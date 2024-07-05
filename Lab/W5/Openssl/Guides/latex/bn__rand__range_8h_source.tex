@@ -1,0 +1,64 @@
+\doxysection{bn\+\_\+rand\+\_\+range.\+h}
+\hypertarget{bn__rand__range_8h_source}{}\label{bn__rand__range_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/test/bn\_rand\_range.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/test/bn\_rand\_range.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ WARNING:\ do\ not\ edit!}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *\ Generated\ by\ statistics/bn\_rand\_range.py\ in\ the\ OpenSSL\ tool\ repository.}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ Copyright\ 2019\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00014\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ range;}
+\DoxyCodeLine{00015\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ iterations;}
+\DoxyCodeLine{00016\ \ \ \ \ \textcolor{keywordtype}{double}\ critical;}
+\DoxyCodeLine{00017\ \}\ rand\_range\_cases[]\ =\ \{}
+\DoxyCodeLine{00018\ \ \ \ \ \{\ \ \ \ \ 2,\ \ \ \ \ 200,\ \ \ \ \ 3.841459\ \},}
+\DoxyCodeLine{00019\ \ \ \ \ \{\ \ \ \ \ 3,\ \ \ \ \ 300,\ \ \ \ \ 5.991465\ \},}
+\DoxyCodeLine{00020\ \ \ \ \ \{\ \ \ \ \ 4,\ \ \ \ \ 400,\ \ \ \ \ 7.814728\ \},}
+\DoxyCodeLine{00021\ \ \ \ \ \{\ \ \ \ \ 5,\ \ \ \ \ 500,\ \ \ \ \ 9.487729\ \},}
+\DoxyCodeLine{00022\ \ \ \ \ \{\ \ \ \ \ 6,\ \ \ \ \ 600,\ \ \ \ 11.070498\ \},}
+\DoxyCodeLine{00023\ \ \ \ \ \{\ \ \ \ \ 7,\ \ \ \ \ 700,\ \ \ \ 12.591587\ \},}
+\DoxyCodeLine{00024\ \ \ \ \ \{\ \ \ \ \ 8,\ \ \ \ \ 800,\ \ \ \ 14.067140\ \},}
+\DoxyCodeLine{00025\ \ \ \ \ \{\ \ \ \ \ 9,\ \ \ \ \ 900,\ \ \ \ 15.507313\ \},}
+\DoxyCodeLine{00026\ \ \ \ \ \{\ \ \ \ 10,\ \ \ \ 1000,\ \ \ \ 16.918978\ \},}
+\DoxyCodeLine{00027\ \ \ \ \ \{\ \ \ \ 11,\ \ \ \ 1100,\ \ \ \ 18.307038\ \},}
+\DoxyCodeLine{00028\ \ \ \ \ \{\ \ \ \ 12,\ \ \ \ 1200,\ \ \ \ 19.675138\ \},}
+\DoxyCodeLine{00029\ \ \ \ \ \{\ \ \ \ 13,\ \ \ \ 1300,\ \ \ \ 21.026070\ \},}
+\DoxyCodeLine{00030\ \ \ \ \ \{\ \ \ \ 14,\ \ \ \ 1400,\ \ \ \ 22.362032\ \},}
+\DoxyCodeLine{00031\ \ \ \ \ \{\ \ \ \ 15,\ \ \ \ 1500,\ \ \ \ 23.684791\ \},}
+\DoxyCodeLine{00032\ \ \ \ \ \{\ \ \ \ 16,\ \ \ \ 1600,\ \ \ \ 24.995790\ \},}
+\DoxyCodeLine{00033\ \ \ \ \ \{\ \ \ \ 17,\ \ \ \ 1700,\ \ \ \ 26.296228\ \},}
+\DoxyCodeLine{00034\ \ \ \ \ \{\ \ \ \ 18,\ \ \ \ 1800,\ \ \ \ 27.587112\ \},}
+\DoxyCodeLine{00035\ \ \ \ \ \{\ \ \ \ 19,\ \ \ \ 1900,\ \ \ \ 28.869299\ \},}
+\DoxyCodeLine{00036\ \ \ \ \ \{\ \ \ \ 20,\ \ \ \ 2000,\ \ \ \ 30.143527\ \},}
+\DoxyCodeLine{00037\ \ \ \ \ \{\ \ \ \ 30,\ \ \ \ 3000,\ \ \ \ 42.556968\ \},}
+\DoxyCodeLine{00038\ \ \ \ \ \{\ \ \ \ 40,\ \ \ \ 4000,\ \ \ \ 54.572228\ \},}
+\DoxyCodeLine{00039\ \ \ \ \ \{\ \ \ \ 50,\ \ \ \ 5000,\ \ \ \ 66.338649\ \},}
+\DoxyCodeLine{00040\ \ \ \ \ \{\ \ \ \ 60,\ \ \ \ 6000,\ \ \ \ 77.930524\ \},}
+\DoxyCodeLine{00041\ \ \ \ \ \{\ \ \ \ 70,\ \ \ \ 7000,\ \ \ \ 89.391208\ \},}
+\DoxyCodeLine{00042\ \ \ \ \ \{\ \ \ \ 80,\ \ \ \ 8000,\ \ \ 100.748619\ \},}
+\DoxyCodeLine{00043\ \ \ \ \ \{\ \ \ \ 90,\ \ \ \ 9000,\ \ \ 112.021986\ \},}
+\DoxyCodeLine{00044\ \ \ \ \ \{\ \ \ 100,\ \ \ 10000,\ \ \ 123.225221\ \},}
+\DoxyCodeLine{00045\ \ \ \ \ \{\ \ 1000,\ \ \ 10000,\ \ 1073.642651\ \},}
+\DoxyCodeLine{00046\ \ \ \ \ \{\ \ 2000,\ \ \ 20000,\ \ 2104.128222\ \},}
+\DoxyCodeLine{00047\ \ \ \ \ \{\ \ 3000,\ \ \ 30000,\ \ 3127.515432\ \},}
+\DoxyCodeLine{00048\ \ \ \ \ \{\ \ 4000,\ \ \ 40000,\ \ 4147.230012\ \},}
+\DoxyCodeLine{00049\ \ \ \ \ \{\ \ 5000,\ \ \ 50000,\ \ 5164.598069\ \},}
+\DoxyCodeLine{00050\ \ \ \ \ \{\ \ 6000,\ \ \ 60000,\ \ 6180.299514\ \},}
+\DoxyCodeLine{00051\ \ \ \ \ \{\ \ 7000,\ \ \ 70000,\ \ 7194.738181\ \},}
+\DoxyCodeLine{00052\ \ \ \ \ \{\ \ 8000,\ \ \ 80000,\ \ 8208.177159\ \},}
+\DoxyCodeLine{00053\ \ \ \ \ \{\ \ 9000,\ \ \ 90000,\ \ 9220.799176\ \},}
+\DoxyCodeLine{00054\ \ \ \ \ \{\ 10000,\ \ 100000,\ 10232.737266\ \},}
+\DoxyCodeLine{00055\ \};}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ binomial\_critical\ =\ 29;}
+\DoxyCodeLine{00058\ }
+
+\end{DoxyCode}

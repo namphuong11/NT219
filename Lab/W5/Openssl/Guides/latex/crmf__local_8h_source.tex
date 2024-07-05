@@ -1,0 +1,391 @@
+\doxysection{crmf\+\_\+local.\+h}
+\hypertarget{crmf__local_8h_source}{}\label{crmf__local_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/crmf/crmf\_local.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/crmf/crmf\_local.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2007-\/2021\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *\ Copyright\ Nokia\ 2007-\/2019}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Copyright\ Siemens\ AG\ 2015-\/2019}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ *\ CRMF\ implementation\ by\ Martin\ Peylo,\ Miikka\ Viljanen,\ and\ David\ von\ Oheimb.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#ifndef\ OSSL\_CRYPTO\_CRMF\_LOCAL\_H}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#\ define\ OSSL\_CRYPTO\_CRMF\_LOCAL\_H}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#\ include\ <openssl/crmf.h>}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#\ include\ <openssl/err.h>}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{comment}{/*\ explicit\ \#includes\ not\ strictly\ needed\ since\ implied\ by\ the\ above:\ */}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#\ include\ <openssl/types.h>}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#\ include\ <openssl/safestack.h>}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#\ include\ <openssl/x509.h>}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#\ include\ <openssl/x509v3.h>}}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00027\ \textcolor{comment}{\ *\ EncryptedValue\ ::=\ SEQUENCE\ \{}}
+\DoxyCodeLine{00028\ \textcolor{comment}{\ *\ intendedAlg\ \ \ [0]\ AlgorithmIdentifier\ \ OPTIONAL,}}
+\DoxyCodeLine{00029\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ -\/-\/\ the\ intended\ algorithm\ for\ which\ the\ value\ will\ be\ used}}
+\DoxyCodeLine{00030\ \textcolor{comment}{\ *\ symmAlg\ \ \ \ \ \ \ [1]\ AlgorithmIdentifier\ \ OPTIONAL,}}
+\DoxyCodeLine{00031\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ -\/-\/\ the\ symmetric\ algorithm\ used\ to\ encrypt\ the\ value}}
+\DoxyCodeLine{00032\ \textcolor{comment}{\ *\ encSymmKey\ \ \ \ [2]\ BIT\ STRING\ \ \ \ \ \ \ \ \ \ \ OPTIONAL,}}
+\DoxyCodeLine{00033\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ -\/-\/\ the\ (encrypted)\ symmetric\ key\ used\ to\ encrypt\ the\ value}}
+\DoxyCodeLine{00034\ \textcolor{comment}{\ *\ keyAlg\ \ \ \ \ \ \ \ [3]\ AlgorithmIdentifier\ \ OPTIONAL,}}
+\DoxyCodeLine{00035\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ -\/-\/\ algorithm\ used\ to\ encrypt\ the\ symmetric\ key}}
+\DoxyCodeLine{00036\ \textcolor{comment}{\ *\ valueHint\ \ \ \ \ [4]\ OCTET\ STRING\ \ \ \ \ \ \ \ \ OPTIONAL,}}
+\DoxyCodeLine{00037\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ -\/-\/\ a\ brief\ description\ or\ identifier\ of\ the\ encValue\ content}}
+\DoxyCodeLine{00038\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ -\/-\/\ (may\ be\ meaningful\ only\ to\ the\ sending\ entity,\ and}}
+\DoxyCodeLine{00039\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ -\/-\/\ \ used\ only\ if\ EncryptedValue\ might\ be\ re-\/examined}}
+\DoxyCodeLine{00040\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ -\/-\/\ \ by\ the\ sending\ entity\ in\ the\ future)}}
+\DoxyCodeLine{00041\ \textcolor{comment}{\ *\ encValue\ \ \ \ \ \ BIT\ STRING}}
+\DoxyCodeLine{00042\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ -\/-\/\ the\ encrypted\ value\ itself}}
+\DoxyCodeLine{00043\ \textcolor{comment}{\ *\ \}}}
+\DoxyCodeLine{00044\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00045\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__crmf__encryptedvalue__st}{ossl\_crmf\_encryptedvalue\_st}}\ \{}
+\DoxyCodeLine{00046\ \ \ \ \ X509\_ALGOR\ *intendedAlg;\ \ \ \ \ \ \textcolor{comment}{/*\ 0\ */}}
+\DoxyCodeLine{00047\ \ \ \ \ X509\_ALGOR\ *symmAlg;\ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ 1\ */}}
+\DoxyCodeLine{00048\ \ \ \ \ ASN1\_BIT\_STRING\ *encSymmKey;\ \ \textcolor{comment}{/*\ 2\ */}}
+\DoxyCodeLine{00049\ \ \ \ \ X509\_ALGOR\ *keyAlg;\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ 3\ */}}
+\DoxyCodeLine{00050\ \ \ \ \ ASN1\_OCTET\_STRING\ *valueHint;\ \textcolor{comment}{/*\ 4\ */}}
+\DoxyCodeLine{00051\ \ \ \ \ ASN1\_BIT\_STRING\ *encValue;}
+\DoxyCodeLine{00052\ \}\ \textcolor{comment}{/*\ OSSL\_CRMF\_ENCRYPTEDVALUE\ */};}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00055\ \textcolor{comment}{\ *\ \ Attributes\ ::=\ SET\ OF\ Attribute}}
+\DoxyCodeLine{00056\ \textcolor{comment}{\ *\ \ =>\ X509\_ATTRIBUTE}}
+\DoxyCodeLine{00057\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00058\ \textcolor{comment}{\ *\ \ PrivateKeyInfo\ ::=\ SEQUENCE\ \{}}
+\DoxyCodeLine{00059\ \textcolor{comment}{\ *\ \ \ \ \ version\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ INTEGER,}}
+\DoxyCodeLine{00060\ \textcolor{comment}{\ *\ \ \ \ \ privateKeyAlgorithm\ \ \ \ \ \ \ \ \ \ \ AlgorithmIdentifier,}}
+\DoxyCodeLine{00061\ \textcolor{comment}{\ *\ \ \ \ \ privateKey\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OCTET\ STRING,}}
+\DoxyCodeLine{00062\ \textcolor{comment}{\ *\ \ \ \ \ attributes\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ [0]\ IMPLICIT\ Attributes\ OPTIONAL}}
+\DoxyCodeLine{00063\ \textcolor{comment}{\ *\ \ \}}}
+\DoxyCodeLine{00064\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00065\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__crmf__privatekeyinfo__st}{ossl\_crmf\_privatekeyinfo\_st}}\ \{}
+\DoxyCodeLine{00066\ \ \ \ \ ASN1\_INTEGER\ *version;}
+\DoxyCodeLine{00067\ \ \ \ \ X509\_ALGOR\ *privateKeyAlgorithm;}
+\DoxyCodeLine{00068\ \ \ \ \ ASN1\_OCTET\_STRING\ *privateKey;}
+\DoxyCodeLine{00069\ \ \ \ \ STACK\_OF(X509\_ATTRIBUTE)\ *attributes;\ \textcolor{comment}{/*\ [\ 0\ ]\ */}}
+\DoxyCodeLine{00070\ \}\ \mbox{\hyperlink{structossl__crmf__privatekeyinfo__st}{OSSL\_CRMF\_PRIVATEKEYINFO}};}
+\DoxyCodeLine{00071\ DECLARE\_ASN1\_FUNCTIONS(\mbox{\hyperlink{structossl__crmf__privatekeyinfo__st}{OSSL\_CRMF\_PRIVATEKEYINFO}})}
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00073\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00074\ \textcolor{comment}{\ *\ section\ 4.2.1\ Private\ Key\ Info\ Content\ Type}}
+\DoxyCodeLine{00075\ \textcolor{comment}{\ *\ id-\/ct-\/encKeyWithID\ OBJECT\ IDENTIFIER\ ::=\ \{id-\/ct\ 21\}}}
+\DoxyCodeLine{00076\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00077\ \textcolor{comment}{\ *\ EncKeyWithID\ ::=\ SEQUENCE\ \{}}
+\DoxyCodeLine{00078\ \textcolor{comment}{\ *\ privateKey\ \ \ \ \ PrivateKeyInfo,}}
+\DoxyCodeLine{00079\ \textcolor{comment}{\ *\ identifier\ \ \ \ \ CHOICE\ \{}}
+\DoxyCodeLine{00080\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ string\ \ \ \ \ \ \ \ \ UTF8String,}}
+\DoxyCodeLine{00081\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ generalName\ \ \ \ GeneralName}}
+\DoxyCodeLine{00082\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}\ OPTIONAL}}
+\DoxyCodeLine{00083\ \textcolor{comment}{\ *\ \}}}
+\DoxyCodeLine{00084\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00085\ typedef\ struct\ \mbox{\hyperlink{structossl__crmf__enckeywithid__identifier__st}{ossl\_crmf\_enckeywithid\_identifier\_st}}\ \{}
+\DoxyCodeLine{00086\ \ \ \ \ \textcolor{keywordtype}{int}\ type;}
+\DoxyCodeLine{00087\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ ASN1\_UTF8STRING\ *string;}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ GENERAL\_NAME\ *generalName;}
+\DoxyCodeLine{00090\ \ \ \ \ \}\ value;}
+\DoxyCodeLine{00091\ \}\ \mbox{\hyperlink{structossl__crmf__enckeywithid__identifier__st}{OSSL\_CRMF\_ENCKEYWITHID\_IDENTIFIER}};}
+\DoxyCodeLine{00092\ DECLARE\_ASN1\_FUNCTIONS(\mbox{\hyperlink{structossl__crmf__enckeywithid__identifier__st}{OSSL\_CRMF\_ENCKEYWITHID\_IDENTIFIER}})}
+\DoxyCodeLine{00093\ }
+\DoxyCodeLine{00094\ typedef\ struct\ \mbox{\hyperlink{structossl__crmf__enckeywithid__st}{ossl\_crmf\_enckeywithid\_st}}\ \{}
+\DoxyCodeLine{00095\ \ \ \ \ \mbox{\hyperlink{structossl__crmf__privatekeyinfo__st}{OSSL\_CRMF\_PRIVATEKEYINFO}}\ *privateKey;}
+\DoxyCodeLine{00096\ \ \ \ \ \textcolor{comment}{/*\ [0]\ */}}
+\DoxyCodeLine{00097\ \ \ \ \ \mbox{\hyperlink{structossl__crmf__enckeywithid__identifier__st}{OSSL\_CRMF\_ENCKEYWITHID\_IDENTIFIER}}\ *identifier;}
+\DoxyCodeLine{00098\ \}\ \mbox{\hyperlink{structossl__crmf__enckeywithid__st}{OSSL\_CRMF\_ENCKEYWITHID}};}
+\DoxyCodeLine{00099\ DECLARE\_ASN1\_FUNCTIONS(\mbox{\hyperlink{structossl__crmf__enckeywithid__st}{OSSL\_CRMF\_ENCKEYWITHID}})}
+\DoxyCodeLine{00100\ }
+\DoxyCodeLine{00101\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00102\ \textcolor{comment}{\ *\ CertId\ ::=\ SEQUENCE\ \{}}
+\DoxyCodeLine{00103\ \textcolor{comment}{\ *\ \ \ \ \ \ issuer\ \ \ \ \ \ \ \ \ \ \ GeneralName,}}
+\DoxyCodeLine{00104\ \textcolor{comment}{\ *\ \ \ \ \ \ serialNumber\ \ \ \ \ INTEGER}}
+\DoxyCodeLine{00105\ \textcolor{comment}{\ *\ \}}}
+\DoxyCodeLine{00106\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00107\ struct\ \mbox{\hyperlink{structossl__crmf__certid__st}{ossl\_crmf\_certid\_st}}\ \{}
+\DoxyCodeLine{00108\ \ \ \ \ GENERAL\_NAME\ *issuer;}
+\DoxyCodeLine{00109\ \ \ \ \ ASN1\_INTEGER\ *serialNumber;}
+\DoxyCodeLine{00110\ \}\ \textcolor{comment}{/*\ OSSL\_CRMF\_CERTID\ */};}
+\DoxyCodeLine{00111\ }
+\DoxyCodeLine{00112\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00113\ \textcolor{comment}{\ *\ SinglePubInfo\ ::=\ SEQUENCE\ \{}}
+\DoxyCodeLine{00114\ \textcolor{comment}{\ *\ \ pubMethod\ \ \ \ \ \ \ \ INTEGER\ \{}}
+\DoxyCodeLine{00115\ \textcolor{comment}{\ *\ \ \ \ \ \ dontCare\ \ \ \ \ \ \ \ (0),}}
+\DoxyCodeLine{00116\ \textcolor{comment}{\ *\ \ \ \ \ \ x500\ \ \ \ \ \ \ \ \ \ \ \ (1),}}
+\DoxyCodeLine{00117\ \textcolor{comment}{\ *\ \ \ \ \ \ web\ \ \ \ \ \ \ \ \ \ \ \ \ (2),}}
+\DoxyCodeLine{00118\ \textcolor{comment}{\ *\ \ \ \ \ \ ldap\ \ \ \ \ \ \ \ \ \ \ \ (3)\ \},}}
+\DoxyCodeLine{00119\ \textcolor{comment}{\ *\ \ pubLocation\ \ GeneralName\ OPTIONAL}}
+\DoxyCodeLine{00120\ \textcolor{comment}{\ *\ \}}}
+\DoxyCodeLine{00121\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00122\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__crmf__singlepubinfo__st}{ossl\_crmf\_singlepubinfo\_st}}\ \{}
+\DoxyCodeLine{00123\ \ \ \ \ ASN1\_INTEGER\ *pubMethod;}
+\DoxyCodeLine{00124\ \ \ \ \ GENERAL\_NAME\ *pubLocation;}
+\DoxyCodeLine{00125\ \}\ \textcolor{comment}{/*\ OSSL\_CRMF\_SINGLEPUBINFO\ */};}
+\DoxyCodeLine{00126\ DEFINE\_STACK\_OF(OSSL\_CRMF\_SINGLEPUBINFO)}
+\DoxyCodeLine{00127\ \textcolor{keyword}{typedef}\ STACK\_OF(OSSL\_CRMF\_SINGLEPUBINFO)\ OSSL\_CRMF\_PUBINFOS;}
+\DoxyCodeLine{00128\ }
+\DoxyCodeLine{00129\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00130\ \textcolor{comment}{\ *\ PKIPublicationInfo\ ::=\ SEQUENCE\ \{}}
+\DoxyCodeLine{00131\ \textcolor{comment}{\ *\ \ \ \ \ \ action\ \ \ \ \ INTEGER\ \{}}
+\DoxyCodeLine{00132\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ dontPublish\ (0),}}
+\DoxyCodeLine{00133\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pleasePublish\ (1)\ \},}}
+\DoxyCodeLine{00134\ \textcolor{comment}{\ *\ \ \ \ \ \ pubInfos\ \ \ SEQUENCE\ SIZE\ (1..MAX)\ OF\ SinglePubInfo\ OPTIONAL}}
+\DoxyCodeLine{00135\ \textcolor{comment}{\ *\ \ \ \ \ \ -\/-\/\ pubInfos\ MUST\ NOT\ be\ present\ if\ action\ is\ "{}dontPublish"{}}}
+\DoxyCodeLine{00136\ \textcolor{comment}{\ *\ \ \ \ \ \ -\/-\/\ (if\ action\ is\ "{}pleasePublish"{}\ and\ pubInfos\ is\ omitted,}}
+\DoxyCodeLine{00137\ \textcolor{comment}{\ *\ \ \ \ \ \ -\/-\/\ "{}dontCare"{}\ is\ assumed)}}
+\DoxyCodeLine{00138\ \textcolor{comment}{\ *\ \}}}
+\DoxyCodeLine{00139\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00140\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__crmf__pkipublicationinfo__st}{ossl\_crmf\_pkipublicationinfo\_st}}\ \{}
+\DoxyCodeLine{00141\ \ \ \ \ ASN1\_INTEGER\ *action;}
+\DoxyCodeLine{00142\ \ \ \ \ OSSL\_CRMF\_PUBINFOS\ *pubInfos;}
+\DoxyCodeLine{00143\ \}\ \textcolor{comment}{/*\ OSSL\_CRMF\_PKIPUBLICATIONINFO\ */};}
+\DoxyCodeLine{00144\ DECLARE\_ASN1\_DUP\_FUNCTION(OSSL\_CRMF\_PKIPUBLICATIONINFO)}
+\DoxyCodeLine{00145\ }
+\DoxyCodeLine{00146\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00147\ \textcolor{comment}{\ *\ PKMACValue\ ::=\ SEQUENCE\ \{}}
+\DoxyCodeLine{00148\ \textcolor{comment}{\ *\ algId\ \ AlgorithmIdentifier,}}
+\DoxyCodeLine{00149\ \textcolor{comment}{\ *\ -\/-\/\ algorithm\ value\ shall\ be\ PasswordBasedMac\ \{1\ 2\ 840\ 113533\ 7\ 66\ 13\}}}
+\DoxyCodeLine{00150\ \textcolor{comment}{\ *\ -\/-\/\ parameter\ value\ is\ PBMParameter}}
+\DoxyCodeLine{00151\ \textcolor{comment}{\ *\ value\ \ BIT\ STRING}}
+\DoxyCodeLine{00152\ \textcolor{comment}{\ *\ \}}}
+\DoxyCodeLine{00153\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00154\ typedef\ struct\ \mbox{\hyperlink{structossl__crmf__pkmacvalue__st}{ossl\_crmf\_pkmacvalue\_st}}\ \{}
+\DoxyCodeLine{00155\ \ \ \ \ X509\_ALGOR\ *algId;}
+\DoxyCodeLine{00156\ \ \ \ \ ASN1\_BIT\_STRING\ *value;}
+\DoxyCodeLine{00157\ \}\ \mbox{\hyperlink{structossl__crmf__pkmacvalue__st}{OSSL\_CRMF\_PKMACVALUE}};}
+\DoxyCodeLine{00158\ DECLARE\_ASN1\_FUNCTIONS(\mbox{\hyperlink{structossl__crmf__pkmacvalue__st}{OSSL\_CRMF\_PKMACVALUE}})}
+\DoxyCodeLine{00159\ }
+\DoxyCodeLine{00160\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00161\ \textcolor{comment}{\ *\ SubsequentMessage\ ::=\ INTEGER\ \{}}
+\DoxyCodeLine{00162\ \textcolor{comment}{\ *\ encrCert\ (0),}}
+\DoxyCodeLine{00163\ \textcolor{comment}{\ *\ -\/-\/\ requests\ that\ resulting\ certificate\ be\ encrypted\ for\ the}}
+\DoxyCodeLine{00164\ \textcolor{comment}{\ *\ -\/-\/\ end\ entity\ (following\ which,\ POP\ will\ be\ proven\ in\ a}}
+\DoxyCodeLine{00165\ \textcolor{comment}{\ *\ -\/-\/\ confirmation\ message)}}
+\DoxyCodeLine{00166\ \textcolor{comment}{\ *\ challengeResp\ (1)}}
+\DoxyCodeLine{00167\ \textcolor{comment}{\ *\ -\/-\/\ requests\ that\ CA\ engage\ in\ challenge-\/response\ exchange\ with}}
+\DoxyCodeLine{00168\ \textcolor{comment}{\ *\ -\/-\/\ end\ entity\ in\ order\ to\ prove\ private\ key\ possession}}
+\DoxyCodeLine{00169\ \textcolor{comment}{\ *\ \}}}
+\DoxyCodeLine{00170\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00171\ \textcolor{comment}{\ *\ POPOPrivKey\ ::=\ CHOICE\ \{}}
+\DoxyCodeLine{00172\ \textcolor{comment}{\ *\ thisMessage\ \ \ \ \ \ \ [0]\ BIT\ STRING,\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ -\/-\/\ Deprecated}}
+\DoxyCodeLine{00173\ \textcolor{comment}{\ *\ -\/-\/\ possession\ is\ proven\ in\ this\ message\ (which\ contains\ the\ private}}
+\DoxyCodeLine{00174\ \textcolor{comment}{\ *\ -\/-\/\ key\ itself\ (encrypted\ for\ the\ CA))}}
+\DoxyCodeLine{00175\ \textcolor{comment}{\ *\ subsequentMessage\ [1]\ SubsequentMessage,}}
+\DoxyCodeLine{00176\ \textcolor{comment}{\ *\ -\/-\/\ possession\ will\ be\ proven\ in\ a\ subsequent\ message}}
+\DoxyCodeLine{00177\ \textcolor{comment}{\ *\ dhMAC\ \ \ \ \ \ \ \ \ \ \ \ \ [2]\ BIT\ STRING,\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ -\/-\/\ Deprecated}}
+\DoxyCodeLine{00178\ \textcolor{comment}{\ *\ agreeMAC\ \ \ \ \ \ \ \ \ \ [3]\ PKMACValue,}}
+\DoxyCodeLine{00179\ \textcolor{comment}{\ *\ encryptedKey\ \ \ \ \ \ [4]\ EnvelopedData}}
+\DoxyCodeLine{00180\ \textcolor{comment}{\ *\ \}}}
+\DoxyCodeLine{00181\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00182\ }
+\DoxyCodeLine{00183\ typedef\ struct\ \mbox{\hyperlink{structossl__crmf__popoprivkey__st}{ossl\_crmf\_popoprivkey\_st}}\ \{}
+\DoxyCodeLine{00184\ \ \ \ \ \textcolor{keywordtype}{int}\ type;}
+\DoxyCodeLine{00185\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00186\ \ \ \ \ \ \ \ \ ASN1\_BIT\_STRING\ *thisMessage;\ \textcolor{comment}{/*\ 0\ */}\ \textcolor{comment}{/*\ Deprecated\ */}}
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ ASN1\_INTEGER\ *subsequentMessage;\ \textcolor{comment}{/*\ 1\ */}}
+\DoxyCodeLine{00188\ \ \ \ \ \ \ \ \ ASN1\_BIT\_STRING\ *dhMAC;\ \textcolor{comment}{/*\ 2\ */}\ \textcolor{comment}{/*\ Deprecated\ */}}
+\DoxyCodeLine{00189\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structossl__crmf__pkmacvalue__st}{OSSL\_CRMF\_PKMACVALUE}}\ *agreeMAC;\ \textcolor{comment}{/*\ 3\ */}}
+\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ ASN1\_NULL\ *encryptedKey;\ \textcolor{comment}{/*\ 4\ */}}
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ When\ supported,\ ASN1\_NULL\ needs\ to\ be\ replaced\ by\ CMS\_ENVELOPEDDATA\ */}}
+\DoxyCodeLine{00192\ \ \ \ \ \}\ value;}
+\DoxyCodeLine{00193\ \}\ \mbox{\hyperlink{structossl__crmf__popoprivkey__st}{OSSL\_CRMF\_POPOPRIVKEY}};}
+\DoxyCodeLine{00194\ DECLARE\_ASN1\_FUNCTIONS(\mbox{\hyperlink{structossl__crmf__popoprivkey__st}{OSSL\_CRMF\_POPOPRIVKEY}})}
+\DoxyCodeLine{00195\ }
+\DoxyCodeLine{00196\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00197\ \textcolor{comment}{\ *\ PBMParameter\ ::=\ SEQUENCE\ \{}}
+\DoxyCodeLine{00198\ \textcolor{comment}{\ *\ \ \ \ salt\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OCTET\ STRING,}}
+\DoxyCodeLine{00199\ \textcolor{comment}{\ *\ \ \ \ owf\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ AlgorithmIdentifier,}}
+\DoxyCodeLine{00200\ \textcolor{comment}{\ *\ \ \ \ -\/-\/\ AlgId\ for\ a\ One-\/Way\ Function\ (SHA-\/1\ recommended)}}
+\DoxyCodeLine{00201\ \textcolor{comment}{\ *\ \ \ \ iterationCount\ \ \ \ \ \ \ \ \ \ INTEGER,}}
+\DoxyCodeLine{00202\ \textcolor{comment}{\ *\ \ \ \ -\/-\/\ number\ of\ times\ the\ OWF\ is\ applied}}
+\DoxyCodeLine{00203\ \textcolor{comment}{\ *\ \ \ \ mac\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ AlgorithmIdentifier}}
+\DoxyCodeLine{00204\ \textcolor{comment}{\ *\ \ \ \ -\/-\/\ the\ MAC\ AlgId\ (e.g.,\ DES-\/MAC,\ Triple-\/DES-\/MAC\ [PKCS11],}}
+\DoxyCodeLine{00205\ \textcolor{comment}{\ *\ \ \ \ -\/-\/\ or\ HMAC\ [HMAC,\ RFC2202])}}
+\DoxyCodeLine{00206\ \textcolor{comment}{\ *\ \}}}
+\DoxyCodeLine{00207\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00208\ struct\ \mbox{\hyperlink{structossl__crmf__pbmparameter__st}{ossl\_crmf\_pbmparameter\_st}}\ \{}
+\DoxyCodeLine{00209\ \ \ \ \ ASN1\_OCTET\_STRING\ *salt;}
+\DoxyCodeLine{00210\ \ \ \ \ X509\_ALGOR\ *owf;}
+\DoxyCodeLine{00211\ \ \ \ \ ASN1\_INTEGER\ *iterationCount;}
+\DoxyCodeLine{00212\ \ \ \ \ X509\_ALGOR\ *mac;}
+\DoxyCodeLine{00213\ \}\ \textcolor{comment}{/*\ OSSL\_CRMF\_PBMPARAMETER\ */};}
+\DoxyCodeLine{00214\ \textcolor{preprocessor}{\#\ define\ OSSL\_CRMF\_PBM\_MAX\_ITERATION\_COUNT\ 100000\ }\textcolor{comment}{/*\ if\ too\ large\ allows\ DoS\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00215\ }
+\DoxyCodeLine{00216\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00217\ \textcolor{comment}{\ *\ POPOSigningKeyInput\ ::=\ SEQUENCE\ \{}}
+\DoxyCodeLine{00218\ \textcolor{comment}{\ *\ authInfo\ \ \ \ \ \ \ CHOICE\ \{}}
+\DoxyCodeLine{00219\ \textcolor{comment}{\ *\ \ \ \ \ sender\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ [0]\ GeneralName,}}
+\DoxyCodeLine{00220\ \textcolor{comment}{\ *\ \ \ -\/-\/\ used\ only\ if\ an\ authenticated\ identity\ has\ been}}
+\DoxyCodeLine{00221\ \textcolor{comment}{\ *\ \ \ -\/-\/\ established\ for\ the\ sender\ (e.g.,\ a\ DN\ from\ a}}
+\DoxyCodeLine{00222\ \textcolor{comment}{\ *\ \ \ -\/-\/\ previously-\/issued\ and\ currently-\/valid\ certificate)}}
+\DoxyCodeLine{00223\ \textcolor{comment}{\ *\ \ \ \ \ publicKeyMAC\ \ \ \ \ \ \ \ \ \ \ PKMACValue\ \},}}
+\DoxyCodeLine{00224\ \textcolor{comment}{\ *\ \ \ -\/-\/\ used\ if\ no\ authenticated\ GeneralName\ currently\ exists\ for}}
+\DoxyCodeLine{00225\ \textcolor{comment}{\ *\ \ \ -\/-\/\ the\ sender;\ publicKeyMAC\ contains\ a\ password-\/based\ MAC}}
+\DoxyCodeLine{00226\ \textcolor{comment}{\ *\ \ \ -\/-\/\ on\ the\ DER-\/encoded\ value\ of\ publicKey}}
+\DoxyCodeLine{00227\ \textcolor{comment}{\ *\ publicKey\ \ \ \ \ \ SubjectPublicKeyInfo\ \ -\/-\/\ from\ CertTemplate}}
+\DoxyCodeLine{00228\ \textcolor{comment}{\ *\ \}}}
+\DoxyCodeLine{00229\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00230\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__crmf__poposigningkeyinput__authinfo__st}{ossl\_crmf\_poposigningkeyinput\_authinfo\_st}}\ \{}
+\DoxyCodeLine{00231\ \ \ \ \ \textcolor{keywordtype}{int}\ type;}
+\DoxyCodeLine{00232\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00233\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ 0\ */}\ GENERAL\_NAME\ *sender;}
+\DoxyCodeLine{00234\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ 1\ */}\ \mbox{\hyperlink{structossl__crmf__pkmacvalue__st}{OSSL\_CRMF\_PKMACVALUE}}\ *publicKeyMAC;}
+\DoxyCodeLine{00235\ \ \ \ \ \}\ value;}
+\DoxyCodeLine{00236\ \}\ \mbox{\hyperlink{structossl__crmf__poposigningkeyinput__authinfo__st}{OSSL\_CRMF\_POPOSIGNINGKEYINPUT\_AUTHINFO}};}
+\DoxyCodeLine{00237\ DECLARE\_ASN1\_FUNCTIONS(\mbox{\hyperlink{structossl__crmf__poposigningkeyinput__authinfo__st}{OSSL\_CRMF\_POPOSIGNINGKEYINPUT\_AUTHINFO}})}
+\DoxyCodeLine{00238\ }
+\DoxyCodeLine{00239\ typedef\ struct\ \mbox{\hyperlink{structossl__crmf__poposigningkeyinput__st}{ossl\_crmf\_poposigningkeyinput\_st}}\ \{}
+\DoxyCodeLine{00240\ \ \ \ \ \mbox{\hyperlink{structossl__crmf__poposigningkeyinput__authinfo__st}{OSSL\_CRMF\_POPOSIGNINGKEYINPUT\_AUTHINFO}}\ *authInfo;}
+\DoxyCodeLine{00241\ \ \ \ \ X509\_PUBKEY\ *publicKey;}
+\DoxyCodeLine{00242\ \}\ \mbox{\hyperlink{structossl__crmf__poposigningkeyinput__st}{OSSL\_CRMF\_POPOSIGNINGKEYINPUT}};}
+\DoxyCodeLine{00243\ DECLARE\_ASN1\_FUNCTIONS(\mbox{\hyperlink{structossl__crmf__poposigningkeyinput__st}{OSSL\_CRMF\_POPOSIGNINGKEYINPUT}})}
+\DoxyCodeLine{00244\ }
+\DoxyCodeLine{00245\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00246\ \textcolor{comment}{\ *\ POPOSigningKey\ ::=\ SEQUENCE\ \{}}
+\DoxyCodeLine{00247\ \textcolor{comment}{\ *\ \ poposkInput\ \ \ \ \ \ \ \ \ \ \ [0]\ POPOSigningKeyInput\ OPTIONAL,}}
+\DoxyCodeLine{00248\ \textcolor{comment}{\ *\ \ algorithmIdentifier\ \ \ AlgorithmIdentifier,}}
+\DoxyCodeLine{00249\ \textcolor{comment}{\ *\ \ signature\ \ \ \ \ \ \ \ \ \ \ \ \ BIT\ STRING}}
+\DoxyCodeLine{00250\ \textcolor{comment}{\ *\ \}}}
+\DoxyCodeLine{00251\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00252\ struct\ \mbox{\hyperlink{structossl__crmf__poposigningkey__st}{ossl\_crmf\_poposigningkey\_st}}\ \{}
+\DoxyCodeLine{00253\ \ \ \ \ \mbox{\hyperlink{structossl__crmf__poposigningkeyinput__st}{OSSL\_CRMF\_POPOSIGNINGKEYINPUT}}\ *poposkInput;}
+\DoxyCodeLine{00254\ \ \ \ \ X509\_ALGOR\ *algorithmIdentifier;}
+\DoxyCodeLine{00255\ \ \ \ \ ASN1\_BIT\_STRING\ *signature;}
+\DoxyCodeLine{00256\ \}\ \textcolor{comment}{/*\ OSSL\_CRMF\_POPOSIGNINGKEY\ */};}
+\DoxyCodeLine{00257\ DECLARE\_ASN1\_FUNCTIONS(OSSL\_CRMF\_POPOSIGNINGKEY)}
+\DoxyCodeLine{00258\ }
+\DoxyCodeLine{00259\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00260\ \textcolor{comment}{\ *\ ProofOfPossession\ ::=\ CHOICE\ \{}}
+\DoxyCodeLine{00261\ \textcolor{comment}{\ *\ \ raVerified\ \ \ \ \ \ \ \ [0]\ NULL,}}
+\DoxyCodeLine{00262\ \textcolor{comment}{\ *\ \ -\/-\/\ used\ if\ the\ RA\ has\ already\ verified\ that\ the\ requester\ is\ in}}
+\DoxyCodeLine{00263\ \textcolor{comment}{\ *\ \ -\/-\/\ possession\ of\ the\ private\ key}}
+\DoxyCodeLine{00264\ \textcolor{comment}{\ *\ \ signature\ \ \ \ \ \ \ \ \ [1]\ POPOSigningKey,}}
+\DoxyCodeLine{00265\ \textcolor{comment}{\ *\ \ keyEncipherment\ \ \ [2]\ POPOPrivKey,}}
+\DoxyCodeLine{00266\ \textcolor{comment}{\ *\ \ keyAgreement\ \ \ \ \ \ [3]\ POPOPrivKey}}
+\DoxyCodeLine{00267\ \textcolor{comment}{\ *\ \}}}
+\DoxyCodeLine{00268\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00269\ typedef\ struct\ \mbox{\hyperlink{structossl__crmf__popo__st}{ossl\_crmf\_popo\_st}}\ \{}
+\DoxyCodeLine{00270\ \ \ \ \ \textcolor{keywordtype}{int}\ type;}
+\DoxyCodeLine{00271\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00272\ \ \ \ \ \ \ \ \ ASN1\_NULL\ *raVerified;\ \textcolor{comment}{/*\ 0\ */}}
+\DoxyCodeLine{00273\ \ \ \ \ \ \ \ \ OSSL\_CRMF\_POPOSIGNINGKEY\ *signature;\ \textcolor{comment}{/*\ 1\ */}}
+\DoxyCodeLine{00274\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structossl__crmf__popoprivkey__st}{OSSL\_CRMF\_POPOPRIVKEY}}\ *keyEncipherment;\ \textcolor{comment}{/*\ 2\ */}}
+\DoxyCodeLine{00275\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structossl__crmf__popoprivkey__st}{OSSL\_CRMF\_POPOPRIVKEY}}\ *keyAgreement;\ \textcolor{comment}{/*\ 3\ */}}
+\DoxyCodeLine{00276\ \ \ \ \ \}\ value;}
+\DoxyCodeLine{00277\ \}\ \mbox{\hyperlink{structossl__crmf__popo__st}{OSSL\_CRMF\_POPO}};}
+\DoxyCodeLine{00278\ DECLARE\_ASN1\_FUNCTIONS(\mbox{\hyperlink{structossl__crmf__popo__st}{OSSL\_CRMF\_POPO}})}
+\DoxyCodeLine{00279\ }
+\DoxyCodeLine{00280\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00281\ \textcolor{comment}{\ *\ OptionalValidity\ ::=\ SEQUENCE\ \{}}
+\DoxyCodeLine{00282\ \textcolor{comment}{\ *\ \ notBefore\ \ \ \ \ \ [0]\ Time\ OPTIONAL,}}
+\DoxyCodeLine{00283\ \textcolor{comment}{\ *\ \ notAfter\ \ \ \ \ \ \ [1]\ Time\ OPTIONAL\ \ -\/-\/\ at\ least\ one\ MUST\ be\ present}}
+\DoxyCodeLine{00284\ \textcolor{comment}{\ *\ \}}}
+\DoxyCodeLine{00285\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00286\ struct\ \mbox{\hyperlink{structossl__crmf__optionalvalidity__st}{ossl\_crmf\_optionalvalidity\_st}}\ \{}
+\DoxyCodeLine{00287\ \ \ \ \ \textcolor{comment}{/*\ 0\ */}\ ASN1\_TIME\ *notBefore;}
+\DoxyCodeLine{00288\ \ \ \ \ \textcolor{comment}{/*\ 1\ */}\ ASN1\_TIME\ *notAfter;}
+\DoxyCodeLine{00289\ \}\ \textcolor{comment}{/*\ OSSL\_CRMF\_OPTIONALVALIDITY\ */};}
+\DoxyCodeLine{00290\ DECLARE\_ASN1\_FUNCTIONS(OSSL\_CRMF\_OPTIONALVALIDITY)}
+\DoxyCodeLine{00291\ }
+\DoxyCodeLine{00292\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00293\ \textcolor{comment}{\ *\ CertTemplate\ ::=\ SEQUENCE\ \{}}
+\DoxyCodeLine{00294\ \textcolor{comment}{\ *\ version\ \ \ \ \ \ \ \ \ \ [0]\ Version\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OPTIONAL,}}
+\DoxyCodeLine{00295\ \textcolor{comment}{\ *\ serialNumber\ \ \ \ \ [1]\ INTEGER\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OPTIONAL,}}
+\DoxyCodeLine{00296\ \textcolor{comment}{\ *\ signingAlg\ \ \ \ \ \ \ [2]\ AlgorithmIdentifier\ \ \ \ \ \ \ OPTIONAL,}}
+\DoxyCodeLine{00297\ \textcolor{comment}{\ *\ issuer\ \ \ \ \ \ \ \ \ \ \ [3]\ Name\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OPTIONAL,}}
+\DoxyCodeLine{00298\ \textcolor{comment}{\ *\ validity\ \ \ \ \ \ \ \ \ [4]\ OptionalValidity\ \ \ \ \ \ \ \ \ \ OPTIONAL,}}
+\DoxyCodeLine{00299\ \textcolor{comment}{\ *\ subject\ \ \ \ \ \ \ \ \ \ [5]\ Name\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OPTIONAL,}}
+\DoxyCodeLine{00300\ \textcolor{comment}{\ *\ publicKey\ \ \ \ \ \ \ \ [6]\ SubjectPublicKeyInfo\ \ \ \ \ \ OPTIONAL,}}
+\DoxyCodeLine{00301\ \textcolor{comment}{\ *\ issuerUID\ \ \ \ \ \ \ \ [7]\ UniqueIdentifier\ \ \ \ \ \ \ \ \ \ OPTIONAL,}}
+\DoxyCodeLine{00302\ \textcolor{comment}{\ *\ subjectUID\ \ \ \ \ \ \ [8]\ UniqueIdentifier\ \ \ \ \ \ \ \ \ \ OPTIONAL,}}
+\DoxyCodeLine{00303\ \textcolor{comment}{\ *\ extensions\ \ \ \ \ \ \ [9]\ Extensions\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OPTIONAL}}
+\DoxyCodeLine{00304\ \textcolor{comment}{\ *\ \}}}
+\DoxyCodeLine{00305\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00306\ struct\ \mbox{\hyperlink{structossl__crmf__certtemplate__st}{ossl\_crmf\_certtemplate\_st}}\ \{}
+\DoxyCodeLine{00307\ \ \ \ \ ASN1\_INTEGER\ *version;}
+\DoxyCodeLine{00308\ \ \ \ \ ASN1\_INTEGER\ *serialNumber;\ \textcolor{comment}{/*\ serialNumber\ MUST\ be\ omitted\ */}}
+\DoxyCodeLine{00309\ \ \ \ \ \textcolor{comment}{/*\ This\ field\ is\ assigned\ by\ the\ CA\ during\ certificate\ creation\ */}}
+\DoxyCodeLine{00310\ \ \ \ \ X509\_ALGOR\ *signingAlg;\ \textcolor{comment}{/*\ signingAlg\ MUST\ be\ omitted\ */}}
+\DoxyCodeLine{00311\ \ \ \ \ \textcolor{comment}{/*\ This\ field\ is\ assigned\ by\ the\ CA\ during\ certificate\ creation\ */}}
+\DoxyCodeLine{00312\ \ \ \ \ \textcolor{keyword}{const}\ X509\_NAME\ *issuer;}
+\DoxyCodeLine{00313\ \ \ \ \ OSSL\_CRMF\_OPTIONALVALIDITY\ *validity;}
+\DoxyCodeLine{00314\ \ \ \ \ \textcolor{keyword}{const}\ X509\_NAME\ *subject;}
+\DoxyCodeLine{00315\ \ \ \ \ X509\_PUBKEY\ *publicKey;}
+\DoxyCodeLine{00316\ \ \ \ \ ASN1\_BIT\_STRING\ *issuerUID;\ \textcolor{comment}{/*\ deprecated\ in\ version\ 2\ */}}
+\DoxyCodeLine{00317\ \ \ \ \ \textcolor{comment}{/*\ According\ to\ rfc\ 3280:\ UniqueIdentifier\ ::=\ BIT\ STRING\ */}}
+\DoxyCodeLine{00318\ \ \ \ \ ASN1\_BIT\_STRING\ *subjectUID;\ \textcolor{comment}{/*\ deprecated\ in\ version\ 2\ */}}
+\DoxyCodeLine{00319\ \ \ \ \ \textcolor{comment}{/*\ Could\ be\ X509\_EXTENSION*S*,\ but\ that's\ only\ cosmetic\ */}}
+\DoxyCodeLine{00320\ \ \ \ \ STACK\_OF(X509\_EXTENSION)\ *extensions;}
+\DoxyCodeLine{00321\ \}\ \textcolor{comment}{/*\ OSSL\_CRMF\_CERTTEMPLATE\ */};}
+\DoxyCodeLine{00322\ }
+\DoxyCodeLine{00323\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00324\ \textcolor{comment}{\ *\ CertRequest\ ::=\ SEQUENCE\ \{}}
+\DoxyCodeLine{00325\ \textcolor{comment}{\ *\ \ certReqId\ \ \ \ \ \ \ \ INTEGER,\ \ \ \ \ \ \ \ \ \ -\/-\/\ ID\ for\ matching\ request\ and\ reply}}
+\DoxyCodeLine{00326\ \textcolor{comment}{\ *\ \ certTemplate\ \ \ \ \ CertTemplate,\ \ \ \ \ -\/-\/\ Selected\ fields\ of\ cert\ to\ be\ issued}}
+\DoxyCodeLine{00327\ \textcolor{comment}{\ *\ \ controls\ \ \ \ \ \ \ \ \ Controls\ OPTIONAL\ -\/-\/\ Attributes\ affecting\ issuance}}
+\DoxyCodeLine{00328\ \textcolor{comment}{\ *\ \}}}
+\DoxyCodeLine{00329\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00330\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__crmf__certrequest__st}{ossl\_crmf\_certrequest\_st}}\ \{}
+\DoxyCodeLine{00331\ \ \ \ \ ASN1\_INTEGER\ *certReqId;}
+\DoxyCodeLine{00332\ \ \ \ \ OSSL\_CRMF\_CERTTEMPLATE\ *certTemplate;}
+\DoxyCodeLine{00333\ \ \ \ \ STACK\_OF(OSSL\_CRMF\_ATTRIBUTETYPEANDVALUE\ \textcolor{comment}{/*\ Controls\ expanded\ */})\ *controls;}
+\DoxyCodeLine{00334\ \}\ \textcolor{comment}{/*\ OSSL\_CRMF\_CERTREQUEST\ */};}
+\DoxyCodeLine{00335\ DECLARE\_ASN1\_FUNCTIONS(OSSL\_CRMF\_CERTREQUEST)}
+\DoxyCodeLine{00336\ DECLARE\_ASN1\_DUP\_FUNCTION(OSSL\_CRMF\_CERTREQUEST)}
+\DoxyCodeLine{00337\ }
+\DoxyCodeLine{00338\ struct\ \mbox{\hyperlink{structossl__crmf__attributetypeandvalue__st}{ossl\_crmf\_attributetypeandvalue\_st}}\ \{}
+\DoxyCodeLine{00339\ \ \ \ \ ASN1\_OBJECT\ *type;}
+\DoxyCodeLine{00340\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00341\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ NID\_id\_regCtrl\_regToken\ */}}
+\DoxyCodeLine{00342\ \ \ \ \ \ \ \ \ ASN1\_UTF8STRING\ *regToken;}
+\DoxyCodeLine{00343\ }
+\DoxyCodeLine{00344\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ NID\_id\_regCtrl\_authenticator\ */}}
+\DoxyCodeLine{00345\ \ \ \ \ \ \ \ \ ASN1\_UTF8STRING\ *authenticator;}
+\DoxyCodeLine{00346\ }
+\DoxyCodeLine{00347\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ NID\_id\_regCtrl\_pkiPublicationInfo\ */}}
+\DoxyCodeLine{00348\ \ \ \ \ \ \ \ \ OSSL\_CRMF\_PKIPUBLICATIONINFO\ *pkiPublicationInfo;}
+\DoxyCodeLine{00349\ }
+\DoxyCodeLine{00350\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ NID\_id\_regCtrl\_oldCertID\ */}}
+\DoxyCodeLine{00351\ \ \ \ \ \ \ \ \ OSSL\_CRMF\_CERTID\ *oldCertID;}
+\DoxyCodeLine{00352\ }
+\DoxyCodeLine{00353\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ NID\_id\_regCtrl\_protocolEncrKey\ */}}
+\DoxyCodeLine{00354\ \ \ \ \ \ \ \ \ X509\_PUBKEY\ *protocolEncrKey;}
+\DoxyCodeLine{00355\ }
+\DoxyCodeLine{00356\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ NID\_id\_regInfo\_utf8Pairs\ */}}
+\DoxyCodeLine{00357\ \ \ \ \ \ \ \ \ ASN1\_UTF8STRING\ *utf8Pairs;}
+\DoxyCodeLine{00358\ }
+\DoxyCodeLine{00359\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ NID\_id\_regInfo\_certReq\ */}}
+\DoxyCodeLine{00360\ \ \ \ \ \ \ \ \ OSSL\_CRMF\_CERTREQUEST\ *certReq;}
+\DoxyCodeLine{00361\ }
+\DoxyCodeLine{00362\ \ \ \ \ \ \ \ \ ASN1\_TYPE\ *other;}
+\DoxyCodeLine{00363\ \ \ \ \ \}\ value;}
+\DoxyCodeLine{00364\ \}\ \textcolor{comment}{/*\ OSSL\_CRMF\_ATTRIBUTETYPEANDVALUE\ */};}
+\DoxyCodeLine{00365\ DECLARE\_ASN1\_FUNCTIONS(OSSL\_CRMF\_ATTRIBUTETYPEANDVALUE)}
+\DoxyCodeLine{00366\ DEFINE\_STACK\_OF(OSSL\_CRMF\_ATTRIBUTETYPEANDVALUE)}
+\DoxyCodeLine{00367\ DECLARE\_ASN1\_DUP\_FUNCTION(OSSL\_CRMF\_ATTRIBUTETYPEANDVALUE)}
+\DoxyCodeLine{00368\ }
+\DoxyCodeLine{00369\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00370\ \textcolor{comment}{\ *\ CertReqMessages\ ::=\ SEQUENCE\ SIZE\ (1..MAX)\ OF\ CertReqMsg}}
+\DoxyCodeLine{00371\ \textcolor{comment}{\ *\ CertReqMsg\ ::=\ SEQUENCE\ \{}}
+\DoxyCodeLine{00372\ \textcolor{comment}{\ *\ \ certReq\ \ \ \ \ \ \ \ CertRequest,}}
+\DoxyCodeLine{00373\ \textcolor{comment}{\ *\ \ popo\ \ \ \ \ \ \ \ \ \ \ ProofOfPossession\ \ OPTIONAL,}}
+\DoxyCodeLine{00374\ \textcolor{comment}{\ *\ -\/-\/\ content\ depends\ upon\ key\ type}}
+\DoxyCodeLine{00375\ \textcolor{comment}{\ *\ \ regInfo\ \ \ SEQUENCE\ SIZE(1..MAX)\ OF\ AttributeTypeAndValue\ OPTIONAL}}
+\DoxyCodeLine{00376\ \textcolor{comment}{\ *\ \}}}
+\DoxyCodeLine{00377\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00378\ struct\ \mbox{\hyperlink{structossl__crmf__msg__st}{ossl\_crmf\_msg\_st}}\ \{}
+\DoxyCodeLine{00379\ \ \ \ \ OSSL\_CRMF\_CERTREQUEST\ *certReq;}
+\DoxyCodeLine{00380\ \ \ \ \ \textcolor{comment}{/*\ 0\ */}}
+\DoxyCodeLine{00381\ \ \ \ \ \mbox{\hyperlink{structossl__crmf__popo__st}{OSSL\_CRMF\_POPO}}\ *popo;}
+\DoxyCodeLine{00382\ \ \ \ \ \textcolor{comment}{/*\ 1\ */}}
+\DoxyCodeLine{00383\ \ \ \ \ STACK\_OF(OSSL\_CRMF\_ATTRIBUTETYPEANDVALUE)\ *regInfo;}
+\DoxyCodeLine{00384\ \}\ \textcolor{comment}{/*\ OSSL\_CRMF\_MSG\ */};}
+\DoxyCodeLine{00385\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

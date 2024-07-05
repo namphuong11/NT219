@@ -1,0 +1,101 @@
+\doxysection{e\+\_\+afalg.\+h}
+\hypertarget{e__afalg_8h_source}{}\label{e__afalg_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/engines/e\_afalg.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/engines/e\_afalg.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2016\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_ENGINES\_E\_AFALG\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_ENGINES\_E\_AFALG\_H}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#\ if\ defined(\_\_GNUC\_\_)\ \&\&\ \_\_GNUC\_\_\ >=\ 4\ \&\&\ \(\backslash\)}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\ \ \ \ \ (!defined(\_\_STDC\_VERSION\_\_)\ ||\ \_\_STDC\_VERSION\_\_\ <\ 199901L)}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#\ \ pragma\ GCC\ diagnostic\ ignored\ "{}-\/Wvariadic-\/macros"{}}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#\ ifdef\ ALG\_DEBUG}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#\ \ define\ ALG\_DGB(x,\ ...)\ fprintf(stderr,\ "{}ALG\_DBG:\ "{}\ x,\ \_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#\ \ define\ ALG\_INFO(x,\ ...)\ fprintf(stderr,\ "{}ALG\_INFO:\ "{}\ x,\ \_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#\ \ define\ ALG\_WARN(x,\ ...)\ fprintf(stderr,\ "{}ALG\_WARN:\ "{}\ x,\ \_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#\ else}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#\ \ define\ ALG\_DGB(x,\ ...)}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#\ \ define\ ALG\_INFO(x,\ ...)}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#\ \ define\ ALG\_WARN(x,\ ...)}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#\ define\ ALG\_ERR(x,\ ...)\ fprintf(stderr,\ "{}ALG\_ERR:\ "{}\ x,\ \_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#\ define\ ALG\_PERR(x,\ ...)\ \(\backslash\)}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ do\ \{\ \(\backslash\)}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ fprintf(stderr,\ "{}ALG\_PERR:\ "{}\ x,\ \_\_VA\_ARGS\_\_);\ \(\backslash\)}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ perror(NULL);\ \(\backslash\)}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}\ while(0)}}
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#\ define\ ALG\_PWARN(x,\ ...)\ \(\backslash\)}}
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ do\ \{\ \(\backslash\)}}
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ fprintf(stderr,\ "{}ALG\_PERR:\ "{}\ x,\ \_\_VA\_ARGS\_\_);\ \(\backslash\)}}
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ perror(NULL);\ \(\backslash\)}}
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}\ while(0)}}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \textcolor{preprocessor}{\#\ ifndef\ AES\_BLOCK\_SIZE}}
+\DoxyCodeLine{00041\ \textcolor{preprocessor}{\#\ \ define\ AES\_BLOCK\_SIZE\ \ \ 16}}
+\DoxyCodeLine{00042\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00043\ \textcolor{preprocessor}{\#\ define\ AES\_KEY\_SIZE\_128\ 16}}
+\DoxyCodeLine{00044\ \textcolor{preprocessor}{\#\ define\ AES\_KEY\_SIZE\_192\ 24}}
+\DoxyCodeLine{00045\ \textcolor{preprocessor}{\#\ define\ AES\_KEY\_SIZE\_256\ 32}}
+\DoxyCodeLine{00046\ \textcolor{preprocessor}{\#\ define\ AES\_IV\_LEN\ \ \ \ \ \ \ 16}}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \textcolor{preprocessor}{\#\ define\ MAX\_INFLIGHTS\ 1}}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}\ \{}
+\DoxyCodeLine{00051\ \ \ \ \ MODE\_UNINIT\ =\ 0,}
+\DoxyCodeLine{00052\ \ \ \ \ MODE\_SYNC,}
+\DoxyCodeLine{00053\ \ \ \ \ MODE\_ASYNC}
+\DoxyCodeLine{00054\ \}\ op\_mode;}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \textcolor{keyword}{enum}\ \{}
+\DoxyCodeLine{00057\ \ \ \ \ AES\_CBC\_128\ =\ 0,}
+\DoxyCodeLine{00058\ \ \ \ \ AES\_CBC\_192,}
+\DoxyCodeLine{00059\ \ \ \ \ AES\_CBC\_256}
+\DoxyCodeLine{00060\ \};}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structcbc__cipher__handles}{cbc\_cipher\_handles}}\ \{}
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{keywordtype}{int}\ key\_size;}
+\DoxyCodeLine{00064\ \ \ \ \ EVP\_CIPHER\ *\_hidden;}
+\DoxyCodeLine{00065\ \};}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00067\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structcbc__cipher__handles}{cbc\_cipher\_handles}}\ \mbox{\hyperlink{structcbc__cipher__handles}{cbc\_handles}};}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structafalg__aio__st}{afalg\_aio\_st}}\ \{}
+\DoxyCodeLine{00070\ \ \ \ \ \textcolor{keywordtype}{int}\ efd;}
+\DoxyCodeLine{00071\ \ \ \ \ op\_mode\ mode;}
+\DoxyCodeLine{00072\ \ \ \ \ aio\_context\_t\ aio\_ctx;}
+\DoxyCodeLine{00073\ \ \ \ \ \textcolor{keyword}{struct\ }io\_event\ events[MAX\_INFLIGHTS];}
+\DoxyCodeLine{00074\ \ \ \ \ \textcolor{keyword}{struct\ }iocb\ cbt[MAX\_INFLIGHTS];}
+\DoxyCodeLine{00075\ \};}
+\DoxyCodeLine{00076\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structafalg__aio__st}{afalg\_aio\_st}}\ \mbox{\hyperlink{structafalg__aio__st}{afalg\_aio}};}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00079\ \textcolor{comment}{\ *\ MAGIC\ Number\ to\ identify\ correct\ initialisation}}
+\DoxyCodeLine{00080\ \textcolor{comment}{\ *\ of\ afalg\_ctx.}}
+\DoxyCodeLine{00081\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00082\ \textcolor{preprocessor}{\#\ define\ MAGIC\_INIT\_NUM\ 0x1890671}}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structafalg__ctx__st}{afalg\_ctx\_st}}\ \{}
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{keywordtype}{int}\ init\_done;}
+\DoxyCodeLine{00086\ \ \ \ \ \textcolor{keywordtype}{int}\ sfd;}
+\DoxyCodeLine{00087\ \ \ \ \ \textcolor{keywordtype}{int}\ bfd;}
+\DoxyCodeLine{00088\ \textcolor{preprocessor}{\#\ ifdef\ ALG\_ZERO\_COPY}}
+\DoxyCodeLine{00089\ \ \ \ \ \textcolor{keywordtype}{int}\ zc\_pipe[2];}
+\DoxyCodeLine{00090\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00091\ \ \ \ \ \mbox{\hyperlink{structafalg__aio__st}{afalg\_aio}}\ aio;}
+\DoxyCodeLine{00092\ \};}
+\DoxyCodeLine{00093\ }
+\DoxyCodeLine{00094\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structafalg__ctx__st}{afalg\_ctx\_st}}\ \mbox{\hyperlink{structafalg__ctx__st}{afalg\_ctx}};}
+\DoxyCodeLine{00095\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

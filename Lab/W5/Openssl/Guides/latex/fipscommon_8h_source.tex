@@ -1,0 +1,23 @@
+\doxysection{fipscommon.\+h}
+\hypertarget{fipscommon_8h_source}{}\label{fipscommon_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/providers/common/include/prov/fipscommon.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/providers/common/include/prov/fipscommon.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifdef\ FIPS\_MODULE}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ include\ <openssl/types.h>}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{keywordtype}{int}\ FIPS\_security\_check\_enabled(OSSL\_LIB\_CTX\ *libctx);}
+\DoxyCodeLine{00014\ \textcolor{keywordtype}{int}\ FIPS\_tls\_prf\_ems\_check(OSSL\_LIB\_CTX\ *libctx);}
+\DoxyCodeLine{00015\ \textcolor{keywordtype}{int}\ FIPS\_restricted\_drbg\_digests\_enabled(OSSL\_LIB\_CTX\ *libctx);}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

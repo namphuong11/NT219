@@ -1,0 +1,520 @@
+\doxysection{aes\+\_\+platform.\+h}
+\hypertarget{aes__platform_8h_source}{}\label{aes__platform_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/crypto/aes\_platform.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/crypto/aes\_platform.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2019-\/2024\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_AES\_PLATFORM\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_AES\_PLATFORM\_H}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#\ pragma\ once}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ include\ <openssl/aes.h>}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#\ ifdef\ VPAES\_ASM}}
+\DoxyCodeLine{00017\ \textcolor{keywordtype}{int}\ vpaes\_set\_encrypt\_key(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *userKey,\ \textcolor{keywordtype}{int}\ bits,}
+\DoxyCodeLine{00018\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ AES\_KEY\ *key);}
+\DoxyCodeLine{00019\ \textcolor{keywordtype}{int}\ vpaes\_set\_decrypt\_key(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *userKey,\ \textcolor{keywordtype}{int}\ bits,}
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ AES\_KEY\ *key);}
+\DoxyCodeLine{00021\ \textcolor{keywordtype}{void}\ vpaes\_encrypt(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,}
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ AES\_KEY\ *key);}
+\DoxyCodeLine{00023\ \textcolor{keywordtype}{void}\ vpaes\_decrypt(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ AES\_KEY\ *key);}
+\DoxyCodeLine{00025\ \textcolor{keywordtype}{void}\ vpaes\_cbc\_encrypt(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ length,}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ AES\_KEY\ *key,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *ivec,\ \textcolor{keywordtype}{int}\ enc);}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#\ endif\ }\textcolor{comment}{/*\ VPAES\_ASM\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#\ ifdef\ BSAES\_ASM}}
+\DoxyCodeLine{00032\ \textcolor{keywordtype}{void}\ ossl\_bsaes\_cbc\_encrypt(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ length,\ \textcolor{keyword}{const}\ AES\_KEY\ *key,}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ivec[16],\ \textcolor{keywordtype}{int}\ enc);}
+\DoxyCodeLine{00035\ \textcolor{keywordtype}{void}\ ossl\_bsaes\_ctr32\_encrypt\_blocks(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,\ \textcolor{keywordtype}{size\_t}\ len,}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ AES\_KEY\ *key,}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ivec[16]);}
+\DoxyCodeLine{00039\ \textcolor{keywordtype}{void}\ ossl\_bsaes\_xts\_encrypt(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *inp,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ len,\ \textcolor{keyword}{const}\ AES\_KEY\ *key1,}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ AES\_KEY\ *key2,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ iv[16]);}
+\DoxyCodeLine{00042\ \textcolor{keywordtype}{void}\ ossl\_bsaes\_xts\_decrypt(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *inp,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ len,\ \textcolor{keyword}{const}\ AES\_KEY\ *key1,}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ AES\_KEY\ *key2,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ iv[16]);}
+\DoxyCodeLine{00045\ \textcolor{preprocessor}{\#\ endif\ }\textcolor{comment}{/*\ BSAES\_ASM\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \textcolor{preprocessor}{\#\ ifdef\ AES\_CTR\_ASM}}
+\DoxyCodeLine{00048\ \textcolor{keywordtype}{void}\ AES\_ctr32\_encrypt(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ blocks,\ \textcolor{keyword}{const}\ AES\_KEY\ *key,}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ivec[AES\_BLOCK\_SIZE]);}
+\DoxyCodeLine{00051\ \textcolor{preprocessor}{\#\ endif\ }\textcolor{comment}{/*\ \ AES\_CTR\_ASM\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \textcolor{preprocessor}{\#\ ifdef\ AES\_XTS\_ASM}}
+\DoxyCodeLine{00054\ \textcolor{keywordtype}{void}\ AES\_xts\_encrypt(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *inp,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,\ \textcolor{keywordtype}{size\_t}\ len,}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ AES\_KEY\ *key1,\ \textcolor{keyword}{const}\ AES\_KEY\ *key2,}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ iv[16]);}
+\DoxyCodeLine{00057\ \textcolor{keywordtype}{void}\ AES\_xts\_decrypt(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *inp,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,\ \textcolor{keywordtype}{size\_t}\ len,}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ AES\_KEY\ *key1,\ \textcolor{keyword}{const}\ AES\_KEY\ *key2,}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ iv[16]);}
+\DoxyCodeLine{00060\ \textcolor{preprocessor}{\#\ endif\ }\textcolor{comment}{/*\ AES\_XTS\_ASM\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \textcolor{preprocessor}{\#\ if\ defined(OPENSSL\_CPUID\_OBJ)}}
+\DoxyCodeLine{00063\ \textcolor{preprocessor}{\#\ \ if\ (defined(\_\_powerpc\_\_)\ ||\ defined(\_\_ppc\_\_)\ ||\ defined(\_ARCH\_PPC))}}
+\DoxyCodeLine{00064\ \textcolor{preprocessor}{\#\ \ \ include\ "{}crypto/ppc\_arch.h"{}}}
+\DoxyCodeLine{00065\ \textcolor{preprocessor}{\#\ \ \ ifdef\ VPAES\_ASM}}
+\DoxyCodeLine{00066\ \textcolor{preprocessor}{\#\ \ \ \ define\ VPAES\_CAPABLE\ (OPENSSL\_ppccap\_P\ \&\ PPC\_ALTIVEC)}}
+\DoxyCodeLine{00067\ \textcolor{preprocessor}{\#\ \ \ endif}}
+\DoxyCodeLine{00068\ \textcolor{preprocessor}{\#\ \ \ if\ !defined(OPENSSL\_SYS\_AIX)\ \&\&\ !defined(OPENSSL\_SYS\_MACOSX)}}
+\DoxyCodeLine{00069\ \textcolor{preprocessor}{\#\ \ \ \ define\ HWAES\_CAPABLE\ \ (OPENSSL\_ppccap\_P\ \&\ PPC\_CRYPTO207)}}
+\DoxyCodeLine{00070\ \textcolor{preprocessor}{\#\ \ \ \ define\ HWAES\_set\_encrypt\_key\ aes\_p8\_set\_encrypt\_key}}
+\DoxyCodeLine{00071\ \textcolor{preprocessor}{\#\ \ \ \ define\ HWAES\_set\_decrypt\_key\ aes\_p8\_set\_decrypt\_key}}
+\DoxyCodeLine{00072\ \textcolor{preprocessor}{\#\ \ \ \ define\ HWAES\_encrypt\ aes\_p8\_encrypt}}
+\DoxyCodeLine{00073\ \textcolor{preprocessor}{\#\ \ \ \ define\ HWAES\_decrypt\ aes\_p8\_decrypt}}
+\DoxyCodeLine{00074\ \textcolor{preprocessor}{\#\ \ \ \ define\ HWAES\_cbc\_encrypt\ aes\_p8\_cbc\_encrypt}}
+\DoxyCodeLine{00075\ \textcolor{preprocessor}{\#\ \ \ \ define\ HWAES\_ctr32\_encrypt\_blocks\ aes\_p8\_ctr32\_encrypt\_blocks}}
+\DoxyCodeLine{00076\ \textcolor{preprocessor}{\#\ \ \ \ define\ HWAES\_xts\_encrypt\ aes\_p8\_xts\_encrypt}}
+\DoxyCodeLine{00077\ \textcolor{preprocessor}{\#\ \ \ \ define\ HWAES\_xts\_decrypt\ aes\_p8\_xts\_decrypt}}
+\DoxyCodeLine{00078\ \textcolor{preprocessor}{\#\ \ \ \ define\ PPC\_AES\_GCM\_CAPABLE\ (OPENSSL\_ppccap\_P\ \&\ PPC\_MADD300)}}
+\DoxyCodeLine{00079\ \textcolor{preprocessor}{\#\ \ \ \ define\ AES\_GCM\_ENC\_BYTES\ 128}}
+\DoxyCodeLine{00080\ \textcolor{preprocessor}{\#\ \ \ \ define\ AES\_GCM\_DEC\_BYTES\ 128}}
+\DoxyCodeLine{00081\ \textcolor{keywordtype}{size\_t}\ ppc\_aes\_gcm\_encrypt(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ len,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *key,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ivec[16],}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ u64\ *Xi);}
+\DoxyCodeLine{00084\ \textcolor{keywordtype}{size\_t}\ ppc\_aes\_gcm\_decrypt(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ len,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *key,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ivec[16],}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ u64\ *Xi);}
+\DoxyCodeLine{00087\ \textcolor{preprocessor}{\#\ \ \ \ define\ AES\_GCM\_ASM\_PPC(gctx)\ ((gctx)-\/>ctr==aes\_p8\_ctr32\_encrypt\_blocks\ \&\&\ \(\backslash\)}}
+\DoxyCodeLine{00088\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (gctx)-\/>gcm.funcs.ghash==gcm\_ghash\_p8)}}
+\DoxyCodeLine{00089\ \textcolor{keywordtype}{void}\ gcm\_ghash\_p8(u64\ Xi[2],\textcolor{keyword}{const}\ \mbox{\hyperlink{structu128}{u128}}\ Htable[16],\textcolor{keyword}{const}\ u8\ *inp,\ \textcolor{keywordtype}{size\_t}\ len);}
+\DoxyCodeLine{00090\ \textcolor{preprocessor}{\#\ \ \ endif\ }\textcolor{comment}{/*\ OPENSSL\_SYS\_AIX\ ||\ OPENSSL\_SYS\_MACOSX\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00091\ \textcolor{preprocessor}{\#\ \ endif\ }\textcolor{comment}{/*\ PPC\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \textcolor{preprocessor}{\#\ \ if\ (defined(\_\_arm\_\_)\ ||\ defined(\_\_arm)\ ||\ defined(\_\_aarch64\_\_)\ ||\ defined(\_M\_ARM64))\ }}
+\DoxyCodeLine{00094\ \textcolor{preprocessor}{\#\ \ \ include\ "{}arm\_arch.h"{}}}
+\DoxyCodeLine{00095\ \textcolor{preprocessor}{\#\ \ \ if\ \_\_ARM\_MAX\_ARCH\_\_>=7}}
+\DoxyCodeLine{00096\ \textcolor{preprocessor}{\#\ \ \ \ if\ defined(BSAES\_ASM)}}
+\DoxyCodeLine{00097\ \textcolor{preprocessor}{\#\ \ \ \ \ define\ BSAES\_CAPABLE\ (OPENSSL\_armcap\_P\ \&\ ARMV7\_NEON)}}
+\DoxyCodeLine{00098\ \textcolor{preprocessor}{\#\ \ \ \ endif}}
+\DoxyCodeLine{00099\ \textcolor{preprocessor}{\#\ \ \ \ if\ defined(VPAES\_ASM)}}
+\DoxyCodeLine{00100\ \textcolor{preprocessor}{\#\ \ \ \ \ define\ VPAES\_CAPABLE\ (OPENSSL\_armcap\_P\ \&\ ARMV7\_NEON)}}
+\DoxyCodeLine{00101\ \textcolor{preprocessor}{\#\ \ \ \ endif}}
+\DoxyCodeLine{00102\ \textcolor{preprocessor}{\#\ \ \ \ define\ HWAES\_CAPABLE\ (OPENSSL\_armcap\_P\ \&\ ARMV8\_AES)}}
+\DoxyCodeLine{00103\ \textcolor{preprocessor}{\#\ \ \ \ define\ HWAES\_set\_encrypt\_key\ aes\_v8\_set\_encrypt\_key}}
+\DoxyCodeLine{00104\ \textcolor{preprocessor}{\#\ \ \ \ define\ HWAES\_set\_decrypt\_key\ aes\_v8\_set\_decrypt\_key}}
+\DoxyCodeLine{00105\ \textcolor{preprocessor}{\#\ \ \ \ define\ HWAES\_encrypt\ aes\_v8\_encrypt}}
+\DoxyCodeLine{00106\ \textcolor{preprocessor}{\#\ \ \ \ define\ HWAES\_decrypt\ aes\_v8\_decrypt}}
+\DoxyCodeLine{00107\ \textcolor{preprocessor}{\#\ \ \ \ define\ HWAES\_cbc\_encrypt\ aes\_v8\_cbc\_encrypt}}
+\DoxyCodeLine{00108\ \textcolor{preprocessor}{\#\ \ \ \ define\ HWAES\_ecb\_encrypt\ aes\_v8\_ecb\_encrypt}}
+\DoxyCodeLine{00109\ \textcolor{preprocessor}{\#\ \ \ \ if\ \_\_ARM\_MAX\_ARCH\_\_>=8\ \&\&\ (defined(\_\_aarch64\_\_)\ ||\ defined(\_M\_ARM64))}}
+\DoxyCodeLine{00110\ \textcolor{preprocessor}{\#\ \ \ \ \ define\ HWAES\_xts\_encrypt\ aes\_v8\_xts\_encrypt}}
+\DoxyCodeLine{00111\ \textcolor{preprocessor}{\#\ \ \ \ \ define\ HWAES\_xts\_decrypt\ aes\_v8\_xts\_decrypt}}
+\DoxyCodeLine{00112\ \textcolor{preprocessor}{\#\ \ \ \ endif}}
+\DoxyCodeLine{00113\ \textcolor{preprocessor}{\#\ \ \ \ define\ HWAES\_ctr32\_encrypt\_blocks\ aes\_v8\_ctr32\_encrypt\_blocks}}
+\DoxyCodeLine{00114\ \textcolor{preprocessor}{\#\ \ \ \ define\ AES\_PMULL\_CAPABLE\ ((OPENSSL\_armcap\_P\ \&\ ARMV8\_PMULL)\ \&\&\ (OPENSSL\_armcap\_P\ \&\ ARMV8\_AES))}}
+\DoxyCodeLine{00115\ \textcolor{preprocessor}{\#\ \ \ \ define\ AES\_GCM\_ENC\_BYTES\ 512}}
+\DoxyCodeLine{00116\ \textcolor{preprocessor}{\#\ \ \ \ define\ AES\_GCM\_DEC\_BYTES\ 512}}
+\DoxyCodeLine{00117\ \textcolor{preprocessor}{\#\ \ \ \ if\ \_\_ARM\_MAX\_ARCH\_\_>=8\ \&\&\ (defined(\_\_aarch64\_\_)\ ||\ defined(\_M\_ARM64))}}
+\DoxyCodeLine{00118\ \textcolor{preprocessor}{\#\ \ \ \ \ define\ AES\_gcm\_encrypt\ armv8\_aes\_gcm\_encrypt}}
+\DoxyCodeLine{00119\ \textcolor{preprocessor}{\#\ \ \ \ \ define\ AES\_gcm\_decrypt\ armv8\_aes\_gcm\_decrypt}}
+\DoxyCodeLine{00120\ \textcolor{preprocessor}{\#\ \ \ \ \ define\ AES\_GCM\_ASM(gctx)\ ((gctx)-\/>ctr==aes\_v8\_ctr32\_encrypt\_blocks\ \&\&\ \(\backslash\)}}
+\DoxyCodeLine{00121\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (gctx)-\/>gcm.funcs.ghash==gcm\_ghash\_v8)}}
+\DoxyCodeLine{00122\ \textcolor{comment}{/*\ The\ [unroll8\_eor3\_]aes\_gcm\_(enc|dec)\_(128|192|256)\_kernel()\ functions}}
+\DoxyCodeLine{00123\ \textcolor{comment}{\ *\ take\ input\ length\ in\ BITS\ and\ return\ number\ of\ BYTES\ processed\ */}}
+\DoxyCodeLine{00124\ \textcolor{keywordtype}{size\_t}\ aes\_gcm\_enc\_128\_kernel(\textcolor{keyword}{const}\ uint8\_t\ *plaintext,\ uint64\_t\ plaintext\_length,\ uint8\_t\ *ciphertext,}
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ *Xi,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ivec[16],\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *key);}
+\DoxyCodeLine{00126\ \textcolor{keywordtype}{size\_t}\ aes\_gcm\_enc\_192\_kernel(\textcolor{keyword}{const}\ uint8\_t\ *plaintext,\ uint64\_t\ plaintext\_length,\ uint8\_t\ *ciphertext,}
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ *Xi,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ivec[16],\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *key);}
+\DoxyCodeLine{00128\ \textcolor{keywordtype}{size\_t}\ aes\_gcm\_enc\_256\_kernel(\textcolor{keyword}{const}\ uint8\_t\ *plaintext,\ uint64\_t\ plaintext\_length,\ uint8\_t\ *ciphertext,}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ *Xi,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ivec[16],\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *key);}
+\DoxyCodeLine{00130\ \textcolor{keywordtype}{size\_t}\ aes\_gcm\_dec\_128\_kernel(\textcolor{keyword}{const}\ uint8\_t\ *ciphertext,\ uint64\_t\ plaintext\_length,\ uint8\_t\ *plaintext,}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ *Xi,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ivec[16],\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *key);}
+\DoxyCodeLine{00132\ \textcolor{keywordtype}{size\_t}\ aes\_gcm\_dec\_192\_kernel(\textcolor{keyword}{const}\ uint8\_t\ *ciphertext,\ uint64\_t\ plaintext\_length,\ uint8\_t\ *plaintext,}
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ *Xi,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ivec[16],\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *key);}
+\DoxyCodeLine{00134\ \textcolor{keywordtype}{size\_t}\ aes\_gcm\_dec\_256\_kernel(\textcolor{keyword}{const}\ uint8\_t\ *ciphertext,\ uint64\_t\ plaintext\_length,\ uint8\_t\ *plaintext,}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ *Xi,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ivec[16],\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *key);}
+\DoxyCodeLine{00136\ \textcolor{keywordtype}{size\_t}\ unroll8\_eor3\_aes\_gcm\_enc\_128\_kernel(\textcolor{keyword}{const}\ uint8\_t\ *plaintext,\ uint64\_t\ plaintext\_length,\ uint8\_t\ *ciphertext,}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ *Xi,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ivec[16],\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *key);}
+\DoxyCodeLine{00138\ \textcolor{keywordtype}{size\_t}\ unroll8\_eor3\_aes\_gcm\_enc\_192\_kernel(\textcolor{keyword}{const}\ uint8\_t\ *plaintext,\ uint64\_t\ plaintext\_length,\ uint8\_t\ *ciphertext,}
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ *Xi,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ivec[16],\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *key);}
+\DoxyCodeLine{00140\ \textcolor{keywordtype}{size\_t}\ unroll8\_eor3\_aes\_gcm\_enc\_256\_kernel(\textcolor{keyword}{const}\ uint8\_t\ *plaintext,\ uint64\_t\ plaintext\_length,\ uint8\_t\ *ciphertext,}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ *Xi,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ivec[16],\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *key);}
+\DoxyCodeLine{00142\ \textcolor{keywordtype}{size\_t}\ unroll8\_eor3\_aes\_gcm\_dec\_128\_kernel(\textcolor{keyword}{const}\ uint8\_t\ *ciphertext,\ uint64\_t\ plaintext\_length,\ uint8\_t\ *plaintext,}
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ *Xi,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ivec[16],\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *key);}
+\DoxyCodeLine{00144\ \textcolor{keywordtype}{size\_t}\ unroll8\_eor3\_aes\_gcm\_dec\_192\_kernel(\textcolor{keyword}{const}\ uint8\_t\ *ciphertext,\ uint64\_t\ plaintext\_length,\ uint8\_t\ *plaintext,}
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ *Xi,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ivec[16],\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *key);}
+\DoxyCodeLine{00146\ \textcolor{keywordtype}{size\_t}\ unroll8\_eor3\_aes\_gcm\_dec\_256\_kernel(\textcolor{keyword}{const}\ uint8\_t\ *ciphertext,\ uint64\_t\ plaintext\_length,\ uint8\_t\ *plaintext,}
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ *Xi,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ivec[16],\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *key);}
+\DoxyCodeLine{00148\ \textcolor{keywordtype}{size\_t}\ armv8\_aes\_gcm\_encrypt(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,\ \textcolor{keywordtype}{size\_t}\ len,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *key,}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ivec[16],\ u64\ *Xi);}
+\DoxyCodeLine{00150\ \textcolor{keywordtype}{size\_t}\ armv8\_aes\_gcm\_decrypt(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,\ \textcolor{keywordtype}{size\_t}\ len,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *key,}
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ivec[16],\ u64\ *Xi);}
+\DoxyCodeLine{00152\ \textcolor{keywordtype}{void}\ gcm\_ghash\_v8(u64\ Xi[2],\textcolor{keyword}{const}\ \mbox{\hyperlink{structu128}{u128}}\ Htable[16],\textcolor{keyword}{const}\ u8\ *inp,\ \textcolor{keywordtype}{size\_t}\ len);}
+\DoxyCodeLine{00153\ \textcolor{preprocessor}{\#\ \ \ \ endif}}
+\DoxyCodeLine{00154\ \textcolor{preprocessor}{\#\ \ \ endif}}
+\DoxyCodeLine{00155\ \textcolor{preprocessor}{\#\ \ endif}}
+\DoxyCodeLine{00156\ \textcolor{preprocessor}{\#\ endif\ }\textcolor{comment}{/*\ OPENSSL\_CPUID\_OBJ\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00157\ }
+\DoxyCodeLine{00158\ \textcolor{preprocessor}{\#\ if\ \ \ \ \ defined(AES\_ASM)\ \&\&\ \ \ \ \ (\ \(\backslash\)}}
+\DoxyCodeLine{00159\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ defined(\_\_x86\_64)\ \ \ \ \ \ \ ||\ defined(\_\_x86\_64\_\_)\ \ ||\ \(\backslash\)}}
+\DoxyCodeLine{00160\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ defined(\_M\_AMD64)\ \ \ \ \ \ \ ||\ defined(\_M\_X64)\ \ \ \ \ \ )}}
+\DoxyCodeLine{00161\ \textcolor{preprocessor}{\#\ \ define\ AES\_CBC\_HMAC\_SHA\_CAPABLE\ 1}}
+\DoxyCodeLine{00162\ \textcolor{preprocessor}{\#\ \ define\ AESNI\_CBC\_HMAC\_SHA\_CAPABLE\ (OPENSSL\_ia32cap\_P[1]\&(1<<(57-\/32)))}}
+\DoxyCodeLine{00163\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00164\ }
+\DoxyCodeLine{00165\ \textcolor{preprocessor}{\#\ if\ defined(\_\_loongarch\_\_)\ ||\ defined(\_\_loongarch64)}}
+\DoxyCodeLine{00166\ \textcolor{preprocessor}{\#\ \ include\ "{}loongarch\_arch.h"{}}}
+\DoxyCodeLine{00167\ \textcolor{preprocessor}{\#\ \ if\ defined(VPAES\_ASM)}}
+\DoxyCodeLine{00168\ \textcolor{preprocessor}{\#\ \ \ define\ VPAES\_CAPABLE\ \ (OPENSSL\_loongarch\_hwcap\_P\ \&\ LOONGARCH\_HWCAP\_LSX)}}
+\DoxyCodeLine{00169\ \textcolor{preprocessor}{\#\ \ endif}}
+\DoxyCodeLine{00170\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00171\ }
+\DoxyCodeLine{00172\ \textcolor{preprocessor}{\#\ if\ \ \ \ \ defined(AES\_ASM)\ \&\&\ !defined(I386\_ONLY)\ \&\&\ \ \ \ \ \ (\ \ \(\backslash\)}}
+\DoxyCodeLine{00173\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ ((defined(\_\_i386)\ \ \ \ \ \ \ ||\ defined(\_\_i386\_\_)\ \ \ \ ||\ \(\backslash\)}}
+\DoxyCodeLine{00174\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ defined(\_M\_IX86))\ \&\&\ defined(OPENSSL\_IA32\_SSE2))||\ \(\backslash\)}}
+\DoxyCodeLine{00175\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ defined(\_\_x86\_64)\ \ \ \ \ \ \ ||\ defined(\_\_x86\_64\_\_)\ \ ||\ \(\backslash\)}}
+\DoxyCodeLine{00176\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ defined(\_M\_AMD64)\ \ \ \ \ \ \ ||\ defined(\_M\_X64)\ \ \ \ \ \ )}}
+\DoxyCodeLine{00177\ }
+\DoxyCodeLine{00178\ \textcolor{comment}{/*\ AES-\/NI\ section\ */}}
+\DoxyCodeLine{00179\ }
+\DoxyCodeLine{00180\ \textcolor{preprocessor}{\#\ \ define\ AESNI\_CAPABLE\ \ \ (OPENSSL\_ia32cap\_P[1]\&(1<<(57-\/32)))}}
+\DoxyCodeLine{00181\ \textcolor{preprocessor}{\#\ \ ifdef\ VPAES\_ASM}}
+\DoxyCodeLine{00182\ \textcolor{preprocessor}{\#\ \ \ define\ VPAES\_CAPABLE\ \ \ (OPENSSL\_ia32cap\_P[1]\&(1<<(41-\/32)))}}
+\DoxyCodeLine{00183\ \textcolor{preprocessor}{\#\ \ endif}}
+\DoxyCodeLine{00184\ \textcolor{preprocessor}{\#\ \ ifdef\ BSAES\_ASM}}
+\DoxyCodeLine{00185\ \textcolor{preprocessor}{\#\ \ \ define\ BSAES\_CAPABLE\ \ \ (OPENSSL\_ia32cap\_P[1]\&(1<<(41-\/32)))}}
+\DoxyCodeLine{00186\ \textcolor{preprocessor}{\#\ \ endif}}
+\DoxyCodeLine{00187\ }
+\DoxyCodeLine{00188\ \textcolor{preprocessor}{\#\ \ define\ AES\_GCM\_ENC\_BYTES\ 32}}
+\DoxyCodeLine{00189\ \textcolor{preprocessor}{\#\ \ define\ AES\_GCM\_DEC\_BYTES\ 16}}
+\DoxyCodeLine{00190\ }
+\DoxyCodeLine{00191\ \textcolor{keywordtype}{int}\ aesni\_set\_encrypt\_key(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *userKey,\ \textcolor{keywordtype}{int}\ bits,}
+\DoxyCodeLine{00192\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ AES\_KEY\ *key);}
+\DoxyCodeLine{00193\ \textcolor{keywordtype}{int}\ aesni\_set\_decrypt\_key(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *userKey,\ \textcolor{keywordtype}{int}\ bits,}
+\DoxyCodeLine{00194\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ AES\_KEY\ *key);}
+\DoxyCodeLine{00195\ }
+\DoxyCodeLine{00196\ \textcolor{keywordtype}{void}\ aesni\_encrypt(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,}
+\DoxyCodeLine{00197\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ AES\_KEY\ *key);}
+\DoxyCodeLine{00198\ \textcolor{keywordtype}{void}\ aesni\_decrypt(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,}
+\DoxyCodeLine{00199\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ AES\_KEY\ *key);}
+\DoxyCodeLine{00200\ }
+\DoxyCodeLine{00201\ \textcolor{keywordtype}{void}\ aesni\_ecb\_encrypt(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,}
+\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,}
+\DoxyCodeLine{00203\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ length,\ \textcolor{keyword}{const}\ AES\_KEY\ *key,\ \textcolor{keywordtype}{int}\ enc);}
+\DoxyCodeLine{00204\ \textcolor{keywordtype}{void}\ aesni\_cbc\_encrypt(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,}
+\DoxyCodeLine{00205\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,}
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ length,}
+\DoxyCodeLine{00207\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ AES\_KEY\ *key,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *ivec,\ \textcolor{keywordtype}{int}\ enc);}
+\DoxyCodeLine{00208\ \textcolor{preprocessor}{\#\ \ ifndef\ OPENSSL\_NO\_OCB}}
+\DoxyCodeLine{00209\ \textcolor{keywordtype}{void}\ aesni\_ocb\_encrypt(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,}
+\DoxyCodeLine{00210\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ blocks,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *key,}
+\DoxyCodeLine{00211\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ start\_block\_num,}
+\DoxyCodeLine{00212\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ offset\_i[16],}
+\DoxyCodeLine{00213\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ L\_[][16],}
+\DoxyCodeLine{00214\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ checksum[16]);}
+\DoxyCodeLine{00215\ \textcolor{keywordtype}{void}\ aesni\_ocb\_decrypt(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,}
+\DoxyCodeLine{00216\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ blocks,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *key,}
+\DoxyCodeLine{00217\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ start\_block\_num,}
+\DoxyCodeLine{00218\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ offset\_i[16],}
+\DoxyCodeLine{00219\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ L\_[][16],}
+\DoxyCodeLine{00220\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ checksum[16]);}
+\DoxyCodeLine{00221\ \textcolor{preprocessor}{\#\ \ endif\ }\textcolor{comment}{/*\ OPENSSL\_NO\_OCB\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00222\ }
+\DoxyCodeLine{00223\ \textcolor{keywordtype}{void}\ aesni\_ctr32\_encrypt\_blocks(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,}
+\DoxyCodeLine{00224\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,}
+\DoxyCodeLine{00225\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ blocks,}
+\DoxyCodeLine{00226\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *key,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *ivec);}
+\DoxyCodeLine{00227\ }
+\DoxyCodeLine{00228\ \textcolor{keywordtype}{void}\ aesni\_xts\_encrypt(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,}
+\DoxyCodeLine{00229\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,}
+\DoxyCodeLine{00230\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ length,}
+\DoxyCodeLine{00231\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ AES\_KEY\ *key1,\ \textcolor{keyword}{const}\ AES\_KEY\ *key2,}
+\DoxyCodeLine{00232\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ iv[16]);}
+\DoxyCodeLine{00233\ }
+\DoxyCodeLine{00234\ \textcolor{keywordtype}{void}\ aesni\_xts\_decrypt(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,}
+\DoxyCodeLine{00235\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,}
+\DoxyCodeLine{00236\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ length,}
+\DoxyCodeLine{00237\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ AES\_KEY\ *key1,\ \textcolor{keyword}{const}\ AES\_KEY\ *key2,}
+\DoxyCodeLine{00238\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ iv[16]);}
+\DoxyCodeLine{00239\ }
+\DoxyCodeLine{00240\ \textcolor{keywordtype}{void}\ aesni\_ccm64\_encrypt\_blocks(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,}
+\DoxyCodeLine{00241\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,}
+\DoxyCodeLine{00242\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ blocks,}
+\DoxyCodeLine{00243\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *key,}
+\DoxyCodeLine{00244\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ivec[16],}
+\DoxyCodeLine{00245\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ cmac[16]);}
+\DoxyCodeLine{00246\ }
+\DoxyCodeLine{00247\ \textcolor{keywordtype}{void}\ aesni\_ccm64\_decrypt\_blocks(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,}
+\DoxyCodeLine{00248\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,}
+\DoxyCodeLine{00249\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ blocks,}
+\DoxyCodeLine{00250\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *key,}
+\DoxyCodeLine{00251\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ivec[16],}
+\DoxyCodeLine{00252\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ cmac[16]);}
+\DoxyCodeLine{00253\ }
+\DoxyCodeLine{00254\ \textcolor{preprocessor}{\#\ \ if\ defined(\_\_x86\_64)\ ||\ defined(\_\_x86\_64\_\_)\ ||\ defined(\_M\_AMD64)\ ||\ defined(\_M\_X64)}}
+\DoxyCodeLine{00255\ \textcolor{keywordtype}{size\_t}\ aesni\_gcm\_encrypt(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,\ \textcolor{keywordtype}{size\_t}\ len,}
+\DoxyCodeLine{00256\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *key,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ivec[16],\ u64\ *Xi);}
+\DoxyCodeLine{00257\ \textcolor{keywordtype}{size\_t}\ aesni\_gcm\_decrypt(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,\ \textcolor{keywordtype}{size\_t}\ len,}
+\DoxyCodeLine{00258\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *key,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ivec[16],\ u64\ *Xi);}
+\DoxyCodeLine{00259\ \textcolor{keywordtype}{void}\ gcm\_ghash\_avx(u64\ Xi[2],\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structu128}{u128}}\ Htable[16],\ \textcolor{keyword}{const}\ u8\ *in,\ \textcolor{keywordtype}{size\_t}\ len);}
+\DoxyCodeLine{00260\ }
+\DoxyCodeLine{00261\ \textcolor{preprocessor}{\#\ \ \ define\ AES\_gcm\_encrypt\ aesni\_gcm\_encrypt}}
+\DoxyCodeLine{00262\ \textcolor{preprocessor}{\#\ \ \ define\ AES\_gcm\_decrypt\ aesni\_gcm\_decrypt}}
+\DoxyCodeLine{00263\ \textcolor{preprocessor}{\#\ \ \ define\ AES\_GCM\_ASM(ctx)\ \ \ \ (ctx-\/>ctr\ ==\ aesni\_ctr32\_encrypt\_blocks\ \&\&\ \(\backslash\)}}
+\DoxyCodeLine{00264\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ctx-\/>gcm.funcs.ghash\ ==\ gcm\_ghash\_avx)}}
+\DoxyCodeLine{00265\ \textcolor{preprocessor}{\#\ \ endif}}
+\DoxyCodeLine{00266\ }
+\DoxyCodeLine{00267\ }
+\DoxyCodeLine{00268\ \textcolor{preprocessor}{\#\ elif\ defined(AES\_ASM)\ \&\&\ (defined(\_\_sparc)\ ||\ defined(\_\_sparc\_\_))}}
+\DoxyCodeLine{00269\ }
+\DoxyCodeLine{00270\ \textcolor{comment}{/*\ Fujitsu\ SPARC64\ X\ support\ */}}
+\DoxyCodeLine{00271\ \textcolor{preprocessor}{\#\ \ include\ "{}crypto/sparc\_arch.h"{}}}
+\DoxyCodeLine{00272\ }
+\DoxyCodeLine{00273\ \textcolor{preprocessor}{\#\ \ define\ SPARC\_AES\_CAPABLE\ \ \ \ \ \ \ (OPENSSL\_sparcv9cap\_P[1]\ \&\ CFR\_AES)}}
+\DoxyCodeLine{00274\ \textcolor{preprocessor}{\#\ \ define\ HWAES\_CAPABLE\ \ \ \ \ \ \ \ \ \ \ (OPENSSL\_sparcv9cap\_P[0]\ \&\ SPARCV9\_FJAESX)}}
+\DoxyCodeLine{00275\ \textcolor{preprocessor}{\#\ \ define\ HWAES\_set\_encrypt\_key\ aes\_fx\_set\_encrypt\_key}}
+\DoxyCodeLine{00276\ \textcolor{preprocessor}{\#\ \ define\ HWAES\_set\_decrypt\_key\ aes\_fx\_set\_decrypt\_key}}
+\DoxyCodeLine{00277\ \textcolor{preprocessor}{\#\ \ define\ HWAES\_encrypt\ aes\_fx\_encrypt}}
+\DoxyCodeLine{00278\ \textcolor{preprocessor}{\#\ \ define\ HWAES\_decrypt\ aes\_fx\_decrypt}}
+\DoxyCodeLine{00279\ \textcolor{preprocessor}{\#\ \ define\ HWAES\_cbc\_encrypt\ aes\_fx\_cbc\_encrypt}}
+\DoxyCodeLine{00280\ \textcolor{preprocessor}{\#\ \ define\ HWAES\_ctr32\_encrypt\_blocks\ aes\_fx\_ctr32\_encrypt\_blocks}}
+\DoxyCodeLine{00281\ }
+\DoxyCodeLine{00282\ \textcolor{keywordtype}{void}\ aes\_t4\_set\_encrypt\_key(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *key,\ \textcolor{keywordtype}{int}\ bits,\ AES\_KEY\ *ks);}
+\DoxyCodeLine{00283\ \textcolor{keywordtype}{void}\ aes\_t4\_set\_decrypt\_key(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *key,\ \textcolor{keywordtype}{int}\ bits,\ AES\_KEY\ *ks);}
+\DoxyCodeLine{00284\ \textcolor{keywordtype}{void}\ aes\_t4\_encrypt(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,}
+\DoxyCodeLine{00285\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ AES\_KEY\ *key);}
+\DoxyCodeLine{00286\ \textcolor{keywordtype}{void}\ aes\_t4\_decrypt(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,}
+\DoxyCodeLine{00287\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ AES\_KEY\ *key);}
+\DoxyCodeLine{00288\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00289\ \textcolor{comment}{\ *\ Key-\/length\ specific\ subroutines\ were\ chosen\ for\ following\ reason.}}
+\DoxyCodeLine{00290\ \textcolor{comment}{\ *\ Each\ SPARC\ T4\ core\ can\ execute\ up\ to\ 8\ threads\ which\ share\ core's}}
+\DoxyCodeLine{00291\ \textcolor{comment}{\ *\ resources.\ Loading\ as\ much\ key\ material\ to\ registers\ allows\ to}}
+\DoxyCodeLine{00292\ \textcolor{comment}{\ *\ minimize\ references\ to\ shared\ memory\ interface,\ as\ well\ as\ amount}}
+\DoxyCodeLine{00293\ \textcolor{comment}{\ *\ of\ instructions\ in\ inner\ loops\ [much\ needed\ on\ T4].\ But\ then\ having}}
+\DoxyCodeLine{00294\ \textcolor{comment}{\ *\ non-\/key-\/length\ specific\ routines\ would\ require\ conditional\ branches}}
+\DoxyCodeLine{00295\ \textcolor{comment}{\ *\ either\ in\ inner\ loops\ or\ on\ subroutines'\ entries.\ Former\ is\ hardly}}
+\DoxyCodeLine{00296\ \textcolor{comment}{\ *\ acceptable,\ while\ latter\ means\ code\ size\ increase\ to\ size\ occupied}}
+\DoxyCodeLine{00297\ \textcolor{comment}{\ *\ by\ multiple\ key-\/length\ specific\ subroutines,\ so\ why\ fight?}}
+\DoxyCodeLine{00298\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00299\ \textcolor{keywordtype}{void}\ aes128\_t4\_cbc\_encrypt(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,}
+\DoxyCodeLine{00300\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ len,\ \textcolor{keyword}{const}\ AES\_KEY\ *key,}
+\DoxyCodeLine{00301\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *ivec,\ \textcolor{keywordtype}{int}\ \textcolor{comment}{/*unused*/});}
+\DoxyCodeLine{00302\ \textcolor{keywordtype}{void}\ aes128\_t4\_cbc\_decrypt(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,}
+\DoxyCodeLine{00303\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ len,\ \textcolor{keyword}{const}\ AES\_KEY\ *key,}
+\DoxyCodeLine{00304\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *ivec,\ \textcolor{keywordtype}{int}\ \textcolor{comment}{/*unused*/});}
+\DoxyCodeLine{00305\ \textcolor{keywordtype}{void}\ aes192\_t4\_cbc\_encrypt(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,}
+\DoxyCodeLine{00306\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ len,\ \textcolor{keyword}{const}\ AES\_KEY\ *key,}
+\DoxyCodeLine{00307\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *ivec,\ \textcolor{keywordtype}{int}\ \textcolor{comment}{/*unused*/});}
+\DoxyCodeLine{00308\ \textcolor{keywordtype}{void}\ aes192\_t4\_cbc\_decrypt(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,}
+\DoxyCodeLine{00309\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ len,\ \textcolor{keyword}{const}\ AES\_KEY\ *key,}
+\DoxyCodeLine{00310\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *ivec,\ \textcolor{keywordtype}{int}\ \textcolor{comment}{/*unused*/});}
+\DoxyCodeLine{00311\ \textcolor{keywordtype}{void}\ aes256\_t4\_cbc\_encrypt(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,}
+\DoxyCodeLine{00312\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ len,\ \textcolor{keyword}{const}\ AES\_KEY\ *key,}
+\DoxyCodeLine{00313\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *ivec,\ \textcolor{keywordtype}{int}\ \textcolor{comment}{/*unused*/});}
+\DoxyCodeLine{00314\ \textcolor{keywordtype}{void}\ aes256\_t4\_cbc\_decrypt(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,}
+\DoxyCodeLine{00315\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ len,\ \textcolor{keyword}{const}\ AES\_KEY\ *key,}
+\DoxyCodeLine{00316\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *ivec,\ \textcolor{keywordtype}{int}\ \textcolor{comment}{/*unused*/});}
+\DoxyCodeLine{00317\ \textcolor{keywordtype}{void}\ aes128\_t4\_ctr32\_encrypt(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,}
+\DoxyCodeLine{00318\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ blocks,\ \textcolor{keyword}{const}\ AES\_KEY\ *key,}
+\DoxyCodeLine{00319\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *ivec);}
+\DoxyCodeLine{00320\ \textcolor{keywordtype}{void}\ aes192\_t4\_ctr32\_encrypt(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,}
+\DoxyCodeLine{00321\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ blocks,\ \textcolor{keyword}{const}\ AES\_KEY\ *key,}
+\DoxyCodeLine{00322\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *ivec);}
+\DoxyCodeLine{00323\ \textcolor{keywordtype}{void}\ aes256\_t4\_ctr32\_encrypt(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,}
+\DoxyCodeLine{00324\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ blocks,\ \textcolor{keyword}{const}\ AES\_KEY\ *key,}
+\DoxyCodeLine{00325\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *ivec);}
+\DoxyCodeLine{00326\ \textcolor{keywordtype}{void}\ aes128\_t4\_xts\_encrypt(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,}
+\DoxyCodeLine{00327\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ blocks,\ \textcolor{keyword}{const}\ AES\_KEY\ *key1,}
+\DoxyCodeLine{00328\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ AES\_KEY\ *key2,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *ivec);}
+\DoxyCodeLine{00329\ \textcolor{keywordtype}{void}\ aes128\_t4\_xts\_decrypt(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,}
+\DoxyCodeLine{00330\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ blocks,\ \textcolor{keyword}{const}\ AES\_KEY\ *key1,}
+\DoxyCodeLine{00331\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ AES\_KEY\ *key2,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *ivec);}
+\DoxyCodeLine{00332\ \textcolor{keywordtype}{void}\ aes256\_t4\_xts\_encrypt(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,}
+\DoxyCodeLine{00333\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ blocks,\ \textcolor{keyword}{const}\ AES\_KEY\ *key1,}
+\DoxyCodeLine{00334\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ AES\_KEY\ *key2,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *ivec);}
+\DoxyCodeLine{00335\ \textcolor{keywordtype}{void}\ aes256\_t4\_xts\_decrypt(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,}
+\DoxyCodeLine{00336\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ blocks,\ \textcolor{keyword}{const}\ AES\_KEY\ *key1,}
+\DoxyCodeLine{00337\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ AES\_KEY\ *key2,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *ivec);}
+\DoxyCodeLine{00338\ }
+\DoxyCodeLine{00339\ \textcolor{preprocessor}{\#\ elif\ defined(OPENSSL\_CPUID\_OBJ)\ \&\&\ defined(\_\_s390\_\_)}}
+\DoxyCodeLine{00340\ \textcolor{comment}{/*\ IBM\ S390X\ support\ */}}
+\DoxyCodeLine{00341\ \textcolor{preprocessor}{\#\ \ include\ "{}s390x\_arch.h"{}}}
+\DoxyCodeLine{00342\ }
+\DoxyCodeLine{00343\ }
+\DoxyCodeLine{00344\ \textcolor{comment}{/*\ Convert\ key\ size\ to\ function\ code:\ [16,24,32]\ -\/>\ [18,19,20].\ */}}
+\DoxyCodeLine{00345\ \textcolor{preprocessor}{\#\ \ define\ S390X\_AES\_FC(keylen)\ \ (S390X\_AES\_128\ +\ ((((keylen)\ <<\ 3)\ -\/\ 128)\ >>\ 6))}}
+\DoxyCodeLine{00346\ }
+\DoxyCodeLine{00347\ \textcolor{comment}{/*\ Most\ modes\ of\ operation\ need\ km\ for\ partial\ block\ processing.\ */}}
+\DoxyCodeLine{00348\ \textcolor{preprocessor}{\#\ \ define\ S390X\_aes\_128\_CAPABLE\ (OPENSSL\_s390xcap\_P.km[0]\ \&\ \ \(\backslash\)}}
+\DoxyCodeLine{00349\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ S390X\_CAPBIT(S390X\_AES\_128))}}
+\DoxyCodeLine{00350\ \textcolor{preprocessor}{\#\ \ define\ S390X\_aes\_192\_CAPABLE\ (OPENSSL\_s390xcap\_P.km[0]\ \&\ \ \(\backslash\)}}
+\DoxyCodeLine{00351\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ S390X\_CAPBIT(S390X\_AES\_192))}}
+\DoxyCodeLine{00352\ \textcolor{preprocessor}{\#\ \ define\ S390X\_aes\_256\_CAPABLE\ (OPENSSL\_s390xcap\_P.km[0]\ \&\ \ \(\backslash\)}}
+\DoxyCodeLine{00353\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ S390X\_CAPBIT(S390X\_AES\_256))}}
+\DoxyCodeLine{00354\ }
+\DoxyCodeLine{00355\ \textcolor{preprocessor}{\#\ \ define\ S390X\_aes\_128\_cbc\_CAPABLE\ \ \ \ \ 1\ \ \ \ \ \ \ }\textcolor{comment}{/*\ checked\ by\ callee\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00356\ \textcolor{preprocessor}{\#\ \ define\ S390X\_aes\_192\_cbc\_CAPABLE\ \ \ \ \ 1}}
+\DoxyCodeLine{00357\ \textcolor{preprocessor}{\#\ \ define\ S390X\_aes\_256\_cbc\_CAPABLE\ \ \ \ \ 1}}
+\DoxyCodeLine{00358\ }
+\DoxyCodeLine{00359\ \textcolor{preprocessor}{\#\ \ define\ S390X\_aes\_128\_ecb\_CAPABLE\ \ \ \ \ S390X\_aes\_128\_CAPABLE}}
+\DoxyCodeLine{00360\ \textcolor{preprocessor}{\#\ \ define\ S390X\_aes\_192\_ecb\_CAPABLE\ \ \ \ \ S390X\_aes\_192\_CAPABLE}}
+\DoxyCodeLine{00361\ \textcolor{preprocessor}{\#\ \ define\ S390X\_aes\_256\_ecb\_CAPABLE\ \ \ \ \ S390X\_aes\_256\_CAPABLE}}
+\DoxyCodeLine{00362\ }
+\DoxyCodeLine{00363\ \textcolor{preprocessor}{\#\ \ define\ S390X\_aes\_128\_ofb\_CAPABLE\ (S390X\_aes\_128\_CAPABLE\ \&\&\ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00364\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (OPENSSL\_s390xcap\_P.kmo[0]\ \&\ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00365\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ S390X\_CAPBIT(S390X\_AES\_128)))}}
+\DoxyCodeLine{00366\ \textcolor{preprocessor}{\#\ \ define\ S390X\_aes\_192\_ofb\_CAPABLE\ (S390X\_aes\_192\_CAPABLE\ \&\&\ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00367\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (OPENSSL\_s390xcap\_P.kmo[0]\ \&\ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00368\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ S390X\_CAPBIT(S390X\_AES\_192)))}}
+\DoxyCodeLine{00369\ \textcolor{preprocessor}{\#\ \ define\ S390X\_aes\_256\_ofb\_CAPABLE\ (S390X\_aes\_256\_CAPABLE\ \&\&\ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00370\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (OPENSSL\_s390xcap\_P.kmo[0]\ \&\ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00371\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ S390X\_CAPBIT(S390X\_AES\_256)))}}
+\DoxyCodeLine{00372\ }
+\DoxyCodeLine{00373\ \textcolor{preprocessor}{\#\ \ define\ S390X\_aes\_128\_cfb\_CAPABLE\ (S390X\_aes\_128\_CAPABLE\ \&\&\ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00374\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (OPENSSL\_s390xcap\_P.kmf[0]\ \&\ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00375\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ S390X\_CAPBIT(S390X\_AES\_128)))}}
+\DoxyCodeLine{00376\ \textcolor{preprocessor}{\#\ \ define\ S390X\_aes\_192\_cfb\_CAPABLE\ (S390X\_aes\_192\_CAPABLE\ \&\&\ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00377\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (OPENSSL\_s390xcap\_P.kmf[0]\ \&\ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00378\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ S390X\_CAPBIT(S390X\_AES\_192)))}}
+\DoxyCodeLine{00379\ \textcolor{preprocessor}{\#\ \ define\ S390X\_aes\_256\_cfb\_CAPABLE\ (S390X\_aes\_256\_CAPABLE\ \&\&\ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00380\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (OPENSSL\_s390xcap\_P.kmf[0]\ \&\ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00381\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ S390X\_CAPBIT(S390X\_AES\_256)))}}
+\DoxyCodeLine{00382\ \textcolor{preprocessor}{\#\ \ define\ S390X\_aes\_128\_cfb8\_CAPABLE\ (OPENSSL\_s390xcap\_P.kmf[0]\ \&\ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00383\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ S390X\_CAPBIT(S390X\_AES\_128))}}
+\DoxyCodeLine{00384\ \textcolor{preprocessor}{\#\ \ define\ S390X\_aes\_192\_cfb8\_CAPABLE\ (OPENSSL\_s390xcap\_P.kmf[0]\ \&\ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00385\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ S390X\_CAPBIT(S390X\_AES\_192))}}
+\DoxyCodeLine{00386\ \textcolor{preprocessor}{\#\ \ define\ S390X\_aes\_256\_cfb8\_CAPABLE\ (OPENSSL\_s390xcap\_P.kmf[0]\ \&\ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00387\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ S390X\_CAPBIT(S390X\_AES\_256))}}
+\DoxyCodeLine{00388\ \textcolor{preprocessor}{\#\ \ define\ S390X\_aes\_128\_cfb1\_CAPABLE\ \ \ \ 0}}
+\DoxyCodeLine{00389\ \textcolor{preprocessor}{\#\ \ define\ S390X\_aes\_192\_cfb1\_CAPABLE\ \ \ \ 0}}
+\DoxyCodeLine{00390\ \textcolor{preprocessor}{\#\ \ define\ S390X\_aes\_256\_cfb1\_CAPABLE\ \ \ \ 0}}
+\DoxyCodeLine{00391\ }
+\DoxyCodeLine{00392\ \textcolor{preprocessor}{\#\ \ define\ S390X\_aes\_128\_ctr\_CAPABLE\ \ \ \ \ 1\ \ \ \ \ \ \ }\textcolor{comment}{/*\ checked\ by\ callee\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00393\ \textcolor{preprocessor}{\#\ \ define\ S390X\_aes\_192\_ctr\_CAPABLE\ \ \ \ \ 1}}
+\DoxyCodeLine{00394\ \textcolor{preprocessor}{\#\ \ define\ S390X\_aes\_256\_ctr\_CAPABLE\ \ \ \ \ 1}}
+\DoxyCodeLine{00395\ }
+\DoxyCodeLine{00396\ \textcolor{preprocessor}{\#\ \ define\ S390X\_aes\_128\_xts\_CAPABLE\ \ \ \ \ 1\ \ \ \ \ \ \ }\textcolor{comment}{/*\ checked\ by\ callee\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00397\ \textcolor{preprocessor}{\#\ \ define\ S390X\_aes\_256\_xts\_CAPABLE\ \ \ \ \ 1}}
+\DoxyCodeLine{00398\ }
+\DoxyCodeLine{00399\ \textcolor{preprocessor}{\#\ define\ S390X\_aes\_128\_gcm\_CAPABLE\ (S390X\_aes\_128\_CAPABLE\ \&\&\ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00400\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (OPENSSL\_s390xcap\_P.kma[0]\ \&\ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00401\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ S390X\_CAPBIT(S390X\_AES\_128)))}}
+\DoxyCodeLine{00402\ \textcolor{preprocessor}{\#\ define\ S390X\_aes\_192\_gcm\_CAPABLE\ (S390X\_aes\_192\_CAPABLE\ \&\&\ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00403\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (OPENSSL\_s390xcap\_P.kma[0]\ \&\ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00404\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ S390X\_CAPBIT(S390X\_AES\_192)))}}
+\DoxyCodeLine{00405\ \textcolor{preprocessor}{\#\ define\ S390X\_aes\_256\_gcm\_CAPABLE\ (S390X\_aes\_256\_CAPABLE\ \&\&\ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00406\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (OPENSSL\_s390xcap\_P.kma[0]\ \&\ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00407\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ S390X\_CAPBIT(S390X\_AES\_256)))}}
+\DoxyCodeLine{00408\ }
+\DoxyCodeLine{00409\ \textcolor{preprocessor}{\#\ \ define\ S390X\_aes\_128\_ccm\_CAPABLE\ (S390X\_aes\_128\_CAPABLE\ \&\&\ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00410\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (OPENSSL\_s390xcap\_P.kmac[0]\ \&\ \ \ \(\backslash\)}}
+\DoxyCodeLine{00411\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ S390X\_CAPBIT(S390X\_AES\_128)))}}
+\DoxyCodeLine{00412\ \textcolor{preprocessor}{\#\ \ define\ S390X\_aes\_192\_ccm\_CAPABLE\ (S390X\_aes\_192\_CAPABLE\ \&\&\ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00413\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (OPENSSL\_s390xcap\_P.kmac[0]\ \&\ \ \ \(\backslash\)}}
+\DoxyCodeLine{00414\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ S390X\_CAPBIT(S390X\_AES\_192)))}}
+\DoxyCodeLine{00415\ \textcolor{preprocessor}{\#\ \ define\ S390X\_aes\_256\_ccm\_CAPABLE\ (S390X\_aes\_256\_CAPABLE\ \&\&\ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00416\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (OPENSSL\_s390xcap\_P.kmac[0]\ \&\ \ \ \(\backslash\)}}
+\DoxyCodeLine{00417\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ S390X\_CAPBIT(S390X\_AES\_256)))}}
+\DoxyCodeLine{00418\ \textcolor{preprocessor}{\#\ \ define\ S390X\_CCM\_AAD\_FLAG\ \ \ \ 0x40}}
+\DoxyCodeLine{00419\ }
+\DoxyCodeLine{00420\ \textcolor{preprocessor}{\#\ \ ifndef\ OPENSSL\_NO\_OCB}}
+\DoxyCodeLine{00421\ \textcolor{preprocessor}{\#\ \ \ define\ S390X\_aes\_128\_ocb\_CAPABLE\ \ \ \ 0}}
+\DoxyCodeLine{00422\ \textcolor{preprocessor}{\#\ \ \ define\ S390X\_aes\_192\_ocb\_CAPABLE\ \ \ \ 0}}
+\DoxyCodeLine{00423\ \textcolor{preprocessor}{\#\ \ \ define\ S390X\_aes\_256\_ocb\_CAPABLE\ \ \ \ 0}}
+\DoxyCodeLine{00424\ \textcolor{preprocessor}{\#\ \ endif\ }\textcolor{comment}{/*\ OPENSSL\_NO\_OCB\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00425\ }
+\DoxyCodeLine{00426\ \textcolor{preprocessor}{\#\ \ ifndef\ OPENSSL\_NO\_SIV}}
+\DoxyCodeLine{00427\ \textcolor{preprocessor}{\#\ \ \ define\ S390X\_aes\_128\_siv\_CAPABLE\ \ \ \ 0}}
+\DoxyCodeLine{00428\ \textcolor{preprocessor}{\#\ \ \ define\ S390X\_aes\_192\_siv\_CAPABLE\ \ \ \ 0}}
+\DoxyCodeLine{00429\ \textcolor{preprocessor}{\#\ \ \ define\ S390X\_aes\_256\_siv\_CAPABLE\ \ \ \ 0}}
+\DoxyCodeLine{00430\ \textcolor{preprocessor}{\#\ \ endif\ }\textcolor{comment}{/*\ OPENSSL\_NO\_SIV\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00431\ }
+\DoxyCodeLine{00432\ \textcolor{comment}{/*\ Convert\ key\ size\ to\ function\ code:\ [16,24,32]\ -\/>\ [18,19,20].\ */}}
+\DoxyCodeLine{00433\ \textcolor{preprocessor}{\#\ \ define\ S390X\_AES\_FC(keylen)\ \ (S390X\_AES\_128\ +\ ((((keylen)\ <<\ 3)\ -\/\ 128)\ >>\ 6))}}
+\DoxyCodeLine{00434\ \textcolor{preprocessor}{\#\ elif\ defined(OPENSSL\_CPUID\_OBJ)\ \&\&\ defined(\_\_riscv)\ \&\&\ \_\_riscv\_xlen\ ==\ 64}}
+\DoxyCodeLine{00435\ \textcolor{comment}{/*\ RISC-\/V\ 64\ support\ */}}
+\DoxyCodeLine{00436\ \textcolor{preprocessor}{\#\ \ include\ "{}riscv\_arch.h"{}}}
+\DoxyCodeLine{00437\ }
+\DoxyCodeLine{00438\ \textcolor{keywordtype}{int}\ rv64i\_zkne\_set\_encrypt\_key(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *userKey,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ bits,}
+\DoxyCodeLine{00439\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ AES\_KEY\ *key);}
+\DoxyCodeLine{00440\ \textcolor{keywordtype}{int}\ rv64i\_zknd\_set\_decrypt\_key(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *userKey,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ bits,}
+\DoxyCodeLine{00441\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ AES\_KEY\ *key);}
+\DoxyCodeLine{00442\ \textcolor{keywordtype}{void}\ rv64i\_zkne\_encrypt(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,}
+\DoxyCodeLine{00443\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ AES\_KEY\ *key);}
+\DoxyCodeLine{00444\ \textcolor{keywordtype}{void}\ rv64i\_zknd\_decrypt(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,}
+\DoxyCodeLine{00445\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ AES\_KEY\ *key);}
+\DoxyCodeLine{00446\ \textcolor{preprocessor}{\#\ elif\ defined(OPENSSL\_CPUID\_OBJ)\ \&\&\ defined(\_\_riscv)\ \&\&\ \_\_riscv\_xlen\ ==\ 32}}
+\DoxyCodeLine{00447\ \textcolor{comment}{/*\ RISC-\/V\ 32\ support\ */}}
+\DoxyCodeLine{00448\ \textcolor{preprocessor}{\#\ \ include\ "{}riscv\_arch.h"{}}}
+\DoxyCodeLine{00449\ }
+\DoxyCodeLine{00450\ \textcolor{keywordtype}{int}\ rv32i\_zkne\_set\_encrypt\_key(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *userKey,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ bits,}
+\DoxyCodeLine{00451\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ AES\_KEY\ *key);}
+\DoxyCodeLine{00452\ \textcolor{comment}{/*\ set\_decrypt\_key\ needs\ both\ zknd\ and\ zkne\ */}}
+\DoxyCodeLine{00453\ \textcolor{keywordtype}{int}\ rv32i\_zknd\_zkne\_set\_decrypt\_key(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *userKey,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ bits,}
+\DoxyCodeLine{00454\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ AES\_KEY\ *key);}
+\DoxyCodeLine{00455\ \textcolor{keywordtype}{int}\ rv32i\_zbkb\_zkne\_set\_encrypt\_key(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *userKey,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ bits,}
+\DoxyCodeLine{00456\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ AES\_KEY\ *key);}
+\DoxyCodeLine{00457\ \textcolor{keywordtype}{int}\ rv32i\_zbkb\_zknd\_zkne\_set\_decrypt\_key(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *userKey,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ bits,}
+\DoxyCodeLine{00458\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ AES\_KEY\ *key);}
+\DoxyCodeLine{00459\ \textcolor{keywordtype}{void}\ rv32i\_zkne\_encrypt(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,}
+\DoxyCodeLine{00460\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ AES\_KEY\ *key);}
+\DoxyCodeLine{00461\ \textcolor{keywordtype}{void}\ rv32i\_zknd\_decrypt(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,}
+\DoxyCodeLine{00462\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ AES\_KEY\ *key);}
+\DoxyCodeLine{00463\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00464\ }
+\DoxyCodeLine{00465\ \textcolor{preprocessor}{\#\ if\ defined(HWAES\_CAPABLE)}}
+\DoxyCodeLine{00466\ \textcolor{keywordtype}{int}\ HWAES\_set\_encrypt\_key(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *userKey,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ bits,}
+\DoxyCodeLine{00467\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ AES\_KEY\ *key);}
+\DoxyCodeLine{00468\ \textcolor{keywordtype}{int}\ HWAES\_set\_decrypt\_key(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *userKey,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ bits,}
+\DoxyCodeLine{00469\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ AES\_KEY\ *key);}
+\DoxyCodeLine{00470\ \textcolor{keywordtype}{void}\ HWAES\_encrypt(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,}
+\DoxyCodeLine{00471\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ AES\_KEY\ *key);}
+\DoxyCodeLine{00472\ \textcolor{keywordtype}{void}\ HWAES\_decrypt(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,}
+\DoxyCodeLine{00473\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ AES\_KEY\ *key);}
+\DoxyCodeLine{00474\ \textcolor{keywordtype}{void}\ HWAES\_cbc\_encrypt(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,}
+\DoxyCodeLine{00475\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ length,\ \textcolor{keyword}{const}\ AES\_KEY\ *key,}
+\DoxyCodeLine{00476\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *ivec,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ enc);}
+\DoxyCodeLine{00477\ \textcolor{keywordtype}{void}\ HWAES\_ecb\_encrypt(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,}
+\DoxyCodeLine{00478\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ length,\ \textcolor{keyword}{const}\ AES\_KEY\ *key,}
+\DoxyCodeLine{00479\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ enc);}
+\DoxyCodeLine{00480\ \textcolor{keywordtype}{void}\ HWAES\_ctr32\_encrypt\_blocks(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,}
+\DoxyCodeLine{00481\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ len,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *key,}
+\DoxyCodeLine{00482\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ivec[16]);}
+\DoxyCodeLine{00483\ \textcolor{keywordtype}{void}\ HWAES\_xts\_encrypt(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *inp,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,}
+\DoxyCodeLine{00484\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ len,\ \textcolor{keyword}{const}\ AES\_KEY\ *key1,}
+\DoxyCodeLine{00485\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ AES\_KEY\ *key2,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ iv[16]);}
+\DoxyCodeLine{00486\ \textcolor{keywordtype}{void}\ HWAES\_xts\_decrypt(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *inp,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,}
+\DoxyCodeLine{00487\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ len,\ \textcolor{keyword}{const}\ AES\_KEY\ *key1,}
+\DoxyCodeLine{00488\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ AES\_KEY\ *key2,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ iv[16]);}
+\DoxyCodeLine{00489\ \textcolor{preprocessor}{\#\ \ ifndef\ OPENSSL\_NO\_OCB}}
+\DoxyCodeLine{00490\ \textcolor{preprocessor}{\#\ \ \ ifdef\ HWAES\_ocb\_encrypt}}
+\DoxyCodeLine{00491\ \textcolor{keywordtype}{void}\ HWAES\_ocb\_encrypt(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,}
+\DoxyCodeLine{00492\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ blocks,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *key,}
+\DoxyCodeLine{00493\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ start\_block\_num,}
+\DoxyCodeLine{00494\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ offset\_i[16],}
+\DoxyCodeLine{00495\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ L\_[][16],}
+\DoxyCodeLine{00496\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ checksum[16]);}
+\DoxyCodeLine{00497\ \textcolor{preprocessor}{\#\ \ \ else}}
+\DoxyCodeLine{00498\ \textcolor{preprocessor}{\#\ \ \ \ \ define\ HWAES\_ocb\_encrypt\ ((ocb128\_f)NULL)}}
+\DoxyCodeLine{00499\ \textcolor{preprocessor}{\#\ \ \ endif}}
+\DoxyCodeLine{00500\ \textcolor{preprocessor}{\#\ \ \ ifdef\ HWAES\_ocb\_decrypt}}
+\DoxyCodeLine{00501\ \textcolor{keywordtype}{void}\ HWAES\_ocb\_decrypt(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,}
+\DoxyCodeLine{00502\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ blocks,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *key,}
+\DoxyCodeLine{00503\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ start\_block\_num,}
+\DoxyCodeLine{00504\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ offset\_i[16],}
+\DoxyCodeLine{00505\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ L\_[][16],}
+\DoxyCodeLine{00506\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ checksum[16]);}
+\DoxyCodeLine{00507\ \textcolor{preprocessor}{\#\ \ \ else}}
+\DoxyCodeLine{00508\ \textcolor{preprocessor}{\#\ \ \ \ \ define\ HWAES\_ocb\_decrypt\ ((ocb128\_f)NULL)}}
+\DoxyCodeLine{00509\ \textcolor{preprocessor}{\#\ \ \ endif}}
+\DoxyCodeLine{00510\ \textcolor{preprocessor}{\#\ \ endif\ }\textcolor{comment}{/*\ OPENSSL\_NO\_OCB\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00511\ }
+\DoxyCodeLine{00512\ \textcolor{preprocessor}{\#\ endif\ }\textcolor{comment}{/*\ HWAES\_CAPABLE\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00513\ }
+\DoxyCodeLine{00514\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ OSSL\_AES\_PLATFORM\_H\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

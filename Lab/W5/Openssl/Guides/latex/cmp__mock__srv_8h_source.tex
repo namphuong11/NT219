@@ -1,0 +1,45 @@
+\doxysection{cmp\+\_\+mock\+\_\+srv.\+h}
+\hypertarget{cmp__mock__srv_8h_source}{}\label{cmp__mock__srv_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/apps/include/cmp\_mock\_srv.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/apps/include/cmp\_mock\_srv.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2018-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *\ Copyright\ Siemens\ AG\ 2018-\/2020}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#ifndef\ OSSL\_APPS\_CMP\_MOCK\_SRV\_H}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#\ define\ OSSL\_APPS\_CMP\_MOCK\_SRV\_H}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ include\ <openssl/opensslconf.h>}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#\ ifndef\ OPENSSL\_NO\_CMP}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#\ \ include\ <openssl/cmp.h>}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ OSSL\_CMP\_SRV\_CTX\ *ossl\_cmp\_mock\_srv\_new(OSSL\_LIB\_CTX\ *libctx,}
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *propq);}
+\DoxyCodeLine{00021\ \textcolor{keywordtype}{void}\ ossl\_cmp\_mock\_srv\_free(OSSL\_CMP\_SRV\_CTX\ *srv\_ctx);}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{keywordtype}{int}\ ossl\_cmp\_mock\_srv\_set1\_refCert(OSSL\_CMP\_SRV\_CTX\ *srv\_ctx,\ X509\ *cert);}
+\DoxyCodeLine{00024\ \textcolor{keywordtype}{int}\ ossl\_cmp\_mock\_srv\_set1\_certOut(OSSL\_CMP\_SRV\_CTX\ *srv\_ctx,\ X509\ *cert);}
+\DoxyCodeLine{00025\ \textcolor{keywordtype}{int}\ ossl\_cmp\_mock\_srv\_set1\_chainOut(OSSL\_CMP\_SRV\_CTX\ *srv\_ctx,}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ STACK\_OF(X509)\ *chain);}
+\DoxyCodeLine{00027\ \textcolor{keywordtype}{int}\ ossl\_cmp\_mock\_srv\_set1\_caPubsOut(OSSL\_CMP\_SRV\_CTX\ *srv\_ctx,}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ STACK\_OF(X509)\ *caPubs);}
+\DoxyCodeLine{00029\ \textcolor{keywordtype}{int}\ ossl\_cmp\_mock\_srv\_set1\_newWithNew(OSSL\_CMP\_SRV\_CTX\ *srv\_ctx,\ X509\ *cert);}
+\DoxyCodeLine{00030\ \textcolor{keywordtype}{int}\ ossl\_cmp\_mock\_srv\_set1\_newWithOld(OSSL\_CMP\_SRV\_CTX\ *srv\_ctx,\ X509\ *cert);}
+\DoxyCodeLine{00031\ \textcolor{keywordtype}{int}\ ossl\_cmp\_mock\_srv\_set1\_oldWithNew(OSSL\_CMP\_SRV\_CTX\ *srv\_ctx,\ X509\ *cert);}
+\DoxyCodeLine{00032\ \textcolor{keywordtype}{int}\ ossl\_cmp\_mock\_srv\_set\_statusInfo(OSSL\_CMP\_SRV\_CTX\ *srv\_ctx,\ \textcolor{keywordtype}{int}\ status,}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ fail\_info,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *text);}
+\DoxyCodeLine{00034\ \textcolor{keywordtype}{int}\ ossl\_cmp\_mock\_srv\_set\_sendError(OSSL\_CMP\_SRV\_CTX\ *srv\_ctx,\ \textcolor{keywordtype}{int}\ bodytype);}
+\DoxyCodeLine{00035\ \textcolor{keywordtype}{int}\ ossl\_cmp\_mock\_srv\_set\_pollCount(OSSL\_CMP\_SRV\_CTX\ *srv\_ctx,\ \textcolor{keywordtype}{int}\ count);}
+\DoxyCodeLine{00036\ \textcolor{keywordtype}{int}\ ossl\_cmp\_mock\_srv\_set\_checkAfterTime(OSSL\_CMP\_SRV\_CTX\ *srv\_ctx,\ \textcolor{keywordtype}{int}\ sec);}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#\ endif\ }\textcolor{comment}{/*\ !defined(OPENSSL\_NO\_CMP)\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00039\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ !defined(OSSL\_APPS\_CMP\_MOCK\_SRV\_H)\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

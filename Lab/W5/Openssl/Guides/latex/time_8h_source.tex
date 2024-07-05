@@ -1,0 +1,248 @@
+\doxysection{time.\+h}
+\hypertarget{time_8h_source}{}\label{time_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/time.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/time.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2022-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_INTERNAL\_TIME\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_INTERNAL\_TIME\_H}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#\ pragma\ once}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ include\ <openssl/e\_os2.h>}\ \ \ \ \ \textcolor{comment}{/*\ uint64\_t\ */}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#\ include\ "{}internal/e\_os.h"{}}\ \ \ \ \ \textcolor{comment}{/*\ for\ struct\ timeval\ */}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#\ include\ "{}internal/safe\_math.h"{}}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ *\ Internal\ type\ defining\ a\ time.}}
+\DoxyCodeLine{00020\ \textcolor{comment}{\ *\ This\ should\ be\ treated\ as\ an\ opaque\ structure.}}
+\DoxyCodeLine{00021\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00022\ \textcolor{comment}{\ *\ The\ time\ datum\ is\ Unix's\ 1970\ and\ at\ nanosecond\ precision,\ this\ gives}}
+\DoxyCodeLine{00023\ \textcolor{comment}{\ *\ a\ range\ of\ 584\ years\ roughly.}}
+\DoxyCodeLine{00024\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00025\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00026\ \ \ \ \ uint64\_t\ t;\ \ \ \ \ \textcolor{comment}{/*\ Ticks\ since\ the\ epoch\ */}}
+\DoxyCodeLine{00027\ \}\ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}};}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \textcolor{comment}{/*\ The\ precision\ of\ times\ allows\ this\ many\ values\ per\ second\ */}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#\ define\ OSSL\_TIME\_SECOND\ ((uint64\_t)1000000000)}}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \textcolor{comment}{/*\ One\ millisecond.\ */}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#\ define\ OSSL\_TIME\_MS\ \ \ \ \ (OSSL\_TIME\_SECOND\ /\ 1000)}}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \textcolor{comment}{/*\ One\ microsecond.\ */}}
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#\ define\ OSSL\_TIME\_US\ \ \ \ \ (OSSL\_TIME\_MS\ \ \ \ \ /\ 1000)}}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \textcolor{comment}{/*\ One\ nanosecond.\ */}}
+\DoxyCodeLine{00039\ \textcolor{preprocessor}{\#\ define\ OSSL\_TIME\_NS\ \ \ \ \ (OSSL\_TIME\_US\ \ \ \ \ /\ 1000)}}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \textcolor{preprocessor}{\#define\ ossl\_seconds2time(s)\ ossl\_ticks2time((s)\ *\ OSSL\_TIME\_SECOND)}}
+\DoxyCodeLine{00042\ \textcolor{preprocessor}{\#define\ ossl\_time2seconds(t)\ (ossl\_time2ticks(t)\ /\ OSSL\_TIME\_SECOND)}}
+\DoxyCodeLine{00043\ \textcolor{preprocessor}{\#define\ ossl\_ms2time(ms)\ ossl\_ticks2time((ms)\ *\ OSSL\_TIME\_MS)}}
+\DoxyCodeLine{00044\ \textcolor{preprocessor}{\#define\ ossl\_time2ms(t)\ (ossl\_time2ticks(t)\ /\ OSSL\_TIME\_MS)}}
+\DoxyCodeLine{00045\ \textcolor{preprocessor}{\#define\ ossl\_us2time(us)\ ossl\_ticks2time((us)\ *\ OSSL\_TIME\_US)}}
+\DoxyCodeLine{00046\ \textcolor{preprocessor}{\#define\ ossl\_time2us(t)\ (ossl\_time2ticks(t)\ /\ OSSL\_TIME\_US)}}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00049\ \textcolor{comment}{\ *\ Arithmetic\ operations\ on\ times.}}
+\DoxyCodeLine{00050\ \textcolor{comment}{\ *\ These\ operations\ are\ saturating,\ in\ that\ an\ overflow\ or\ underflow\ returns}}
+\DoxyCodeLine{00051\ \textcolor{comment}{\ *\ the\ largest\ or\ smallest\ value\ respectively.}}
+\DoxyCodeLine{00052\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00053\ OSSL\_SAFE\_MATH\_UNSIGNED(time,\ uint64\_t)}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ \textcolor{comment}{/*\ Convert\ a\ tick\ count\ into\ a\ time\ */}}
+\DoxyCodeLine{00056\ \textcolor{keyword}{static}\ ossl\_unused\ ossl\_inline}
+\DoxyCodeLine{00057\ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ ossl\_ticks2time(uint64\_t\ ticks)}
+\DoxyCodeLine{00058\ \{}
+\DoxyCodeLine{00059\ \ \ \ \ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ r;}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ \ \ \ \ r.t\ =\ ticks;}
+\DoxyCodeLine{00062\ \ \ \ \ \textcolor{keywordflow}{return}\ r;}
+\DoxyCodeLine{00063\ \}}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ \textcolor{comment}{/*\ Convert\ a\ time\ to\ a\ tick\ count\ */}}
+\DoxyCodeLine{00066\ \textcolor{keyword}{static}\ ossl\_unused\ ossl\_inline}
+\DoxyCodeLine{00067\ uint64\_t\ ossl\_time2ticks(\mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ t)}
+\DoxyCodeLine{00068\ \{}
+\DoxyCodeLine{00069\ \ \ \ \ \textcolor{keywordflow}{return}\ t.t;}
+\DoxyCodeLine{00070\ \}}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00072\ \textcolor{comment}{/*\ Get\ current\ time\ */}}
+\DoxyCodeLine{00073\ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ ossl\_time\_now(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00075\ \textcolor{comment}{/*\ The\ beginning\ and\ end\ of\ the\ time\ range\ */}}
+\DoxyCodeLine{00076\ \textcolor{keyword}{static}\ ossl\_unused\ ossl\_inline}
+\DoxyCodeLine{00077\ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ ossl\_time\_zero(\textcolor{keywordtype}{void})}
+\DoxyCodeLine{00078\ \{}
+\DoxyCodeLine{00079\ \ \ \ \ \textcolor{keywordflow}{return}\ ossl\_ticks2time(0);}
+\DoxyCodeLine{00080\ \}}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00082\ \textcolor{keyword}{static}\ ossl\_unused\ ossl\_inline}
+\DoxyCodeLine{00083\ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ ossl\_time\_infinite(\textcolor{keywordtype}{void})}
+\DoxyCodeLine{00084\ \{}
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{keywordflow}{return}\ ossl\_ticks2time(\string~(uint64\_t)0);}
+\DoxyCodeLine{00086\ \}}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00089\ \textcolor{comment}{/*\ Convert\ time\ to\ timeval\ */}}
+\DoxyCodeLine{00090\ \textcolor{keyword}{static}\ ossl\_unused\ ossl\_inline}
+\DoxyCodeLine{00091\ \textcolor{keyword}{struct\ }timeval\ ossl\_time\_to\_timeval(\mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ t)}
+\DoxyCodeLine{00092\ \{}
+\DoxyCodeLine{00093\ \ \ \ \ \textcolor{keyword}{struct\ }timeval\ tv;}
+\DoxyCodeLine{00094\ \ \ \ \ \textcolor{keywordtype}{int}\ err\ =\ 0;}
+\DoxyCodeLine{00095\ }
+\DoxyCodeLine{00096\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00097\ \textcolor{comment}{\ \ \ \ \ *\ Round\ up\ any\ nano\ secs\ which\ struct\ timeval\ doesn't\ support.\ Ensures\ that}}
+\DoxyCodeLine{00098\ \textcolor{comment}{\ \ \ \ \ *\ we\ never\ return\ a\ zero\ time\ if\ the\ input\ time\ is\ non\ zero}}
+\DoxyCodeLine{00099\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00100\ \ \ \ \ t.t\ =\ safe\_add\_time(t.t,\ OSSL\_TIME\_US\ -\/\ 1,\ \&err);}
+\DoxyCodeLine{00101\ \ \ \ \ \textcolor{keywordflow}{if}\ (err)}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ t\ =\ ossl\_time\_infinite();}
+\DoxyCodeLine{00103\ }
+\DoxyCodeLine{00104\ \textcolor{preprocessor}{\#ifdef\ \_WIN32}}
+\DoxyCodeLine{00105\ \ \ \ \ tv.tv\_sec\ =\ (\textcolor{keywordtype}{long}\ int)(t.t\ /\ OSSL\_TIME\_SECOND);}
+\DoxyCodeLine{00106\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00107\ \ \ \ \ tv.tv\_sec\ =\ (time\_t)(t.t\ /\ OSSL\_TIME\_SECOND);}
+\DoxyCodeLine{00108\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00109\ \ \ \ \ tv.tv\_usec\ =\ (t.t\ \%\ OSSL\_TIME\_SECOND)\ /\ OSSL\_TIME\_US;}
+\DoxyCodeLine{00110\ \ \ \ \ \textcolor{keywordflow}{return}\ tv;}
+\DoxyCodeLine{00111\ \}}
+\DoxyCodeLine{00112\ }
+\DoxyCodeLine{00113\ \textcolor{comment}{/*\ Convert\ timeval\ to\ time\ */}}
+\DoxyCodeLine{00114\ \textcolor{keyword}{static}\ ossl\_unused\ ossl\_inline}
+\DoxyCodeLine{00115\ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ ossl\_time\_from\_timeval(\textcolor{keyword}{struct}\ timeval\ tv)}
+\DoxyCodeLine{00116\ \{}
+\DoxyCodeLine{00117\ \ \ \ \ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ t;}
+\DoxyCodeLine{00118\ }
+\DoxyCodeLine{00119\ \textcolor{preprocessor}{\#ifndef\ \_\_DJGPP\_\_\ }\textcolor{comment}{/*\ tv\_sec\ is\ unsigned\ on\ djgpp.\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00120\ \ \ \ \ \textcolor{keywordflow}{if}\ (tv.tv\_sec\ <\ 0)}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ ossl\_time\_zero();}
+\DoxyCodeLine{00122\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00123\ \ \ \ \ t.t\ =\ tv.tv\_sec\ *\ OSSL\_TIME\_SECOND\ +\ tv.tv\_usec\ *\ OSSL\_TIME\_US;}
+\DoxyCodeLine{00124\ \ \ \ \ \textcolor{keywordflow}{return}\ t;}
+\DoxyCodeLine{00125\ \}}
+\DoxyCodeLine{00126\ }
+\DoxyCodeLine{00127\ \textcolor{comment}{/*\ Convert\ OSSL\_TIME\ to\ time\_t\ */}}
+\DoxyCodeLine{00128\ \textcolor{keyword}{static}\ ossl\_unused\ ossl\_inline}
+\DoxyCodeLine{00129\ time\_t\ ossl\_time\_to\_time\_t(\mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ t)}
+\DoxyCodeLine{00130\ \{}
+\DoxyCodeLine{00131\ \ \ \ \ \textcolor{keywordflow}{return}\ (time\_t)(t.t\ /\ OSSL\_TIME\_SECOND);}
+\DoxyCodeLine{00132\ \}}
+\DoxyCodeLine{00133\ }
+\DoxyCodeLine{00134\ \textcolor{comment}{/*\ Convert\ time\_t\ to\ OSSL\_TIME\ */}}
+\DoxyCodeLine{00135\ \textcolor{keyword}{static}\ ossl\_unused\ ossl\_inline}
+\DoxyCodeLine{00136\ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ ossl\_time\_from\_time\_t(time\_t\ t)}
+\DoxyCodeLine{00137\ \{}
+\DoxyCodeLine{00138\ \ \ \ \ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ ot;}
+\DoxyCodeLine{00139\ }
+\DoxyCodeLine{00140\ \ \ \ \ ot.t\ =\ t;}
+\DoxyCodeLine{00141\ \ \ \ \ ot.t\ *=\ OSSL\_TIME\_SECOND;}
+\DoxyCodeLine{00142\ \ \ \ \ \textcolor{keywordflow}{return}\ ot;}
+\DoxyCodeLine{00143\ \}}
+\DoxyCodeLine{00144\ }
+\DoxyCodeLine{00145\ \textcolor{comment}{/*\ Compare\ two\ time\ values,\ return\ -\/1\ if\ less,\ 1\ if\ greater\ and\ 0\ if\ equal\ */}}
+\DoxyCodeLine{00146\ \textcolor{keyword}{static}\ ossl\_unused\ ossl\_inline}
+\DoxyCodeLine{00147\ \textcolor{keywordtype}{int}\ ossl\_time\_compare(\mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ a,\ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ \mbox{\hyperlink{structb}{b}})}
+\DoxyCodeLine{00148\ \{}
+\DoxyCodeLine{00149\ \ \ \ \ \textcolor{keywordflow}{if}\ (a.t\ >\ \mbox{\hyperlink{structb}{b}}.t)}
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00151\ \ \ \ \ \textcolor{keywordflow}{if}\ (a.t\ <\ \mbox{\hyperlink{structb}{b}}.t)}
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ -\/1;}
+\DoxyCodeLine{00153\ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00154\ \}}
+\DoxyCodeLine{00155\ }
+\DoxyCodeLine{00156\ \textcolor{comment}{/*\ Returns\ true\ if\ an\ OSSL\_TIME\ is\ ossl\_time\_zero().\ */}}
+\DoxyCodeLine{00157\ \textcolor{keyword}{static}\ ossl\_unused\ ossl\_inline}
+\DoxyCodeLine{00158\ \textcolor{keywordtype}{int}\ ossl\_time\_is\_zero(\mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ t)}
+\DoxyCodeLine{00159\ \{}
+\DoxyCodeLine{00160\ \ \ \ \ \textcolor{keywordflow}{return}\ ossl\_time\_compare(t,\ ossl\_time\_zero())\ ==\ 0;}
+\DoxyCodeLine{00161\ \}}
+\DoxyCodeLine{00162\ }
+\DoxyCodeLine{00163\ \textcolor{comment}{/*\ Returns\ true\ if\ an\ OSSL\_TIME\ is\ ossl\_time\_infinite().\ */}}
+\DoxyCodeLine{00164\ \textcolor{keyword}{static}\ ossl\_unused\ ossl\_inline}
+\DoxyCodeLine{00165\ \textcolor{keywordtype}{int}\ ossl\_time\_is\_infinite(\mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ t)}
+\DoxyCodeLine{00166\ \{}
+\DoxyCodeLine{00167\ \ \ \ \ \textcolor{keywordflow}{return}\ ossl\_time\_compare(t,\ ossl\_time\_infinite())\ ==\ 0;}
+\DoxyCodeLine{00168\ \}}
+\DoxyCodeLine{00169\ }
+\DoxyCodeLine{00170\ \textcolor{keyword}{static}\ ossl\_unused\ ossl\_inline}
+\DoxyCodeLine{00171\ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ ossl\_time\_add(\mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ a,\ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ \mbox{\hyperlink{structb}{b}})}
+\DoxyCodeLine{00172\ \{}
+\DoxyCodeLine{00173\ \ \ \ \ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ r;}
+\DoxyCodeLine{00174\ \ \ \ \ \textcolor{keywordtype}{int}\ err\ =\ 0;}
+\DoxyCodeLine{00175\ }
+\DoxyCodeLine{00176\ \ \ \ \ r.t\ =\ safe\_add\_time(a.t,\ \mbox{\hyperlink{structb}{b}}.t,\ \&err);}
+\DoxyCodeLine{00177\ \ \ \ \ \textcolor{keywordflow}{return}\ err\ ?\ ossl\_time\_infinite()\ :\ r;}
+\DoxyCodeLine{00178\ \}}
+\DoxyCodeLine{00179\ }
+\DoxyCodeLine{00180\ \textcolor{keyword}{static}\ ossl\_unused\ ossl\_inline}
+\DoxyCodeLine{00181\ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ ossl\_time\_subtract(\mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ a,\ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ \mbox{\hyperlink{structb}{b}})}
+\DoxyCodeLine{00182\ \{}
+\DoxyCodeLine{00183\ \ \ \ \ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ r;}
+\DoxyCodeLine{00184\ \ \ \ \ \textcolor{keywordtype}{int}\ err\ =\ 0;}
+\DoxyCodeLine{00185\ }
+\DoxyCodeLine{00186\ \ \ \ \ r.t\ =\ safe\_sub\_time(a.t,\ \mbox{\hyperlink{structb}{b}}.t,\ \&err);}
+\DoxyCodeLine{00187\ \ \ \ \ \textcolor{keywordflow}{return}\ err\ ?\ ossl\_time\_zero()\ :\ r;}
+\DoxyCodeLine{00188\ \}}
+\DoxyCodeLine{00189\ }
+\DoxyCodeLine{00190\ \textcolor{comment}{/*\ Returns\ |a\ -\/\ b|.\ */}}
+\DoxyCodeLine{00191\ \textcolor{keyword}{static}\ ossl\_unused\ ossl\_inline}
+\DoxyCodeLine{00192\ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ ossl\_time\_abs\_difference(\mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ a,\ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ \mbox{\hyperlink{structb}{b}})}
+\DoxyCodeLine{00193\ \{}
+\DoxyCodeLine{00194\ \ \ \ \ \textcolor{keywordflow}{return}\ a.t\ >\ \mbox{\hyperlink{structb}{b}}.t\ ?\ ossl\_time\_subtract(a,\ \mbox{\hyperlink{structb}{b}})}
+\DoxyCodeLine{00195\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ ossl\_time\_subtract(\mbox{\hyperlink{structb}{b}},\ a);}
+\DoxyCodeLine{00196\ \}}
+\DoxyCodeLine{00197\ }
+\DoxyCodeLine{00198\ \textcolor{keyword}{static}\ ossl\_unused\ ossl\_inline}
+\DoxyCodeLine{00199\ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ ossl\_time\_multiply(\mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ a,\ uint64\_t\ \mbox{\hyperlink{structb}{b}})}
+\DoxyCodeLine{00200\ \{}
+\DoxyCodeLine{00201\ \ \ \ \ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ r;}
+\DoxyCodeLine{00202\ \ \ \ \ \textcolor{keywordtype}{int}\ err\ =\ 0;}
+\DoxyCodeLine{00203\ }
+\DoxyCodeLine{00204\ \ \ \ \ r.t\ =\ safe\_mul\_time(a.t,\ \mbox{\hyperlink{structb}{b}},\ \&err);}
+\DoxyCodeLine{00205\ \ \ \ \ \textcolor{keywordflow}{return}\ err\ ?\ ossl\_time\_infinite()\ :\ r;}
+\DoxyCodeLine{00206\ \}}
+\DoxyCodeLine{00207\ }
+\DoxyCodeLine{00208\ \textcolor{keyword}{static}\ ossl\_unused\ ossl\_inline}
+\DoxyCodeLine{00209\ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ ossl\_time\_divide(\mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ a,\ uint64\_t\ \mbox{\hyperlink{structb}{b}})}
+\DoxyCodeLine{00210\ \{}
+\DoxyCodeLine{00211\ \ \ \ \ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ r;}
+\DoxyCodeLine{00212\ \ \ \ \ \textcolor{keywordtype}{int}\ err\ =\ 0;}
+\DoxyCodeLine{00213\ }
+\DoxyCodeLine{00214\ \ \ \ \ r.t\ =\ safe\_div\_time(a.t,\ \mbox{\hyperlink{structb}{b}},\ \&err);}
+\DoxyCodeLine{00215\ \ \ \ \ \textcolor{keywordflow}{return}\ err\ ?\ ossl\_time\_zero()\ :\ r;}
+\DoxyCodeLine{00216\ \}}
+\DoxyCodeLine{00217\ }
+\DoxyCodeLine{00218\ \textcolor{keyword}{static}\ ossl\_unused\ ossl\_inline}
+\DoxyCodeLine{00219\ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ ossl\_time\_muldiv(\mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ a,\ uint64\_t\ \mbox{\hyperlink{structb}{b}},\ uint64\_t\ c)}
+\DoxyCodeLine{00220\ \{}
+\DoxyCodeLine{00221\ \ \ \ \ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ r;}
+\DoxyCodeLine{00222\ \ \ \ \ \textcolor{keywordtype}{int}\ err\ =\ 0;}
+\DoxyCodeLine{00223\ }
+\DoxyCodeLine{00224\ \ \ \ \ r.t\ =\ safe\_muldiv\_time(a.t,\ \mbox{\hyperlink{structb}{b}},\ c,\ \&err);}
+\DoxyCodeLine{00225\ \ \ \ \ \textcolor{keywordflow}{return}\ err\ ?\ ossl\_time\_zero()\ :\ r;}
+\DoxyCodeLine{00226\ \}}
+\DoxyCodeLine{00227\ }
+\DoxyCodeLine{00228\ \textcolor{comment}{/*\ Return\ higher\ of\ the\ two\ given\ time\ values.\ */}}
+\DoxyCodeLine{00229\ \textcolor{keyword}{static}\ ossl\_unused\ ossl\_inline}
+\DoxyCodeLine{00230\ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ ossl\_time\_max(\mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ a,\ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ \mbox{\hyperlink{structb}{b}})}
+\DoxyCodeLine{00231\ \{}
+\DoxyCodeLine{00232\ \ \ \ \ \textcolor{keywordflow}{return}\ a.t\ >\ \mbox{\hyperlink{structb}{b}}.t\ ?\ a\ :\ \mbox{\hyperlink{structb}{b}};}
+\DoxyCodeLine{00233\ \}}
+\DoxyCodeLine{00234\ }
+\DoxyCodeLine{00235\ \textcolor{comment}{/*\ Return\ the\ lower\ of\ the\ two\ given\ time\ values.\ */}}
+\DoxyCodeLine{00236\ \textcolor{keyword}{static}\ ossl\_unused\ ossl\_inline}
+\DoxyCodeLine{00237\ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ ossl\_time\_min(\mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ a,\ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ \mbox{\hyperlink{structb}{b}})}
+\DoxyCodeLine{00238\ \{}
+\DoxyCodeLine{00239\ \ \ \ \ \textcolor{keywordflow}{return}\ a.t\ <\ \mbox{\hyperlink{structb}{b}}.t\ ?\ a\ :\ \mbox{\hyperlink{structb}{b}};}
+\DoxyCodeLine{00240\ \}}
+\DoxyCodeLine{00241\ }
+\DoxyCodeLine{00242\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

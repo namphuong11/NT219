@@ -1,0 +1,350 @@
+\doxysection{names.\+h}
+\hypertarget{providers_2implementations_2include_2prov_2names_8h_source}{}\label{providers_2implementations_2include_2prov_2names_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/providers/implementations/include/prov/names.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/providers/implementations/include/prov/names.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2021-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ *\ Macros\ for\ use\ as\ names\ and\ descriptions\ in\ our\ providers'\ OSSL\_ALGORITHM.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ *\ All\ the\ strings\ are\ formatted\ the\ same\ way:}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ *\ \ \ \ \ Our\ primary\ name[:other\ names][:numeric\ OID]}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ *\ 'other\ names'\ include\ historical\ OpenSSL\ names,\ NIST\ names,\ ASN.1\ OBJECT}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ *\ IDENTIFIER\ names,\ and\ commonly\ known\ aliases.}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00020\ \textcolor{comment}{\ *\ Where\ it\ matters,\ our\ primary\ names\ follow\ this\ format:}}
+\DoxyCodeLine{00021\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00022\ \textcolor{comment}{\ *\ \ \ \ \ ALGNAME[VERSION?][-\/SUBNAME[VERSION?]?][-\/SIZE?][-\/MODE?]}}
+\DoxyCodeLine{00023\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00024\ \textcolor{comment}{\ *\ \ \ \ \ VERSION\ is\ only\ present\ if\ there\ are\ multiple\ versions\ of}}
+\DoxyCodeLine{00025\ \textcolor{comment}{\ *\ \ \ \ \ an\ alg\ (MD2,\ MD4,\ MD5).\ \ It\ may\ be\ omitted\ if\ there\ is\ only}}
+\DoxyCodeLine{00026\ \textcolor{comment}{\ *\ \ \ \ \ one\ version\ (if\ a\ subsequent\ version\ is\ released\ in\ the\ future,}}
+\DoxyCodeLine{00027\ \textcolor{comment}{\ *\ \ \ \ \ we\ can\ always\ change\ the\ canonical\ name,\ and\ add\ the\ old\ name}}
+\DoxyCodeLine{00028\ \textcolor{comment}{\ *\ \ \ \ \ as\ an\ alias).}}
+\DoxyCodeLine{00029\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00030\ \textcolor{comment}{\ *\ \ \ \ \ SUBNAME\ may\ be\ present\ where\ we\ are\ combining\ multiple}}
+\DoxyCodeLine{00031\ \textcolor{comment}{\ *\ \ \ \ \ algorithms\ together,\ e.g.\ MD5-\/SHA1.}}
+\DoxyCodeLine{00032\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00033\ \textcolor{comment}{\ *\ \ \ \ \ SIZE\ is\ only\ present\ if\ multiple\ versions\ of\ an\ algorithm\ exist}}
+\DoxyCodeLine{00034\ \textcolor{comment}{\ *\ \ \ \ \ with\ different\ sizes\ (e.g.\ AES-\/128-\/CBC,\ AES-\/256-\/CBC)}}
+\DoxyCodeLine{00035\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00036\ \textcolor{comment}{\ *\ \ \ \ \ MODE\ is\ only\ present\ where\ applicable.}}
+\DoxyCodeLine{00037\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00040\ \textcolor{comment}{\ *\ Symmetric\ ciphers}}
+\DoxyCodeLine{00041\ \textcolor{comment}{\ *\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00042\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00043\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_AES\_256\_ECB\ "{}AES-\/256-\/ECB:2.16.840.1.101.3.4.1.41"{}}}
+\DoxyCodeLine{00044\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_AES\_192\_ECB\ "{}AES-\/192-\/ECB:2.16.840.1.101.3.4.1.21"{}}}
+\DoxyCodeLine{00045\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_AES\_128\_ECB\ "{}AES-\/128-\/ECB:2.16.840.1.101.3.4.1.1"{}}}
+\DoxyCodeLine{00046\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_AES\_256\_CBC\ "{}AES-\/256-\/CBC:AES256:2.16.840.1.101.3.4.1.42"{}}}
+\DoxyCodeLine{00047\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_AES\_192\_CBC\ "{}AES-\/192-\/CBC:AES192:2.16.840.1.101.3.4.1.22"{}}}
+\DoxyCodeLine{00048\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_AES\_128\_CBC\ "{}AES-\/128-\/CBC:AES128:2.16.840.1.101.3.4.1.2"{}}}
+\DoxyCodeLine{00049\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_AES\_256\_CBC\_CTS\ "{}AES-\/256-\/CBC-\/CTS"{}}}
+\DoxyCodeLine{00050\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_AES\_192\_CBC\_CTS\ "{}AES-\/192-\/CBC-\/CTS"{}}}
+\DoxyCodeLine{00051\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_AES\_128\_CBC\_CTS\ "{}AES-\/128-\/CBC-\/CTS"{}}}
+\DoxyCodeLine{00052\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_AES\_256\_OFB\ "{}AES-\/256-\/OFB:2.16.840.1.101.3.4.1.43"{}}}
+\DoxyCodeLine{00053\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_AES\_192\_OFB\ "{}AES-\/192-\/OFB:2.16.840.1.101.3.4.1.23"{}}}
+\DoxyCodeLine{00054\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_AES\_128\_OFB\ "{}AES-\/128-\/OFB:2.16.840.1.101.3.4.1.3"{}}}
+\DoxyCodeLine{00055\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_AES\_256\_CFB\ "{}AES-\/256-\/CFB:2.16.840.1.101.3.4.1.44"{}}}
+\DoxyCodeLine{00056\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_AES\_192\_CFB\ "{}AES-\/192-\/CFB:2.16.840.1.101.3.4.1.24"{}}}
+\DoxyCodeLine{00057\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_AES\_128\_CFB\ "{}AES-\/128-\/CFB:2.16.840.1.101.3.4.1.4"{}}}
+\DoxyCodeLine{00058\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_AES\_256\_CFB1\ "{}AES-\/256-\/CFB1"{}}}
+\DoxyCodeLine{00059\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_AES\_192\_CFB1\ "{}AES-\/192-\/CFB1"{}}}
+\DoxyCodeLine{00060\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_AES\_128\_CFB1\ "{}AES-\/128-\/CFB1"{}}}
+\DoxyCodeLine{00061\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_AES\_256\_CFB8\ "{}AES-\/256-\/CFB8"{}}}
+\DoxyCodeLine{00062\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_AES\_192\_CFB8\ "{}AES-\/192-\/CFB8"{}}}
+\DoxyCodeLine{00063\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_AES\_128\_CFB8\ "{}AES-\/128-\/CFB8"{}}}
+\DoxyCodeLine{00064\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_AES\_256\_CTR\ "{}AES-\/256-\/CTR"{}}}
+\DoxyCodeLine{00065\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_AES\_192\_CTR\ "{}AES-\/192-\/CTR"{}}}
+\DoxyCodeLine{00066\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_AES\_128\_CTR\ "{}AES-\/128-\/CTR"{}}}
+\DoxyCodeLine{00067\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_AES\_256\_XTS\ "{}AES-\/256-\/XTS:1.3.111.2.1619.0.1.2"{}}}
+\DoxyCodeLine{00068\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_AES\_128\_XTS\ "{}AES-\/128-\/XTS:1.3.111.2.1619.0.1.1"{}}}
+\DoxyCodeLine{00069\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_AES\_256\_GCM\ "{}AES-\/256-\/GCM:id-\/aes256-\/GCM:2.16.840.1.101.3.4.1.46"{}}}
+\DoxyCodeLine{00070\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_AES\_192\_GCM\ "{}AES-\/192-\/GCM:id-\/aes192-\/GCM:2.16.840.1.101.3.4.1.26"{}}}
+\DoxyCodeLine{00071\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_AES\_128\_GCM\ "{}AES-\/128-\/GCM:id-\/aes128-\/GCM:2.16.840.1.101.3.4.1.6"{}}}
+\DoxyCodeLine{00072\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_AES\_256\_CCM\ "{}AES-\/256-\/CCM:id-\/aes256-\/CCM:2.16.840.1.101.3.4.1.47"{}}}
+\DoxyCodeLine{00073\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_AES\_192\_CCM\ "{}AES-\/192-\/CCM:id-\/aes192-\/CCM:2.16.840.1.101.3.4.1.27"{}}}
+\DoxyCodeLine{00074\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_AES\_128\_CCM\ "{}AES-\/128-\/CCM:id-\/aes128-\/CCM:2.16.840.1.101.3.4.1.7"{}}}
+\DoxyCodeLine{00075\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_AES\_256\_WRAP\ "{}AES-\/256-\/WRAP:id-\/aes256-\/wrap:AES256-\/WRAP:2.16.840.1.101.3.4.1.45"{}}}
+\DoxyCodeLine{00076\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_AES\_192\_WRAP\ "{}AES-\/192-\/WRAP:id-\/aes192-\/wrap:AES192-\/WRAP:2.16.840.1.101.3.4.1.25"{}}}
+\DoxyCodeLine{00077\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_AES\_128\_WRAP\ "{}AES-\/128-\/WRAP:id-\/aes128-\/wrap:AES128-\/WRAP:2.16.840.1.101.3.4.1.5"{}}}
+\DoxyCodeLine{00078\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_AES\_256\_WRAP\_PAD\ "{}AES-\/256-\/WRAP-\/PAD:id-\/aes256-\/wrap-\/pad:AES256-\/WRAP-\/PAD:2.16.840.1.101.3.4.1.48"{}}}
+\DoxyCodeLine{00079\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_AES\_192\_WRAP\_PAD\ "{}AES-\/192-\/WRAP-\/PAD:id-\/aes192-\/wrap-\/pad:AES192-\/WRAP-\/PAD:2.16.840.1.101.3.4.1.28"{}}}
+\DoxyCodeLine{00080\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_AES\_128\_WRAP\_PAD\ "{}AES-\/128-\/WRAP-\/PAD:id-\/aes128-\/wrap-\/pad:AES128-\/WRAP-\/PAD:2.16.840.1.101.3.4.1.8"{}}}
+\DoxyCodeLine{00081\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_AES\_256\_WRAP\_INV\ "{}AES-\/256-\/WRAP-\/INV:AES256-\/WRAP-\/INV"{}}}
+\DoxyCodeLine{00082\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_AES\_192\_WRAP\_INV\ "{}AES-\/192-\/WRAP-\/INV:AES192-\/WRAP-\/INV"{}}}
+\DoxyCodeLine{00083\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_AES\_128\_WRAP\_INV\ "{}AES-\/128-\/WRAP-\/INV:AES128-\/WRAP-\/INV"{}}}
+\DoxyCodeLine{00084\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_AES\_256\_WRAP\_PAD\_INV\ "{}AES-\/256-\/WRAP-\/PAD-\/INV:AES256-\/WRAP-\/PAD-\/INV"{}}}
+\DoxyCodeLine{00085\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_AES\_192\_WRAP\_PAD\_INV\ "{}AES-\/192-\/WRAP-\/PAD-\/INV:AES192-\/WRAP-\/PAD-\/INV"{}}}
+\DoxyCodeLine{00086\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_AES\_128\_WRAP\_PAD\_INV\ "{}AES-\/128-\/WRAP-\/PAD-\/INV:AES128-\/WRAP-\/PAD-\/INV"{}}}
+\DoxyCodeLine{00087\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_AES\_128\_CBC\_HMAC\_SHA1\ "{}AES-\/128-\/CBC-\/HMAC-\/SHA1"{}}}
+\DoxyCodeLine{00088\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_AES\_256\_CBC\_HMAC\_SHA1\ "{}AES-\/256-\/CBC-\/HMAC-\/SHA1"{}}}
+\DoxyCodeLine{00089\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_AES\_128\_CBC\_HMAC\_SHA256\ "{}AES-\/128-\/CBC-\/HMAC-\/SHA256"{}}}
+\DoxyCodeLine{00090\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_AES\_256\_CBC\_HMAC\_SHA256\ "{}AES-\/256-\/CBC-\/HMAC-\/SHA256"{}}}
+\DoxyCodeLine{00091\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_DES\_EDE3\_ECB\ "{}DES-\/EDE3-\/ECB:DES-\/EDE3"{}}}
+\DoxyCodeLine{00092\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_DES\_EDE3\_CBC\ "{}DES-\/EDE3-\/CBC:DES3:1.2.840.113549.3.7"{}}}
+\DoxyCodeLine{00093\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_NULL\ "{}NULL"{}}}
+\DoxyCodeLine{00094\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_AES\_256\_OCB\ "{}AES-\/256-\/OCB"{}}}
+\DoxyCodeLine{00095\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_AES\_192\_OCB\ "{}AES-\/192-\/OCB"{}}}
+\DoxyCodeLine{00096\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_AES\_128\_OCB\ "{}AES-\/128-\/OCB"{}}}
+\DoxyCodeLine{00097\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_AES\_128\_SIV\ "{}AES-\/128-\/SIV"{}}}
+\DoxyCodeLine{00098\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_AES\_192\_SIV\ "{}AES-\/192-\/SIV"{}}}
+\DoxyCodeLine{00099\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_AES\_256\_SIV\ "{}AES-\/256-\/SIV"{}}}
+\DoxyCodeLine{00100\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_AES\_128\_GCM\_SIV\ "{}AES-\/128-\/GCM-\/SIV"{}}}
+\DoxyCodeLine{00101\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_AES\_192\_GCM\_SIV\ "{}AES-\/192-\/GCM-\/SIV"{}}}
+\DoxyCodeLine{00102\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_AES\_256\_GCM\_SIV\ "{}AES-\/256-\/GCM-\/SIV"{}}}
+\DoxyCodeLine{00103\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_ARIA\_256\_GCM\ "{}ARIA-\/256-\/GCM:1.2.410.200046.1.1.36"{}}}
+\DoxyCodeLine{00104\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_ARIA\_192\_GCM\ "{}ARIA-\/192-\/GCM:1.2.410.200046.1.1.35"{}}}
+\DoxyCodeLine{00105\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_ARIA\_128\_GCM\ "{}ARIA-\/128-\/GCM:1.2.410.200046.1.1.34"{}}}
+\DoxyCodeLine{00106\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_ARIA\_256\_CCM\ "{}ARIA-\/256-\/CCM:1.2.410.200046.1.1.39"{}}}
+\DoxyCodeLine{00107\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_ARIA\_192\_CCM\ "{}ARIA-\/192-\/CCM:1.2.410.200046.1.1.38"{}}}
+\DoxyCodeLine{00108\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_ARIA\_128\_CCM\ "{}ARIA-\/128-\/CCM:1.2.410.200046.1.1.37"{}}}
+\DoxyCodeLine{00109\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_ARIA\_256\_ECB\ "{}ARIA-\/256-\/ECB:1.2.410.200046.1.1.11"{}}}
+\DoxyCodeLine{00110\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_ARIA\_192\_ECB\ "{}ARIA-\/192-\/ECB:1.2.410.200046.1.1.6"{}}}
+\DoxyCodeLine{00111\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_ARIA\_128\_ECB\ "{}ARIA-\/128-\/ECB:1.2.410.200046.1.1.1"{}}}
+\DoxyCodeLine{00112\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_ARIA\_256\_CBC\ "{}ARIA-\/256-\/CBC:ARIA256:1.2.410.200046.1.1.12"{}}}
+\DoxyCodeLine{00113\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_ARIA\_192\_CBC\ "{}ARIA-\/192-\/CBC:ARIA192:1.2.410.200046.1.1.7"{}}}
+\DoxyCodeLine{00114\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_ARIA\_128\_CBC\ "{}ARIA-\/128-\/CBC:ARIA128:1.2.410.200046.1.1.2"{}}}
+\DoxyCodeLine{00115\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_ARIA\_256\_OFB\ "{}ARIA-\/256-\/OFB:1.2.410.200046.1.1.14"{}}}
+\DoxyCodeLine{00116\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_ARIA\_192\_OFB\ "{}ARIA-\/192-\/OFB:1.2.410.200046.1.1.9"{}}}
+\DoxyCodeLine{00117\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_ARIA\_128\_OFB\ "{}ARIA-\/128-\/OFB:1.2.410.200046.1.1.4"{}}}
+\DoxyCodeLine{00118\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_ARIA\_256\_CFB\ "{}ARIA-\/256-\/CFB:1.2.410.200046.1.1.13"{}}}
+\DoxyCodeLine{00119\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_ARIA\_192\_CFB\ "{}ARIA-\/192-\/CFB:1.2.410.200046.1.1.8"{}}}
+\DoxyCodeLine{00120\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_ARIA\_128\_CFB\ "{}ARIA-\/128-\/CFB:1.2.410.200046.1.1.3"{}}}
+\DoxyCodeLine{00121\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_ARIA\_256\_CFB1\ "{}ARIA-\/256-\/CFB1"{}}}
+\DoxyCodeLine{00122\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_ARIA\_192\_CFB1\ "{}ARIA-\/192-\/CFB1"{}}}
+\DoxyCodeLine{00123\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_ARIA\_128\_CFB1\ "{}ARIA-\/128-\/CFB1"{}}}
+\DoxyCodeLine{00124\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_ARIA\_256\_CFB8\ "{}ARIA-\/256-\/CFB8"{}}}
+\DoxyCodeLine{00125\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_ARIA\_192\_CFB8\ "{}ARIA-\/192-\/CFB8"{}}}
+\DoxyCodeLine{00126\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_ARIA\_128\_CFB8\ "{}ARIA-\/128-\/CFB8"{}}}
+\DoxyCodeLine{00127\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_ARIA\_256\_CTR\ "{}ARIA-\/256-\/CTR:1.2.410.200046.1.1.15"{}}}
+\DoxyCodeLine{00128\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_ARIA\_192\_CTR\ "{}ARIA-\/192-\/CTR:1.2.410.200046.1.1.10"{}}}
+\DoxyCodeLine{00129\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_ARIA\_128\_CTR\ "{}ARIA-\/128-\/CTR:1.2.410.200046.1.1.5"{}}}
+\DoxyCodeLine{00130\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_CAMELLIA\_256\_ECB\ "{}CAMELLIA-\/256-\/ECB:0.3.4401.5.3.1.9.41"{}}}
+\DoxyCodeLine{00131\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_CAMELLIA\_192\_ECB\ "{}CAMELLIA-\/192-\/ECB:0.3.4401.5.3.1.9.21"{}}}
+\DoxyCodeLine{00132\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_CAMELLIA\_128\_ECB\ "{}CAMELLIA-\/128-\/ECB:0.3.4401.5.3.1.9.1"{}}}
+\DoxyCodeLine{00133\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_CAMELLIA\_256\_CBC\ "{}CAMELLIA-\/256-\/CBC:CAMELLIA256:1.2.392.200011.61.1.1.1.4"{}}}
+\DoxyCodeLine{00134\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_CAMELLIA\_192\_CBC\ "{}CAMELLIA-\/192-\/CBC:CAMELLIA192:1.2.392.200011.61.1.1.1.3"{}}}
+\DoxyCodeLine{00135\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_CAMELLIA\_128\_CBC\ "{}CAMELLIA-\/128-\/CBC:CAMELLIA128:1.2.392.200011.61.1.1.1.2"{}}}
+\DoxyCodeLine{00136\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_CAMELLIA\_256\_CBC\_CTS\ "{}CAMELLIA-\/256-\/CBC-\/CTS"{}}}
+\DoxyCodeLine{00137\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_CAMELLIA\_192\_CBC\_CTS\ "{}CAMELLIA-\/192-\/CBC-\/CTS"{}}}
+\DoxyCodeLine{00138\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_CAMELLIA\_128\_CBC\_CTS\ "{}CAMELLIA-\/128-\/CBC-\/CTS"{}}}
+\DoxyCodeLine{00139\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_CAMELLIA\_256\_OFB\ "{}CAMELLIA-\/256-\/OFB:0.3.4401.5.3.1.9.43"{}}}
+\DoxyCodeLine{00140\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_CAMELLIA\_192\_OFB\ "{}CAMELLIA-\/192-\/OFB:0.3.4401.5.3.1.9.23"{}}}
+\DoxyCodeLine{00141\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_CAMELLIA\_128\_OFB\ "{}CAMELLIA-\/128-\/OFB:0.3.4401.5.3.1.9.3"{}}}
+\DoxyCodeLine{00142\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_CAMELLIA\_256\_CFB\ "{}CAMELLIA-\/256-\/CFB:0.3.4401.5.3.1.9.44"{}}}
+\DoxyCodeLine{00143\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_CAMELLIA\_192\_CFB\ "{}CAMELLIA-\/192-\/CFB:0.3.4401.5.3.1.9.24"{}}}
+\DoxyCodeLine{00144\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_CAMELLIA\_128\_CFB\ "{}CAMELLIA-\/128-\/CFB:0.3.4401.5.3.1.9.4"{}}}
+\DoxyCodeLine{00145\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_CAMELLIA\_256\_CFB1\ "{}CAMELLIA-\/256-\/CFB1"{}}}
+\DoxyCodeLine{00146\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_CAMELLIA\_192\_CFB1\ "{}CAMELLIA-\/192-\/CFB1"{}}}
+\DoxyCodeLine{00147\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_CAMELLIA\_128\_CFB1\ "{}CAMELLIA-\/128-\/CFB1"{}}}
+\DoxyCodeLine{00148\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_CAMELLIA\_256\_CFB8\ "{}CAMELLIA-\/256-\/CFB8"{}}}
+\DoxyCodeLine{00149\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_CAMELLIA\_192\_CFB8\ "{}CAMELLIA-\/192-\/CFB8"{}}}
+\DoxyCodeLine{00150\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_CAMELLIA\_128\_CFB8\ "{}CAMELLIA-\/128-\/CFB8"{}}}
+\DoxyCodeLine{00151\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_CAMELLIA\_256\_CTR\ "{}CAMELLIA-\/256-\/CTR:0.3.4401.5.3.1.9.49"{}}}
+\DoxyCodeLine{00152\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_CAMELLIA\_192\_CTR\ "{}CAMELLIA-\/192-\/CTR:0.3.4401.5.3.1.9.29"{}}}
+\DoxyCodeLine{00153\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_CAMELLIA\_128\_CTR\ "{}CAMELLIA-\/128-\/CTR:0.3.4401.5.3.1.9.9"{}}}
+\DoxyCodeLine{00154\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_DES\_EDE3\_OFB\ "{}DES-\/EDE3-\/OFB"{}}}
+\DoxyCodeLine{00155\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_DES\_EDE3\_CFB\ "{}DES-\/EDE3-\/CFB"{}}}
+\DoxyCodeLine{00156\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_DES\_EDE3\_CFB8\ "{}DES-\/EDE3-\/CFB8"{}}}
+\DoxyCodeLine{00157\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_DES\_EDE3\_CFB1\ "{}DES-\/EDE3-\/CFB1"{}}}
+\DoxyCodeLine{00158\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_DES3\_WRAP\ "{}DES3-\/WRAP:id-\/smime-\/alg-\/CMS3DESwrap:1.2.840.113549.1.9.16.3.6"{}}}
+\DoxyCodeLine{00159\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_DES\_EDE\_ECB\ "{}DES-\/EDE-\/ECB:DES-\/EDE:1.3.14.3.2.17"{}}}
+\DoxyCodeLine{00160\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_DES\_EDE\_CBC\ "{}DES-\/EDE-\/CBC"{}}}
+\DoxyCodeLine{00161\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_DES\_EDE\_OFB\ "{}DES-\/EDE-\/OFB"{}}}
+\DoxyCodeLine{00162\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_DES\_EDE\_CFB\ "{}DES-\/EDE-\/CFB"{}}}
+\DoxyCodeLine{00163\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_SM4\_ECB\ "{}SM4-\/ECB:1.2.156.10197.1.104.1"{}}}
+\DoxyCodeLine{00164\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_SM4\_CBC\ "{}SM4-\/CBC:SM4:1.2.156.10197.1.104.2"{}}}
+\DoxyCodeLine{00165\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_SM4\_CTR\ "{}SM4-\/CTR:1.2.156.10197.1.104.7"{}}}
+\DoxyCodeLine{00166\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_SM4\_OFB\ "{}SM4-\/OFB:SM4-\/OFB128:1.2.156.10197.1.104.3"{}}}
+\DoxyCodeLine{00167\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_SM4\_CFB\ "{}SM4-\/CFB:SM4-\/CFB128:1.2.156.10197.1.104.4"{}}}
+\DoxyCodeLine{00168\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_SM4\_GCM\ "{}SM4-\/GCM:1.2.156.10197.1.104.8"{}}}
+\DoxyCodeLine{00169\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_SM4\_CCM\ "{}SM4-\/CCM:1.2.156.10197.1.104.9"{}}}
+\DoxyCodeLine{00170\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_SM4\_XTS\ "{}SM4-\/XTS:1.2.156.10197.1.104.10"{}}}
+\DoxyCodeLine{00171\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_ChaCha20\ "{}ChaCha20"{}}}
+\DoxyCodeLine{00172\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_ChaCha20\_Poly1305\ "{}ChaCha20-\/Poly1305"{}}}
+\DoxyCodeLine{00173\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_CAST5\_ECB\ "{}CAST5-\/ECB"{}}}
+\DoxyCodeLine{00174\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_CAST5\_CBC\ "{}CAST5-\/CBC:CAST-\/CBC:CAST:1.2.840.113533.7.66.10"{}}}
+\DoxyCodeLine{00175\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_CAST5\_OFB\ "{}CAST5-\/OFB"{}}}
+\DoxyCodeLine{00176\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_CAST5\_CFB\ "{}CAST5-\/CFB"{}}}
+\DoxyCodeLine{00177\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_BF\_ECB\ "{}BF-\/ECB"{}}}
+\DoxyCodeLine{00178\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_BF\_CBC\ "{}BF-\/CBC:BF:BLOWFISH:1.3.6.1.4.1.3029.1.2"{}}}
+\DoxyCodeLine{00179\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_BF\_OFB\ "{}BF-\/OFB"{}}}
+\DoxyCodeLine{00180\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_BF\_CFB\ "{}BF-\/CFB"{}}}
+\DoxyCodeLine{00181\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_IDEA\_ECB\ "{}IDEA-\/ECB"{}}}
+\DoxyCodeLine{00182\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_IDEA\_CBC\ "{}IDEA-\/CBC:IDEA:1.3.6.1.4.1.188.7.1.1.2"{}}}
+\DoxyCodeLine{00183\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_IDEA\_OFB\ "{}IDEA-\/OFB:IDEA-\/OFB64"{}}}
+\DoxyCodeLine{00184\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_IDEA\_CFB\ "{}IDEA-\/CFB:IDEA-\/CFB64"{}}}
+\DoxyCodeLine{00185\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_SEED\_ECB\ "{}SEED-\/ECB:1.2.410.200004.1.3"{}}}
+\DoxyCodeLine{00186\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_SEED\_CBC\ "{}SEED-\/CBC:SEED:1.2.410.200004.1.4"{}}}
+\DoxyCodeLine{00187\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_SEED\_OFB\ "{}SEED-\/OFB:SEED-\/OFB128:1.2.410.200004.1.6"{}}}
+\DoxyCodeLine{00188\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_SEED\_CFB\ "{}SEED-\/CFB:SEED-\/CFB128:1.2.410.200004.1.5"{}}}
+\DoxyCodeLine{00189\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_RC2\_ECB\ "{}RC2-\/ECB"{}}}
+\DoxyCodeLine{00190\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_RC2\_CBC\ "{}RC2-\/CBC:RC2:RC2-\/128:1.2.840.113549.3.2"{}}}
+\DoxyCodeLine{00191\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_RC2\_40\_CBC\ "{}RC2-\/40-\/CBC:RC2-\/40"{}}}
+\DoxyCodeLine{00192\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_RC2\_64\_CBC\ "{}RC2-\/64-\/CBC:RC2-\/64"{}}}
+\DoxyCodeLine{00193\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_RC2\_CFB\ "{}RC2-\/CFB"{}}}
+\DoxyCodeLine{00194\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_RC2\_OFB\ "{}RC2-\/OFB"{}}}
+\DoxyCodeLine{00195\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_RC4\ "{}RC4:1.2.840.113549.3.4"{}}}
+\DoxyCodeLine{00196\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_RC4\_40\ "{}RC4-\/40"{}}}
+\DoxyCodeLine{00197\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_RC4\_HMAC\_MD5\ "{}RC4-\/HMAC-\/MD5"{}}}
+\DoxyCodeLine{00198\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_RC5\_ECB\ "{}RC5-\/ECB"{}}}
+\DoxyCodeLine{00199\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_RC5\_CBC\ "{}RC5-\/CBC:RC5:1.2.840.113549.3.8"{}}}
+\DoxyCodeLine{00200\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_RC5\_OFB\ "{}RC5-\/OFB"{}}}
+\DoxyCodeLine{00201\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_RC5\_CFB\ "{}RC5-\/CFB"{}}}
+\DoxyCodeLine{00202\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_DESX\_CBC\ "{}DESX-\/CBC:DESX"{}}}
+\DoxyCodeLine{00203\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_DES\_ECB\ "{}DES-\/ECB:1.3.14.3.2.6"{}}}
+\DoxyCodeLine{00204\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_DES\_CBC\ "{}DES-\/CBC:DES:1.3.14.3.2.7"{}}}
+\DoxyCodeLine{00205\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_DES\_OFB\ "{}DES-\/OFB:1.3.14.3.2.8"{}}}
+\DoxyCodeLine{00206\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_DES\_CFB\ "{}DES-\/CFB:1.3.14.3.2.9"{}}}
+\DoxyCodeLine{00207\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_DES\_CFB1\ "{}DES-\/CFB1"{}}}
+\DoxyCodeLine{00208\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_DES\_CFB8\ "{}DES-\/CFB8"{}}}
+\DoxyCodeLine{00209\ }
+\DoxyCodeLine{00210\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00211\ \textcolor{comment}{\ *\ Digests}}
+\DoxyCodeLine{00212\ \textcolor{comment}{\ *\ -\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00213\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00214\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_SHA1\ "{}SHA1:SHA-\/1:SSL3-\/SHA1:1.3.14.3.2.26"{}}}
+\DoxyCodeLine{00215\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_SHA2\_224\ "{}SHA2-\/224:SHA-\/224:SHA224:2.16.840.1.101.3.4.2.4"{}}}
+\DoxyCodeLine{00216\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_SHA2\_256\ "{}SHA2-\/256:SHA-\/256:SHA256:2.16.840.1.101.3.4.2.1"{}}}
+\DoxyCodeLine{00217\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_SHA2\_256\_192\ "{}SHA2-\/256/192:SHA-\/256/192:SHA256-\/192"{}}}
+\DoxyCodeLine{00218\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_SHA2\_384\ "{}SHA2-\/384:SHA-\/384:SHA384:2.16.840.1.101.3.4.2.2"{}}}
+\DoxyCodeLine{00219\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_SHA2\_512\ "{}SHA2-\/512:SHA-\/512:SHA512:2.16.840.1.101.3.4.2.3"{}}}
+\DoxyCodeLine{00220\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_SHA2\_512\_224\ "{}SHA2-\/512/224:SHA-\/512/224:SHA512-\/224:2.16.840.1.101.3.4.2.5"{}}}
+\DoxyCodeLine{00221\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_SHA2\_512\_256\ "{}SHA2-\/512/256:SHA-\/512/256:SHA512-\/256:2.16.840.1.101.3.4.2.6"{}}}
+\DoxyCodeLine{00222\ }
+\DoxyCodeLine{00223\ \textcolor{comment}{/*\ We\ agree\ with\ NIST\ here,\ so\ one\ name\ only\ */}}
+\DoxyCodeLine{00224\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_SHA3\_224\ "{}SHA3-\/224:2.16.840.1.101.3.4.2.7"{}}}
+\DoxyCodeLine{00225\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_SHA3\_256\ "{}SHA3-\/256:2.16.840.1.101.3.4.2.8"{}}}
+\DoxyCodeLine{00226\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_SHA3\_384\ "{}SHA3-\/384:2.16.840.1.101.3.4.2.9"{}}}
+\DoxyCodeLine{00227\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_SHA3\_512\ "{}SHA3-\/512:2.16.840.1.101.3.4.2.10"{}}}
+\DoxyCodeLine{00228\ }
+\DoxyCodeLine{00229\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_KECCAK\_224\ "{}KECCAK-\/224"{}}}
+\DoxyCodeLine{00230\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_KECCAK\_256\ "{}KECCAK-\/256"{}}}
+\DoxyCodeLine{00231\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_KECCAK\_384\ "{}KECCAK-\/384"{}}}
+\DoxyCodeLine{00232\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_KECCAK\_512\ "{}KECCAK-\/512"{}}}
+\DoxyCodeLine{00233\ }
+\DoxyCodeLine{00234\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_SHAKE\_128\ "{}SHAKE-\/128:SHAKE128:2.16.840.1.101.3.4.2.11"{}}}
+\DoxyCodeLine{00235\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_SHAKE\_256\ "{}SHAKE-\/256:SHAKE256:2.16.840.1.101.3.4.2.12"{}}}
+\DoxyCodeLine{00236\ }
+\DoxyCodeLine{00237\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00238\ \textcolor{comment}{\ *\ KECCAK-\/KMAC-\/128\ and\ KECCAK-\/KMAC-\/256\ as\ hashes\ are\ mostly\ useful\ for\ }}
+\DoxyCodeLine{00239\ \textcolor{comment}{\ *\ KMAC128\ and\ KMAC256.}}
+\DoxyCodeLine{00240\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00241\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_KECCAK\_KMAC\_128\ "{}KECCAK-\/KMAC-\/128:KECCAK-\/KMAC128"{}}}
+\DoxyCodeLine{00242\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_KECCAK\_KMAC\_256\ "{}KECCAK-\/KMAC-\/256:KECCAK-\/KMAC256"{}}}
+\DoxyCodeLine{00243\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00244\ \textcolor{comment}{\ *\ https://blake2.net/\ doesn't\ specify\ size\ variants,\ but\ mentions\ that}}
+\DoxyCodeLine{00245\ \textcolor{comment}{\ *\ Bouncy\ Castle\ uses\ the\ names\ BLAKE2b-\/160,\ BLAKE2b-\/256,\ BLAKE2b-\/384,\ and}}
+\DoxyCodeLine{00246\ \textcolor{comment}{\ *\ BLAKE2b-\/512}}
+\DoxyCodeLine{00247\ \textcolor{comment}{\ *\ If\ we\ assume\ that\ "{}2b"{}\ and\ "{}2s"{}\ are\ versions,\ that\ pattern\ fits\ with\ ours.}}
+\DoxyCodeLine{00248\ \textcolor{comment}{\ *\ \ We\ also\ add\ our\ historical\ names.}}
+\DoxyCodeLine{00249\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00250\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_BLAKE2S\_256\ "{}BLAKE2S-\/256:BLAKE2s256:1.3.6.1.4.1.1722.12.2.2.8"{}}}
+\DoxyCodeLine{00251\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_BLAKE2B\_512\ "{}BLAKE2B-\/512:BLAKE2b512:1.3.6.1.4.1.1722.12.2.1.16"{}}}
+\DoxyCodeLine{00252\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_SM3\ "{}SM3:1.2.156.10197.1.401"{}}}
+\DoxyCodeLine{00253\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_MD5\ "{}MD5:SSL3-\/MD5:1.2.840.113549.2.5"{}}}
+\DoxyCodeLine{00254\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_MD5\_SHA1\ "{}MD5-\/SHA1"{}}}
+\DoxyCodeLine{00255\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_MD2\ "{}MD2:1.2.840.113549.2.2"{}}}
+\DoxyCodeLine{00256\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_MD4\ "{}MD4:1.2.840.113549.2.4"{}}}
+\DoxyCodeLine{00257\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_MDC2\ "{}MDC2:2.5.8.3.101"{}}}
+\DoxyCodeLine{00258\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_WHIRLPOOL\ "{}WHIRLPOOL:1.0.10118.3.0.55"{}}}
+\DoxyCodeLine{00259\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_RIPEMD\_160\ "{}RIPEMD-\/160:RIPEMD160:RIPEMD:RMD160:1.3.36.3.2.1"{}}}
+\DoxyCodeLine{00260\ }
+\DoxyCodeLine{00261\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00262\ \textcolor{comment}{\ *\ KDFs\ /\ PRFs}}
+\DoxyCodeLine{00263\ \textcolor{comment}{\ *\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00264\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00265\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_HKDF\ "{}HKDF"{}}}
+\DoxyCodeLine{00266\ \textcolor{preprocessor}{\#define\ PROV\_DESCS\_HKDF\_SIGN\ "{}OpenSSL\ HKDF\ via\ EVP\_PKEY\ implementation"{}}}
+\DoxyCodeLine{00267\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_TLS1\_3\_KDF\ "{}TLS13-\/KDF"{}}}
+\DoxyCodeLine{00268\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_SSKDF\ "{}SSKDF"{}}}
+\DoxyCodeLine{00269\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_PBKDF1\ "{}PBKDF1"{}}}
+\DoxyCodeLine{00270\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_PBKDF2\ "{}PBKDF2:1.2.840.113549.1.5.12"{}}}
+\DoxyCodeLine{00271\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_PVKKDF\ "{}PVKKDF"{}}}
+\DoxyCodeLine{00272\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_SSHKDF\ "{}SSHKDF"{}}}
+\DoxyCodeLine{00273\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_X963KDF\ "{}X963KDF:X942KDF-\/CONCAT"{}}}
+\DoxyCodeLine{00274\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_X942KDF\_ASN1\ "{}X942KDF-\/ASN1:X942KDF"{}}}
+\DoxyCodeLine{00275\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_TLS1\_PRF\ "{}TLS1-\/PRF"{}}}
+\DoxyCodeLine{00276\ \textcolor{preprocessor}{\#define\ PROV\_DESCS\_TLS1\_PRF\_SIGN\ "{}OpenSSL\ TLS1\_PRF\ via\ EVP\_PKEY\ implementation"{}}}
+\DoxyCodeLine{00277\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_KBKDF\ "{}KBKDF"{}}}
+\DoxyCodeLine{00278\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_PKCS12KDF\ "{}PKCS12KDF"{}}}
+\DoxyCodeLine{00279\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_SCRYPT\ "{}SCRYPT:id-\/scrypt:1.3.6.1.4.1.11591.4.11"{}}}
+\DoxyCodeLine{00280\ \textcolor{preprocessor}{\#define\ PROV\_DESCS\_SCRYPT\_SIGN\ "{}OpenSSL\ SCRYPT\ via\ EVP\_PKEY\ implementation"{}}}
+\DoxyCodeLine{00281\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_KRB5KDF\ "{}KRB5KDF"{}}}
+\DoxyCodeLine{00282\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_HMAC\_DRBG\_KDF\ "{}HMAC-\/DRBG-\/KDF"{}}}
+\DoxyCodeLine{00283\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_ARGON2I\ "{}ARGON2I"{}}}
+\DoxyCodeLine{00284\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_ARGON2D\ "{}ARGON2D"{}}}
+\DoxyCodeLine{00285\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_ARGON2ID\ "{}ARGON2ID"{}}}
+\DoxyCodeLine{00286\ }
+\DoxyCodeLine{00287\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00288\ \textcolor{comment}{\ *\ MACs}}
+\DoxyCodeLine{00289\ \textcolor{comment}{\ *\ -\/-\/-\/-\/}}
+\DoxyCodeLine{00290\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00291\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_HMAC\ "{}HMAC"{}}}
+\DoxyCodeLine{00292\ \textcolor{preprocessor}{\#define\ PROV\_DESCS\_HMAC\_SIGN\ "{}OpenSSL\ HMAC\ via\ EVP\_PKEY\ implementation"{}}}
+\DoxyCodeLine{00293\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_CMAC\ "{}CMAC"{}}}
+\DoxyCodeLine{00294\ \textcolor{preprocessor}{\#define\ PROV\_DESCS\_CMAC\_SIGN\ "{}OpenSSL\ CMAC\ via\ EVP\_PKEY\ implementation"{}}}
+\DoxyCodeLine{00295\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_SIPHASH\ "{}SIPHASH"{}}}
+\DoxyCodeLine{00296\ \textcolor{preprocessor}{\#define\ PROV\_DESCS\_SIPHASH\_SIGN\ "{}OpenSSL\ SIPHASH\ via\ EVP\_PKEY\ implementation"{}}}
+\DoxyCodeLine{00297\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_POLY1305\ "{}POLY1305"{}}}
+\DoxyCodeLine{00298\ \textcolor{preprocessor}{\#define\ PROV\_DESCS\_POLY1305\_SIGN\ "{}OpenSSL\ POLY1305\ via\ EVP\_PKEY\ implementation"{}}}
+\DoxyCodeLine{00299\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_GMAC\ "{}GMAC:1.0.9797.3.4"{}}}
+\DoxyCodeLine{00300\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_KMAC\_128\ "{}KMAC-\/128:KMAC128:2.16.840.1.101.3.4.2.19"{}}}
+\DoxyCodeLine{00301\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_KMAC\_256\ "{}KMAC-\/256:KMAC256:2.16.840.1.101.3.4.2.20"{}}}
+\DoxyCodeLine{00302\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_BLAKE2BMAC\ "{}BLAKE2BMAC:1.3.6.1.4.1.1722.12.2.1"{}}}
+\DoxyCodeLine{00303\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_BLAKE2SMAC\ "{}BLAKE2SMAC:1.3.6.1.4.1.1722.12.2.2"{}}}
+\DoxyCodeLine{00304\ }
+\DoxyCodeLine{00305\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00306\ \textcolor{comment}{\ *\ RANDs}}
+\DoxyCodeLine{00307\ \textcolor{comment}{\ *\ -\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00308\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00309\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_CTR\_DRBG\ "{}CTR-\/DRBG"{}}}
+\DoxyCodeLine{00310\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_HASH\_DRBG\ "{}HASH-\/DRBG"{}}}
+\DoxyCodeLine{00311\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_HMAC\_DRBG\ "{}HMAC-\/DRBG"{}}}
+\DoxyCodeLine{00312\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_TEST\_RAND\ "{}TEST-\/RAND"{}}}
+\DoxyCodeLine{00313\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_SEED\_SRC\ "{}SEED-\/SRC"{}}}
+\DoxyCodeLine{00314\ }
+\DoxyCodeLine{00315\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00316\ \textcolor{comment}{\ *\ Asymmetric\ algos}}
+\DoxyCodeLine{00317\ \textcolor{comment}{\ *\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00318\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00319\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_EC\ "{}EC:id-\/ecPublicKey:1.2.840.10045.2.1"{}}}
+\DoxyCodeLine{00320\ \textcolor{preprocessor}{\#define\ PROV\_DESCS\_EC\ "{}OpenSSL\ EC\ implementation"{}}}
+\DoxyCodeLine{00321\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_ECDH\ "{}ECDH"{}}}
+\DoxyCodeLine{00322\ \textcolor{preprocessor}{\#define\ PROV\_DESCS\_ECDH\ "{}OpenSSL\ ECDH\ implementation"{}}}
+\DoxyCodeLine{00323\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_ECDSA\ "{}ECDSA"{}}}
+\DoxyCodeLine{00324\ \textcolor{preprocessor}{\#define\ PROV\_DESCS\_ECDSA\ "{}OpenSSL\ ECDSA\ implementation"{}}}
+\DoxyCodeLine{00325\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_X25519\ "{}X25519:1.3.101.110"{}}}
+\DoxyCodeLine{00326\ \textcolor{preprocessor}{\#define\ PROV\_DESCS\_X25519\ "{}OpenSSL\ X25519\ implementation"{}}}
+\DoxyCodeLine{00327\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_X448\ "{}X448:1.3.101.111"{}}}
+\DoxyCodeLine{00328\ \textcolor{preprocessor}{\#define\ PROV\_DESCS\_X448\ "{}OpenSSL\ X448\ implementation"{}}}
+\DoxyCodeLine{00329\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_ED25519\ "{}ED25519:1.3.101.112"{}}}
+\DoxyCodeLine{00330\ \textcolor{preprocessor}{\#define\ PROV\_DESCS\_ED25519\ "{}OpenSSL\ ED25519\ implementation"{}}}
+\DoxyCodeLine{00331\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_ED448\ "{}ED448:1.3.101.113"{}}}
+\DoxyCodeLine{00332\ \textcolor{preprocessor}{\#define\ PROV\_DESCS\_ED448\ "{}OpenSSL\ ED448\ implementation"{}}}
+\DoxyCodeLine{00333\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_DH\ "{}DH:dhKeyAgreement:1.2.840.113549.1.3.1"{}}}
+\DoxyCodeLine{00334\ \textcolor{preprocessor}{\#define\ PROV\_DESCS\_DH\ "{}OpenSSL\ PKCS\#3\ DH\ implementation"{}}}
+\DoxyCodeLine{00335\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_DHX\ "{}DHX:X9.42\ DH:dhpublicnumber:1.2.840.10046.2.1"{}}}
+\DoxyCodeLine{00336\ \textcolor{preprocessor}{\#define\ PROV\_DESCS\_DHX\ "{}OpenSSL\ X9.42\ DH\ implementation"{}}}
+\DoxyCodeLine{00337\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_DSA\ "{}DSA:dsaEncryption:1.2.840.10040.4.1"{}}}
+\DoxyCodeLine{00338\ \textcolor{preprocessor}{\#define\ PROV\_DESCS\_DSA\ "{}OpenSSL\ DSA\ implementation"{}}}
+\DoxyCodeLine{00339\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_RSA\ "{}RSA:rsaEncryption:1.2.840.113549.1.1.1"{}}}
+\DoxyCodeLine{00340\ \textcolor{preprocessor}{\#define\ PROV\_DESCS\_RSA\ "{}OpenSSL\ RSA\ implementation"{}}}
+\DoxyCodeLine{00341\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_RSA\_PSS\ "{}RSA-\/PSS:RSASSA-\/PSS:1.2.840.113549.1.1.10"{}}}
+\DoxyCodeLine{00342\ \textcolor{preprocessor}{\#define\ PROV\_DESCS\_RSA\_PSS\ "{}OpenSSL\ RSA-\/PSS\ implementation"{}}}
+\DoxyCodeLine{00343\ \textcolor{preprocessor}{\#define\ PROV\_NAMES\_SM2\ "{}SM2:1.2.156.10197.1.301"{}}}
+\DoxyCodeLine{00344\ \textcolor{preprocessor}{\#define\ PROV\_DESCS\_SM2\ "{}OpenSSL\ SM2\ implementation"{}}}
+
+\end{DoxyCode}

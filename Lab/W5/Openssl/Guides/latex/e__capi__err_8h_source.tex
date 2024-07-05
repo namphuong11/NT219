@@ -1,0 +1,63 @@
+\doxysection{e\+\_\+capi\+\_\+err.\+h}
+\hypertarget{e__capi__err_8h_source}{}\label{e__capi__err_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/engines/e\_capi\_err.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/engines/e\_capi\_err.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Generated\ by\ util/mkerr.pl\ DO\ NOT\ EDIT}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *\ Copyright\ 1995-\/2022\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#ifndef\ OSSL\_E\_CAPI\_ERR\_H}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#\ define\ OSSL\_E\_CAPI\_ERR\_H}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#\ pragma\ once}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#\ include\ <openssl/opensslconf.h>}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#\ include\ <openssl/symhacks.h>}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#\ define\ CAPIerr(f,\ r)\ ERR\_CAPI\_error(0,\ (r),\ OPENSSL\_FILE,\ OPENSSL\_LINE)}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#\ define\ ERR\_R\_CAPI\_LIB\ ERR\_CAPI\_lib()}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00024\ \textcolor{comment}{\ *\ CAPI\ reason\ codes.}}
+\DoxyCodeLine{00025\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#\ define\ CAPI\_R\_CANT\_CREATE\_HASH\_OBJECT\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 100}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#\ define\ CAPI\_R\_CANT\_FIND\_CAPI\_CONTEXT\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 101}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#\ define\ CAPI\_R\_CANT\_GET\_KEY\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 102}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#\ define\ CAPI\_R\_CANT\_SET\_HASH\_VALUE\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 103}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#\ define\ CAPI\_R\_CRYPTACQUIRECONTEXT\_ERROR\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 104}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#\ define\ CAPI\_R\_CRYPTENUMPROVIDERS\_ERROR\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 105}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#\ define\ CAPI\_R\_DECRYPT\_ERROR\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 106}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#\ define\ CAPI\_R\_ENGINE\_NOT\_INITIALIZED\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 107}}
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#\ define\ CAPI\_R\_ENUMCONTAINERS\_ERROR\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 108}}
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#\ define\ CAPI\_R\_ERROR\_ADDING\_CERT\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 109}}
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#\ define\ CAPI\_R\_ERROR\_CREATING\_STORE\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 110}}
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#\ define\ CAPI\_R\_ERROR\_GETTING\_FRIENDLY\_NAME\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 111}}
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#\ define\ CAPI\_R\_ERROR\_GETTING\_KEY\_PROVIDER\_INFO\ \ \ \ \ \ \ \ \ \ \ 112}}
+\DoxyCodeLine{00039\ \textcolor{preprocessor}{\#\ define\ CAPI\_R\_ERROR\_OPENING\_STORE\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 113}}
+\DoxyCodeLine{00040\ \textcolor{preprocessor}{\#\ define\ CAPI\_R\_ERROR\_SIGNING\_HASH\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 114}}
+\DoxyCodeLine{00041\ \textcolor{preprocessor}{\#\ define\ CAPI\_R\_FILE\_OPEN\_ERROR\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 115}}
+\DoxyCodeLine{00042\ \textcolor{preprocessor}{\#\ define\ CAPI\_R\_FUNCTION\_NOT\_SUPPORTED\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 116}}
+\DoxyCodeLine{00043\ \textcolor{preprocessor}{\#\ define\ CAPI\_R\_GETUSERKEY\_ERROR\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 117}}
+\DoxyCodeLine{00044\ \textcolor{preprocessor}{\#\ define\ CAPI\_R\_INVALID\_DIGEST\_LENGTH\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 118}}
+\DoxyCodeLine{00045\ \textcolor{preprocessor}{\#\ define\ CAPI\_R\_INVALID\_DSA\_PUBLIC\_KEY\_BLOB\_MAGIC\_NUMBER\ \ 119}}
+\DoxyCodeLine{00046\ \textcolor{preprocessor}{\#\ define\ CAPI\_R\_INVALID\_LOOKUP\_METHOD\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 120}}
+\DoxyCodeLine{00047\ \textcolor{preprocessor}{\#\ define\ CAPI\_R\_INVALID\_PUBLIC\_KEY\_BLOB\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 121}}
+\DoxyCodeLine{00048\ \textcolor{preprocessor}{\#\ define\ CAPI\_R\_INVALID\_RSA\_PUBLIC\_KEY\_BLOB\_MAGIC\_NUMBER\ \ 122}}
+\DoxyCodeLine{00049\ \textcolor{preprocessor}{\#\ define\ CAPI\_R\_PUBKEY\_EXPORT\_ERROR\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 123}}
+\DoxyCodeLine{00050\ \textcolor{preprocessor}{\#\ define\ CAPI\_R\_PUBKEY\_EXPORT\_LENGTH\_ERROR\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 124}}
+\DoxyCodeLine{00051\ \textcolor{preprocessor}{\#\ define\ CAPI\_R\_UNKNOWN\_COMMAND\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 125}}
+\DoxyCodeLine{00052\ \textcolor{preprocessor}{\#\ define\ CAPI\_R\_UNSUPPORTED\_ALGORITHM\_NID\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 126}}
+\DoxyCodeLine{00053\ \textcolor{preprocessor}{\#\ define\ CAPI\_R\_UNSUPPORTED\_PADDING\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 127}}
+\DoxyCodeLine{00054\ \textcolor{preprocessor}{\#\ define\ CAPI\_R\_UNSUPPORTED\_PUBLIC\_KEY\_ALGORITHM\ \ \ \ \ \ \ \ \ \ 128}}
+\DoxyCodeLine{00055\ \textcolor{preprocessor}{\#\ define\ CAPI\_R\_WIN32\_ERROR\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 129}}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

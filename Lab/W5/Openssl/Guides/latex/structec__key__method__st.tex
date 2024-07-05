@@ -1,0 +1,55 @@
+\doxysection{ec\+\_\+key\+\_\+method\+\_\+st Struct Reference}
+\hypertarget{structec__key__method__st}{}\label{structec__key__method__st}\index{ec\_key\_method\_st@{ec\_key\_method\_st}}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{structec__key__method__st_afe381805f167620ea10c8bf8c41d6de7}\label{structec__key__method__st_afe381805f167620ea10c8bf8c41d6de7} 
+const char \texorpdfstring{$\ast$}{*} {\bfseries name}
+\item 
+\Hypertarget{structec__key__method__st_a689021d5c9b0387683595c57c863881e}\label{structec__key__method__st_a689021d5c9b0387683595c57c863881e} 
+int32\+\_\+t {\bfseries flags}
+\item 
+\Hypertarget{structec__key__method__st_a2ee1200ce551cf3d0aec15f81a523748}\label{structec__key__method__st_a2ee1200ce551cf3d0aec15f81a523748} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries init} )(EC\+\_\+\+KEY \texorpdfstring{$\ast$}{*}key)
+\item 
+\Hypertarget{structec__key__method__st_a5ad486b5371585d5da3f24d82a170f7f}\label{structec__key__method__st_a5ad486b5371585d5da3f24d82a170f7f} 
+void(\texorpdfstring{$\ast$}{*} {\bfseries finish} )(EC\+\_\+\+KEY \texorpdfstring{$\ast$}{*}key)
+\item 
+\Hypertarget{structec__key__method__st_a6fd451e2e04b1bdc967eb6232185ba22}\label{structec__key__method__st_a6fd451e2e04b1bdc967eb6232185ba22} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries copy} )(EC\+\_\+\+KEY \texorpdfstring{$\ast$}{*}dest, const EC\+\_\+\+KEY \texorpdfstring{$\ast$}{*}src)
+\item 
+\Hypertarget{structec__key__method__st_a05a220ba775745efdec55afb40dd008f}\label{structec__key__method__st_a05a220ba775745efdec55afb40dd008f} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries set\+\_\+group} )(EC\+\_\+\+KEY \texorpdfstring{$\ast$}{*}key, const EC\+\_\+\+GROUP \texorpdfstring{$\ast$}{*}grp)
+\item 
+\Hypertarget{structec__key__method__st_a10aabc7ff8b779ed11e895c526819993}\label{structec__key__method__st_a10aabc7ff8b779ed11e895c526819993} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries set\+\_\+private} )(EC\+\_\+\+KEY \texorpdfstring{$\ast$}{*}key, const BIGNUM \texorpdfstring{$\ast$}{*}priv\+\_\+key)
+\item 
+\Hypertarget{structec__key__method__st_aaa6b1c669d678b82aedc16c0276162b8}\label{structec__key__method__st_aaa6b1c669d678b82aedc16c0276162b8} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries set\+\_\+public} )(EC\+\_\+\+KEY \texorpdfstring{$\ast$}{*}key, const EC\+\_\+\+POINT \texorpdfstring{$\ast$}{*}pub\+\_\+key)
+\item 
+\Hypertarget{structec__key__method__st_a1f13ba5b943f6ea05898c01bdef3d31e}\label{structec__key__method__st_a1f13ba5b943f6ea05898c01bdef3d31e} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries keygen} )(EC\+\_\+\+KEY \texorpdfstring{$\ast$}{*}key)
+\item 
+\Hypertarget{structec__key__method__st_aef1597438be7c20a26280c9b59f75175}\label{structec__key__method__st_aef1597438be7c20a26280c9b59f75175} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries compute\+\_\+key} )(unsigned char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}pout, size\+\_\+t \texorpdfstring{$\ast$}{*}poutlen, const EC\+\_\+\+POINT \texorpdfstring{$\ast$}{*}pub\+\_\+key, const EC\+\_\+\+KEY \texorpdfstring{$\ast$}{*}ecdh)
+\item 
+\Hypertarget{structec__key__method__st_a2d615bf401c66f883789018234eaa337}\label{structec__key__method__st_a2d615bf401c66f883789018234eaa337} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries sign} )(int type, const unsigned char \texorpdfstring{$\ast$}{*}dgst, int dlen, unsigned char \texorpdfstring{$\ast$}{*}sig, unsigned int \texorpdfstring{$\ast$}{*}siglen, const BIGNUM \texorpdfstring{$\ast$}{*}kinv, const BIGNUM \texorpdfstring{$\ast$}{*}r, EC\+\_\+\+KEY \texorpdfstring{$\ast$}{*}eckey)
+\item 
+\Hypertarget{structec__key__method__st_aee625e028e58529f05773a1474267661}\label{structec__key__method__st_aee625e028e58529f05773a1474267661} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries sign\+\_\+setup} )(EC\+\_\+\+KEY \texorpdfstring{$\ast$}{*}eckey, BN\+\_\+\+CTX \texorpdfstring{$\ast$}{*}ctx\+\_\+in, BIGNUM \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}kinvp, BIGNUM \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}rp)
+\item 
+\Hypertarget{structec__key__method__st_a984f1e12a81077710fea9a4856a88ea7}\label{structec__key__method__st_a984f1e12a81077710fea9a4856a88ea7} 
+ECDSA\+\_\+\+SIG \texorpdfstring{$\ast$}{*}(\texorpdfstring{$\ast$}{*} {\bfseries sign\+\_\+sig} )(const unsigned char \texorpdfstring{$\ast$}{*}dgst, int dgst\+\_\+len, const BIGNUM \texorpdfstring{$\ast$}{*}in\+\_\+kinv, const BIGNUM \texorpdfstring{$\ast$}{*}in\+\_\+r, EC\+\_\+\+KEY \texorpdfstring{$\ast$}{*}eckey)
+\item 
+\Hypertarget{structec__key__method__st_aa78b7f42723391e67a22863c191f4da4}\label{structec__key__method__st_aa78b7f42723391e67a22863c191f4da4} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries verify} )(int type, const unsigned char \texorpdfstring{$\ast$}{*}dgst, int dgst\+\_\+len, const unsigned char \texorpdfstring{$\ast$}{*}sigbuf, int sig\+\_\+len, EC\+\_\+\+KEY \texorpdfstring{$\ast$}{*}eckey)
+\item 
+\Hypertarget{structec__key__method__st_aab2e619900e469ff895adb26021886db}\label{structec__key__method__st_aab2e619900e469ff895adb26021886db} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries verify\+\_\+sig} )(const unsigned char \texorpdfstring{$\ast$}{*}dgst, int dgst\+\_\+len, const ECDSA\+\_\+\+SIG \texorpdfstring{$\ast$}{*}sig, EC\+\_\+\+KEY \texorpdfstring{$\ast$}{*}eckey)
+\end{DoxyCompactItemize}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/namph/\+Downloads/openssl/openssl-\/3.\+2.\+1/crypto/ec/ec\+\_\+local.\+h\end{DoxyCompactItemize}

@@ -1,0 +1,47 @@
+\doxysection{self\+\_\+test.\+h}
+\hypertarget{providers_2fips_2self__test_8h_source}{}\label{providers_2fips_2self__test_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/providers/fips/self\_test.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/providers/fips/self\_test.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2019-\/2020\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <openssl/core\_dispatch.h>}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ <openssl/types.h>}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ <openssl/self\_test.h>}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structself__test__post__params__st}{self\_test\_post\_params\_st}}\ \{}
+\DoxyCodeLine{00015\ \ \ \ \ \textcolor{comment}{/*\ FIPS\ module\ integrity\ check\ parameters\ */}}
+\DoxyCodeLine{00016\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *module\_filename;\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Module\ file\ to\ perform\ MAC\ on\ */}}
+\DoxyCodeLine{00017\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *module\_checksum\_data;\ \ \ \ \ \ \ \textcolor{comment}{/*\ Expected\ module\ MAC\ integrity\ */}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \ \ \ \ \textcolor{comment}{/*\ Used\ for\ KAT\ install\ indicator\ integrity\ check\ */}}
+\DoxyCodeLine{00020\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *indicator\_version;\ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ version\ -\/\ for\ future\ proofing\ */}}
+\DoxyCodeLine{00021\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *indicator\_data;\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ data\ to\ perform\ MAC\ on\ */}}
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *indicator\_checksum\_data;\ \ \ \ \textcolor{comment}{/*\ Expected\ MAC\ integrity\ value\ */}}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \ \ \ \ \textcolor{comment}{/*\ Used\ for\ continuous\ tests\ */}}
+\DoxyCodeLine{00025\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *conditional\_error\_check;}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{comment}{/*\ BIO\ callbacks\ supplied\ to\ the\ FIPS\ provider\ */}}
+\DoxyCodeLine{00028\ \ \ \ \ OSSL\_FUNC\_BIO\_new\_file\_fn\ *bio\_new\_file\_cb;}
+\DoxyCodeLine{00029\ \ \ \ \ OSSL\_FUNC\_BIO\_new\_membuf\_fn\ *bio\_new\_buffer\_cb;}
+\DoxyCodeLine{00030\ \ \ \ \ OSSL\_FUNC\_BIO\_read\_ex\_fn\ *bio\_read\_ex\_cb;}
+\DoxyCodeLine{00031\ \ \ \ \ OSSL\_FUNC\_BIO\_free\_fn\ *bio\_free\_cb;}
+\DoxyCodeLine{00032\ \ \ \ \ OSSL\_CALLBACK\ *cb;}
+\DoxyCodeLine{00033\ \ \ \ \ \textcolor{keywordtype}{void}\ *cb\_arg;}
+\DoxyCodeLine{00034\ \ \ \ \ OSSL\_LIB\_CTX\ *libctx;}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \}\ \mbox{\hyperlink{structself__test__post__params__st}{SELF\_TEST\_POST\_PARAMS}};}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \textcolor{keywordtype}{int}\ SELF\_TEST\_post(\mbox{\hyperlink{structself__test__post__params__st}{SELF\_TEST\_POST\_PARAMS}}\ *st,\ \textcolor{keywordtype}{int}\ on\_demand\_test);}
+\DoxyCodeLine{00039\ \textcolor{keywordtype}{int}\ SELF\_TEST\_kats(OSSL\_SELF\_TEST\ *event,\ OSSL\_LIB\_CTX\ *libctx);}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \textcolor{keywordtype}{void}\ SELF\_TEST\_disable\_conditional\_error\_state(\textcolor{keywordtype}{void});}
+
+\end{DoxyCode}

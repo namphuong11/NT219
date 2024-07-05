@@ -1,0 +1,57 @@
+\doxysection{aria.\+h}
+\hypertarget{aria_8h_source}{}\label{aria_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/crypto/aria.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/crypto/aria.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2006-\/2021\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *\ Copyright\ (c)\ 2017,\ Oracle\ and/or\ its\ affiliates.\ \ All\ rights\ reserved.}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \ \textcolor{comment}{/*\ Copyright\ (c)\ 2017\ National\ Security\ Research\ Institute.\ \ All\ rights\ reserved.\ */}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#ifndef\ OSSL\_CRYPTO\_ARIA\_H}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ define\ OSSL\_CRYPTO\_ARIA\_H}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#\ pragma\ once}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#\ include\ <openssl/opensslconf.h>}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#\ ifdef\ OPENSSL\_NO\_ARIA}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#\ \ error\ ARIA\ is\ disabled.}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#\ define\ ARIA\_ENCRYPT\ \ \ \ \ 1}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#\ define\ ARIA\_DECRYPT\ \ \ \ \ 0}}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#\ define\ ARIA\_BLOCK\_SIZE\ \ \ \ 16\ \ }\textcolor{comment}{/*\ Size\ of\ each\ encryption/decryption\ block\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#\ define\ ARIA\_MAX\_KEYS\ \ \ \ \ \ 17\ \ }\textcolor{comment}{/*\ Number\ of\ keys\ needed\ in\ the\ worst\ case\ \ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00030\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ c[ARIA\_BLOCK\_SIZE];}
+\DoxyCodeLine{00031\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ u[ARIA\_BLOCK\_SIZE\ /\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{unsigned}\ int)];}
+\DoxyCodeLine{00032\ \}\ \mbox{\hyperlink{union_a_r_i_a__u128}{ARIA\_u128}};}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \textcolor{keyword}{typedef}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ARIA\_c128[ARIA\_BLOCK\_SIZE];}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structaria__key__st}{aria\_key\_st}}\ \{}
+\DoxyCodeLine{00037\ \ \ \ \ \mbox{\hyperlink{union_a_r_i_a__u128}{ARIA\_u128}}\ rd\_key[ARIA\_MAX\_KEYS];}
+\DoxyCodeLine{00038\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ rounds;}
+\DoxyCodeLine{00039\ \};}
+\DoxyCodeLine{00040\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structaria__key__st}{aria\_key\_st}}\ \mbox{\hyperlink{structaria__key__st}{ARIA\_KEY}};}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \textcolor{keywordtype}{int}\ ossl\_aria\_set\_encrypt\_key(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *userKey,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ bits,}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structaria__key__st}{ARIA\_KEY}}\ *key);}
+\DoxyCodeLine{00045\ \textcolor{keywordtype}{int}\ ossl\_aria\_set\_decrypt\_key(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *userKey,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ bits,}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structaria__key__st}{ARIA\_KEY}}\ *key);}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \textcolor{keywordtype}{void}\ ossl\_aria\_encrypt(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structaria__key__st}{ARIA\_KEY}}\ *key);}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

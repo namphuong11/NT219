@@ -1,0 +1,55 @@
+\doxysection{quic\+\_\+stream\+\_\+map\+\_\+st Struct Reference}
+\hypertarget{structquic__stream__map__st}{}\label{structquic__stream__map__st}\index{quic\_stream\_map\_st@{quic\_stream\_map\_st}}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{structquic__stream__map__st_a15d9f74caa58127c972babe6233f2187}\label{structquic__stream__map__st_a15d9f74caa58127c972babe6233f2187} 
+{\bfseries LHASH\+\_\+\+OF} (\mbox{\hyperlink{structquic__stream__st}{QUIC\+\_\+\+STREAM}}) \texorpdfstring{$\ast$}{*}map
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{structquic__stream__map__st_acfadc5c12faec800ac446d1cfece2c4b}\label{structquic__stream__map__st_acfadc5c12faec800ac446d1cfece2c4b} 
+\mbox{\hyperlink{structquic__stream__list__node__st}{QUIC\+\_\+\+STREAM\+\_\+\+LIST\+\_\+\+NODE}} {\bfseries active\+\_\+list}
+\item 
+\Hypertarget{structquic__stream__map__st_a86f09e111f56182e873233bb18c62006}\label{structquic__stream__map__st_a86f09e111f56182e873233bb18c62006} 
+\mbox{\hyperlink{structquic__stream__list__node__st}{QUIC\+\_\+\+STREAM\+\_\+\+LIST\+\_\+\+NODE}} {\bfseries accept\+\_\+list}
+\item 
+\Hypertarget{structquic__stream__map__st_ab3443c7d866ab246a664721dc68fdb49}\label{structquic__stream__map__st_ab3443c7d866ab246a664721dc68fdb49} 
+\mbox{\hyperlink{structquic__stream__list__node__st}{QUIC\+\_\+\+STREAM\+\_\+\+LIST\+\_\+\+NODE}} {\bfseries ready\+\_\+for\+\_\+gc\+\_\+list}
+\item 
+\Hypertarget{structquic__stream__map__st_a8b443852d6be4f5e4843218bceeef6fb}\label{structquic__stream__map__st_a8b443852d6be4f5e4843218bceeef6fb} 
+size\+\_\+t {\bfseries rr\+\_\+stepping}
+\item 
+\Hypertarget{structquic__stream__map__st_aa5d16f5e9e7142f132f3cbb548a27b07}\label{structquic__stream__map__st_aa5d16f5e9e7142f132f3cbb548a27b07} 
+size\+\_\+t {\bfseries rr\+\_\+counter}
+\item 
+\Hypertarget{structquic__stream__map__st_a1a02d0a213acc72d31f84276400c4f4f}\label{structquic__stream__map__st_a1a02d0a213acc72d31f84276400c4f4f} 
+size\+\_\+t {\bfseries num\+\_\+accept}
+\item 
+\Hypertarget{structquic__stream__map__st_a87e3766eab5c4bb3af89659d4aa24ffb}\label{structquic__stream__map__st_a87e3766eab5c4bb3af89659d4aa24ffb} 
+size\+\_\+t {\bfseries num\+\_\+shutdown\+\_\+flush}
+\item 
+\Hypertarget{structquic__stream__map__st_a8073ed0effff992ab02fe141a7b6858f}\label{structquic__stream__map__st_a8073ed0effff992ab02fe141a7b6858f} 
+\mbox{\hyperlink{structquic__stream__st}{QUIC\+\_\+\+STREAM}} \texorpdfstring{$\ast$}{*} {\bfseries rr\+\_\+cur}
+\item 
+\Hypertarget{structquic__stream__map__st_a7942351f93e939e06cdc3071f5c7a148}\label{structquic__stream__map__st_a7942351f93e939e06cdc3071f5c7a148} 
+uint64\+\_\+t(\texorpdfstring{$\ast$}{*} {\bfseries get\+\_\+stream\+\_\+limit\+\_\+cb} )(int uni, void \texorpdfstring{$\ast$}{*}arg)
+\item 
+\Hypertarget{structquic__stream__map__st_a99cd9caee19b9b61e207a7ecd2243ea1}\label{structquic__stream__map__st_a99cd9caee19b9b61e207a7ecd2243ea1} 
+void \texorpdfstring{$\ast$}{*} {\bfseries get\+\_\+stream\+\_\+limit\+\_\+cb\+\_\+arg}
+\item 
+\Hypertarget{structquic__stream__map__st_a8ce34e4e22686ae721b7943b0378c92c}\label{structquic__stream__map__st_a8ce34e4e22686ae721b7943b0378c92c} 
+\mbox{\hyperlink{structquic__rxfc__st}{QUIC\+\_\+\+RXFC}} \texorpdfstring{$\ast$}{*} {\bfseries max\+\_\+streams\+\_\+bidi\+\_\+rxfc}
+\item 
+\Hypertarget{structquic__stream__map__st_a9c969f5c989f812a673a258f430b993d}\label{structquic__stream__map__st_a9c969f5c989f812a673a258f430b993d} 
+\mbox{\hyperlink{structquic__rxfc__st}{QUIC\+\_\+\+RXFC}} \texorpdfstring{$\ast$}{*} {\bfseries max\+\_\+streams\+\_\+uni\+\_\+rxfc}
+\item 
+\Hypertarget{structquic__stream__map__st_a816a3b782b721645079f14009e36d468}\label{structquic__stream__map__st_a816a3b782b721645079f14009e36d468} 
+int {\bfseries is\+\_\+server}
+\end{DoxyCompactItemize}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/namph/\+Downloads/openssl/openssl-\/3.\+2.\+1/include/internal/quic\+\_\+stream\+\_\+map.\+h\end{DoxyCompactItemize}

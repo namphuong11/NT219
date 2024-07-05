@@ -1,0 +1,429 @@
+\chapter{QUIC ACK Manager}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-ackm}{}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-ackm}\index{QUIC ACK Manager@{QUIC ACK Manager}}
+
+
+The QUIC ACK manager is responsible for, on the TX side\+:
+
+
+\begin{DoxyItemize}
+\item Handling received ACK frames
+\item Generating notifications that a packet we sent was delivered successfully
+\item Generating notifications that a packet we sent was lost
+\item Generating requests for probe transmission
+\item Providing information on the largest unacked packet number so that packet numbers in packet headers can be encoded and decoded correctly
+\end{DoxyItemize}
+
+On the RX side, it is responsible for\+:
+
+
+\begin{DoxyItemize}
+\item Generating ACK frames for later transmission in response to packets we received
+\item Providing information on whether a given RX packet number is potentially duplicate and should not be processed
+\end{DoxyItemize}
+
+In order to allow it to perform these tasks, the ACK manager must\+:
+
+
+\begin{DoxyItemize}
+\item be notified of all transmitted packets
+\item be notified of all received datagrams
+\item be notified of all received packets
+\item be notified of all received ACK frames
+\item be notified when a packet number space is discarded
+\item be notified when its loss detection deadline arrives
+\end{DoxyItemize}
+
+The ACK manager consumes\+:
+
+
+\begin{DoxyItemize}
+\item an arbitrary function which returns the current time;
+\item a RTT statistics tracker;
+\item a congestion controller.
+\end{DoxyItemize}
+
+The ACK manager provides the following outputs\+:
+
+
+\begin{DoxyItemize}
+\item It indicates the current deadline by which the loss detection event should be invoked.
+\item It indicates when probes should be generated.
+\item It indicates what ACK frames should be generated.
+\item It indicates the current deadline by which new ACK frames will be generated, if any.
+\item It indicates the largest unacknowledged packet number for a given packet number space.
+\item It calls a callback for each transmitted packet it is notified of, specifying whether the packet was successfully acknowledged by the peer, lost or discarded.
+\item It may communicate with a congestion controller, causing the congestion controller to update its state.
+\item It may communicate with a RTT statistics tracker, causing it to update its state.
+\end{DoxyItemize}
+
+In this document, “the caller” refers to the system which makes use of the ACK manager.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-ackm_autotoc_md277}{}\doxysection{\texorpdfstring{Utility Definitions}{Utility Definitions}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-ackm_autotoc_md277}
+There are three QUIC packet number spaces\+: Initial, Handshake and Application Data.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{/*\ QUIC\ packet\ number\ spaces.\ */}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#define\ QUIC\_PN\_SPACE\_INITIAL\ \ \ \ \ \ \ 0}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#define\ QUIC\_PN\_SPACE\_HANDSHAKE\ \ \ \ \ 1}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#define\ QUIC\_PN\_SPACE\_APP\ \ \ \ \ \ \ \ \ \ \ 2}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#define\ QUIC\_PN\_SPACE\_NUM\ \ \ \ \ \ \ \ \ \ \ 3}}
+
+\end{DoxyCode}
+
+
+Packet numbers are 62-\/bit values represented herein by {\ttfamily QUIC\+\_\+\+PN}. {\ttfamily QUIC\+\_\+\+PN\+\_\+\+INFINITE} evaluates to an invalid QUIC packet number value.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{/*\ QUIC\ packet\ number\ representation.\ */}}
+\DoxyCodeLine{\textcolor{keyword}{typedef}\ uint64\_t\ QUIC\_PN;}
+\DoxyCodeLine{\textcolor{preprocessor}{\#define\ QUIC\_PN\_INFINITE\ \ \ \ \ \ \ \ \ \ \ \ UINT64\_MAX}}
+
+\end{DoxyCode}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-ackm_autotoc_md278}{}\doxysection{\texorpdfstring{Instantiation}{Instantiation}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-ackm_autotoc_md278}
+The QUIC ACK manager is instantiated as follows\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__ackm__st}{ossl\_ackm\_st}}\ \mbox{\hyperlink{structossl__ackm__st}{OSSL\_ACKM}};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\mbox{\hyperlink{structossl__ackm__st}{OSSL\_ACKM}}\ *ossl\_ackm\_new(\mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ (*now)(\textcolor{keywordtype}{void}\ *arg),}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *now\_arg,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ QUIC\_STATM\ *statm,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structossl__cc__method__st}{OSSL\_CC\_METHOD}}\ *cc\_method,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OSSL\_CC\_DATA\ *cc\_data);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{void}\ ossl\_ackm\_free(\mbox{\hyperlink{structossl__ackm__st}{OSSL\_ACKM}}\ *ackm);}
+
+\end{DoxyCode}
+
+
+The function pointer {\ttfamily now} is invoked by the ACK manager to obtain the current time. {\ttfamily now\+\_\+arg} is passed as the argument. The congestion controller method and instance passed are used by the ACK manager instance. {\ttfamily statm} points to a \doxysectlink{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-statm}{Statistics Manager tracker instance}{0}.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-ackm_autotoc_md279}{}\doxysection{\texorpdfstring{Events}{Events}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-ackm_autotoc_md279}
+The ACK manager state is evolved in response to events provided to the ACK manager by the caller.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-ackm_autotoc_md280}{}\doxysubsection{\texorpdfstring{On TX Packet}{On TX Packet}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-ackm_autotoc_md280}
+This must be called when a packet is transmitted. It does not provide the payload of the packet, but provides metadata about the packet which is relevant to the loss detection and acknowledgement process.
+
+The caller is responsible for the allocation of the structure and the structure must remain allocated until one of the callbacks is called or the ACK manager is freed. It is expected this structure will usually be freed (or returned to a pool) in the implementation of either callback passed by the caller.
+
+Only exactly one of the callbacks in the structure will be called over the lifetime of a {\ttfamily OSSL\+\_\+\+ACKM\+\_\+\+TX\+\_\+\+PKT}, and only once.
+
+Returns 1 on success.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__ackm__tx__pkt__st}{ossl\_ackm\_tx\_pkt\_st}}\ \{}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{/*\ The\ packet\ number\ of\ the\ transmitted\ packet.\ */}}
+\DoxyCodeLine{\ \ \ \ QUIC\_PN\ pkt\_num;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{/*\ The\ number\ of\ bytes\ in\ the\ packet\ which\ was\ sent.\ */}}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordtype}{size\_t}\ num\_bytes;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{/*\ The\ time\ at\ which\ the\ packet\ was\ sent.\ */}}
+\DoxyCodeLine{\ \ \ \ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ time;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{\textcolor{comment}{\ \ \ \ \ *\ If\ the\ packet\ being\ described\ by\ this\ structure\ contains\ an\ ACK\ frame,}}
+\DoxyCodeLine{\textcolor{comment}{\ \ \ \ \ *\ this\ must\ be\ set\ to\ the\ largest\ PN\ ACK'd\ by\ that\ frame.}}
+\DoxyCodeLine{\textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{\textcolor{comment}{\ \ \ \ \ *\ Otherwise,\ it\ should\ be\ set\ to\ QUIC\_PN\_INVALID.}}
+\DoxyCodeLine{\textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{\textcolor{comment}{\ \ \ \ \ *\ This\ is\ necessary\ to\ bound\ the\ number\ of\ PNs\ we\ have\ to\ keep\ track\ of\ on}}
+\DoxyCodeLine{\textcolor{comment}{\ \ \ \ \ *\ the\ RX\ side\ (RFC\ 9000\ s.\ 13.2.4).\ It\ allows\ older\ PN\ tracking\ information}}
+\DoxyCodeLine{\textcolor{comment}{\ \ \ \ \ *\ on\ the\ RX\ side\ to\ be\ discarded.}}
+\DoxyCodeLine{\textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{\ \ \ \ QUIC\_PN\ largest\_acked;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{\textcolor{comment}{\ \ \ \ \ *\ One\ of\ the\ QUIC\_PN\_SPACE\_*\ values.\ This\ qualifies\ the\ pkt\_num\ field}}
+\DoxyCodeLine{\textcolor{comment}{\ \ \ \ \ *\ into\ a\ packet\ number\ space.}}
+\DoxyCodeLine{\textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ pkt\_space\ :2;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{/*\ 1\ if\ the\ packet\ is\ in\ flight.\ */}}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ is\_inflight\ :1;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{/*\ 1\ if\ the\ packet\ has\ one\ or\ more\ ACK-\/eliciting\ frames.\ */}}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ is\_ack\_eliciting\ :1;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{/*\ 1\ if\ the\ packet\ is\ a\ PTO\ probe.\ */}}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ is\_pto\_probe\ :1;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{/*\ 1\ if\ the\ packet\ is\ an\ MTU\ probe.\ */}}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ is\_mtu\_probe\ :1;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{/*\ Callback\ called\ if\ frames\ in\ this\ packet\ are\ lost.\ arg\ is\ cb\_arg.\ */}}
+\DoxyCodeLine{\ \ \ \ void\ (*on\_lost)(\textcolor{keywordtype}{void}\ *arg);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{/*\ Callback\ called\ if\ frames\ in\ this\ packet\ are\ acked.\ arg\ is\ cb\_arg.\ */}}
+\DoxyCodeLine{\ \ \ \ void\ (*on\_acked)(\textcolor{keywordtype}{void}\ *arg);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{\textcolor{comment}{\ \ \ \ \ *\ Callback\ called\ if\ frames\ in\ this\ packet\ are\ neither\ acked\ nor\ lost.\ arg}}
+\DoxyCodeLine{\textcolor{comment}{\ \ \ \ \ *\ is\ cb\_arg.}}
+\DoxyCodeLine{\textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{\ \ \ \ void\ (*on\_discarded)(\textcolor{keywordtype}{void}\ *arg);}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordtype}{void}\ \ *cb\_arg;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{/*\ (Internal\ use\ fields\ are\ appended\ here\ and\ must\ be\ zero-\/initialized.)\ */}}
+\DoxyCodeLine{\}\ \mbox{\hyperlink{structossl__ackm__tx__pkt__st}{OSSL\_ACKM\_TX\_PKT}};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{int}\ ossl\_ackm\_on\_tx\_packet(\mbox{\hyperlink{structossl__ackm__st}{OSSL\_ACKM}}\ *ackm,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structossl__ackm__tx__pkt__st}{OSSL\_ACKM\_TX\_PKT}}\ *pkt);}
+
+\end{DoxyCode}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-ackm_autotoc_md281}{}\doxysubsection{\texorpdfstring{On RX Datagram}{On RX Datagram}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-ackm_autotoc_md281}
+This must be called whenever a datagram is received. A datagram may contain multiple packets, and this function should be called before the calls to {\ttfamily ossl\+\_\+ackm\+\_\+on\+\_\+rx\+\_\+packet}.
+
+The primary use of this function is to inform the ACK manager of new credit to the anti-\/amplification budget. Packet and ACK-\/frame related logic are handled separately in the subsequent calls to {\ttfamily ossl\+\_\+ackm\+\_\+on\+\_\+rx\+\_\+packet} and {\ttfamily ossl\+\_\+ackm\+\_\+on\+\_\+rx\+\_\+ack\+\_\+frame}, respectively.
+
+Returns 1 on success.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keywordtype}{int}\ ossl\_ackm\_on\_rx\_datagram(\mbox{\hyperlink{structossl__ackm__st}{OSSL\_ACKM}}\ *ackm,\ \textcolor{keywordtype}{size\_t}\ num\_bytes);}
+
+\end{DoxyCode}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-ackm_autotoc_md282}{}\doxysubsection{\texorpdfstring{On RX Packet}{On RX Packet}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-ackm_autotoc_md282}
+This must be called whenever a packet is received. It should be called after {\ttfamily ossl\+\_\+ackm\+\_\+on\+\_\+rx\+\_\+datagram} was called for the datagram containing the packet.
+
+Returns 1 on success.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{preprocessor}{\#define\ OSSL\_ACKM\_ECN\_NONE\ \ \ \ \ \ 0}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#define\ OSSL\_ACKM\_ECN\_ECT1\ \ \ \ \ \ 1}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#define\ OSSL\_ACKM\_ECN\_ECT0\ \ \ \ \ \ 2}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#define\ OSSL\_ACKM\_ECN\_ECNCE\ \ \ \ \ 3}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__ackm__rx__pkt__st}{ossl\_ackm\_rx\_pkt\_st}}\ \{}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{/*\ The\ packet\ number\ of\ the\ received\ packet.\ */}}
+\DoxyCodeLine{\ \ \ \ QUIC\_PN\ pkt\_num;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{/*\ The\ time\ at\ which\ the\ packet\ was\ received.\ */}}
+\DoxyCodeLine{\ \ \ \ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ time;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{\textcolor{comment}{\ \ \ \ \ *\ One\ of\ the\ QUIC\_PN\_SPACE\_*\ values.\ This\ qualifies\ the\ pkt\_num\ field}}
+\DoxyCodeLine{\textcolor{comment}{\ \ \ \ \ *\ into\ a\ packet\ number\ space.}}
+\DoxyCodeLine{\textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ pkt\_space\ :2;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{/*\ 1\ if\ the\ packet\ has\ one\ or\ more\ ACK-\/eliciting\ frames.\ */}}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ is\_ack\_eliciting\ :1;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{\textcolor{comment}{\ \ \ \ \ *\ One\ of\ the\ OSSL\_ACKM\_ECN\_*\ values.\ This\ is\ the\ ECN\ labelling\ applied}}
+\DoxyCodeLine{\textcolor{comment}{\ \ \ \ \ *\ to\ the\ received\ packet.\ If\ unknown,\ use\ OSSL\_ACKM\_ECN\_NONE.}}
+\DoxyCodeLine{\textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ ecn\ :2;}
+\DoxyCodeLine{\}\ \mbox{\hyperlink{structossl__ackm__rx__pkt__st}{OSSL\_ACKM\_RX\_PKT}};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{int}\ ossl\_ackm\_on\_rx\_packet(\mbox{\hyperlink{structossl__ackm__st}{OSSL\_ACKM}}\ *ackm,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structossl__ackm__rx__pkt__st}{OSSL\_ACKM\_RX\_PKT}}\ *pkt);}
+
+\end{DoxyCode}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-ackm_autotoc_md283}{}\doxysubsection{\texorpdfstring{On RX ACK Frame}{On RX ACK Frame}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-ackm_autotoc_md283}
+This must be called whenever an ACK frame is received. It should be called after any call to {\ttfamily ossl\+\_\+ackm\+\_\+on\+\_\+rx\+\_\+packet}.
+
+The ranges of packet numbers being acknowledged are passed as an argument. {\ttfamily pkt\+\_\+space} is one of the {\ttfamily QUIC\+\_\+\+PN\+\_\+\+SPACE\+\_\+\texorpdfstring{$\ast$}{*}} values, specifying the packet number space of the containing packet. {\ttfamily rx\+\_\+time} is the time the frame was received.
+
+This function causes {\ttfamily on\+\_\+acked} callbacks to be invoked on applicable packets.
+
+Returns 1 on success.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }ossl\_ackm\_ack\_range\_st\ \{}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{\textcolor{comment}{\ \ \ \ \ *\ Represents\ an\ inclusive\ range\ of\ packet\ numbers\ [start,\ end].}}
+\DoxyCodeLine{\textcolor{comment}{\ \ \ \ \ *\ start\ must\ be\ <=\ end.}}
+\DoxyCodeLine{\textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{\ \ \ \ QUIC\_PN\ start,\ end;}
+\DoxyCodeLine{\}\ OSSL\_ACKM\_ACK\_RANGE;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }ossl\_ackm\_ack\ \{}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{\textcolor{comment}{\ \ \ \ \ *\ A\ sequence\ of\ packet\ number\ ranges\ [[start,\ end]...].}}
+\DoxyCodeLine{\textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{\textcolor{comment}{\ \ \ \ \ *\ The\ ranges\ must\ be\ sorted\ in\ descending\ order,\ for\ example:}}
+\DoxyCodeLine{\textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ [\ 95,\ 100]}}
+\DoxyCodeLine{\textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ [\ 90,\ \ 92]}}
+\DoxyCodeLine{\textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ etc.}}
+\DoxyCodeLine{\textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{\textcolor{comment}{\ \ \ \ \ *\ As\ such,\ ack\_ranges[0].end\ is\ always\ the\ highest\ packet\ number}}
+\DoxyCodeLine{\textcolor{comment}{\ \ \ \ \ *\ being\ acknowledged\ and\ ack\_ranges[num\_ack\_ranges-\/1].start\ is}}
+\DoxyCodeLine{\textcolor{comment}{\ \ \ \ \ *\ always\ the\ lowest\ packet\ number\ being\ acknowledged.}}
+\DoxyCodeLine{\textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{\textcolor{comment}{\ \ \ \ \ *\ num\_ack\_ranges\ must\ be\ greater\ than\ zero,\ as\ an\ ACK\ frame\ must}}
+\DoxyCodeLine{\textcolor{comment}{\ \ \ \ \ *\ acknowledge\ at\ least\ one\ packet\ number.}}
+\DoxyCodeLine{\textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{const}\ OSSL\_ACKM\_ACK\_RANGE\ \ *ack\_ranges;}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordtype}{size\_t}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ num\_ack\_ranges;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ delay\_time;}
+\DoxyCodeLine{\ \ \ \ uint64\_t\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ect0,\ ect1,\ ecnce;}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{/*\ 1\ if\ the\ ect0,\ ect1\ and\ ecnce\ fields\ are\ valid\ */}}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordtype}{char}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ecn\_present;}
+\DoxyCodeLine{\}\ OSSL\_ACKM\_ACK;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{int}\ ossl\_ackm\_on\_rx\_ack\_frame(\mbox{\hyperlink{structossl__ackm__st}{OSSL\_ACKM}}\ *ackm,\ \textcolor{keyword}{const}\ OSSL\_ACKM\_ACK\ *ack,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ pkt\_space,\ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ rx\_time);}
+
+\end{DoxyCode}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-ackm_autotoc_md284}{}\doxysubsection{\texorpdfstring{On Packet Space Discarded}{On Packet Space Discarded}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-ackm_autotoc_md284}
+This must be called whenever a packet number space is discarded. ACK-\/tracking information for the number space is thrown away. Any previously provided {\ttfamily OSSL\+\_\+\+ACKM\+\_\+\+TX\+\_\+\+PKT} structures have their {\ttfamily on\+\_\+discarded} callback invoked, providing an opportunity for them to be freed.
+
+Returns 1 on success.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keywordtype}{int}\ ossl\_ackm\_on\_pkt\_space\_discarded(\mbox{\hyperlink{structossl__ackm__st}{OSSL\_ACKM}}\ *ackm,\ \textcolor{keywordtype}{int}\ pkt\_space);}
+
+\end{DoxyCode}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-ackm_autotoc_md285}{}\doxysubsection{\texorpdfstring{On Handshake Confirmed}{On Handshake Confirmed}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-ackm_autotoc_md285}
+This should be called by the caller when the QUIC handshake is confirmed. The Probe Timeout (PTO) algorithm behaves differently depending on whether the QUIC handshake is confirmed yet.
+
+Returns 1 on success.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keywordtype}{int}\ ossl\_ackm\_on\_handshake\_confirmed(\mbox{\hyperlink{structossl__ackm__st}{OSSL\_ACKM}}\ *ackm);}
+
+\end{DoxyCode}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-ackm_autotoc_md286}{}\doxysubsection{\texorpdfstring{On Timeout}{On Timeout}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-ackm_autotoc_md286}
+This must be called whenever the loss detection deadline expires.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keywordtype}{int}\ ossl\_ackm\_on\_timeout(\mbox{\hyperlink{structossl__ackm__st}{OSSL\_ACKM}}\ *ackm);}
+
+\end{DoxyCode}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-ackm_autotoc_md287}{}\doxysection{\texorpdfstring{Queries}{Queries}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-ackm_autotoc_md287}
+These functions allow information about the status of the ACK manager to be obtained.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-ackm_autotoc_md288}{}\doxysubsection{\texorpdfstring{Get Loss Detection Deadline}{Get Loss Detection Deadline}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-ackm_autotoc_md288}
+This returns a deadline after which {\ttfamily ossl\+\_\+ackm\+\_\+on\+\_\+timeout} should be called.
+
+If it is {\ttfamily OSSL\+\_\+\+TIME\+\_\+\+INFINITY}, no timeout is currently active.
+
+The value returned by this function may change after any call to any of the event functions above is made.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ ossl\_ackm\_get\_loss\_detection\_deadline(\mbox{\hyperlink{structossl__ackm__st}{OSSL\_ACKM}}\ *ackm);}
+
+\end{DoxyCode}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-ackm_autotoc_md289}{}\doxysubsection{\texorpdfstring{Get ACK Frame}{Get ACK Frame}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-ackm_autotoc_md289}
+This returns a pointer to a {\ttfamily OSSL\+\_\+\+ACKM\+\_\+\+ACK} structure representing the information which should be packed into an ACK frame and transmitted.
+
+This generates an ACK frame regardless of whether the ACK manager thinks one should currently be sent. To determine if the ACK manager thinks an ACK frame should be sent, use {\ttfamily ossl\+\_\+ackm\+\_\+is\+\_\+ack\+\_\+desired}, discussed below.
+
+If no new ACK frame is currently needed, returns NULL. After calling this function, calling the function immediately again will return NULL.
+
+The structure pointed to by the returned pointer, and the referenced ACK range structures, are guaranteed to remain valid until the next call to any {\ttfamily OSSL\+\_\+\+ACKM} function. After such a call is made, all fields become undefined.
+
+This function is used to provide ACK frames for acknowledging packets which have been received and notified to the ACK manager via {\ttfamily ossl\+\_\+ackm\+\_\+on\+\_\+rx\+\_\+packet}.
+
+Calling this function clears the flag returned by {\ttfamily ossl\+\_\+ackm\+\_\+is\+\_\+ack\+\_\+desired} and the deadline returned by {\ttfamily ossl\+\_\+ackm\+\_\+get\+\_\+ack\+\_\+deadline}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{const}\ OSSL\_ACKM\_ACK\ *ossl\_ackm\_get\_ack\_frame(\mbox{\hyperlink{structossl__ackm__st}{OSSL\_ACKM}}\ *ackm,\ \textcolor{keywordtype}{int}\ pkt\_space);}
+
+\end{DoxyCode}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-ackm_autotoc_md290}{}\doxysubsection{\texorpdfstring{Is ACK Desired}{Is ACK Desired}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-ackm_autotoc_md290}
+This returns 1 if the ACK manager thinks an ACK frame ought to be generated and sent at this time. {\ttfamily ossl\+\_\+ackm\+\_\+get\+\_\+ack\+\_\+frame} will always provide an ACK frame whether or not this returns 1, so it is suggested that you call this function first to determine whether you need to generate an ACK frame.
+
+The return value of this function can change based on calls to {\ttfamily ossl\+\_\+ackm\+\_\+on\+\_\+rx\+\_\+packet} and based on the passage of time (see {\ttfamily ossl\+\_\+ackm\+\_\+get\+\_\+ack\+\_\+deadline}).
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keywordtype}{int}\ ossl\_ackm\_is\_ack\_desired(\mbox{\hyperlink{structossl__ackm__st}{OSSL\_ACKM}}\ *ackm,\ \textcolor{keywordtype}{int}\ pkt\_space);}
+
+\end{DoxyCode}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-ackm_autotoc_md291}{}\doxysubsection{\texorpdfstring{Get ACK Deadline}{Get ACK Deadline}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-ackm_autotoc_md291}
+The ACK manager may defer generation of ACK frames to optimize performance. For example, after a packet requiring acknowledgement is received, it may decide to wait until a few more packets are received before generating an ACK frame, so that a single ACK frame can acknowledge all of them. However, if further packets do not arrive, an ACK frame must be generated anyway within a certain amount of time.
+
+This function returns the deadline at which the return value of {\ttfamily ossl\+\_\+ackm\+\_\+is\+\_\+ack\+\_\+desired} will change to 1, or {\ttfamily OSSL\+\_\+\+TIME\+\_\+\+INFINITY}, which means that no deadline is currently applicable. If the deadline has already passed, it may either return that deadline or {\ttfamily OSSL\+\_\+\+TIME\+\_\+\+ZERO}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ ossl\_ackm\_get\_ack\_deadline(\mbox{\hyperlink{structossl__ackm__st}{OSSL\_ACKM}}\ *ackm,\ \textcolor{keywordtype}{int}\ pkt\_space);}
+
+\end{DoxyCode}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-ackm_autotoc_md292}{}\doxysubsection{\texorpdfstring{Is RX PN Processable}{Is RX PN Processable}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-ackm_autotoc_md292}
+Returns 1 if the given RX packet number is “processable”. A processable PN is one that is not either
+
+
+\begin{DoxyItemize}
+\item duplicate, meaning that we have already been passed such a PN in a call to {\ttfamily ossl\+\_\+ackm\+\_\+on\+\_\+rx\+\_\+packet}; or
+\item written off, meaning that the PN is so old that we have stopped tracking state for it (meaning we cannot tell whether it is a duplicate and cannot process it safely).
+\end{DoxyItemize}
+
+This should be called for a packet before attempting to process its contents. Failure to do so may may result in processing a duplicated packet in violation of the RFC.
+
+The returrn value of this function transitions from 1 to 0 for a given PN once that PN is passed to ossl\+\_\+ackm\+\_\+on\+\_\+rx\+\_\+packet, thus this function must be used before calling {\ttfamily ossl\+\_\+ackm\+\_\+on\+\_\+rx\+\_\+packet}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keywordtype}{int}\ ossl\_ackm\_is\_rx\_pn\_processable(\mbox{\hyperlink{structossl__ackm__st}{OSSL\_ACKM}}\ *ackm,\ QUIC\_PN\ pn,\ \textcolor{keywordtype}{int}\ pkt\_space);}
+
+\end{DoxyCode}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-ackm_autotoc_md293}{}\doxysubsection{\texorpdfstring{Get Probe Packet}{Get Probe Packet}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-ackm_autotoc_md293}
+This determines if the ACK manager is requesting any probe packets to be transmitted.
+
+The user calls {\ttfamily ossl\+\_\+ackm\+\_\+get\+\_\+probe\+\_\+request}. The structure pointed to by {\ttfamily info} is filled and the function returns 1 on success.
+
+The fields of {\ttfamily OSSL\+\_\+\+ACKM\+\_\+\+PROBE\+\_\+\+INFO} record the number of probe requests of each type which are outstanding. In short\+:
+
+
+\begin{DoxyItemize}
+\item {\ttfamily handshake} designates the number of ACK-\/eliciting Handshake packets being requested. This is equivalent to {\ttfamily Send\+One\+Ack\+Eliciting\+Handshake\+Packet()} in RFC 9002.
+\item {\ttfamily padded\+\_\+initial} designates the number of ACK-\/eliciting padded Initial packets being requested. This is equivalent to {\ttfamily Send\+One\+Ack\+Eliciting\+Padded\+Initial\+Packet()} in RFC 9002.
+\item {\ttfamily pto} designates the number of ACK-\/eliciting outstanding probe events corresponding to each packet number space. This is equivalent to {\ttfamily Send\+One\+Or\+Two\+Ack\+Eliciting\+Packets(pn\+\_\+space)} in RFC 9002.
+\end{DoxyItemize}
+
+Once the caller has processed these requests, the caller must clear these outstanding requests by calling {\ttfamily ossl\+\_\+ackm\+\_\+get\+\_\+probe\+\_\+request} with {\ttfamily clear} set to 1. If {\ttfamily clear} is non-\/zero, the current values are returned and then zeroed, so that the next call to {\ttfamily ossl\+\_\+ackm\+\_\+get\+\_\+probe\+\_\+request} (if made immediately) will return zero values for all fields.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__ackm__probe__info__st}{ossl\_ackm\_probe\_info\_st}}\ \{}
+\DoxyCodeLine{\ \ \ \ uint32\_t\ handshake;}
+\DoxyCodeLine{\ \ \ \ uint32\_t\ padded\_initial;}
+\DoxyCodeLine{\ \ \ \ uint32\_t\ pto[QUIC\_PN\_SPACE\_NUM];}
+\DoxyCodeLine{\}\ \mbox{\hyperlink{structossl__ackm__probe__info__st}{OSSL\_ACKM\_PROBE\_INFO}};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{int}\ ossl\_ackm\_get\_probe\_request(\mbox{\hyperlink{structossl__ackm__st}{OSSL\_ACKM}}\ *ackm,\ \textcolor{keywordtype}{int}\ clear,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structossl__ackm__probe__info__st}{OSSL\_ACKM\_PROBE\_INFO}}\ *info);}
+
+\end{DoxyCode}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-ackm_autotoc_md294}{}\doxysubsection{\texorpdfstring{Get Largest Unacked Packet Number}{Get Largest Unacked Packet Number}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-ackm_autotoc_md294}
+This gets the largest unacknowledged packet number in the given packet number space. The packet number is written to {\ttfamily \texorpdfstring{$\ast$}{*}pn}. Returns 1 on success.
+
+This is needed so that packet encoders can determine with what length to encode the abridged packet number in the packet header.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keywordtype}{int}\ ossl\_ackm\_get\_largest\_unacked(\mbox{\hyperlink{structossl__ackm__st}{OSSL\_ACKM}}\ *ackm,\ \textcolor{keywordtype}{int}\ pkt\_space,\ QUIC\_PN\ *pn);}
+
+\end{DoxyCode}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-ackm_autotoc_md295}{}\doxysection{\texorpdfstring{Callback Functionality}{Callback Functionality}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-ackm_autotoc_md295}
+The ACK manager supports optional callback functionality when its deadlines are updated. By default, the callback functionality is not enabled. To use the callback functionality, call either or both of the following functions with a non-\/\+NULL function pointer\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keywordtype}{void}\ ossl\_ackm\_set\_loss\_detection\_deadline\_callback(\mbox{\hyperlink{structossl__ackm__st}{OSSL\_ACKM}}\ *ackm,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ (*fn)(\mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ deadline,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *arg),}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *arg);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{void}\ ossl\_ackm\_set\_ack\_deadline\_callback(\mbox{\hyperlink{structossl__ackm__st}{OSSL\_ACKM}}\ *ackm,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ (*fn)(\mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ deadline,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ pkt\_space,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *arg),}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *arg);}
+
+\end{DoxyCode}
+
+
+Callbacks can be subsequently disabled by calling these functions with a NULL function pointer. The callbacks are not called at the time that they are set, therefore it is recommended to call them immediately after the call to {\ttfamily ossl\+\_\+ackm\+\_\+new}.
+
+The loss detection deadline callback is called whenever the value returned by {\ttfamily ossl\+\_\+ackm\+\_\+get\+\_\+loss\+\_\+detection\+\_\+deadline} changes.
+
+The ACK deadline callback is called whenever the value returned by {\ttfamily ossl\+\_\+ackm\+\_\+get\+\_\+ack\+\_\+deadline} changes for a given packet space.
+
+The {\ttfamily deadline} argument reflects the value which will be newly returned by the corresponding function. If the configured callback calls either of these functions, the returned value will reflect the new deadline. 

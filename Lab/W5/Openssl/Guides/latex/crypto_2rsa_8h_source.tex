@@ -1,0 +1,138 @@
+\doxysection{rsa.\+h}
+\hypertarget{crypto_2rsa_8h_source}{}\label{crypto_2rsa_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/crypto/rsa.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/crypto/rsa.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2019-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_INTERNAL\_RSA\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_INTERNAL\_RSA\_H}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#\ pragma\ once}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ include\ <openssl/core.h>}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#\ include\ <openssl/rsa.h>}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#\ include\ "{}crypto/types.h"{}}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#define\ RSA\_MIN\_MODULUS\_BITS\ \ \ \ 512}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structrsa__pss__params__30__st}{rsa\_pss\_params\_30\_st}}\ \{}
+\DoxyCodeLine{00021\ \ \ \ \ \textcolor{keywordtype}{int}\ hash\_algorithm\_nid;}
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ algorithm\_nid;\ \ \ \ \ \ \ \textcolor{comment}{/*\ Currently\ always\ NID\_mgf1\ */}}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ hash\_algorithm\_nid;}
+\DoxyCodeLine{00025\ \ \ \ \ \}\ mask\_gen;}
+\DoxyCodeLine{00026\ \ \ \ \ \textcolor{keywordtype}{int}\ salt\_len;}
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keywordtype}{int}\ trailer\_field;}
+\DoxyCodeLine{00028\ \}\ \mbox{\hyperlink{structrsa__pss__params__30__st}{RSA\_PSS\_PARAMS\_30}};}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \mbox{\hyperlink{structrsa__pss__params__30__st}{RSA\_PSS\_PARAMS\_30}}\ *ossl\_rsa\_get0\_pss\_params\_30(RSA\ *r);}
+\DoxyCodeLine{00031\ \textcolor{keywordtype}{int}\ ossl\_rsa\_pss\_params\_30\_set\_defaults(\mbox{\hyperlink{structrsa__pss__params__30__st}{RSA\_PSS\_PARAMS\_30}}\ *rsa\_pss\_params);}
+\DoxyCodeLine{00032\ \textcolor{keywordtype}{int}\ ossl\_rsa\_pss\_params\_30\_copy(\mbox{\hyperlink{structrsa__pss__params__30__st}{RSA\_PSS\_PARAMS\_30}}\ *to,}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structrsa__pss__params__30__st}{RSA\_PSS\_PARAMS\_30}}\ *from);}
+\DoxyCodeLine{00034\ \textcolor{keywordtype}{int}\ ossl\_rsa\_pss\_params\_30\_is\_unrestricted(\textcolor{keyword}{const}\ \mbox{\hyperlink{structrsa__pss__params__30__st}{RSA\_PSS\_PARAMS\_30}}\ *rsa\_pss\_params);}
+\DoxyCodeLine{00035\ \textcolor{keywordtype}{int}\ ossl\_rsa\_pss\_params\_30\_set\_hashalg(\mbox{\hyperlink{structrsa__pss__params__30__st}{RSA\_PSS\_PARAMS\_30}}\ *rsa\_pss\_params,}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ hashalg\_nid);}
+\DoxyCodeLine{00037\ \textcolor{keywordtype}{int}\ ossl\_rsa\_pss\_params\_30\_set\_maskgenhashalg(\mbox{\hyperlink{structrsa__pss__params__30__st}{RSA\_PSS\_PARAMS\_30}}\ *rsa\_pss\_params,}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ maskgenhashalg\_nid);}
+\DoxyCodeLine{00039\ \textcolor{keywordtype}{int}\ ossl\_rsa\_pss\_params\_30\_set\_saltlen(\mbox{\hyperlink{structrsa__pss__params__30__st}{RSA\_PSS\_PARAMS\_30}}\ *rsa\_pss\_params,}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ saltlen);}
+\DoxyCodeLine{00041\ \textcolor{keywordtype}{int}\ ossl\_rsa\_pss\_params\_30\_set\_trailerfield(\mbox{\hyperlink{structrsa__pss__params__30__st}{RSA\_PSS\_PARAMS\_30}}\ *rsa\_pss\_params,}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ trailerfield);}
+\DoxyCodeLine{00043\ \textcolor{keywordtype}{int}\ ossl\_rsa\_pss\_params\_30\_hashalg(\textcolor{keyword}{const}\ \mbox{\hyperlink{structrsa__pss__params__30__st}{RSA\_PSS\_PARAMS\_30}}\ *rsa\_pss\_params);}
+\DoxyCodeLine{00044\ \textcolor{keywordtype}{int}\ ossl\_rsa\_pss\_params\_30\_maskgenalg(\textcolor{keyword}{const}\ \mbox{\hyperlink{structrsa__pss__params__30__st}{RSA\_PSS\_PARAMS\_30}}\ *rsa\_pss\_params);}
+\DoxyCodeLine{00045\ \textcolor{keywordtype}{int}\ ossl\_rsa\_pss\_params\_30\_maskgenhashalg(\textcolor{keyword}{const}\ \mbox{\hyperlink{structrsa__pss__params__30__st}{RSA\_PSS\_PARAMS\_30}}\ *rsa\_pss\_params);}
+\DoxyCodeLine{00046\ \textcolor{keywordtype}{int}\ ossl\_rsa\_pss\_params\_30\_saltlen(\textcolor{keyword}{const}\ \mbox{\hyperlink{structrsa__pss__params__30__st}{RSA\_PSS\_PARAMS\_30}}\ *rsa\_pss\_params);}
+\DoxyCodeLine{00047\ \textcolor{keywordtype}{int}\ ossl\_rsa\_pss\_params\_30\_trailerfield(\textcolor{keyword}{const}\ \mbox{\hyperlink{structrsa__pss__params__30__st}{RSA\_PSS\_PARAMS\_30}}\ *rsa\_pss\_params);}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *ossl\_rsa\_mgf\_nid2name(\textcolor{keywordtype}{int}\ mgf);}
+\DoxyCodeLine{00050\ \textcolor{keywordtype}{int}\ ossl\_rsa\_oaeppss\_md2nid(\textcolor{keyword}{const}\ EVP\_MD\ *md);}
+\DoxyCodeLine{00051\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *ossl\_rsa\_oaeppss\_nid2name(\textcolor{keywordtype}{int}\ md);}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ RSA\ *ossl\_rsa\_new\_with\_ctx(OSSL\_LIB\_CTX\ *libctx);}
+\DoxyCodeLine{00054\ OSSL\_LIB\_CTX\ *ossl\_rsa\_get0\_libctx(RSA\ *r);}
+\DoxyCodeLine{00055\ \textcolor{keywordtype}{void}\ ossl\_rsa\_set0\_libctx(RSA\ *r,\ OSSL\_LIB\_CTX\ *libctx);}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \textcolor{keywordtype}{int}\ ossl\_rsa\_set0\_all\_params(RSA\ *r,\ \textcolor{keyword}{const}\ STACK\_OF(BIGNUM)\ *primes,}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ STACK\_OF(BIGNUM)\ *exps,}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ STACK\_OF(BIGNUM)\ *coeffs);}
+\DoxyCodeLine{00060\ \textcolor{keywordtype}{int}\ ossl\_rsa\_get0\_all\_params(RSA\ *r,\ STACK\_OF(BIGNUM\_const)\ *primes,}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ STACK\_OF(BIGNUM\_const)\ *exps,}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ STACK\_OF(BIGNUM\_const)\ *coeffs);}
+\DoxyCodeLine{00063\ \textcolor{keywordtype}{int}\ ossl\_rsa\_is\_foreign(\textcolor{keyword}{const}\ RSA\ *rsa);}
+\DoxyCodeLine{00064\ RSA\ *ossl\_rsa\_dup(\textcolor{keyword}{const}\ RSA\ *rsa,\ \textcolor{keywordtype}{int}\ selection);}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \textcolor{keywordtype}{int}\ ossl\_rsa\_todata(RSA\ *rsa,\ OSSL\_PARAM\_BLD\ *bld,\ OSSL\_PARAM\ params[],}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ include\_private);}
+\DoxyCodeLine{00068\ \textcolor{keywordtype}{int}\ ossl\_rsa\_fromdata(RSA\ *rsa,\ \textcolor{keyword}{const}\ OSSL\_PARAM\ params[],\ \textcolor{keywordtype}{int}\ include\_private);}
+\DoxyCodeLine{00069\ \textcolor{keywordtype}{int}\ ossl\_rsa\_pss\_params\_30\_todata(\textcolor{keyword}{const}\ \mbox{\hyperlink{structrsa__pss__params__30__st}{RSA\_PSS\_PARAMS\_30}}\ *pss,}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OSSL\_PARAM\_BLD\ *bld,\ OSSL\_PARAM\ params[]);}
+\DoxyCodeLine{00071\ \textcolor{keywordtype}{int}\ ossl\_rsa\_pss\_params\_30\_fromdata(\mbox{\hyperlink{structrsa__pss__params__30__st}{RSA\_PSS\_PARAMS\_30}}\ *pss\_params,}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ *defaults\_set,}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ OSSL\_PARAM\ params[],}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OSSL\_LIB\_CTX\ *libctx);}
+\DoxyCodeLine{00075\ \textcolor{keywordtype}{int}\ ossl\_rsa\_set0\_pss\_params(RSA\ *r,\ RSA\_PSS\_PARAMS\ *pss);}
+\DoxyCodeLine{00076\ \textcolor{keywordtype}{int}\ ossl\_rsa\_pss\_get\_param\_unverified(\textcolor{keyword}{const}\ RSA\_PSS\_PARAMS\ *pss,}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ EVP\_MD\ **pmd,\ \textcolor{keyword}{const}\ EVP\_MD\ **pmgf1md,}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ *psaltlen,\ \textcolor{keywordtype}{int}\ *ptrailerField);}
+\DoxyCodeLine{00079\ RSA\_PSS\_PARAMS\ *ossl\_rsa\_pss\_decode(\textcolor{keyword}{const}\ X509\_ALGOR\ *alg);}
+\DoxyCodeLine{00080\ \textcolor{keywordtype}{int}\ ossl\_rsa\_param\_decode(RSA\ *rsa,\ \textcolor{keyword}{const}\ X509\_ALGOR\ *alg);}
+\DoxyCodeLine{00081\ RSA\ *ossl\_rsa\_key\_from\_pkcs8(\textcolor{keyword}{const}\ PKCS8\_PRIV\_KEY\_INFO\ *p8inf,}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OSSL\_LIB\_CTX\ *libctx,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *propq);}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \textcolor{keywordtype}{int}\ ossl\_rsa\_padding\_check\_PKCS1\_type\_2(OSSL\_LIB\_CTX\ *ctx,}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *to,\ \textcolor{keywordtype}{int}\ tlen,}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *from,\ \textcolor{keywordtype}{int}\ flen,}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ num,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *kdk);}
+\DoxyCodeLine{00088\ \textcolor{keywordtype}{int}\ ossl\_rsa\_padding\_check\_PKCS1\_type\_2\_TLS(OSSL\_LIB\_CTX\ *ctx,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *to,}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ tlen,}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *from,}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ flen,\ \textcolor{keywordtype}{int}\ client\_version,}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ alt\_version);}
+\DoxyCodeLine{00093\ \textcolor{keywordtype}{int}\ ossl\_rsa\_padding\_add\_PKCS1\_OAEP\_mgf1\_ex(OSSL\_LIB\_CTX\ *libctx,}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *to,\ \textcolor{keywordtype}{int}\ tlen,}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *from,\ \textcolor{keywordtype}{int}\ flen,}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *param,}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ plen,\ \textcolor{keyword}{const}\ EVP\_MD\ *md,}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ EVP\_MD\ *mgf1md);}
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00100\ \textcolor{keywordtype}{int}\ ossl\_rsa\_validate\_public(\textcolor{keyword}{const}\ RSA\ *key);}
+\DoxyCodeLine{00101\ \textcolor{keywordtype}{int}\ ossl\_rsa\_validate\_private(\textcolor{keyword}{const}\ RSA\ *key);}
+\DoxyCodeLine{00102\ \textcolor{keywordtype}{int}\ ossl\_rsa\_validate\_pairwise(\textcolor{keyword}{const}\ RSA\ *key);}
+\DoxyCodeLine{00103\ }
+\DoxyCodeLine{00104\ \textcolor{keywordtype}{int}\ ossl\_rsa\_verify(\textcolor{keywordtype}{int}\ dtype,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *m,}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ m\_len,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *rm,}
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ *prm\_len,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *sigbuf,}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ siglen,\ RSA\ *rsa);}
+\DoxyCodeLine{00108\ }
+\DoxyCodeLine{00109\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *ossl\_rsa\_digestinfo\_encoding(\textcolor{keywordtype}{int}\ md\_nid,\ \textcolor{keywordtype}{size\_t}\ *len);}
+\DoxyCodeLine{00110\ }
+\DoxyCodeLine{00111\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *ossl\_rsa\_mp\_factor\_names[];}
+\DoxyCodeLine{00112\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *ossl\_rsa\_mp\_exp\_names[];}
+\DoxyCodeLine{00113\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *ossl\_rsa\_mp\_coeff\_names[];}
+\DoxyCodeLine{00114\ }
+\DoxyCodeLine{00115\ ASN1\_STRING\ *ossl\_rsa\_ctx\_to\_pss\_string(EVP\_PKEY\_CTX\ *pkctx);}
+\DoxyCodeLine{00116\ \textcolor{keywordtype}{int}\ ossl\_rsa\_pss\_to\_ctx(EVP\_MD\_CTX\ *ctx,\ EVP\_PKEY\_CTX\ *pkctx,}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ X509\_ALGOR\ *sigalg,\ EVP\_PKEY\ *pkey);}
+\DoxyCodeLine{00118\ }
+\DoxyCodeLine{00119\ \textcolor{preprocessor}{\#\ if\ defined(FIPS\_MODULE)\ \&\&\ !defined(OPENSSL\_NO\_ACVP\_TESTS)}}
+\DoxyCodeLine{00120\ \textcolor{keywordtype}{int}\ ossl\_rsa\_acvp\_test\_gen\_params\_new(OSSL\_PARAM\ **dst,\ \textcolor{keyword}{const}\ OSSL\_PARAM\ src[]);}
+\DoxyCodeLine{00121\ \textcolor{keywordtype}{void}\ ossl\_rsa\_acvp\_test\_gen\_params\_free(OSSL\_PARAM\ *dst);}
+\DoxyCodeLine{00122\ }
+\DoxyCodeLine{00123\ \textcolor{keywordtype}{int}\ ossl\_rsa\_acvp\_test\_set\_params(RSA\ *r,\ \textcolor{keyword}{const}\ OSSL\_PARAM\ params[]);}
+\DoxyCodeLine{00124\ \textcolor{keywordtype}{int}\ ossl\_rsa\_acvp\_test\_get\_params(RSA\ *r,\ OSSL\_PARAM\ params[]);}
+\DoxyCodeLine{00125\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }rsa\_acvp\_test\_st\ RSA\_ACVP\_TEST;}
+\DoxyCodeLine{00126\ \textcolor{keywordtype}{void}\ ossl\_rsa\_acvp\_test\_free(RSA\_ACVP\_TEST\ *t);}
+\DoxyCodeLine{00127\ \textcolor{preprocessor}{\#\ else}}
+\DoxyCodeLine{00128\ \textcolor{preprocessor}{\#\ define\ RSA\_ACVP\_TEST\ void}}
+\DoxyCodeLine{00129\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00130\ }
+\DoxyCodeLine{00131\ RSA\ *evp\_pkey\_get1\_RSA\_PSS(EVP\_PKEY\ *pkey);}
+\DoxyCodeLine{00132\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

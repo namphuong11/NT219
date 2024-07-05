@@ -1,0 +1,223 @@
+\doxysection{sockets.\+h}
+\hypertarget{sockets_8h_source}{}\label{sockets_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/sockets.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/sockets.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 1995-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_INTERNAL\_SOCKETS\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_INTERNAL\_SOCKETS\_H}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#\ pragma\ once}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ include\ <openssl/opensslconf.h>}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#\ if\ defined(OPENSSL\_SYS\_VXWORKS)\ ||\ defined(OPENSSL\_SYS\_UEFI)}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#\ \ define\ NO\_SYS\_PARAM\_H}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#\ ifdef\ WIN32}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#\ \ define\ NO\_SYS\_UN\_H}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#\ ifdef\ OPENSSL\_SYS\_VMS}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#\ \ define\ NO\_SYS\_PARAM\_H}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#\ \ define\ NO\_SYS\_UN\_H}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#\ ifdef\ OPENSSL\_NO\_SOCK}}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#\ elif\ defined(OPENSSL\_SYS\_WINDOWS)\ ||\ defined(OPENSSL\_SYS\_MSDOS)}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#\ \ if\ defined(\_\_DJGPP\_\_)}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#\ \ \ define\ WATT32}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#\ \ \ define\ WATT32\_NO\_OLDIES}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#\ \ \ include\ <sys/socket.h>}}
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#\ \ \ include\ <sys/un.h>}}
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#\ \ \ include\ <tcp.h>}}
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#\ \ \ include\ <netdb.h>}}
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#\ \ \ include\ <arpa/inet.h>}}
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#\ \ \ include\ <netinet/tcp.h>}}
+\DoxyCodeLine{00039\ \textcolor{preprocessor}{\#\ \ elif\ defined(\_WIN32\_WCE)\ \&\&\ \_WIN32\_WCE<410}}
+\DoxyCodeLine{00040\ \textcolor{preprocessor}{\#\ \ \ define\ getservbyname\ \_masked\_declaration\_getservbyname}}
+\DoxyCodeLine{00041\ \textcolor{preprocessor}{\#\ \ endif}}
+\DoxyCodeLine{00042\ \textcolor{preprocessor}{\#\ \ if\ !defined(IPPROTO\_IP)}}
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{comment}{/*\ winsock[2].h\ was\ included\ already?\ */}}
+\DoxyCodeLine{00044\ \textcolor{preprocessor}{\#\ \ \ include\ <winsock.h>}}
+\DoxyCodeLine{00045\ \textcolor{preprocessor}{\#\ \ endif}}
+\DoxyCodeLine{00046\ \textcolor{preprocessor}{\#\ \ ifdef\ getservbyname}}
+\DoxyCodeLine{00047\ \ \ \ \ \ \textcolor{comment}{/*\ this\ is\ used\ to\ be\ wcecompat/include/winsock\_extras.h\ */}}
+\DoxyCodeLine{00048\ \textcolor{preprocessor}{\#\ \ \ undef\ getservbyname}}
+\DoxyCodeLine{00049\ \textcolor{keyword}{struct\ }servent\ *PASCAL\ getservbyname(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *);}
+\DoxyCodeLine{00050\ \textcolor{preprocessor}{\#\ \ endif}}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ \textcolor{preprocessor}{\#\ \ ifdef\ \_WIN64}}
+\DoxyCodeLine{00053\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00054\ \textcolor{comment}{\ *\ Even\ though\ sizeof(SOCKET)\ is\ 8,\ it's\ safe\ to\ cast\ it\ to\ int,\ because}}
+\DoxyCodeLine{00055\ \textcolor{comment}{\ *\ the\ value\ constitutes\ an\ index\ in\ per-\/process\ table\ of\ limited\ size}}
+\DoxyCodeLine{00056\ \textcolor{comment}{\ *\ and\ not\ a\ real\ pointer.\ And\ we\ also\ depend\ on\ fact\ that\ all\ processors}}
+\DoxyCodeLine{00057\ \textcolor{comment}{\ *\ Windows\ run\ on\ happen\ to\ be\ two's-\/complement,\ which\ allows\ to}}
+\DoxyCodeLine{00058\ \textcolor{comment}{\ *\ interchange\ INVALID\_SOCKET\ and\ -\/1.}}
+\DoxyCodeLine{00059\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00060\ \textcolor{preprocessor}{\#\ \ \ define\ socket(d,t,p)\ \ \ ((int)socket(d,t,p))}}
+\DoxyCodeLine{00061\ \textcolor{preprocessor}{\#\ \ \ define\ accept(s,f,l)\ \ \ ((int)accept(s,f,l))}}
+\DoxyCodeLine{00062\ \textcolor{preprocessor}{\#\ \ endif}}
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00064\ \textcolor{comment}{/*\ Windows\ have\ other\ names\ for\ shutdown()\ reasons\ */}}
+\DoxyCodeLine{00065\ \textcolor{preprocessor}{\#\ \ ifndef\ SHUT\_RD}}
+\DoxyCodeLine{00066\ \textcolor{preprocessor}{\#\ \ \ define\ SHUT\_RD\ SD\_RECEIVE}}
+\DoxyCodeLine{00067\ \textcolor{preprocessor}{\#\ \ endif}}
+\DoxyCodeLine{00068\ \textcolor{preprocessor}{\#\ \ ifndef\ SHUT\_WR}}
+\DoxyCodeLine{00069\ \textcolor{preprocessor}{\#\ \ \ define\ SHUT\_WR\ SD\_SEND}}
+\DoxyCodeLine{00070\ \textcolor{preprocessor}{\#\ \ endif}}
+\DoxyCodeLine{00071\ \textcolor{preprocessor}{\#\ \ ifndef\ SHUT\_RDWR}}
+\DoxyCodeLine{00072\ \textcolor{preprocessor}{\#\ \ \ define\ SHUT\_RDWR\ SD\_BOTH}}
+\DoxyCodeLine{00073\ \textcolor{preprocessor}{\#\ \ endif}}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00075\ \textcolor{preprocessor}{\#\ else}}
+\DoxyCodeLine{00076\ \textcolor{preprocessor}{\#\ \ if\ defined(\_\_APPLE\_\_)}}
+\DoxyCodeLine{00077\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00078\ \textcolor{comment}{\ \ \ \ \ *\ This\ must\ be\ defined\ before\ including\ <netinet/in6.h>\ to\ get}}
+\DoxyCodeLine{00079\ \textcolor{comment}{\ \ \ \ \ *\ IPV6\_RECVPKTINFO}}
+\DoxyCodeLine{00080\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00081\ \textcolor{preprocessor}{\#\ \ \ define\ \_\_APPLE\_USE\_RFC\_3542}}
+\DoxyCodeLine{00082\ \textcolor{preprocessor}{\#\ \ endif}}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \textcolor{preprocessor}{\#\ \ ifndef\ NO\_SYS\_PARAM\_H}}
+\DoxyCodeLine{00085\ \textcolor{preprocessor}{\#\ \ \ include\ <sys/param.h>}}
+\DoxyCodeLine{00086\ \textcolor{preprocessor}{\#\ \ endif}}
+\DoxyCodeLine{00087\ \textcolor{preprocessor}{\#\ \ ifdef\ OPENSSL\_SYS\_VXWORKS}}
+\DoxyCodeLine{00088\ \textcolor{preprocessor}{\#\ \ \ include\ <time.h>}}
+\DoxyCodeLine{00089\ \textcolor{preprocessor}{\#\ \ endif}}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ \textcolor{preprocessor}{\#\ \ include\ <netdb.h>}}
+\DoxyCodeLine{00092\ \textcolor{preprocessor}{\#\ \ if\ defined(OPENSSL\_SYS\_VMS)}}
+\DoxyCodeLine{00093\ \textcolor{keyword}{typedef}\ \textcolor{keywordtype}{size\_t}\ socklen\_t;\ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Currently\ appears\ to\ be\ missing\ on\ VMS\ */}}
+\DoxyCodeLine{00094\ \textcolor{preprocessor}{\#\ \ endif}}
+\DoxyCodeLine{00095\ \textcolor{preprocessor}{\#\ \ if\ defined(OPENSSL\_SYS\_VMS\_NODECC)}}
+\DoxyCodeLine{00096\ \textcolor{preprocessor}{\#\ \ \ include\ <socket.h>}}
+\DoxyCodeLine{00097\ \textcolor{preprocessor}{\#\ \ \ include\ <in.h>}}
+\DoxyCodeLine{00098\ \textcolor{preprocessor}{\#\ \ \ include\ <inet.h>}}
+\DoxyCodeLine{00099\ \textcolor{preprocessor}{\#\ \ else}}
+\DoxyCodeLine{00100\ \textcolor{preprocessor}{\#\ \ \ include\ <sys/socket.h>}}
+\DoxyCodeLine{00101\ \textcolor{preprocessor}{\#\ \ \ if\ !defined(NO\_SYS\_UN\_H)\ \&\&\ defined(AF\_UNIX)\ \&\&\ !defined(OPENSSL\_NO\_UNIX\_SOCK)}}
+\DoxyCodeLine{00102\ \textcolor{preprocessor}{\#\ \ \ \ include\ <sys/un.h>}}
+\DoxyCodeLine{00103\ \textcolor{preprocessor}{\#\ \ \ \ ifndef\ UNIX\_PATH\_MAX}}
+\DoxyCodeLine{00104\ \textcolor{preprocessor}{\#\ \ \ \ \ define\ UNIX\_PATH\_MAX\ sizeof(((struct\ sockaddr\_un\ *)NULL)-\/>sun\_path)}}
+\DoxyCodeLine{00105\ \textcolor{preprocessor}{\#\ \ \ \ endif}}
+\DoxyCodeLine{00106\ \textcolor{preprocessor}{\#\ \ \ endif}}
+\DoxyCodeLine{00107\ \textcolor{preprocessor}{\#\ \ \ ifdef\ FILIO\_H}}
+\DoxyCodeLine{00108\ \textcolor{preprocessor}{\#\ \ \ \ include\ <sys/filio.h>}\ \textcolor{comment}{/*\ FIONBIO\ in\ some\ SVR4,\ e.g.\ unixware,\ solaris\ */}}
+\DoxyCodeLine{00109\ \textcolor{preprocessor}{\#\ \ \ endif}}
+\DoxyCodeLine{00110\ \textcolor{preprocessor}{\#\ \ \ include\ <netinet/in.h>}}
+\DoxyCodeLine{00111\ \textcolor{preprocessor}{\#\ \ \ include\ <arpa/inet.h>}}
+\DoxyCodeLine{00112\ \textcolor{preprocessor}{\#\ \ \ include\ <netinet/tcp.h>}}
+\DoxyCodeLine{00113\ \textcolor{preprocessor}{\#\ \ endif}}
+\DoxyCodeLine{00114\ }
+\DoxyCodeLine{00115\ \textcolor{preprocessor}{\#\ \ ifdef\ OPENSSL\_SYS\_AIX}}
+\DoxyCodeLine{00116\ \textcolor{preprocessor}{\#\ \ \ include\ <sys/select.h>}}
+\DoxyCodeLine{00117\ \textcolor{preprocessor}{\#\ \ endif}}
+\DoxyCodeLine{00118\ }
+\DoxyCodeLine{00119\ \textcolor{preprocessor}{\#\ \ ifdef\ OPENSSL\_SYS\_UNIX}}
+\DoxyCodeLine{00120\ \textcolor{preprocessor}{\#\ \ \ \ ifndef\ OPENSSL\_SYS\_TANDEM}}
+\DoxyCodeLine{00121\ \textcolor{preprocessor}{\#\ \ \ \ \ include\ <poll.h>}}
+\DoxyCodeLine{00122\ \textcolor{preprocessor}{\#\ \ \ \ endif}}
+\DoxyCodeLine{00123\ \textcolor{preprocessor}{\#\ \ \ \ include\ <errno.h>}}
+\DoxyCodeLine{00124\ \textcolor{preprocessor}{\#\ \ endif}}
+\DoxyCodeLine{00125\ }
+\DoxyCodeLine{00126\ \textcolor{preprocessor}{\#\ \ ifndef\ VMS}}
+\DoxyCodeLine{00127\ \textcolor{preprocessor}{\#\ \ \ include\ <sys/ioctl.h>}}
+\DoxyCodeLine{00128\ \textcolor{preprocessor}{\#\ \ else}}
+\DoxyCodeLine{00129\ \textcolor{preprocessor}{\#\ \ \ if\ !defined(TCPIP\_TYPE\_SOCKETSHR)\ \&\&\ defined(\_\_VMS\_VER)\ \&\&\ (\_\_VMS\_VER\ >\ 70000000)}}
+\DoxyCodeLine{00130\ \ \ \ \ \ \textcolor{comment}{/*\ ioctl\ is\ only\ in\ VMS\ >\ 7.0\ and\ when\ socketshr\ is\ not\ used\ */}}
+\DoxyCodeLine{00131\ \textcolor{preprocessor}{\#\ \ \ \ include\ <sys/ioctl.h>}}
+\DoxyCodeLine{00132\ \textcolor{preprocessor}{\#\ \ \ endif}}
+\DoxyCodeLine{00133\ \textcolor{preprocessor}{\#\ \ \ include\ <unixio.h>}}
+\DoxyCodeLine{00134\ \textcolor{preprocessor}{\#\ \ \ if\ defined(TCPIP\_TYPE\_SOCKETSHR)}}
+\DoxyCodeLine{00135\ \textcolor{preprocessor}{\#\ \ \ \ include\ <socketshr.h>}}
+\DoxyCodeLine{00136\ \textcolor{preprocessor}{\#\ \ \ endif}}
+\DoxyCodeLine{00137\ \textcolor{preprocessor}{\#\ \ endif}}
+\DoxyCodeLine{00138\ }
+\DoxyCodeLine{00139\ \textcolor{preprocessor}{\#\ \ ifndef\ INVALID\_SOCKET}}
+\DoxyCodeLine{00140\ \textcolor{preprocessor}{\#\ \ \ define\ INVALID\_SOCKET\ \ \ \ \ \ (-\/1)}}
+\DoxyCodeLine{00141\ \textcolor{preprocessor}{\#\ \ endif}}
+\DoxyCodeLine{00142\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00143\ }
+\DoxyCodeLine{00144\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00145\ \textcolor{comment}{\ *\ Some\ IPv6\ implementations\ are\ broken,\ you\ can\ disable\ them\ in\ known}}
+\DoxyCodeLine{00146\ \textcolor{comment}{\ *\ bad\ versions.}}
+\DoxyCodeLine{00147\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00148\ \textcolor{preprocessor}{\#\ if\ !defined(OPENSSL\_USE\_IPV6)}}
+\DoxyCodeLine{00149\ \textcolor{preprocessor}{\#\ \ if\ defined(AF\_INET6)}}
+\DoxyCodeLine{00150\ \textcolor{preprocessor}{\#\ \ \ define\ OPENSSL\_USE\_IPV6\ 1}}
+\DoxyCodeLine{00151\ \textcolor{preprocessor}{\#\ \ else}}
+\DoxyCodeLine{00152\ \textcolor{preprocessor}{\#\ \ \ define\ OPENSSL\_USE\_IPV6\ 0}}
+\DoxyCodeLine{00153\ \textcolor{preprocessor}{\#\ \ endif}}
+\DoxyCodeLine{00154\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00155\ }
+\DoxyCodeLine{00156\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00157\ \textcolor{comment}{\ *\ Some\ platforms\ define\ AF\_UNIX,\ but\ don't\ support\ it}}
+\DoxyCodeLine{00158\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00159\ \textcolor{preprocessor}{\#\ if\ !defined(OPENSSL\_NO\_UNIX\_SOCK)}}
+\DoxyCodeLine{00160\ \textcolor{preprocessor}{\#\ \ if\ !defined(AF\_UNIX)\ ||\ defined(NO\_SYS\_UN\_H)}}
+\DoxyCodeLine{00161\ \textcolor{preprocessor}{\#\ \ \ define\ OPENSSL\_NO\_UNIX\_SOCK}}
+\DoxyCodeLine{00162\ \textcolor{preprocessor}{\#\ \ endif}}
+\DoxyCodeLine{00163\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00164\ }
+\DoxyCodeLine{00165\ \textcolor{preprocessor}{\#\ define\ get\_last\_socket\_error()\ errno}}
+\DoxyCodeLine{00166\ \textcolor{preprocessor}{\#\ define\ clear\_socket\_error()\ \ \ \ errno=0}}
+\DoxyCodeLine{00167\ \textcolor{preprocessor}{\#\ define\ get\_last\_socket\_error\_is\_eintr()\ (get\_last\_socket\_error()\ ==\ EINTR)}}
+\DoxyCodeLine{00168\ }
+\DoxyCodeLine{00169\ \textcolor{preprocessor}{\#\ if\ defined(OPENSSL\_SYS\_WINDOWS)}}
+\DoxyCodeLine{00170\ \textcolor{preprocessor}{\#\ \ undef\ get\_last\_socket\_error}}
+\DoxyCodeLine{00171\ \textcolor{preprocessor}{\#\ \ undef\ clear\_socket\_error}}
+\DoxyCodeLine{00172\ \textcolor{preprocessor}{\#\ \ undef\ get\_last\_socket\_error\_is\_eintr}}
+\DoxyCodeLine{00173\ \textcolor{preprocessor}{\#\ \ define\ get\_last\_socket\_error()\ WSAGetLastError()}}
+\DoxyCodeLine{00174\ \textcolor{preprocessor}{\#\ \ define\ clear\_socket\_error()\ \ \ \ WSASetLastError(0)}}
+\DoxyCodeLine{00175\ \textcolor{preprocessor}{\#\ \ define\ get\_last\_socket\_error\_is\_eintr()\ (get\_last\_socket\_error()\ ==\ WSAEINTR)}}
+\DoxyCodeLine{00176\ \textcolor{preprocessor}{\#\ \ define\ readsocket(s,b,n)\ \ \ \ \ \ \ recv((s),(b),(n),0)}}
+\DoxyCodeLine{00177\ \textcolor{preprocessor}{\#\ \ define\ writesocket(s,b,n)\ \ \ \ \ \ send((s),(b),(n),0)}}
+\DoxyCodeLine{00178\ \textcolor{preprocessor}{\#\ elif\ defined(\_\_DJGPP\_\_)}}
+\DoxyCodeLine{00179\ \textcolor{preprocessor}{\#\ \ define\ closesocket(s)\ \ \ \ \ \ \ \ \ \ close\_s(s)}}
+\DoxyCodeLine{00180\ \textcolor{preprocessor}{\#\ \ define\ readsocket(s,b,n)\ \ \ \ \ \ \ read\_s(s,b,n)}}
+\DoxyCodeLine{00181\ \textcolor{preprocessor}{\#\ \ define\ writesocket(s,b,n)\ \ \ \ \ \ send(s,b,n,0)}}
+\DoxyCodeLine{00182\ \textcolor{preprocessor}{\#\ elif\ defined(OPENSSL\_SYS\_VMS)}}
+\DoxyCodeLine{00183\ \textcolor{preprocessor}{\#\ \ define\ ioctlsocket(a,b,c)\ \ \ \ \ \ ioctl(a,b,c)}}
+\DoxyCodeLine{00184\ \textcolor{preprocessor}{\#\ \ define\ closesocket(s)\ \ \ \ \ \ \ \ \ \ close(s)}}
+\DoxyCodeLine{00185\ \textcolor{preprocessor}{\#\ \ define\ readsocket(s,b,n)\ \ \ \ \ \ \ recv((s),(b),(n),0)}}
+\DoxyCodeLine{00186\ \textcolor{preprocessor}{\#\ \ define\ writesocket(s,b,n)\ \ \ \ \ \ send((s),(b),(n),0)}}
+\DoxyCodeLine{00187\ \textcolor{preprocessor}{\#\ elif\ defined(OPENSSL\_SYS\_VXWORKS)}}
+\DoxyCodeLine{00188\ \textcolor{preprocessor}{\#\ \ define\ ioctlsocket(a,b,c)\ \ \ \ \ \ \ \ \ \ ioctl((a),(b),(int)(c))}}
+\DoxyCodeLine{00189\ \textcolor{preprocessor}{\#\ \ define\ closesocket(s)\ \ \ \ \ \ \ \ \ \ \ \ \ \ close(s)}}
+\DoxyCodeLine{00190\ \textcolor{preprocessor}{\#\ \ define\ readsocket(s,b,n)\ \ \ \ \ \ \ \ \ \ \ read((s),(b),(n))}}
+\DoxyCodeLine{00191\ \textcolor{preprocessor}{\#\ \ define\ writesocket(s,b,n)\ \ \ \ \ \ \ \ \ \ write((s),(char\ *)(b),(n))}}
+\DoxyCodeLine{00192\ \textcolor{preprocessor}{\#\ elif\ defined(OPENSSL\_SYS\_TANDEM)}}
+\DoxyCodeLine{00193\ \textcolor{preprocessor}{\#\ \ if\ defined(OPENSSL\_TANDEM\_FLOSS)}}
+\DoxyCodeLine{00194\ \textcolor{preprocessor}{\#\ \ \ include\ <floss.h(floss\_read,\ floss\_write)>}}
+\DoxyCodeLine{00195\ \textcolor{preprocessor}{\#\ \ \ define\ readsocket(s,b,n)\ \ \ \ \ \ \ floss\_read((s),(b),(n))}}
+\DoxyCodeLine{00196\ \textcolor{preprocessor}{\#\ \ \ define\ writesocket(s,b,n)\ \ \ \ \ \ floss\_write((s),(b),(n))}}
+\DoxyCodeLine{00197\ \textcolor{preprocessor}{\#\ \ else}}
+\DoxyCodeLine{00198\ \textcolor{preprocessor}{\#\ \ \ define\ readsocket(s,b,n)\ \ \ \ \ \ \ read((s),(b),(n))}}
+\DoxyCodeLine{00199\ \textcolor{preprocessor}{\#\ \ \ define\ writesocket(s,b,n)\ \ \ \ \ \ write((s),(b),(n))}}
+\DoxyCodeLine{00200\ \textcolor{preprocessor}{\#\ \ endif}}
+\DoxyCodeLine{00201\ \textcolor{preprocessor}{\#\ \ define\ ioctlsocket(a,b,c)\ \ \ \ \ \ ioctl(a,b,c)}}
+\DoxyCodeLine{00202\ \textcolor{preprocessor}{\#\ \ define\ closesocket(s)\ \ \ \ \ \ \ \ \ \ close(s)}}
+\DoxyCodeLine{00203\ \textcolor{preprocessor}{\#\ else}}
+\DoxyCodeLine{00204\ \textcolor{preprocessor}{\#\ \ define\ ioctlsocket(a,b,c)\ \ \ \ \ \ ioctl(a,b,c)}}
+\DoxyCodeLine{00205\ \textcolor{preprocessor}{\#\ \ define\ closesocket(s)\ \ \ \ \ \ \ \ \ \ close(s)}}
+\DoxyCodeLine{00206\ \textcolor{preprocessor}{\#\ \ define\ readsocket(s,b,n)\ \ \ \ \ \ \ read((s),(b),(n))}}
+\DoxyCodeLine{00207\ \textcolor{preprocessor}{\#\ \ define\ writesocket(s,b,n)\ \ \ \ \ \ write((s),(b),(n))}}
+\DoxyCodeLine{00208\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00209\ }
+\DoxyCodeLine{00210\ \textcolor{comment}{/*\ also\ in\ apps/include/apps.h\ */}}
+\DoxyCodeLine{00211\ \textcolor{preprocessor}{\#\ if\ defined(OPENSSL\_SYS\_WIN32)\ ||\ defined(OPENSSL\_SYS\_WINCE)}}
+\DoxyCodeLine{00212\ \textcolor{preprocessor}{\#\ \ define\ openssl\_fdset(a,\ b)\ FD\_SET((unsigned\ int)(a),\ b)}}
+\DoxyCodeLine{00213\ \textcolor{preprocessor}{\#\ else}}
+\DoxyCodeLine{00214\ \textcolor{preprocessor}{\#\ \ define\ openssl\_fdset(a,\ b)\ FD\_SET(a,\ b)}}
+\DoxyCodeLine{00215\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00216\ }
+\DoxyCodeLine{00217\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

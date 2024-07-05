@@ -1,0 +1,55 @@
+\doxysection{ossl\+\_\+passphrase\+\_\+data\+\_\+st Struct Reference}
+\hypertarget{structossl__passphrase__data__st}{}\label{structossl__passphrase__data__st}\index{ossl\_passphrase\_data\_st@{ossl\_passphrase\_data\_st}}
+\doxysubsubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{structossl__passphrase__data__st_a632e348b6b9863d1c61681a7be4b441b}\label{structossl__passphrase__data__st_a632e348b6b9863d1c61681a7be4b441b} 
+enum \{ {\bfseries is\+\_\+expl\+\_\+passphrase} = 1
+, {\bfseries is\+\_\+pem\+\_\+password}
+, {\bfseries is\+\_\+ossl\+\_\+passphrase}
+, {\bfseries is\+\_\+ui\+\_\+method}
+ \}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{structossl__passphrase__data__st_a55ef24e73538a5755316db6e7bf0bf03}\label{structossl__passphrase__data__st_a55ef24e73538a5755316db6e7bf0bf03} 
+enum ossl\+\_\+passphrase\+\_\+data\+\_\+st\+:: \{ ... \}  {\bfseries type}
+\item 
+\Hypertarget{structossl__passphrase__data__st_ac9464058a10ab5f6e64c7bfc60d97c7f}\label{structossl__passphrase__data__st_ac9464058a10ab5f6e64c7bfc60d97c7f} 
+\begin{tabbing}
+xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=\kill
+union \{\\
+\>struct \{\\
+\>\>char \texorpdfstring{$\ast$}{*} {\bfseries passphrase\_copy}\\
+\>\>size\_t {\bfseries passphrase\_len}\\
+\>\} {\bfseries expl\_passphrase}\\
+\>struct \{\\
+\>\>pem\_password\_cb \texorpdfstring{$\ast$}{*} {\bfseries password\_cb}\\
+\>\>void \texorpdfstring{$\ast$}{*} {\bfseries password\_cbarg}\\
+\>\} {\bfseries pem\_password}\\
+\>struct \{\\
+\>\>OSSL\_PASSPHRASE\_CALLBACK \texorpdfstring{$\ast$}{*} {\bfseries passphrase\_cb}\\
+\>\>void \texorpdfstring{$\ast$}{*} {\bfseries passphrase\_cbarg}\\
+\>\} {\bfseries ossl\_passphrase}\\
+\>struct \{\\
+\>\>const UI\_METHOD \texorpdfstring{$\ast$}{*} {\bfseries ui\_method}\\
+\>\>void \texorpdfstring{$\ast$}{*} {\bfseries ui\_method\_data}\\
+\>\} {\bfseries ui\_method}\\
+\} {\bfseries \_}\\
+
+\end{tabbing}\item 
+\Hypertarget{structossl__passphrase__data__st_ac85cabe4456f8617221df3f8975ce65c}\label{structossl__passphrase__data__st_ac85cabe4456f8617221df3f8975ce65c} 
+unsigned int {\bfseries flag\+\_\+cache\+\_\+passphrase}\+:1
+\item 
+\Hypertarget{structossl__passphrase__data__st_a6e728547cd31dc9798229d4ed973e525}\label{structossl__passphrase__data__st_a6e728547cd31dc9798229d4ed973e525} 
+char \texorpdfstring{$\ast$}{*} {\bfseries cached\+\_\+passphrase}
+\item 
+\Hypertarget{structossl__passphrase__data__st_a1865ecbf35732460118565998f1d3f42}\label{structossl__passphrase__data__st_a1865ecbf35732460118565998f1d3f42} 
+size\+\_\+t {\bfseries cached\+\_\+passphrase\+\_\+len}
+\end{DoxyCompactItemize}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/namph/\+Downloads/openssl/openssl-\/3.\+2.\+1/include/internal/passphrase.\+h\end{DoxyCompactItemize}

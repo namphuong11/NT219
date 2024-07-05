@@ -1,0 +1,57 @@
+\doxysection{cmll\+\_\+platform.\+h}
+\hypertarget{cmll__platform_8h_source}{}\label{cmll__platform_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/crypto/cmll\_platform.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/crypto/cmll\_platform.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2019-\/2021\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_CMLL\_PLATFORM\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_CMLL\_PLATFORM\_H}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#\ pragma\ once}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ if\ defined(CMLL\_ASM)\ \&\&\ (defined(\_\_sparc)\ ||\ defined(\_\_sparc\_\_))}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{comment}{/*\ Fujitsu\ SPARC64\ X\ support\ */}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#\ \ include\ "{}crypto/sparc\_arch.h"{}}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#\ \ ifndef\ OPENSSL\_NO\_CAMELLIA}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#\ \ \ define\ SPARC\_CMLL\_CAPABLE\ \ \ \ \ \ (OPENSSL\_sparcv9cap\_P[1]\ \&\ CFR\_CAMELLIA)}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#\ \ \ include\ <openssl/camellia.h>}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{keywordtype}{void}\ cmll\_t4\_set\_key(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *key,\ \textcolor{keywordtype}{int}\ bits,\ CAMELLIA\_KEY\ *ks);}
+\DoxyCodeLine{00024\ \textcolor{keywordtype}{void}\ cmll\_t4\_encrypt(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ CAMELLIA\_KEY\ *key);}
+\DoxyCodeLine{00026\ \textcolor{keywordtype}{void}\ cmll\_t4\_decrypt(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ CAMELLIA\_KEY\ *key);}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \textcolor{keywordtype}{void}\ cmll128\_t4\_cbc\_encrypt(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ len,\ \textcolor{keyword}{const}\ CAMELLIA\_KEY\ *key,}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *ivec,\ \textcolor{keywordtype}{int}\ \textcolor{comment}{/*unused*/});}
+\DoxyCodeLine{00032\ \textcolor{keywordtype}{void}\ cmll128\_t4\_cbc\_decrypt(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ len,\ \textcolor{keyword}{const}\ CAMELLIA\_KEY\ *key,}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *ivec,\ \textcolor{keywordtype}{int}\ \textcolor{comment}{/*unused*/});}
+\DoxyCodeLine{00035\ \textcolor{keywordtype}{void}\ cmll256\_t4\_cbc\_encrypt(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ len,\ \textcolor{keyword}{const}\ CAMELLIA\_KEY\ *key,}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *ivec,\ \textcolor{keywordtype}{int}\ \textcolor{comment}{/*unused*/});}
+\DoxyCodeLine{00038\ \textcolor{keywordtype}{void}\ cmll256\_t4\_cbc\_decrypt(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ len,\ \textcolor{keyword}{const}\ CAMELLIA\_KEY\ *key,}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *ivec,\ \textcolor{keywordtype}{int}\ \textcolor{comment}{/*unused*/});}
+\DoxyCodeLine{00041\ \textcolor{keywordtype}{void}\ cmll128\_t4\_ctr32\_encrypt(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ blocks,\ \textcolor{keyword}{const}\ CAMELLIA\_KEY\ *key,}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *ivec);}
+\DoxyCodeLine{00044\ \textcolor{keywordtype}{void}\ cmll256\_t4\_ctr32\_encrypt(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ blocks,\ \textcolor{keyword}{const}\ CAMELLIA\_KEY\ *key,}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *ivec);}
+\DoxyCodeLine{00047\ \textcolor{preprocessor}{\#\ \ endif\ }\textcolor{comment}{/*\ OPENSSL\_NO\_CAMELLIA\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \textcolor{preprocessor}{\#\ endif\ }\textcolor{comment}{/*\ CMLL\_ASM\ \&\&\ sparc\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ OSSL\_CRYPTO\_CIPHERMODE\_PLATFORM\_H\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

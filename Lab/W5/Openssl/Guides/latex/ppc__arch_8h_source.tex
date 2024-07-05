@@ -1,0 +1,35 @@
+\doxysection{ppc\+\_\+arch.\+h}
+\hypertarget{ppc__arch_8h_source}{}\label{ppc__arch_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/crypto/ppc\_arch.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/crypto/ppc\_arch.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2014-\/2022\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_CRYPTO\_PPC\_ARCH\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_CRYPTO\_PPC\_ARCH\_H}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{keyword}{extern}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ OPENSSL\_ppccap\_P;}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ *\ Flags'\ usage\ can\ appear\ ambiguous,\ because\ they\ are\ set\ rather}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ *\ to\ reflect\ OpenSSL\ performance\ preferences\ than\ actual\ processor}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ *\ capabilities.}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#\ define\ PPC\_FPU64\ \ \ \ \ \ \ (1<<0)}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#\ define\ PPC\_ALTIVEC\ \ \ \ \ (1<<1)}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#\ define\ PPC\_CRYPTO207\ \ \ (1<<2)}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#\ define\ PPC\_FPU\ \ \ \ \ \ \ \ \ (1<<3)}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#\ define\ PPC\_MADD300\ \ \ \ \ (1<<4)}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#\ define\ PPC\_MFTB\ \ \ \ \ \ \ \ (1<<5)}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#\ define\ PPC\_MFSPR268\ \ \ \ (1<<6)}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#\ define\ PPC\_BRD31\ \ \ \ \ \ \ (1<<7)}}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

@@ -1,0 +1,193 @@
+\doxysection{der\+\_\+rsa.\+h}
+\hypertarget{der__rsa_8h_source}{}\label{der__rsa_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/providers/common/include/prov/der\_rsa.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/providers/common/include/prov/der\_rsa.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ WARNING:\ do\ not\ edit!}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *\ Generated\ by\ makefile\ from\ providers\(\backslash\)common\(\backslash\)include\(\backslash\)prov\(\backslash\)der\_rsa.h.in}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ Copyright\ 2020-\/2021\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ "{}crypto/rsa.h"{}}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ "{}internal/der.h"{}}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{comment}{/*\ Well\ known\ OIDs\ precompiled\ */}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ *\ hashAlgs\ OBJECT\ IDENTIFIER\ ::=\ \{\ nistAlgorithms\ 2\ \}}}
+\DoxyCodeLine{00020\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#define\ DER\_OID\_V\_hashAlgs\ DER\_P\_OBJECT,\ 8,\ 0x60,\ 0x86,\ 0x48,\ 0x01,\ 0x65,\ 0x03,\ 0x04,\ 0x02}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#define\ DER\_OID\_SZ\_hashAlgs\ 10}}
+\DoxyCodeLine{00023\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ossl\_der\_oid\_hashAlgs[DER\_OID\_SZ\_hashAlgs];}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00026\ \textcolor{comment}{\ *\ rsaEncryption\ \ \ \ OBJECT\ IDENTIFIER\ ::=\ \{\ pkcs-\/1\ 1\ \}}}
+\DoxyCodeLine{00027\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#define\ DER\_OID\_V\_rsaEncryption\ DER\_P\_OBJECT,\ 9,\ 0x2A,\ 0x86,\ 0x48,\ 0x86,\ 0xF7,\ 0x0D,\ 0x01,\ 0x01,\ 0x01}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#define\ DER\_OID\_SZ\_rsaEncryption\ 11}}
+\DoxyCodeLine{00030\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ossl\_der\_oid\_rsaEncryption[DER\_OID\_SZ\_rsaEncryption];}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00033\ \textcolor{comment}{\ *\ id-\/RSAES-\/OAEP\ \ \ \ OBJECT\ IDENTIFIER\ ::=\ \{\ pkcs-\/1\ 7\ \}}}
+\DoxyCodeLine{00034\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#define\ DER\_OID\_V\_id\_RSAES\_OAEP\ DER\_P\_OBJECT,\ 9,\ 0x2A,\ 0x86,\ 0x48,\ 0x86,\ 0xF7,\ 0x0D,\ 0x01,\ 0x01,\ 0x07}}
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#define\ DER\_OID\_SZ\_id\_RSAES\_OAEP\ 11}}
+\DoxyCodeLine{00037\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ossl\_der\_oid\_id\_RSAES\_OAEP[DER\_OID\_SZ\_id\_RSAES\_OAEP];}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00040\ \textcolor{comment}{\ *\ id-\/pSpecified\ \ \ \ OBJECT\ IDENTIFIER\ ::=\ \{\ pkcs-\/1\ 9\ \}}}
+\DoxyCodeLine{00041\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00042\ \textcolor{preprocessor}{\#define\ DER\_OID\_V\_id\_pSpecified\ DER\_P\_OBJECT,\ 9,\ 0x2A,\ 0x86,\ 0x48,\ 0x86,\ 0xF7,\ 0x0D,\ 0x01,\ 0x01,\ 0x09}}
+\DoxyCodeLine{00043\ \textcolor{preprocessor}{\#define\ DER\_OID\_SZ\_id\_pSpecified\ 11}}
+\DoxyCodeLine{00044\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ossl\_der\_oid\_id\_pSpecified[DER\_OID\_SZ\_id\_pSpecified];}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00047\ \textcolor{comment}{\ *\ id-\/RSASSA-\/PSS\ \ \ \ OBJECT\ IDENTIFIER\ ::=\ \{\ pkcs-\/1\ 10\ \}}}
+\DoxyCodeLine{00048\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00049\ \textcolor{preprocessor}{\#define\ DER\_OID\_V\_id\_RSASSA\_PSS\ DER\_P\_OBJECT,\ 9,\ 0x2A,\ 0x86,\ 0x48,\ 0x86,\ 0xF7,\ 0x0D,\ 0x01,\ 0x01,\ 0x0A}}
+\DoxyCodeLine{00050\ \textcolor{preprocessor}{\#define\ DER\_OID\_SZ\_id\_RSASSA\_PSS\ 11}}
+\DoxyCodeLine{00051\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ossl\_der\_oid\_id\_RSASSA\_PSS[DER\_OID\_SZ\_id\_RSASSA\_PSS];}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00054\ \textcolor{comment}{\ *\ md2WithRSAEncryption\ \ \ \ \ \ \ \ \ OBJECT\ IDENTIFIER\ ::=\ \{\ pkcs-\/1\ 2\ \}}}
+\DoxyCodeLine{00055\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00056\ \textcolor{preprocessor}{\#define\ DER\_OID\_V\_md2WithRSAEncryption\ DER\_P\_OBJECT,\ 9,\ 0x2A,\ 0x86,\ 0x48,\ 0x86,\ 0xF7,\ 0x0D,\ 0x01,\ 0x01,\ 0x02}}
+\DoxyCodeLine{00057\ \textcolor{preprocessor}{\#define\ DER\_OID\_SZ\_md2WithRSAEncryption\ 11}}
+\DoxyCodeLine{00058\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ossl\_der\_oid\_md2WithRSAEncryption[DER\_OID\_SZ\_md2WithRSAEncryption];}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00061\ \textcolor{comment}{\ *\ md5WithRSAEncryption\ \ \ \ \ \ \ \ \ OBJECT\ IDENTIFIER\ ::=\ \{\ pkcs-\/1\ 4\ \}}}
+\DoxyCodeLine{00062\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00063\ \textcolor{preprocessor}{\#define\ DER\_OID\_V\_md5WithRSAEncryption\ DER\_P\_OBJECT,\ 9,\ 0x2A,\ 0x86,\ 0x48,\ 0x86,\ 0xF7,\ 0x0D,\ 0x01,\ 0x01,\ 0x04}}
+\DoxyCodeLine{00064\ \textcolor{preprocessor}{\#define\ DER\_OID\_SZ\_md5WithRSAEncryption\ 11}}
+\DoxyCodeLine{00065\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ossl\_der\_oid\_md5WithRSAEncryption[DER\_OID\_SZ\_md5WithRSAEncryption];}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00067\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00068\ \textcolor{comment}{\ *\ sha1WithRSAEncryption\ \ \ \ \ \ \ \ OBJECT\ IDENTIFIER\ ::=\ \{\ pkcs-\/1\ 5\ \}}}
+\DoxyCodeLine{00069\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00070\ \textcolor{preprocessor}{\#define\ DER\_OID\_V\_sha1WithRSAEncryption\ DER\_P\_OBJECT,\ 9,\ 0x2A,\ 0x86,\ 0x48,\ 0x86,\ 0xF7,\ 0x0D,\ 0x01,\ 0x01,\ 0x05}}
+\DoxyCodeLine{00071\ \textcolor{preprocessor}{\#define\ DER\_OID\_SZ\_sha1WithRSAEncryption\ 11}}
+\DoxyCodeLine{00072\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ossl\_der\_oid\_sha1WithRSAEncryption[DER\_OID\_SZ\_sha1WithRSAEncryption];}
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00074\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00075\ \textcolor{comment}{\ *\ sha224WithRSAEncryption\ \ \ \ \ \ OBJECT\ IDENTIFIER\ ::=\ \{\ pkcs-\/1\ 14\ \}}}
+\DoxyCodeLine{00076\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00077\ \textcolor{preprocessor}{\#define\ DER\_OID\_V\_sha224WithRSAEncryption\ DER\_P\_OBJECT,\ 9,\ 0x2A,\ 0x86,\ 0x48,\ 0x86,\ 0xF7,\ 0x0D,\ 0x01,\ 0x01,\ 0x0E}}
+\DoxyCodeLine{00078\ \textcolor{preprocessor}{\#define\ DER\_OID\_SZ\_sha224WithRSAEncryption\ 11}}
+\DoxyCodeLine{00079\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ossl\_der\_oid\_sha224WithRSAEncryption[DER\_OID\_SZ\_sha224WithRSAEncryption];}
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00081\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00082\ \textcolor{comment}{\ *\ sha256WithRSAEncryption\ \ \ \ \ \ OBJECT\ IDENTIFIER\ ::=\ \{\ pkcs-\/1\ 11\ \}}}
+\DoxyCodeLine{00083\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00084\ \textcolor{preprocessor}{\#define\ DER\_OID\_V\_sha256WithRSAEncryption\ DER\_P\_OBJECT,\ 9,\ 0x2A,\ 0x86,\ 0x48,\ 0x86,\ 0xF7,\ 0x0D,\ 0x01,\ 0x01,\ 0x0B}}
+\DoxyCodeLine{00085\ \textcolor{preprocessor}{\#define\ DER\_OID\_SZ\_sha256WithRSAEncryption\ 11}}
+\DoxyCodeLine{00086\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ossl\_der\_oid\_sha256WithRSAEncryption[DER\_OID\_SZ\_sha256WithRSAEncryption];}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00088\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00089\ \textcolor{comment}{\ *\ sha384WithRSAEncryption\ \ \ \ \ \ OBJECT\ IDENTIFIER\ ::=\ \{\ pkcs-\/1\ 12\ \}}}
+\DoxyCodeLine{00090\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00091\ \textcolor{preprocessor}{\#define\ DER\_OID\_V\_sha384WithRSAEncryption\ DER\_P\_OBJECT,\ 9,\ 0x2A,\ 0x86,\ 0x48,\ 0x86,\ 0xF7,\ 0x0D,\ 0x01,\ 0x01,\ 0x0C}}
+\DoxyCodeLine{00092\ \textcolor{preprocessor}{\#define\ DER\_OID\_SZ\_sha384WithRSAEncryption\ 11}}
+\DoxyCodeLine{00093\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ossl\_der\_oid\_sha384WithRSAEncryption[DER\_OID\_SZ\_sha384WithRSAEncryption];}
+\DoxyCodeLine{00094\ }
+\DoxyCodeLine{00095\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00096\ \textcolor{comment}{\ *\ sha512WithRSAEncryption\ \ \ \ \ \ OBJECT\ IDENTIFIER\ ::=\ \{\ pkcs-\/1\ 13\ \}}}
+\DoxyCodeLine{00097\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00098\ \textcolor{preprocessor}{\#define\ DER\_OID\_V\_sha512WithRSAEncryption\ DER\_P\_OBJECT,\ 9,\ 0x2A,\ 0x86,\ 0x48,\ 0x86,\ 0xF7,\ 0x0D,\ 0x01,\ 0x01,\ 0x0D}}
+\DoxyCodeLine{00099\ \textcolor{preprocessor}{\#define\ DER\_OID\_SZ\_sha512WithRSAEncryption\ 11}}
+\DoxyCodeLine{00100\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ossl\_der\_oid\_sha512WithRSAEncryption[DER\_OID\_SZ\_sha512WithRSAEncryption];}
+\DoxyCodeLine{00101\ }
+\DoxyCodeLine{00102\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00103\ \textcolor{comment}{\ *\ sha512-\/224WithRSAEncryption\ \ OBJECT\ IDENTIFIER\ ::=\ \{\ pkcs-\/1\ 15\ \}}}
+\DoxyCodeLine{00104\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00105\ \textcolor{preprocessor}{\#define\ DER\_OID\_V\_sha512\_224WithRSAEncryption\ DER\_P\_OBJECT,\ 9,\ 0x2A,\ 0x86,\ 0x48,\ 0x86,\ 0xF7,\ 0x0D,\ 0x01,\ 0x01,\ 0x0F}}
+\DoxyCodeLine{00106\ \textcolor{preprocessor}{\#define\ DER\_OID\_SZ\_sha512\_224WithRSAEncryption\ 11}}
+\DoxyCodeLine{00107\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ossl\_der\_oid\_sha512\_224WithRSAEncryption[DER\_OID\_SZ\_sha512\_224WithRSAEncryption];}
+\DoxyCodeLine{00108\ }
+\DoxyCodeLine{00109\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00110\ \textcolor{comment}{\ *\ sha512-\/256WithRSAEncryption\ \ OBJECT\ IDENTIFIER\ ::=\ \{\ pkcs-\/1\ 16\ \}}}
+\DoxyCodeLine{00111\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00112\ \textcolor{preprocessor}{\#define\ DER\_OID\_V\_sha512\_256WithRSAEncryption\ DER\_P\_OBJECT,\ 9,\ 0x2A,\ 0x86,\ 0x48,\ 0x86,\ 0xF7,\ 0x0D,\ 0x01,\ 0x01,\ 0x10}}
+\DoxyCodeLine{00113\ \textcolor{preprocessor}{\#define\ DER\_OID\_SZ\_sha512\_256WithRSAEncryption\ 11}}
+\DoxyCodeLine{00114\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ossl\_der\_oid\_sha512\_256WithRSAEncryption[DER\_OID\_SZ\_sha512\_256WithRSAEncryption];}
+\DoxyCodeLine{00115\ }
+\DoxyCodeLine{00116\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00117\ \textcolor{comment}{\ *\ id-\/mgf1\ \ \ \ OBJECT\ IDENTIFIER\ ::=\ \{\ pkcs-\/1\ 8\ \}}}
+\DoxyCodeLine{00118\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00119\ \textcolor{preprocessor}{\#define\ DER\_OID\_V\_id\_mgf1\ DER\_P\_OBJECT,\ 9,\ 0x2A,\ 0x86,\ 0x48,\ 0x86,\ 0xF7,\ 0x0D,\ 0x01,\ 0x01,\ 0x08}}
+\DoxyCodeLine{00120\ \textcolor{preprocessor}{\#define\ DER\_OID\_SZ\_id\_mgf1\ 11}}
+\DoxyCodeLine{00121\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ossl\_der\_oid\_id\_mgf1[DER\_OID\_SZ\_id\_mgf1];}
+\DoxyCodeLine{00122\ }
+\DoxyCodeLine{00123\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00124\ \textcolor{comment}{\ *\ id-\/rsassa-\/pkcs1-\/v1\_5-\/with-\/sha3-\/224\ OBJECT\ IDENTIFIER\ ::=\ \{\ sigAlgs\ 13\ \}}}
+\DoxyCodeLine{00125\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00126\ \textcolor{preprocessor}{\#define\ DER\_OID\_V\_id\_rsassa\_pkcs1\_v1\_5\_with\_sha3\_224\ DER\_P\_OBJECT,\ 9,\ 0x60,\ 0x86,\ 0x48,\ 0x01,\ 0x65,\ 0x03,\ 0x04,\ 0x03,\ 0x0D}}
+\DoxyCodeLine{00127\ \textcolor{preprocessor}{\#define\ DER\_OID\_SZ\_id\_rsassa\_pkcs1\_v1\_5\_with\_sha3\_224\ 11}}
+\DoxyCodeLine{00128\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ossl\_der\_oid\_id\_rsassa\_pkcs1\_v1\_5\_with\_sha3\_224[DER\_OID\_SZ\_id\_rsassa\_pkcs1\_v1\_5\_with\_sha3\_224];}
+\DoxyCodeLine{00129\ }
+\DoxyCodeLine{00130\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00131\ \textcolor{comment}{\ *\ id-\/rsassa-\/pkcs1-\/v1\_5-\/with-\/sha3-\/256\ OBJECT\ IDENTIFIER\ ::=\ \{\ sigAlgs\ 14\ \}}}
+\DoxyCodeLine{00132\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00133\ \textcolor{preprocessor}{\#define\ DER\_OID\_V\_id\_rsassa\_pkcs1\_v1\_5\_with\_sha3\_256\ DER\_P\_OBJECT,\ 9,\ 0x60,\ 0x86,\ 0x48,\ 0x01,\ 0x65,\ 0x03,\ 0x04,\ 0x03,\ 0x0E}}
+\DoxyCodeLine{00134\ \textcolor{preprocessor}{\#define\ DER\_OID\_SZ\_id\_rsassa\_pkcs1\_v1\_5\_with\_sha3\_256\ 11}}
+\DoxyCodeLine{00135\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ossl\_der\_oid\_id\_rsassa\_pkcs1\_v1\_5\_with\_sha3\_256[DER\_OID\_SZ\_id\_rsassa\_pkcs1\_v1\_5\_with\_sha3\_256];}
+\DoxyCodeLine{00136\ }
+\DoxyCodeLine{00137\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00138\ \textcolor{comment}{\ *\ id-\/rsassa-\/pkcs1-\/v1\_5-\/with-\/sha3-\/384\ OBJECT\ IDENTIFIER\ ::=\ \{\ sigAlgs\ 15\ \}}}
+\DoxyCodeLine{00139\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00140\ \textcolor{preprocessor}{\#define\ DER\_OID\_V\_id\_rsassa\_pkcs1\_v1\_5\_with\_sha3\_384\ DER\_P\_OBJECT,\ 9,\ 0x60,\ 0x86,\ 0x48,\ 0x01,\ 0x65,\ 0x03,\ 0x04,\ 0x03,\ 0x0F}}
+\DoxyCodeLine{00141\ \textcolor{preprocessor}{\#define\ DER\_OID\_SZ\_id\_rsassa\_pkcs1\_v1\_5\_with\_sha3\_384\ 11}}
+\DoxyCodeLine{00142\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ossl\_der\_oid\_id\_rsassa\_pkcs1\_v1\_5\_with\_sha3\_384[DER\_OID\_SZ\_id\_rsassa\_pkcs1\_v1\_5\_with\_sha3\_384];}
+\DoxyCodeLine{00143\ }
+\DoxyCodeLine{00144\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00145\ \textcolor{comment}{\ *\ id-\/rsassa-\/pkcs1-\/v1\_5-\/with-\/sha3-\/512\ OBJECT\ IDENTIFIER\ ::=\ \{\ sigAlgs\ 16\ \}}}
+\DoxyCodeLine{00146\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00147\ \textcolor{preprocessor}{\#define\ DER\_OID\_V\_id\_rsassa\_pkcs1\_v1\_5\_with\_sha3\_512\ DER\_P\_OBJECT,\ 9,\ 0x60,\ 0x86,\ 0x48,\ 0x01,\ 0x65,\ 0x03,\ 0x04,\ 0x03,\ 0x10}}
+\DoxyCodeLine{00148\ \textcolor{preprocessor}{\#define\ DER\_OID\_SZ\_id\_rsassa\_pkcs1\_v1\_5\_with\_sha3\_512\ 11}}
+\DoxyCodeLine{00149\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ossl\_der\_oid\_id\_rsassa\_pkcs1\_v1\_5\_with\_sha3\_512[DER\_OID\_SZ\_id\_rsassa\_pkcs1\_v1\_5\_with\_sha3\_512];}
+\DoxyCodeLine{00150\ }
+\DoxyCodeLine{00151\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00152\ \textcolor{comment}{\ *\ md4WithRSAEncryption\ OBJECT\ IDENTIFIER\ ::=\ \{\ pkcs-\/1\ 3\ \}}}
+\DoxyCodeLine{00153\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00154\ \textcolor{preprocessor}{\#define\ DER\_OID\_V\_md4WithRSAEncryption\ DER\_P\_OBJECT,\ 9,\ 0x2A,\ 0x86,\ 0x48,\ 0x86,\ 0xF7,\ 0x0D,\ 0x01,\ 0x01,\ 0x03}}
+\DoxyCodeLine{00155\ \textcolor{preprocessor}{\#define\ DER\_OID\_SZ\_md4WithRSAEncryption\ 11}}
+\DoxyCodeLine{00156\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ossl\_der\_oid\_md4WithRSAEncryption[DER\_OID\_SZ\_md4WithRSAEncryption];}
+\DoxyCodeLine{00157\ }
+\DoxyCodeLine{00158\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00159\ \textcolor{comment}{\ *\ ripemd160WithRSAEncryption\ \ \ \ OBJECT\ IDENTIFIER\ ::=\ \{}}
+\DoxyCodeLine{00160\ \textcolor{comment}{\ *\ \ \ \ \ iso(1)\ identified-\/organization(3)\ teletrust(36)\ algorithm(3)\ signatureAlgorithm(3)\ rsaSignature(1)\ 2}}
+\DoxyCodeLine{00161\ \textcolor{comment}{\ *\ \}}}
+\DoxyCodeLine{00162\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00163\ \textcolor{preprocessor}{\#define\ DER\_OID\_V\_ripemd160WithRSAEncryption\ DER\_P\_OBJECT,\ 6,\ 0x2B,\ 0x24,\ 0x03,\ 0x03,\ 0x01,\ 0x02}}
+\DoxyCodeLine{00164\ \textcolor{preprocessor}{\#define\ DER\_OID\_SZ\_ripemd160WithRSAEncryption\ 8}}
+\DoxyCodeLine{00165\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ossl\_der\_oid\_ripemd160WithRSAEncryption[DER\_OID\_SZ\_ripemd160WithRSAEncryption];}
+\DoxyCodeLine{00166\ }
+\DoxyCodeLine{00167\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00168\ \textcolor{comment}{\ *\ mdc2WithRSASignature\ OBJECT\ IDENTIFIER\ ::=\ \{}}
+\DoxyCodeLine{00169\ \textcolor{comment}{\ *\ \ \ \ \ iso(1)\ identified-\/organization(3)\ oiw(14)\ secsig(3)\ algorithms(2)\ mdc2WithRSASignature(14)}}
+\DoxyCodeLine{00170\ \textcolor{comment}{\ *\ \}}}
+\DoxyCodeLine{00171\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00172\ \textcolor{preprocessor}{\#define\ DER\_OID\_V\_mdc2WithRSASignature\ DER\_P\_OBJECT,\ 5,\ 0x2B,\ 0x0E,\ 0x03,\ 0x02,\ 0x0E}}
+\DoxyCodeLine{00173\ \textcolor{preprocessor}{\#define\ DER\_OID\_SZ\_mdc2WithRSASignature\ 7}}
+\DoxyCodeLine{00174\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ossl\_der\_oid\_mdc2WithRSASignature[DER\_OID\_SZ\_mdc2WithRSASignature];}
+\DoxyCodeLine{00175\ }
+\DoxyCodeLine{00176\ }
+\DoxyCodeLine{00177\ \textcolor{comment}{/*\ PSS\ parameters\ */}}
+\DoxyCodeLine{00178\ \textcolor{keywordtype}{int}\ ossl\_DER\_w\_RSASSA\_PSS\_params(\mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,\ \textcolor{keywordtype}{int}\ tag,}
+\DoxyCodeLine{00179\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structrsa__pss__params__30__st}{RSA\_PSS\_PARAMS\_30}}\ *pss);}
+\DoxyCodeLine{00180\ \textcolor{comment}{/*\ Subject\ Public\ Key\ Info\ */}}
+\DoxyCodeLine{00181\ \textcolor{keywordtype}{int}\ ossl\_DER\_w\_algorithmIdentifier\_RSA(\mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,\ \textcolor{keywordtype}{int}\ tag,\ RSA\ *rsa);}
+\DoxyCodeLine{00182\ \textcolor{keywordtype}{int}\ ossl\_DER\_w\_algorithmIdentifier\_RSA\_PSS(\mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,\ \textcolor{keywordtype}{int}\ tag,}
+\DoxyCodeLine{00183\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ rsa\_type,}
+\DoxyCodeLine{00184\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structrsa__pss__params__30__st}{RSA\_PSS\_PARAMS\_30}}\ *pss);}
+\DoxyCodeLine{00185\ \textcolor{comment}{/*\ Signature\ */}}
+\DoxyCodeLine{00186\ \textcolor{keywordtype}{int}\ ossl\_DER\_w\_algorithmIdentifier\_MDWithRSAEncryption(\mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,\ \textcolor{keywordtype}{int}\ tag,}
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ mdnid);}
+
+\end{DoxyCode}

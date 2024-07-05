@@ -1,0 +1,82 @@
+\doxysection{ess.\+h}
+\hypertarget{crypto_2ess_8h_source}{}\label{crypto_2ess_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/crypto/ess.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/crypto/ess.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2019-\/2021\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_CRYPTO\_ESS\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_CRYPTO\_ESS\_H}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#\ pragma\ once}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ *\ IssuerSerial\ ::=\ SEQUENCE\ \{}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ issuer\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ GeneralNames,}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ serialNumber\ \ \ \ \ \ \ \ \ \ \ \ CertificateSerialNumber}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ *\ \}}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_e_s_s__issuer__serial}{ESS\_issuer\_serial}}\ \{}
+\DoxyCodeLine{00022\ \ \ \ \ STACK\_OF(GENERAL\_NAME)\ *issuer;}
+\DoxyCodeLine{00023\ \ \ \ \ ASN1\_INTEGER\ *serial;}
+\DoxyCodeLine{00024\ \};}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00027\ \textcolor{comment}{\ *\ ESSCertID\ ::=\ \ SEQUENCE\ \{}}
+\DoxyCodeLine{00028\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ certHash\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Hash,}}
+\DoxyCodeLine{00029\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ issuerSerial\ \ \ \ \ \ \ \ \ \ \ \ IssuerSerial\ OPTIONAL}}
+\DoxyCodeLine{00030\ \textcolor{comment}{\ *\ \}}}
+\DoxyCodeLine{00031\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_e_s_s__cert__id}{ESS\_cert\_id}}\ \{}
+\DoxyCodeLine{00034\ \ \ \ \ ASN1\_OCTET\_STRING\ *hash;\ \ \ \ \textcolor{comment}{/*\ Always\ SHA-\/1\ digest.\ */}}
+\DoxyCodeLine{00035\ \ \ \ \ ESS\_ISSUER\_SERIAL\ *issuer\_serial;}
+\DoxyCodeLine{00036\ \};}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00039\ \textcolor{comment}{\ *\ SigningCertificate\ ::=\ \ SEQUENCE\ \{}}
+\DoxyCodeLine{00040\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ certs\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ SEQUENCE\ OF\ ESSCertID,}}
+\DoxyCodeLine{00041\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ policies\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ SEQUENCE\ OF\ PolicyInformation\ OPTIONAL}}
+\DoxyCodeLine{00042\ \textcolor{comment}{\ *\ \}}}
+\DoxyCodeLine{00043\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_e_s_s__signing__cert}{ESS\_signing\_cert}}\ \{}
+\DoxyCodeLine{00046\ \ \ \ \ STACK\_OF(ESS\_CERT\_ID)\ *cert\_ids;}
+\DoxyCodeLine{00047\ \ \ \ \ STACK\_OF(POLICYINFO)\ *policy\_info;}
+\DoxyCodeLine{00048\ \};}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00051\ \textcolor{comment}{\ *\ ESSCertIDv2\ ::=\ \ SEQUENCE\ \{}}
+\DoxyCodeLine{00052\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ hashAlgorithm\ \ \ \ \ \ \ \ \ \ \ AlgorithmIdentifier\ DEFAULT\ id-\/sha256,}}
+\DoxyCodeLine{00053\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ certHash\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Hash,}}
+\DoxyCodeLine{00054\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ issuerSerial\ \ \ \ \ \ \ \ \ \ \ \ IssuerSerial\ OPTIONAL}}
+\DoxyCodeLine{00055\ \textcolor{comment}{\ *\ \}}}
+\DoxyCodeLine{00056\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_e_s_s__cert__id__v2__st}{ESS\_cert\_id\_v2\_st}}\ \{}
+\DoxyCodeLine{00059\ \ \ \ \ X509\_ALGOR\ *hash\_alg;\ \ \ \ \ \ \ \textcolor{comment}{/*\ Default:\ SHA-\/256\ */}}
+\DoxyCodeLine{00060\ \ \ \ \ ASN1\_OCTET\_STRING\ *hash;}
+\DoxyCodeLine{00061\ \ \ \ \ ESS\_ISSUER\_SERIAL\ *issuer\_serial;}
+\DoxyCodeLine{00062\ \};}
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00064\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00065\ \textcolor{comment}{\ *\ SigningCertificateV2\ ::=\ SEQUENCE\ \{}}
+\DoxyCodeLine{00066\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ certs\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ SEQUENCE\ OF\ ESSCertIDv2,}}
+\DoxyCodeLine{00067\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ policies\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ SEQUENCE\ OF\ PolicyInformation\ OPTIONAL}}
+\DoxyCodeLine{00068\ \textcolor{comment}{\ *\ \}}}
+\DoxyCodeLine{00069\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00071\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_e_s_s__signing__cert__v2__st}{ESS\_signing\_cert\_v2\_st}}\ \{}
+\DoxyCodeLine{00072\ \ \ \ \ STACK\_OF(ESS\_CERT\_ID\_V2)\ *cert\_ids;}
+\DoxyCodeLine{00073\ \ \ \ \ STACK\_OF(POLICYINFO)\ *policy\_info;}
+\DoxyCodeLine{00074\ \};}
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00076\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ OSSL\_CRYPTO\_ESS\_H\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

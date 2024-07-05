@@ -1,0 +1,464 @@
+\chapter{Design Problem\+: Abstract Record Layer}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2record-layer}{}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2record-layer}\index{Design Problem: Abstract Record Layer@{Design Problem: Abstract Record Layer}}
+This document covers the design of an abstract record layer for use in (D)TLS. The QUIC record layer is handled separately.
+
+A record within this document refers to a packet of data. It will typically contain some header data and some payload data, and will often be cryptographically protected. A record may or may not have a one-\/to-\/one correspondence with network packets, depending on the implementation details of an individual record layer.
+
+The term record comes directly from the TLS and DTLS specifications.
+
+Libssl supports a number of different types of record layer, and record layer variants\+:
+
+
+\begin{DoxyItemize}
+\item Standard TLS record layer
+\item Standard DTLS record layer
+\item Kernel TLS record layer
+\end{DoxyItemize}
+
+Within the TLS record layer there are options to handle "{}multiblock"{} and "{}pipelining"{} which are different approaches for supporting the reading or writing of multiple records at the same time. All record layer variants also have to be able to handle different protocol versions.
+
+These different record layer implementations, variants and protocol versions have each been added at different times and over many years. The result is that each took slightly different approaches for achieving the goals that were appropriate at the time and the integration points where they were added were spread throughout the code.
+
+The introduction of QUIC support will see the implementation of a new record layer, i.\+e. the QUIC-\/\+TLS record layer. This refers to the "{}inner"{} TLS implementation used by QUIC. Records here will be in the form of QUIC CRYPTO frames.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2record-layer_autotoc_md454}{}\doxysection{\texorpdfstring{Requirements}{Requirements}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2record-layer_autotoc_md454}
+The technical requirements \href{https://github.com/openssl/openssl/blob/master/doc/designs/quic-design/quic-requirements.md}{\texttt{ document}} lists these requirements that are relevant to the record layer\+:
+
+
+\begin{DoxyItemize}
+\item The current libssl record layer includes support for TLS, DTLS and KTLS. QUIC will introduce another variant and there may be more over time. The OMC requires a pluggable record layer interface to be implemented to enable this to be less intrusive, more maintainable, and to harmonize the existing record layer interactions between TLS, DTLS, KTLS and the planned QUIC protocols. The pluggable record layer interface will be internal only for MVP and be public in a future release.
+\item The minimum viable product (MVP) for the next release is a pluggable record layer interface and a single stream QUIC client in the form of s\+\_\+client that does not require significant API changes. In the MVP, interoperability should be prioritized over strict standards compliance.
+\item Once we have a fully functional QUIC implementation (in a subsequent release), it should be possible for external libraries to be able to use the pluggable record layer interface and it should offer a stable ABI (via a provider).
+\end{DoxyItemize}
+
+The MVP requirements are\+:
+
+
+\begin{DoxyItemize}
+\item a pluggable record layer (not public for MVP)
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2record-layer_autotoc_md455}{}\doxysection{\texorpdfstring{Candidate Solutions that were considered}{Candidate Solutions that were considered}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2record-layer_autotoc_md455}
+This section outlines two different solution approaches that were considered for the abstract record layer\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2record-layer_autotoc_md456}{}\doxysubsection{\texorpdfstring{Use a METHOD based approach}{Use a METHOD based approach}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2record-layer_autotoc_md456}
+A \doxylink{struct_m_e_t_h_o_d}{METHOD} based approach is simply a structure containing function pointers. It is a common pattern in the Open\+SSL codebase. Different strategies for implementing a \doxylink{struct_m_e_t_h_o_d}{METHOD} can be employed, but these differences are hidden from the caller of the \doxylink{struct_m_e_t_h_o_d}{METHOD}.
+
+In this solution we would seek to implement a different \doxylink{struct_m_e_t_h_o_d}{METHOD} for each of the types of record layer that we support, i.\+e. there would be one for the standard TLS record layer, one for the standard DTLS record layer, one for kernel TLS and one for QUIC-\/\+TLS.
+
+In the MVP the \doxylink{struct_m_e_t_h_o_d}{METHOD} approach would be private. However, once it has stabilised, it would be straight forward to supply public functions to enable end user applications to construct their own METHODs.
+
+This option is simpler to implement than the alternative of having a provider based approach. However it could be used as a "{}stepping stone"{} for that, i.\+e. the MVP could implement a \doxylink{struct_m_e_t_h_o_d}{METHOD} based approach, and subsequent releases could convert the METHODs into fully fetchable algorithms.
+
+Pros\+:
+
+
+\begin{DoxyItemize}
+\item Simple approach that has been used historically in Open\+SSL
+\item Could be used as the basis for the final public solution
+\item Could also be used as the basis for a fetchable solution in a subsequent release
+\item If this option is later converted to a fetchable solution then much of the effort involved in making the record layer fetchable can be deferred to a later release
+\end{DoxyItemize}
+
+Cons\+:
+
+
+\begin{DoxyItemize}
+\item Not consistent with the provider based approach we used for extensibility in 3.\+0
+\item If this option is implemented and later converted to a fetchable solution then some rework might be required
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2record-layer_autotoc_md457}{}\doxysubsection{\texorpdfstring{Use a provider based approach}{Use a provider based approach}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2record-layer_autotoc_md457}
+This approach is very similar to the alternative \doxylink{struct_m_e_t_h_o_d}{METHOD} based approach. The main difference is that the record layer implementations would be held in providers and "{}fetched"{} in much the same way that cryptographic algorithms are fetched in Open\+SSL 3.\+0.
+
+This approach is more consistent with the approach adopted for extensibility in 3.\+0. METHODS are being deprecated with providers being used extensively.
+
+Complex objects (e.\+g. an {\ttfamily SSL} object) cannot be passed across the libssl/provider boundary. This imposes some restrictions on the design of the functions that can be implemented. Additionally implementing the infrastructure for a new fetchable operation is more involved than a \doxylink{struct_m_e_t_h_o_d}{METHOD} based approach.
+
+Pros\+:
+
+
+\begin{DoxyItemize}
+\item Consistent with the extensibility solution used in 3.\+0
+\item If this option is implemented immediately in the MVP then it would avoid later rework if adopted in a subsequent release
+\end{DoxyItemize}
+
+Cons\+:
+
+
+\begin{DoxyItemize}
+\item More complicated to implement than the simple \doxylink{struct_m_e_t_h_o_d}{METHOD} based approach
+\item Cannot pass complex objects across the provider boundary
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2record-layer_autotoc_md458}{}\doxysubsection{\texorpdfstring{Selected solution}{Selected solution}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2record-layer_autotoc_md458}
+The \doxylink{struct_m_e_t_h_o_d}{METHOD} based approach has been selected for MVP, with the expectation that subsequent releases will convert it to a full provider based solution accessible to third party applications.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2record-layer_autotoc_md459}{}\doxysection{\texorpdfstring{Solution Description\+: The METHOD based approach}{Solution Description\+: The METHOD based approach}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2record-layer_autotoc_md459}
+This section focuses on the selected approach of using METHODs and further elaborates on how the design works.
+
+A proposed internal record method API is given in Appendix A.
+
+An {\ttfamily OSSL\+\_\+\+RECORD\+\_\+\+METHOD} represents the implementation of a particular type of record layer. It contains a set of function pointers to represent the various actions that can be performed by a record layer.
+
+An {\ttfamily OSSL\+\_\+\+RECORD\+\_\+\+LAYER} object represents a specific instantiation of a particular {\ttfamily OSSL\+\_\+\+RECORD\+\_\+\+METHOD}. It contains the state used by that {\ttfamily OSSL\+\_\+\+RECORD\+\_\+\+METHOD} for a specific connection (i.\+e. {\ttfamily SSL} object). Any {\ttfamily SSL} object will have at least 2 {\ttfamily OSSL\+\_\+\+RECORD\+\_\+\+LAYER} objects associated with it -\/ one for reading and one for writing. In some cases there may be more than 2 -\/ for example in DTLS it may be necessary to retransmit records from a previous epoch. There will be different {\ttfamily OSSL\+\_\+\+RECORD\+\_\+\+LAYER} objects for different protection levels or epochs. It may be that different {\ttfamily OSSL\+\_\+\+RECORD\+\_\+\+METHOD}s are used for different protection levels. For example a connection might start using the standard TLS record layer during the handshake, and later transition to using the kernel TLS record layer once the handshake is complete.
+
+A new {\ttfamily OSSL\+\_\+\+RECORD\+\_\+\+LAYER} is created by calling the {\ttfamily new} function of the associated {\ttfamily OSSL\+\_\+\+RECORD\+\_\+\+METHOD}, and freed by calling the {\ttfamily free} function. The parameters to the {\ttfamily new} function also supply all of the cryptographic state (e.\+g. keys, ivs, symmetric encryption algorithms, hash algorithm etc) used by the record layer. The internal structure details of an {\ttfamily OSSL\+\_\+\+RECORD\+\_\+\+LAYER} are entirely hidden to the rest of libssl and can be specific to the given {\ttfamily OSSL\+\_\+\+RECORD\+\_\+\+METHOD}. In practice the standard internal TLS, DTLS and KTLS {\ttfamily OSSL\+\_\+\+RECORD\+\_\+\+METHOD}s all use a common {\ttfamily OSSL\+\_\+\+RECORD\+\_\+\+LAYER} structure. However the QUIC-\/\+TLS implementation is likely to use a different structure layout.
+
+All of the header and payload data for a single record will be represented by an {\ttfamily OSSL\+\_\+\+RECORD\+\_\+\+TEMPLATE} structure when writing. Libssl will construct a set of templates for records to be written out and pass them to the "{}write"{} record layer. In most cases only a single record is ever written out at one time, however there are some cases (such as when using the "{}pipelining"{} or "{}multibuffer"{} optimisations) that multiple records can be written in one go.
+
+It is the record layer\textquotesingle{}s responsibility to know whether it can support multiple records in one go or not. It is libssl\textquotesingle{}s responsibility to split the payload data into {\ttfamily OSSL\+\_\+\+RECORD\+\_\+\+TEMPLATE} objects. Libssl will call the record layer\textquotesingle{}s {\ttfamily get\+\_\+max\+\_\+records()} function to determine how many records a given payload should be split into. If that value is more than one, then libssl will construct (up to) that number of {\ttfamily OSSL\+\_\+\+RECORD\+\_\+\+TEMPLATE}s and pass the whole set to the record layer\textquotesingle{}s {\ttfamily write\+\_\+records()} function.
+
+The implementation of the {\ttfamily write\+\_\+records} function must construct the appropriate number of records, apply protection to them as required and then write them out to the underlying transport layer BIO. In the event that not all the data can be transmitted at the current time (e.\+g. because the underlying transport has indicated a retry), then the {\ttfamily write\+\_\+records} function will return a "{}retry"{} response. It is permissible for the data to be partially sent, but this is still considered a "{}retry"{} until all of the data is sent.
+
+On a success or retry response libssl may free its buffers immediately. The {\ttfamily OSSL\+\_\+\+RECORD\+\_\+\+LAYER} object will have to buffer any untransmitted data until it is eventually sent.
+
+If a "{}retry"{} occurs, then libssl will subsequently call {\ttfamily retry\+\_\+write\+\_\+records} and continue to do so until a success return value is received. Libssl will never call {\ttfamily write\+\_\+records} a second time until a previous call to {\ttfamily write\+\_\+records} or {\ttfamily retry\+\_\+write\+\_\+records} has indicated success.
+
+Libssl will read records by calling the {\ttfamily read\+\_\+record} function. The {\ttfamily OSSL\+\_\+\+RECORD\+\_\+\+LAYER} may read multiple records in one go and buffer them, but the {\ttfamily read\+\_\+record} function only ever returns one record at a time. The {\ttfamily OSSL\+\_\+\+RECORD\+\_\+\+LAYER} object owns the buffers for the record that has been read and supplies a pointer into that buffer back to libssl for the payload data, as well as other information about the record such as its length and the type of data contained in it. Each record has an associated opaque handle {\ttfamily rechandle}. The record data must remain buffered by the {\ttfamily OSSL\+\_\+\+RECORD\+\_\+\+LAYER} until it has been released via a call to {\ttfamily release\+\_\+record()}.
+
+A record layer implementation supplies various functions to enable libssl to query the current state. In particular\+:
+
+{\ttfamily unprocessed\+\_\+read\+\_\+pending()}\+: to query whether there is data buffered that has already been read from the underlying BIO, but not yet processed.
+
+{\ttfamily processed\+\_\+read\+\_\+pending()}\+: to query whether there is data buffered that has been read from the underlying BIO and has been processed. The data is not necessarily application data.
+
+{\ttfamily app\+\_\+data\+\_\+pending()}\+: to query the amount of processed application data that is buffered and available for immediate read.
+
+{\ttfamily get\+\_\+alert\+\_\+code()}\+: to query the alert code that should be used in the event that a previous attempt to read or write records failed.
+
+{\ttfamily get\+\_\+state()}\+: to obtain a printable string to describe the current state of the record layer.
+
+{\ttfamily get\+\_\+compression()}\+: to obtain information about the compression method currently being used by the record layer.
+
+{\ttfamily get\+\_\+max\+\_\+record\+\_\+overhead()}\+: to obtain the maximum amount of bytes the record layer will add to the payload bytes before transmission. This does not include any expansion that might occur during compression. Currently this is only implemented for DTLS.
+
+In addition, libssl will tell the record layer about various events that might occur that are relevant to the record layer\textquotesingle{}s operation\+:
+
+{\ttfamily set1\+\_\+bio()}\+: called if the underlying BIO being used by the record layer has been changed.
+
+{\ttfamily set\+\_\+protocol\+\_\+version()}\+: called during protocol version negotiation when a specific protocol version has been selected.
+
+{\ttfamily set\+\_\+plain\+\_\+alerts()}\+: to indicate that receiving unencrypted alerts is allowed in the current context, even if normally we would expect to receive encrypted data. This is only relevant for TLSv1.\+3.
+
+{\ttfamily set\+\_\+first\+\_\+handshake()}\+: called at the beginning and end of the first handshake for any given (D)TLS connection.
+
+{\ttfamily set\+\_\+max\+\_\+pipelines()}\+: called to configure the maximum number of pipelines of data that the record layer should process in one go. By default this is 1.
+
+{\ttfamily set\+\_\+in\+\_\+init()}\+: called by libssl to tell the record layer whether we are currently {\ttfamily in\+\_\+init} or not. Defaults to "{}true"{}.
+
+{\ttfamily set\+\_\+options()}\+: called by libssl in the event that the current set of options to use has been updated.
+
+{\ttfamily set\+\_\+max\+\_\+frag\+\_\+len()}\+: called by libssl to set the maximum allowed fragment length that is in force at the moment. This might be the result of user configuration, or it may be negotiated during the handshake.
+
+{\ttfamily increment\+\_\+sequence\+\_\+ctr()}\+: force the record layer to increment its sequence counter. In most cases the record layer will entirely manage its own sequence counters. However in the DTLSv1\+\_\+listen() corner case, libssl needs to initialise the record layer with an incremented sequence counter.
+
+{\ttfamily alloc\+\_\+buffers()}\+: called by libssl to request that the record layer allocate its buffers. This is a hint only and the record layer is expected to manage its own buffer allocation and freeing.
+
+{\ttfamily free\+\_\+buffers()}\+: called by libssl to request that the record layer free its buffers. This is a hint only and the record layer is expected to manage its own buffer allocation and freeing.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2record-layer_autotoc_md460}{}\doxysection{\texorpdfstring{Appendix A\+: The internal record method API}{Appendix A\+: The internal record method API}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2record-layer_autotoc_md460}
+The internal \doxylink{recordmethod_8h_source}{recordmethod.\+h} header file for the record method API\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\ C}
+\DoxyCodeLine{/*}
+\DoxyCodeLine{\ *\ We\ use\ the\ term\ "{}record"{}\ here\ to\ refer\ to\ a\ packet\ of\ data.\ Records\ are}
+\DoxyCodeLine{\ *\ typically\ protected\ via\ a\ cipher\ and\ MAC,\ or\ an\ AEAD\ cipher\ (although\ not}
+\DoxyCodeLine{\ *\ always).\ This\ usage\ of\ the\ term\ record\ is\ consistent\ with\ the\ TLS\ concept.}
+\DoxyCodeLine{\ *\ In\ QUIC\ the\ term\ "{}record"{}\ is\ not\ used\ but\ it\ is\ analogous\ to\ the\ QUIC\ term}
+\DoxyCodeLine{\ *\ "{}packet"{}.\ The\ interface\ in\ this\ file\ applies\ to\ all\ protocols\ that\ protect}
+\DoxyCodeLine{\ *\ records/packets\ of\ data,\ i.e.\ (D)TLS\ and\ QUIC.\ The\ term\ record\ is\ used\ to}
+\DoxyCodeLine{\ *\ refer\ to\ both\ contexts.}
+\DoxyCodeLine{\ */}
+\DoxyCodeLine{}
+\DoxyCodeLine{/*}
+\DoxyCodeLine{\ *\ An\ OSSL\_RECORD\_METHOD\ is\ a\ protocol\ specific\ method\ which\ provides\ the}
+\DoxyCodeLine{\ *\ functions\ for\ reading\ and\ writing\ records\ for\ that\ protocol.\ Which}
+\DoxyCodeLine{\ *\ OSSL\_RECORD\_METHOD\ to\ use\ for\ a\ given\ protocol\ is\ defined\ by\ the\ SSL\_METHOD.}
+\DoxyCodeLine{\ */}
+\DoxyCodeLine{typedef\ struct\ ossl\_record\_method\_st\ OSSL\_RECORD\_METHOD;}
+\DoxyCodeLine{}
+\DoxyCodeLine{/*}
+\DoxyCodeLine{\ *\ An\ OSSL\_RECORD\_LAYER\ is\ just\ an\ externally\ defined\ opaque\ pointer\ created\ by}
+\DoxyCodeLine{\ *\ the\ method}
+\DoxyCodeLine{\ */}
+\DoxyCodeLine{typedef\ struct\ ossl\_record\_layer\_st\ OSSL\_RECORD\_LAYER;}
+\DoxyCodeLine{}
+\DoxyCodeLine{}
+\DoxyCodeLine{\#\ define\ OSSL\_RECORD\_ROLE\_CLIENT\ 0}
+\DoxyCodeLine{\#\ define\ OSSL\_RECORD\_ROLE\_SERVER\ 1}
+\DoxyCodeLine{}
+\DoxyCodeLine{\#\ define\ OSSL\_RECORD\_DIRECTION\_READ\ \ 0}
+\DoxyCodeLine{\#\ define\ OSSL\_RECORD\_DIRECTION\_WRITE\ 1}
+\DoxyCodeLine{}
+\DoxyCodeLine{/*}
+\DoxyCodeLine{\ *\ Protection\ level.\ For\ <=\ TLSv1.2\ only\ "{}NONE"{}\ and\ "{}APPLICATION"{}\ are\ used.}
+\DoxyCodeLine{\ */}
+\DoxyCodeLine{\#\ define\ OSSL\_RECORD\_PROTECTION\_LEVEL\_NONE\ \ \ \ \ \ \ \ 0}
+\DoxyCodeLine{\#\ define\ OSSL\_RECORD\_PROTECTION\_LEVEL\_EARLY\ \ \ \ \ \ \ 1}
+\DoxyCodeLine{\#\ define\ OSSL\_RECORD\_PROTECTION\_LEVEL\_HANDSHAKE\ \ \ 2}
+\DoxyCodeLine{\#\ define\ OSSL\_RECORD\_PROTECTION\_LEVEL\_APPLICATION\ 3}
+\DoxyCodeLine{}
+\DoxyCodeLine{\#\ define\ OSSL\_RECORD\_RETURN\_SUCCESS\ \ \ \ \ \ \ \ \ \ \ 1}
+\DoxyCodeLine{\#\ define\ OSSL\_RECORD\_RETURN\_RETRY\ \ \ \ \ \ \ \ \ \ \ \ \ 0}
+\DoxyCodeLine{\#\ define\ OSSL\_RECORD\_RETURN\_NON\_FATAL\_ERR\ \ \ \ -\/1}
+\DoxyCodeLine{\#\ define\ OSSL\_RECORD\_RETURN\_FATAL\ \ \ \ \ \ \ \ \ \ \ \ -\/2}
+\DoxyCodeLine{\#\ define\ OSSL\_RECORD\_RETURN\_EOF\ \ \ \ \ \ \ \ \ \ \ \ \ \ -\/3}
+\DoxyCodeLine{}
+\DoxyCodeLine{/*}
+\DoxyCodeLine{\ *\ Template\ for\ creating\ a\ record.\ A\ record\ consists\ of\ the\ |type|\ of\ data\ it}
+\DoxyCodeLine{\ *\ will\ contain\ (e.g.\ alert,\ handshake,\ application\ data,\ etc)\ along\ with\ a}
+\DoxyCodeLine{\ *\ buffer\ of\ payload\ data\ in\ |buf|\ of\ length\ |buflen|.}
+\DoxyCodeLine{\ */}
+\DoxyCodeLine{struct\ ossl\_record\_template\_st\ \{}
+\DoxyCodeLine{\ \ \ \ int\ type;}
+\DoxyCodeLine{\ \ \ \ unsigned\ int\ version;}
+\DoxyCodeLine{\ \ \ \ const\ unsigned\ char\ *buf;}
+\DoxyCodeLine{\ \ \ \ size\_t\ buflen;}
+\DoxyCodeLine{\};}
+\DoxyCodeLine{}
+\DoxyCodeLine{typedef\ struct\ ossl\_record\_template\_st\ OSSL\_RECORD\_TEMPLATE;}
+\DoxyCodeLine{}
+\DoxyCodeLine{/*}
+\DoxyCodeLine{\ *\ Rather\ than\ a\ "{}method"{}\ approach,\ we\ could\ make\ this\ fetchable\ -\/\ Should\ we?}
+\DoxyCodeLine{\ *\ There\ could\ be\ some\ complexity\ in\ finding\ suitable\ record\ layer\ implementations}
+\DoxyCodeLine{\ *\ e.g.\ we\ need\ to\ find\ one\ that\ matches\ the\ negotiated\ protocol,\ cipher,}
+\DoxyCodeLine{\ *\ extensions,\ etc.\ The\ selection\_cb\ approach\ given\ above\ doesn't\ work\ so\ well}
+\DoxyCodeLine{\ *\ if\ unknown\ third\ party\ providers\ with\ OSSL\_RECORD\_METHOD\ implementations\ are}
+\DoxyCodeLine{\ *\ loaded.}
+\DoxyCodeLine{\ */}
+\DoxyCodeLine{}
+\DoxyCodeLine{/*}
+\DoxyCodeLine{\ *\ If\ this\ becomes\ public\ API\ then\ we\ will\ need\ functions\ to\ create\ and}
+\DoxyCodeLine{\ *\ free\ an\ OSSL\_RECORD\_METHOD,\ as\ well\ as\ functions\ to\ get/set\ the\ various}
+\DoxyCodeLine{\ *\ function\ pointers....unless\ we\ make\ it\ fetchable.}
+\DoxyCodeLine{\ */}
+\DoxyCodeLine{struct\ ossl\_record\_method\_st\ \{}
+\DoxyCodeLine{\ \ \ \ /*}
+\DoxyCodeLine{\ \ \ \ \ *\ Create\ a\ new\ OSSL\_RECORD\_LAYER\ object\ for\ handling\ the\ protocol\ version}
+\DoxyCodeLine{\ \ \ \ \ *\ set\ by\ |vers|.\ |role|\ is\ 0\ for\ client\ and\ 1\ for\ server.\ |direction|}
+\DoxyCodeLine{\ \ \ \ \ *\ indicates\ either\ read\ or\ write.\ |level|\ is\ the\ protection\ level\ as}
+\DoxyCodeLine{\ \ \ \ \ *\ described\ above.\ |settings|\ are\ mandatory\ settings\ that\ will\ cause\ the}
+\DoxyCodeLine{\ \ \ \ \ *\ new()\ call\ to\ fail\ if\ they\ are\ not\ understood\ (for\ example\ to\ require}
+\DoxyCodeLine{\ \ \ \ \ *\ Encrypt-\/Then-\/Mac\ support).\ |options|\ are\ optional\ settings\ that\ will\ not}
+\DoxyCodeLine{\ \ \ \ \ *\ cause\ the\ new()\ call\ to\ fail\ if\ they\ are\ not\ understood\ (for\ example}
+\DoxyCodeLine{\ \ \ \ \ *\ whether\ to\ use\ "{}read\ ahead"{}\ or\ not).}
+\DoxyCodeLine{\ \ \ \ \ *}
+\DoxyCodeLine{\ \ \ \ \ *\ The\ BIO\ in\ |transport|\ is\ the\ BIO\ for\ the\ underlying\ transport\ layer.}
+\DoxyCodeLine{\ \ \ \ \ *\ Where\ the\ direction\ is\ "{}read"{},\ then\ this\ BIO\ will\ only\ ever\ be\ used\ for}
+\DoxyCodeLine{\ \ \ \ \ *\ reading\ data.\ Where\ the\ direction\ is\ "{}write"{},\ then\ this\ BIO\ will\ only}
+\DoxyCodeLine{\ \ \ \ \ *\ every\ be\ used\ for\ writing\ data.}
+\DoxyCodeLine{\ \ \ \ \ *}
+\DoxyCodeLine{\ \ \ \ \ *\ An\ SSL\ object\ will\ always\ have\ at\ least\ 2\ OSSL\_RECORD\_LAYER\ objects\ in}
+\DoxyCodeLine{\ \ \ \ \ *\ force\ at\ any\ one\ time\ (one\ for\ reading\ and\ one\ for\ writing).\ In\ some}
+\DoxyCodeLine{\ \ \ \ \ *\ protocols\ more\ than\ 2\ might\ be\ used\ (e.g.\ in\ DTLS\ for\ retransmitting}
+\DoxyCodeLine{\ \ \ \ \ *\ messages\ from\ an\ earlier\ epoch).}
+\DoxyCodeLine{\ \ \ \ \ *}
+\DoxyCodeLine{\ \ \ \ \ *\ The\ created\ OSSL\_RECORD\_LAYER\ object\ is\ stored\ in\ *ret\ on\ success\ (or}
+\DoxyCodeLine{\ \ \ \ \ *\ NULL\ otherwise).\ The\ return\ value\ will\ be\ one\ of}
+\DoxyCodeLine{\ \ \ \ \ *\ OSSL\_RECORD\_RETURN\_SUCCESS,\ OSSL\_RECORD\_RETURN\_FATAL\ or}
+\DoxyCodeLine{\ \ \ \ \ *\ OSSL\_RECORD\_RETURN\_NON\_FATAL.\ A\ non-\/fatal\ return\ means\ that\ creation\ of}
+\DoxyCodeLine{\ \ \ \ \ *\ the\ record\ layer\ has\ failed\ because\ it\ is\ unsuitable,\ but\ an\ alternative}
+\DoxyCodeLine{\ \ \ \ \ *\ record\ layer\ can\ be\ tried\ instead.}
+\DoxyCodeLine{\ \ \ \ \ */}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ /*}
+\DoxyCodeLine{\ \ \ \ \ *\ If\ we\ eventually\ make\ this\ fetchable\ then\ we\ will\ need\ to\ use\ something}
+\DoxyCodeLine{\ \ \ \ \ *\ other\ than\ EVP\_CIPHER.\ Also\ mactype\ would\ not\ be\ a\ NID,\ but\ a\ string.\ For}
+\DoxyCodeLine{\ \ \ \ \ *\ now\ though,\ this\ works.}
+\DoxyCodeLine{\ \ \ \ \ */}
+\DoxyCodeLine{\ \ \ \ int\ (*new\_record\_layer)(OSSL\_LIB\_CTX\ *libctx,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ const\ char\ *propq,\ int\ vers,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ int\ role,\ int\ direction,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ int\ level,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint16\_t\ epoch,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ unsigned\ char\ *key,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ size\_t\ keylen,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ unsigned\ char\ *iv,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ size\_t\ ivlen,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ unsigned\ char\ *mackey,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ size\_t\ mackeylen,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ const\ EVP\_CIPHER\ *ciph,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ size\_t\ taglen,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ int\ mactype,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ const\ EVP\_MD\ *md,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ COMP\_METHOD\ *comp,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BIO\ *prev,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BIO\ *transport,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BIO\ *next,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BIO\_ADDR\ *local,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BIO\_ADDR\ *peer,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ const\ OSSL\_PARAM\ *settings,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ const\ OSSL\_PARAM\ *options,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ const\ OSSL\_DISPATCH\ *fns,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ void\ *cbarg,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OSSL\_RECORD\_LAYER\ **ret);}
+\DoxyCodeLine{\ \ \ \ int\ (*free)(OSSL\_RECORD\_LAYER\ *rl);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ int\ (*reset)(OSSL\_RECORD\_LAYER\ *rl);\ /*\ Is\ this\ needed?\ */}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ /*\ Returns\ 1\ if\ we\ have\ unprocessed\ data\ buffered\ or\ 0\ otherwise\ */}
+\DoxyCodeLine{\ \ \ \ int\ (*unprocessed\_read\_pending)(OSSL\_RECORD\_LAYER\ *rl);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ /*}
+\DoxyCodeLine{\ \ \ \ \ *\ Returns\ 1\ if\ we\ have\ processed\ data\ buffered\ that\ can\ be\ read\ or\ 0\ otherwise}
+\DoxyCodeLine{\ \ \ \ \ *\ -\/\ not\ necessarily\ app\ data}
+\DoxyCodeLine{\ \ \ \ \ */}
+\DoxyCodeLine{\ \ \ \ int\ (*processed\_read\_pending)(OSSL\_RECORD\_LAYER\ *rl);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ /*}
+\DoxyCodeLine{\ \ \ \ \ *\ The\ amount\ of\ processed\ app\ data\ that\ is\ internally\ buffered\ and}
+\DoxyCodeLine{\ \ \ \ \ *\ available\ to\ read}
+\DoxyCodeLine{\ \ \ \ \ */}
+\DoxyCodeLine{\ \ \ \ size\_t\ (*app\_data\_pending)(OSSL\_RECORD\_LAYER\ *rl);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ /*}
+\DoxyCodeLine{\ \ \ \ \ *\ Find\ out\ the\ maximum\ number\ of\ records\ that\ the\ record\ layer\ is\ prepared}
+\DoxyCodeLine{\ \ \ \ \ *\ to\ process\ in\ a\ single\ call\ to\ write\_records.\ It\ is\ the\ caller's}
+\DoxyCodeLine{\ \ \ \ \ *\ responsibility\ to\ ensure\ that\ no\ call\ to\ write\_records\ exceeds\ this}
+\DoxyCodeLine{\ \ \ \ \ *\ number\ of\ records.\ |type|\ is\ the\ type\ of\ the\ records\ that\ the\ caller}
+\DoxyCodeLine{\ \ \ \ \ *\ wants\ to\ write,\ and\ |len|\ is\ the\ total\ amount\ of\ data\ that\ it\ wants}
+\DoxyCodeLine{\ \ \ \ \ *\ to\ send.\ |maxfrag|\ is\ the\ maximum\ allowed\ fragment\ size\ based\ on\ user}
+\DoxyCodeLine{\ \ \ \ \ *\ configuration,\ or\ TLS\ parameter\ negotiation.\ |*preffrag|\ contains\ on}
+\DoxyCodeLine{\ \ \ \ \ *\ entry\ the\ default\ fragment\ size\ that\ will\ actually\ be\ used\ based\ on\ user}
+\DoxyCodeLine{\ \ \ \ \ *\ configuration.\ This\ will\ always\ be\ less\ than\ or\ equal\ to\ |maxfrag|.\ On}
+\DoxyCodeLine{\ \ \ \ \ *\ exit\ the\ record\ layer\ may\ update\ this\ to\ an\ alternative\ fragment\ size\ to}
+\DoxyCodeLine{\ \ \ \ \ *\ be\ used.\ This\ must\ always\ be\ less\ than\ or\ equal\ to\ |maxfrag|.}
+\DoxyCodeLine{\ \ \ \ \ */}
+\DoxyCodeLine{\ \ \ \ size\_t\ (*get\_max\_records)(OSSL\_RECORD\_LAYER\ *rl,\ uint8\_t\ type,\ size\_t\ len,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ size\_t\ maxfrag,\ size\_t\ *preffrag);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ /*}
+\DoxyCodeLine{\ \ \ \ \ *\ Write\ |numtempl|\ records\ from\ the\ array\ of\ record\ templates\ pointed\ to}
+\DoxyCodeLine{\ \ \ \ \ *\ by\ |templates|.\ Each\ record\ should\ be\ no\ longer\ than\ the\ value\ returned}
+\DoxyCodeLine{\ \ \ \ \ *\ by\ get\_max\_record\_len(),\ and\ there\ should\ be\ no\ more\ records\ than\ the}
+\DoxyCodeLine{\ \ \ \ \ *\ value\ returned\ by\ get\_max\_records().}
+\DoxyCodeLine{\ \ \ \ \ *\ Where\ possible\ the\ caller\ will\ attempt\ to\ ensure\ that\ all\ records\ are\ the}
+\DoxyCodeLine{\ \ \ \ \ *\ same\ length,\ except\ the\ last\ record.\ This\ may\ not\ always\ be\ possible\ so}
+\DoxyCodeLine{\ \ \ \ \ *\ the\ record\ method\ implementation\ should\ not\ rely\ on\ this\ being\ the\ case.}
+\DoxyCodeLine{\ \ \ \ \ *\ In\ the\ event\ of\ a\ retry\ the\ caller\ should\ call\ retry\_write\_records()}
+\DoxyCodeLine{\ \ \ \ \ *\ to\ try\ again.\ No\ more\ calls\ to\ write\_records()\ should\ be\ attempted\ until}
+\DoxyCodeLine{\ \ \ \ \ *\ retry\_write\_records()\ returns\ success.}
+\DoxyCodeLine{\ \ \ \ \ *\ Buffers\ allocated\ for\ the\ record\ templates\ can\ be\ freed\ immediately\ after}
+\DoxyCodeLine{\ \ \ \ \ *\ write\_records()\ returns\ -\/\ even\ in\ the\ case\ a\ retry.}
+\DoxyCodeLine{\ \ \ \ \ *\ The\ record\ templates\ represent\ the\ plaintext\ payload.\ The\ encrypted}
+\DoxyCodeLine{\ \ \ \ \ *\ output\ is\ written\ to\ the\ |transport|\ BIO.}
+\DoxyCodeLine{\ \ \ \ \ *\ Returns:}
+\DoxyCodeLine{\ \ \ \ \ *\ \ 1\ on\ success}
+\DoxyCodeLine{\ \ \ \ \ *\ \ 0\ on\ retry}
+\DoxyCodeLine{\ \ \ \ \ *\ -\/1\ on\ failure}
+\DoxyCodeLine{\ \ \ \ \ */}
+\DoxyCodeLine{\ \ \ \ int\ (*write\_records)(OSSL\_RECORD\_LAYER\ *rl,\ OSSL\_RECORD\_TEMPLATE\ *templates,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ size\_t\ numtempl);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ /*}
+\DoxyCodeLine{\ \ \ \ \ *\ Retry\ a\ previous\ call\ to\ write\_records.\ The\ caller\ should\ continue\ to}
+\DoxyCodeLine{\ \ \ \ \ *\ call\ this\ until\ the\ function\ returns\ with\ success\ or\ failure.\ After}
+\DoxyCodeLine{\ \ \ \ \ *\ each\ retry\ more\ of\ the\ data\ may\ have\ been\ incrementally\ sent.}
+\DoxyCodeLine{\ \ \ \ \ *\ Returns:}
+\DoxyCodeLine{\ \ \ \ \ *\ \ 1\ on\ success}
+\DoxyCodeLine{\ \ \ \ \ *\ \ 0\ on\ retry}
+\DoxyCodeLine{\ \ \ \ \ *\ -\/1\ on\ failure}
+\DoxyCodeLine{\ \ \ \ \ */}
+\DoxyCodeLine{\ \ \ \ int\ (*retry\_write\_records)(OSSL\_RECORD\_LAYER\ *rl);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ /*}
+\DoxyCodeLine{\ \ \ \ \ *\ Read\ a\ record\ and\ return\ the\ record\ layer\ version\ and\ record\ type\ in}
+\DoxyCodeLine{\ \ \ \ \ *\ the\ |rversion|\ and\ |type|\ parameters.\ |*data|\ is\ set\ to\ point\ to\ a}
+\DoxyCodeLine{\ \ \ \ \ *\ record\ layer\ buffer\ containing\ the\ record\ payload\ data\ and\ |*datalen|}
+\DoxyCodeLine{\ \ \ \ \ *\ is\ filled\ in\ with\ the\ length\ of\ that\ data.\ The\ |epoch|\ and\ |seq\_num|}
+\DoxyCodeLine{\ \ \ \ \ *\ values\ are\ only\ used\ if\ DTLS\ has\ been\ negotiated.\ In\ that\ case\ they\ are}
+\DoxyCodeLine{\ \ \ \ \ *\ filled\ in\ with\ the\ epoch\ and\ sequence\ number\ from\ the\ record.}
+\DoxyCodeLine{\ \ \ \ \ *\ An\ opaque\ record\ layer\ handle\ for\ the\ record\ is\ returned\ in\ |*rechandle|}
+\DoxyCodeLine{\ \ \ \ \ *\ which\ is\ used\ in\ a\ subsequent\ call\ to\ |release\_record|.\ The\ buffer\ must}
+\DoxyCodeLine{\ \ \ \ \ *\ remain\ available\ until\ release\_record\ is\ called.}
+\DoxyCodeLine{\ \ \ \ \ *}
+\DoxyCodeLine{\ \ \ \ \ *\ Internally\ the\ the\ OSSL\_RECORD\_METHOD\ the\ implementation\ may\ read/process}
+\DoxyCodeLine{\ \ \ \ \ *\ multiple\ records\ in\ one\ go\ and\ buffer\ them.}
+\DoxyCodeLine{\ \ \ \ \ */}
+\DoxyCodeLine{\ \ \ \ int\ (*read\_record)(OSSL\_RECORD\_LAYER\ *rl,\ void\ **rechandle,\ int\ *rversion,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint8\_t\ *type,\ unsigned\ char\ **data,\ size\_t\ *datalen,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint16\_t\ *epoch,\ unsigned\ char\ *seq\_num);}
+\DoxyCodeLine{\ \ \ \ /*}
+\DoxyCodeLine{\ \ \ \ \ *\ Release\ a\ buffer\ associated\ with\ a\ record\ previously\ read\ with}
+\DoxyCodeLine{\ \ \ \ \ *\ read\_record.\ Records\ are\ guaranteed\ to\ be\ released\ in\ the\ order\ that\ they}
+\DoxyCodeLine{\ \ \ \ \ *\ are\ read.}
+\DoxyCodeLine{\ \ \ \ \ */}
+\DoxyCodeLine{\ \ \ \ int\ (*release\_record)(OSSL\_RECORD\_LAYER\ *rl,\ void\ *rechandle);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ /*}
+\DoxyCodeLine{\ \ \ \ \ *\ In\ the\ event\ that\ a\ fatal\ error\ is\ returned\ from\ the\ functions\ above\ then}
+\DoxyCodeLine{\ \ \ \ \ *\ get\_alert\_code()\ can\ be\ called\ to\ obtain\ a\ more\ details\ identifier\ for}
+\DoxyCodeLine{\ \ \ \ \ *\ the\ error.\ In\ (D)TLS\ this\ is\ the\ alert\ description\ code.}
+\DoxyCodeLine{\ \ \ \ \ */}
+\DoxyCodeLine{\ \ \ \ int\ (*get\_alert\_code)(OSSL\_RECORD\_LAYER\ *rl);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ /*}
+\DoxyCodeLine{\ \ \ \ \ *\ Update\ the\ transport\ BIO\ from\ the\ one\ originally\ set\ in\ the}
+\DoxyCodeLine{\ \ \ \ \ *\ new\_record\_layer\ call}
+\DoxyCodeLine{\ \ \ \ \ */}
+\DoxyCodeLine{\ \ \ \ int\ (*set1\_bio)(OSSL\_RECORD\_LAYER\ *rl,\ BIO\ *bio);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ /*\ Called\ when\ protocol\ negotiation\ selects\ a\ protocol\ version\ to\ use\ */}
+\DoxyCodeLine{\ \ \ \ int\ (*set\_protocol\_version)(OSSL\_RECORD\_LAYER\ *rl,\ int\ version);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ /*}
+\DoxyCodeLine{\ \ \ \ \ *\ Whether\ we\ are\ allowed\ to\ receive\ unencrypted\ alerts,\ even\ if\ we\ might}
+\DoxyCodeLine{\ \ \ \ \ *\ otherwise\ expect\ encrypted\ records.\ Ignored\ by\ protocol\ versions\ where}
+\DoxyCodeLine{\ \ \ \ \ *\ this\ isn't\ relevant}
+\DoxyCodeLine{\ \ \ \ \ */}
+\DoxyCodeLine{\ \ \ \ void\ (*set\_plain\_alerts)(OSSL\_RECORD\_LAYER\ *rl,\ int\ allow);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ /*}
+\DoxyCodeLine{\ \ \ \ \ *\ Called\ immediately\ after\ creation\ of\ the\ record\ layer\ if\ we\ are\ in\ a}
+\DoxyCodeLine{\ \ \ \ \ *\ first\ handshake.\ Also\ called\ at\ the\ end\ of\ the\ first\ handshake}
+\DoxyCodeLine{\ \ \ \ \ */}
+\DoxyCodeLine{\ \ \ \ void\ (*set\_first\_handshake)(OSSL\_RECORD\_LAYER\ *rl,\ int\ first);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ /*}
+\DoxyCodeLine{\ \ \ \ \ *\ Set\ the\ maximum\ number\ of\ pipelines\ that\ the\ record\ layer\ should\ process.}
+\DoxyCodeLine{\ \ \ \ \ *\ The\ default\ is\ 1.}
+\DoxyCodeLine{\ \ \ \ \ */}
+\DoxyCodeLine{\ \ \ \ void\ (*set\_max\_pipelines)(OSSL\_RECORD\_LAYER\ *rl,\ size\_t\ max\_pipelines);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ /*}
+\DoxyCodeLine{\ \ \ \ \ *\ Called\ to\ tell\ the\ record\ layer\ whether\ we\ are\ currently\ "{}in\ init"{}\ or}
+\DoxyCodeLine{\ \ \ \ \ *\ not.\ Default\ at\ creation\ of\ the\ record\ layer\ is\ "{}yes"{}.}
+\DoxyCodeLine{\ \ \ \ \ */}
+\DoxyCodeLine{\ \ \ \ void\ (*set\_in\_init)(OSSL\_RECORD\_LAYER\ *rl,\ int\ in\_init);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ /*}
+\DoxyCodeLine{\ \ \ \ \ *\ Get\ a\ short\ or\ long\ human\ readable\ description\ of\ the\ record\ layer\ state}
+\DoxyCodeLine{\ \ \ \ \ */}
+\DoxyCodeLine{\ \ \ \ void\ (*get\_state)(OSSL\_RECORD\_LAYER\ *rl,\ const\ char\ **shortstr,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ const\ char\ **longstr);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ /*}
+\DoxyCodeLine{\ \ \ \ \ *\ Set\ new\ options\ or\ modify\ ones\ that\ were\ originally\ specified\ in\ the}
+\DoxyCodeLine{\ \ \ \ \ *\ new\_record\_layer\ call.}
+\DoxyCodeLine{\ \ \ \ \ */}
+\DoxyCodeLine{\ \ \ \ int\ (*set\_options)(OSSL\_RECORD\_LAYER\ *rl,\ const\ OSSL\_PARAM\ *options);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ const\ COMP\_METHOD\ *(*get\_compression)(OSSL\_RECORD\_LAYER\ *rl);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ /*}
+\DoxyCodeLine{\ \ \ \ \ *\ Set\ the\ maximum\ fragment\ length\ to\ be\ used\ for\ the\ record\ layer.\ This}
+\DoxyCodeLine{\ \ \ \ \ *\ will\ override\ any\ previous\ value\ supplied\ for\ the\ "{}max\_frag\_len"{}}
+\DoxyCodeLine{\ \ \ \ \ *\ setting\ during\ construction\ of\ the\ record\ layer.}
+\DoxyCodeLine{\ \ \ \ \ */}
+\DoxyCodeLine{\ \ \ \ void\ (*set\_max\_frag\_len)(OSSL\_RECORD\_LAYER\ *rl,\ size\_t\ max\_frag\_len);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ /*}
+\DoxyCodeLine{\ \ \ \ \ *\ The\ maximum\ expansion\ in\ bytes\ that\ the\ record\ layer\ might\ add\ while}
+\DoxyCodeLine{\ \ \ \ \ *\ writing\ a\ record}
+\DoxyCodeLine{\ \ \ \ \ */}
+\DoxyCodeLine{\ \ \ \ size\_t\ (*get\_max\_record\_overhead)(OSSL\_RECORD\_LAYER\ *rl);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ /*}
+\DoxyCodeLine{\ \ \ \ \ *\ Increment\ the\ record\ sequence\ number}
+\DoxyCodeLine{\ \ \ \ \ */}
+\DoxyCodeLine{\ \ \ \ int\ (*increment\_sequence\_ctr)(OSSL\_RECORD\_LAYER\ *rl);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ /*}
+\DoxyCodeLine{\ \ \ \ \ *\ Allocate\ read\ or\ write\ buffers.\ Does\ nothing\ if\ already\ allocated.}
+\DoxyCodeLine{\ \ \ \ \ *\ Assumes\ default\ buffer\ length\ and\ 1\ pipeline.}
+\DoxyCodeLine{\ \ \ \ \ */}
+\DoxyCodeLine{\ \ \ \ int\ (*alloc\_buffers)(OSSL\_RECORD\_LAYER\ *rl);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ /*}
+\DoxyCodeLine{\ \ \ \ \ *\ Free\ read\ or\ write\ buffers.\ Fails\ if\ there\ is\ pending\ read\ or\ write}
+\DoxyCodeLine{\ \ \ \ \ *\ data.\ Buffers\ are\ automatically\ reallocated\ on\ next\ read/write.}
+\DoxyCodeLine{\ \ \ \ \ */}
+\DoxyCodeLine{\ \ \ \ int\ (*free\_buffers)(OSSL\_RECORD\_LAYER\ *rl);}
+\DoxyCodeLine{\};}
+
+\end{DoxyCode}
+ 

@@ -1,0 +1,93 @@
+\chapter{Guidelines for test developers}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2test_2_r_e_a_d_m_e-dev}{}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2test_2_r_e_a_d_m_e-dev}\index{Guidelines for test developers@{Guidelines for test developers}}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2test_2_r_e_a_d_m_e-dev_autotoc_md973}{}\doxysection{\texorpdfstring{How to add recipes}{How to add recipes}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2test_2_r_e_a_d_m_e-dev_autotoc_md973}
+For any test that you want to perform, you write a script located in {\ttfamily test/recipes/}, named {\ttfamily \{nn\}-\/test\+\_\+\{name\}.t}, where {\ttfamily \{nn\}} is a two digit number and {\ttfamily \{name\}} is a unique name of your choice.
+
+Please note that if a test involves a new testing executable, you will need to do some additions in test/build.\+info. Please refer to the section \href{README.md\#changes-to-testbuildinfo}{\texttt{ "{}Changes to test/build.\+info"{}}} below.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2test_2_r_e_a_d_m_e-dev_autotoc_md974}{}\doxysection{\texorpdfstring{Naming conventions}{Naming conventions}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2test_2_r_e_a_d_m_e-dev_autotoc_md974}
+A test executable is named {\ttfamily test/\{name\}test.\+c}
+
+A test recipe is named {\ttfamily test/recipes/\{nn\}-\/test\+\_\+\{name\}.t}, where {\ttfamily \{nn\}} is a two digit number and {\ttfamily \{name\}} is a unique name of your choice.
+
+The number {\ttfamily \{nn\}} is (somewhat loosely) grouped as follows\+: \begin{DoxyVerb}00-04  sanity, internal and essential API tests
+05-09  individual symmetric cipher algorithms
+10-14  math (bignum)
+15-19  individual asymmetric cipher algorithms
+20-24  openssl commands (some otherwise not tested)
+25-29  certificate forms, generation and verification
+30-35  engine and evp
+60-79  APIs:
+   60  X509 subsystem
+   61  BIO subsystem
+   65  CMP subsystem
+   70  PACKET layer
+80-89  "larger" protocols (CA, CMS, OCSP, SSL, TSA)
+90-98  misc
+99     most time consuming tests [such as test_fuzz]
+\end{DoxyVerb}
+ \hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2test_2_r_e_a_d_m_e-dev_autotoc_md975}{}\doxysection{\texorpdfstring{A recipe that just runs a test executable}{A recipe that just runs a test executable}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2test_2_r_e_a_d_m_e-dev_autotoc_md975}
+A script that just runs a program looks like this\+: \begin{DoxyVerb}#! /usr/bin/env perl
+
+use OpenSSL::Test::Simple;
+
+simple_test("test_{name}", "{name}test", "{name}");
+\end{DoxyVerb}
+ {\ttfamily \{name\}} is the unique name you have chosen for your test.
+
+The second argument to {\ttfamily simple\+\_\+test} is the test executable, and {\ttfamily simple\+\_\+test} expects it to be located in {\ttfamily test/}
+
+For documentation on {\ttfamily Open\+SSL\+::\+Test\+::\+Simple}, do {\ttfamily perldoc util/perl/\+Open\+SSL/\+Test/\+Simple.\+pm}.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2test_2_r_e_a_d_m_e-dev_autotoc_md976}{}\doxysection{\texorpdfstring{A recipe that runs a more complex test}{A recipe that runs a more complex test}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2test_2_r_e_a_d_m_e-dev_autotoc_md976}
+For more complex tests, you will need to read up on Test\+::\+More and Open\+SSL\+::\+Test. Test\+::\+More is normally preinstalled, do {\ttfamily man Test\+::\+More} for documentation. For Open\+SSL\+::\+Test, do {\ttfamily perldoc util/perl/\+Open\+SSL/\+Test.\+pm}.
+
+A script to start from could be this\+: \begin{DoxyVerb}#! /usr/bin/env perl
+
+use strict;
+use warnings;
+use OpenSSL::Test;
+
+setup("test_{name}");
+
+plan tests => 2;                # The number of tests being performed
+
+ok(test1, "test1");
+ok(test2, "test1");
+
+sub test1
+{
+    # test feature 1
+}
+
+sub test2
+{
+    # test feature 2
+}
+\end{DoxyVerb}
+ \hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2test_2_r_e_a_d_m_e-dev_autotoc_md977}{}\doxysection{\texorpdfstring{Changes to test/build.\+info}{Changes to test/build.\+info}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2test_2_r_e_a_d_m_e-dev_autotoc_md977}
+Whenever a new test involves a new test executable you need to do the following (at all times, replace \{NAME\} and \{name\} with the name of your test)\+:
+
+
+\begin{DoxyItemize}
+\item add {\ttfamily \{name\}} to the list of programs under {\ttfamily PROGRAMS\+\_\+\+NO\+\_\+\+INST}
+\item create a three line description of how to build the test, you will have to modify the include paths and source files if you don\textquotesingle{}t want to use the basic test framework\+: \begin{DoxyVerb}SOURCE[{name}]={name}.c
+INCLUDE[{name}]=.. ../include ../apps/include
+DEPEND[{name}]=../libcrypto libtestutil.a
+\end{DoxyVerb}
+ 
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2test_2_r_e_a_d_m_e-dev_autotoc_md978}{}\doxysection{\texorpdfstring{Generic form of C test executables}{Generic form of C test executables}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2test_2_r_e_a_d_m_e-dev_autotoc_md978}
+include "{}testutil.\+h"{}
+
+static int my\+\_\+test(void) \{ int testresult = 0; /\texorpdfstring{$\ast$}{*} Assume the test will fail \texorpdfstring{$\ast$}{*}/ int observed;
+
+observed = function(); /\texorpdfstring{$\ast$}{*} Call the code under test \texorpdfstring{$\ast$}{*}/ if (!\+TEST\+\_\+int\+\_\+eq(observed, 2)) /\texorpdfstring{$\ast$}{*} Check the result is correct \texorpdfstring{$\ast$}{*}/ goto end; /\texorpdfstring{$\ast$}{*} Exit on failure -\/ optional \texorpdfstring{$\ast$}{*}/
+
+testresult = 1; /\texorpdfstring{$\ast$}{*} Mark the test case a success \texorpdfstring{$\ast$}{*}/ end\+: cleanup(); /\texorpdfstring{$\ast$}{*} Any cleanup you require \texorpdfstring{$\ast$}{*}/ return testresult; \}
+
+int setup\+\_\+tests(void) \{ ADD\+\_\+\+TEST(my\+\_\+test); /\texorpdfstring{$\ast$}{*} Add each test separately \texorpdfstring{$\ast$}{*}/ return 1; /\texorpdfstring{$\ast$}{*} Indicates success. Return 0 \texorpdfstring{$\ast$}{*}/ /\texorpdfstring{$\ast$}{*} to produce an error with a \texorpdfstring{$\ast$}{*}/ /\texorpdfstring{$\ast$}{*} usage message and -\/1 for \texorpdfstring{$\ast$}{*}/ /\texorpdfstring{$\ast$}{*} failure to set up with no \texorpdfstring{$\ast$}{*}/ /\texorpdfstring{$\ast$}{*} usage message. \texorpdfstring{$\ast$}{*}/ \}
+
+You should use the {\ttfamily TEST\+\_\+xxx} macros provided by {\ttfamily \doxylink{testutil_8h_source}{testutil.\+h}} to test all failure conditions. These macros produce an error message in a standard format if the condition is not met (and nothing if the condition is met). Additional information can be presented with the {\ttfamily TEST\+\_\+info} macro that takes a {\ttfamily printf} format string and arguments. {\ttfamily TEST\+\_\+error} is useful for complicated conditions, it also takes a {\ttfamily printf} format string and argument. In all cases the {\ttfamily TEST\+\_\+xxx} macros are guaranteed to evaluate their arguments exactly once. This means that expressions with side effects are allowed as parameters. Thus, \begin{DoxyVerb}if (!TEST_ptr(ptr = OPENSSL_malloc(..)))
+\end{DoxyVerb}
+ works fine and can be used in place of\+: \begin{DoxyVerb}ptr = OPENSSL_malloc(..);
+if (!TEST_ptr(ptr))
+\end{DoxyVerb}
+ The former produces a more meaningful message on failure than the latter.
+
+Note that the test infrastructure automatically sets up all required environment variables (such as {\ttfamily OPENSSL\+\_\+\+MODULES}, {\ttfamily OPENSSL\+\_\+\+CONF}, etc.) for the tests. Individual tests may choose to override the default settings as required. 

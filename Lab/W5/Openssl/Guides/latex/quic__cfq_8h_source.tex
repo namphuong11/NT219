@@ -1,0 +1,160 @@
+\doxysection{quic\+\_\+cfq.\+h}
+\hypertarget{quic__cfq_8h_source}{}\label{quic__cfq_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/quic\_cfq.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/quic\_cfq.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2022-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_QUIC\_CFQ\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_QUIC\_CFQ\_H}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#\ include\ <openssl/ssl.h>}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ include\ "{}internal/quic\_types.h"{}}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#\ ifndef\ OPENSSL\_NO\_QUIC}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ *\ QUIC\ Control\ Frame\ Queue\ Item}}
+\DoxyCodeLine{00020\ \textcolor{comment}{\ *\ =============================}}
+\DoxyCodeLine{00021\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00022\ \textcolor{comment}{\ *\ The\ CFQ\ item\ structure\ has\ a\ public\ and\ a\ private\ part.\ This\ structure}}
+\DoxyCodeLine{00023\ \textcolor{comment}{\ *\ documents\ the\ public\ part.}}
+\DoxyCodeLine{00024\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00025\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structquic__cfq__item__st}{quic\_cfq\_item\_st}}\ \mbox{\hyperlink{structquic__cfq__item__st}{QUIC\_CFQ\_ITEM}};}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structquic__cfq__item__st}{quic\_cfq\_item\_st}}\ \{}
+\DoxyCodeLine{00028\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00029\ \textcolor{comment}{\ \ \ \ \ *\ These\ fields\ are\ not\ used\ by\ the\ CFQ,\ but\ are\ a\ convenience\ to\ assist\ the}}
+\DoxyCodeLine{00030\ \textcolor{comment}{\ \ \ \ \ *\ TXPIM\ in\ keeping\ a\ list\ of\ GCR\ control\ frames\ which\ were\ sent\ in\ a}}
+\DoxyCodeLine{00031\ \textcolor{comment}{\ \ \ \ \ *\ packet.\ They\ may\ be\ used\ for\ any\ purpose.}}
+\DoxyCodeLine{00032\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00033\ \ \ \ \ \mbox{\hyperlink{structquic__cfq__item__st}{QUIC\_CFQ\_ITEM}}\ \ *pkt\_prev,\ *pkt\_next;}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \ \ \ \ \textcolor{comment}{/*\ All\ other\ fields\ are\ private;\ use\ ossl\_quic\_cfq\_item\_*\ accessors.\ */}}
+\DoxyCodeLine{00036\ \};}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_CFQ\_STATE\_NEW\ \ \ \ \ \ 0}}
+\DoxyCodeLine{00039\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_CFQ\_STATE\_TX\ \ \ \ \ \ \ 1}}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \textcolor{comment}{/*\ If\ set,\ do\ not\ retransmit\ on\ loss\ */}}
+\DoxyCodeLine{00042\ \textcolor{preprocessor}{\#define\ QUIC\_CFQ\_ITEM\_FLAG\_UNRELIABLE\ \ \ (1U\ <<\ 0)}}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ \textcolor{comment}{/*\ Returns\ the\ frame\ type\ of\ a\ CFQ\ item.\ */}}
+\DoxyCodeLine{00045\ uint64\_t\ ossl\_quic\_cfq\_item\_get\_frame\_type(\textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__cfq__item__st}{QUIC\_CFQ\_ITEM}}\ *item);}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \textcolor{comment}{/*\ Returns\ a\ pointer\ to\ the\ encoded\ buffer\ of\ a\ CFQ\ item.\ */}}
+\DoxyCodeLine{00048\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *ossl\_quic\_cfq\_item\_get\_encoded(\textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__cfq__item__st}{QUIC\_CFQ\_ITEM}}\ *item);}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \textcolor{comment}{/*\ Returns\ the\ length\ of\ the\ encoded\ buffer\ in\ bytes.\ */}}
+\DoxyCodeLine{00051\ \textcolor{keywordtype}{size\_t}\ ossl\_quic\_cfq\_item\_get\_encoded\_len(\textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__cfq__item__st}{QUIC\_CFQ\_ITEM}}\ *item);}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \textcolor{comment}{/*\ Returns\ the\ CFQ\ item\ state,\ a\ QUIC\_CFQ\_STATE\_*\ value.\ */}}
+\DoxyCodeLine{00054\ \textcolor{keywordtype}{int}\ ossl\_quic\_cfq\_item\_get\_state(\textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__cfq__item__st}{QUIC\_CFQ\_ITEM}}\ *item);}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \textcolor{comment}{/*\ Returns\ the\ PN\ space\ for\ the\ CFQ\ item.\ */}}
+\DoxyCodeLine{00057\ uint32\_t\ ossl\_quic\_cfq\_item\_get\_pn\_space(\textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__cfq__item__st}{QUIC\_CFQ\_ITEM}}\ *item);}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ \textcolor{comment}{/*\ Returns\ 1\ if\ this\ is\ an\ unreliable\ frame.\ */}}
+\DoxyCodeLine{00060\ \textcolor{keywordtype}{int}\ ossl\_quic\_cfq\_item\_is\_unreliable(\textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__cfq__item__st}{QUIC\_CFQ\_ITEM}}\ *item);}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00063\ \textcolor{comment}{\ *\ QUIC\ Control\ Frame\ Queue}}
+\DoxyCodeLine{00064\ \textcolor{comment}{\ *\ ========================}}
+\DoxyCodeLine{00065\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00066\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structquic__cfq__st}{quic\_cfq\_st}}\ \mbox{\hyperlink{structquic__cfq__st}{QUIC\_CFQ}};}
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00068\ \mbox{\hyperlink{structquic__cfq__st}{QUIC\_CFQ}}\ *ossl\_quic\_cfq\_new(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00069\ \textcolor{keywordtype}{void}\ ossl\_quic\_cfq\_free(\mbox{\hyperlink{structquic__cfq__st}{QUIC\_CFQ}}\ *cfq);}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00071\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00072\ \textcolor{comment}{\ *\ Input\ Side}}
+\DoxyCodeLine{00073\ \textcolor{comment}{\ *\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00074\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00076\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00077\ \textcolor{comment}{\ *\ Enqueue\ a\ frame\ to\ the\ CFQ.}}
+\DoxyCodeLine{00078\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00079\ \textcolor{comment}{\ *\ encoded\ points\ to\ the\ opaque\ encoded\ frame.}}
+\DoxyCodeLine{00080\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00081\ \textcolor{comment}{\ *\ free\_cb\ is\ called\ by\ the\ CFQ\ when\ the\ buffer\ is\ no\ longer\ needed;}}
+\DoxyCodeLine{00082\ \textcolor{comment}{\ *\ free\_cb\_arg\ is\ an\ opaque\ value\ passed\ to\ free\_cb.}}
+\DoxyCodeLine{00083\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00084\ \textcolor{comment}{\ *\ priority\ determines\ the\ relative\ ordering\ of\ control\ frames\ in\ a\ packet.}}
+\DoxyCodeLine{00085\ \textcolor{comment}{\ *\ Lower\ numerical\ values\ for\ priority\ mean\ that\ a\ frame\ should\ come\ earlier\ in}}
+\DoxyCodeLine{00086\ \textcolor{comment}{\ *\ a\ packet.\ pn\_space\ is\ a\ QUIC\_PN\_SPACE\_*\ value.}}
+\DoxyCodeLine{00087\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00088\ \textcolor{comment}{\ *\ On\ success,\ returns\ a\ QUIC\_CFQ\_ITEM\ pointer\ which\ acts\ as\ a\ handle\ to}}
+\DoxyCodeLine{00089\ \textcolor{comment}{\ *\ the\ queued\ frame.\ On\ failure,\ returns\ NULL.}}
+\DoxyCodeLine{00090\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00091\ \textcolor{comment}{\ *\ The\ frame\ is\ initially\ in\ the\ TX\ state,\ so\ there\ is\ no\ need\ to\ call}}
+\DoxyCodeLine{00092\ \textcolor{comment}{\ *\ ossl\_quic\_cfq\_mark\_tx()\ immediately\ after\ calling\ this\ function.}}
+\DoxyCodeLine{00093\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00094\ \textcolor{comment}{\ *\ The\ frame\ type\ is\ duplicated\ as\ the\ frame\_type\ argument\ here,\ even\ though\ it}}
+\DoxyCodeLine{00095\ \textcolor{comment}{\ *\ is\ also\ encoded\ into\ the\ buffer.\ This\ allows\ the\ caller\ to\ determine\ the}}
+\DoxyCodeLine{00096\ \textcolor{comment}{\ *\ frame\ type\ if\ desired\ without\ having\ to\ decode\ the\ frame.}}
+\DoxyCodeLine{00097\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00098\ \textcolor{comment}{\ *\ flags\ is\ zero\ or\ more\ QUIC\_CFQ\_ITEM\_FLAG\ values.}}
+\DoxyCodeLine{00099\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00100\ \textcolor{keyword}{typedef}\ void\ (cfq\_free\_cb)(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *buf,\ \textcolor{keywordtype}{size\_t}\ buf\_len,\ \textcolor{keywordtype}{void}\ *arg);}
+\DoxyCodeLine{00101\ }
+\DoxyCodeLine{00102\ \mbox{\hyperlink{structquic__cfq__item__st}{QUIC\_CFQ\_ITEM}}\ *ossl\_quic\_cfq\_add\_frame(\mbox{\hyperlink{structquic__cfq__st}{QUIC\_CFQ}}\ \ \ \ \ \ \ \ \ \ \ \ *cfq,}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ \ \ \ \ \ \ \ \ \ \ \ \ priority,}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ \ \ \ \ \ \ \ \ \ \ \ \ pn\_space,}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ \ \ \ \ \ \ \ \ \ \ \ \ frame\_type,}
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ \ \ \ \ \ \ \ \ \ \ \ \ flags,}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *encoded,}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ encoded\_len,}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cfq\_free\_cb\ \ \ \ \ \ \ \ \ *free\_cb,}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *free\_cb\_arg);}
+\DoxyCodeLine{00111\ }
+\DoxyCodeLine{00112\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00113\ \textcolor{comment}{\ *\ Effects\ an\ immediate\ transition\ of\ the\ given\ CFQ\ item\ to\ the\ TX\ state.}}
+\DoxyCodeLine{00114\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00115\ \textcolor{keywordtype}{void}\ ossl\_quic\_cfq\_mark\_tx(\mbox{\hyperlink{structquic__cfq__st}{QUIC\_CFQ}}\ *cfq,\ \mbox{\hyperlink{structquic__cfq__item__st}{QUIC\_CFQ\_ITEM}}\ *item);}
+\DoxyCodeLine{00116\ }
+\DoxyCodeLine{00117\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00118\ \textcolor{comment}{\ *\ Effects\ an\ immediate\ transition\ of\ the\ given\ CFQ\ item\ to\ the\ NEW\ state,}}
+\DoxyCodeLine{00119\ \textcolor{comment}{\ *\ allowing\ the\ frame\ to\ be\ retransmitted.\ If\ priority\ is\ not\ UINT32\_MAX,}}
+\DoxyCodeLine{00120\ \textcolor{comment}{\ *\ the\ priority\ is\ changed\ to\ the\ given\ value.}}
+\DoxyCodeLine{00121\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00122\ \textcolor{keywordtype}{void}\ ossl\_quic\_cfq\_mark\_lost(\mbox{\hyperlink{structquic__cfq__st}{QUIC\_CFQ}}\ *cfq,\ \mbox{\hyperlink{structquic__cfq__item__st}{QUIC\_CFQ\_ITEM}}\ *item,}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ priority);}
+\DoxyCodeLine{00124\ }
+\DoxyCodeLine{00125\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00126\ \textcolor{comment}{\ *\ Releases\ a\ CFQ\ item.\ The\ item\ may\ be\ in\ either\ state\ (NEW\ or\ TX)\ prior\ to\ the}}
+\DoxyCodeLine{00127\ \textcolor{comment}{\ *\ call.\ The\ QUIC\_CFQ\_ITEM\ pointer\ must\ not\ be\ used\ following\ this\ call.}}
+\DoxyCodeLine{00128\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00129\ \textcolor{keywordtype}{void}\ ossl\_quic\_cfq\_release(\mbox{\hyperlink{structquic__cfq__st}{QUIC\_CFQ}}\ *cfq,\ \mbox{\hyperlink{structquic__cfq__item__st}{QUIC\_CFQ\_ITEM}}\ *item);}
+\DoxyCodeLine{00130\ }
+\DoxyCodeLine{00131\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00132\ \textcolor{comment}{\ *\ Output\ Side}}
+\DoxyCodeLine{00133\ \textcolor{comment}{\ *\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00134\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00135\ }
+\DoxyCodeLine{00136\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00137\ \textcolor{comment}{\ *\ Gets\ the\ highest\ priority\ CFQ\ item\ in\ the\ given\ PN\ space\ awaiting}}
+\DoxyCodeLine{00138\ \textcolor{comment}{\ *\ transmission.\ If\ there\ are\ none,\ returns\ NULL.}}
+\DoxyCodeLine{00139\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00140\ \mbox{\hyperlink{structquic__cfq__item__st}{QUIC\_CFQ\_ITEM}}\ *ossl\_quic\_cfq\_get\_priority\_head(\textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__cfq__st}{QUIC\_CFQ}}\ *cfq,}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ pn\_space);}
+\DoxyCodeLine{00142\ }
+\DoxyCodeLine{00143\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00144\ \textcolor{comment}{\ *\ Given\ a\ CFQ\ item,\ gets\ the\ next\ CFQ\ item\ awaiting\ transmission\ in\ priority}}
+\DoxyCodeLine{00145\ \textcolor{comment}{\ *\ order\ in\ the\ given\ PN\ space.\ In\ other\ words,\ given\ the\ return\ value\ of}}
+\DoxyCodeLine{00146\ \textcolor{comment}{\ *\ ossl\_quic\_cfq\_get\_priority\_head(),\ returns\ the\ next-\/lower\ priority\ item.}}
+\DoxyCodeLine{00147\ \textcolor{comment}{\ *\ Returns\ NULL\ if\ the\ given\ item\ is\ the\ last\ item\ in\ priority\ order.}}
+\DoxyCodeLine{00148\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00149\ \mbox{\hyperlink{structquic__cfq__item__st}{QUIC\_CFQ\_ITEM}}\ *ossl\_quic\_cfq\_item\_get\_priority\_next(\textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__cfq__item__st}{QUIC\_CFQ\_ITEM}}\ *item,}
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ pn\_space);}
+\DoxyCodeLine{00151\ }
+\DoxyCodeLine{00152\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00153\ }
+\DoxyCodeLine{00154\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

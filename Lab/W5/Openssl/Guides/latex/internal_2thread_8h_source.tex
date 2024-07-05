@@ -1,0 +1,45 @@
+\doxysection{thread.\+h}
+\hypertarget{internal_2thread_8h_source}{}\label{internal_2thread_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/thread.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/thread.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2019-\/2021\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_INTERNAL\_THREAD\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OPENSSL\_INTERNAL\_THREAD\_H}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#\ include\ <openssl/configuration.h>}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#\ include\ <internal/thread\_arch.h>}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ include\ <openssl/e\_os2.h>}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#\ include\ <openssl/types.h>}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#\ include\ <internal/cryptlib.h>}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#\ include\ "{}crypto/context.h"{}}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{keywordtype}{void}\ *ossl\_crypto\_thread\_start(OSSL\_LIB\_CTX\ *ctx,\ CRYPTO\_THREAD\_ROUTINE\ start,}
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *data);}
+\DoxyCodeLine{00021\ \textcolor{keywordtype}{int}\ ossl\_crypto\_thread\_join(\textcolor{keywordtype}{void}\ *task,\ CRYPTO\_THREAD\_RETVAL\ *retval);}
+\DoxyCodeLine{00022\ \textcolor{keywordtype}{int}\ ossl\_crypto\_thread\_clean(\textcolor{keywordtype}{void}\ *vhandle);}
+\DoxyCodeLine{00023\ uint64\_t\ ossl\_get\_avail\_threads(OSSL\_LIB\_CTX\ *ctx);}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#\ if\ defined(OPENSSL\_THREADS)}}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#\ \ define\ OSSL\_LIB\_CTX\_GET\_THREADS(CTX)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\ \ \ \ ossl\_lib\_ctx\_get\_data(CTX,\ OSSL\_LIB\_CTX\_THREAD\_INDEX);}}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }openssl\_threads\_st\ \{}
+\DoxyCodeLine{00031\ \ \ \ \ uint64\_t\ max\_threads;}
+\DoxyCodeLine{00032\ \ \ \ \ uint64\_t\ active\_threads;}
+\DoxyCodeLine{00033\ \ \ \ \ CRYPTO\_MUTEX\ *lock;}
+\DoxyCodeLine{00034\ \ \ \ \ CRYPTO\_CONDVAR\ *cond\_finished;}
+\DoxyCodeLine{00035\ \}\ OSSL\_LIB\_CTX\_THREADS;}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#\ endif\ }\textcolor{comment}{/*\ defined(OPENSSL\_THREADS)\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ OPENSSL\_INTERNAL\_THREAD\_H\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

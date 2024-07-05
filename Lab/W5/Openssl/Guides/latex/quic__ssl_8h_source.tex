@@ -1,0 +1,138 @@
+\doxysection{quic\+\_\+ssl.\+h}
+\hypertarget{quic__ssl_8h_source}{}\label{quic__ssl_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/quic\_ssl.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/quic\_ssl.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2022-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_QUIC\_SSL\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_QUIC\_SSL\_H}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#\ include\ <openssl/ssl.h>}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ include\ <openssl/bio.h>}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#\ include\ "{}internal/quic\_record\_rx.h"{}}\ \textcolor{comment}{/*\ OSSL\_QRX\ */}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#\ include\ "{}internal/quic\_ackm.h"{}}\ \ \ \ \ \ \textcolor{comment}{/*\ OSSL\_ACKM\ */}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#\ include\ "{}internal/quic\_channel.h"{}}\ \ \ \textcolor{comment}{/*\ QUIC\_CHANNEL\ */}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#\ ifndef\ OPENSSL\_NO\_QUIC}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \_\_owur\ SSL\ *ossl\_quic\_new(SSL\_CTX\ *ctx);}
+\DoxyCodeLine{00022\ \_\_owur\ \textcolor{keywordtype}{int}\ ossl\_quic\_init(SSL\ *s);}
+\DoxyCodeLine{00023\ \textcolor{keywordtype}{void}\ ossl\_quic\_deinit(SSL\ *s);}
+\DoxyCodeLine{00024\ \textcolor{keywordtype}{void}\ ossl\_quic\_free(SSL\ *s);}
+\DoxyCodeLine{00025\ \textcolor{keywordtype}{int}\ ossl\_quic\_reset(SSL\ *s);}
+\DoxyCodeLine{00026\ \textcolor{keywordtype}{int}\ ossl\_quic\_clear(SSL\ *s);}
+\DoxyCodeLine{00027\ \_\_owur\ \textcolor{keywordtype}{int}\ ossl\_quic\_accept(SSL\ *s);}
+\DoxyCodeLine{00028\ \_\_owur\ \textcolor{keywordtype}{int}\ ossl\_quic\_connect(SSL\ *s);}
+\DoxyCodeLine{00029\ \_\_owur\ \textcolor{keywordtype}{int}\ ossl\_quic\_read(SSL\ *s,\ \textcolor{keywordtype}{void}\ *buf,\ \textcolor{keywordtype}{size\_t}\ len,\ \textcolor{keywordtype}{size\_t}\ *readbytes);}
+\DoxyCodeLine{00030\ \_\_owur\ \textcolor{keywordtype}{int}\ ossl\_quic\_peek(SSL\ *s,\ \textcolor{keywordtype}{void}\ *buf,\ \textcolor{keywordtype}{size\_t}\ len,\ \textcolor{keywordtype}{size\_t}\ *readbytes);}
+\DoxyCodeLine{00031\ \_\_owur\ \textcolor{keywordtype}{int}\ ossl\_quic\_write(SSL\ *s,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *buf,\ \textcolor{keywordtype}{size\_t}\ len,\ \textcolor{keywordtype}{size\_t}\ *written);}
+\DoxyCodeLine{00032\ \_\_owur\ \textcolor{keywordtype}{long}\ ossl\_quic\_ctrl(SSL\ *s,\ \textcolor{keywordtype}{int}\ cmd,\ \textcolor{keywordtype}{long}\ larg,\ \textcolor{keywordtype}{void}\ *parg);}
+\DoxyCodeLine{00033\ \_\_owur\ \textcolor{keywordtype}{long}\ ossl\_quic\_ctx\_ctrl(SSL\_CTX\ *ctx,\ \textcolor{keywordtype}{int}\ cmd,\ \textcolor{keywordtype}{long}\ larg,\ \textcolor{keywordtype}{void}\ *parg);}
+\DoxyCodeLine{00034\ \_\_owur\ \textcolor{keywordtype}{long}\ ossl\_quic\_callback\_ctrl(SSL\ *s,\ \textcolor{keywordtype}{int}\ cmd,\ \textcolor{keywordtype}{void}\ (*fp)\ (\textcolor{keywordtype}{void}));}
+\DoxyCodeLine{00035\ \_\_owur\ \textcolor{keywordtype}{long}\ ossl\_quic\_ctx\_callback\_ctrl(SSL\_CTX\ *ctx,\ \textcolor{keywordtype}{int}\ cmd,\ \textcolor{keywordtype}{void}\ (*fp)\ (\textcolor{keywordtype}{void}));}
+\DoxyCodeLine{00036\ \_\_owur\ \textcolor{keywordtype}{size\_t}\ ossl\_quic\_pending(\textcolor{keyword}{const}\ SSL\ *s);}
+\DoxyCodeLine{00037\ \_\_owur\ \textcolor{keywordtype}{int}\ ossl\_quic\_key\_update(SSL\ *s,\ \textcolor{keywordtype}{int}\ update\_type);}
+\DoxyCodeLine{00038\ \_\_owur\ \textcolor{keywordtype}{int}\ ossl\_quic\_get\_key\_update\_type(\textcolor{keyword}{const}\ SSL\ *s);}
+\DoxyCodeLine{00039\ \_\_owur\ \textcolor{keyword}{const}\ SSL\_CIPHER\ *ossl\_quic\_get\_cipher\_by\_char(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *p);}
+\DoxyCodeLine{00040\ \_\_owur\ \textcolor{keywordtype}{int}\ ossl\_quic\_num\_ciphers(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00041\ \_\_owur\ \textcolor{keyword}{const}\ SSL\_CIPHER\ *ossl\_quic\_get\_cipher(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ u);}
+\DoxyCodeLine{00042\ \textcolor{keywordtype}{int}\ ossl\_quic\_renegotiate\_check(SSL\ *ssl,\ \textcolor{keywordtype}{int}\ initok);}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structquic__conn__st}{quic\_conn\_st}}\ \mbox{\hyperlink{structquic__conn__st}{QUIC\_CONNECTION}};}
+\DoxyCodeLine{00045\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structquic__xso__st}{quic\_xso\_st}}\ \mbox{\hyperlink{structquic__xso__st}{QUIC\_XSO}};}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \textcolor{keywordtype}{int}\ ossl\_quic\_do\_handshake(SSL\ *s);}
+\DoxyCodeLine{00048\ \textcolor{keywordtype}{void}\ ossl\_quic\_set\_connect\_state(SSL\ *s);}
+\DoxyCodeLine{00049\ \textcolor{keywordtype}{void}\ ossl\_quic\_set\_accept\_state(SSL\ *s);}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \_\_owur\ \textcolor{keywordtype}{int}\ ossl\_quic\_has\_pending(\textcolor{keyword}{const}\ SSL\ *s);}
+\DoxyCodeLine{00052\ \_\_owur\ \textcolor{keywordtype}{int}\ ossl\_quic\_handle\_events(SSL\ *s);}
+\DoxyCodeLine{00053\ \_\_owur\ \textcolor{keywordtype}{int}\ ossl\_quic\_get\_event\_timeout(SSL\ *s,\ \textcolor{keyword}{struct}\ timeval\ *tv,}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ *is\_infinite);}
+\DoxyCodeLine{00055\ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ ossl\_quic\_get\_event\_deadline(SSL\ *s);}
+\DoxyCodeLine{00056\ \_\_owur\ \textcolor{keywordtype}{int}\ ossl\_quic\_get\_rpoll\_descriptor(SSL\ *s,\ BIO\_POLL\_DESCRIPTOR\ *d);}
+\DoxyCodeLine{00057\ \_\_owur\ \textcolor{keywordtype}{int}\ ossl\_quic\_get\_wpoll\_descriptor(SSL\ *s,\ BIO\_POLL\_DESCRIPTOR\ *d);}
+\DoxyCodeLine{00058\ \_\_owur\ \textcolor{keywordtype}{int}\ ossl\_quic\_get\_net\_read\_desired(SSL\ *s);}
+\DoxyCodeLine{00059\ \_\_owur\ \textcolor{keywordtype}{int}\ ossl\_quic\_get\_net\_write\_desired(SSL\ *s);}
+\DoxyCodeLine{00060\ \_\_owur\ \textcolor{keywordtype}{int}\ ossl\_quic\_get\_error(\textcolor{keyword}{const}\ SSL\ *s,\ \textcolor{keywordtype}{int}\ i);}
+\DoxyCodeLine{00061\ \_\_owur\ \textcolor{keywordtype}{int}\ ossl\_quic\_want(\textcolor{keyword}{const}\ SSL\ *s);}
+\DoxyCodeLine{00062\ \_\_owur\ \textcolor{keywordtype}{int}\ ossl\_quic\_conn\_get\_blocking\_mode(\textcolor{keyword}{const}\ SSL\ *s);}
+\DoxyCodeLine{00063\ \_\_owur\ \textcolor{keywordtype}{int}\ ossl\_quic\_conn\_set\_blocking\_mode(SSL\ *s,\ \textcolor{keywordtype}{int}\ blocking);}
+\DoxyCodeLine{00064\ \_\_owur\ \textcolor{keywordtype}{int}\ ossl\_quic\_conn\_shutdown(SSL\ *s,\ uint64\_t\ flags,}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ SSL\_SHUTDOWN\_EX\_ARGS\ *args,}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ args\_len);}
+\DoxyCodeLine{00067\ \_\_owur\ \textcolor{keywordtype}{int}\ ossl\_quic\_conn\_stream\_conclude(SSL\ *s);}
+\DoxyCodeLine{00068\ \textcolor{keywordtype}{void}\ ossl\_quic\_conn\_set0\_net\_rbio(SSL\ *s,\ BIO\ *net\_wbio);}
+\DoxyCodeLine{00069\ \textcolor{keywordtype}{void}\ ossl\_quic\_conn\_set0\_net\_wbio(SSL\ *s,\ BIO\ *net\_wbio);}
+\DoxyCodeLine{00070\ BIO\ *ossl\_quic\_conn\_get\_net\_rbio(\textcolor{keyword}{const}\ SSL\ *s);}
+\DoxyCodeLine{00071\ BIO\ *ossl\_quic\_conn\_get\_net\_wbio(\textcolor{keyword}{const}\ SSL\ *s);}
+\DoxyCodeLine{00072\ \_\_owur\ \textcolor{keywordtype}{int}\ ossl\_quic\_conn\_set\_initial\_peer\_addr(SSL\ *s,}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIO\_ADDR\ *peer\_addr);}
+\DoxyCodeLine{00074\ \_\_owur\ SSL\ *ossl\_quic\_conn\_stream\_new(SSL\ *s,\ uint64\_t\ flags);}
+\DoxyCodeLine{00075\ \_\_owur\ SSL\ *ossl\_quic\_get0\_connection(SSL\ *s);}
+\DoxyCodeLine{00076\ \_\_owur\ \textcolor{keywordtype}{int}\ ossl\_quic\_get\_stream\_type(SSL\ *s);}
+\DoxyCodeLine{00077\ \_\_owur\ uint64\_t\ ossl\_quic\_get\_stream\_id(SSL\ *s);}
+\DoxyCodeLine{00078\ \_\_owur\ \textcolor{keywordtype}{int}\ ossl\_quic\_is\_stream\_local(SSL\ *s);}
+\DoxyCodeLine{00079\ \_\_owur\ \textcolor{keywordtype}{int}\ ossl\_quic\_set\_default\_stream\_mode(SSL\ *s,\ uint32\_t\ mode);}
+\DoxyCodeLine{00080\ \_\_owur\ SSL\ *ossl\_quic\_detach\_stream(SSL\ *s);}
+\DoxyCodeLine{00081\ \_\_owur\ \textcolor{keywordtype}{int}\ ossl\_quic\_attach\_stream(SSL\ *conn,\ SSL\ *stream);}
+\DoxyCodeLine{00082\ \_\_owur\ \textcolor{keywordtype}{int}\ ossl\_quic\_set\_incoming\_stream\_policy(SSL\ *s,\ \textcolor{keywordtype}{int}\ policy,}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ aec);}
+\DoxyCodeLine{00084\ \_\_owur\ SSL\ *ossl\_quic\_accept\_stream(SSL\ *s,\ uint64\_t\ flags);}
+\DoxyCodeLine{00085\ \_\_owur\ \textcolor{keywordtype}{size\_t}\ ossl\_quic\_get\_accept\_stream\_queue\_len(SSL\ *s);}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00087\ \_\_owur\ \textcolor{keywordtype}{int}\ ossl\_quic\_stream\_reset(SSL\ *ssl,}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ SSL\_STREAM\_RESET\_ARGS\ *args,}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ args\_len);}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ \_\_owur\ \textcolor{keywordtype}{int}\ ossl\_quic\_get\_stream\_read\_state(SSL\ *ssl);}
+\DoxyCodeLine{00092\ \_\_owur\ \textcolor{keywordtype}{int}\ ossl\_quic\_get\_stream\_write\_state(SSL\ *ssl);}
+\DoxyCodeLine{00093\ \_\_owur\ \textcolor{keywordtype}{int}\ ossl\_quic\_get\_stream\_read\_error\_code(SSL\ *ssl,}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ *app\_error\_code);}
+\DoxyCodeLine{00095\ \_\_owur\ \textcolor{keywordtype}{int}\ ossl\_quic\_get\_stream\_write\_error\_code(SSL\ *ssl,}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ *app\_error\_code);}
+\DoxyCodeLine{00097\ \_\_owur\ \textcolor{keywordtype}{int}\ ossl\_quic\_get\_conn\_close\_info(SSL\ *ssl,}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ SSL\_CONN\_CLOSE\_INFO\ *info,}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ info\_len);}
+\DoxyCodeLine{00100\ }
+\DoxyCodeLine{00101\ uint64\_t\ ossl\_quic\_set\_options(SSL\ *s,\ uint64\_t\ opts);}
+\DoxyCodeLine{00102\ uint64\_t\ ossl\_quic\_clear\_options(SSL\ *s,\ uint64\_t\ opts);}
+\DoxyCodeLine{00103\ uint64\_t\ ossl\_quic\_get\_options(\textcolor{keyword}{const}\ SSL\ *s);}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00105\ \textcolor{comment}{/*\ Modifies\ write\ buffer\ size\ for\ a\ stream.\ */}}
+\DoxyCodeLine{00106\ \_\_owur\ \textcolor{keywordtype}{int}\ ossl\_quic\_set\_write\_buffer\_size(SSL\ *s,\ \textcolor{keywordtype}{size\_t}\ size);}
+\DoxyCodeLine{00107\ }
+\DoxyCodeLine{00108\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00109\ \textcolor{comment}{\ *\ Used\ to\ override\ ossl\_time\_now()\ for\ debug\ purposes.\ While\ this\ may\ be}}
+\DoxyCodeLine{00110\ \textcolor{comment}{\ *\ overridden\ at\ any\ time,\ expect\ strange\ results\ if\ you\ change\ it\ after}}
+\DoxyCodeLine{00111\ \textcolor{comment}{\ *\ connecting.}}
+\DoxyCodeLine{00112\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00113\ \textcolor{keywordtype}{int}\ ossl\_quic\_conn\_set\_override\_now\_cb(SSL\ *s,}
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ (*now\_cb)(\textcolor{keywordtype}{void}\ *arg),}
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *now\_cb\_arg);}
+\DoxyCodeLine{00116\ }
+\DoxyCodeLine{00117\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00118\ \textcolor{comment}{\ *\ Condvar\ waiting\ in\ the\ assist\ thread\ doesn't\ support\ time\ faking\ as\ it\ relies}}
+\DoxyCodeLine{00119\ \textcolor{comment}{\ *\ on\ the\ OS's\ notion\ of\ time,\ thus\ this\ is\ used\ in\ test\ code\ to\ force\ a}}
+\DoxyCodeLine{00120\ \textcolor{comment}{\ *\ spurious\ wakeup\ instead.}}
+\DoxyCodeLine{00121\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00122\ \textcolor{keywordtype}{void}\ ossl\_quic\_conn\_force\_assist\_thread\_wake(SSL\ *s);}
+\DoxyCodeLine{00123\ }
+\DoxyCodeLine{00124\ \textcolor{comment}{/*\ For\ use\ by\ tests\ only.\ */}}
+\DoxyCodeLine{00125\ \mbox{\hyperlink{structquic__channel__st}{QUIC\_CHANNEL}}\ *ossl\_quic\_conn\_get\_channel(SSL\ *s);}
+\DoxyCodeLine{00126\ }
+\DoxyCodeLine{00127\ \textcolor{keywordtype}{int}\ ossl\_quic\_has\_pending(\textcolor{keyword}{const}\ SSL\ *s);}
+\DoxyCodeLine{00128\ \textcolor{keywordtype}{int}\ ossl\_quic\_get\_shutdown(\textcolor{keyword}{const}\ SSL\ *s);}
+\DoxyCodeLine{00129\ }
+\DoxyCodeLine{00130\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00131\ }
+\DoxyCodeLine{00132\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

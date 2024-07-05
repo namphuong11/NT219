@@ -1,0 +1,227 @@
+\doxysection{ffc.\+h}
+\hypertarget{ffc_8h_source}{}\label{ffc_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/ffc.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/ffc.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2019-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_INTERNAL\_FFC\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_INTERNAL\_FFC\_H}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#\ pragma\ once}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ include\ <openssl/core.h>}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#\ include\ <openssl/bn.h>}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#\ include\ <openssl/evp.h>}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#\ include\ <openssl/dh.h>}\ \textcolor{comment}{/*\ Uses\ Error\ codes\ from\ DH\ */}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#\ include\ <openssl/params.h>}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#\ include\ <openssl/param\_build.h>}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#\ include\ "{}internal/sizes.h"{}}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{comment}{/*\ Default\ value\ for\ gindex\ when\ canonical\ generation\ of\ g\ is\ not\ used\ */}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#\ define\ FFC\_UNVERIFIABLE\_GINDEX\ -\/1}}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{comment}{/*\ The\ different\ types\ of\ FFC\ keys\ */}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#\ define\ FFC\_PARAM\_TYPE\_DSA\ \ 0}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#\ define\ FFC\_PARAM\_TYPE\_DH\ \ \ 1}}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00030\ \textcolor{comment}{\ *\ The\ mode\ used\ by\ functions\ that\ share\ code\ for\ both\ generation\ and}}
+\DoxyCodeLine{00031\ \textcolor{comment}{\ *\ verification.\ See\ ossl\_ffc\_params\_FIPS186\_4\_gen\_verify().}}
+\DoxyCodeLine{00032\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#define\ FFC\_PARAM\_MODE\_VERIFY\ \ \ 0}}
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#define\ FFC\_PARAM\_MODE\_GENERATE\ 1}}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \textcolor{comment}{/*\ Return\ codes\ for\ generation\ and\ validation\ of\ FFC\ parameters\ */}}
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#define\ FFC\_PARAM\_RET\_STATUS\_FAILED\ \ \ \ \ \ \ \ \ 0}}
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#define\ FFC\_PARAM\_RET\_STATUS\_SUCCESS\ \ \ \ \ \ \ \ 1}}
+\DoxyCodeLine{00039\ \textcolor{comment}{/*\ Returned\ if\ validating\ and\ g\ is\ only\ partially\ verifiable\ */}}
+\DoxyCodeLine{00040\ \textcolor{preprocessor}{\#define\ FFC\_PARAM\_RET\_STATUS\_UNVERIFIABLE\_G\ 2}}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \textcolor{comment}{/*\ Validation\ flags\ */}}
+\DoxyCodeLine{00043\ \textcolor{preprocessor}{\#\ define\ FFC\_PARAM\_FLAG\_VALIDATE\_PQ\ \ \ \ 0x01}}
+\DoxyCodeLine{00044\ \textcolor{preprocessor}{\#\ define\ FFC\_PARAM\_FLAG\_VALIDATE\_G\ \ \ \ \ 0x02}}
+\DoxyCodeLine{00045\ \textcolor{preprocessor}{\#\ define\ FFC\_PARAM\_FLAG\_VALIDATE\_PQG\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00046\ \textcolor{preprocessor}{\ \ \ \ (FFC\_PARAM\_FLAG\_VALIDATE\_PQ\ |\ FFC\_PARAM\_FLAG\_VALIDATE\_G)}}
+\DoxyCodeLine{00047\ \textcolor{preprocessor}{\#define\ FFC\_PARAM\_FLAG\_VALIDATE\_LEGACY\ 0x04}}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00050\ \textcolor{comment}{\ *\ NB:\ These\ values\ must\ align\ with\ the\ equivalently\ named\ macros\ in}}
+\DoxyCodeLine{00051\ \textcolor{comment}{\ *\ openssl/dh.h.\ We\ cannot\ use\ those\ macros\ here\ in\ case\ DH\ has\ been\ disabled.}}
+\DoxyCodeLine{00052\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00053\ \textcolor{preprocessor}{\#\ define\ FFC\_CHECK\_P\_NOT\_PRIME\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 0x00001}}
+\DoxyCodeLine{00054\ \textcolor{preprocessor}{\#\ define\ FFC\_CHECK\_P\_NOT\_SAFE\_PRIME\ \ \ \ \ \ \ \ \ \ \ 0x00002}}
+\DoxyCodeLine{00055\ \textcolor{preprocessor}{\#\ define\ FFC\_CHECK\_UNKNOWN\_GENERATOR\ \ \ \ \ \ \ \ \ \ 0x00004}}
+\DoxyCodeLine{00056\ \textcolor{preprocessor}{\#\ define\ FFC\_CHECK\_NOT\_SUITABLE\_GENERATOR\ \ \ \ \ 0x00008}}
+\DoxyCodeLine{00057\ \textcolor{preprocessor}{\#\ define\ FFC\_CHECK\_Q\_NOT\_PRIME\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 0x00010}}
+\DoxyCodeLine{00058\ \textcolor{preprocessor}{\#\ define\ FFC\_CHECK\_INVALID\_Q\_VALUE\ \ \ \ \ \ \ \ \ \ \ \ 0x00020}}
+\DoxyCodeLine{00059\ \textcolor{preprocessor}{\#\ define\ FFC\_CHECK\_INVALID\_J\_VALUE\ \ \ \ \ \ \ \ \ \ \ \ 0x00040}}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00062\ \textcolor{comment}{\ *\ 0x80,\ 0x100\ reserved\ by\ include/openssl/dh.h\ with\ check\ bits\ that\ are\ not}}
+\DoxyCodeLine{00063\ \textcolor{comment}{\ *\ relevant\ for\ FFC.}}
+\DoxyCodeLine{00064\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \textcolor{preprocessor}{\#\ define\ FFC\_CHECK\_MISSING\_SEED\_OR\_COUNTER\ \ \ \ 0x00200}}
+\DoxyCodeLine{00067\ \textcolor{preprocessor}{\#\ define\ FFC\_CHECK\_INVALID\_G\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 0x00400}}
+\DoxyCodeLine{00068\ \textcolor{preprocessor}{\#\ define\ FFC\_CHECK\_INVALID\_PQ\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 0x00800}}
+\DoxyCodeLine{00069\ \textcolor{preprocessor}{\#\ define\ FFC\_CHECK\_INVALID\_COUNTER\ \ \ \ \ \ \ \ \ \ \ \ 0x01000}}
+\DoxyCodeLine{00070\ \textcolor{preprocessor}{\#\ define\ FFC\_CHECK\_P\_MISMATCH\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 0x02000}}
+\DoxyCodeLine{00071\ \textcolor{preprocessor}{\#\ define\ FFC\_CHECK\_Q\_MISMATCH\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 0x04000}}
+\DoxyCodeLine{00072\ \textcolor{preprocessor}{\#\ define\ FFC\_CHECK\_G\_MISMATCH\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 0x08000}}
+\DoxyCodeLine{00073\ \textcolor{preprocessor}{\#\ define\ FFC\_CHECK\_COUNTER\_MISMATCH\ \ \ \ \ \ \ \ \ \ \ 0x10000}}
+\DoxyCodeLine{00074\ \textcolor{preprocessor}{\#\ define\ FFC\_CHECK\_BAD\_LN\_PAIR\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 0x20000}}
+\DoxyCodeLine{00075\ \textcolor{preprocessor}{\#\ define\ FFC\_CHECK\_INVALID\_SEED\_SIZE\ \ \ \ \ \ \ \ \ \ 0x40000}}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00077\ \textcolor{comment}{/*\ Validation\ Return\ codes\ */}}
+\DoxyCodeLine{00078\ \textcolor{preprocessor}{\#\ define\ FFC\_ERROR\_PUBKEY\_TOO\_SMALL\ \ \ \ \ \ \ 0x01}}
+\DoxyCodeLine{00079\ \textcolor{preprocessor}{\#\ define\ FFC\_ERROR\_PUBKEY\_TOO\_LARGE\ \ \ \ \ \ \ 0x02}}
+\DoxyCodeLine{00080\ \textcolor{preprocessor}{\#\ define\ FFC\_ERROR\_PUBKEY\_INVALID\ \ \ \ \ \ \ \ \ 0x04}}
+\DoxyCodeLine{00081\ \textcolor{preprocessor}{\#\ define\ FFC\_ERROR\_NOT\_SUITABLE\_GENERATOR\ 0x08}}
+\DoxyCodeLine{00082\ \textcolor{preprocessor}{\#\ define\ FFC\_ERROR\_PRIVKEY\_TOO\_SMALL\ \ \ \ \ \ 0x10}}
+\DoxyCodeLine{00083\ \textcolor{preprocessor}{\#\ define\ FFC\_ERROR\_PRIVKEY\_TOO\_LARGE\ \ \ \ \ \ 0x20}}
+\DoxyCodeLine{00084\ \textcolor{preprocessor}{\#\ define\ FFC\_ERROR\_PASSED\_NULL\_PARAM\ \ \ \ \ \ 0x40}}
+\DoxyCodeLine{00085\ }
+\DoxyCodeLine{00086\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00087\ \textcolor{comment}{\ *\ Finite\ field\ cryptography\ (FFC)\ domain\ parameters\ are\ used\ by\ DH\ and\ DSA.}}
+\DoxyCodeLine{00088\ \textcolor{comment}{\ *\ Refer\ to\ FIPS186\_4\ Appendix\ A\ \&\ B.}}
+\DoxyCodeLine{00089\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00090\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structffc__params__st}{ffc\_params\_st}}\ \{}
+\DoxyCodeLine{00091\ \ \ \ \ \textcolor{comment}{/*\ Primes\ */}}
+\DoxyCodeLine{00092\ \ \ \ \ BIGNUM\ *p;}
+\DoxyCodeLine{00093\ \ \ \ \ BIGNUM\ *q;}
+\DoxyCodeLine{00094\ \ \ \ \ \textcolor{comment}{/*\ Generator\ */}}
+\DoxyCodeLine{00095\ \ \ \ \ BIGNUM\ *g;}
+\DoxyCodeLine{00096\ \ \ \ \ \textcolor{comment}{/*\ DH\ X9.42\ Optional\ Subgroup\ factor\ j\ >=\ 2\ where\ p\ =\ j\ *\ q\ +\ 1\ */}}
+\DoxyCodeLine{00097\ \ \ \ \ BIGNUM\ *j;}
+\DoxyCodeLine{00098\ }
+\DoxyCodeLine{00099\ \ \ \ \ \textcolor{comment}{/*\ Required\ for\ FIPS186\_4\ validation\ of\ p,\ q\ and\ optionally\ canonical\ g\ */}}
+\DoxyCodeLine{00100\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *seed;}
+\DoxyCodeLine{00101\ \ \ \ \ \textcolor{comment}{/*\ If\ this\ value\ is\ zero\ the\ hash\ size\ is\ used\ as\ the\ seed\ length\ */}}
+\DoxyCodeLine{00102\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ seedlen;}
+\DoxyCodeLine{00103\ \ \ \ \ \textcolor{comment}{/*\ Required\ for\ FIPS186\_4\ validation\ of\ p\ and\ q\ */}}
+\DoxyCodeLine{00104\ \ \ \ \ \textcolor{keywordtype}{int}\ pcounter;}
+\DoxyCodeLine{00105\ \ \ \ \ \textcolor{keywordtype}{int}\ nid;\ \textcolor{comment}{/*\ The\ identity\ of\ a\ named\ group\ */}}
+\DoxyCodeLine{00106\ }
+\DoxyCodeLine{00107\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00108\ \textcolor{comment}{\ \ \ \ \ *\ Required\ for\ FIPS186\_4\ generation\ \&\ validation\ of\ canonical\ g.}}
+\DoxyCodeLine{00109\ \textcolor{comment}{\ \ \ \ \ *\ It\ uses\ unverifiable\ g\ if\ this\ value\ is\ -\/1.}}
+\DoxyCodeLine{00110\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00111\ \ \ \ \ \textcolor{keywordtype}{int}\ gindex;}
+\DoxyCodeLine{00112\ \ \ \ \ \textcolor{keywordtype}{int}\ h;\ \textcolor{comment}{/*\ loop\ counter\ for\ unverifiable\ g\ */}}
+\DoxyCodeLine{00113\ }
+\DoxyCodeLine{00114\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ flags;}
+\DoxyCodeLine{00115\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00116\ \textcolor{comment}{\ \ \ \ \ *\ The\ digest\ to\ use\ for\ generation\ or\ validation.\ If\ this\ value\ is\ NULL,}}
+\DoxyCodeLine{00117\ \textcolor{comment}{\ \ \ \ \ *\ then\ the\ digest\ is\ chosen\ using\ the\ value\ of\ N.}}
+\DoxyCodeLine{00118\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00119\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *mdname;}
+\DoxyCodeLine{00120\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *mdprops;}
+\DoxyCodeLine{00121\ \ \ \ \ \textcolor{comment}{/*\ Default\ key\ length\ for\ known\ named\ groups\ according\ to\ RFC7919\ */}}
+\DoxyCodeLine{00122\ \ \ \ \ \textcolor{keywordtype}{int}\ keylength;}
+\DoxyCodeLine{00123\ \}\ \mbox{\hyperlink{structffc__params__st}{FFC\_PARAMS}};}
+\DoxyCodeLine{00124\ }
+\DoxyCodeLine{00125\ \textcolor{keywordtype}{void}\ ossl\_ffc\_params\_init(\mbox{\hyperlink{structffc__params__st}{FFC\_PARAMS}}\ *params);}
+\DoxyCodeLine{00126\ \textcolor{keywordtype}{void}\ ossl\_ffc\_params\_cleanup(\mbox{\hyperlink{structffc__params__st}{FFC\_PARAMS}}\ *params);}
+\DoxyCodeLine{00127\ \textcolor{keywordtype}{void}\ ossl\_ffc\_params\_set0\_pqg(\mbox{\hyperlink{structffc__params__st}{FFC\_PARAMS}}\ *params,\ BIGNUM\ *p,\ BIGNUM\ *q,}
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BIGNUM\ *g);}
+\DoxyCodeLine{00129\ \textcolor{keywordtype}{void}\ ossl\_ffc\_params\_get0\_pqg(\textcolor{keyword}{const}\ \mbox{\hyperlink{structffc__params__st}{FFC\_PARAMS}}\ *params,\ \textcolor{keyword}{const}\ BIGNUM\ **p,}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ **q,\ \textcolor{keyword}{const}\ BIGNUM\ **g);}
+\DoxyCodeLine{00131\ \textcolor{keywordtype}{void}\ ossl\_ffc\_params\_set0\_j(\mbox{\hyperlink{structffc__params__st}{FFC\_PARAMS}}\ *d,\ BIGNUM\ *j);}
+\DoxyCodeLine{00132\ \textcolor{keywordtype}{int}\ ossl\_ffc\_params\_set\_seed(\mbox{\hyperlink{structffc__params__st}{FFC\_PARAMS}}\ *params,}
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *seed,\ \textcolor{keywordtype}{size\_t}\ seedlen);}
+\DoxyCodeLine{00134\ \textcolor{keywordtype}{void}\ ossl\_ffc\_params\_set\_gindex(\mbox{\hyperlink{structffc__params__st}{FFC\_PARAMS}}\ *params,\ \textcolor{keywordtype}{int}\ index);}
+\DoxyCodeLine{00135\ \textcolor{keywordtype}{void}\ ossl\_ffc\_params\_set\_pcounter(\mbox{\hyperlink{structffc__params__st}{FFC\_PARAMS}}\ *params,\ \textcolor{keywordtype}{int}\ index);}
+\DoxyCodeLine{00136\ \textcolor{keywordtype}{void}\ ossl\_ffc\_params\_set\_h(\mbox{\hyperlink{structffc__params__st}{FFC\_PARAMS}}\ *params,\ \textcolor{keywordtype}{int}\ index);}
+\DoxyCodeLine{00137\ \textcolor{keywordtype}{void}\ ossl\_ffc\_params\_set\_flags(\mbox{\hyperlink{structffc__params__st}{FFC\_PARAMS}}\ *params,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ flags);}
+\DoxyCodeLine{00138\ \textcolor{keywordtype}{void}\ ossl\_ffc\_params\_enable\_flags(\mbox{\hyperlink{structffc__params__st}{FFC\_PARAMS}}\ *params,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ flags,}
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ enable);}
+\DoxyCodeLine{00140\ \textcolor{keywordtype}{void}\ ossl\_ffc\_set\_digest(\mbox{\hyperlink{structffc__params__st}{FFC\_PARAMS}}\ *params,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *alg,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *props);}
+\DoxyCodeLine{00141\ }
+\DoxyCodeLine{00142\ \textcolor{keywordtype}{int}\ ossl\_ffc\_params\_set\_validate\_params(\mbox{\hyperlink{structffc__params__st}{FFC\_PARAMS}}\ *params,}
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *seed,}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ seedlen,\ \textcolor{keywordtype}{int}\ counter);}
+\DoxyCodeLine{00145\ \textcolor{keywordtype}{void}\ ossl\_ffc\_params\_get\_validate\_params(\textcolor{keyword}{const}\ \mbox{\hyperlink{structffc__params__st}{FFC\_PARAMS}}\ *params,}
+\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **seed,\ \textcolor{keywordtype}{size\_t}\ *seedlen,}
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ *pcounter);}
+\DoxyCodeLine{00148\ }
+\DoxyCodeLine{00149\ \textcolor{keywordtype}{int}\ ossl\_ffc\_params\_copy(\mbox{\hyperlink{structffc__params__st}{FFC\_PARAMS}}\ *dst,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structffc__params__st}{FFC\_PARAMS}}\ *src);}
+\DoxyCodeLine{00150\ \textcolor{keywordtype}{int}\ ossl\_ffc\_params\_cmp(\textcolor{keyword}{const}\ \mbox{\hyperlink{structffc__params__st}{FFC\_PARAMS}}\ *a,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structffc__params__st}{FFC\_PARAMS}}\ *\mbox{\hyperlink{structb}{b}},\ \textcolor{keywordtype}{int}\ ignore\_q);}
+\DoxyCodeLine{00151\ }
+\DoxyCodeLine{00152\ \textcolor{preprocessor}{\#ifndef\ FIPS\_MODULE}}
+\DoxyCodeLine{00153\ \textcolor{keywordtype}{int}\ ossl\_ffc\_params\_print(BIO\ *bp,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structffc__params__st}{FFC\_PARAMS}}\ *ffc,\ \textcolor{keywordtype}{int}\ indent);}
+\DoxyCodeLine{00154\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ FIPS\_MODULE\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00155\ }
+\DoxyCodeLine{00156\ }
+\DoxyCodeLine{00157\ \textcolor{keywordtype}{int}\ ossl\_ffc\_params\_FIPS186\_4\_generate(OSSL\_LIB\_CTX\ *libctx,\ \mbox{\hyperlink{structffc__params__st}{FFC\_PARAMS}}\ *params,}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ type,\ \textcolor{keywordtype}{size\_t}\ L,\ \textcolor{keywordtype}{size\_t}\ N,}
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ *res,\ BN\_GENCB\ *cb);}
+\DoxyCodeLine{00160\ \textcolor{keywordtype}{int}\ ossl\_ffc\_params\_FIPS186\_2\_generate(OSSL\_LIB\_CTX\ *libctx,\ \mbox{\hyperlink{structffc__params__st}{FFC\_PARAMS}}\ *params,}
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ type,\ \textcolor{keywordtype}{size\_t}\ L,\ \textcolor{keywordtype}{size\_t}\ N,}
+\DoxyCodeLine{00162\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ *res,\ BN\_GENCB\ *cb);}
+\DoxyCodeLine{00163\ }
+\DoxyCodeLine{00164\ \textcolor{keywordtype}{int}\ ossl\_ffc\_params\_FIPS186\_4\_gen\_verify(OSSL\_LIB\_CTX\ *libctx,}
+\DoxyCodeLine{00165\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structffc__params__st}{FFC\_PARAMS}}\ *params,\ \textcolor{keywordtype}{int}\ mode,\ \textcolor{keywordtype}{int}\ type,}
+\DoxyCodeLine{00166\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ L,\ \textcolor{keywordtype}{size\_t}\ N,\ \textcolor{keywordtype}{int}\ *res,}
+\DoxyCodeLine{00167\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BN\_GENCB\ *cb);}
+\DoxyCodeLine{00168\ \textcolor{keywordtype}{int}\ ossl\_ffc\_params\_FIPS186\_2\_gen\_verify(OSSL\_LIB\_CTX\ *libctx,}
+\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structffc__params__st}{FFC\_PARAMS}}\ *params,\ \textcolor{keywordtype}{int}\ mode,\ \textcolor{keywordtype}{int}\ type,}
+\DoxyCodeLine{00170\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ L,\ \textcolor{keywordtype}{size\_t}\ N,\ \textcolor{keywordtype}{int}\ *res,}
+\DoxyCodeLine{00171\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BN\_GENCB\ *cb);}
+\DoxyCodeLine{00172\ }
+\DoxyCodeLine{00173\ \textcolor{keywordtype}{int}\ ossl\_ffc\_params\_simple\_validate(OSSL\_LIB\_CTX\ *libctx,}
+\DoxyCodeLine{00174\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structffc__params__st}{FFC\_PARAMS}}\ *params,}
+\DoxyCodeLine{00175\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ paramstype,\ \textcolor{keywordtype}{int}\ *res);}
+\DoxyCodeLine{00176\ \textcolor{keywordtype}{int}\ ossl\_ffc\_params\_full\_validate(OSSL\_LIB\_CTX\ *libctx,}
+\DoxyCodeLine{00177\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structffc__params__st}{FFC\_PARAMS}}\ *params,}
+\DoxyCodeLine{00178\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ paramstype,\ \textcolor{keywordtype}{int}\ *res);}
+\DoxyCodeLine{00179\ \textcolor{keywordtype}{int}\ ossl\_ffc\_params\_FIPS186\_4\_validate(OSSL\_LIB\_CTX\ *libctx,}
+\DoxyCodeLine{00180\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structffc__params__st}{FFC\_PARAMS}}\ *params,}
+\DoxyCodeLine{00181\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ type,\ \textcolor{keywordtype}{int}\ *res,\ BN\_GENCB\ *cb);}
+\DoxyCodeLine{00182\ \textcolor{keywordtype}{int}\ ossl\_ffc\_params\_FIPS186\_2\_validate(OSSL\_LIB\_CTX\ *libctx,}
+\DoxyCodeLine{00183\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structffc__params__st}{FFC\_PARAMS}}\ *params,}
+\DoxyCodeLine{00184\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ type,\ \textcolor{keywordtype}{int}\ *res,\ BN\_GENCB\ *cb);}
+\DoxyCodeLine{00185\ }
+\DoxyCodeLine{00186\ \textcolor{keywordtype}{int}\ ossl\_ffc\_generate\_private\_key(BN\_CTX\ *ctx,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structffc__params__st}{FFC\_PARAMS}}\ *params,}
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ N,\ \textcolor{keywordtype}{int}\ s,\ BIGNUM\ *priv);}
+\DoxyCodeLine{00188\ }
+\DoxyCodeLine{00189\ \textcolor{keywordtype}{int}\ ossl\_ffc\_params\_validate\_unverifiable\_g(BN\_CTX\ *ctx,\ BN\_MONT\_CTX\ *mont,}
+\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *p,\ \textcolor{keyword}{const}\ BIGNUM\ *q,}
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *g,\ BIGNUM\ *tmp,}
+\DoxyCodeLine{00192\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ *ret);}
+\DoxyCodeLine{00193\ }
+\DoxyCodeLine{00194\ \textcolor{keywordtype}{int}\ ossl\_ffc\_validate\_public\_key(\textcolor{keyword}{const}\ \mbox{\hyperlink{structffc__params__st}{FFC\_PARAMS}}\ *params,}
+\DoxyCodeLine{00195\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *pub\_key,\ \textcolor{keywordtype}{int}\ *ret);}
+\DoxyCodeLine{00196\ \textcolor{keywordtype}{int}\ ossl\_ffc\_validate\_public\_key\_partial(\textcolor{keyword}{const}\ \mbox{\hyperlink{structffc__params__st}{FFC\_PARAMS}}\ *params,}
+\DoxyCodeLine{00197\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *pub\_key,\ \textcolor{keywordtype}{int}\ *ret);}
+\DoxyCodeLine{00198\ \textcolor{keywordtype}{int}\ ossl\_ffc\_validate\_private\_key(\textcolor{keyword}{const}\ BIGNUM\ *upper,\ \textcolor{keyword}{const}\ BIGNUM\ *priv\_key,}
+\DoxyCodeLine{00199\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ *ret);}
+\DoxyCodeLine{00200\ }
+\DoxyCodeLine{00201\ \textcolor{keywordtype}{int}\ ossl\_ffc\_params\_todata(\textcolor{keyword}{const}\ \mbox{\hyperlink{structffc__params__st}{FFC\_PARAMS}}\ *ffc,\ OSSL\_PARAM\_BLD\ *tmpl,}
+\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OSSL\_PARAM\ params[]);}
+\DoxyCodeLine{00203\ \textcolor{keywordtype}{int}\ ossl\_ffc\_params\_fromdata(\mbox{\hyperlink{structffc__params__st}{FFC\_PARAMS}}\ *ffc,\ \textcolor{keyword}{const}\ OSSL\_PARAM\ params[]);}
+\DoxyCodeLine{00204\ }
+\DoxyCodeLine{00205\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structdh__named__group__st}{dh\_named\_group\_st}}\ \mbox{\hyperlink{structdh__named__group__st}{DH\_NAMED\_GROUP}};}
+\DoxyCodeLine{00206\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structdh__named__group__st}{DH\_NAMED\_GROUP}}\ *ossl\_ffc\_name\_to\_dh\_named\_group(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *name);}
+\DoxyCodeLine{00207\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structdh__named__group__st}{DH\_NAMED\_GROUP}}\ *ossl\_ffc\_uid\_to\_dh\_named\_group(\textcolor{keywordtype}{int}\ uid);}
+\DoxyCodeLine{00208\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_DH}}
+\DoxyCodeLine{00209\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structdh__named__group__st}{DH\_NAMED\_GROUP}}\ *ossl\_ffc\_numbers\_to\_dh\_named\_group(\textcolor{keyword}{const}\ BIGNUM\ *p,}
+\DoxyCodeLine{00210\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *q,}
+\DoxyCodeLine{00211\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *g);}
+\DoxyCodeLine{00212\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00213\ \textcolor{keywordtype}{int}\ ossl\_ffc\_named\_group\_get\_uid(\textcolor{keyword}{const}\ \mbox{\hyperlink{structdh__named__group__st}{DH\_NAMED\_GROUP}}\ *group);}
+\DoxyCodeLine{00214\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *ossl\_ffc\_named\_group\_get\_name(\textcolor{keyword}{const}\ \mbox{\hyperlink{structdh__named__group__st}{DH\_NAMED\_GROUP}}\ *);}
+\DoxyCodeLine{00215\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_DH}}
+\DoxyCodeLine{00216\ \textcolor{keywordtype}{int}\ ossl\_ffc\_named\_group\_get\_keylength(\textcolor{keyword}{const}\ \mbox{\hyperlink{structdh__named__group__st}{DH\_NAMED\_GROUP}}\ *group);}
+\DoxyCodeLine{00217\ \textcolor{keyword}{const}\ BIGNUM\ *ossl\_ffc\_named\_group\_get\_q(\textcolor{keyword}{const}\ \mbox{\hyperlink{structdh__named__group__st}{DH\_NAMED\_GROUP}}\ *group);}
+\DoxyCodeLine{00218\ \textcolor{keywordtype}{int}\ ossl\_ffc\_named\_group\_set(\mbox{\hyperlink{structffc__params__st}{FFC\_PARAMS}}\ *ffc,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structdh__named__group__st}{DH\_NAMED\_GROUP}}\ *group);}
+\DoxyCodeLine{00219\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00220\ }
+\DoxyCodeLine{00221\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ OSSL\_INTERNAL\_FFC\_H\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

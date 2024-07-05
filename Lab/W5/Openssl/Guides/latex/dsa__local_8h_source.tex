@@ -1,0 +1,80 @@
+\doxysection{dsa\+\_\+local.\+h}
+\hypertarget{dsa__local_8h_source}{}\label{dsa__local_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/dsa/dsa\_local.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/dsa/dsa\_local.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2007-\/2021\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <openssl/dsa.h>}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ "{}internal/refcount.h"{}}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ "{}internal/ffc.h"{}}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structdsa__st}{dsa\_st}}\ \{}
+\DoxyCodeLine{00015\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ \ \ \ \ *\ This\ first\ variable\ is\ used\ to\ pick\ up\ errors\ where\ a\ DSA\ is\ passed}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ \ \ \ \ *\ instead\ of\ an\ EVP\_PKEY}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00019\ \ \ \ \ \textcolor{keywordtype}{int}\ pad;}
+\DoxyCodeLine{00020\ \ \ \ \ int32\_t\ version;}
+\DoxyCodeLine{00021\ \ \ \ \ \mbox{\hyperlink{structffc__params__st}{FFC\_PARAMS}}\ params;}
+\DoxyCodeLine{00022\ \ \ \ \ BIGNUM\ *pub\_key;\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ y\ public\ key\ */}}
+\DoxyCodeLine{00023\ \ \ \ \ BIGNUM\ *priv\_key;\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ x\ private\ key\ */}}
+\DoxyCodeLine{00024\ \ \ \ \ \textcolor{keywordtype}{int}\ flags;}
+\DoxyCodeLine{00025\ \ \ \ \ \textcolor{comment}{/*\ Normally\ used\ to\ cache\ montgomery\ values\ */}}
+\DoxyCodeLine{00026\ \ \ \ \ BN\_MONT\_CTX\ *method\_mont\_p;}
+\DoxyCodeLine{00027\ \ \ \ \ \mbox{\hyperlink{struct_c_r_y_p_t_o___r_e_f___c_o_u_n_t}{CRYPTO\_REF\_COUNT}}\ references;}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#ifndef\ FIPS\_MODULE}}
+\DoxyCodeLine{00029\ \ \ \ \ CRYPTO\_EX\_DATA\ ex\_data;}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00031\ \ \ \ \ \textcolor{keyword}{const}\ DSA\_METHOD\ *meth;}
+\DoxyCodeLine{00032\ \ \ \ \ \textcolor{comment}{/*\ functional\ reference\ if\ 'meth'\ is\ ENGINE-\/provided\ */}}
+\DoxyCodeLine{00033\ \ \ \ \ ENGINE\ *engine;}
+\DoxyCodeLine{00034\ \ \ \ \ CRYPTO\_RWLOCK\ *lock;}
+\DoxyCodeLine{00035\ \ \ \ \ OSSL\_LIB\_CTX\ *libctx;}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{comment}{/*\ Provider\ data\ */}}
+\DoxyCodeLine{00038\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ dirty\_cnt;\ \textcolor{comment}{/*\ If\ any\ key\ material\ changes,\ increment\ this\ */}}
+\DoxyCodeLine{00039\ \};}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_d_s_a___s_i_g__st}{DSA\_SIG\_st}}\ \{}
+\DoxyCodeLine{00042\ \ \ \ \ BIGNUM\ *r;}
+\DoxyCodeLine{00043\ \ \ \ \ BIGNUM\ *s;}
+\DoxyCodeLine{00044\ \};}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structdsa__method}{dsa\_method}}\ \{}
+\DoxyCodeLine{00047\ \ \ \ \ \textcolor{keywordtype}{char}\ *name;}
+\DoxyCodeLine{00048\ \ \ \ \ DSA\_SIG\ *(*dsa\_do\_sign)\ (\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *dgst,\ \textcolor{keywordtype}{int}\ dlen,\ DSA\ *dsa);}
+\DoxyCodeLine{00049\ \ \ \ \ int\ (*dsa\_sign\_setup)\ (DSA\ *dsa,\ BN\_CTX\ *ctx\_in,\ BIGNUM\ **kinvp,}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BIGNUM\ **rp);}
+\DoxyCodeLine{00051\ \ \ \ \ int\ (*dsa\_do\_verify)\ (\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *dgst,\ \textcolor{keywordtype}{int}\ dgst\_len,}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ DSA\_SIG\ *sig,\ DSA\ *dsa);}
+\DoxyCodeLine{00053\ \ \ \ \ int\ (*dsa\_mod\_exp)\ (DSA\ *dsa,\ BIGNUM\ *rr,\ \textcolor{keyword}{const}\ BIGNUM\ *a1,}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *p1,\ \textcolor{keyword}{const}\ BIGNUM\ *a2,\ \textcolor{keyword}{const}\ BIGNUM\ *p2,}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *m,\ BN\_CTX\ *ctx,\ BN\_MONT\_CTX\ *in\_mont);}
+\DoxyCodeLine{00056\ \ \ \ \ \textcolor{comment}{/*\ Can\ be\ null\ */}}
+\DoxyCodeLine{00057\ \ \ \ \ int\ (*bn\_mod\_exp)\ (DSA\ *dsa,\ BIGNUM\ *r,\ \textcolor{keyword}{const}\ BIGNUM\ *a,\ \textcolor{keyword}{const}\ BIGNUM\ *p,}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *m,\ BN\_CTX\ *ctx,\ BN\_MONT\_CTX\ *m\_ctx);}
+\DoxyCodeLine{00059\ \ \ \ \ int\ (*init)\ (DSA\ *dsa);}
+\DoxyCodeLine{00060\ \ \ \ \ int\ (*finish)\ (DSA\ *dsa);}
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{keywordtype}{int}\ flags;}
+\DoxyCodeLine{00062\ \ \ \ \ \textcolor{keywordtype}{void}\ *app\_data;}
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{comment}{/*\ If\ this\ is\ non-\/NULL,\ it\ is\ used\ to\ generate\ DSA\ parameters\ */}}
+\DoxyCodeLine{00064\ \ \ \ \ int\ (*dsa\_paramgen)\ (DSA\ *dsa,\ \textcolor{keywordtype}{int}\ bits,}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *seed,\ \textcolor{keywordtype}{int}\ seed\_len,}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ *counter\_ret,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ *h\_ret,}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BN\_GENCB\ *cb);}
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{comment}{/*\ If\ this\ is\ non-\/NULL,\ it\ is\ used\ to\ generate\ DSA\ keys\ */}}
+\DoxyCodeLine{00069\ \ \ \ \ int\ (*dsa\_keygen)\ (DSA\ *dsa);}
+\DoxyCodeLine{00070\ \};}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00072\ DSA\_SIG\ *ossl\_dsa\_do\_sign\_int(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *dgst,\ \textcolor{keywordtype}{int}\ dlen,\ DSA\ *dsa,}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ nonce\_type,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *digestname,}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OSSL\_LIB\_CTX\ *libctx,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *propq);}
+
+\end{DoxyCode}

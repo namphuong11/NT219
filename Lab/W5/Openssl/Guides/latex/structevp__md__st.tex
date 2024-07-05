@@ -1,0 +1,103 @@
+\doxysection{evp\+\_\+md\+\_\+st Struct Reference}
+\hypertarget{structevp__md__st}{}\label{structevp__md__st}\index{evp\_md\_st@{evp\_md\_st}}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{structevp__md__st_a97429cb33aa783b1bf1ae4c358bfa015}\label{structevp__md__st_a97429cb33aa783b1bf1ae4c358bfa015} 
+int {\bfseries type}
+\item 
+\Hypertarget{structevp__md__st_abf1796f18addf307aef2b3309db42293}\label{structevp__md__st_abf1796f18addf307aef2b3309db42293} 
+int {\bfseries pkey\+\_\+type}
+\item 
+\Hypertarget{structevp__md__st_a6944423014d79e2e0dc2b8fa118017d5}\label{structevp__md__st_a6944423014d79e2e0dc2b8fa118017d5} 
+int {\bfseries md\+\_\+size}
+\item 
+\Hypertarget{structevp__md__st_a2e58c7253744f87c567dd1baa05d4391}\label{structevp__md__st_a2e58c7253744f87c567dd1baa05d4391} 
+unsigned long {\bfseries flags}
+\item 
+\Hypertarget{structevp__md__st_ab11458a2d44649ab09a393a6128aa51f}\label{structevp__md__st_ab11458a2d44649ab09a393a6128aa51f} 
+int {\bfseries origin}
+\item 
+\Hypertarget{structevp__md__st_af77ceab71d9583bfc79f971b35f37bc9}\label{structevp__md__st_af77ceab71d9583bfc79f971b35f37bc9} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries init} )(EVP\+\_\+\+MD\+\_\+\+CTX \texorpdfstring{$\ast$}{*}ctx)
+\item 
+\Hypertarget{structevp__md__st_a1d2c16f06068882308fea2c0bac1420e}\label{structevp__md__st_a1d2c16f06068882308fea2c0bac1420e} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries update} )(EVP\+\_\+\+MD\+\_\+\+CTX \texorpdfstring{$\ast$}{*}ctx, const void \texorpdfstring{$\ast$}{*}data, size\+\_\+t count)
+\item 
+\Hypertarget{structevp__md__st_ad01440a25d0075887664ee9ce177153a}\label{structevp__md__st_ad01440a25d0075887664ee9ce177153a} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries final} )(EVP\+\_\+\+MD\+\_\+\+CTX \texorpdfstring{$\ast$}{*}ctx, unsigned char \texorpdfstring{$\ast$}{*}md)
+\item 
+\Hypertarget{structevp__md__st_a485bd8713b6e9313e4b19db5a9ca8c65}\label{structevp__md__st_a485bd8713b6e9313e4b19db5a9ca8c65} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries copy} )(EVP\+\_\+\+MD\+\_\+\+CTX \texorpdfstring{$\ast$}{*}to, const EVP\+\_\+\+MD\+\_\+\+CTX \texorpdfstring{$\ast$}{*}from)
+\item 
+\Hypertarget{structevp__md__st_a5ef155d17f45b4f65254955727c94c12}\label{structevp__md__st_a5ef155d17f45b4f65254955727c94c12} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries cleanup} )(EVP\+\_\+\+MD\+\_\+\+CTX \texorpdfstring{$\ast$}{*}ctx)
+\item 
+\Hypertarget{structevp__md__st_ab8c844ecf661485fd63f8788e3ee32cd}\label{structevp__md__st_ab8c844ecf661485fd63f8788e3ee32cd} 
+int {\bfseries block\+\_\+size}
+\item 
+\Hypertarget{structevp__md__st_a97600b029c7d1c5325390006ce82b48f}\label{structevp__md__st_a97600b029c7d1c5325390006ce82b48f} 
+int {\bfseries ctx\+\_\+size}
+\item 
+\Hypertarget{structevp__md__st_a7884b23792c91f15ab658b84a3ecc2db}\label{structevp__md__st_a7884b23792c91f15ab658b84a3ecc2db} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries md\+\_\+ctrl} )(EVP\+\_\+\+MD\+\_\+\+CTX \texorpdfstring{$\ast$}{*}ctx, int cmd, int p1, void \texorpdfstring{$\ast$}{*}p2)
+\item 
+\Hypertarget{structevp__md__st_af02a22ce6c13e4b0d0779f7da926b0e4}\label{structevp__md__st_af02a22ce6c13e4b0d0779f7da926b0e4} 
+int {\bfseries name\+\_\+id}
+\item 
+\Hypertarget{structevp__md__st_aa5fc9500c7303269ea4cee55e15307e4}\label{structevp__md__st_aa5fc9500c7303269ea4cee55e15307e4} 
+char \texorpdfstring{$\ast$}{*} {\bfseries type\+\_\+name}
+\item 
+\Hypertarget{structevp__md__st_a1f7352faec16a01a303d8feef156781a}\label{structevp__md__st_a1f7352faec16a01a303d8feef156781a} 
+const char \texorpdfstring{$\ast$}{*} {\bfseries description}
+\item 
+\Hypertarget{structevp__md__st_aa6b03d743fb788099fe72a5103b4ebe6}\label{structevp__md__st_aa6b03d743fb788099fe72a5103b4ebe6} 
+OSSL\+\_\+\+PROVIDER \texorpdfstring{$\ast$}{*} {\bfseries prov}
+\item 
+\Hypertarget{structevp__md__st_a3d8560b36ea2cfb05fb7f9f9f7b22432}\label{structevp__md__st_a3d8560b36ea2cfb05fb7f9f9f7b22432} 
+\mbox{\hyperlink{struct_c_r_y_p_t_o___r_e_f___c_o_u_n_t}{CRYPTO\+\_\+\+REF\+\_\+\+COUNT}} {\bfseries refcnt}
+\item 
+\Hypertarget{structevp__md__st_aaaa5f0f7d49bf32f5e3481d886010b20}\label{structevp__md__st_aaaa5f0f7d49bf32f5e3481d886010b20} 
+OSSL\+\_\+\+FUNC\+\_\+digest\+\_\+newctx\+\_\+fn \texorpdfstring{$\ast$}{*} {\bfseries newctx}
+\item 
+\Hypertarget{structevp__md__st_abc75d69dda58cca1c9f010619229cfe4}\label{structevp__md__st_abc75d69dda58cca1c9f010619229cfe4} 
+OSSL\+\_\+\+FUNC\+\_\+digest\+\_\+init\+\_\+fn \texorpdfstring{$\ast$}{*} {\bfseries dinit}
+\item 
+\Hypertarget{structevp__md__st_a9f6a7a3dfb9cd982455054e6607d4e74}\label{structevp__md__st_a9f6a7a3dfb9cd982455054e6607d4e74} 
+OSSL\+\_\+\+FUNC\+\_\+digest\+\_\+update\+\_\+fn \texorpdfstring{$\ast$}{*} {\bfseries dupdate}
+\item 
+\Hypertarget{structevp__md__st_a2ad0ebef254dfb3e3e633070f32a7550}\label{structevp__md__st_a2ad0ebef254dfb3e3e633070f32a7550} 
+OSSL\+\_\+\+FUNC\+\_\+digest\+\_\+final\+\_\+fn \texorpdfstring{$\ast$}{*} {\bfseries dfinal}
+\item 
+\Hypertarget{structevp__md__st_a0c2f983bc8fbeff3c08fb7bd2120bf5e}\label{structevp__md__st_a0c2f983bc8fbeff3c08fb7bd2120bf5e} 
+OSSL\+\_\+\+FUNC\+\_\+digest\+\_\+digest\+\_\+fn \texorpdfstring{$\ast$}{*} {\bfseries digest}
+\item 
+\Hypertarget{structevp__md__st_a9ef6b532689fe479cb568ded61a32223}\label{structevp__md__st_a9ef6b532689fe479cb568ded61a32223} 
+OSSL\+\_\+\+FUNC\+\_\+digest\+\_\+freectx\+\_\+fn \texorpdfstring{$\ast$}{*} {\bfseries freectx}
+\item 
+\Hypertarget{structevp__md__st_a5af4355bb36fbf01df4f4fbb2b1346e8}\label{structevp__md__st_a5af4355bb36fbf01df4f4fbb2b1346e8} 
+OSSL\+\_\+\+FUNC\+\_\+digest\+\_\+dupctx\+\_\+fn \texorpdfstring{$\ast$}{*} {\bfseries dupctx}
+\item 
+\Hypertarget{structevp__md__st_acd30cf5f1126966507e8a3ea18ce9015}\label{structevp__md__st_acd30cf5f1126966507e8a3ea18ce9015} 
+OSSL\+\_\+\+FUNC\+\_\+digest\+\_\+get\+\_\+params\+\_\+fn \texorpdfstring{$\ast$}{*} {\bfseries get\+\_\+params}
+\item 
+\Hypertarget{structevp__md__st_a7d742bd90b5ea2a8f9844534f22d14ba}\label{structevp__md__st_a7d742bd90b5ea2a8f9844534f22d14ba} 
+OSSL\+\_\+\+FUNC\+\_\+digest\+\_\+set\+\_\+ctx\+\_\+params\+\_\+fn \texorpdfstring{$\ast$}{*} {\bfseries set\+\_\+ctx\+\_\+params}
+\item 
+\Hypertarget{structevp__md__st_accc7ec05ce69357357c89f601f4ecdcd}\label{structevp__md__st_accc7ec05ce69357357c89f601f4ecdcd} 
+OSSL\+\_\+\+FUNC\+\_\+digest\+\_\+get\+\_\+ctx\+\_\+params\+\_\+fn \texorpdfstring{$\ast$}{*} {\bfseries get\+\_\+ctx\+\_\+params}
+\item 
+\Hypertarget{structevp__md__st_a41ff3453caebebfe4259318443b1db20}\label{structevp__md__st_a41ff3453caebebfe4259318443b1db20} 
+OSSL\+\_\+\+FUNC\+\_\+digest\+\_\+gettable\+\_\+params\+\_\+fn \texorpdfstring{$\ast$}{*} {\bfseries gettable\+\_\+params}
+\item 
+\Hypertarget{structevp__md__st_a7f9e98e7b386a91a15fbb06824682b2c}\label{structevp__md__st_a7f9e98e7b386a91a15fbb06824682b2c} 
+OSSL\+\_\+\+FUNC\+\_\+digest\+\_\+settable\+\_\+ctx\+\_\+params\+\_\+fn \texorpdfstring{$\ast$}{*} {\bfseries settable\+\_\+ctx\+\_\+params}
+\item 
+\Hypertarget{structevp__md__st_adb0b10abfddcd2d5fdfe1c537c89cc46}\label{structevp__md__st_adb0b10abfddcd2d5fdfe1c537c89cc46} 
+OSSL\+\_\+\+FUNC\+\_\+digest\+\_\+gettable\+\_\+ctx\+\_\+params\+\_\+fn \texorpdfstring{$\ast$}{*} {\bfseries gettable\+\_\+ctx\+\_\+params}
+\end{DoxyCompactItemize}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/namph/\+Downloads/openssl/openssl-\/3.\+2.\+1/include/crypto/evp.\+h\end{DoxyCompactItemize}

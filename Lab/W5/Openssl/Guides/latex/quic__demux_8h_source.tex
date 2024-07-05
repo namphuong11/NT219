@@ -1,0 +1,370 @@
+\doxysection{quic\+\_\+demux.\+h}
+\hypertarget{quic__demux_8h_source}{}\label{quic__demux_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/quic\_demux.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/quic\_demux.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2022-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_QUIC\_DEMUX\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_QUIC\_DEMUX\_H}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#\ include\ <openssl/ssl.h>}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ include\ "{}internal/quic\_types.h"{}}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#\ include\ "{}internal/bio\_addr.h"{}}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#\ include\ "{}internal/time.h"{}}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#\ include\ "{}internal/list.h"{}}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#\ ifndef\ OPENSSL\_NO\_QUIC}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00022\ \textcolor{comment}{\ *\ QUIC\ Demuxer}}
+\DoxyCodeLine{00023\ \textcolor{comment}{\ *\ ============}}
+\DoxyCodeLine{00024\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00025\ \textcolor{comment}{\ *\ The\ QUIC\ connection\ demuxer\ is\ the\ entity\ responsible\ for\ receiving\ datagrams}}
+\DoxyCodeLine{00026\ \textcolor{comment}{\ *\ from\ the\ network\ via\ a\ datagram\ BIO.\ It\ parses\ packet\ headers\ to\ determine}}
+\DoxyCodeLine{00027\ \textcolor{comment}{\ *\ each\ packet's\ destination\ connection\ ID\ (DCID)\ and\ hands\ off\ processing\ of}}
+\DoxyCodeLine{00028\ \textcolor{comment}{\ *\ the\ packet\ to\ the\ correct\ QUIC\ Record\ Layer\ (QRL)'s\ RX\ side\ (known\ as\ the}}
+\DoxyCodeLine{00029\ \textcolor{comment}{\ *\ QRX).}}
+\DoxyCodeLine{00030\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00031\ \textcolor{comment}{\ *\ A\ QRX\ is\ instantiated\ per\ QUIC\ connection\ and\ contains\ the\ cryptographic}}
+\DoxyCodeLine{00032\ \textcolor{comment}{\ *\ resources\ needed\ to\ decrypt\ QUIC\ packets\ for\ that\ connection.\ Received}}
+\DoxyCodeLine{00033\ \textcolor{comment}{\ *\ datagrams\ are\ passed\ from\ the\ demuxer\ to\ the\ QRX\ via\ a\ callback\ registered}}
+\DoxyCodeLine{00034\ \textcolor{comment}{\ *\ for\ a\ specific\ DCID\ by\ the\ QRX;\ thus\ the\ demuxer\ has\ no\ specific\ knowledge\ of}}
+\DoxyCodeLine{00035\ \textcolor{comment}{\ *\ the\ QRX\ and\ is\ not\ coupled\ to\ it.}}
+\DoxyCodeLine{00036\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00037\ \textcolor{comment}{\ *\ A\ connection\ may\ have\ multiple\ connection\ IDs\ associated\ with\ it;\ a\ QRX}}
+\DoxyCodeLine{00038\ \textcolor{comment}{\ *\ handles\ this\ simply\ by\ registering\ multiple\ connection\ IDs\ with\ the\ demuxer}}
+\DoxyCodeLine{00039\ \textcolor{comment}{\ *\ via\ multiple\ register\ calls.}}
+\DoxyCodeLine{00040\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00041\ \textcolor{comment}{\ *\ URX\ Queue}}
+\DoxyCodeLine{00042\ \textcolor{comment}{\ *\ -\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00043\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00044\ \textcolor{comment}{\ *\ Since\ the\ demuxer\ must\ handle\ the\ initial\ reception\ of\ datagrams\ from\ the\ OS,}}
+\DoxyCodeLine{00045\ \textcolor{comment}{\ *\ RX\ queue\ management\ for\ new,\ unprocessed\ datagrams\ is\ also\ handled\ by\ the}}
+\DoxyCodeLine{00046\ \textcolor{comment}{\ *\ demuxer.}}
+\DoxyCodeLine{00047\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00048\ \textcolor{comment}{\ *\ The\ demuxer\ maintains\ a\ queue\ of\ Unprocessed\ RX\ Entries\ (URXEs),\ which\ store}}
+\DoxyCodeLine{00049\ \textcolor{comment}{\ *\ unprocessed\ (i.e.,\ encrypted,\ unvalidated)\ data\ received\ from\ the\ network.}}
+\DoxyCodeLine{00050\ \textcolor{comment}{\ *\ The\ URXE\ queue\ is\ designed\ to\ allow\ multiple\ datagrams\ to\ be\ received\ in\ a}}
+\DoxyCodeLine{00051\ \textcolor{comment}{\ *\ single\ call\ to\ BIO\_recvmmsg,\ where\ supported.}}
+\DoxyCodeLine{00052\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00053\ \textcolor{comment}{\ *\ One\ URXE\ is\ used\ per\ received\ datagram.\ Each\ datagram\ may\ contain\ multiple}}
+\DoxyCodeLine{00054\ \textcolor{comment}{\ *\ packets,\ however,\ this\ is\ not\ the\ demuxer's\ concern.\ QUIC\ prohibits\ different}}
+\DoxyCodeLine{00055\ \textcolor{comment}{\ *\ packets\ in\ the\ same\ datagram\ from\ containing\ different\ DCIDs;\ the\ demuxer}}
+\DoxyCodeLine{00056\ \textcolor{comment}{\ *\ only\ considers\ the\ DCID\ of\ the\ first\ packet\ in\ a\ datagram\ when\ deciding\ how}}
+\DoxyCodeLine{00057\ \textcolor{comment}{\ *\ to\ route\ a\ received\ datagram,\ and\ it\ is\ the\ responsibility\ of\ the\ QRX\ to}}
+\DoxyCodeLine{00058\ \textcolor{comment}{\ *\ enforce\ this\ rule.\ Packets\ other\ than\ the\ first\ packet\ in\ a\ datagram\ are\ not}}
+\DoxyCodeLine{00059\ \textcolor{comment}{\ *\ examined\ by\ the\ demuxer,\ and\ the\ demuxer\ does\ not\ perform\ validation\ of}}
+\DoxyCodeLine{00060\ \textcolor{comment}{\ *\ packet\ headers\ other\ than\ to\ the\ minimum\ extent\ necessary\ to\ extract\ the}}
+\DoxyCodeLine{00061\ \textcolor{comment}{\ *\ DCID;\ further\ parsing\ and\ validation\ of\ packet\ headers\ is\ the\ responsibility}}
+\DoxyCodeLine{00062\ \textcolor{comment}{\ *\ of\ the\ QRX.}}
+\DoxyCodeLine{00063\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00064\ \textcolor{comment}{\ *\ Rather\ than\ defining\ an\ opaque\ interface,\ the\ URXE\ structure\ internals}}
+\DoxyCodeLine{00065\ \textcolor{comment}{\ *\ are\ exposed.\ Since\ the\ demuxer\ is\ only\ exposed\ to\ other\ parts\ of\ the\ QUIC}}
+\DoxyCodeLine{00066\ \textcolor{comment}{\ *\ implementation\ internals,\ this\ poses\ no\ problem,\ and\ has\ a\ number\ of}}
+\DoxyCodeLine{00067\ \textcolor{comment}{\ *\ advantages:}}
+\DoxyCodeLine{00068\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00069\ \textcolor{comment}{\ *\ \ \ -\/\ Fields\ in\ the\ URXE\ can\ be\ allocated\ to\ support\ requirements\ in\ other}}
+\DoxyCodeLine{00070\ \textcolor{comment}{\ *\ \ \ \ \ components,\ like\ the\ QRX,\ which\ would\ otherwise\ have\ to\ allocate\ extra}}
+\DoxyCodeLine{00071\ \textcolor{comment}{\ *\ \ \ \ \ memory\ corresponding\ to\ each\ URXE.}}
+\DoxyCodeLine{00072\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00073\ \textcolor{comment}{\ *\ \ \ -\/\ Other\ components,\ like\ the\ QRX,\ can\ keep\ the\ URXE\ in\ queues\ of\ its\ own}}
+\DoxyCodeLine{00074\ \textcolor{comment}{\ *\ \ \ \ \ when\ it\ is\ not\ being\ managed\ by\ the\ demuxer.}}
+\DoxyCodeLine{00075\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00076\ \textcolor{comment}{\ *\ URX\ Queue\ Structure}}
+\DoxyCodeLine{00077\ \textcolor{comment}{\ *\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00078\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00079\ \textcolor{comment}{\ *\ The\ URXE\ queue\ is\ maintained\ as\ a\ simple\ doubly-\/linked\ list.\ URXE\ entries\ are}}
+\DoxyCodeLine{00080\ \textcolor{comment}{\ *\ moved\ between\ different\ lists\ in\ their\ lifecycle\ (for\ example,\ from\ a\ free}}
+\DoxyCodeLine{00081\ \textcolor{comment}{\ *\ list\ to\ a\ pending\ list\ and\ vice\ versa).\ The\ buffer\ into\ which\ datagrams\ are}}
+\DoxyCodeLine{00082\ \textcolor{comment}{\ *\ received\ immediately\ follows\ this\ URXE\ header\ structure\ and\ is\ part\ of\ the}}
+\DoxyCodeLine{00083\ \textcolor{comment}{\ *\ same\ allocation.}}
+\DoxyCodeLine{00084\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00085\ }
+\DoxyCodeLine{00086\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structquic__urxe__st}{quic\_urxe\_st}}\ \mbox{\hyperlink{structquic__urxe__st}{QUIC\_URXE}};}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00088\ \textcolor{comment}{/*\ Maximum\ number\ of\ packets\ we\ allow\ to\ exist\ in\ one\ datagram.\ */}}
+\DoxyCodeLine{00089\ \textcolor{preprocessor}{\#define\ QUIC\_MAX\_PKT\_PER\_URXE\ \ \ \ \ \ \ (sizeof(uint64\_t)\ *\ 8)}}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structquic__urxe__st}{quic\_urxe\_st}}\ \{}
+\DoxyCodeLine{00092\ \ \ \ \ OSSL\_LIST\_MEMBER(urxe,\ \mbox{\hyperlink{structquic__urxe__st}{QUIC\_URXE}});}
+\DoxyCodeLine{00093\ }
+\DoxyCodeLine{00094\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00095\ \textcolor{comment}{\ \ \ \ \ *\ The\ URXE\ data\ starts\ after\ this\ structure\ so\ we\ don't\ need\ a\ pointer.}}
+\DoxyCodeLine{00096\ \textcolor{comment}{\ \ \ \ \ *\ data\_len\ stores\ the\ current\ length\ (i.e.,\ the\ length\ of\ the\ received}}
+\DoxyCodeLine{00097\ \textcolor{comment}{\ \ \ \ \ *\ datagram)\ and\ alloc\_len\ stores\ the\ allocation\ length.\ The\ URXE\ will\ be}}
+\DoxyCodeLine{00098\ \textcolor{comment}{\ \ \ \ \ *\ reallocated\ if\ we\ need\ a\ larger\ allocation\ than\ is\ available,\ though\ this}}
+\DoxyCodeLine{00099\ \textcolor{comment}{\ \ \ \ \ *\ should\ not\ be\ common\ as\ we\ will\ have\ a\ good\ idea\ of\ worst-\/case\ MTUs\ up}}
+\DoxyCodeLine{00100\ \textcolor{comment}{\ \ \ \ \ *\ front.}}
+\DoxyCodeLine{00101\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00102\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \ \ \ \ \ \ \ \ \ data\_len,\ alloc\_len;}
+\DoxyCodeLine{00103\ }
+\DoxyCodeLine{00104\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00105\ \textcolor{comment}{\ \ \ \ \ *\ Bitfields\ per\ packet.\ processed\ indicates\ the\ packet\ has\ been\ processed}}
+\DoxyCodeLine{00106\ \textcolor{comment}{\ \ \ \ \ *\ and\ must\ not\ be\ processed\ again,\ hpr\_removed\ indicates\ header\ protection}}
+\DoxyCodeLine{00107\ \textcolor{comment}{\ \ \ \ \ *\ has\ already\ been\ removed.\ Used\ by\ QRX\ only;\ not\ used\ by\ the\ demuxer.}}
+\DoxyCodeLine{00108\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00109\ \ \ \ \ uint64\_t\ \ \ \ \ \ \ \ processed,\ hpr\_removed;}
+\DoxyCodeLine{00110\ }
+\DoxyCodeLine{00111\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00112\ \textcolor{comment}{\ \ \ \ \ *\ Address\ of\ peer\ we\ received\ the\ datagram\ from,\ and\ the\ local\ interface}}
+\DoxyCodeLine{00113\ \textcolor{comment}{\ \ \ \ \ *\ address\ we\ received\ it\ on.\ If\ local\ address\ support\ is\ not\ enabled,\ local}}
+\DoxyCodeLine{00114\ \textcolor{comment}{\ \ \ \ \ *\ is\ zeroed.}}
+\DoxyCodeLine{00115\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00116\ \ \ \ \ BIO\_ADDR\ \ \ \ \ \ \ \ peer,\ local;}
+\DoxyCodeLine{00117\ }
+\DoxyCodeLine{00118\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00119\ \textcolor{comment}{\ \ \ \ \ *\ Time\ at\ which\ datagram\ was\ received\ (or\ ossl\_time\_zero())\ if\ a\ now}}
+\DoxyCodeLine{00120\ \textcolor{comment}{\ \ \ \ \ *\ function\ was\ not\ provided).}}
+\DoxyCodeLine{00121\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00122\ \ \ \ \ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ \ \ \ \ \ \ time;}
+\DoxyCodeLine{00123\ }
+\DoxyCodeLine{00124\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00125\ \textcolor{comment}{\ \ \ \ \ *\ Used\ by\ the\ QRX\ to\ mark\ whether\ a\ datagram\ has\ been\ deferred.\ Used\ by\ the}}
+\DoxyCodeLine{00126\ \textcolor{comment}{\ \ \ \ \ *\ QRX\ only;\ not\ used\ by\ the\ demuxer.}}
+\DoxyCodeLine{00127\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00128\ \ \ \ \ \textcolor{keywordtype}{char}\ \ \ \ \ \ \ \ \ \ \ \ deferred;}
+\DoxyCodeLine{00129\ }
+\DoxyCodeLine{00130\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00131\ \textcolor{comment}{\ \ \ \ \ *\ Used\ by\ the\ DEMUX\ to\ track\ if\ a\ URXE\ has\ been\ handed\ out.\ Used\ primarily}}
+\DoxyCodeLine{00132\ \textcolor{comment}{\ \ \ \ \ *\ for\ debugging\ purposes.}}
+\DoxyCodeLine{00133\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00134\ \ \ \ \ \textcolor{keywordtype}{char}\ \ \ \ \ \ \ \ \ \ \ \ demux\_state;}
+\DoxyCodeLine{00135\ \};}
+\DoxyCodeLine{00136\ }
+\DoxyCodeLine{00137\ \textcolor{comment}{/*\ Accessors\ for\ URXE\ buffer.\ */}}
+\DoxyCodeLine{00138\ \textcolor{keyword}{static}\ ossl\_unused\ ossl\_inline\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *}
+\DoxyCodeLine{00139\ ossl\_quic\_urxe\_data(\textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__urxe__st}{QUIC\_URXE}}\ *\mbox{\hyperlink{structe}{e}})}
+\DoxyCodeLine{00140\ \{}
+\DoxyCodeLine{00141\ \ \ \ \ \textcolor{keywordflow}{return}\ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *)\&\mbox{\hyperlink{structe}{e}}[1];}
+\DoxyCodeLine{00142\ \}}
+\DoxyCodeLine{00143\ }
+\DoxyCodeLine{00144\ \textcolor{keyword}{static}\ ossl\_unused\ ossl\_inline\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *}
+\DoxyCodeLine{00145\ ossl\_quic\_urxe\_data\_end(\textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__urxe__st}{QUIC\_URXE}}\ *\mbox{\hyperlink{structe}{e}})}
+\DoxyCodeLine{00146\ \{}
+\DoxyCodeLine{00147\ \ \ \ \ \textcolor{keywordflow}{return}\ ossl\_quic\_urxe\_data(\mbox{\hyperlink{structe}{e}})\ +\ \mbox{\hyperlink{structe}{e}}-\/>data\_len;}
+\DoxyCodeLine{00148\ \}}
+\DoxyCodeLine{00149\ }
+\DoxyCodeLine{00150\ \textcolor{comment}{/*\ List\ structure\ tracking\ a\ queue\ of\ URXEs.\ */}}
+\DoxyCodeLine{00151\ DEFINE\_LIST\_OF(urxe,\ \mbox{\hyperlink{structquic__urxe__st}{QUIC\_URXE}});}
+\DoxyCodeLine{00152\ \textcolor{keyword}{typedef}\ OSSL\_LIST(urxe)\ QUIC\_URXE\_LIST;}
+\DoxyCodeLine{00153\ }
+\DoxyCodeLine{00154\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00155\ \textcolor{comment}{\ *\ List\ management\ helpers.\ These\ are\ used\ by\ the\ demuxer\ but\ can\ also\ be\ used}}
+\DoxyCodeLine{00156\ \textcolor{comment}{\ *\ by\ users\ of\ the\ demuxer\ to\ manage\ URXEs.}}
+\DoxyCodeLine{00157\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00158\ \textcolor{keywordtype}{void}\ ossl\_quic\_urxe\_remove(QUIC\_URXE\_LIST\ *l,\ \mbox{\hyperlink{structquic__urxe__st}{QUIC\_URXE}}\ *\mbox{\hyperlink{structe}{e}});}
+\DoxyCodeLine{00159\ \textcolor{keywordtype}{void}\ ossl\_quic\_urxe\_insert\_head(QUIC\_URXE\_LIST\ *l,\ \mbox{\hyperlink{structquic__urxe__st}{QUIC\_URXE}}\ *\mbox{\hyperlink{structe}{e}});}
+\DoxyCodeLine{00160\ \textcolor{keywordtype}{void}\ ossl\_quic\_urxe\_insert\_tail(QUIC\_URXE\_LIST\ *l,\ \mbox{\hyperlink{structquic__urxe__st}{QUIC\_URXE}}\ *\mbox{\hyperlink{structe}{e}});}
+\DoxyCodeLine{00161\ }
+\DoxyCodeLine{00162\ \textcolor{comment}{/*\ Opaque\ type\ representing\ a\ demuxer.\ */}}
+\DoxyCodeLine{00163\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structquic__demux__st}{quic\_demux\_st}}\ \mbox{\hyperlink{structquic__demux__st}{QUIC\_DEMUX}};}
+\DoxyCodeLine{00164\ }
+\DoxyCodeLine{00165\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00166\ \textcolor{comment}{\ *\ Called\ when\ a\ datagram\ is\ received\ for\ a\ given\ connection\ ID.}}
+\DoxyCodeLine{00167\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00168\ \textcolor{comment}{\ *\ e\ is\ a\ URXE\ containing\ the\ datagram\ payload.\ It\ is\ permissible\ for\ the\ callee}}
+\DoxyCodeLine{00169\ \textcolor{comment}{\ *\ to\ mutate\ this\ buffer;\ once\ the\ demuxer\ calls\ this\ callback,\ it\ will\ never}}
+\DoxyCodeLine{00170\ \textcolor{comment}{\ *\ read\ the\ buffer\ again.}}
+\DoxyCodeLine{00171\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00172\ \textcolor{comment}{\ *\ The\ callee\ must\ arrange\ for\ ossl\_quic\_demux\_release\_urxe\ or}}
+\DoxyCodeLine{00173\ \textcolor{comment}{\ *\ ossl\_quic\_demux\_reinject\_urxe\ to\ be\ called\ on\ the\ URXE\ at\ some\ point\ in\ the}}
+\DoxyCodeLine{00174\ \textcolor{comment}{\ *\ future\ (this\ need\ not\ be\ before\ the\ callback\ returns).}}
+\DoxyCodeLine{00175\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00176\ \textcolor{comment}{\ *\ At\ the\ time\ the\ callback\ is\ made,\ the\ URXE\ will\ not\ be\ in\ any\ queue,}}
+\DoxyCodeLine{00177\ \textcolor{comment}{\ *\ therefore\ the\ callee\ can\ use\ the\ prev\ and\ next\ fields\ as\ it\ wishes.}}
+\DoxyCodeLine{00178\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00179\ \textcolor{keyword}{typedef}\ void\ (ossl\_quic\_demux\_cb\_fn)(\mbox{\hyperlink{structquic__urxe__st}{QUIC\_URXE}}\ *\mbox{\hyperlink{structe}{e}},\ \textcolor{keywordtype}{void}\ *arg);}
+\DoxyCodeLine{00180\ }
+\DoxyCodeLine{00181\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00182\ \textcolor{comment}{\ *\ Called\ when\ a\ datagram\ is\ received.}}
+\DoxyCodeLine{00183\ \textcolor{comment}{\ *\ Returns\ 1\ if\ the\ datagram\ ends\ with\ a\ stateless\ reset\ token\ and}}
+\DoxyCodeLine{00184\ \textcolor{comment}{\ *\ 0\ if\ not.}}
+\DoxyCodeLine{00185\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00186\ \textcolor{keyword}{typedef}\ int\ (ossl\_quic\_stateless\_reset\_cb\_fn)(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *data,}
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ data\_len,\ \textcolor{keywordtype}{void}\ *arg);}
+\DoxyCodeLine{00188\ }
+\DoxyCodeLine{00189\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00190\ \textcolor{comment}{\ *\ Creates\ a\ new\ demuxer.\ The\ given\ BIO\ is\ used\ to\ receive\ datagrams\ from\ the}}
+\DoxyCodeLine{00191\ \textcolor{comment}{\ *\ network\ using\ BIO\_recvmmsg.\ short\_conn\_id\_len\ is\ the\ length\ of\ destination}}
+\DoxyCodeLine{00192\ \textcolor{comment}{\ *\ connection\ IDs\ used\ in\ RX'd\ packets;\ it\ must\ have\ the\ same\ value\ for\ all}}
+\DoxyCodeLine{00193\ \textcolor{comment}{\ *\ connections\ used\ on\ a\ socket.\ default\_urxe\_alloc\_len\ is\ the\ buffer\ size\ to}}
+\DoxyCodeLine{00194\ \textcolor{comment}{\ *\ receive\ datagrams\ into;\ it\ should\ be\ a\ value\ large\ enough\ to\ contain\ any}}
+\DoxyCodeLine{00195\ \textcolor{comment}{\ *\ received\ datagram\ according\ to\ local\ MTUs,\ etc.}}
+\DoxyCodeLine{00196\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00197\ \textcolor{comment}{\ *\ now\ is\ an\ optional\ function\ used\ to\ determine\ the\ time\ a\ datagram\ was}}
+\DoxyCodeLine{00198\ \textcolor{comment}{\ *\ received.\ now\_arg\ is\ an\ opaque\ argument\ passed\ to\ the\ function.\ If\ now\ is}}
+\DoxyCodeLine{00199\ \textcolor{comment}{\ *\ NULL,\ ossl\_time\_zero()\ is\ used\ as\ the\ datagram\ reception\ time.}}
+\DoxyCodeLine{00200\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00201\ \mbox{\hyperlink{structquic__demux__st}{QUIC\_DEMUX}}\ *ossl\_quic\_demux\_new(BIO\ *net\_bio,}
+\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ short\_conn\_id\_len,}
+\DoxyCodeLine{00203\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ (*now)(\textcolor{keywordtype}{void}\ *arg),}
+\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *now\_arg);}
+\DoxyCodeLine{00205\ }
+\DoxyCodeLine{00206\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00207\ \textcolor{comment}{\ *\ Destroy\ a\ demuxer.\ All\ URXEs\ must\ have\ been\ released\ back\ to\ the\ demuxer}}
+\DoxyCodeLine{00208\ \textcolor{comment}{\ *\ before\ calling\ this.\ No-\/op\ if\ demux\ is\ NULL.}}
+\DoxyCodeLine{00209\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00210\ \textcolor{keywordtype}{void}\ ossl\_quic\_demux\_free(\mbox{\hyperlink{structquic__demux__st}{QUIC\_DEMUX}}\ *demux);}
+\DoxyCodeLine{00211\ }
+\DoxyCodeLine{00212\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00213\ \textcolor{comment}{\ *\ Changes\ the\ BIO\ which\ the\ demuxer\ reads\ from.\ This\ also\ sets\ the\ MTU\ if\ the}}
+\DoxyCodeLine{00214\ \textcolor{comment}{\ *\ BIO\ supports\ querying\ the\ MTU.}}
+\DoxyCodeLine{00215\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00216\ \textcolor{keywordtype}{void}\ ossl\_quic\_demux\_set\_bio(\mbox{\hyperlink{structquic__demux__st}{QUIC\_DEMUX}}\ *demux,\ BIO\ *net\_bio);}
+\DoxyCodeLine{00217\ }
+\DoxyCodeLine{00218\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00219\ \textcolor{comment}{\ *\ Changes\ the\ MTU\ in\ bytes\ we\ use\ to\ receive\ datagrams.}}
+\DoxyCodeLine{00220\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00221\ \textcolor{keywordtype}{int}\ ossl\_quic\_demux\_set\_mtu(\mbox{\hyperlink{structquic__demux__st}{QUIC\_DEMUX}}\ *demux,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ mtu);}
+\DoxyCodeLine{00222\ }
+\DoxyCodeLine{00223\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00224\ \textcolor{comment}{\ *\ Register\ a\ datagram\ handler\ callback\ for\ a\ connection\ ID.}}
+\DoxyCodeLine{00225\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00226\ \textcolor{comment}{\ *\ ossl\_quic\_demux\_pump\ will\ call\ the\ specified\ function\ if\ it\ receives\ a\ datagram}}
+\DoxyCodeLine{00227\ \textcolor{comment}{\ *\ the\ first\ packet\ of\ which\ has\ the\ specified\ destination\ connection\ ID.}}
+\DoxyCodeLine{00228\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00229\ \textcolor{comment}{\ *\ It\ is\ assumed\ all\ packets\ in\ a\ datagram\ have\ the\ same\ destination\ connection}}
+\DoxyCodeLine{00230\ \textcolor{comment}{\ *\ ID\ (as\ QUIC\ mandates\ this),\ but\ it\ is\ the\ user's\ responsibility\ to\ check\ for}}
+\DoxyCodeLine{00231\ \textcolor{comment}{\ *\ this\ and\ reject\ subsequent\ packets\ in\ a\ datagram\ that\ violate\ this\ rule.}}
+\DoxyCodeLine{00232\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00233\ \textcolor{comment}{\ *\ dst\_conn\_id\ is\ a\ destination\ connection\ ID;\ it\ is\ copied\ and\ need\ not\ remain}}
+\DoxyCodeLine{00234\ \textcolor{comment}{\ *\ valid\ after\ this\ function\ returns.}}
+\DoxyCodeLine{00235\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00236\ \textcolor{comment}{\ *\ cb\_arg\ is\ passed\ to\ cb\ when\ it\ is\ called.\ For\ information\ on\ the\ callback,}}
+\DoxyCodeLine{00237\ \textcolor{comment}{\ *\ see\ its\ typedef\ above.}}
+\DoxyCodeLine{00238\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00239\ \textcolor{comment}{\ *\ Only\ one\ handler\ can\ be\ set\ for\ a\ given\ connection\ ID.\ If\ a\ handler\ is}}
+\DoxyCodeLine{00240\ \textcolor{comment}{\ *\ already\ set\ for\ the\ given\ connection\ ID,\ returns\ 0.}}
+\DoxyCodeLine{00241\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00242\ \textcolor{comment}{\ *\ Returns\ 1\ on\ success\ or\ 0\ on\ failure.}}
+\DoxyCodeLine{00243\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00244\ \textcolor{keywordtype}{int}\ ossl\_quic\_demux\_register(\mbox{\hyperlink{structquic__demux__st}{QUIC\_DEMUX}}\ *demux,}
+\DoxyCodeLine{00245\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__conn__id__st}{QUIC\_CONN\_ID}}\ *dst\_conn\_id,}
+\DoxyCodeLine{00246\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ossl\_quic\_demux\_cb\_fn\ *cb,}
+\DoxyCodeLine{00247\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *cb\_arg);}
+\DoxyCodeLine{00248\ }
+\DoxyCodeLine{00249\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00250\ \textcolor{comment}{\ *\ Unregisters\ any\ datagram\ handler\ callback\ set\ for\ the\ given\ connection\ ID.}}
+\DoxyCodeLine{00251\ \textcolor{comment}{\ *\ Fails\ if\ no\ handler\ is\ registered\ for\ the\ given\ connection\ ID.}}
+\DoxyCodeLine{00252\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00253\ \textcolor{comment}{\ *\ Returns\ 1\ on\ success\ or\ 0\ on\ failure.}}
+\DoxyCodeLine{00254\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00255\ \textcolor{keywordtype}{int}\ ossl\_quic\_demux\_unregister(\mbox{\hyperlink{structquic__demux__st}{QUIC\_DEMUX}}\ *demux,}
+\DoxyCodeLine{00256\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__conn__id__st}{QUIC\_CONN\_ID}}\ *dst\_conn\_id);}
+\DoxyCodeLine{00257\ }
+\DoxyCodeLine{00258\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00259\ \textcolor{comment}{\ *\ Unregisters\ any\ datagram\ handler\ callback\ from\ all\ connection\ IDs\ it\ is\ used}}
+\DoxyCodeLine{00260\ \textcolor{comment}{\ *\ for.\ cb\ and\ cb\_arg\ must\ both\ match\ the\ values\ passed\ to}}
+\DoxyCodeLine{00261\ \textcolor{comment}{\ *\ ossl\_quic\_demux\_register.}}
+\DoxyCodeLine{00262\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00263\ \textcolor{keywordtype}{void}\ ossl\_quic\_demux\_unregister\_by\_cb(\mbox{\hyperlink{structquic__demux__st}{QUIC\_DEMUX}}\ *demux,}
+\DoxyCodeLine{00264\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ossl\_quic\_demux\_cb\_fn\ *cb,}
+\DoxyCodeLine{00265\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *cb\_arg);}
+\DoxyCodeLine{00266\ }
+\DoxyCodeLine{00267\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00268\ \textcolor{comment}{\ *\ Set\ the\ default\ packet\ handler.\ This\ is\ used\ for\ incoming\ packets\ which\ don't}}
+\DoxyCodeLine{00269\ \textcolor{comment}{\ *\ match\ a\ registered\ DCID.\ This\ is\ only\ needed\ for\ servers.\ If\ a\ default\ packet}}
+\DoxyCodeLine{00270\ \textcolor{comment}{\ *\ handler\ is\ not\ set,\ a\ packet\ which\ doesn't\ match\ a\ registered\ DCID\ is}}
+\DoxyCodeLine{00271\ \textcolor{comment}{\ *\ silently\ dropped.\ A\ default\ packet\ handler\ may\ be\ unset\ by\ passing\ NULL.}}
+\DoxyCodeLine{00272\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00273\ \textcolor{comment}{\ *\ The\ handler\ is\ responsible\ for\ ensuring\ that\ ossl\_quic\_demux\_reinject\_urxe\ or}}
+\DoxyCodeLine{00274\ \textcolor{comment}{\ *\ ossl\_quic\_demux\_release\_urxe\ is\ called\ on\ the\ passed\ packet\ at\ some\ point\ in}}
+\DoxyCodeLine{00275\ \textcolor{comment}{\ *\ the\ future,\ which\ may\ or\ may\ not\ be\ before\ the\ handler\ returns.}}
+\DoxyCodeLine{00276\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00277\ \textcolor{keywordtype}{void}\ ossl\_quic\_demux\_set\_default\_handler(\mbox{\hyperlink{structquic__demux__st}{QUIC\_DEMUX}}\ *demux,}
+\DoxyCodeLine{00278\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ossl\_quic\_demux\_cb\_fn\ *cb,}
+\DoxyCodeLine{00279\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *cb\_arg);}
+\DoxyCodeLine{00280\ }
+\DoxyCodeLine{00281\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00282\ \textcolor{comment}{\ *\ Sets\ a\ callback\ for\ stateless\ reset\ processing.}}
+\DoxyCodeLine{00283\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00284\ \textcolor{comment}{\ *\ If\ set,\ this\ callback\ is\ called\ for\ datagrams\ for\ which\ we\ cannot\ identify}}
+\DoxyCodeLine{00285\ \textcolor{comment}{\ *\ a\ CID.\ \ This\ function\ should\ return\ 1\ if\ there\ is\ a\ stateless\ reset\ token}}
+\DoxyCodeLine{00286\ \textcolor{comment}{\ *\ present\ and\ 0\ if\ not.\ \ If\ there\ is\ a\ token\ present,\ the\ connection\ should}}
+\DoxyCodeLine{00287\ \textcolor{comment}{\ *\ also\ be\ reset.}}
+\DoxyCodeLine{00288\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00289\ \textcolor{keywordtype}{void}\ ossl\_quic\_demux\_set\_stateless\_reset\_handler(}
+\DoxyCodeLine{00290\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structquic__demux__st}{QUIC\_DEMUX}}\ *demux,}
+\DoxyCodeLine{00291\ \ \ \ \ \ \ \ \ ossl\_quic\_stateless\_reset\_cb\_fn\ *cb,\ \textcolor{keywordtype}{void}\ *cb\_arg);}
+\DoxyCodeLine{00292\ }
+\DoxyCodeLine{00293\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00294\ \textcolor{comment}{\ *\ Releases\ a\ URXE\ back\ to\ the\ demuxer.\ No\ reference\ must\ be\ made\ to\ the\ URXE\ or}}
+\DoxyCodeLine{00295\ \textcolor{comment}{\ *\ its\ buffer\ after\ calling\ this\ function.\ The\ URXE\ must\ not\ be\ in\ any\ queue;}}
+\DoxyCodeLine{00296\ \textcolor{comment}{\ *\ that\ is,\ its\ prev\ and\ next\ pointers\ must\ be\ NULL.}}
+\DoxyCodeLine{00297\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00298\ \textcolor{keywordtype}{void}\ ossl\_quic\_demux\_release\_urxe(\mbox{\hyperlink{structquic__demux__st}{QUIC\_DEMUX}}\ *demux,}
+\DoxyCodeLine{00299\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structquic__urxe__st}{QUIC\_URXE}}\ *\mbox{\hyperlink{structe}{e}});}
+\DoxyCodeLine{00300\ }
+\DoxyCodeLine{00301\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00302\ \textcolor{comment}{\ *\ Reinjects\ a\ URXE\ which\ was\ issued\ to\ a\ registered\ DCID\ callback\ or\ the}}
+\DoxyCodeLine{00303\ \textcolor{comment}{\ *\ default\ packet\ handler\ callback\ back\ into\ the\ pending\ queue.\ This\ is\ useful}}
+\DoxyCodeLine{00304\ \textcolor{comment}{\ *\ when\ a\ packet\ has\ been\ handled\ by\ the\ default\ packet\ handler\ callback\ such}}
+\DoxyCodeLine{00305\ \textcolor{comment}{\ *\ that\ a\ DCID\ has\ now\ been\ registered\ and\ can\ be\ dispatched\ normally\ by\ DCID.}}
+\DoxyCodeLine{00306\ \textcolor{comment}{\ *\ Once\ this\ has\ been\ called,\ the\ caller\ must\ not\ touch\ the\ URXE\ anymore\ and}}
+\DoxyCodeLine{00307\ \textcolor{comment}{\ *\ must\ not\ also\ call\ ossl\_quic\_demux\_release\_urxe().}}
+\DoxyCodeLine{00308\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00309\ \textcolor{comment}{\ *\ The\ URXE\ is\ reinjected\ at\ the\ head\ of\ the\ queue,\ so\ it\ will\ be\ reprocessed}}
+\DoxyCodeLine{00310\ \textcolor{comment}{\ *\ immediately.}}
+\DoxyCodeLine{00311\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00312\ \textcolor{keywordtype}{void}\ ossl\_quic\_demux\_reinject\_urxe(\mbox{\hyperlink{structquic__demux__st}{QUIC\_DEMUX}}\ *demux,}
+\DoxyCodeLine{00313\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structquic__urxe__st}{QUIC\_URXE}}\ *\mbox{\hyperlink{structe}{e}});}
+\DoxyCodeLine{00314\ }
+\DoxyCodeLine{00315\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00316\ \textcolor{comment}{\ *\ Process\ any\ unprocessed\ RX'd\ datagrams,\ by\ calling\ registered\ callbacks\ by}}
+\DoxyCodeLine{00317\ \textcolor{comment}{\ *\ connection\ ID,\ reading\ more\ datagrams\ from\ the\ BIO\ if\ necessary.}}
+\DoxyCodeLine{00318\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00319\ \textcolor{comment}{\ *\ Returns\ one\ of\ the\ following\ values:}}
+\DoxyCodeLine{00320\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00321\ \textcolor{comment}{\ *\ \ \ \ \ QUIC\_DEMUX\_PUMP\_RES\_OK}}
+\DoxyCodeLine{00322\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ At\ least\ one\ incoming\ datagram\ was\ processed.}}
+\DoxyCodeLine{00323\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00324\ \textcolor{comment}{\ *\ \ \ \ \ QUIC\_DEMUX\_PUMP\_RES\_TRANSIENT\_FAIL}}
+\DoxyCodeLine{00325\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ No\ more\ incoming\ datagrams\ are\ currently\ available.}}
+\DoxyCodeLine{00326\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ Call\ again\ later.}}
+\DoxyCodeLine{00327\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00328\ \textcolor{comment}{\ *\ \ \ \ \ QUIC\_DEMUX\_PUMP\_RES\_PERMANENT\_FAIL}}
+\DoxyCodeLine{00329\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ Either\ the\ network\ read\ BIO\ has\ failed\ in\ a\ non-\/transient\ fashion,\ or}}
+\DoxyCodeLine{00330\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ the\ QUIC\ implementation\ has\ encountered\ an\ internal\ state,\ assertion}}
+\DoxyCodeLine{00331\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ or\ allocation\ error.\ The\ caller\ should\ tear\ down\ the\ connection}}
+\DoxyCodeLine{00332\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ similarly\ to\ in\ the\ case\ of\ a\ protocol\ violation.}}
+\DoxyCodeLine{00333\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00334\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00335\ \textcolor{preprocessor}{\#define\ QUIC\_DEMUX\_PUMP\_RES\_OK\ \ \ \ \ \ \ \ \ \ \ \ \ \ 1}}
+\DoxyCodeLine{00336\ \textcolor{preprocessor}{\#define\ QUIC\_DEMUX\_PUMP\_RES\_TRANSIENT\_FAIL\ \ (-\/1)}}
+\DoxyCodeLine{00337\ \textcolor{preprocessor}{\#define\ QUIC\_DEMUX\_PUMP\_RES\_PERMANENT\_FAIL\ \ (-\/2)}}
+\DoxyCodeLine{00338\ \textcolor{preprocessor}{\#define\ QUIC\_DEMUX\_PUMP\_RES\_STATELESS\_RESET\ (-\/3)}}
+\DoxyCodeLine{00339\ }
+\DoxyCodeLine{00340\ \textcolor{keywordtype}{int}\ ossl\_quic\_demux\_pump(\mbox{\hyperlink{structquic__demux__st}{QUIC\_DEMUX}}\ *demux);}
+\DoxyCodeLine{00341\ }
+\DoxyCodeLine{00342\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00343\ \textcolor{comment}{\ *\ Artificially\ inject\ a\ packet\ into\ the\ demuxer\ for\ testing\ purposes.\ The}}
+\DoxyCodeLine{00344\ \textcolor{comment}{\ *\ buffer\ must\ not\ exceed\ the\ URXE\ size\ being\ used\ by\ the\ demuxer.}}
+\DoxyCodeLine{00345\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00346\ \textcolor{comment}{\ *\ If\ peer\ or\ local\ are\ NULL,\ their\ respective\ fields\ are\ zeroed\ in\ the\ injected}}
+\DoxyCodeLine{00347\ \textcolor{comment}{\ *\ URXE.}}
+\DoxyCodeLine{00348\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00349\ \textcolor{comment}{\ *\ Returns\ 1\ on\ success\ or\ 0\ on\ failure.}}
+\DoxyCodeLine{00350\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00351\ \textcolor{keywordtype}{int}\ ossl\_quic\_demux\_inject(\mbox{\hyperlink{structquic__demux__st}{QUIC\_DEMUX}}\ *demux,}
+\DoxyCodeLine{00352\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *buf,}
+\DoxyCodeLine{00353\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ buf\_len,}
+\DoxyCodeLine{00354\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIO\_ADDR\ *peer,}
+\DoxyCodeLine{00355\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIO\_ADDR\ *local);}
+\DoxyCodeLine{00356\ }
+\DoxyCodeLine{00357\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00358\ \textcolor{comment}{\ *\ Returns\ 1\ if\ there\ are\ any\ pending\ URXEs.}}
+\DoxyCodeLine{00359\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00360\ \textcolor{keywordtype}{int}\ ossl\_quic\_demux\_has\_pending(\textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__demux__st}{QUIC\_DEMUX}}\ *demux);}
+\DoxyCodeLine{00361\ }
+\DoxyCodeLine{00362\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00363\ }
+\DoxyCodeLine{00364\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

@@ -1,0 +1,106 @@
+\chapter{Welcome to the Open\+SSL Project}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_r_e_a_d_m_e}{}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_r_e_a_d_m_e}\index{Welcome to the OpenSSL Project@{Welcome to the OpenSSL Project}}
+\href{https://www.openssl.org>}{\texttt{ !\mbox{[}openssl logo\mbox{]}}}
+
+\href{https://github.com/openssl/openssl/actions?query=workflow\%3A\%22GitHub+CI\%22>}{\texttt{ !\mbox{[}github actions ci badge\mbox{]}}} \href{https://ci.appveyor.com/project/openssl/openssl/branch/master>}{\texttt{ !\mbox{[}appveyor badge\mbox{]}}}
+
+Open\+SSL is a robust, commercial-\/grade, full-\/featured Open Source Toolkit for the TLS (formerly SSL), DTLS and QUIC (currently client side only) protocols.
+
+The protocol implementations are based on a full-\/strength general purpose cryptographic library, which can also be used stand-\/alone. Also included is a cryptographic module validated to conform with FIPS standards.
+
+Open\+SSL is descended from the SSLeay library developed by Eric A. Young and Tim J. Hudson.
+
+The official Home Page of the Open\+SSL Project is \href{https://www.openssl.org>}{\texttt{ www.\+openssl.\+org}}.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_r_e_a_d_m_e_autotoc_md951}{}\doxysection{\texorpdfstring{Table of Contents}{Table of Contents}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_r_e_a_d_m_e_autotoc_md951}
+
+\begin{DoxyItemize}
+\item Overview
+\item Download
+\item Build and Install
+\item Documentation
+\item License
+\item Support
+\item Contributing
+\item Legalities
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_r_e_a_d_m_e_autotoc_md952}{}\doxysection{\texorpdfstring{Overview}{Overview}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_r_e_a_d_m_e_autotoc_md952}
+The Open\+SSL toolkit includes\+:
+
+
+\begin{DoxyItemize}
+\item {\bfseries{libssl}} an implementation of all TLS protocol versions up to TLSv1.\+3 (\href{https://tools.ietf.org/html/rfc8446>}{\texttt{ RFC 8446}}), DTLS protocol versions up to DTLSv1.\+2 (\href{https://tools.ietf.org/html/rfc6347>}{\texttt{ RFC 6347}}) and the QUIC (currently client side only) version 1 protocol (\href{https://tools.ietf.org/html/rfc9000>}{\texttt{ RFC 9000}}).
+\item {\bfseries{libcrypto}} a full-\/strength general purpose cryptographic library. It constitutes the basis of the TLS implementation, but can also be used independently.
+\item {\bfseries{openssl}} the Open\+SSL command line tool, a swiss army knife for cryptographic tasks, testing and analyzing. It can be used for
+\begin{DoxyItemize}
+\item creation of key parameters
+\item creation of X.\+509 certificates, CSRs and CRLs
+\item calculation of message digests
+\item encryption and decryption
+\item SSL/\+TLS/\+DTLS and client and server tests
+\item QUIC client tests
+\item handling of S/\+MIME signed or encrypted mail
+\item and more...
+\end{DoxyItemize}
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_r_e_a_d_m_e_autotoc_md953}{}\doxysection{\texorpdfstring{Download}{Download}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_r_e_a_d_m_e_autotoc_md953}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_r_e_a_d_m_e_autotoc_md954}{}\doxysubsection{\texorpdfstring{For Production Use}{For Production Use}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_r_e_a_d_m_e_autotoc_md954}
+Source code tarballs of the official releases can be downloaded from \href{https://www.openssl.org/source}{\texttt{ www.\+openssl.\+org/source}}. The Open\+SSL project does not distribute the toolkit in binary form.
+
+However, for a large variety of operating systems precompiled versions of the Open\+SSL toolkit are available. In particular, on Linux and other Unix operating systems, it is normally recommended to link against the precompiled shared libraries provided by the distributor or vendor.
+
+We also maintain a list of third parties that produce Open\+SSL binaries for various Operating Systems (including Windows) on the \href{https://wiki.openssl.org/index.php/Binaries>}{\texttt{ Binaries}} page on our wiki.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_r_e_a_d_m_e_autotoc_md955}{}\doxysubsection{\texorpdfstring{For Testing and Development}{For Testing and Development}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_r_e_a_d_m_e_autotoc_md955}
+Although testing and development could in theory also be done using the source tarballs, having a local copy of the git repository with the entire project history gives you much more insight into the code base.
+
+The official Open\+SSL Git Repository is located at \href{https://git.openssl.org>}{\texttt{ git.\+openssl.\+org}}. There is a Git\+Hub mirror of the repository at \href{https://github.com/openssl/openssl>}{\texttt{ github.\+com/openssl/openssl}}, which is updated automatically from the former on every commit.
+
+A local copy of the Git Repository can be obtained by cloning it from the original Open\+SSL repository using \begin{DoxyVerb}git clone git://git.openssl.org/openssl.git
+\end{DoxyVerb}
+ or from the Git\+Hub mirror using \begin{DoxyVerb}git clone https://github.com/openssl/openssl.git
+\end{DoxyVerb}
+ If you intend to contribute to Open\+SSL, either to fix bugs or contribute new features, you need to fork the Open\+SSL repository openssl/openssl on Git\+Hub and clone your public fork instead. \begin{DoxyVerb}git clone https://github.com/yourname/openssl.git
+\end{DoxyVerb}
+ This is necessary because all development of Open\+SSL nowadays is done via Git\+Hub pull requests. For more details, see Contributing.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_r_e_a_d_m_e_autotoc_md956}{}\doxysection{\texorpdfstring{Build and Install}{Build and Install}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_r_e_a_d_m_e_autotoc_md956}
+After obtaining the Source, have a look at the \doxysectlink{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l}{INSTALL}{0} file for detailed instructions about building and installing Open\+SSL. For some platforms, the installation instructions are amended by a platform specific document.
+
+
+\begin{DoxyItemize}
+\item \doxysectlink{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_u_n_i_x}{Notes for UNIX-\/like platforms}{0}
+\item \doxysectlink{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_a_n_d_r_o_i_d}{Notes for Android platforms}{0}
+\item \doxysectlink{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_w_i_n_d_o_w_s}{Notes for Windows platforms}{0}
+\item \doxysectlink{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_d_j_g_p_p}{Notes for the DOS platform with DJGPP}{0}
+\item \doxysectlink{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_v_m_s}{Notes for the Open\+VMS platform}{0}
+\item \doxysectlink{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_p_e_r_l}{Notes on Perl}{0}
+\item \doxysectlink{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_v_a_l_g_r_i_n_d}{Notes on Valgrind}{0}
+\end{DoxyItemize}
+
+Specific notes on upgrading to Open\+SSL 3.\+x from previous versions can be found in the \href{https://www.openssl.org/docs/manmaster/man7/ossl-guide-migration.html>}{\texttt{ ossl-\/guide-\/migration(7ossl)}} manual page.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_r_e_a_d_m_e_autotoc_md957}{}\doxysection{\texorpdfstring{Documentation}{Documentation}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_r_e_a_d_m_e_autotoc_md957}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_r_e_a_d_m_e_autotoc_md958}{}\doxysubsection{\texorpdfstring{README Files}{README Files}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_r_e_a_d_m_e_autotoc_md958}
+There are some README.\+md files in the top level of the source distribution containing additional information on specific topics.
+
+
+\begin{DoxyItemize}
+\item \doxysectlink{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_r_e_a_d_m_e-_q_u_i_c}{Information about the Open\+SSL QUIC protocol implementation}{0}
+\item \doxysectlink{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_r_e_a_d_m_e-_p_r_o_v_i_d_e_r_s}{Information about the Open\+SSL Provider architecture}{0}
+\item \doxysectlink{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_r_e_a_d_m_e-_f_i_p_s}{Information about using the Open\+SSL FIPS validated module}{0}
+\item \doxysectlink{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_r_e_a_d_m_e-_e_n_g_i_n_e_s}{Information about the legacy Open\+SSL Engine architecture}{0}
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_r_e_a_d_m_e_autotoc_md959}{}\doxysubsection{\texorpdfstring{The Open\+SSL Guide}{The Open\+SSL Guide}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_r_e_a_d_m_e_autotoc_md959}
+There are some tutorial and introductory pages on some important Open\+SSL topics within the \href{https://www.openssl.org/docs/manmaster/man7/ossl-guide-introduction.html>}{\texttt{ Open\+SSL Guide}}.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_r_e_a_d_m_e_autotoc_md960}{}\doxysubsection{\texorpdfstring{Manual Pages}{Manual Pages}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_r_e_a_d_m_e_autotoc_md960}
+The manual pages for the master branch and all current stable releases are available online.
+
+
+\begin{DoxyItemize}
+\item \href{https://www.openssl.org/docs/manmaster}{\texttt{ Open\+SSL master}}
+\item \href{https://www.openssl.org/docs/man3.0}{\texttt{ Open\+SSL 3.\+0}}
+\item \href{https://www.openssl.org/docs/man3.1}{\texttt{ Open\+SSL 3.\+1}}
+\item \href{https://www.openssl.org/docs/man3.2}{\texttt{ Open\+SSL 3.\+2}}
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_r_e_a_d_m_e_autotoc_md961}{}\doxysubsection{\texorpdfstring{Demos}{Demos}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_r_e_a_d_m_e_autotoc_md961}
+The are numerous source code demos for using various Open\+SSL capabilities in the \href{./demos}{\texttt{ demos subfolder}}.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_r_e_a_d_m_e_autotoc_md962}{}\doxysubsection{\texorpdfstring{Wiki}{Wiki}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_r_e_a_d_m_e_autotoc_md962}
+There is a Wiki at \href{https://wiki.openssl.org>}{\texttt{ wiki.\+openssl.\+org}} which is currently not very active. It contains a lot of useful information, not all of which is up-\/to-\/date.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_r_e_a_d_m_e_autotoc_md963}{}\doxysection{\texorpdfstring{License}{License}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_r_e_a_d_m_e_autotoc_md963}
+Open\+SSL is licensed under the Apache License 2.\+0, which means that you are free to get and use it for commercial and non-\/commercial purposes as long as you fulfill its conditions.
+
+See the \href{LICENSE.txt}{\texttt{ LICENSE.\+txt}} file for more details.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_r_e_a_d_m_e_autotoc_md964}{}\doxysection{\texorpdfstring{Support}{Support}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_r_e_a_d_m_e_autotoc_md964}
+There are various ways to get in touch. The correct channel depends on your requirement. See the \doxysectlink{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_s_u_p_p_o_r_t}{SUPPORT}{0} file for more details.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_r_e_a_d_m_e_autotoc_md965}{}\doxysection{\texorpdfstring{Contributing}{Contributing}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_r_e_a_d_m_e_autotoc_md965}
+If you are interested and willing to contribute to the Open\+SSL project, please take a look at the \doxysectlink{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_c_o_n_t_r_i_b_u_t_i_n_g}{CONTRIBUTING}{0} file.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_r_e_a_d_m_e_autotoc_md966}{}\doxysection{\texorpdfstring{Legalities}{Legalities}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_r_e_a_d_m_e_autotoc_md966}
+A number of nations restrict the use or export of cryptography. If you are potentially subject to such restrictions, you should seek legal advice before attempting to develop or distribute cryptographic code.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_r_e_a_d_m_e_autotoc_md967}{}\doxysection{\texorpdfstring{Copyright}{Copyright}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_r_e_a_d_m_e_autotoc_md967}
+Copyright (c) 1998-\/2024 The Open\+SSL Project Authors
+
+Copyright (c) 1995-\/1998 Eric A. Young, Tim J. Hudson
+
+All rights reserved. 

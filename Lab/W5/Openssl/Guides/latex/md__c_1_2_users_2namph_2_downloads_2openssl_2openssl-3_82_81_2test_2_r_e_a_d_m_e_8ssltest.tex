@@ -1,0 +1,197 @@
+\chapter{SSL tests}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2test_2_r_e_a_d_m_e_8ssltest}{}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2test_2_r_e_a_d_m_e_8ssltest}\index{SSL tests@{SSL tests}}
+SSL testcases are configured in the {\ttfamily ssl-\/tests} directory.
+
+Each {\ttfamily ssl\+\_\+\texorpdfstring{$\ast$}{*}.cnf.\+in} file contains a number of test configurations. These files are used to generate testcases in the Open\+SSL CONF format.
+
+The precise test output can be dependent on the library configuration. The test harness generates the output files on the fly.
+
+However, for verification, we also include checked-\/in configuration outputs corresponding to the default configuration. These testcases live in {\ttfamily test/ssl-\/tests/\texorpdfstring{$\ast$}{*}.cnf} files.
+
+For more details, see {\ttfamily ssl-\/tests/01-\/simple.\+cnf.\+in} for an example.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2test_2_r_e_a_d_m_e_8ssltest_autotoc_md993}{}\doxysection{\texorpdfstring{Configuring the test}{Configuring the test}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2test_2_r_e_a_d_m_e_8ssltest_autotoc_md993}
+First, give your test a name. The names do not have to be unique.
+
+An example test input looks like this\+: \begin{DoxyVerb}{
+    name => "test-default",
+    server => { "CipherString" => "DEFAULT" },
+    client => { "CipherString" => "DEFAULT" },
+    test   => { "ExpectedResult" => "Success" },
+}
+\end{DoxyVerb}
+ The test section supports the following options\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2test_2_r_e_a_d_m_e_8ssltest_autotoc_md994}{}\doxysubsection{\texorpdfstring{Test mode}{Test mode}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2test_2_r_e_a_d_m_e_8ssltest_autotoc_md994}
+
+\begin{DoxyItemize}
+\item Method -\/ the method to test. One of DTLS or TLS.
+\item Handshake\+Mode -\/ which handshake flavour to test\+:
+\begin{DoxyItemize}
+\item Simple -\/ plain handshake (default)
+\item Resume -\/ test resumption
+\item Renegotiate\+Server -\/ test server initiated renegotiation
+\item Renegotiate\+Client -\/ test client initiated renegotiation
+\end{DoxyItemize}
+\end{DoxyItemize}
+
+When Handshake\+Mode is Resume or Renegotiate, the original handshake is expected to succeed. All configured test expectations are verified against the second handshake.
+
+
+\begin{DoxyItemize}
+\item Application\+Data -\/ amount of application data bytes to send (integer, defaults to 256 bytes). Applies to both client and server. Application data is sent in 64kB chunks (but limited by Max\+Fragment\+Size and available parallelization, see below).
+\item Max\+Fragment\+Size -\/ maximum send fragment size (integer, defaults to 512 in tests -\/ see {\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+max\+\_\+send\+\_\+fragment} for documentation). Applies to both client and server. Lowering the fragment size will split handshake and application data up between more {\ttfamily SSL\+\_\+write} calls, thus allowing to exercise different code paths. In particular, if the buffer size (64kB) is at least four times as large as the maximum fragment, interleaved multi-\/buffer crypto implementations may be used on some platforms.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2test_2_r_e_a_d_m_e_8ssltest_autotoc_md995}{}\doxysubsection{\texorpdfstring{Test expectations}{Test expectations}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2test_2_r_e_a_d_m_e_8ssltest_autotoc_md995}
+
+\begin{DoxyItemize}
+\item Expected\+Result -\/ expected handshake outcome. One of
+\begin{DoxyItemize}
+\item Success -\/ handshake success
+\item Server\+Fail -\/ serverside handshake failure
+\item Client\+Fail -\/ clientside handshake failure
+\item Internal\+Error -\/ some other error
+\end{DoxyItemize}
+\item Expected\+Client\+Alert, Expected\+Server\+Alert -\/ expected alert. See {\ttfamily test/helpers/ssl\+\_\+test\+\_\+ctx.\+c} for known values. Note\+: the expected alert is currently matched against the {\itshape last} received alert (i.\+e., a fatal alert or a {\ttfamily close\+\_\+notify}). Warning alert expectations are not yet supported. (A warning alert will not be correctly matched, if followed by a {\ttfamily close\+\_\+notify} or another alert.)
+\item Expected\+Protocol -\/ expected negotiated protocol. One of SSLv3, TLSv1, TLSv1.\+1, TLSv1.\+2.
+\item Session\+Ticket\+Expected -\/ whether or not a session ticket is expected
+\begin{DoxyItemize}
+\item Ignore -\/ do not check for a session ticket (default)
+\item Yes -\/ a session ticket is expected
+\item No -\/ a session ticket is not expected
+\end{DoxyItemize}
+\item Session\+Id\+Expected -\/ whether or not a session id is expected
+\begin{DoxyItemize}
+\item Ignore -\/ do not check for a session id (default)
+\item Yes -\/ a session id is expected
+\item No -\/ a session id is not expected
+\end{DoxyItemize}
+\item Resumption\+Expected -\/ whether or not resumption is expected (Resume mode only)
+\begin{DoxyItemize}
+\item Yes -\/ resumed handshake
+\item No -\/ full handshake (default)
+\end{DoxyItemize}
+\item Expected\+NPNProtocol, Expected\+ALPNProtocol -\/ NPN and ALPN expectations.
+\item Expected\+Tmp\+Key\+Type -\/ the expected algorithm or curve of server temp key
+\item Expected\+Server\+Cert\+Type, Expected\+Client\+Cert\+Type -\/ the expected algorithm or curve of server or client certificate
+\item Expected\+Server\+Sign\+Hash, Expected\+Client\+Sign\+Hash -\/ the expected signing hash used by server or client certificate
+\item Expected\+Server\+Sign\+Type, Expected\+Client\+Sign\+Type -\/ the expected signature type used by server or client when signing messages
+\item Expected\+Client\+CANames -\/ for client auth list of CA names the server must send. If this is "{}empty"{} the list is expected to be empty otherwise it is a file of certificates whose subject names form the list.
+\item Expected\+Server\+CANames -\/ list of CA names the client must send, TLS 1.\+3 only. If this is "{}empty"{} the list is expected to be empty otherwise it is a file of certificates whose subject names form the list.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2test_2_r_e_a_d_m_e_8ssltest_autotoc_md996}{}\doxysection{\texorpdfstring{Configuring the client and server}{Configuring the client and server}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2test_2_r_e_a_d_m_e_8ssltest_autotoc_md996}
+The client and server configurations can be any valid {\ttfamily SSL\+\_\+\+CTX} configurations. For details, see the manpages for {\ttfamily SSL\+\_\+\+CONF\+\_\+cmd}.
+
+Give your configurations as a dictionary of CONF commands, e.\+g. \begin{DoxyVerb}server => {
+    "CipherString" => "DEFAULT",
+    "MinProtocol" => "TLSv1",
+}
+\end{DoxyVerb}
+ The following sections may optionally be defined\+:
+
+
+\begin{DoxyItemize}
+\item server2 -\/ this section configures a secondary context that is selected via the Server\+Name test option. This context is used whenever a Server\+Name\+Callback is specified. If the server2 section is not present, then the configuration matches server.
+\item resume\+\_\+server -\/ this section configures the client to resume its session against a different server. This context is used whenever Handshake\+Mode is Resume. If the resume\+\_\+server section is not present, then the configuration matches server.
+\item resume\+\_\+client -\/ this section configures the client to resume its session with a different configuration. In practice this may occur when, for example, upgraded clients reuse sessions persisted on disk. This context is used whenever Handshake\+Mode is Resume. If the resume\+\_\+client section is not present, then the configuration matches client.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2test_2_r_e_a_d_m_e_8ssltest_autotoc_md997}{}\doxysubsection{\texorpdfstring{Configuring callbacks and additional options}{Configuring callbacks and additional options}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2test_2_r_e_a_d_m_e_8ssltest_autotoc_md997}
+Additional handshake settings can be configured in the {\ttfamily extra} section of each client and server\+: \begin{DoxyVerb}client => {
+    "CipherString" => "DEFAULT",
+    extra => {
+        "ServerName" => "server2",
+    }
+}
+\end{DoxyVerb}
+ \hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2test_2_r_e_a_d_m_e_8ssltest_autotoc_md998}{}\doxysubsubsection{\texorpdfstring{Supported client-\/side options}{Supported client-\/side options}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2test_2_r_e_a_d_m_e_8ssltest_autotoc_md998}
+
+\begin{DoxyItemize}
+\item Client\+Verify\+Callback -\/ the client\textquotesingle{}s custom certificate verify callback. Used to test callback behaviour. One of
+\begin{DoxyItemize}
+\item None -\/ no custom callback (default)
+\item Accept\+All -\/ accepts all certificates.
+\item Reject\+All -\/ rejects all certificates.
+\end{DoxyItemize}
+\item Server\+Name -\/ the server the client should attempt to connect to. One of
+\begin{DoxyItemize}
+\item None -\/ do not use SNI (default)
+\item server1 -\/ the initial context
+\item server2 -\/ the secondary context
+\item invalid -\/ an unknown context
+\end{DoxyItemize}
+\item CTValidation -\/ Certificate Transparency validation strategy. One of
+\begin{DoxyItemize}
+\item None -\/ no validation (default)
+\item Permissive -\/ SSL\+\_\+\+CT\+\_\+\+VALIDATION\+\_\+\+PERMISSIVE
+\item Strict -\/ SSL\+\_\+\+CT\+\_\+\+VALIDATION\+\_\+\+STRICT
+\end{DoxyItemize}
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2test_2_r_e_a_d_m_e_8ssltest_autotoc_md999}{}\doxysubsubsection{\texorpdfstring{Supported server-\/side options}{Supported server-\/side options}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2test_2_r_e_a_d_m_e_8ssltest_autotoc_md999}
+
+\begin{DoxyItemize}
+\item Server\+Name\+Callback -\/ the SNI switching callback to use
+\begin{DoxyItemize}
+\item None -\/ no callback (default)
+\item Ignore\+Mismatch -\/ continue the handshake on SNI mismatch
+\item Reject\+Mismatch -\/ abort the handshake on SNI mismatch
+\end{DoxyItemize}
+\item Broken\+Session\+Ticket -\/ a special test case where the session ticket callback does not initialize crypto.
+\begin{DoxyItemize}
+\item No (default)
+\item Yes
+\end{DoxyItemize}
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2test_2_r_e_a_d_m_e_8ssltest_autotoc_md1000}{}\doxysubsubsection{\texorpdfstring{Mutually supported options}{Mutually supported options}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2test_2_r_e_a_d_m_e_8ssltest_autotoc_md1000}
+
+\begin{DoxyItemize}
+\item NPNProtocols, ALPNProtocols -\/ NPN and ALPN settings. Server and client protocols can be specified as a comma-\/separated list, and a callback with the recommended behaviour will be installed automatically.
+\item SRPUser, SRPPassword -\/ SRP settings. For client, this is the SRP user to connect as; for server, this is a known SRP user.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2test_2_r_e_a_d_m_e_8ssltest_autotoc_md1001}{}\doxysubsection{\texorpdfstring{Default server and client configurations}{Default server and client configurations}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2test_2_r_e_a_d_m_e_8ssltest_autotoc_md1001}
+The default server certificate and CA files are added to the configurations automatically. Server certificate verification is requested by default.
+
+You can override these options by redefining them\+: \begin{DoxyVerb}client => {
+    "VerifyCAFile" => "/path/to/custom/file"
+}
+\end{DoxyVerb}
+ or by deleting them \begin{DoxyVerb}client => {
+    "VerifyCAFile" => undef
+}
+\end{DoxyVerb}
+ \hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2test_2_r_e_a_d_m_e_8ssltest_autotoc_md1002}{}\doxysection{\texorpdfstring{Adding a test to the test harness}{Adding a test to the test harness}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2test_2_r_e_a_d_m_e_8ssltest_autotoc_md1002}
+
+\begin{DoxyEnumerate}
+\item Add a new test configuration to {\ttfamily test/ssl-\/tests}, following the examples of existing {\ttfamily \texorpdfstring{$\ast$}{*}.cnf.\+in} files (for example, {\ttfamily 01-\/simple.\+cnf.\+in}).
+\item Generate the generated {\ttfamily \texorpdfstring{$\ast$}{*}.cnf} test input file. You can do so by running {\ttfamily generate\+\_\+ssl\+\_\+tests.\+pl}\+:
+
+\$ ./config \$ cd test \$ TOP=.. perl -\/I ../util/perl/ generate\+\_\+ssl\+\_\+tests.\+pl \textbackslash{} ssl-\/tests/my.\+cnf.\+in default \texorpdfstring{$>$}{>} ssl-\/tests/my.\+cnf
+\end{DoxyEnumerate}
+
+where {\ttfamily my.\+cnf.\+in} is your test input file and {\ttfamily default} is the provider to use. For all the pre-\/generated test files you should use the default provider.
+
+For example, to generate the test cases in {\ttfamily ssl-\/tests/01-\/simple.\+cnf.\+in}, do \begin{DoxyVerb}$ TOP=.. perl -I ../util/perl/ generate_ssl_tests.pl \
+  ssl-tests/01-simple.cnf.in default > ssl-tests/01-simple.cnf
+\end{DoxyVerb}
+ Alternatively (hackish but simple), you can comment out \begin{DoxyVerb}unlink glob $tmp_file;
+\end{DoxyVerb}
+ in {\ttfamily test/recipes/80-\/test\+\_\+ssl\+\_\+new.\+t} and run \begin{DoxyVerb}$ make TESTS=test_ssl_new test
+\end{DoxyVerb}
+ This will save the generated output in a {\ttfamily \texorpdfstring{$\ast$}{*}.tmp} file in the build directory.
+
+
+\begin{DoxyEnumerate}
+\item Update the number of tests planned in {\ttfamily test/recipes/80-\/test\+\_\+ssl\+\_\+new.\+t}. If the test suite has any skip conditions, update those too (see {\ttfamily test/recipes/80-\/test\+\_\+ssl\+\_\+new.\+t} for details).
+\end{DoxyEnumerate}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2test_2_r_e_a_d_m_e_8ssltest_autotoc_md1003}{}\doxysection{\texorpdfstring{Running the tests with the test harness}{Running the tests with the test harness}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2test_2_r_e_a_d_m_e_8ssltest_autotoc_md1003}
+\begin{DoxyVerb}HARNESS_VERBOSE=yes make TESTS=test_ssl_new test
+\end{DoxyVerb}
+ \hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2test_2_r_e_a_d_m_e_8ssltest_autotoc_md1004}{}\doxysection{\texorpdfstring{Running a test manually}{Running a test manually}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2test_2_r_e_a_d_m_e_8ssltest_autotoc_md1004}
+These steps are only needed during development. End users should run {\ttfamily make test} or follow the instructions above to run the SSL test suite.
+
+To run an SSL test manually from the command line, the {\ttfamily TEST\+\_\+\+CERTS\+\_\+\+DIR} environment variable to point to the location of the certs. E.\+g., from the root Open\+SSL directory, do \begin{DoxyVerb}$ CTLOG_FILE=test/ct/log_list.cnf TEST_CERTS_DIR=test/certs test/ssl_test \
+  test/ssl-tests/01-simple.cnf default
+\end{DoxyVerb}
+ or for shared builds \begin{DoxyVerb}$ CTLOG_FILE=test/ct/log_list.cnf  TEST_CERTS_DIR=test/certs \
+  util/wrap.pl test/ssl_test test/ssl-tests/01-simple.cnf default
+\end{DoxyVerb}
+ In the above examples, {\ttfamily default} is the provider to use.
+
+Note that the test expectations sometimes depend on the Configure settings. For example, the negotiated protocol depends on the set of available (enabled) protocols\+: a build with {\ttfamily enable-\/ssl3} has different test expectations than a build with {\ttfamily no-\/ssl3}.
+
+The Perl test harness automatically generates expected outputs, so users who just run {\ttfamily make test} do not need any extra steps.
+
+However, when running a test manually, keep in mind that the repository version of the generated {\ttfamily test/ssl-\/tests/\texorpdfstring{$\ast$}{*}.cnf} correspond to expected outputs in with the default Configure options. To run {\ttfamily ssl\+\_\+test} manually from the command line in a build with a different configuration, you may need to generate the right {\ttfamily \texorpdfstring{$\ast$}{*}.cnf} file from the {\ttfamily \texorpdfstring{$\ast$}{*}.cnf.\+in} input first.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2test_2_r_e_a_d_m_e_8ssltest_autotoc_md1005}{}\doxysection{\texorpdfstring{Running a test manually via make}{Running a test manually via make}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2test_2_r_e_a_d_m_e_8ssltest_autotoc_md1005}
+Individual tests may be run by adding the SSL\+\_\+\+TESTS variable to the {\ttfamily make} command line. The SSL\+\_\+\+TESTS variable is set to the list of input (or "{}.\+in"{}) files. The values in SSL\+\_\+\+TESTS are globbed. \begin{DoxyVerb}$ make test TESTS=test_ssl_new SSL_TESTS="0*.cnf.in"
+
+$ make test TESTS=test_ssl_new SSL_TESTS="01-simple.cnf.in 05-sni.cnf.in"
+\end{DoxyVerb}
+ 

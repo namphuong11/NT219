@@ -1,0 +1,59 @@
+\chapter{Notes for the Open\+VMS platform}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_v_m_s}{}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_v_m_s}\index{Notes for the OpenVMS platform@{Notes for the OpenVMS platform}}
+
+\begin{DoxyItemize}
+\item Requirement details
+\item About ANSI C compiler
+\item About ODS-\/5 directory names and Perl
+\item About MMS and DCL
+\item About debugging
+\item Checking the distribution
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_v_m_s_autotoc_md898}{}\doxysection{\texorpdfstring{Requirement details}{Requirement details}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_v_m_s_autotoc_md898}
+In addition to the requirements and instructions listed in \doxysectlink{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l}{INSTALL.md}{0}, this are required as well\+:
+
+
+\begin{DoxyItemize}
+\item At least ODS-\/5 disk organization for source and build. Installation can be done on any existing disk organization.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_v_m_s_autotoc_md899}{}\doxysection{\texorpdfstring{About ANSI C compiler}{About ANSI C compiler}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_v_m_s_autotoc_md899}
+An ANSI C compiled is needed among other things. This means that VAX C is not and will not be supported.
+
+We have only tested with DEC C (aka HP VMS C / VSI C) and require version 7.\+1 or later. Compiling with a different ANSI C compiler may require some work.
+
+Please avoid using C RTL feature logical names {\ttfamily DECC\$\texorpdfstring{$\ast$}{*}} when building and testing Open\+SSL. Most of all, they can be disruptive when running the tests, as they affect the Perl interpreter.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_v_m_s_autotoc_md900}{}\doxysection{\texorpdfstring{About ODS-\/5 directory names and Perl}{About ODS-\/5 directory names and Perl}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_v_m_s_autotoc_md900}
+It seems that the perl function canonpath() in the {\ttfamily File\+::\+Spec} module doesn\textquotesingle{}t treat file specifications where the last directory name contains periods very well. Unfortunately, some versions of VMS tar will keep the periods in the Open\+SSL source directory instead of converting them to underscore, thereby leaving your source in something like {\ttfamily \mbox{[}.openssl-\/1\texorpdfstring{$^\wedge$}{\string^}.1\texorpdfstring{$^\wedge$}{\string^}.0\mbox{]}}. This will lead to issues when configuring and building Open\+SSL.
+
+We have no replacement for Perl\textquotesingle{}s canonpath(), so the best workaround for now is to rename the Open\+SSL source directory, as follows (please adjust for the actual source directory name you have)\+: \begin{DoxyVerb}$ rename openssl-1^.1^.0.DIR openssl-1_1_0.DIR
+\end{DoxyVerb}
+ \hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_v_m_s_autotoc_md901}{}\doxysection{\texorpdfstring{About MMS and DCL}{About MMS and DCL}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_v_m_s_autotoc_md901}
+MMS has certain limitations when it comes to line length, and DCL has certain limitations when it comes to total command length. We do what we can to mitigate, but there is the possibility that it\textquotesingle{}s not enough. Should you run into issues, a very simple solution is to set yourself up a few logical names for the directory trees you\textquotesingle{}re going to use.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_v_m_s_autotoc_md902}{}\doxysection{\texorpdfstring{About debugging}{About debugging}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_v_m_s_autotoc_md902}
+If you build for debugging, the default on VMS is that image activation starts the debugger automatically, giving you a debug prompt. Unfortunately, this disrupts all other uses, such as running test programs in the test framework.
+
+Generally speaking, if you build for debugging, only use the programs directly for debugging. Do not try to use them from a script, such as running the test suite.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_v_m_s_autotoc_md903}{}\doxysubsection{\texorpdfstring{The following is not available on Alpha}{The following is not available on Alpha}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_v_m_s_autotoc_md903}
+As a compromise, we\textquotesingle{}re turning off the flag that makes the debugger start automatically. If there is a program that you need to debug, you need to turn that flag back on first, for example\+: \begin{DoxyVerb}$ set image /flag=call_debug [.test]evp_test.exe
+\end{DoxyVerb}
+ Then just run it and you will find yourself in a debugging session. When done, we recommend that you turn that flag back off\+: \begin{DoxyVerb}$ set image /flag=nocall_debug [.test]evp_test.exe
+\end{DoxyVerb}
+ \hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_v_m_s_autotoc_md904}{}\doxysection{\texorpdfstring{About assembler acceleration}{About assembler acceleration}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_v_m_s_autotoc_md904}
+Open\+SSL has assembler acceleration for a number of BIGNUM and crypto routines. The VMS config targets tries to look for a selection of assemblers and will use what they find. If none of the assemblers are found, Open\+SSL will be built as if {\ttfamily no-\/asm} was configured.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_v_m_s_autotoc_md905}{}\doxysubsection{\texorpdfstring{For Itanium / IA64 / I64}{For Itanium / IA64 / I64}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_v_m_s_autotoc_md905}
+
+\begin{DoxyItemize}
+\item There is only one assembler, a port of Intel\textquotesingle{}s {\ttfamily ias}, found in the HP Open Source Tools CD, available through \href{http://www.decuslib.com}{\texttt{ DECUSlib}}. It\textquotesingle{}s assumed to be set up as per the instructions, where {\ttfamily disk} and {\ttfamily dir} are expected to be adapted to local conditions\+: \begin{DoxyVerb}$ ias :== $disk:[dir]iasi64.exe
+\end{DoxyVerb}
+ 
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_v_m_s_autotoc_md906}{}\doxysection{\texorpdfstring{Checking the distribution}{Checking the distribution}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_v_m_s_autotoc_md906}
+There have been reports of places where the distribution didn\textquotesingle{}t quite get through, for example if you\textquotesingle{}ve copied the tree from a NFS-\/mounted Unix mount point.
+
+The easiest way to check if everything got through as it should is to check that this file exists\+: \begin{DoxyVerb}[.include.openssl]configuration^.h.in
+\end{DoxyVerb}
+ The best way to get a correct distribution is to download the gzipped tar file from \href{ftp://ftp.openssl.org/source/}{\texttt{ ftp\+://ftp.\+openssl.\+org/source/}}, use {\ttfamily GZIP -\/d} to uncompress it and {\ttfamily VMSTAR} to unpack the resulting tar file.
+
+Gzip and VMSTAR are available here\+:
+
+\href{http://antinode.info/dec/index.html\#Software}{\texttt{ http\+://antinode.\+info/dec/index.\+html\#\+Software}}
+
+Should you need it, you can find Un\+Zip for VMS here\+:
+
+\href{http://www.info-zip.org/UnZip.html}{\texttt{ http\+://www.\+info-\/zip.\+org/\+Un\+Zip.\+html}}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_v_m_s_autotoc_md907}{}\doxysection{\texorpdfstring{How the value of \textquotesingle{}arch\textquotesingle{} is determined}{How the value of \textquotesingle{}arch\textquotesingle{} is determined}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_v_m_s_autotoc_md907}
+\textquotesingle{}arch\textquotesingle{} is mentioned in INSTALL. It\textquotesingle{}s value is determined like this\+:
+
+arch = f\$edit( f\$getsyi( "{}arch\+\_\+name"{}), "{}upcase"{}) 

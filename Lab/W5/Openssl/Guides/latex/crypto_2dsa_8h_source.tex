@@ -1,0 +1,57 @@
+\doxysection{dsa.\+h}
+\hypertarget{crypto_2dsa_8h_source}{}\label{crypto_2dsa_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/crypto/dsa.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/crypto/dsa.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2019-\/2022\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_CRYPTO\_DSA\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_CRYPTO\_DSA\_H}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#\ pragma\ once}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ include\ <openssl/core.h>}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#\ include\ <openssl/dsa.h>}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#\ include\ "{}internal/ffc.h"{}}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#define\ DSA\_PARAMGEN\_TYPE\_FIPS\_186\_4\ \ \ 0\ \ \ }\textcolor{comment}{/*\ Use\ FIPS186-\/4\ standard\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#define\ DSA\_PARAMGEN\_TYPE\_FIPS\_186\_2\ \ \ 1\ \ \ }\textcolor{comment}{/*\ Use\ legacy\ FIPS186-\/2\ standard\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#define\ DSA\_PARAMGEN\_TYPE\_FIPS\_DEFAULT\ 2}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ DSA\ *ossl\_dsa\_new(OSSL\_LIB\_CTX\ *libctx);}
+\DoxyCodeLine{00023\ \textcolor{keywordtype}{void}\ ossl\_dsa\_set0\_libctx(DSA\ *d,\ OSSL\_LIB\_CTX\ *libctx);}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{keywordtype}{int}\ ossl\_dsa\_generate\_ffc\_parameters(DSA\ *dsa,\ \textcolor{keywordtype}{int}\ type,\ \textcolor{keywordtype}{int}\ pbits,\ \textcolor{keywordtype}{int}\ qbits,}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BN\_GENCB\ *cb);}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \textcolor{keywordtype}{int}\ ossl\_dsa\_sign\_int(\textcolor{keywordtype}{int}\ type,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *dgst,\ \textcolor{keywordtype}{int}\ dlen,}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *sig,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ *siglen,\ DSA\ *dsa,}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ nonce\_type,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *digestname,}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OSSL\_LIB\_CTX\ *libctx,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *propq);}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \mbox{\hyperlink{structffc__params__st}{FFC\_PARAMS}}\ *ossl\_dsa\_get0\_params(DSA\ *dsa);}
+\DoxyCodeLine{00034\ \textcolor{keywordtype}{int}\ ossl\_dsa\_ffc\_params\_fromdata(DSA\ *dsa,\ \textcolor{keyword}{const}\ OSSL\_PARAM\ params[]);}
+\DoxyCodeLine{00035\ \textcolor{keywordtype}{int}\ ossl\_dsa\_key\_fromdata(DSA\ *dsa,\ \textcolor{keyword}{const}\ OSSL\_PARAM\ params[],}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ include\_private);}
+\DoxyCodeLine{00037\ DSA\ *ossl\_dsa\_key\_from\_pkcs8(\textcolor{keyword}{const}\ PKCS8\_PRIV\_KEY\_INFO\ *p8inf,}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OSSL\_LIB\_CTX\ *libctx,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *propq);}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \textcolor{keywordtype}{int}\ ossl\_dsa\_generate\_public\_key(BN\_CTX\ *ctx,\ \textcolor{keyword}{const}\ DSA\ *dsa,}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *priv\_key,\ BIGNUM\ *pub\_key);}
+\DoxyCodeLine{00042\ \textcolor{keywordtype}{int}\ ossl\_dsa\_check\_params(\textcolor{keyword}{const}\ DSA\ *dsa,\ \textcolor{keywordtype}{int}\ checktype,\ \textcolor{keywordtype}{int}\ *ret);}
+\DoxyCodeLine{00043\ \textcolor{keywordtype}{int}\ ossl\_dsa\_check\_pub\_key(\textcolor{keyword}{const}\ DSA\ *dsa,\ \textcolor{keyword}{const}\ BIGNUM\ *pub\_key,\ \textcolor{keywordtype}{int}\ *ret);}
+\DoxyCodeLine{00044\ \textcolor{keywordtype}{int}\ ossl\_dsa\_check\_pub\_key\_partial(\textcolor{keyword}{const}\ DSA\ *dsa,\ \textcolor{keyword}{const}\ BIGNUM\ *pub\_key,}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ *ret);}
+\DoxyCodeLine{00046\ \textcolor{keywordtype}{int}\ ossl\_dsa\_check\_priv\_key(\textcolor{keyword}{const}\ DSA\ *dsa,\ \textcolor{keyword}{const}\ BIGNUM\ *priv\_key,\ \textcolor{keywordtype}{int}\ *ret);}
+\DoxyCodeLine{00047\ \textcolor{keywordtype}{int}\ ossl\_dsa\_check\_pairwise(\textcolor{keyword}{const}\ DSA\ *dsa);}
+\DoxyCodeLine{00048\ \textcolor{keywordtype}{int}\ ossl\_dsa\_is\_foreign(\textcolor{keyword}{const}\ DSA\ *dsa);}
+\DoxyCodeLine{00049\ DSA\ *ossl\_dsa\_dup(\textcolor{keyword}{const}\ DSA\ *dsa,\ \textcolor{keywordtype}{int}\ selection);}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

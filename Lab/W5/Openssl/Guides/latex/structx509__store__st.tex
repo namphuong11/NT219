@@ -1,0 +1,73 @@
+\doxysection{x509\+\_\+store\+\_\+st Struct Reference}
+\hypertarget{structx509__store__st}{}\label{structx509__store__st}\index{x509\_store\_st@{x509\_store\_st}}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{structx509__store__st_a3802443396e8862b5ab6c22172cfd6ff}\label{structx509__store__st_a3802443396e8862b5ab6c22172cfd6ff} 
+{\bfseries STACK\+\_\+\+OF} (X509\+\_\+\+OBJECT) \texorpdfstring{$\ast$}{*}objs
+\item 
+\Hypertarget{structx509__store__st_aefdf9aec0a4c6f004e6d60aebe25e277}\label{structx509__store__st_aefdf9aec0a4c6f004e6d60aebe25e277} 
+{\bfseries STACK\+\_\+\+OF} (X509\+\_\+\+LOOKUP) \texorpdfstring{$\ast$}{*}get\+\_\+cert\+\_\+methods
+\item 
+\Hypertarget{structx509__store__st_ae58df4d40c98ddc37a455e00a000aef0}\label{structx509__store__st_ae58df4d40c98ddc37a455e00a000aef0} 
+{\bfseries STACK\+\_\+\+OF} (X509) \texorpdfstring{$\ast$}{*}(\texorpdfstring{$\ast$}{*}lookup\+\_\+certs)(X509\+\_\+\+STORE\+\_\+\+CTX \texorpdfstring{$\ast$}{*}ctx
+\item 
+\Hypertarget{structx509__store__st_a7f5a9f3dc165236aa89a8094636085ff}\label{structx509__store__st_a7f5a9f3dc165236aa89a8094636085ff} 
+{\bfseries STACK\+\_\+\+OF} (X509\+\_\+\+CRL) \texorpdfstring{$\ast$}{*}(\texorpdfstring{$\ast$}{*}lookup\+\_\+crls)(const X509\+\_\+\+STORE\+\_\+\+CTX \texorpdfstring{$\ast$}{*}ctx
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{structx509__store__st_a39100a4cc433d10485ffe0c30c5b88f8}\label{structx509__store__st_a39100a4cc433d10485ffe0c30c5b88f8} 
+int {\bfseries cache}
+\item 
+\Hypertarget{structx509__store__st_a988c764019923790356d956bc071c50b}\label{structx509__store__st_a988c764019923790356d956bc071c50b} 
+X509\+\_\+\+VERIFY\+\_\+\+PARAM \texorpdfstring{$\ast$}{*} {\bfseries param}
+\item 
+\Hypertarget{structx509__store__st_a942efe26133aadd04d45f30a824644a7}\label{structx509__store__st_a942efe26133aadd04d45f30a824644a7} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries verify} )(X509\+\_\+\+STORE\+\_\+\+CTX \texorpdfstring{$\ast$}{*}ctx)
+\item 
+\Hypertarget{structx509__store__st_a2babc2b1c606dc4a45bee39bcb2dddad}\label{structx509__store__st_a2babc2b1c606dc4a45bee39bcb2dddad} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries verify\+\_\+cb} )(int ok, X509\+\_\+\+STORE\+\_\+\+CTX \texorpdfstring{$\ast$}{*}ctx)
+\item 
+\Hypertarget{structx509__store__st_a1201b752d9780b08579097b6f53f05b6}\label{structx509__store__st_a1201b752d9780b08579097b6f53f05b6} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries get\+\_\+issuer} )(X509 \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}issuer, X509\+\_\+\+STORE\+\_\+\+CTX \texorpdfstring{$\ast$}{*}ctx, X509 \texorpdfstring{$\ast$}{*}x)
+\item 
+\Hypertarget{structx509__store__st_a28e3031f30d155bfcee3077781875dd5}\label{structx509__store__st_a28e3031f30d155bfcee3077781875dd5} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries check\+\_\+issued} )(X509\+\_\+\+STORE\+\_\+\+CTX \texorpdfstring{$\ast$}{*}ctx, X509 \texorpdfstring{$\ast$}{*}x, X509 \texorpdfstring{$\ast$}{*}issuer)
+\item 
+\Hypertarget{structx509__store__st_af48617053d5abd22e6f0bb877a3801d9}\label{structx509__store__st_af48617053d5abd22e6f0bb877a3801d9} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries check\+\_\+revocation} )(X509\+\_\+\+STORE\+\_\+\+CTX \texorpdfstring{$\ast$}{*}ctx)
+\item 
+\Hypertarget{structx509__store__st_a805b166e3886e35dac65014a43752c17}\label{structx509__store__st_a805b166e3886e35dac65014a43752c17} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries get\+\_\+crl} )(X509\+\_\+\+STORE\+\_\+\+CTX \texorpdfstring{$\ast$}{*}ctx, X509\+\_\+\+CRL \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}crl, X509 \texorpdfstring{$\ast$}{*}x)
+\item 
+\Hypertarget{structx509__store__st_a7aac41f5042c0d73d994d554dc80bab4}\label{structx509__store__st_a7aac41f5042c0d73d994d554dc80bab4} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries check\+\_\+crl} )(X509\+\_\+\+STORE\+\_\+\+CTX \texorpdfstring{$\ast$}{*}ctx, X509\+\_\+\+CRL \texorpdfstring{$\ast$}{*}crl)
+\item 
+\Hypertarget{structx509__store__st_a9e4cbd526c96a9d6eca4b05026e3848f}\label{structx509__store__st_a9e4cbd526c96a9d6eca4b05026e3848f} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries cert\+\_\+crl} )(X509\+\_\+\+STORE\+\_\+\+CTX \texorpdfstring{$\ast$}{*}ctx, X509\+\_\+\+CRL \texorpdfstring{$\ast$}{*}crl, X509 \texorpdfstring{$\ast$}{*}x)
+\item 
+\Hypertarget{structx509__store__st_a956359b1175dc54295f1446a9c4f2598}\label{structx509__store__st_a956359b1175dc54295f1446a9c4f2598} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries check\+\_\+policy} )(X509\+\_\+\+STORE\+\_\+\+CTX \texorpdfstring{$\ast$}{*}ctx)
+\item 
+\Hypertarget{structx509__store__st_ac42dfb5703178c5547204352c035e5d8}\label{structx509__store__st_ac42dfb5703178c5547204352c035e5d8} 
+const X509\+\_\+\+NAME \texorpdfstring{$\ast$}{*} {\bfseries nm}
+\item 
+\Hypertarget{structx509__store__st_a47f8b84ffcf429407df15bf5b896f29a}\label{structx509__store__st_a47f8b84ffcf429407df15bf5b896f29a} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries cleanup} )(X509\+\_\+\+STORE\+\_\+\+CTX \texorpdfstring{$\ast$}{*}ctx)
+\item 
+\Hypertarget{structx509__store__st_acb8c355184a6de1d30c4a2cee60f0839}\label{structx509__store__st_acb8c355184a6de1d30c4a2cee60f0839} 
+CRYPTO\+\_\+\+EX\+\_\+\+DATA {\bfseries ex\+\_\+data}
+\item 
+\Hypertarget{structx509__store__st_a64388d19579d13b556f7115931204a69}\label{structx509__store__st_a64388d19579d13b556f7115931204a69} 
+\mbox{\hyperlink{struct_c_r_y_p_t_o___r_e_f___c_o_u_n_t}{CRYPTO\+\_\+\+REF\+\_\+\+COUNT}} {\bfseries references}
+\item 
+\Hypertarget{structx509__store__st_ad1194984b7d5b5c9904d0b4125561992}\label{structx509__store__st_ad1194984b7d5b5c9904d0b4125561992} 
+CRYPTO\+\_\+\+RWLOCK \texorpdfstring{$\ast$}{*} {\bfseries lock}
+\end{DoxyCompactItemize}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/namph/\+Downloads/openssl/openssl-\/3.\+2.\+1/crypto/x509/x509\+\_\+local.\+h\end{DoxyCompactItemize}

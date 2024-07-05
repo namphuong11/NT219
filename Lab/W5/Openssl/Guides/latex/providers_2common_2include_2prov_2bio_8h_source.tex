@@ -1,0 +1,38 @@
+\doxysection{bio.\+h}
+\hypertarget{providers_2common_2include_2prov_2bio_8h_source}{}\label{providers_2common_2include_2prov_2bio_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/providers/common/include/prov/bio.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/providers/common/include/prov/bio.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2019-\/2021\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <stdarg.h>}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ <openssl/bio.h>}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ <openssl/core.h>}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ "{}prov/provider\_ctx.h"{}}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{keywordtype}{int}\ ossl\_prov\_bio\_from\_dispatch(\textcolor{keyword}{const}\ OSSL\_DISPATCH\ *fns);}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ OSSL\_CORE\_BIO\ *ossl\_prov\_bio\_new\_file(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *filename,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *mode);}
+\DoxyCodeLine{00018\ OSSL\_CORE\_BIO\ *ossl\_prov\_bio\_new\_membuf(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *filename,\ \textcolor{keywordtype}{int}\ len);}
+\DoxyCodeLine{00019\ \textcolor{keywordtype}{int}\ ossl\_prov\_bio\_read\_ex(OSSL\_CORE\_BIO\ *bio,\ \textcolor{keywordtype}{void}\ *data,\ \textcolor{keywordtype}{size\_t}\ data\_len,}
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ *bytes\_read);}
+\DoxyCodeLine{00021\ \textcolor{keywordtype}{int}\ ossl\_prov\_bio\_write\_ex(OSSL\_CORE\_BIO\ *bio,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *data,\ \textcolor{keywordtype}{size\_t}\ data\_len,}
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ *written);}
+\DoxyCodeLine{00023\ \textcolor{keywordtype}{int}\ ossl\_prov\_bio\_gets(OSSL\_CORE\_BIO\ *bio,\ \textcolor{keywordtype}{char}\ *buf,\ \textcolor{keywordtype}{int}\ size);}
+\DoxyCodeLine{00024\ \textcolor{keywordtype}{int}\ ossl\_prov\_bio\_puts(OSSL\_CORE\_BIO\ *bio,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *str);}
+\DoxyCodeLine{00025\ \textcolor{keywordtype}{int}\ ossl\_prov\_bio\_ctrl(OSSL\_CORE\_BIO\ *bio,\ \textcolor{keywordtype}{int}\ cmd,\ \textcolor{keywordtype}{long}\ num,\ \textcolor{keywordtype}{void}\ *ptr);}
+\DoxyCodeLine{00026\ \textcolor{keywordtype}{int}\ ossl\_prov\_bio\_up\_ref(OSSL\_CORE\_BIO\ *bio);}
+\DoxyCodeLine{00027\ \textcolor{keywordtype}{int}\ ossl\_prov\_bio\_free(OSSL\_CORE\_BIO\ *bio);}
+\DoxyCodeLine{00028\ \textcolor{keywordtype}{int}\ ossl\_prov\_bio\_vprintf(OSSL\_CORE\_BIO\ *bio,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *format,\ va\_list\ ap);}
+\DoxyCodeLine{00029\ \textcolor{keywordtype}{int}\ ossl\_prov\_bio\_printf(OSSL\_CORE\_BIO\ *bio,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *format,\ ...);}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ BIO\_METHOD\ *ossl\_bio\_prov\_init\_bio\_method(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00032\ BIO\ *ossl\_bio\_new\_from\_core\_bio(\mbox{\hyperlink{structprov__ctx__st}{PROV\_CTX}}\ *provctx,\ OSSL\_CORE\_BIO\ *corebio);}
+
+\end{DoxyCode}

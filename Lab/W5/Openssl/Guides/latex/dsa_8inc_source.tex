@@ -1,0 +1,178 @@
+\doxysection{dsa.\+inc}
+\hypertarget{dsa_8inc_source}{}\label{dsa_8inc_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/demos/pkey/dsa.inc@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/demos/pkey/dsa.inc}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2022\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <openssl/pem.h>}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ <openssl/core\_names.h>}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{comment}{/*\ Raw\ DSA\ params\ for\ P,\ Q\ and\ G\ */}}
+\DoxyCodeLine{00014\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ dsa\_p[]\ =\ \{}
+\DoxyCodeLine{00015\ \ \ \ \ 0xa2,\ 0x9b,\ 0x88,\ 0x72,\ 0xce,\ 0x8b,\ 0x84,\ 0x23,}
+\DoxyCodeLine{00016\ \ \ \ \ 0xb7,\ 0xd5,\ 0xd2,\ 0x1d,\ 0x4b,\ 0x02,\ 0xf5,\ 0x7e,}
+\DoxyCodeLine{00017\ \ \ \ \ 0x03,\ 0xe9,\ 0xe6,\ 0xb8,\ 0xa2,\ 0x58,\ 0xdc,\ 0x16,}
+\DoxyCodeLine{00018\ \ \ \ \ 0x61,\ 0x1b,\ 0xa0,\ 0x98,\ 0xab,\ 0x54,\ 0x34,\ 0x15,}
+\DoxyCodeLine{00019\ \ \ \ \ 0xe4,\ 0x15,\ 0xf1,\ 0x56,\ 0x99,\ 0x7a,\ 0x3e,\ 0xe2,}
+\DoxyCodeLine{00020\ \ \ \ \ 0x36,\ 0x65,\ 0x8f,\ 0xa0,\ 0x93,\ 0x26,\ 0x0d,\ 0xe3,}
+\DoxyCodeLine{00021\ \ \ \ \ 0xad,\ 0x42,\ 0x2e,\ 0x05,\ 0xe0,\ 0x46,\ 0xf9,\ 0xec,}
+\DoxyCodeLine{00022\ \ \ \ \ 0x29,\ 0x16,\ 0x1a,\ 0x37,\ 0x5f,\ 0x0e,\ 0xb4,\ 0xef,}
+\DoxyCodeLine{00023\ \ \ \ \ 0xfc,\ 0xef,\ 0x58,\ 0x28,\ 0x5c,\ 0x5d,\ 0x39,\ 0xed,}
+\DoxyCodeLine{00024\ \ \ \ \ 0x42,\ 0x5d,\ 0x7a,\ 0x62,\ 0xca,\ 0x12,\ 0x89,\ 0x6c,}
+\DoxyCodeLine{00025\ \ \ \ \ 0x4a,\ 0x92,\ 0xcb,\ 0x19,\ 0x46,\ 0xf2,\ 0x95,\ 0x2a,}
+\DoxyCodeLine{00026\ \ \ \ \ 0x48,\ 0x13,\ 0x3f,\ 0x07,\ 0xda,\ 0x36,\ 0x4d,\ 0x1b,}
+\DoxyCodeLine{00027\ \ \ \ \ 0xdf,\ 0x6b,\ 0x0f,\ 0x71,\ 0x39,\ 0x98,\ 0x3e,\ 0x69,}
+\DoxyCodeLine{00028\ \ \ \ \ 0x3c,\ 0x80,\ 0x05,\ 0x9b,\ 0x0e,\ 0xac,\ 0xd1,\ 0x47,}
+\DoxyCodeLine{00029\ \ \ \ \ 0x9b,\ 0xa9,\ 0xf2,\ 0x85,\ 0x77,\ 0x54,\ 0xed,\ 0xe7,}
+\DoxyCodeLine{00030\ \ \ \ \ 0x5f,\ 0x11,\ 0x2b,\ 0x07,\ 0xeb,\ 0xbf,\ 0x35,\ 0x34,}
+\DoxyCodeLine{00031\ \ \ \ \ 0x8b,\ 0xbf,\ 0x3e,\ 0x01,\ 0xe0,\ 0x2f,\ 0x2d,\ 0x47,}
+\DoxyCodeLine{00032\ \ \ \ \ 0x3d,\ 0xe3,\ 0x94,\ 0x53,\ 0xf9,\ 0x9d,\ 0xd2,\ 0x36,}
+\DoxyCodeLine{00033\ \ \ \ \ 0x75,\ 0x41,\ 0xca,\ 0xca,\ 0x3b,\ 0xa0,\ 0x11,\ 0x66,}
+\DoxyCodeLine{00034\ \ \ \ \ 0x34,\ 0x3d,\ 0x7b,\ 0x5b,\ 0x58,\ 0xa3,\ 0x7b,\ 0xd1,}
+\DoxyCodeLine{00035\ \ \ \ \ 0xb7,\ 0x52,\ 0x1d,\ 0xb2,\ 0xf1,\ 0x3b,\ 0x86,\ 0x70,}
+\DoxyCodeLine{00036\ \ \ \ \ 0x71,\ 0x32,\ 0xfe,\ 0x09,\ 0xf4,\ 0xcd,\ 0x09,\ 0xdc,}
+\DoxyCodeLine{00037\ \ \ \ \ 0x16,\ 0x18,\ 0xfa,\ 0x34,\ 0x01,\ 0xeb,\ 0xf9,\ 0xcc,}
+\DoxyCodeLine{00038\ \ \ \ \ 0x7b,\ 0x19,\ 0xfa,\ 0x94,\ 0xaa,\ 0x47,\ 0x20,\ 0x88,}
+\DoxyCodeLine{00039\ \ \ \ \ 0x13,\ 0x3d,\ 0x6c,\ 0xb2,\ 0xd3,\ 0x5c,\ 0x11,\ 0x79,}
+\DoxyCodeLine{00040\ \ \ \ \ 0xc8,\ 0xc8,\ 0xff,\ 0x36,\ 0x87,\ 0x58,\ 0xd5,\ 0x07,}
+\DoxyCodeLine{00041\ \ \ \ \ 0xd9,\ 0xf9,\ 0xa1,\ 0x7d,\ 0x46,\ 0xc1,\ 0x10,\ 0xfe,}
+\DoxyCodeLine{00042\ \ \ \ \ 0x31,\ 0x44,\ 0xce,\ 0x9b,\ 0x02,\ 0x2b,\ 0x42,\ 0xe4,}
+\DoxyCodeLine{00043\ \ \ \ \ 0x19,\ 0xeb,\ 0x4f,\ 0x53,\ 0x88,\ 0x61,\ 0x3b,\ 0xfc,}
+\DoxyCodeLine{00044\ \ \ \ \ 0x3e,\ 0x26,\ 0x24,\ 0x1a,\ 0x43,\ 0x2e,\ 0x87,\ 0x06,}
+\DoxyCodeLine{00045\ \ \ \ \ 0xbc,\ 0x58,\ 0xef,\ 0x76,\ 0x11,\ 0x72,\ 0x78,\ 0xde,}
+\DoxyCodeLine{00046\ \ \ \ \ 0xab,\ 0x6c,\ 0xf6,\ 0x92,\ 0x61,\ 0x82,\ 0x91,\ 0xb7}
+\DoxyCodeLine{00047\ \};}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ dsa\_q[]\ =\ \{}
+\DoxyCodeLine{00050\ \ \ \ \ 0xa3,\ 0xbf,\ 0xd9,\ 0xab,\ 0x78,\ 0x84,\ 0x79,\ 0x4e,}
+\DoxyCodeLine{00051\ \ \ \ \ 0x38,\ 0x34,\ 0x50,\ 0xd5,\ 0x89,\ 0x1d,\ 0xc1,\ 0x8b,}
+\DoxyCodeLine{00052\ \ \ \ \ 0x65,\ 0x15,\ 0x7b,\ 0xdc,\ 0xfc,\ 0xda,\ 0xc5,\ 0x15,}
+\DoxyCodeLine{00053\ \ \ \ \ 0x18,\ 0x90,\ 0x28,\ 0x67}
+\DoxyCodeLine{00054\ \};}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ dsa\_g[]\ =\ \{}
+\DoxyCodeLine{00057\ \ \ \ \ 0x68,\ 0x19,\ 0x27,\ 0x88,\ 0x69,\ 0xc7,\ 0xfd,\ 0x3d,}
+\DoxyCodeLine{00058\ \ \ \ \ 0x2d,\ 0x7b,\ 0x77,\ 0xf7,\ 0x7e,\ 0x81,\ 0x50,\ 0xd9,}
+\DoxyCodeLine{00059\ \ \ \ \ 0xad,\ 0x43,\ 0x3b,\ 0xea,\ 0x3b,\ 0xa8,\ 0x5e,\ 0xfc,}
+\DoxyCodeLine{00060\ \ \ \ \ 0x80,\ 0x41,\ 0x5a,\ 0xa3,\ 0x54,\ 0x5f,\ 0x78,\ 0xf7,}
+\DoxyCodeLine{00061\ \ \ \ \ 0x22,\ 0x96,\ 0xf0,\ 0x6c,\ 0xb1,\ 0x9c,\ 0xed,\ 0xa0,}
+\DoxyCodeLine{00062\ \ \ \ \ 0x6c,\ 0x94,\ 0xb0,\ 0x55,\ 0x1c,\ 0xfe,\ 0x6e,\ 0x6f,}
+\DoxyCodeLine{00063\ \ \ \ \ 0x86,\ 0x3e,\ 0x31,\ 0xd1,\ 0xde,\ 0x6e,\ 0xed,\ 0x7d,}
+\DoxyCodeLine{00064\ \ \ \ \ 0xab,\ 0x8b,\ 0x0c,\ 0x9d,\ 0xf2,\ 0x31,\ 0xe0,\ 0x84,}
+\DoxyCodeLine{00065\ \ \ \ \ 0x34,\ 0xd1,\ 0x18,\ 0x4f,\ 0x91,\ 0xd0,\ 0x33,\ 0x69,}
+\DoxyCodeLine{00066\ \ \ \ \ 0x6b,\ 0xb3,\ 0x82,\ 0xf8,\ 0x45,\ 0x5e,\ 0x98,\ 0x88,}
+\DoxyCodeLine{00067\ \ \ \ \ 0xf5,\ 0xd3,\ 0x1d,\ 0x47,\ 0x84,\ 0xec,\ 0x40,\ 0x12,}
+\DoxyCodeLine{00068\ \ \ \ \ 0x02,\ 0x46,\ 0xf4,\ 0xbe,\ 0xa6,\ 0x17,\ 0x94,\ 0xbb,}
+\DoxyCodeLine{00069\ \ \ \ \ 0xa5,\ 0x86,\ 0x6f,\ 0x09,\ 0x74,\ 0x64,\ 0x63,\ 0xbd,}
+\DoxyCodeLine{00070\ \ \ \ \ 0xf8,\ 0xe9,\ 0xe1,\ 0x08,\ 0xcd,\ 0x95,\ 0x29,\ 0xc3,}
+\DoxyCodeLine{00071\ \ \ \ \ 0xd0,\ 0xf6,\ 0xdf,\ 0x80,\ 0x31,\ 0x6e,\ 0x2e,\ 0x70,}
+\DoxyCodeLine{00072\ \ \ \ \ 0xaa,\ 0xeb,\ 0x1b,\ 0x26,\ 0xcd,\ 0xb8,\ 0xad,\ 0x97,}
+\DoxyCodeLine{00073\ \ \ \ \ 0xbc,\ 0x3d,\ 0x28,\ 0x7e,\ 0x0b,\ 0x8d,\ 0x61,\ 0x6c,}
+\DoxyCodeLine{00074\ \ \ \ \ 0x42,\ 0xe6,\ 0x5b,\ 0x87,\ 0xdb,\ 0x20,\ 0xde,\ 0xb7,}
+\DoxyCodeLine{00075\ \ \ \ \ 0x00,\ 0x5b,\ 0xc4,\ 0x16,\ 0x74,\ 0x7a,\ 0x64,\ 0x70,}
+\DoxyCodeLine{00076\ \ \ \ \ 0x14,\ 0x7a,\ 0x68,\ 0xa7,\ 0x82,\ 0x03,\ 0x88,\ 0xeb,}
+\DoxyCodeLine{00077\ \ \ \ \ 0xf4,\ 0x4d,\ 0x52,\ 0xe0,\ 0x62,\ 0x8a,\ 0xf9,\ 0xcf,}
+\DoxyCodeLine{00078\ \ \ \ \ 0x1b,\ 0x71,\ 0x66,\ 0xd0,\ 0x34,\ 0x65,\ 0xf3,\ 0x5a,}
+\DoxyCodeLine{00079\ \ \ \ \ 0xcc,\ 0x31,\ 0xb6,\ 0x11,\ 0x0c,\ 0x43,\ 0xda,\ 0xbc,}
+\DoxyCodeLine{00080\ \ \ \ \ 0x7c,\ 0x5d,\ 0x59,\ 0x1e,\ 0x67,\ 0x1e,\ 0xaf,\ 0x7c,}
+\DoxyCodeLine{00081\ \ \ \ \ 0x25,\ 0x2c,\ 0x1c,\ 0x14,\ 0x53,\ 0x36,\ 0xa1,\ 0xa4,}
+\DoxyCodeLine{00082\ \ \ \ \ 0xdd,\ 0xf1,\ 0x32,\ 0x44,\ 0xd5,\ 0x5e,\ 0x83,\ 0x56,}
+\DoxyCodeLine{00083\ \ \ \ \ 0x80,\ 0xca,\ 0xb2,\ 0x53,\ 0x3b,\ 0x82,\ 0xdf,\ 0x2e,}
+\DoxyCodeLine{00084\ \ \ \ \ 0xfe,\ 0x55,\ 0xec,\ 0x18,\ 0xc1,\ 0xe6,\ 0xcd,\ 0x00,}
+\DoxyCodeLine{00085\ \ \ \ \ 0x7b,\ 0xb0,\ 0x89,\ 0x75,\ 0x8b,\ 0xb1,\ 0x7c,\ 0x2c,}
+\DoxyCodeLine{00086\ \ \ \ \ 0xbe,\ 0x14,\ 0x44,\ 0x1b,\ 0xd0,\ 0x93,\ 0xae,\ 0x66,}
+\DoxyCodeLine{00087\ \ \ \ \ 0xe5,\ 0x97,\ 0x6d,\ 0x53,\ 0x73,\ 0x3f,\ 0x4f,\ 0xa3,}
+\DoxyCodeLine{00088\ \ \ \ \ 0x26,\ 0x97,\ 0x01,\ 0xd3,\ 0x1d,\ 0x23,\ 0xd4,\ 0x67}
+\DoxyCodeLine{00089\ \};}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ \textcolor{comment}{/*\ Helper\ function\ to\ retrieve\ and\ print\ a\ key\ BIGNUM\ field\ */}}
+\DoxyCodeLine{00092\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ print\_bn(BIO\ *bio,\ \textcolor{keyword}{const}\ EVP\_PKEY\ *pkey,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *name)}
+\DoxyCodeLine{00093\ \{}
+\DoxyCodeLine{00094\ \ \ \ \ BIGNUM\ *bn\ =\ NULL;}
+\DoxyCodeLine{00095\ }
+\DoxyCodeLine{00096\ \ \ \ \ \textcolor{keywordflow}{if}\ (EVP\_PKEY\_get\_bn\_param(pkey,\ name,\ \&bn)\ ==\ 0)}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00098\ }
+\DoxyCodeLine{00099\ \ \ \ \ BIO\_printf(bio,\ \textcolor{stringliteral}{"{}\ \ \%s\ =\ 0x"{}},\ name);}
+\DoxyCodeLine{00100\ \ \ \ \ BN\_print(bio,\ bn);}
+\DoxyCodeLine{00101\ \ \ \ \ BIO\_printf(bio,\ \textcolor{stringliteral}{"{}\(\backslash\)n"{}});}
+\DoxyCodeLine{00102\ \ \ \ \ BN\_clear\_free(bn);}
+\DoxyCodeLine{00103\ \}}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00105\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00106\ \textcolor{comment}{\ *\ Print\ DSA\ key\ info}}
+\DoxyCodeLine{00107\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00108\ \textcolor{comment}{\ *\ This\ method\ shows\ how\ to\ extract\ DSA\ data\ from\ an\ EVP\_PKEY.}}
+\DoxyCodeLine{00109\ \textcolor{comment}{\ *\ There\ are\ simpler\ ways\ to\ print\ using\ EVP\_PKEY\_print\_XXXX().}}
+\DoxyCodeLine{00110\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00111\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ dsa\_print\_key(\textcolor{keyword}{const}\ EVP\_PKEY\ *pkey,\ \textcolor{keywordtype}{int}\ keypair,}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OSSL\_LIB\_CTX\ *libctx,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *propq)}
+\DoxyCodeLine{00113\ \{}
+\DoxyCodeLine{00114\ }
+\DoxyCodeLine{00115\ \ \ \ \ \textcolor{keywordtype}{int}\ rv\ =\ 0,\ gindex,\ counter;}
+\DoxyCodeLine{00116\ \ \ \ \ BIO\ *bio\ =\ BIO\_new\_fp(stdout,\ BIO\_NOCLOSE);}
+\DoxyCodeLine{00117\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ seed[2048];}
+\DoxyCodeLine{00118\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ seedlen;}
+\DoxyCodeLine{00119\ }
+\DoxyCodeLine{00120\ \ \ \ \ \textcolor{keywordflow}{if}\ (bio\ ==\ NULL)}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00122\ }
+\DoxyCodeLine{00123\ \ \ \ \ \textcolor{comment}{/*\ Output\ hexadecimal\ representations\ of\ the\ BIGNUM\ objects.\ */}}
+\DoxyCodeLine{00124\ \ \ \ \ BIO\_printf(bio,\ \textcolor{stringliteral}{"{}\(\backslash\)nPublic\ values:\(\backslash\)n"{}});}
+\DoxyCodeLine{00125\ \ \ \ \ print\_bn(bio,\ pkey,\ OSSL\_PKEY\_PARAM\_FFC\_P);}
+\DoxyCodeLine{00126\ \ \ \ \ print\_bn(bio,\ pkey,\ OSSL\_PKEY\_PARAM\_FFC\_Q);}
+\DoxyCodeLine{00127\ \ \ \ \ print\_bn(bio,\ pkey,\ OSSL\_PKEY\_PARAM\_FFC\_G);}
+\DoxyCodeLine{00128\ }
+\DoxyCodeLine{00129\ \ \ \ \ \textcolor{keywordflow}{if}\ (EVP\_PKEY\_get\_octet\_string\_param(pkey,\ OSSL\_PKEY\_PARAM\_FFC\_SEED,\ seed,}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{sizeof}(seed),\ \&seedlen)\ >\ 0)\ \{}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ BIO\_printf(bio,\ \textcolor{stringliteral}{"{}\ \ \%s\(\backslash\)n"{}},\ OSSL\_PKEY\_PARAM\_FFC\_SEED);}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ BIO\_dump(bio,\ seed,\ seedlen);}
+\DoxyCodeLine{00133\ \ \ \ \ \}}
+\DoxyCodeLine{00134\ \ \ \ \ \textcolor{keywordflow}{if}\ (EVP\_PKEY\_get\_int\_param(pkey,\ OSSL\_PKEY\_PARAM\_FFC\_GINDEX,\ \&gindex)\ >\ 0)\ \{}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (gindex\ !=\ -\/1)}
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ \ \ \ \ BIO\_printf(bio,\ \textcolor{stringliteral}{"{}\ \ \%s\ =\ \%d\(\backslash\)n"{}},\ OSSL\_PKEY\_PARAM\_FFC\_GINDEX,\ gindex);}
+\DoxyCodeLine{00137\ \ \ \ \ \}}
+\DoxyCodeLine{00138\ \ \ \ \ \textcolor{keywordflow}{if}\ (EVP\_PKEY\_get\_int\_param(pkey,\ OSSL\_PKEY\_PARAM\_FFC\_PCOUNTER,\ \&counter)\ >\ 0)\ \{}
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (counter\ !=\ -\/1)}
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ \ \ \ \ BIO\_printf(bio,\ \textcolor{stringliteral}{"{}\ \ \%s\ =\ \%d\(\backslash\)n"{}},\ OSSL\_PKEY\_PARAM\_FFC\_PCOUNTER,\ counter);}
+\DoxyCodeLine{00141\ \ \ \ \ \}}
+\DoxyCodeLine{00142\ }
+\DoxyCodeLine{00143\ \ \ \ \ \textcolor{keywordflow}{if}\ (keypair)\ \{}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ fprintf(stdout,\ \textcolor{stringliteral}{"{}\(\backslash\)nPrivate\ value:\(\backslash\)n"{}});}
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ print\_bn(bio,\ pkey,\ OSSL\_PKEY\_PARAM\_PRIV\_KEY);}
+\DoxyCodeLine{00146\ }
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Output\ a\ PEM\ encoding\ of\ the\ public\ key.\ */}}
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (PEM\_write\_bio\_PUBKEY\_ex(bio,\ pkey,\ libctx,\ propq)\ ==\ 0)\ \{}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ \ \ \ \ fprintf(stderr,\ \textcolor{stringliteral}{"{}Failed\ to\ output\ PEM-\/encoded\ public\ key\(\backslash\)n"{}});}
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{goto}\ cleanup;}
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00152\ }
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00154\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ *\ Output\ a\ PEM\ encoding\ of\ the\ private\ key.\ Please\ note\ that\ this\ output\ is}}
+\DoxyCodeLine{00155\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ *\ not\ encrypted.\ You\ may\ wish\ to\ use\ the\ arguments\ to\ specify\ encryption\ of}}
+\DoxyCodeLine{00156\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ *\ the\ key\ if\ you\ are\ storing\ it\ on\ disk.\ See\ PEM\_write\_bio\_PrivateKey\_ex(3).}}
+\DoxyCodeLine{00157\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (PEM\_write\_bio\_PrivateKey\_ex(bio,\ pkey,\ NULL,\ NULL,\ 0,\ NULL,\ NULL,\ libctx,\ propq)\ ==\ 0)\ \{}
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ \ \ \ \ fprintf(stderr,\ \textcolor{stringliteral}{"{}Failed\ to\ output\ PEM-\/encoded\ private\ key\(\backslash\)n"{}});}
+\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{goto}\ cleanup;}
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00162\ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00163\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (PEM\_write\_bio\_Parameters(bio,\ pkey)\ ==\ 0)\ \{}
+\DoxyCodeLine{00164\ \ \ \ \ \ \ \ \ \ \ \ \ fprintf(stderr,\ \textcolor{stringliteral}{"{}Failed\ to\ output\ PEM-\/encoded\ params\(\backslash\)n"{}});}
+\DoxyCodeLine{00165\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{goto}\ cleanup;}
+\DoxyCodeLine{00166\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00167\ \ \ \ \ \}}
+\DoxyCodeLine{00168\ \ \ \ \ rv\ =\ 1;}
+\DoxyCodeLine{00169\ cleanup:}
+\DoxyCodeLine{00170\ \ \ \ \ BIO\_free(bio);}
+\DoxyCodeLine{00171\ \ \ \ \ \textcolor{keywordflow}{return}\ rv;}
+\DoxyCodeLine{00172\ \}}
+
+\end{DoxyCode}

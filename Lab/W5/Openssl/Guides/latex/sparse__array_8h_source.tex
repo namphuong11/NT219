@@ -1,0 +1,98 @@
+\doxysection{sparse\+\_\+array.\+h}
+\hypertarget{sparse__array_8h_source}{}\label{sparse__array_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/crypto/sparse\_array.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/crypto/sparse\_array.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2019-\/2021\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *\ Copyright\ (c)\ 2019,\ Oracle\ and/or\ its\ affiliates.\ \ All\ rights\ reserved.}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#ifndef\ OSSL\_CRYPTO\_SPARSE\_ARRAY\_H}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#\ define\ OSSL\_CRYPTO\_SPARSE\_ARRAY\_H}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#\ pragma\ once}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#\ include\ <openssl/e\_os2.h>}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#\ ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00018\ \textcolor{keyword}{extern}\ \textcolor{stringliteral}{"{}C"{}}\ \{}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#\ define\ SPARSE\_ARRAY\_OF(type)\ struct\ sparse\_array\_st\_\ \#\#\ type}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#\ define\ DEFINE\_SPARSE\_ARRAY\_OF\_INTERNAL(type,\ ctype)\ \(\backslash\)}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\ \ \ \ SPARSE\_ARRAY\_OF(type);\ \(\backslash\)}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\ \ \ \ static\ ossl\_unused\ ossl\_inline\ SPARSE\_ARRAY\_OF(type)\ *\ \(\backslash\)}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ ossl\_sa\_\#\#type\#\#\_new(void)\ \(\backslash\)}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\ \ \ \ \{\ \(\backslash\)}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ return\ (SPARSE\_ARRAY\_OF(type)\ *)ossl\_sa\_new();\ \(\backslash\)}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\ \ \ \ \}\ \(\backslash\)}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\ \ \ \ static\ ossl\_unused\ ossl\_inline\ void\ \(\backslash\)}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\ \ \ \ ossl\_sa\_\#\#type\#\#\_free(SPARSE\_ARRAY\_OF(type)\ *sa)\ \(\backslash\)}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\ \ \ \ \{\ \(\backslash\)}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ ossl\_sa\_free((OPENSSL\_SA\ *)sa);\ \(\backslash\)}}
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\ \ \ \ \}\ \(\backslash\)}}
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\ \ \ \ static\ ossl\_unused\ ossl\_inline\ void\ \(\backslash\)}}
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\ \ \ \ ossl\_sa\_\#\#type\#\#\_free\_leaves(SPARSE\_ARRAY\_OF(type)\ *sa)\ \(\backslash\)}}
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\ \ \ \ \{\ \(\backslash\)}}
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ ossl\_sa\_free\_leaves((OPENSSL\_SA\ *)sa);\ \(\backslash\)}}
+\DoxyCodeLine{00039\ \textcolor{preprocessor}{\ \ \ \ \}\ \(\backslash\)}}
+\DoxyCodeLine{00040\ \textcolor{preprocessor}{\ \ \ \ static\ ossl\_unused\ ossl\_inline\ size\_t\ \(\backslash\)}}
+\DoxyCodeLine{00041\ \textcolor{preprocessor}{\ \ \ \ ossl\_sa\_\#\#type\#\#\_num(const\ SPARSE\_ARRAY\_OF(type)\ *sa)\ \(\backslash\)}}
+\DoxyCodeLine{00042\ \textcolor{preprocessor}{\ \ \ \ \{\ \(\backslash\)}}
+\DoxyCodeLine{00043\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ return\ ossl\_sa\_num((OPENSSL\_SA\ *)sa);\ \(\backslash\)}}
+\DoxyCodeLine{00044\ \textcolor{preprocessor}{\ \ \ \ \}\ \(\backslash\)}}
+\DoxyCodeLine{00045\ \textcolor{preprocessor}{\ \ \ \ static\ ossl\_unused\ ossl\_inline\ void\ \(\backslash\)}}
+\DoxyCodeLine{00046\ \textcolor{preprocessor}{\ \ \ \ ossl\_sa\_\#\#type\#\#\_doall(const\ SPARSE\_ARRAY\_OF(type)\ *sa,\ \(\backslash\)}}
+\DoxyCodeLine{00047\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ void\ (*leaf)(ossl\_uintmax\_t,\ type\ *))\ \(\backslash\)}}
+\DoxyCodeLine{00048\ \textcolor{preprocessor}{\ \ \ \ \{\ \(\backslash\)}}
+\DoxyCodeLine{00049\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ ossl\_sa\_doall((OPENSSL\_SA\ *)sa,\ \(\backslash\)}}
+\DoxyCodeLine{00050\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (void\ (*)(ossl\_uintmax\_t,\ void\ *))leaf);\ \(\backslash\)}}
+\DoxyCodeLine{00051\ \textcolor{preprocessor}{\ \ \ \ \}\ \(\backslash\)}}
+\DoxyCodeLine{00052\ \textcolor{preprocessor}{\ \ \ \ static\ ossl\_unused\ ossl\_inline\ void\ \(\backslash\)}}
+\DoxyCodeLine{00053\ \textcolor{preprocessor}{\ \ \ \ ossl\_sa\_\#\#type\#\#\_doall\_arg(const\ SPARSE\_ARRAY\_OF(type)\ *sa,\ \(\backslash\)}}
+\DoxyCodeLine{00054\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ void\ (*leaf)(ossl\_uintmax\_t,\ type\ *,\ void\ *),\ \(\backslash\)}}
+\DoxyCodeLine{00055\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ void\ *arg)\ \(\backslash\)}}
+\DoxyCodeLine{00056\ \textcolor{preprocessor}{\ \ \ \ \{\ \(\backslash\)}}
+\DoxyCodeLine{00057\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ ossl\_sa\_doall\_arg((OPENSSL\_SA\ *)sa,\ \(\backslash\)}}
+\DoxyCodeLine{00058\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (void\ (*)(ossl\_uintmax\_t,\ void\ *,\ void\ *))leaf,\ arg);\ \(\backslash\)}}
+\DoxyCodeLine{00059\ \textcolor{preprocessor}{\ \ \ \ \}\ \(\backslash\)}}
+\DoxyCodeLine{00060\ \textcolor{preprocessor}{\ \ \ \ static\ ossl\_unused\ ossl\_inline\ ctype\ \(\backslash\)}}
+\DoxyCodeLine{00061\ \textcolor{preprocessor}{\ \ \ \ *ossl\_sa\_\#\#type\#\#\_get(const\ SPARSE\_ARRAY\_OF(type)\ *sa,\ ossl\_uintmax\_t\ n)\ \(\backslash\)}}
+\DoxyCodeLine{00062\ \textcolor{preprocessor}{\ \ \ \ \{\ \(\backslash\)}}
+\DoxyCodeLine{00063\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ return\ (type\ *)ossl\_sa\_get((OPENSSL\_SA\ *)sa,\ n);\ \(\backslash\)}}
+\DoxyCodeLine{00064\ \textcolor{preprocessor}{\ \ \ \ \}\ \(\backslash\)}}
+\DoxyCodeLine{00065\ \textcolor{preprocessor}{\ \ \ \ static\ ossl\_unused\ ossl\_inline\ int\ \(\backslash\)}}
+\DoxyCodeLine{00066\ \textcolor{preprocessor}{\ \ \ \ ossl\_sa\_\#\#type\#\#\_set(SPARSE\_ARRAY\_OF(type)\ *sa,\ \(\backslash\)}}
+\DoxyCodeLine{00067\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ossl\_uintmax\_t\ n,\ ctype\ *val)\ \(\backslash\)}}
+\DoxyCodeLine{00068\ \textcolor{preprocessor}{\ \ \ \ \{\ \(\backslash\)}}
+\DoxyCodeLine{00069\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ return\ ossl\_sa\_set((OPENSSL\_SA\ *)sa,\ n,\ (void\ *)val);\ \(\backslash\)}}
+\DoxyCodeLine{00070\ \textcolor{preprocessor}{\ \ \ \ \}\ \(\backslash\)}}
+\DoxyCodeLine{00071\ \textcolor{preprocessor}{\ \ \ \ SPARSE\_ARRAY\_OF(type)}}
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00073\ \textcolor{preprocessor}{\#\ define\ DEFINE\_SPARSE\_ARRAY\_OF(type)\ \(\backslash\)}}
+\DoxyCodeLine{00074\ \textcolor{preprocessor}{\ \ \ \ DEFINE\_SPARSE\_ARRAY\_OF\_INTERNAL(type,\ type)}}
+\DoxyCodeLine{00075\ \textcolor{preprocessor}{\#\ define\ DEFINE\_SPARSE\_ARRAY\_OF\_CONST(type)\ \(\backslash\)}}
+\DoxyCodeLine{00076\ \textcolor{preprocessor}{\ \ \ \ DEFINE\_SPARSE\_ARRAY\_OF\_INTERNAL(type,\ const\ type)}}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structsparse__array__st}{sparse\_array\_st}}\ \mbox{\hyperlink{structsparse__array__st}{OPENSSL\_SA}};}
+\DoxyCodeLine{00079\ \mbox{\hyperlink{structsparse__array__st}{OPENSSL\_SA}}\ *ossl\_sa\_new(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00080\ \textcolor{keywordtype}{void}\ ossl\_sa\_free(\mbox{\hyperlink{structsparse__array__st}{OPENSSL\_SA}}\ *sa);}
+\DoxyCodeLine{00081\ \textcolor{keywordtype}{void}\ ossl\_sa\_free\_leaves(\mbox{\hyperlink{structsparse__array__st}{OPENSSL\_SA}}\ *sa);}
+\DoxyCodeLine{00082\ \textcolor{keywordtype}{size\_t}\ ossl\_sa\_num(\textcolor{keyword}{const}\ \mbox{\hyperlink{structsparse__array__st}{OPENSSL\_SA}}\ *sa);}
+\DoxyCodeLine{00083\ \textcolor{keywordtype}{void}\ ossl\_sa\_doall(\textcolor{keyword}{const}\ \mbox{\hyperlink{structsparse__array__st}{OPENSSL\_SA}}\ *sa,\ \textcolor{keywordtype}{void}\ (*leaf)(ossl\_uintmax\_t,\ \textcolor{keywordtype}{void}\ *));}
+\DoxyCodeLine{00084\ \textcolor{keywordtype}{void}\ ossl\_sa\_doall\_arg(\textcolor{keyword}{const}\ \mbox{\hyperlink{structsparse__array__st}{OPENSSL\_SA}}\ *sa,}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ (*leaf)(ossl\_uintmax\_t,\ \textcolor{keywordtype}{void}\ *,\ \textcolor{keywordtype}{void}\ *),\ \textcolor{keywordtype}{void}\ *);}
+\DoxyCodeLine{00086\ \textcolor{keywordtype}{void}\ *ossl\_sa\_get(\textcolor{keyword}{const}\ \mbox{\hyperlink{structsparse__array__st}{OPENSSL\_SA}}\ *sa,\ ossl\_uintmax\_t\ n);}
+\DoxyCodeLine{00087\ \textcolor{keywordtype}{int}\ ossl\_sa\_set(\mbox{\hyperlink{structsparse__array__st}{OPENSSL\_SA}}\ *sa,\ ossl\_uintmax\_t\ n,\ \textcolor{keywordtype}{void}\ *val);}
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00089\ \textcolor{preprocessor}{\#\ ifdef\ \ \_\_cplusplus}}
+\DoxyCodeLine{00090\ \}}
+\DoxyCodeLine{00091\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00092\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

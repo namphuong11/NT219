@@ -1,0 +1,42 @@
+\doxysection{cipher\+\_\+rc4\+\_\+hmac\+\_\+md5.\+h}
+\hypertarget{cipher__rc4__hmac__md5_8h_source}{}\label{cipher__rc4__hmac__md5_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/providers/implementations/ciphers/cipher\_rc4\_hmac\_md5.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/providers/implementations/ciphers/cipher\_rc4\_hmac\_md5.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2019-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <openssl/rc4.h>}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ <openssl/md5.h>}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ "{}prov/ciphercommon.h"{}}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structprov__rc4__hmac__md5__ctx__st}{prov\_rc4\_hmac\_md5\_ctx\_st}}\ \{}
+\DoxyCodeLine{00015\ \ \ \ \ \mbox{\hyperlink{structprov__cipher__ctx__st}{PROV\_CIPHER\_CTX}}\ base;\ \ \ \ \ \ \textcolor{comment}{/*\ Must\ be\ first\ */}}
+\DoxyCodeLine{00016\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00017\ \ \ \ \ \ \ \ \ OSSL\_UNION\_ALIGN;}
+\DoxyCodeLine{00018\ \ \ \ \ \ \ \ \ RC4\_KEY\ ks;}
+\DoxyCodeLine{00019\ \ \ \ \ \}\ ks;}
+\DoxyCodeLine{00020\ \ \ \ \ MD5\_CTX\ head,\ tail,\ md;}
+\DoxyCodeLine{00021\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ payload\_length;}
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ tls\_aad\_pad\_sz;}
+\DoxyCodeLine{00023\ \}\ \mbox{\hyperlink{structprov__rc4__hmac__md5__ctx__st}{PROV\_RC4\_HMAC\_MD5\_CTX}};}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structprov__cipher__hw__rc4__hmac__md5__st}{prov\_cipher\_hw\_rc4\_hmac\_md5\_st}}\ \{}
+\DoxyCodeLine{00026\ \ \ \ \ \mbox{\hyperlink{structprov__cipher__hw__st}{PROV\_CIPHER\_HW}}\ base;\ \textcolor{comment}{/*\ Must\ be\ first\ */}}
+\DoxyCodeLine{00027\ \ \ \ \ int\ (*tls\_init)(\mbox{\hyperlink{structprov__cipher__ctx__st}{PROV\_CIPHER\_CTX}}\ *ctx,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *aad,\ \textcolor{keywordtype}{size\_t}\ aad\_len);}
+\DoxyCodeLine{00028\ \ \ \ \ void\ (*init\_mackey)(\mbox{\hyperlink{structprov__cipher__ctx__st}{PROV\_CIPHER\_CTX}}\ *ctx,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *key,}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ len);}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \}\ \mbox{\hyperlink{structprov__cipher__hw__rc4__hmac__md5__st}{PROV\_CIPHER\_HW\_RC4\_HMAC\_MD5}};}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structprov__cipher__hw__st}{PROV\_CIPHER\_HW}}\ *ossl\_prov\_cipher\_hw\_rc4\_hmac\_md5(\textcolor{keywordtype}{size\_t}\ keybits);}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \textcolor{keywordtype}{void}\ rc4\_md5\_enc(RC4\_KEY\ *key,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *in0,\ \textcolor{keywordtype}{void}\ *out,}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ MD5\_CTX\ *ctx,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *inp,\ \textcolor{keywordtype}{size\_t}\ blocks);}
+
+\end{DoxyCode}

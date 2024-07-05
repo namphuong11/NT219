@@ -1,0 +1,62 @@
+\chapter{Stream Receive Buffers}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2stream-receive-buffers}{}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2stream-receive-buffers}\index{Stream Receive Buffers@{Stream Receive Buffers}}
+This is a QUIC specific module that retains the received stream data until the application reads it with SSL\+\_\+read() or any future stream read calls.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2stream-receive-buffers_autotoc_md471}{}\doxysection{\texorpdfstring{Receive Buffers requirements for MVP}{Receive Buffers requirements for MVP}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2stream-receive-buffers_autotoc_md471}
+These are the requirements that were identified for MVP\+:
+
+
+\begin{DoxyItemize}
+\item As packets with stream frames are received in arbitrary frames the received data must be stored until all the data with earlier offsets are received.
+\item As packets can be received before application calls SSL\+\_\+read() to read the data the data must be stored.
+\item The application should be able to set the limit on how much data should be stored. The flow controller should be used to limit the peer to not send more data. Without the flow control limit a rogue peer could trigger a DoS via unlimited flow of incoming stream data frames.
+\item After the data is passed via SSL\+\_\+read() to the application the stored data can be released and flow control limit can be raised.
+\item As the peer can recreate stream data frames when resending them, the implementation must be able to handle properly frames with partially or fully overlapping data with previously received frames.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2stream-receive-buffers_autotoc_md472}{}\doxysection{\texorpdfstring{Optional Receive Buffers requirements}{Optional Receive Buffers requirements}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2stream-receive-buffers_autotoc_md472}
+These are optional features of the stream receive buffers implementation. They are not required for MVP but they are otherwise desirable\+:
+
+
+\begin{DoxyItemize}
+\item To support a single copy operation with a future stream read call the received data should not be copied out of the decrypted packets to store the data. The only information actually stored would be a list of offset, length, and pointers to data, along with a pointer to the decrypted QUIC packet that stores the actual frame.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2stream-receive-buffers_autotoc_md473}{}\doxysection{\texorpdfstring{Proposed new public API calls}{Proposed new public API calls}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2stream-receive-buffers_autotoc_md473}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keywordtype}{int}\ SSL\_set\_max\_stored\_stream\_data(SSL\ *stream,\ \textcolor{keywordtype}{size\_t}\ length);}
+
+\end{DoxyCode}
+
+
+This function adjusts the current data flow control limit on the {\ttfamily stream} to allow storing {\ttfamily length} bytes of quic stream data before it is read by the application.
+
+Open\+SSL handles sending MAX\+\_\+\+STREAM\+\_\+\+DATA frames appropriately when the application reads the stored data.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keywordtype}{int}\ SSL\_set\_max\_unprocessed\_packet\_data(SSL\ *connection,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ length);}
+
+\end{DoxyCode}
+
+
+This sets the limit on unprocessed quic packet data {\ttfamily length} in bytes that is allowed to be allocated for the {\ttfamily connection}. See the Other considerations section below.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2stream-receive-buffers_autotoc_md474}{}\doxysection{\texorpdfstring{Interfaces to other QUIC implementation modules}{Interfaces to other QUIC implementation modules}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2stream-receive-buffers_autotoc_md474}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2stream-receive-buffers_autotoc_md475}{}\doxysubsection{\texorpdfstring{Front End I/O API}{Front End I/O API}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2stream-receive-buffers_autotoc_md475}
+SSL\+\_\+read() copies data out of the stored buffers if available and eventually triggers release of stored unprocessed packet(s).
+
+SSL\+\_\+peek(), SSL\+\_\+pending(), SSL\+\_\+has\+\_\+pending() peek into the stored buffers for any information about the stored data.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2stream-receive-buffers_autotoc_md476}{}\doxysubsection{\texorpdfstring{RX Depacketizer}{RX Depacketizer}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2stream-receive-buffers_autotoc_md476}
+The Receive Buffers module obtains the stream data via the ssl\+\_\+queue\+\_\+data() callback.
+
+The module uses ossl\+\_\+qrx\+\_\+pkt\+\_\+wrap\+\_\+up\+\_\+ref() and ossl\+\_\+qrx\+\_\+pkt\+\_\+wrap\+\_\+release() functions to keep and release decrypted packets with unprocessed data.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2stream-receive-buffers_autotoc_md477}{}\doxysubsection{\texorpdfstring{Flow Control}{Flow Control}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2stream-receive-buffers_autotoc_md477}
+The Receive Buffers module provides an appropriate value for the Flow Control module to send MAX\+\_\+\+DATA and MAX\+\_\+\+STREAM\+\_\+\+DATA frames. Details TBD.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2stream-receive-buffers_autotoc_md478}{}\doxysubsection{\texorpdfstring{QUIC Read Record Layer}{QUIC Read Record Layer}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2stream-receive-buffers_autotoc_md478}
+The Receive Buffers module needs to know whether it should stop holding the decrypted quic packets and start copying the stream data due to the limit reached. See the {\ttfamily SSL\+\_\+set\+\_\+max\+\_\+unprocessed\+\_\+quic\+\_\+packet\+\_\+data()} function above and the Other considerations section below. Details TBD.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2stream-receive-buffers_autotoc_md479}{}\doxysection{\texorpdfstring{Implementation details}{Implementation details}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2stream-receive-buffers_autotoc_md479}
+The QUIC\+\_\+\+RSTREAM object holds the received stream data in the SFRAME\+\_\+\+LIST structure. This is a sorted list of partially (never fully) overlapping data frames. Each list item holds a pointer to the received packet wrapper for refcounting and proper release of the received packet data once the stream data is read by the application.
+
+Each SFRAME\+\_\+\+LIST item has range.\+start and range.\+end values greater than the range.\+start and range.\+end values of the previous item in the list. This invariant is ensured on the insertion of overlapping stream frames. Any redundant frames are released. Insertion at the end of the list is optimised as in the ideal situation when no packets are lost we always just append new frames.
+
+See {\ttfamily \doxylink{quic__stream_8h_source}{include/internal/quic\+\_\+stream.\+h}} and {\ttfamily \doxylink{quic__sf__list_8h_source}{include/internal/quic\+\_\+sf\+\_\+list.\+h}} for internal API details.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2stream-receive-buffers_autotoc_md480}{}\doxysection{\texorpdfstring{Other considerations}{Other considerations}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2stream-receive-buffers_autotoc_md480}
+The peer is allowed to recreate the stream data frames. As we aim for a single-\/copy operation a rogue peer could use this to override the stored data limits by sending duplicate frames with only slight changes in the offset. For example\+: 1st frame -\/ offset 0 length 1000, 2nd frame -\/ offset 1 length 1000, 3rd frame -\/ offset 2 length 1000, and so on. We would have to keep the packet data for all these frames which would effectively raise the stream data flow control limit quadratically.
+
+And this is not the only way how a rogue peer could make us occupy much more data than what is allowed by the stream data flow control limit in the single-\/copy scenario.
+
+Although intuitively the MAX\+\_\+\+DATA flow control limit might be used to somehow limit the allocated packet buffer size, it is defined as sum of allowed data to be sent across all the streams in the connection instead. The packet buffer will contain much more data than just the stream frames especially with a rogue peer, that means MAX\+\_\+\+DATA limit cannot be used to limit the memory occupied by packet buffers.
+
+To resolve this problem, we fall back to copying the data off the decrypted packet buffer once we reach a limit on unprocessed decrypted packets. We might also consider falling back to copying the data in case we receive stream data frames that are partially overlapping and one frame not being a subrange of the other.
+
+Because in MVP only a single bidirectional stream to receive any data will be supported, the MAX\+\_\+\+DATA flow control limit should be equal to MAX\+\_\+\+STREAM\+\_\+\+DATA limit for that stream. 

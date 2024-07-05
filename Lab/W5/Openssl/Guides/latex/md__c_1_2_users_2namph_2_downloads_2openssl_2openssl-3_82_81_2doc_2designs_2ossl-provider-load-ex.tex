@@ -1,0 +1,42 @@
+\chapter{OSSL\+\_\+\+PROVIDER\+\_\+load\+\_\+ex -\/ activating providers with run-\/time configuration}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2ossl-provider-load-ex}{}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2ossl-provider-load-ex}\index{OSSL\_PROVIDER\_load\_ex -\/ activating providers with run-\/time configuration@{OSSL\_PROVIDER\_load\_ex -\/ activating providers with run-\/time configuration}}
+Currently any provider run-\/time activation requires the presence of the initialization parameters in the Open\+SSL configuration file. Otherwise the provider will be activated with some default settings, that may or may not work for a particular application. For real-\/world systems it may require providing a specially designed Open\+SSL configuration file and passing it somehow (e.\+g. via environment), which has obvious drawbacks.
+
+We need a possibility to initialize providers on per-\/application level according to per-\/application parameters. It\textquotesingle{}s necessary for example for PKCS\#11 provider (where different applications may use different devices with different drivers) and will be useful for some other providers. In case of Red Hat it is also usable for FIPS provider.
+
+Open\+SSL 3.\+2 introduces the API
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{OSSL\_PROVIDER\ *OSSL\_PROVIDER\_load\_ex(OSSL\_LIB\_CTX\ *libctx,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *name,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OSSL\_PARAM\ params[]);}
+
+\end{DoxyCode}
+
+
+intended to configure the provider at load time.
+
+It accepts only parameters of type {\ttfamily OSSL\+\_\+\+PARAM\+\_\+\+UTF8\+\_\+\+STRING} because any provider can be initialized from the config file where the values are represented as strings and provider init function has to deal with it.
+
+Explicitly configured parameters can differ from the parameters named in the configuration file. Here are the current design decisions and some possible future steps.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2ossl-provider-load-ex_autotoc_md227}{}\doxysection{\texorpdfstring{Real-\/world cases}{Real-\/world cases}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2ossl-provider-load-ex_autotoc_md227}
+Many applications use PKCS\#11 API with specific drivers. Open\+SSL PKCS\#11 provider \href{https://github.com/latchset/pkcs11-provider}{\texttt{ https\+://github.\+com/latchset/pkcs11-\/provider}} also provides a set of tweaks usable in particular situations. So there are several scenarios for which the new API can be used\+:
+
+
+\begin{DoxyEnumerate}
+\item Configure a provider in the config file, activate on demand
+\item Load/activate a provider run-\/time with parameters
+\end{DoxyEnumerate}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2ossl-provider-load-ex_autotoc_md228}{}\doxysection{\texorpdfstring{Current design}{Current design}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2ossl-provider-load-ex_autotoc_md228}
+When the provider is already loaded an activated in the current library context, the {\ttfamily OSSL\+\_\+\+PROVIDER\+\_\+load\+\_\+ex} call simply returns the active provider and the extra parameters are ignored.
+
+In all other cases, the extra parameters provided by the {\ttfamily OSSL\+\_\+\+PROVIDER\+\_\+load\+\_\+ex} call are applied and the values from the config file are ignored.
+
+Separate instances of the provider can be loaded in the separate library contexts.
+
+Several instances of the same provider can be loaded in the same context using different section names, module names (e.\+g. via symlinks) and provider names. But unless the provider supports some configuration options, the algorithms in this case will have the same {\ttfamily provider} property and the result of fetching is not determined. We strongly discourage against this trick.
+
+Changing the loaded provider configuration at runtime is not supported. If it is necessary, the provider needs to be unloaded using {\ttfamily OSSL\+\_\+\+PROVIDER\+\_\+unload} and reloaded using {\ttfamily OSSL\+\_\+\+PROVIDER\+\_\+load} or {\ttfamily OSSL\+\_\+\+PROVIDER\+\_\+load\+\_\+ex} should be used.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2ossl-provider-load-ex_autotoc_md229}{}\doxysection{\texorpdfstring{Possible future steps}{Possible future steps}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2ossl-provider-load-ex_autotoc_md229}
+
+\begin{DoxyEnumerate}
+\item We should provide some API function accessing the configuration parameters of a particular provider. Having it, the application will be able to combine some default values with the app-\/specific ones in more or less intellectual way.
+\item We probably should remove the {\ttfamily \doxylink{struct_i_n_f_o_p_a_i_r}{INFOPAIR}} structure and use the {\ttfamily OSSL\+\_\+\+PARAM} one instead. 
+\end{DoxyEnumerate}

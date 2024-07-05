@@ -1,0 +1,133 @@
+\doxysection{quic\+\_\+vlint.\+h}
+\hypertarget{quic__vlint_8h_source}{}\label{quic__vlint_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/quic\_vlint.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/quic\_vlint.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{*\ Copyright\ 2022-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{*}}
+\DoxyCodeLine{00004\ \textcolor{comment}{*\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{*\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{*\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{*\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_INTERNAL\_QUIC\_VLINT\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_INTERNAL\_QUIC\_VLINT\_H}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#\ pragma\ once}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ include\ "{}internal/e\_os.h"{}}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#\ ifndef\ OPENSSL\_NO\_QUIC}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{comment}{/*\ The\ smallest\ value\ requiring\ a\ 1,\ 2,\ 4,\ or\ 8-\/byte\ representation.\ */}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#define\ OSSL\_QUIC\_VLINT\_1B\_MIN\ 0}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#define\ OSSL\_QUIC\_VLINT\_2B\_MIN\ 64}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#define\ OSSL\_QUIC\_VLINT\_4B\_MIN\ 16384}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#define\ OSSL\_QUIC\_VLINT\_8B\_MIN\ 1073741824}}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{comment}{/*\ The\ largest\ value\ representable\ in\ a\ given\ number\ of\ bytes.\ */}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#define\ OSSL\_QUIC\_VLINT\_1B\_MAX\ (OSSL\_QUIC\_VLINT\_2B\_MIN\ -\/\ 1)}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#define\ OSSL\_QUIC\_VLINT\_2B\_MAX\ (OSSL\_QUIC\_VLINT\_4B\_MIN\ -\/\ 1)}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#define\ OSSL\_QUIC\_VLINT\_4B\_MAX\ (OSSL\_QUIC\_VLINT\_8B\_MIN\ -\/\ 1)}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#define\ OSSL\_QUIC\_VLINT\_8B\_MAX\ (((uint64\_t)1\ <<\ 62)\ -\/\ 1)}}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \textcolor{comment}{/*\ The\ largest\ value\ representable\ as\ a\ variable-\/length\ integer.\ */}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#define\ OSSL\_QUIC\_VLINT\_MAX\ \ \ \ OSSL\_QUIC\_VLINT\_8B\_MAX}}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00034\ \textcolor{comment}{\ *\ Returns\ the\ number\ of\ bytes\ needed\ to\ encode\ v\ in\ the\ QUIC\ variable-\/length}}
+\DoxyCodeLine{00035\ \textcolor{comment}{\ *\ integer\ encoding.}}
+\DoxyCodeLine{00036\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00037\ \textcolor{comment}{\ *\ Returns\ 0\ if\ v\ exceeds\ OSSL\_QUIC\_VLINT\_MAX.}}
+\DoxyCodeLine{00038\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00039\ \textcolor{keyword}{static}\ ossl\_unused\ ossl\_inline\ \textcolor{keywordtype}{size\_t}\ ossl\_quic\_vlint\_encode\_len(uint64\_t\ v)}
+\DoxyCodeLine{00040\ \{}
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{keywordflow}{if}\ (v\ <\ OSSL\_QUIC\_VLINT\_2B\_MIN)}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ \ \ \ \ \textcolor{keywordflow}{if}\ (v\ <\ OSSL\_QUIC\_VLINT\_4B\_MIN)}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 2;}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \ \ \ \ \textcolor{keywordflow}{if}\ (v\ <\ OSSL\_QUIC\_VLINT\_8B\_MIN)}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 4;}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{keywordflow}{if}\ (v\ <=\ OSSL\_QUIC\_VLINT\_MAX)}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 8;}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00054\ \}}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00057\ \textcolor{comment}{\ *\ This\ function\ writes\ a\ QUIC\ varable-\/length\ encoded\ integer\ to\ buf.}}
+\DoxyCodeLine{00058\ \textcolor{comment}{\ *\ The\ smallest\ usable\ representation\ is\ used.}}
+\DoxyCodeLine{00059\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00060\ \textcolor{comment}{\ *\ It\ is\ the\ caller's\ responsibility\ to\ ensure\ that\ the\ buffer\ is\ big\ enough\ by}}
+\DoxyCodeLine{00061\ \textcolor{comment}{\ *\ calling\ ossl\_quic\_vlint\_encode\_len(v)\ before\ calling\ this\ function.}}
+\DoxyCodeLine{00062\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00063\ \textcolor{comment}{\ *\ Precondition:\ buf\ is\ at\ least\ ossl\_quic\_vlint\_enc\_len(v)\ bytes\ in\ size}}
+\DoxyCodeLine{00064\ \textcolor{comment}{\ *\ \ \ (unchecked)}}
+\DoxyCodeLine{00065\ \textcolor{comment}{\ *\ Precondition:\ v\ does\ not\ exceed\ OSSL\_QUIC\_VLINT\_MAX}}
+\DoxyCodeLine{00066\ \textcolor{comment}{\ *\ \ \ (unchecked)}}
+\DoxyCodeLine{00067\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00068\ \textcolor{keywordtype}{void}\ ossl\_quic\_vlint\_encode(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *buf,\ uint64\_t\ v);}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00071\ \textcolor{comment}{\ *\ This\ function\ writes\ a\ QUIC\ variable-\/length\ encoded\ integer\ to\ buf.\ The}}
+\DoxyCodeLine{00072\ \textcolor{comment}{\ *\ specified\ number\ of\ bytes\ n\ are\ used\ for\ the\ encoding,\ which\ means\ that\ the}}
+\DoxyCodeLine{00073\ \textcolor{comment}{\ *\ encoded\ value\ may\ take\ up\ more\ space\ than\ necessary.}}
+\DoxyCodeLine{00074\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00075\ \textcolor{comment}{\ *\ It\ is\ the\ caller's\ responsibility\ to\ ensure\ that\ the\ buffer\ is\ of\ at\ least\ n}}
+\DoxyCodeLine{00076\ \textcolor{comment}{\ *\ bytes,\ and\ that\ v\ is\ representable\ by\ a\ n-\/byte\ QUIC\ variable-\/length\ integer.}}
+\DoxyCodeLine{00077\ \textcolor{comment}{\ *\ The\ representable\ ranges\ are:}}
+\DoxyCodeLine{00078\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00079\ \textcolor{comment}{\ *\ \ \ 1-\/byte\ encoding:\ [0,\ 2**\ 6-\/1]}}
+\DoxyCodeLine{00080\ \textcolor{comment}{\ *\ \ \ 2-\/byte\ encoding:\ [0,\ 2**14-\/1]}}
+\DoxyCodeLine{00081\ \textcolor{comment}{\ *\ \ \ 4-\/byte\ encoding:\ [0,\ 2**30-\/1]}}
+\DoxyCodeLine{00082\ \textcolor{comment}{\ *\ \ \ 8-\/byte\ encoding:\ [0,\ 2**62-\/1]}}
+\DoxyCodeLine{00083\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00084\ \textcolor{comment}{\ *\ Precondition:\ buf\ is\ at\ least\ n\ bytes\ in\ size\ (unchecked)}}
+\DoxyCodeLine{00085\ \textcolor{comment}{\ *\ Precondition:\ v\ does\ not\ exceed\ the\ representable\ range}}
+\DoxyCodeLine{00086\ \textcolor{comment}{\ *\ \ \ (ossl\_quic\_vlint\_encode\_len(v)\ <=\ n)\ (unchecked)}}
+\DoxyCodeLine{00087\ \textcolor{comment}{\ *\ Precondition:\ v\ does\ not\ exceed\ OSSL\_QUIC\_VLINT\_MAX}}
+\DoxyCodeLine{00088\ \textcolor{comment}{\ *\ \ \ (unchecked)}}
+\DoxyCodeLine{00089\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00090\ \textcolor{keywordtype}{void}\ ossl\_quic\_vlint\_encode\_n(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *buf,\ uint64\_t\ v,\ \textcolor{keywordtype}{int}\ n);}
+\DoxyCodeLine{00091\ }
+\DoxyCodeLine{00092\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00093\ \textcolor{comment}{\ *\ Given\ the\ first\ byte\ of\ an\ encoded\ QUIC\ variable-\/length\ integer,\ returns}}
+\DoxyCodeLine{00094\ \textcolor{comment}{\ *\ the\ number\ of\ bytes\ comprising\ the\ encoded\ integer,\ including\ the\ first}}
+\DoxyCodeLine{00095\ \textcolor{comment}{\ *\ byte.}}
+\DoxyCodeLine{00096\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00097\ \textcolor{keyword}{static}\ ossl\_unused\ ossl\_inline\ \textcolor{keywordtype}{size\_t}\ ossl\_quic\_vlint\_decode\_len(uint8\_t\ first\_byte)}
+\DoxyCodeLine{00098\ \{}
+\DoxyCodeLine{00099\ \ \ \ \ \textcolor{keywordflow}{return}\ 1U\ <<\ ((first\_byte\ \&\ 0xC0)\ >>\ 6);}
+\DoxyCodeLine{00100\ \}}
+\DoxyCodeLine{00101\ }
+\DoxyCodeLine{00102\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00103\ \textcolor{comment}{\ *\ Given\ a\ buffer\ containing\ an\ encoded\ QUIC\ variable-\/length\ integer,\ returns}}
+\DoxyCodeLine{00104\ \textcolor{comment}{\ *\ the\ decoded\ value.\ The\ buffer\ must\ be\ of\ at\ least}}
+\DoxyCodeLine{00105\ \textcolor{comment}{\ *\ ossl\_quic\_vlint\_decode\_len(buf[0])\ bytes\ in\ size,\ and\ the\ caller\ is\ responsible}}
+\DoxyCodeLine{00106\ \textcolor{comment}{\ *\ for\ checking\ this.}}
+\DoxyCodeLine{00107\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00108\ \textcolor{comment}{\ *\ Precondition:\ buf\ is\ at\ least\ ossl\_quic\_vlint\_decode\_len(buf[0])\ bytes\ in\ size}}
+\DoxyCodeLine{00109\ \textcolor{comment}{\ *\ \ \ (unchecked)}}
+\DoxyCodeLine{00110\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00111\ uint64\_t\ ossl\_quic\_vlint\_decode\_unchecked(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *buf);}
+\DoxyCodeLine{00112\ }
+\DoxyCodeLine{00113\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00114\ \textcolor{comment}{\ *\ Given\ a\ buffer\ buf\ of\ buf\_len\ bytes\ in\ length,\ attempts\ to\ decode\ an\ encoded}}
+\DoxyCodeLine{00115\ \textcolor{comment}{\ *\ QUIC\ variable-\/length\ integer\ at\ the\ start\ of\ the\ buffer\ and\ writes\ the\ result}}
+\DoxyCodeLine{00116\ \textcolor{comment}{\ *\ to\ *v.\ If\ buf\_len\ is\ inadequate,\ suggesting\ a\ truncated\ encoded\ integer,\ the}}
+\DoxyCodeLine{00117\ \textcolor{comment}{\ *\ function\ fails\ and\ 0\ is\ returned.\ Otherwise,\ returns\ the\ number\ of\ bytes}}
+\DoxyCodeLine{00118\ \textcolor{comment}{\ *\ consumed.}}
+\DoxyCodeLine{00119\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00120\ \textcolor{comment}{\ *\ Precondition:\ buf\ is\ at\ least\ buf\_len\ bytes\ in\ size}}
+\DoxyCodeLine{00121\ \textcolor{comment}{\ *\ Precondition:\ v\ (unchecked)}}
+\DoxyCodeLine{00122\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00123\ \textcolor{keywordtype}{int}\ ossl\_quic\_vlint\_decode(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *buf,\ \textcolor{keywordtype}{size\_t}\ buf\_len,\ uint64\_t\ *v);}
+\DoxyCodeLine{00124\ }
+\DoxyCodeLine{00125\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00126\ }
+\DoxyCodeLine{00127\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

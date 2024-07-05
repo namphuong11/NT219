@@ -1,0 +1,128 @@
+\doxysection{passphrase.\+h}
+\hypertarget{passphrase_8h_source}{}\label{passphrase_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/passphrase.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/passphrase.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2020-\/2021\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_INTERNAL\_PASSPHRASE\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_INTERNAL\_PASSPHRASE\_H}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#\ pragma\ once}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ *\ This\ is\ a\ passphrase\ reader\ bridge\ with\ bells\ and\ whistles.}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ *\ On\ one\ hand,\ an\ API\ may\ wish\ to\ offer\ all\ sorts\ of\ passphrase\ callback}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ *\ possibilities\ to\ users,\ or\ may\ have\ to\ do\ so\ for\ historical\ reasons.}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ *\ On\ the\ other\ hand,\ that\ same\ API\ may\ have\ demands\ from\ other\ interfaces,}}
+\DoxyCodeLine{00020\ \textcolor{comment}{\ *\ notably\ from\ the\ libcrypto\ <-\/>\ provider\ interface,\ which\ uses}}
+\DoxyCodeLine{00021\ \textcolor{comment}{\ *\ OSSL\_PASSPHRASE\_CALLBACK\ consistently.}}
+\DoxyCodeLine{00022\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00023\ \textcolor{comment}{\ *\ The\ structure\ and\ functions\ below\ are\ the\ fundaments\ for\ bridging\ one}}
+\DoxyCodeLine{00024\ \textcolor{comment}{\ *\ passphrase\ callback\ form\ to\ another.}}
+\DoxyCodeLine{00025\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00026\ \textcolor{comment}{\ *\ In\ addition,\ extra\ features\ are\ included\ (this\ may\ be\ a\ growing\ list):}}
+\DoxyCodeLine{00027\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00028\ \textcolor{comment}{\ *\ -\/\ \ \ password\ caching.\ \ This\ is\ to\ be\ used\ by\ APIs\ where\ it's\ likely}}
+\DoxyCodeLine{00029\ \textcolor{comment}{\ *\ \ \ \ \ that\ the\ same\ passphrase\ may\ be\ asked\ for\ more\ than\ once,\ but\ the}}
+\DoxyCodeLine{00030\ \textcolor{comment}{\ *\ \ \ \ \ user\ shouldn't\ get\ prompted\ more\ than\ once.\ \ For\ example,\ this\ is}}
+\DoxyCodeLine{00031\ \textcolor{comment}{\ *\ \ \ \ \ useful\ for\ OSSL\_DECODER,\ which\ may\ have\ to\ use\ a\ passphrase\ while}}
+\DoxyCodeLine{00032\ \textcolor{comment}{\ *\ \ \ \ \ trying\ to\ find\ out\ what\ input\ it\ has.}}
+\DoxyCodeLine{00033\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00036\ \textcolor{comment}{\ *\ Structure\ to\ hold\ whatever\ the\ calling\ user\ may\ specify.\ \ This\ structure}}
+\DoxyCodeLine{00037\ \textcolor{comment}{\ *\ is\ intended\ to\ be\ integrated\ into\ API\ specific\ structures\ or\ to\ be\ used}}
+\DoxyCodeLine{00038\ \textcolor{comment}{\ *\ as\ a\ local\ on-\/stack\ variable\ type.\ \ Therefore,\ no\ functions\ to\ allocate}}
+\DoxyCodeLine{00039\ \textcolor{comment}{\ *\ or\ freed\ it\ on\ the\ heap\ is\ offered.}}
+\DoxyCodeLine{00040\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00041\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__passphrase__data__st}{ossl\_passphrase\_data\_st}}\ \{}
+\DoxyCodeLine{00042\ \ \ \ \ \textcolor{keyword}{enum}\ \{}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ is\_expl\_passphrase\ =\ 1,\ \textcolor{comment}{/*\ Explicit\ passphrase\ given\ by\ user\ */}}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ is\_pem\_password,\ \ \ \ \ \ \ \ \textcolor{comment}{/*\ pem\_password\_cb\ given\ by\ user\ */}}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ is\_ossl\_passphrase,\ \ \ \ \ \textcolor{comment}{/*\ OSSL\_PASSPHRASE\_CALLBACK\ given\ by\ user\ */}}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ is\_ui\_method\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ UI\_METHOD\ given\ by\ user\ */}}
+\DoxyCodeLine{00047\ \ \ \ \ \}\ type;}
+\DoxyCodeLine{00048\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{char}\ *passphrase\_copy;}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ passphrase\_len;}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \}\ expl\_passphrase;}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \ \ \ \ pem\_password\_cb\ *password\_cb;}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *password\_cbarg;}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \}\ pem\_password;}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \ \ \ \ OSSL\_PASSPHRASE\_CALLBACK\ *passphrase\_cb;}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *passphrase\_cbarg;}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \}\ ossl\_passphrase;}
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ UI\_METHOD\ *ui\_method;}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *ui\_method\_data;}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \}\ ui\_method;}
+\DoxyCodeLine{00068\ \ \ \ \ \}\ \_;}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ \ \ \ \ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00071\ \textcolor{comment}{\ \ \ \ \ *\ Flags\ section}}
+\DoxyCodeLine{00072\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00074\ \ \ \ \ \textcolor{comment}{/*\ Set\ to\ indicate\ that\ caching\ should\ be\ done\ */}}
+\DoxyCodeLine{00075\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ flag\_cache\_passphrase:1;}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00077\ \ \ \ \ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00078\ \textcolor{comment}{\ \ \ \ \ *\ Misc\ section:\ caches\ and\ other}}
+\DoxyCodeLine{00079\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00081\ \ \ \ \ \textcolor{keywordtype}{char}\ *cached\_passphrase;}
+\DoxyCodeLine{00082\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ cached\_passphrase\_len;}
+\DoxyCodeLine{00083\ \};}
+\DoxyCodeLine{00084\ }
+\DoxyCodeLine{00085\ \textcolor{comment}{/*\ Structure\ manipulation\ */}}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00087\ \textcolor{keywordtype}{void}\ ossl\_pw\_clear\_passphrase\_data(\textcolor{keyword}{struct}\ \mbox{\hyperlink{structossl__passphrase__data__st}{ossl\_passphrase\_data\_st}}\ *data);}
+\DoxyCodeLine{00088\ \textcolor{keywordtype}{void}\ ossl\_pw\_clear\_passphrase\_cache(\textcolor{keyword}{struct}\ \mbox{\hyperlink{structossl__passphrase__data__st}{ossl\_passphrase\_data\_st}}\ *data);}
+\DoxyCodeLine{00089\ }
+\DoxyCodeLine{00090\ \textcolor{keywordtype}{int}\ ossl\_pw\_set\_passphrase(\textcolor{keyword}{struct}\ \mbox{\hyperlink{structossl__passphrase__data__st}{ossl\_passphrase\_data\_st}}\ *data,}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *passphrase,}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ passphrase\_len);}
+\DoxyCodeLine{00093\ \textcolor{keywordtype}{int}\ ossl\_pw\_set\_pem\_password\_cb(\textcolor{keyword}{struct}\ \mbox{\hyperlink{structossl__passphrase__data__st}{ossl\_passphrase\_data\_st}}\ *data,}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pem\_password\_cb\ *cb,\ \textcolor{keywordtype}{void}\ *cbarg);}
+\DoxyCodeLine{00095\ \textcolor{keywordtype}{int}\ ossl\_pw\_set\_ossl\_passphrase\_cb(\textcolor{keyword}{struct}\ \mbox{\hyperlink{structossl__passphrase__data__st}{ossl\_passphrase\_data\_st}}\ *data,}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OSSL\_PASSPHRASE\_CALLBACK\ *cb,\ \textcolor{keywordtype}{void}\ *cbarg);}
+\DoxyCodeLine{00097\ \textcolor{keywordtype}{int}\ ossl\_pw\_set\_ui\_method(\textcolor{keyword}{struct}\ \mbox{\hyperlink{structossl__passphrase__data__st}{ossl\_passphrase\_data\_st}}\ *data,}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ UI\_METHOD\ *ui\_method,\ \textcolor{keywordtype}{void}\ *ui\_data);}
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00100\ \textcolor{keywordtype}{int}\ ossl\_pw\_enable\_passphrase\_caching(\textcolor{keyword}{struct}\ \mbox{\hyperlink{structossl__passphrase__data__st}{ossl\_passphrase\_data\_st}}\ *data);}
+\DoxyCodeLine{00101\ \textcolor{keywordtype}{int}\ ossl\_pw\_disable\_passphrase\_caching(\textcolor{keyword}{struct}\ \mbox{\hyperlink{structossl__passphrase__data__st}{ossl\_passphrase\_data\_st}}\ *data);}
+\DoxyCodeLine{00102\ }
+\DoxyCodeLine{00103\ \textcolor{comment}{/*\ Central\ function\ for\ direct\ calls\ */}}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00105\ \textcolor{keywordtype}{int}\ ossl\_pw\_get\_passphrase(\textcolor{keywordtype}{char}\ *pass,\ \textcolor{keywordtype}{size\_t}\ pass\_size,\ \textcolor{keywordtype}{size\_t}\ *pass\_len,}
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ OSSL\_PARAM\ params[],\ \textcolor{keywordtype}{int}\ verify,}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct}\ \mbox{\hyperlink{structossl__passphrase__data__st}{ossl\_passphrase\_data\_st}}\ *data);}
+\DoxyCodeLine{00108\ }
+\DoxyCodeLine{00109\ \textcolor{comment}{/*\ Callback\ functions\ */}}
+\DoxyCodeLine{00110\ }
+\DoxyCodeLine{00111\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00112\ \textcolor{comment}{\ *\ All\ of\ these\ callback\ expect\ that\ the\ callback\ argument\ is\ a}}
+\DoxyCodeLine{00113\ \textcolor{comment}{\ *\ struct\ ossl\_passphrase\_data\_st}}
+\DoxyCodeLine{00114\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00115\ }
+\DoxyCodeLine{00116\ pem\_password\_cb\ ossl\_pw\_pem\_password;}
+\DoxyCodeLine{00117\ pem\_password\_cb\ ossl\_pw\_pvk\_password;}
+\DoxyCodeLine{00118\ \textcolor{comment}{/*\ One\ callback\ for\ encoding\ (verification\ prompt)\ and\ one\ for\ decoding\ */}}
+\DoxyCodeLine{00119\ OSSL\_PASSPHRASE\_CALLBACK\ ossl\_pw\_passphrase\_callback\_enc;}
+\DoxyCodeLine{00120\ OSSL\_PASSPHRASE\_CALLBACK\ ossl\_pw\_passphrase\_callback\_dec;}
+\DoxyCodeLine{00121\ }
+\DoxyCodeLine{00122\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

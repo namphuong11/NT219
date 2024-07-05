@@ -1,0 +1,117 @@
+\doxysection{ossl-\/nghttp3.h}
+\hypertarget{ossl-nghttp3_8h_source}{}\label{ossl-nghttp3_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/demos/http3/ossl-\/nghttp3.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/demos/http3/ossl-\/nghttp3.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#ifndef\ OSSL\_NGHTTP3\_H}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#\ define\ OSSL\_NGHTTP3\_H}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#\ include\ <openssl/bio.h>}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#\ include\ <openssl/ssl.h>}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ include\ <nghttp3/nghttp3.h>}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ *\ ossl-\/nghttp3:\ Demo\ binding\ of\ nghttp3\ to\ OpenSSL\ QUIC}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ *\ =====================================================}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00020\ \textcolor{comment}{\ *\ This\ is\ a\ simple\ library\ which\ provides\ an\ example\ binding\ of\ the\ nghttp3}}
+\DoxyCodeLine{00021\ \textcolor{comment}{\ *\ HTTP/3\ library\ to\ OpenSSL's\ QUIC\ API.}}
+\DoxyCodeLine{00022\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{comment}{/*\ Represents\ an\ HTTP/3\ connection\ to\ a\ server.\ */}}
+\DoxyCodeLine{00025\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__demo__h3__conn__st}{ossl\_demo\_h3\_conn\_st}}\ \mbox{\hyperlink{structossl__demo__h3__conn__st}{OSSL\_DEMO\_H3\_CONN}};}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \textcolor{comment}{/*\ Represents\ an\ HTTP/3\ request,\ control\ or\ QPACK\ stream.\ */}}
+\DoxyCodeLine{00028\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__demo__h3__stream__st}{ossl\_demo\_h3\_stream\_st}}\ \mbox{\hyperlink{structossl__demo__h3__stream__st}{OSSL\_DEMO\_H3\_STREAM}};}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00031\ \textcolor{comment}{\ *\ Creates\ a\ HTTP/3\ connection\ using\ the\ given\ QUIC\ client\ connection\ BIO.\ The}}
+\DoxyCodeLine{00032\ \textcolor{comment}{\ *\ BIO\ must\ be\ able\ to\ provide\ an\ SSL\ object\ pointer\ using\ BIO\_get\_ssl.\ Takes}}
+\DoxyCodeLine{00033\ \textcolor{comment}{\ *\ ownership\ of\ the\ reference.\ If\ the\ QUIC\ connection\ SSL\ object\ has\ not\ already}}
+\DoxyCodeLine{00034\ \textcolor{comment}{\ *\ been\ connected,\ HTTP/3\ ALPN\ is\ set\ automatically.\ If\ it\ has\ already\ been}}
+\DoxyCodeLine{00035\ \textcolor{comment}{\ *\ connected,\ HTTP/3\ ALPN\ ("{}h3"{})\ must\ have\ been\ configured\ and\ no\ streams\ must}}
+\DoxyCodeLine{00036\ \textcolor{comment}{\ *\ have\ been\ created\ yet.}}
+\DoxyCodeLine{00037\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00038\ \textcolor{comment}{\ *\ If\ settings\ is\ NULL,\ use\ default\ settings\ only.\ Settings\ unsupported\ by}}
+\DoxyCodeLine{00039\ \textcolor{comment}{\ *\ this\ QUIC\ binding\ are\ ignored.}}
+\DoxyCodeLine{00040\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00041\ \textcolor{comment}{\ *\ user\_data\ is\ an\ application-\/provided\ opaque\ value\ which\ can\ be\ retrieved}}
+\DoxyCodeLine{00042\ \textcolor{comment}{\ *\ using\ OSSL\_DEMO\_H3\_CONN\_get\_user\_data.\ Note\ that\ the\ user\ data\ value\ passed}}
+\DoxyCodeLine{00043\ \textcolor{comment}{\ *\ to\ the\ callback\ functions\ specified\ in\ callbacks\ is\ a\ pointer\ to\ the}}
+\DoxyCodeLine{00044\ \textcolor{comment}{\ *\ OSSL\_DEMO\_H3\_CONN,\ not\ user\_data.}}
+\DoxyCodeLine{00045\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00046\ \textcolor{comment}{\ *\ Returns\ NULL\ on\ failure.}}
+\DoxyCodeLine{00047\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00048\ \mbox{\hyperlink{structossl__demo__h3__conn__st}{OSSL\_DEMO\_H3\_CONN}}\ *OSSL\_DEMO\_H3\_CONN\_new\_for\_conn(BIO\ *qconn\_bio,}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ nghttp3\_callbacks\ *callbacks,}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ nghttp3\_settings\ *settings,}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *user\_data);}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00054\ \textcolor{comment}{\ *\ Works\ identically\ to\ OSSL\_DEMO\_H3\_CONN\_new\_for\_conn\ except\ that\ it\ manages}}
+\DoxyCodeLine{00055\ \textcolor{comment}{\ *\ the\ creation\ of\ a\ QUIC\ connection\ SSL\ object\ automatically\ using\ an\ address}}
+\DoxyCodeLine{00056\ \textcolor{comment}{\ *\ string.\ addr\ should\ be\ a\ string\ such\ as\ "{}www.example.com:443"{}.\ The\ created}}
+\DoxyCodeLine{00057\ \textcolor{comment}{\ *\ underlying\ QUIC\ connection\ SSL\ object\ is\ owned\ by\ the\ OSSL\_DEMO\_H3\_CONN\ and}}
+\DoxyCodeLine{00058\ \textcolor{comment}{\ *\ can\ be\ subsequently\ retrieved\ using\ OSSL\_DEMO\_H3\_CONN\_get0\_connection.}}
+\DoxyCodeLine{00059\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00060\ \textcolor{comment}{\ *\ Returns\ NULL\ on\ failure.\ ctx\ must\ be\ a\ SSL\_CTX\ using\ a\ QUIC\ client}}
+\DoxyCodeLine{00061\ \textcolor{comment}{\ *\ SSL\_METHOD.}}
+\DoxyCodeLine{00062\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00063\ \mbox{\hyperlink{structossl__demo__h3__conn__st}{OSSL\_DEMO\_H3\_CONN}}\ *OSSL\_DEMO\_H3\_CONN\_new\_for\_addr(SSL\_CTX\ *ctx,}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *addr,}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ nghttp3\_callbacks\ *callbacks,}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ nghttp3\_settings\ *settings,}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *user\_data);}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ \textcolor{comment}{/*\ Equivalent\ to\ SSL\_connect(OSSL\_DEMO\_H3\_CONN\_get0\_connection(conn)).\ */}}
+\DoxyCodeLine{00070\ \textcolor{keywordtype}{int}\ OSSL\_DEMO\_H3\_CONN\_connect(\mbox{\hyperlink{structossl__demo__h3__conn__st}{OSSL\_DEMO\_H3\_CONN}}\ *conn);}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00072\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00073\ \textcolor{comment}{\ *\ Free\ the\ OSSL\_DEMO\_H3\_CONN\ and\ any\ underlying\ QUIC\ connection\ SSL\ object\ and}}
+\DoxyCodeLine{00074\ \textcolor{comment}{\ *\ associated\ streams.}}
+\DoxyCodeLine{00075\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00076\ \textcolor{keywordtype}{void}\ OSSL\_DEMO\_H3\_CONN\_free(\mbox{\hyperlink{structossl__demo__h3__conn__st}{OSSL\_DEMO\_H3\_CONN}}\ *conn);}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00079\ \textcolor{comment}{\ *\ Returns\ the\ user\ data\ value\ which\ was\ specified\ in}}
+\DoxyCodeLine{00080\ \textcolor{comment}{\ *\ OSSL\_DEMO\_H3\_CONN\_new\_for\_conn.}}
+\DoxyCodeLine{00081\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00082\ \textcolor{keywordtype}{void}\ *OSSL\_DEMO\_H3\_CONN\_get\_user\_data(\textcolor{keyword}{const}\ \mbox{\hyperlink{structossl__demo__h3__conn__st}{OSSL\_DEMO\_H3\_CONN}}\ *conn);}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \textcolor{comment}{/*\ Returns\ the\ underlying\ QUIC\ connection\ SSL\ object.\ */}}
+\DoxyCodeLine{00085\ SSL\ *OSSL\_DEMO\_H3\_CONN\_get0\_connection(\textcolor{keyword}{const}\ \mbox{\hyperlink{structossl__demo__h3__conn__st}{OSSL\_DEMO\_H3\_CONN}}\ *conn);}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00087\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00088\ \textcolor{comment}{\ *\ Handle\ any\ pending\ events\ on\ a\ given\ HTTP/3\ connection.\ Returns\ 0\ on\ error.}}
+\DoxyCodeLine{00089\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00090\ \textcolor{keywordtype}{int}\ OSSL\_DEMO\_H3\_CONN\_handle\_events(\mbox{\hyperlink{structossl__demo__h3__conn__st}{OSSL\_DEMO\_H3\_CONN}}\ *conn);}
+\DoxyCodeLine{00091\ }
+\DoxyCodeLine{00092\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00093\ \textcolor{comment}{\ *\ Submits\ a\ new\ HTTP/3\ request\ on\ the\ given\ connection.\ Returns\ 0\ on\ error.}}
+\DoxyCodeLine{00094\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00095\ \textcolor{comment}{\ *\ This\ works\ analogously\ to\ nghttp3\_conn\_submit\_request().\ The\ stream\ user\ data}}
+\DoxyCodeLine{00096\ \textcolor{comment}{\ *\ pointer\ passed\ to\ the\ callbacks\ is\ a\ OSSL\_DEMO\_H3\_STREAM\ object\ pointer;\ to}}
+\DoxyCodeLine{00097\ \textcolor{comment}{\ *\ retrieve\ the\ stream\ user\ data\ pointer\ passed\ to\ this\ function,\ use}}
+\DoxyCodeLine{00098\ \textcolor{comment}{\ *\ OSSL\_DEMO\_H3\_STREAM\_get\_user\_data.}}
+\DoxyCodeLine{00099\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00100\ \textcolor{keywordtype}{int}\ OSSL\_DEMO\_H3\_CONN\_submit\_request(\mbox{\hyperlink{structossl__demo__h3__conn__st}{OSSL\_DEMO\_H3\_CONN}}\ *conn,}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ nghttp3\_nv\ *hdr,\ \textcolor{keywordtype}{size\_t}\ hdrlen,}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ nghttp3\_data\_reader\ *dr,}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *stream\_user\_data);}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00105\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00106\ \textcolor{comment}{\ *\ Returns\ the\ user\ data\ value\ which\ was\ specified\ in}}
+\DoxyCodeLine{00107\ \textcolor{comment}{\ *\ OSSL\_DEMO\_H3\_CONN\_submit\_request.}}
+\DoxyCodeLine{00108\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00109\ \textcolor{keywordtype}{void}\ *OSSL\_DEMO\_H3\_STREAM\_get\_user\_data(\textcolor{keyword}{const}\ \mbox{\hyperlink{structossl__demo__h3__stream__st}{OSSL\_DEMO\_H3\_STREAM}}\ *stream);}
+\DoxyCodeLine{00110\ }
+\DoxyCodeLine{00111\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

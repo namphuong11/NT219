@@ -1,0 +1,49 @@
+\doxysection{cmll\+\_\+local.\+h}
+\hypertarget{cmll__local_8h_source}{}\label{cmll__local_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/camellia/cmll\_local.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/camellia/cmll\_local.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2006-\/2016\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{comment}{/*\ ====================================================================}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ *\ Copyright\ 2006\ NTT\ (Nippon\ Telegraph\ and\ Telephone\ Corporation)\ .}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ *\ ALL\ RIGHTS\ RESERVED.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ *\ Intellectual\ Property\ information\ for\ Camellia:}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ *\ \ \ \ \ http://info.isl.ntt.co.jp/crypt/eng/info/chiteki.html}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ *\ News\ Release\ for\ Announcement\ of\ Camellia\ open\ source:}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ *\ \ \ \ \ http://www.ntt.co.jp/news/news06e/0604/060413a.html}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00020\ \textcolor{comment}{\ *\ The\ Camellia\ Code\ included\ herein\ is\ developed\ by}}
+\DoxyCodeLine{00021\ \textcolor{comment}{\ *\ NTT\ (Nippon\ Telegraph\ and\ Telephone\ Corporation),\ and\ is\ contributed}}
+\DoxyCodeLine{00022\ \textcolor{comment}{\ *\ to\ the\ OpenSSL\ project.}}
+\DoxyCodeLine{00023\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#ifndef\ OSSL\_CRYPTO\_CAMELLIA\_CMLL\_LOCAL\_H}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#\ define\ OSSL\_CRYPTO\_CAMELLIA\_CMLL\_LOCAL\_H}}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \textcolor{keyword}{typedef}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ u32;}
+\DoxyCodeLine{00029\ \textcolor{keyword}{typedef}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ u8;}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \textcolor{keywordtype}{int}\ Camellia\_Ekeygen(\textcolor{keywordtype}{int}\ keyBitLength,\ \textcolor{keyword}{const}\ u8\ *rawKey,}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ KEY\_TABLE\_TYPE\ keyTable);}
+\DoxyCodeLine{00033\ \textcolor{keywordtype}{void}\ Camellia\_EncryptBlock\_Rounds(\textcolor{keywordtype}{int}\ grandRounds,\ \textcolor{keyword}{const}\ u8\ plaintext[],}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ KEY\_TABLE\_TYPE\ keyTable,}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ u8\ ciphertext[]);}
+\DoxyCodeLine{00036\ \textcolor{keywordtype}{void}\ Camellia\_DecryptBlock\_Rounds(\textcolor{keywordtype}{int}\ grandRounds,\ \textcolor{keyword}{const}\ u8\ ciphertext[],}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ KEY\_TABLE\_TYPE\ keyTable,}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ u8\ plaintext[]);}
+\DoxyCodeLine{00039\ \textcolor{keywordtype}{void}\ Camellia\_EncryptBlock(\textcolor{keywordtype}{int}\ keyBitLength,\ \textcolor{keyword}{const}\ u8\ plaintext[],}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ KEY\_TABLE\_TYPE\ keyTable,\ u8\ ciphertext[]);}
+\DoxyCodeLine{00041\ \textcolor{keywordtype}{void}\ Camellia\_DecryptBlock(\textcolor{keywordtype}{int}\ keyBitLength,\ \textcolor{keyword}{const}\ u8\ ciphertext[],}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ KEY\_TABLE\_TYPE\ keyTable,\ u8\ plaintext[]);}
+\DoxyCodeLine{00043\ \textcolor{preprocessor}{\#endif\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{/*\ \#ifndef\ OSSL\_CRYPTO\_CAMELLIA\_CMLL\_LOCAL\_H\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

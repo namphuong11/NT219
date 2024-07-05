@@ -1,0 +1,46 @@
+\doxysection{EVP\+\_\+\+CHACHA\+\_\+\+AEAD\+\_\+\+CTX Struct Reference}
+\hypertarget{struct_e_v_p___c_h_a_c_h_a___a_e_a_d___c_t_x}{}\label{struct_e_v_p___c_h_a_c_h_a___a_e_a_d___c_t_x}\index{EVP\_CHACHA\_AEAD\_CTX@{EVP\_CHACHA\_AEAD\_CTX}}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{struct_e_v_p___c_h_a_c_h_a___a_e_a_d___c_t_x_ab62db467f50ea7325f8a61beafcfa64c}\label{struct_e_v_p___c_h_a_c_h_a___a_e_a_d___c_t_x_ab62db467f50ea7325f8a61beafcfa64c} 
+\mbox{\hyperlink{struct_e_v_p___c_h_a_c_h_a___k_e_y}{EVP\+\_\+\+CHACHA\+\_\+\+KEY}} {\bfseries key}
+\item 
+\Hypertarget{struct_e_v_p___c_h_a_c_h_a___a_e_a_d___c_t_x_ae0185399f565be561c9a182eadfda968}\label{struct_e_v_p___c_h_a_c_h_a___a_e_a_d___c_t_x_ae0185399f565be561c9a182eadfda968} 
+unsigned int {\bfseries nonce} \mbox{[}12/4\mbox{]}
+\item 
+\Hypertarget{struct_e_v_p___c_h_a_c_h_a___a_e_a_d___c_t_x_a6b32d43cfd9eca00f71c3742eabf7c85}\label{struct_e_v_p___c_h_a_c_h_a___a_e_a_d___c_t_x_a6b32d43cfd9eca00f71c3742eabf7c85} 
+unsigned char {\bfseries tag} \mbox{[}POLY1305\+\_\+\+BLOCK\+\_\+\+SIZE\mbox{]}
+\item 
+\Hypertarget{struct_e_v_p___c_h_a_c_h_a___a_e_a_d___c_t_x_a62790baccd4a2881047d78700e583450}\label{struct_e_v_p___c_h_a_c_h_a___a_e_a_d___c_t_x_a62790baccd4a2881047d78700e583450} 
+unsigned char {\bfseries tls\+\_\+aad} \mbox{[}POLY1305\+\_\+\+BLOCK\+\_\+\+SIZE\mbox{]}
+\item 
+\Hypertarget{struct_e_v_p___c_h_a_c_h_a___a_e_a_d___c_t_x_a50a2e810cc15e64a25add8bfa954fd5e}\label{struct_e_v_p___c_h_a_c_h_a___a_e_a_d___c_t_x_a50a2e810cc15e64a25add8bfa954fd5e} 
+\begin{tabbing}
+xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=\kill
+struct \{\\
+\>uint64\_t {\bfseries aad}\\
+\>uint64\_t {\bfseries text}\\
+\} {\bfseries len}\\
+
+\end{tabbing}\item 
+\Hypertarget{struct_e_v_p___c_h_a_c_h_a___a_e_a_d___c_t_x_a58feb0dec62a49cf6168f0ba42495a04}\label{struct_e_v_p___c_h_a_c_h_a___a_e_a_d___c_t_x_a58feb0dec62a49cf6168f0ba42495a04} 
+int {\bfseries aad}
+\item 
+\Hypertarget{struct_e_v_p___c_h_a_c_h_a___a_e_a_d___c_t_x_a37fa0973f1202a435f1b06d0d8448f23}\label{struct_e_v_p___c_h_a_c_h_a___a_e_a_d___c_t_x_a37fa0973f1202a435f1b06d0d8448f23} 
+int {\bfseries mac\+\_\+inited}
+\item 
+\Hypertarget{struct_e_v_p___c_h_a_c_h_a___a_e_a_d___c_t_x_ac3c86a2e5a274cb2cbd4f78d3662019b}\label{struct_e_v_p___c_h_a_c_h_a___a_e_a_d___c_t_x_ac3c86a2e5a274cb2cbd4f78d3662019b} 
+int {\bfseries tag\+\_\+len}
+\item 
+\Hypertarget{struct_e_v_p___c_h_a_c_h_a___a_e_a_d___c_t_x_a94a1842fb06098277f8cee258a33ad2b}\label{struct_e_v_p___c_h_a_c_h_a___a_e_a_d___c_t_x_a94a1842fb06098277f8cee258a33ad2b} 
+int {\bfseries nonce\+\_\+len}
+\item 
+\Hypertarget{struct_e_v_p___c_h_a_c_h_a___a_e_a_d___c_t_x_ac939e4e0197bf1c82a35c7433649d850}\label{struct_e_v_p___c_h_a_c_h_a___a_e_a_d___c_t_x_ac939e4e0197bf1c82a35c7433649d850} 
+size\+\_\+t {\bfseries tls\+\_\+payload\+\_\+length}
+\end{DoxyCompactItemize}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/namph/\+Downloads/openssl/openssl-\/3.\+2.\+1/crypto/evp/e\+\_\+chacha20\+\_\+poly1305.\+c\end{DoxyCompactItemize}

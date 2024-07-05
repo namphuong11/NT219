@@ -1,0 +1,177 @@
+\doxysection{pcy\+\_\+local.\+h}
+\hypertarget{pcy__local_8h_source}{}\label{pcy__local_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/x509/pcy\_local.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/x509/pcy\_local.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2004-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_x509___p_o_l_i_c_y___d_a_t_a__st}{X509\_POLICY\_DATA\_st}}\ \mbox{\hyperlink{struct_x509___p_o_l_i_c_y___d_a_t_a__st}{X509\_POLICY\_DATA}};}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ DEFINE\_STACK\_OF(\mbox{\hyperlink{struct_x509___p_o_l_i_c_y___d_a_t_a__st}{X509\_POLICY\_DATA}})}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{comment}{/*\ Internal\ structures\ */}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ *\ This\ structure\ and\ the\ field\ names\ correspond\ to\ the\ Policy\ 'node'\ of}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ *\ RFC3280.\ NB\ this\ structure\ contains\ no\ pointers\ to\ parent\ or\ child\ data:}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ *\ X509\_POLICY\_NODE\ contains\ that.\ This\ means\ that\ the\ main\ policy\ data\ can}}
+\DoxyCodeLine{00020\ \textcolor{comment}{\ *\ be\ kept\ static\ and\ cached\ with\ the\ certificate.}}
+\DoxyCodeLine{00021\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ struct\ \mbox{\hyperlink{struct_x509___p_o_l_i_c_y___d_a_t_a__st}{X509\_POLICY\_DATA\_st}}\ \{}
+\DoxyCodeLine{00024\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ flags;}
+\DoxyCodeLine{00025\ \ \ \ \ \textcolor{comment}{/*\ Policy\ OID\ and\ qualifiers\ for\ this\ data\ */}}
+\DoxyCodeLine{00026\ \ \ \ \ ASN1\_OBJECT\ *valid\_policy;}
+\DoxyCodeLine{00027\ \ \ \ \ STACK\_OF(POLICYQUALINFO)\ *qualifier\_set;}
+\DoxyCodeLine{00028\ \ \ \ \ STACK\_OF(ASN1\_OBJECT)\ *expected\_policy\_set;}
+\DoxyCodeLine{00029\ \};}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \textcolor{comment}{/*\ X509\_POLICY\_DATA\ flags\ values\ */}}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00034\ \textcolor{comment}{\ *\ This\ flag\ indicates\ the\ structure\ has\ been\ mapped\ using\ a\ policy\ mapping}}
+\DoxyCodeLine{00035\ \textcolor{comment}{\ *\ extension.\ If\ policy\ mapping\ is\ not\ active\ its\ references\ get\ deleted.}}
+\DoxyCodeLine{00036\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#define\ POLICY\_DATA\_FLAG\_MAPPED\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 0x1}}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00041\ \textcolor{comment}{\ *\ This\ flag\ indicates\ the\ data\ doesn't\ correspond\ to\ a\ policy\ in\ Certificate}}
+\DoxyCodeLine{00042\ \textcolor{comment}{\ *\ Policies:\ it\ has\ been\ mapped\ to\ any\ policy.}}
+\DoxyCodeLine{00043\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \textcolor{preprocessor}{\#define\ POLICY\_DATA\_FLAG\_MAPPED\_ANY\ \ \ \ \ \ \ \ \ \ \ \ \ 0x2}}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \textcolor{comment}{/*\ AND\ with\ flags\ to\ see\ if\ any\ mapping\ has\ occurred\ */}}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \textcolor{preprocessor}{\#define\ POLICY\_DATA\_FLAG\_MAP\_MASK\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 0x3}}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \textcolor{comment}{/*\ qualifiers\ are\ shared\ and\ shouldn't\ be\ freed\ */}}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \textcolor{preprocessor}{\#define\ POLICY\_DATA\_FLAG\_SHARED\_QUALIFIERS\ \ \ \ \ \ 0x4}}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ \textcolor{comment}{/*\ Parent\ node\ is\ an\ extra\ node\ and\ should\ be\ freed\ */}}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \textcolor{preprocessor}{\#define\ POLICY\_DATA\_FLAG\_EXTRA\_NODE\ \ \ \ \ \ \ \ \ \ \ \ \ 0x8}}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ \textcolor{comment}{/*\ Corresponding\ CertificatePolicies\ is\ critical\ */}}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ \textcolor{preprocessor}{\#define\ POLICY\_DATA\_FLAG\_CRITICAL\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 0x10}}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00063\ \textcolor{comment}{/*\ This\ structure\ is\ cached\ with\ a\ certificate\ */}}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_x509___p_o_l_i_c_y___c_a_c_h_e__st}{X509\_POLICY\_CACHE\_st}}\ \{}
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{comment}{/*\ anyPolicy\ data\ or\ NULL\ if\ no\ anyPolicy\ */}}
+\DoxyCodeLine{00067\ \ \ \ \ \mbox{\hyperlink{struct_x509___p_o_l_i_c_y___d_a_t_a__st}{X509\_POLICY\_DATA}}\ *anyPolicy;}
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{comment}{/*\ other\ policy\ data\ */}}
+\DoxyCodeLine{00069\ \ \ \ \ STACK\_OF(\mbox{\hyperlink{struct_x509___p_o_l_i_c_y___d_a_t_a__st}{X509\_POLICY\_DATA}})\ *data;}
+\DoxyCodeLine{00070\ \ \ \ \ \textcolor{comment}{/*\ If\ InhibitAnyPolicy\ present\ this\ is\ its\ value\ or\ -\/1\ if\ absent.\ */}}
+\DoxyCodeLine{00071\ \ \ \ \ \textcolor{keywordtype}{long}\ any\_skip;}
+\DoxyCodeLine{00072\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00073\ \textcolor{comment}{\ \ \ \ \ *\ If\ policyConstraints\ and\ requireExplicitPolicy\ present\ this\ is\ its}}
+\DoxyCodeLine{00074\ \textcolor{comment}{\ \ \ \ \ *\ value\ or\ -\/1\ if\ absent.}}
+\DoxyCodeLine{00075\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00076\ \ \ \ \ \textcolor{keywordtype}{long}\ explicit\_skip;}
+\DoxyCodeLine{00077\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00078\ \textcolor{comment}{\ \ \ \ \ *\ If\ policyConstraints\ and\ policyMapping\ present\ this\ is\ its\ value\ or\ -\/1}}
+\DoxyCodeLine{00079\ \textcolor{comment}{\ \ \ \ \ *\ if\ absent.}}
+\DoxyCodeLine{00080\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00081\ \ \ \ \ \textcolor{keywordtype}{long}\ map\_skip;}
+\DoxyCodeLine{00082\ \};}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00085\ \textcolor{comment}{\ *\ \#define\ POLICY\_CACHE\_FLAG\_CRITICAL\ POLICY\_DATA\_FLAG\_CRITICAL}}
+\DoxyCodeLine{00086\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00088\ \textcolor{comment}{/*\ This\ structure\ represents\ the\ relationship\ between\ nodes\ */}}
+\DoxyCodeLine{00089\ }
+\DoxyCodeLine{00090\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_x509___p_o_l_i_c_y___n_o_d_e__st}{X509\_POLICY\_NODE\_st}}\ \{}
+\DoxyCodeLine{00091\ \ \ \ \ \textcolor{comment}{/*\ node\ data\ this\ refers\ to\ */}}
+\DoxyCodeLine{00092\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{struct_x509___p_o_l_i_c_y___d_a_t_a__st}{X509\_POLICY\_DATA}}\ *data;}
+\DoxyCodeLine{00093\ \ \ \ \ \textcolor{comment}{/*\ Parent\ node\ */}}
+\DoxyCodeLine{00094\ \ \ \ \ X509\_POLICY\_NODE\ *parent;}
+\DoxyCodeLine{00095\ \ \ \ \ \textcolor{comment}{/*\ Number\ of\ child\ nodes\ */}}
+\DoxyCodeLine{00096\ \ \ \ \ \textcolor{keywordtype}{int}\ nchild;}
+\DoxyCodeLine{00097\ \};}
+\DoxyCodeLine{00098\ }
+\DoxyCodeLine{00099\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_x509___p_o_l_i_c_y___l_e_v_e_l__st}{X509\_POLICY\_LEVEL\_st}}\ \{}
+\DoxyCodeLine{00100\ \ \ \ \ \textcolor{comment}{/*\ Cert\ for\ this\ level\ */}}
+\DoxyCodeLine{00101\ \ \ \ \ X509\ *cert;}
+\DoxyCodeLine{00102\ \ \ \ \ \textcolor{comment}{/*\ nodes\ at\ this\ level\ */}}
+\DoxyCodeLine{00103\ \ \ \ \ STACK\_OF(X509\_POLICY\_NODE)\ *nodes;}
+\DoxyCodeLine{00104\ \ \ \ \ \textcolor{comment}{/*\ anyPolicy\ node\ */}}
+\DoxyCodeLine{00105\ \ \ \ \ X509\_POLICY\_NODE\ *anyPolicy;}
+\DoxyCodeLine{00106\ \ \ \ \ \textcolor{comment}{/*\ Extra\ data\ */}}
+\DoxyCodeLine{00107\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00108\ \textcolor{comment}{\ \ \ \ \ *\ STACK\_OF(X509\_POLICY\_DATA)\ *extra\_data;}}
+\DoxyCodeLine{00109\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00110\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ flags;}
+\DoxyCodeLine{00111\ \};}
+\DoxyCodeLine{00112\ }
+\DoxyCodeLine{00113\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_x509___p_o_l_i_c_y___t_r_e_e__st}{X509\_POLICY\_TREE\_st}}\ \{}
+\DoxyCodeLine{00114\ \ \ \ \ \textcolor{comment}{/*\ The\ number\ of\ nodes\ in\ the\ tree\ */}}
+\DoxyCodeLine{00115\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ node\_count;}
+\DoxyCodeLine{00116\ \ \ \ \ \textcolor{comment}{/*\ The\ maximum\ number\ of\ nodes\ in\ the\ tree\ */}}
+\DoxyCodeLine{00117\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ node\_maximum;}
+\DoxyCodeLine{00118\ }
+\DoxyCodeLine{00119\ \ \ \ \ \textcolor{comment}{/*\ This\ is\ the\ tree\ 'level'\ data\ */}}
+\DoxyCodeLine{00120\ \ \ \ \ X509\_POLICY\_LEVEL\ *levels;}
+\DoxyCodeLine{00121\ \ \ \ \ \textcolor{keywordtype}{int}\ nlevel;}
+\DoxyCodeLine{00122\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00123\ \textcolor{comment}{\ \ \ \ \ *\ Extra\ policy\ data\ when\ additional\ nodes\ (not\ from\ the\ certificate)\ are}}
+\DoxyCodeLine{00124\ \textcolor{comment}{\ \ \ \ \ *\ required.}}
+\DoxyCodeLine{00125\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00126\ \ \ \ \ STACK\_OF(\mbox{\hyperlink{struct_x509___p_o_l_i_c_y___d_a_t_a__st}{X509\_POLICY\_DATA}})\ *extra\_data;}
+\DoxyCodeLine{00127\ \ \ \ \ \textcolor{comment}{/*\ This\ is\ the\ authority\ constrained\ policy\ set\ */}}
+\DoxyCodeLine{00128\ \ \ \ \ STACK\_OF(X509\_POLICY\_NODE)\ *auth\_policies;}
+\DoxyCodeLine{00129\ \ \ \ \ STACK\_OF(X509\_POLICY\_NODE)\ *user\_policies;}
+\DoxyCodeLine{00130\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ flags;}
+\DoxyCodeLine{00131\ \};}
+\DoxyCodeLine{00132\ }
+\DoxyCodeLine{00133\ \textcolor{comment}{/*\ Set\ if\ anyPolicy\ present\ in\ user\ policies\ */}}
+\DoxyCodeLine{00134\ \textcolor{preprocessor}{\#define\ POLICY\_FLAG\_ANY\_POLICY\ \ \ \ \ \ \ \ \ \ 0x2}}
+\DoxyCodeLine{00135\ }
+\DoxyCodeLine{00136\ \textcolor{comment}{/*\ Useful\ macros\ */}}
+\DoxyCodeLine{00137\ }
+\DoxyCodeLine{00138\ \textcolor{preprocessor}{\#define\ node\_data\_critical(data)\ (data-\/>flags\ \&\ POLICY\_DATA\_FLAG\_CRITICAL)}}
+\DoxyCodeLine{00139\ \textcolor{preprocessor}{\#define\ node\_critical(node)\ node\_data\_critical(node-\/>data)}}
+\DoxyCodeLine{00140\ }
+\DoxyCodeLine{00141\ \textcolor{comment}{/*\ Internal\ functions\ */}}
+\DoxyCodeLine{00142\ }
+\DoxyCodeLine{00143\ \mbox{\hyperlink{struct_x509___p_o_l_i_c_y___d_a_t_a__st}{X509\_POLICY\_DATA}}\ *ossl\_policy\_data\_new(POLICYINFO\ *policy,\ \textcolor{keyword}{const}\ ASN1\_OBJECT\ *\textcolor{keywordtype}{id},}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ crit);}
+\DoxyCodeLine{00145\ \textcolor{keywordtype}{void}\ ossl\_policy\_data\_free(\mbox{\hyperlink{struct_x509___p_o_l_i_c_y___d_a_t_a__st}{X509\_POLICY\_DATA}}\ *data);}
+\DoxyCodeLine{00146\ }
+\DoxyCodeLine{00147\ \mbox{\hyperlink{struct_x509___p_o_l_i_c_y___d_a_t_a__st}{X509\_POLICY\_DATA}}\ *ossl\_policy\_cache\_find\_data(\textcolor{keyword}{const}\ X509\_POLICY\_CACHE\ *cache,}
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ ASN1\_OBJECT\ *\textcolor{keywordtype}{id});}
+\DoxyCodeLine{00149\ \textcolor{keywordtype}{int}\ ossl\_policy\_cache\_set\_mapping(X509\ *x,\ POLICY\_MAPPINGS\ *maps);}
+\DoxyCodeLine{00150\ }
+\DoxyCodeLine{00151\ STACK\_OF(X509\_POLICY\_NODE)\ *ossl\_policy\_node\_cmp\_new(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00152\ }
+\DoxyCodeLine{00153\ \textcolor{keywordtype}{void}\ ossl\_policy\_cache\_free(X509\_POLICY\_CACHE\ *cache);}
+\DoxyCodeLine{00154\ }
+\DoxyCodeLine{00155\ X509\_POLICY\_NODE\ *ossl\_policy\_level\_find\_node(\textcolor{keyword}{const}\ X509\_POLICY\_LEVEL\ *level,}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ X509\_POLICY\_NODE\ *parent,}
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ ASN1\_OBJECT\ *\textcolor{keywordtype}{id});}
+\DoxyCodeLine{00158\ }
+\DoxyCodeLine{00159\ X509\_POLICY\_NODE\ *ossl\_policy\_tree\_find\_sk(STACK\_OF(X509\_POLICY\_NODE)\ *sk,}
+\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ ASN1\_OBJECT\ *\textcolor{keywordtype}{id});}
+\DoxyCodeLine{00161\ }
+\DoxyCodeLine{00162\ X509\_POLICY\_NODE\ *ossl\_policy\_level\_add\_node(X509\_POLICY\_LEVEL\ *level,}
+\DoxyCodeLine{00163\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_x509___p_o_l_i_c_y___d_a_t_a__st}{X509\_POLICY\_DATA}}\ *data,}
+\DoxyCodeLine{00164\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\_POLICY\_NODE\ *parent,}
+\DoxyCodeLine{00165\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\_POLICY\_TREE\ *tree,}
+\DoxyCodeLine{00166\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ extra\_data);}
+\DoxyCodeLine{00167\ \textcolor{keywordtype}{void}\ ossl\_policy\_node\_free(X509\_POLICY\_NODE\ *node);}
+\DoxyCodeLine{00168\ \textcolor{keywordtype}{int}\ ossl\_policy\_node\_match(\textcolor{keyword}{const}\ X509\_POLICY\_LEVEL\ *lvl,}
+\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ X509\_POLICY\_NODE\ *node,\ \textcolor{keyword}{const}\ ASN1\_OBJECT\ *oid);}
+\DoxyCodeLine{00170\ }
+\DoxyCodeLine{00171\ \textcolor{keyword}{const}\ X509\_POLICY\_CACHE\ *ossl\_policy\_cache\_set(X509\ *x);}
+
+\end{DoxyCode}

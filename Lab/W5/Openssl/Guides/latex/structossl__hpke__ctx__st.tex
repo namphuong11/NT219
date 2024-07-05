@@ -1,0 +1,96 @@
+\doxysection{ossl\+\_\+hpke\+\_\+ctx\+\_\+st Struct Reference}
+\hypertarget{structossl__hpke__ctx__st}{}\label{structossl__hpke__ctx__st}\index{ossl\_hpke\_ctx\_st@{ossl\_hpke\_ctx\_st}}
+
+
+sender or receiver context  
+
+
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{structossl__hpke__ctx__st_ae35df22afb33ac184e030f52b0415db8}\label{structossl__hpke__ctx__st_ae35df22afb33ac184e030f52b0415db8} 
+OSSL\+\_\+\+LIB\+\_\+\+CTX \texorpdfstring{$\ast$}{*} {\bfseries libctx}
+\item 
+\Hypertarget{structossl__hpke__ctx__st_a4e8d805288ee46b11143c16b725e1349}\label{structossl__hpke__ctx__st_a4e8d805288ee46b11143c16b725e1349} 
+char \texorpdfstring{$\ast$}{*} {\bfseries propq}
+\item 
+\Hypertarget{structossl__hpke__ctx__st_a96a9a3c7991e7cbe81a2884936aec020}\label{structossl__hpke__ctx__st_a96a9a3c7991e7cbe81a2884936aec020} 
+int {\bfseries mode}
+\item 
+\Hypertarget{structossl__hpke__ctx__st_ac0561b07e33d39b6f3ecad9a230ee7d4}\label{structossl__hpke__ctx__st_ac0561b07e33d39b6f3ecad9a230ee7d4} 
+OSSL\+\_\+\+HPKE\+\_\+\+SUITE {\bfseries suite}
+\item 
+\Hypertarget{structossl__hpke__ctx__st_a8a87eefc954fd2bb40dbcf2aab5c7dd3}\label{structossl__hpke__ctx__st_a8a87eefc954fd2bb40dbcf2aab5c7dd3} 
+const \mbox{\hyperlink{struct_o_s_s_l___h_p_k_e___k_e_m___i_n_f_o}{OSSL\+\_\+\+HPKE\+\_\+\+KEM\+\_\+\+INFO}} \texorpdfstring{$\ast$}{*} {\bfseries kem\+\_\+info}
+\item 
+\Hypertarget{structossl__hpke__ctx__st_aacf5eed2abeab349eeaac63c48d4abb3}\label{structossl__hpke__ctx__st_aacf5eed2abeab349eeaac63c48d4abb3} 
+const \mbox{\hyperlink{struct_o_s_s_l___h_p_k_e___k_d_f___i_n_f_o}{OSSL\+\_\+\+HPKE\+\_\+\+KDF\+\_\+\+INFO}} \texorpdfstring{$\ast$}{*} {\bfseries kdf\+\_\+info}
+\item 
+\Hypertarget{structossl__hpke__ctx__st_a90a443f65d6eadff88d9c98258e7aa32}\label{structossl__hpke__ctx__st_a90a443f65d6eadff88d9c98258e7aa32} 
+const \mbox{\hyperlink{struct_o_s_s_l___h_p_k_e___a_e_a_d___i_n_f_o}{OSSL\+\_\+\+HPKE\+\_\+\+AEAD\+\_\+\+INFO}} \texorpdfstring{$\ast$}{*} {\bfseries aead\+\_\+info}
+\item 
+\Hypertarget{structossl__hpke__ctx__st_a690af8b85fa24eebe4c6acddc7eb0058}\label{structossl__hpke__ctx__st_a690af8b85fa24eebe4c6acddc7eb0058} 
+EVP\+\_\+\+CIPHER \texorpdfstring{$\ast$}{*} {\bfseries aead\+\_\+ciph}
+\item 
+\Hypertarget{structossl__hpke__ctx__st_adfd38bad126286c0d6e81aa63a853fd0}\label{structossl__hpke__ctx__st_adfd38bad126286c0d6e81aa63a853fd0} 
+int {\bfseries role}
+\item 
+\Hypertarget{structossl__hpke__ctx__st_a8565fa0e1b151e054ba47434a5cde140}\label{structossl__hpke__ctx__st_a8565fa0e1b151e054ba47434a5cde140} 
+uint64\+\_\+t {\bfseries seq}
+\item 
+\Hypertarget{structossl__hpke__ctx__st_af2a57d27d18ab0696c658db7007a7da2}\label{structossl__hpke__ctx__st_af2a57d27d18ab0696c658db7007a7da2} 
+unsigned char \texorpdfstring{$\ast$}{*} {\bfseries shared\+\_\+secret}
+\item 
+\Hypertarget{structossl__hpke__ctx__st_ab29334ab9e0214166ec900dd096dc8da}\label{structossl__hpke__ctx__st_ab29334ab9e0214166ec900dd096dc8da} 
+size\+\_\+t {\bfseries shared\+\_\+secretlen}
+\item 
+\Hypertarget{structossl__hpke__ctx__st_a27f4fdc272350907d4d973778eaf13d2}\label{structossl__hpke__ctx__st_a27f4fdc272350907d4d973778eaf13d2} 
+unsigned char \texorpdfstring{$\ast$}{*} {\bfseries key}
+\item 
+\Hypertarget{structossl__hpke__ctx__st_a35731afcbe4ad2867d7a8fcde595679f}\label{structossl__hpke__ctx__st_a35731afcbe4ad2867d7a8fcde595679f} 
+size\+\_\+t {\bfseries keylen}
+\item 
+\Hypertarget{structossl__hpke__ctx__st_a8e38f4b8e84dd70e97d36832ca7d6d3d}\label{structossl__hpke__ctx__st_a8e38f4b8e84dd70e97d36832ca7d6d3d} 
+unsigned char \texorpdfstring{$\ast$}{*} {\bfseries nonce}
+\item 
+\Hypertarget{structossl__hpke__ctx__st_a708b6b17a69ef859dc941aec683917d8}\label{structossl__hpke__ctx__st_a708b6b17a69ef859dc941aec683917d8} 
+size\+\_\+t {\bfseries noncelen}
+\item 
+\Hypertarget{structossl__hpke__ctx__st_a2591385d9496c3316e548705b270d268}\label{structossl__hpke__ctx__st_a2591385d9496c3316e548705b270d268} 
+unsigned char \texorpdfstring{$\ast$}{*} {\bfseries exportersec}
+\item 
+\Hypertarget{structossl__hpke__ctx__st_a70ad6f1d7a1ee2f18c670d4ae7675855}\label{structossl__hpke__ctx__st_a70ad6f1d7a1ee2f18c670d4ae7675855} 
+size\+\_\+t {\bfseries exporterseclen}
+\item 
+\Hypertarget{structossl__hpke__ctx__st_ac128371175f14babbb1e5f1db5e19333}\label{structossl__hpke__ctx__st_ac128371175f14babbb1e5f1db5e19333} 
+char \texorpdfstring{$\ast$}{*} {\bfseries pskid}
+\item 
+\Hypertarget{structossl__hpke__ctx__st_a2b0d735c01c6400a20b022ed912e03de}\label{structossl__hpke__ctx__st_a2b0d735c01c6400a20b022ed912e03de} 
+unsigned char \texorpdfstring{$\ast$}{*} {\bfseries psk}
+\item 
+\Hypertarget{structossl__hpke__ctx__st_a04248c13024dcd0c0d1c0181d5afbba6}\label{structossl__hpke__ctx__st_a04248c13024dcd0c0d1c0181d5afbba6} 
+size\+\_\+t {\bfseries psklen}
+\item 
+\Hypertarget{structossl__hpke__ctx__st_aa23aeffb99383e603fe1fd40d4d31cec}\label{structossl__hpke__ctx__st_aa23aeffb99383e603fe1fd40d4d31cec} 
+EVP\+\_\+\+PKEY \texorpdfstring{$\ast$}{*} {\bfseries authpriv}
+\item 
+\Hypertarget{structossl__hpke__ctx__st_a37208364c4ebfab9e8b79e3f7a58c3d8}\label{structossl__hpke__ctx__st_a37208364c4ebfab9e8b79e3f7a58c3d8} 
+unsigned char \texorpdfstring{$\ast$}{*} {\bfseries authpub}
+\item 
+\Hypertarget{structossl__hpke__ctx__st_a9eb7c46baf4b282a8e5cd2ba5b9a250b}\label{structossl__hpke__ctx__st_a9eb7c46baf4b282a8e5cd2ba5b9a250b} 
+size\+\_\+t {\bfseries authpublen}
+\item 
+\Hypertarget{structossl__hpke__ctx__st_a82e25627fc1565895b4fcabd6fcd63cb}\label{structossl__hpke__ctx__st_a82e25627fc1565895b4fcabd6fcd63cb} 
+unsigned char \texorpdfstring{$\ast$}{*} {\bfseries ikme}
+\item 
+\Hypertarget{structossl__hpke__ctx__st_a7314a2397020f9a908637bd66d6c81f7}\label{structossl__hpke__ctx__st_a7314a2397020f9a908637bd66d6c81f7} 
+size\+\_\+t {\bfseries ikmelen}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+sender or receiver context 
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/namph/\+Downloads/openssl/openssl-\/3.\+2.\+1/crypto/hpke/hpke.\+c\end{DoxyCompactItemize}

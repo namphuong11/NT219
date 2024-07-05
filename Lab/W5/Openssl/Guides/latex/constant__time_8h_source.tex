@@ -1,0 +1,427 @@
+\doxysection{constant\+\_\+time.\+h}
+\hypertarget{constant__time_8h_source}{}\label{constant__time_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/constant\_time.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/constant\_time.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2014-\/2021\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_INTERNAL\_CONSTANT\_TIME\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_INTERNAL\_CONSTANT\_TIME\_H}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#\ pragma\ once}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ include\ <stdlib.h>}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#\ include\ <string.h>}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#\ include\ <openssl/e\_os2.h>}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ For\ 'ossl\_inline'\ */}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ *\ The\ boolean\ methods\ return\ a\ bitmask\ of\ all\ ones\ (0xff...f)\ for\ true}}
+\DoxyCodeLine{00020\ \textcolor{comment}{\ *\ and\ 0\ for\ false.\ This\ is\ useful\ for\ choosing\ a\ value\ based\ on\ the\ result}}
+\DoxyCodeLine{00021\ \textcolor{comment}{\ *\ of\ a\ conditional\ in\ constant\ time.\ For\ example,}}
+\DoxyCodeLine{00022\ \textcolor{comment}{\ *\ \ \ \ \ \ if\ (a\ <\ b)\ \{}}
+\DoxyCodeLine{00023\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ c\ =\ a;}}
+\DoxyCodeLine{00024\ \textcolor{comment}{\ *\ \ \ \ \ \ \}\ else\ \{}}
+\DoxyCodeLine{00025\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ c\ =\ b;}}
+\DoxyCodeLine{00026\ \textcolor{comment}{\ *\ \ \ \ \ \ \}}}
+\DoxyCodeLine{00027\ \textcolor{comment}{\ *\ can\ be\ written\ as}}
+\DoxyCodeLine{00028\ \textcolor{comment}{\ *\ \ \ \ \ \ unsigned\ int\ lt\ =\ constant\_time\_lt(a,\ b);}}
+\DoxyCodeLine{00029\ \textcolor{comment}{\ *\ \ \ \ \ \ c\ =\ constant\_time\_select(lt,\ a,\ b);}}
+\DoxyCodeLine{00030\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \textcolor{comment}{/*\ Returns\ the\ given\ value\ with\ the\ MSB\ copied\ to\ all\ the\ other\ bits.\ */}}
+\DoxyCodeLine{00033\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ constant\_time\_msb(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ a);}
+\DoxyCodeLine{00034\ \textcolor{comment}{/*\ Convenience\ method\ for\ uint32\_t.\ */}}
+\DoxyCodeLine{00035\ \textcolor{keyword}{static}\ ossl\_inline\ uint32\_t\ constant\_time\_msb\_32(uint32\_t\ a);}
+\DoxyCodeLine{00036\ \textcolor{comment}{/*\ Convenience\ method\ for\ uint64\_t.\ */}}
+\DoxyCodeLine{00037\ \textcolor{keyword}{static}\ ossl\_inline\ uint64\_t\ constant\_time\_msb\_64(uint64\_t\ a);}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \textcolor{comment}{/*\ Returns\ 0xff..f\ if\ a\ <\ b\ and\ 0\ otherwise.\ */}}
+\DoxyCodeLine{00040\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ constant\_time\_lt(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ a,}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{structb}{b}});}
+\DoxyCodeLine{00042\ \textcolor{comment}{/*\ Convenience\ method\ for\ getting\ an\ 8-\/bit\ mask.\ */}}
+\DoxyCodeLine{00043\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ constant\_time\_lt\_8(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ a,}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{structb}{b}});}
+\DoxyCodeLine{00045\ \textcolor{comment}{/*\ Convenience\ method\ for\ uint64\_t.\ */}}
+\DoxyCodeLine{00046\ \textcolor{keyword}{static}\ ossl\_inline\ uint64\_t\ constant\_time\_lt\_64(uint64\_t\ a,\ uint64\_t\ \mbox{\hyperlink{structb}{b}});}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \textcolor{comment}{/*\ Returns\ 0xff..f\ if\ a\ >=\ b\ and\ 0\ otherwise.\ */}}
+\DoxyCodeLine{00049\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ constant\_time\_ge(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ a,}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{structb}{b}});}
+\DoxyCodeLine{00051\ \textcolor{comment}{/*\ Convenience\ method\ for\ getting\ an\ 8-\/bit\ mask.\ */}}
+\DoxyCodeLine{00052\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ constant\_time\_ge\_8(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ a,}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{structb}{b}});}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ \textcolor{comment}{/*\ Returns\ 0xff..f\ if\ a\ ==\ 0\ and\ 0\ otherwise.\ */}}
+\DoxyCodeLine{00056\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ constant\_time\_is\_zero(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ a);}
+\DoxyCodeLine{00057\ \textcolor{comment}{/*\ Convenience\ method\ for\ getting\ an\ 8-\/bit\ mask.\ */}}
+\DoxyCodeLine{00058\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ constant\_time\_is\_zero\_8(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ a);}
+\DoxyCodeLine{00059\ \textcolor{comment}{/*\ Convenience\ method\ for\ getting\ a\ 32-\/bit\ mask.\ */}}
+\DoxyCodeLine{00060\ \textcolor{keyword}{static}\ ossl\_inline\ uint32\_t\ constant\_time\_is\_zero\_32(uint32\_t\ a);}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \textcolor{comment}{/*\ Returns\ 0xff..f\ if\ a\ ==\ b\ and\ 0\ otherwise.\ */}}
+\DoxyCodeLine{00063\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ constant\_time\_eq(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ a,}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{structb}{b}});}
+\DoxyCodeLine{00065\ \textcolor{comment}{/*\ Convenience\ method\ for\ getting\ an\ 8-\/bit\ mask.\ */}}
+\DoxyCodeLine{00066\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ constant\_time\_eq\_8(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ a,}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{structb}{b}});}
+\DoxyCodeLine{00068\ \textcolor{comment}{/*\ Signed\ integers.\ */}}
+\DoxyCodeLine{00069\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ constant\_time\_eq\_int(\textcolor{keywordtype}{int}\ a,\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{structb}{b}});}
+\DoxyCodeLine{00070\ \textcolor{comment}{/*\ Convenience\ method\ for\ getting\ an\ 8-\/bit\ mask.\ */}}
+\DoxyCodeLine{00071\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ constant\_time\_eq\_int\_8(\textcolor{keywordtype}{int}\ a,\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{structb}{b}});}
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00073\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00074\ \textcolor{comment}{\ *\ Returns\ (mask\ \&\ a)\ |\ (\string~mask\ \&\ b).}}
+\DoxyCodeLine{00075\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00076\ \textcolor{comment}{\ *\ When\ |mask|\ is\ all\ 1s\ or\ all\ 0s\ (as\ returned\ by\ the\ methods\ above),}}
+\DoxyCodeLine{00077\ \textcolor{comment}{\ *\ the\ select\ methods\ return\ either\ |a|\ (if\ |mask|\ is\ nonzero)\ or\ |b|}}
+\DoxyCodeLine{00078\ \textcolor{comment}{\ *\ (if\ |mask|\ is\ zero).}}
+\DoxyCodeLine{00079\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00080\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ constant\_time\_select(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ mask,}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ a,}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{structb}{b}});}
+\DoxyCodeLine{00083\ \textcolor{comment}{/*\ Convenience\ method\ for\ unsigned\ chars.\ */}}
+\DoxyCodeLine{00084\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ constant\_time\_select\_8(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ mask,}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ a,}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \mbox{\hyperlink{structb}{b}});}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00088\ \textcolor{comment}{/*\ Convenience\ method\ for\ uint32\_t.\ */}}
+\DoxyCodeLine{00089\ \textcolor{keyword}{static}\ ossl\_inline\ uint32\_t\ constant\_time\_select\_32(uint32\_t\ mask,\ uint32\_t\ a,}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ \mbox{\hyperlink{structb}{b}});}
+\DoxyCodeLine{00091\ }
+\DoxyCodeLine{00092\ \textcolor{comment}{/*\ Convenience\ method\ for\ uint64\_t.\ */}}
+\DoxyCodeLine{00093\ \textcolor{keyword}{static}\ ossl\_inline\ uint64\_t\ constant\_time\_select\_64(uint64\_t\ mask,\ uint64\_t\ a,}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ \mbox{\hyperlink{structb}{b}});}
+\DoxyCodeLine{00095\ \textcolor{comment}{/*\ Convenience\ method\ for\ signed\ integers.\ */}}
+\DoxyCodeLine{00096\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{int}\ constant\_time\_select\_int(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ mask,\ \textcolor{keywordtype}{int}\ a,}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{structb}{b}});}
+\DoxyCodeLine{00098\ }
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00100\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ constant\_time\_msb(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ a)}
+\DoxyCodeLine{00101\ \{}
+\DoxyCodeLine{00102\ \ \ \ \ \textcolor{keywordflow}{return}\ 0\ -\/\ (a\ >>\ (\textcolor{keyword}{sizeof}(a)\ *\ 8\ -\/\ 1));}
+\DoxyCodeLine{00103\ \}}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00105\ }
+\DoxyCodeLine{00106\ \textcolor{keyword}{static}\ ossl\_inline\ uint32\_t\ constant\_time\_msb\_32(uint32\_t\ a)}
+\DoxyCodeLine{00107\ \{}
+\DoxyCodeLine{00108\ \ \ \ \ \textcolor{keywordflow}{return}\ 0\ -\/\ (a\ >>\ 31);}
+\DoxyCodeLine{00109\ \}}
+\DoxyCodeLine{00110\ }
+\DoxyCodeLine{00111\ \textcolor{keyword}{static}\ ossl\_inline\ uint64\_t\ constant\_time\_msb\_64(uint64\_t\ a)}
+\DoxyCodeLine{00112\ \{}
+\DoxyCodeLine{00113\ \ \ \ \ \textcolor{keywordflow}{return}\ 0\ -\/\ (a\ >>\ 63);}
+\DoxyCodeLine{00114\ \}}
+\DoxyCodeLine{00115\ }
+\DoxyCodeLine{00116\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{size\_t}\ constant\_time\_msb\_s(\textcolor{keywordtype}{size\_t}\ a)}
+\DoxyCodeLine{00117\ \{}
+\DoxyCodeLine{00118\ \ \ \ \ \textcolor{keywordflow}{return}\ 0\ -\/\ (a\ >>\ (\textcolor{keyword}{sizeof}(a)\ *\ 8\ -\/\ 1));}
+\DoxyCodeLine{00119\ \}}
+\DoxyCodeLine{00120\ }
+\DoxyCodeLine{00121\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ constant\_time\_lt(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ a,}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{structb}{b}})}
+\DoxyCodeLine{00123\ \{}
+\DoxyCodeLine{00124\ \ \ \ \ \textcolor{keywordflow}{return}\ constant\_time\_msb(a\ \string^\ ((a\ \string^\ \mbox{\hyperlink{structb}{b}})\ |\ ((a\ -\/\ \mbox{\hyperlink{structb}{b}})\ \string^\ \mbox{\hyperlink{structb}{b}})));}
+\DoxyCodeLine{00125\ \}}
+\DoxyCodeLine{00126\ }
+\DoxyCodeLine{00127\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{size\_t}\ constant\_time\_lt\_s(\textcolor{keywordtype}{size\_t}\ a,\ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{structb}{b}})}
+\DoxyCodeLine{00128\ \{}
+\DoxyCodeLine{00129\ \ \ \ \ \textcolor{keywordflow}{return}\ constant\_time\_msb\_s(a\ \string^\ ((a\ \string^\ \mbox{\hyperlink{structb}{b}})\ |\ ((a\ -\/\ \mbox{\hyperlink{structb}{b}})\ \string^\ \mbox{\hyperlink{structb}{b}})));}
+\DoxyCodeLine{00130\ \}}
+\DoxyCodeLine{00131\ }
+\DoxyCodeLine{00132\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ constant\_time\_lt\_8(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ a,}
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{structb}{b}})}
+\DoxyCodeLine{00134\ \{}
+\DoxyCodeLine{00135\ \ \ \ \ \textcolor{keywordflow}{return}\ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char})constant\_time\_lt(a,\ \mbox{\hyperlink{structb}{b}});}
+\DoxyCodeLine{00136\ \}}
+\DoxyCodeLine{00137\ }
+\DoxyCodeLine{00138\ \textcolor{keyword}{static}\ ossl\_inline\ uint64\_t\ constant\_time\_lt\_64(uint64\_t\ a,\ uint64\_t\ \mbox{\hyperlink{structb}{b}})}
+\DoxyCodeLine{00139\ \{}
+\DoxyCodeLine{00140\ \ \ \ \ \textcolor{keywordflow}{return}\ constant\_time\_msb\_64(a\ \string^\ ((a\ \string^\ \mbox{\hyperlink{structb}{b}})\ |\ ((a\ -\/\ \mbox{\hyperlink{structb}{b}})\ \string^\ \mbox{\hyperlink{structb}{b}})));}
+\DoxyCodeLine{00141\ \}}
+\DoxyCodeLine{00142\ }
+\DoxyCodeLine{00143\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ constant\_time\_ge(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ a,}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{structb}{b}})}
+\DoxyCodeLine{00145\ \{}
+\DoxyCodeLine{00146\ \ \ \ \ \textcolor{keywordflow}{return}\ \string~constant\_time\_lt(a,\ \mbox{\hyperlink{structb}{b}});}
+\DoxyCodeLine{00147\ \}}
+\DoxyCodeLine{00148\ }
+\DoxyCodeLine{00149\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{size\_t}\ constant\_time\_ge\_s(\textcolor{keywordtype}{size\_t}\ a,\ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{structb}{b}})}
+\DoxyCodeLine{00150\ \{}
+\DoxyCodeLine{00151\ \ \ \ \ \textcolor{keywordflow}{return}\ \string~constant\_time\_lt\_s(a,\ \mbox{\hyperlink{structb}{b}});}
+\DoxyCodeLine{00152\ \}}
+\DoxyCodeLine{00153\ }
+\DoxyCodeLine{00154\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ constant\_time\_ge\_8(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ a,}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{structb}{b}})}
+\DoxyCodeLine{00156\ \{}
+\DoxyCodeLine{00157\ \ \ \ \ \textcolor{keywordflow}{return}\ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char})constant\_time\_ge(a,\ \mbox{\hyperlink{structb}{b}});}
+\DoxyCodeLine{00158\ \}}
+\DoxyCodeLine{00159\ }
+\DoxyCodeLine{00160\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ constant\_time\_ge\_8\_s(\textcolor{keywordtype}{size\_t}\ a,\ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{structb}{b}})}
+\DoxyCodeLine{00161\ \{}
+\DoxyCodeLine{00162\ \ \ \ \ \textcolor{keywordflow}{return}\ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char})constant\_time\_ge\_s(a,\ \mbox{\hyperlink{structb}{b}});}
+\DoxyCodeLine{00163\ \}}
+\DoxyCodeLine{00164\ }
+\DoxyCodeLine{00165\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ constant\_time\_is\_zero(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ a)}
+\DoxyCodeLine{00166\ \{}
+\DoxyCodeLine{00167\ \ \ \ \ \textcolor{keywordflow}{return}\ constant\_time\_msb(\string~a\ \&\ (a\ -\/\ 1));}
+\DoxyCodeLine{00168\ \}}
+\DoxyCodeLine{00169\ }
+\DoxyCodeLine{00170\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{size\_t}\ constant\_time\_is\_zero\_s(\textcolor{keywordtype}{size\_t}\ a)}
+\DoxyCodeLine{00171\ \{}
+\DoxyCodeLine{00172\ \ \ \ \ \textcolor{keywordflow}{return}\ constant\_time\_msb\_s(\string~a\ \&\ (a\ -\/\ 1));}
+\DoxyCodeLine{00173\ \}}
+\DoxyCodeLine{00174\ }
+\DoxyCodeLine{00175\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ constant\_time\_is\_zero\_8(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ a)}
+\DoxyCodeLine{00176\ \{}
+\DoxyCodeLine{00177\ \ \ \ \ \textcolor{keywordflow}{return}\ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char})constant\_time\_is\_zero(a);}
+\DoxyCodeLine{00178\ \}}
+\DoxyCodeLine{00179\ }
+\DoxyCodeLine{00180\ \textcolor{keyword}{static}\ ossl\_inline\ uint32\_t\ constant\_time\_is\_zero\_32(uint32\_t\ a)}
+\DoxyCodeLine{00181\ \{}
+\DoxyCodeLine{00182\ \ \ \ \ \textcolor{keywordflow}{return}\ constant\_time\_msb\_32(\string~a\ \&\ (a\ -\/\ 1));}
+\DoxyCodeLine{00183\ \}}
+\DoxyCodeLine{00184\ }
+\DoxyCodeLine{00185\ \textcolor{keyword}{static}\ ossl\_inline\ uint64\_t\ constant\_time\_is\_zero\_64(uint64\_t\ a)}
+\DoxyCodeLine{00186\ \{}
+\DoxyCodeLine{00187\ \ \ \ \ \textcolor{keywordflow}{return}\ constant\_time\_msb\_64(\string~a\ \&\ (a\ -\/\ 1));}
+\DoxyCodeLine{00188\ \}}
+\DoxyCodeLine{00189\ }
+\DoxyCodeLine{00190\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ constant\_time\_eq(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ a,}
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{structb}{b}})}
+\DoxyCodeLine{00192\ \{}
+\DoxyCodeLine{00193\ \ \ \ \ \textcolor{keywordflow}{return}\ constant\_time\_is\_zero(a\ \string^\ \mbox{\hyperlink{structb}{b}});}
+\DoxyCodeLine{00194\ \}}
+\DoxyCodeLine{00195\ }
+\DoxyCodeLine{00196\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{size\_t}\ constant\_time\_eq\_s(\textcolor{keywordtype}{size\_t}\ a,\ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{structb}{b}})}
+\DoxyCodeLine{00197\ \{}
+\DoxyCodeLine{00198\ \ \ \ \ \textcolor{keywordflow}{return}\ constant\_time\_is\_zero\_s(a\ \string^\ \mbox{\hyperlink{structb}{b}});}
+\DoxyCodeLine{00199\ \}}
+\DoxyCodeLine{00200\ }
+\DoxyCodeLine{00201\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ constant\_time\_eq\_8(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ a,}
+\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{structb}{b}})}
+\DoxyCodeLine{00203\ \{}
+\DoxyCodeLine{00204\ \ \ \ \ \textcolor{keywordflow}{return}\ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char})constant\_time\_eq(a,\ \mbox{\hyperlink{structb}{b}});}
+\DoxyCodeLine{00205\ \}}
+\DoxyCodeLine{00206\ }
+\DoxyCodeLine{00207\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ constant\_time\_eq\_8\_s(\textcolor{keywordtype}{size\_t}\ a,\ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{structb}{b}})}
+\DoxyCodeLine{00208\ \{}
+\DoxyCodeLine{00209\ \ \ \ \ \textcolor{keywordflow}{return}\ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char})constant\_time\_eq\_s(a,\ \mbox{\hyperlink{structb}{b}});}
+\DoxyCodeLine{00210\ \}}
+\DoxyCodeLine{00211\ }
+\DoxyCodeLine{00212\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ constant\_time\_eq\_int(\textcolor{keywordtype}{int}\ a,\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{structb}{b}})}
+\DoxyCodeLine{00213\ \{}
+\DoxyCodeLine{00214\ \ \ \ \ \textcolor{keywordflow}{return}\ constant\_time\_eq((\textcolor{keywordtype}{unsigned})(a),\ (\textcolor{keywordtype}{unsigned})(\mbox{\hyperlink{structb}{b}}));}
+\DoxyCodeLine{00215\ \}}
+\DoxyCodeLine{00216\ }
+\DoxyCodeLine{00217\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ constant\_time\_eq\_int\_8(\textcolor{keywordtype}{int}\ a,\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{structb}{b}})}
+\DoxyCodeLine{00218\ \{}
+\DoxyCodeLine{00219\ \ \ \ \ \textcolor{keywordflow}{return}\ constant\_time\_eq\_8((\textcolor{keywordtype}{unsigned})(a),\ (\textcolor{keywordtype}{unsigned})(\mbox{\hyperlink{structb}{b}}));}
+\DoxyCodeLine{00220\ \}}
+\DoxyCodeLine{00221\ }
+\DoxyCodeLine{00222\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00223\ \textcolor{comment}{\ *\ Returns\ the\ value\ unmodified,\ but\ avoids\ optimizations.}}
+\DoxyCodeLine{00224\ \textcolor{comment}{\ *\ The\ barriers\ prevent\ the\ compiler\ from\ narrowing\ down\ the}}
+\DoxyCodeLine{00225\ \textcolor{comment}{\ *\ possible\ value\ range\ of\ the\ mask\ and\ \string~mask\ in\ the\ select}}
+\DoxyCodeLine{00226\ \textcolor{comment}{\ *\ statements,\ which\ avoids\ the\ recognition\ of\ the\ select}}
+\DoxyCodeLine{00227\ \textcolor{comment}{\ *\ and\ turning\ it\ into\ a\ conditional\ load\ or\ branch.}}
+\DoxyCodeLine{00228\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00229\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ value\_barrier(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ a)}
+\DoxyCodeLine{00230\ \{}
+\DoxyCodeLine{00231\ \textcolor{preprocessor}{\#if\ !defined(OPENSSL\_NO\_ASM)\ \&\&\ defined(\_\_GNUC\_\_)}}
+\DoxyCodeLine{00232\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ r;}
+\DoxyCodeLine{00233\ \ \ \ \ \_\_asm\_\_(\textcolor{stringliteral}{"{}"{}}\ :\ \textcolor{stringliteral}{"{}=r"{}}(r)\ :\ \textcolor{stringliteral}{"{}0"{}}(a));}
+\DoxyCodeLine{00234\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00235\ \ \ \ \ \textcolor{keyword}{volatile}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ r\ =\ a;}
+\DoxyCodeLine{00236\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00237\ \ \ \ \ \textcolor{keywordflow}{return}\ r;}
+\DoxyCodeLine{00238\ \}}
+\DoxyCodeLine{00239\ }
+\DoxyCodeLine{00240\ \textcolor{comment}{/*\ Convenience\ method\ for\ uint32\_t.\ */}}
+\DoxyCodeLine{00241\ \textcolor{keyword}{static}\ ossl\_inline\ uint32\_t\ value\_barrier\_32(uint32\_t\ a)}
+\DoxyCodeLine{00242\ \{}
+\DoxyCodeLine{00243\ \textcolor{preprocessor}{\#if\ !defined(OPENSSL\_NO\_ASM)\ \&\&\ defined(\_\_GNUC\_\_)}}
+\DoxyCodeLine{00244\ \ \ \ \ uint32\_t\ r;}
+\DoxyCodeLine{00245\ \ \ \ \ \_\_asm\_\_(\textcolor{stringliteral}{"{}"{}}\ :\ \textcolor{stringliteral}{"{}=r"{}}(r)\ :\ \textcolor{stringliteral}{"{}0"{}}(a));}
+\DoxyCodeLine{00246\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00247\ \ \ \ \ \textcolor{keyword}{volatile}\ uint32\_t\ r\ =\ a;}
+\DoxyCodeLine{00248\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00249\ \ \ \ \ \textcolor{keywordflow}{return}\ r;}
+\DoxyCodeLine{00250\ \}}
+\DoxyCodeLine{00251\ }
+\DoxyCodeLine{00252\ \textcolor{comment}{/*\ Convenience\ method\ for\ uint64\_t.\ */}}
+\DoxyCodeLine{00253\ \textcolor{keyword}{static}\ ossl\_inline\ uint64\_t\ value\_barrier\_64(uint64\_t\ a)}
+\DoxyCodeLine{00254\ \{}
+\DoxyCodeLine{00255\ \textcolor{preprocessor}{\#if\ !defined(OPENSSL\_NO\_ASM)\ \&\&\ defined(\_\_GNUC\_\_)}}
+\DoxyCodeLine{00256\ \ \ \ \ uint64\_t\ r;}
+\DoxyCodeLine{00257\ \ \ \ \ \_\_asm\_\_(\textcolor{stringliteral}{"{}"{}}\ :\ \textcolor{stringliteral}{"{}=r"{}}(r)\ :\ \textcolor{stringliteral}{"{}0"{}}(a));}
+\DoxyCodeLine{00258\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00259\ \ \ \ \ \textcolor{keyword}{volatile}\ uint64\_t\ r\ =\ a;}
+\DoxyCodeLine{00260\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00261\ \ \ \ \ \textcolor{keywordflow}{return}\ r;}
+\DoxyCodeLine{00262\ \}}
+\DoxyCodeLine{00263\ }
+\DoxyCodeLine{00264\ \textcolor{comment}{/*\ Convenience\ method\ for\ size\_t.\ */}}
+\DoxyCodeLine{00265\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{size\_t}\ value\_barrier\_s(\textcolor{keywordtype}{size\_t}\ a)}
+\DoxyCodeLine{00266\ \{}
+\DoxyCodeLine{00267\ \textcolor{preprocessor}{\#if\ !defined(OPENSSL\_NO\_ASM)\ \&\&\ defined(\_\_GNUC\_\_)}}
+\DoxyCodeLine{00268\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ r;}
+\DoxyCodeLine{00269\ \ \ \ \ \_\_asm\_\_(\textcolor{stringliteral}{"{}"{}}\ :\ \textcolor{stringliteral}{"{}=r"{}}(r)\ :\ \textcolor{stringliteral}{"{}0"{}}(a));}
+\DoxyCodeLine{00270\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00271\ \ \ \ \ \textcolor{keyword}{volatile}\ \textcolor{keywordtype}{size\_t}\ r\ =\ a;}
+\DoxyCodeLine{00272\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00273\ \ \ \ \ \textcolor{keywordflow}{return}\ r;}
+\DoxyCodeLine{00274\ \}}
+\DoxyCodeLine{00275\ }
+\DoxyCodeLine{00276\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ constant\_time\_select(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ mask,}
+\DoxyCodeLine{00277\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ a,}
+\DoxyCodeLine{00278\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{structb}{b}})}
+\DoxyCodeLine{00279\ \{}
+\DoxyCodeLine{00280\ \ \ \ \ \textcolor{keywordflow}{return}\ (value\_barrier(mask)\ \&\ a)\ |\ (value\_barrier(\string~mask)\ \&\ \mbox{\hyperlink{structb}{b}});}
+\DoxyCodeLine{00281\ \}}
+\DoxyCodeLine{00282\ }
+\DoxyCodeLine{00283\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{size\_t}\ constant\_time\_select\_s(\textcolor{keywordtype}{size\_t}\ mask,}
+\DoxyCodeLine{00284\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ a,}
+\DoxyCodeLine{00285\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{structb}{b}})}
+\DoxyCodeLine{00286\ \{}
+\DoxyCodeLine{00287\ \ \ \ \ \textcolor{keywordflow}{return}\ (value\_barrier\_s(mask)\ \&\ a)\ |\ (value\_barrier\_s(\string~mask)\ \&\ \mbox{\hyperlink{structb}{b}});}
+\DoxyCodeLine{00288\ \}}
+\DoxyCodeLine{00289\ }
+\DoxyCodeLine{00290\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ constant\_time\_select\_8(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ mask,}
+\DoxyCodeLine{00291\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ a,}
+\DoxyCodeLine{00292\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \mbox{\hyperlink{structb}{b}})}
+\DoxyCodeLine{00293\ \{}
+\DoxyCodeLine{00294\ \ \ \ \ \textcolor{keywordflow}{return}\ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char})constant\_time\_select(mask,\ a,\ \mbox{\hyperlink{structb}{b}});}
+\DoxyCodeLine{00295\ \}}
+\DoxyCodeLine{00296\ }
+\DoxyCodeLine{00297\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{int}\ constant\_time\_select\_int(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ mask,\ \textcolor{keywordtype}{int}\ a,}
+\DoxyCodeLine{00298\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{structb}{b}})}
+\DoxyCodeLine{00299\ \{}
+\DoxyCodeLine{00300\ \ \ \ \ \textcolor{keywordflow}{return}\ (\textcolor{keywordtype}{int})constant\_time\_select(mask,\ (\textcolor{keywordtype}{unsigned})(a),\ (\textcolor{keywordtype}{unsigned})(\mbox{\hyperlink{structb}{b}}));}
+\DoxyCodeLine{00301\ \}}
+\DoxyCodeLine{00302\ }
+\DoxyCodeLine{00303\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{int}\ constant\_time\_select\_int\_s(\textcolor{keywordtype}{size\_t}\ mask,\ \textcolor{keywordtype}{int}\ a,\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{structb}{b}})}
+\DoxyCodeLine{00304\ \{}
+\DoxyCodeLine{00305\ \ \ \ \ \textcolor{keywordflow}{return}\ (\textcolor{keywordtype}{int})constant\_time\_select((\textcolor{keywordtype}{unsigned})mask,\ (\textcolor{keywordtype}{unsigned})(a),}
+\DoxyCodeLine{00306\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (\textcolor{keywordtype}{unsigned})(\mbox{\hyperlink{structb}{b}}));}
+\DoxyCodeLine{00307\ \}}
+\DoxyCodeLine{00308\ }
+\DoxyCodeLine{00309\ \textcolor{keyword}{static}\ ossl\_inline\ uint32\_t\ constant\_time\_select\_32(uint32\_t\ mask,\ uint32\_t\ a,}
+\DoxyCodeLine{00310\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ \mbox{\hyperlink{structb}{b}})}
+\DoxyCodeLine{00311\ \{}
+\DoxyCodeLine{00312\ \ \ \ \ \textcolor{keywordflow}{return}\ (value\_barrier\_32(mask)\ \&\ a)\ |\ (value\_barrier\_32(\string~mask)\ \&\ \mbox{\hyperlink{structb}{b}});}
+\DoxyCodeLine{00313\ \}}
+\DoxyCodeLine{00314\ }
+\DoxyCodeLine{00315\ \textcolor{keyword}{static}\ ossl\_inline\ uint64\_t\ constant\_time\_select\_64(uint64\_t\ mask,\ uint64\_t\ a,}
+\DoxyCodeLine{00316\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ \mbox{\hyperlink{structb}{b}})}
+\DoxyCodeLine{00317\ \{}
+\DoxyCodeLine{00318\ \ \ \ \ \textcolor{keywordflow}{return}\ (value\_barrier\_64(mask)\ \&\ a)\ |\ (value\_barrier\_64(\string~mask)\ \&\ \mbox{\hyperlink{structb}{b}});}
+\DoxyCodeLine{00319\ \}}
+\DoxyCodeLine{00320\ }
+\DoxyCodeLine{00321\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00322\ \textcolor{comment}{\ *\ mask\ must\ be\ 0xFFFFFFFF\ or\ 0x00000000.}}
+\DoxyCodeLine{00323\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00324\ \textcolor{comment}{\ *\ if\ (mask)\ \{}}
+\DoxyCodeLine{00325\ \textcolor{comment}{\ *\ \ \ \ \ uint32\_t\ tmp\ =\ *a;}}
+\DoxyCodeLine{00326\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00327\ \textcolor{comment}{\ *\ \ \ \ \ *a\ =\ *b;}}
+\DoxyCodeLine{00328\ \textcolor{comment}{\ *\ \ \ \ \ *b\ =\ tmp;}}
+\DoxyCodeLine{00329\ \textcolor{comment}{\ *\ \}}}
+\DoxyCodeLine{00330\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00331\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{void}\ constant\_time\_cond\_swap\_32(uint32\_t\ mask,\ uint32\_t\ *a,}
+\DoxyCodeLine{00332\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ *\mbox{\hyperlink{structb}{b}})}
+\DoxyCodeLine{00333\ \{}
+\DoxyCodeLine{00334\ \ \ \ \ uint32\_t\ xor\ =\ *a\ \string^\ *\mbox{\hyperlink{structb}{b}};}
+\DoxyCodeLine{00335\ }
+\DoxyCodeLine{00336\ \ \ \ \ xor\ \&=\ mask;}
+\DoxyCodeLine{00337\ \ \ \ \ *a\ \string^=\ xor;}
+\DoxyCodeLine{00338\ \ \ \ \ *\mbox{\hyperlink{structb}{b}}\ \string^=\ xor;}
+\DoxyCodeLine{00339\ \}}
+\DoxyCodeLine{00340\ }
+\DoxyCodeLine{00341\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00342\ \textcolor{comment}{\ *\ mask\ must\ be\ 0xFFFFFFFF\ or\ 0x00000000.}}
+\DoxyCodeLine{00343\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00344\ \textcolor{comment}{\ *\ if\ (mask)\ \{}}
+\DoxyCodeLine{00345\ \textcolor{comment}{\ *\ \ \ \ \ uint64\_t\ tmp\ =\ *a;}}
+\DoxyCodeLine{00346\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00347\ \textcolor{comment}{\ *\ \ \ \ \ *a\ =\ *b;}}
+\DoxyCodeLine{00348\ \textcolor{comment}{\ *\ \ \ \ \ *b\ =\ tmp;}}
+\DoxyCodeLine{00349\ \textcolor{comment}{\ *\ \}}}
+\DoxyCodeLine{00350\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00351\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{void}\ constant\_time\_cond\_swap\_64(uint64\_t\ mask,\ uint64\_t\ *a,}
+\DoxyCodeLine{00352\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ *\mbox{\hyperlink{structb}{b}})}
+\DoxyCodeLine{00353\ \{}
+\DoxyCodeLine{00354\ \ \ \ \ uint64\_t\ xor\ =\ *a\ \string^\ *\mbox{\hyperlink{structb}{b}};}
+\DoxyCodeLine{00355\ }
+\DoxyCodeLine{00356\ \ \ \ \ xor\ \&=\ mask;}
+\DoxyCodeLine{00357\ \ \ \ \ *a\ \string^=\ xor;}
+\DoxyCodeLine{00358\ \ \ \ \ *\mbox{\hyperlink{structb}{b}}\ \string^=\ xor;}
+\DoxyCodeLine{00359\ \}}
+\DoxyCodeLine{00360\ }
+\DoxyCodeLine{00361\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00362\ \textcolor{comment}{\ *\ mask\ must\ be\ 0xFF\ or\ 0x00.}}
+\DoxyCodeLine{00363\ \textcolor{comment}{\ *\ "{}constant\ time"{}\ is\ per\ len.}}
+\DoxyCodeLine{00364\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00365\ \textcolor{comment}{\ *\ if\ (mask)\ \{}}
+\DoxyCodeLine{00366\ \textcolor{comment}{\ *\ \ \ \ \ unsigned\ char\ tmp[len];}}
+\DoxyCodeLine{00367\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00368\ \textcolor{comment}{\ *\ \ \ \ \ memcpy(tmp,\ a,\ len);}}
+\DoxyCodeLine{00369\ \textcolor{comment}{\ *\ \ \ \ \ memcpy(a,\ b);}}
+\DoxyCodeLine{00370\ \textcolor{comment}{\ *\ \ \ \ \ memcpy(b,\ tmp);}}
+\DoxyCodeLine{00371\ \textcolor{comment}{\ *\ \}}}
+\DoxyCodeLine{00372\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00373\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{void}\ constant\_time\_cond\_swap\_buff(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ mask,}
+\DoxyCodeLine{00374\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *a,}
+\DoxyCodeLine{00375\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *\mbox{\hyperlink{structb}{b}},}
+\DoxyCodeLine{00376\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ len)}
+\DoxyCodeLine{00377\ \{}
+\DoxyCodeLine{00378\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ i;}
+\DoxyCodeLine{00379\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ tmp;}
+\DoxyCodeLine{00380\ }
+\DoxyCodeLine{00381\ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ len;\ i++)\ \{}
+\DoxyCodeLine{00382\ \ \ \ \ \ \ \ \ tmp\ =\ a[i]\ \string^\ \mbox{\hyperlink{structb}{b}}[i];}
+\DoxyCodeLine{00383\ \ \ \ \ \ \ \ \ tmp\ \&=\ mask;}
+\DoxyCodeLine{00384\ \ \ \ \ \ \ \ \ a[i]\ \string^=\ tmp;}
+\DoxyCodeLine{00385\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structb}{b}}[i]\ \string^=\ tmp;}
+\DoxyCodeLine{00386\ \ \ \ \ \}}
+\DoxyCodeLine{00387\ \}}
+\DoxyCodeLine{00388\ }
+\DoxyCodeLine{00389\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00390\ \textcolor{comment}{\ *\ table\ is\ a\ two\ dimensional\ array\ of\ bytes.\ Each\ row\ has\ rowsize\ elements.}}
+\DoxyCodeLine{00391\ \textcolor{comment}{\ *\ Copies\ row\ number\ idx\ into\ out.\ rowsize\ and\ numrows\ are\ not\ considered}}
+\DoxyCodeLine{00392\ \textcolor{comment}{\ *\ private.}}
+\DoxyCodeLine{00393\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00394\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{void}\ constant\_time\_lookup(\textcolor{keywordtype}{void}\ *out,}
+\DoxyCodeLine{00395\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *table,}
+\DoxyCodeLine{00396\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ rowsize,}
+\DoxyCodeLine{00397\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ numrows,}
+\DoxyCodeLine{00398\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ idx)}
+\DoxyCodeLine{00399\ \{}
+\DoxyCodeLine{00400\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ i,\ j;}
+\DoxyCodeLine{00401\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *tablec\ =\ (\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *)table;}
+\DoxyCodeLine{00402\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *outc\ =\ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *)out;}
+\DoxyCodeLine{00403\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ mask;}
+\DoxyCodeLine{00404\ }
+\DoxyCodeLine{00405\ \ \ \ \ memset(out,\ 0,\ rowsize);}
+\DoxyCodeLine{00406\ }
+\DoxyCodeLine{00407\ \ \ \ \ \textcolor{comment}{/*\ Note\ idx\ may\ underflow\ -\/\ but\ that\ is\ well\ defined\ */}}
+\DoxyCodeLine{00408\ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ numrows;\ i++,\ idx-\/-\/)\ \{}
+\DoxyCodeLine{00409\ \ \ \ \ \ \ \ \ mask\ =\ (\textcolor{keywordtype}{unsigned}\ char)constant\_time\_is\_zero\_s(idx);}
+\DoxyCodeLine{00410\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (j\ =\ 0;\ j\ <\ rowsize;\ j++)}
+\DoxyCodeLine{00411\ \ \ \ \ \ \ \ \ \ \ \ \ *(outc\ +\ j)\ |=\ constant\_time\_select\_8(mask,\ *(tablec++),\ 0);}
+\DoxyCodeLine{00412\ \ \ \ \ \}}
+\DoxyCodeLine{00413\ \}}
+\DoxyCodeLine{00414\ }
+\DoxyCodeLine{00415\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00416\ \textcolor{comment}{\ *\ Expected\ usage\ pattern\ is\ to\ unconditionally\ set\ error\ and\ then}}
+\DoxyCodeLine{00417\ \textcolor{comment}{\ *\ wipe\ it\ if\ there\ was\ no\ actual\ error.\ |clear|\ is\ 1\ or\ 0.}}
+\DoxyCodeLine{00418\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00419\ \textcolor{keywordtype}{void}\ err\_clear\_last\_constant\_time(\textcolor{keywordtype}{int}\ clear);}
+\DoxyCodeLine{00420\ }
+\DoxyCodeLine{00421\ \textcolor{preprocessor}{\#endif\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{/*\ OSSL\_INTERNAL\_CONSTANT\_TIME\_H\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

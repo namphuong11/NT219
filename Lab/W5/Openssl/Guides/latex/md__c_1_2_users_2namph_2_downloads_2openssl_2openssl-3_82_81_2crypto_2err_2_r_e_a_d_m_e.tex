@@ -1,0 +1,29 @@
+\chapter{Adding new libraries}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2crypto_2err_2_r_e_a_d_m_e}{}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2crypto_2err_2_r_e_a_d_m_e}\index{Adding new libraries@{Adding new libraries}}
+When adding a new sub-\/library to Open\+SSL, assign it a library number {\ttfamily ERR\+\_\+\+LIB\+\_\+\+XXX}, define a macro {\ttfamily XXXerr()} (both in {\ttfamily err.\+h}), add its name to {\ttfamily ERR\+\_\+str\+\_\+libraries\mbox{[}\mbox{]}} (in {\ttfamily crypto/err/err.\+c}), and add {\ttfamily ERR\+\_\+load\+\_\+\+XXX\+\_\+strings()} to the {\ttfamily ERR\+\_\+load\+\_\+crypto\+\_\+strings()} function (in {\ttfamily crypto/err/err\+\_\+all.\+c}). Finally, add an entry\+: \begin{DoxyVerb}L      XXX     xxx.h   xxx_err.c
+\end{DoxyVerb}
+ to {\ttfamily crypto/err/openssl.\+ec}, and add {\ttfamily xxx\+\_\+err.\+c} to the {\ttfamily Makefile}. Running make errors will then generate a file {\ttfamily xxx\+\_\+err.\+c}, and add all error codes used in the library to {\ttfamily xxx.\+h}.
+
+Additionally the library include file must have a certain form. Typically it will initially look like this\+: \begin{DoxyVerb}#ifndef HEADER_XXX_H
+#define HEADER_XXX_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/* Include files */
+
+#include <openssl/bio.h>
+#include <openssl/x509.h>
+
+/* Macros, structures and function prototypes */
+
+
+/* BEGIN ERROR CODES */
+\end{DoxyVerb}
+ The {\ttfamily BEGIN ERROR CODES} sequence is used by the error code generation script as the point to place new error codes, any text after this point will be overwritten when make errors is run. The closing {\ttfamily \#endif} etc will be automatically added by the script.
+
+The generated C error code file {\ttfamily xxx\+\_\+err.\+c} will load the header files {\ttfamily stdio.\+h}, {\ttfamily \doxylink{openssl_2err_8h_source}{openssl/err.\+h}} and {\ttfamily openssl/xxx.\+h} so the header file must load any additional header files containing any definitions it uses.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2crypto_2err_2_r_e_a_d_m_e_autotoc_md181}{}\doxysection{\texorpdfstring{Adding new error codes}{Adding new error codes}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2crypto_2err_2_r_e_a_d_m_e_autotoc_md181}
+Instead of manually adding error codes into {\ttfamily crypto/err/openssl.\+txt}, it is recommended to leverage {\ttfamily make update} for error code generation. The target will process relevant sources and generate error codes for any {\itshape used} error codes.
+
+If an error code is added manually into {\ttfamily crypto/err/openssl.\+txt}, subsequent {\ttfamily make update} has no effect. 

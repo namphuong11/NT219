@@ -1,0 +1,91 @@
+\chapter{Demo-\/\+Driven Design}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2ddd_2_r_e_a_d_m_e}{}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2ddd_2_r_e_a_d_m_e}\index{Demo-\/Driven Design@{Demo-\/Driven Design}}
+The Open\+SSL project from time to time must evolve its public API surface in order to support new functionality and deprecate old functionality. When this occurs, the changes to Open\+SSL\textquotesingle{}s public API must be planned, discussed and agreed. One significant dimension which must be considered when considering any proposed API change is how a broad spectrum of real-\/world Open\+SSL applications uses the APIs which exist today, as this determines the ways in which those applications will be affected by any proposed changes, the extent to which they will be affected, and the extent of any changes which will need to be made by codebases using Open\+SSL to remain current with best practices for Open\+SSL API usage.
+
+As such, it is useful for the Open\+SSL project to have a good understanding of the usage patterns common in codebases which use Open\+SSL, so that it can anticipate the impact of any evolution of its API on those codebases. This directory seeks to maintain a set of {\bfseries{API usage demos}} which demonstrate a full spectrum of ways in which real-\/world applications use the Open\+SSL APIs. This allows the project to discuss any proposed API changes in terms of the changes that would need to be made to each demo. Since the demos are representative of a broad spectrum of real-\/world Open\+SSL-\/based applications, this ensures that API evolution is made both with reference to real-\/world API usage patterns and with reference to the impact on existing applications.
+
+As such, these demos are maintained in the Open\+SSL repository because they are useful both to current and any future proposed API changes. The set of demos may be expanded over time, and the demos in this directory at any one time constitute a present body of understanding of API usage patterns, which can be used to plan API changes.
+
+For further background information on the premise of this approach, see \href{https://github.com/openssl/openssl/issues/17939}{\texttt{ API long-\/term evolution}}.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2ddd_2_r_e_a_d_m_e_autotoc_md188}{}\doxysection{\texorpdfstring{Scope}{Scope}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2ddd_2_r_e_a_d_m_e_autotoc_md188}
+The current emphasis is on client demos. Server support for QUIC is deferred to subsequent Open\+SSL releases, and therefore is (currently) out of scope for this design exercise.
+
+The demos also deliberately focus on aspects of libssl usage which are likely to be relevant to QUIC and require changes; for example, how varied applications have libssl perform network I/O, and how varied applications create sockets and connections for use with libssl. The libssl API as a whole has a much larger scope and includes numerous functions and features; the intention is not to demonstrate all of these, because most of them will not be touched by QUIC. For example, while many users of Open\+SSL may make use of APIs for client certificates or other TLS functionality, the use of QUIC is unlikely to have implications for these APIs and demos demonstrating such functionality are therefore out of scope.
+
+\doxysectlink{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2ddd_2_r_e_p_o_r_t}{A report is available}{0} on the results of the DDD process following the completion of the development of the QUIC MVP (minimum viable product).\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2ddd_2_r_e_a_d_m_e_autotoc_md189}{}\doxysection{\texorpdfstring{Background}{Background}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2ddd_2_r_e_a_d_m_e_autotoc_md189}
+These demos were developed after analysis of the following open source applications to determine libssl API usage patterns. The commonly occurring usage patterns were determined and used to determine categories into which to classify the applications\+:
+
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{3}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Blk?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ FD    }\\\cline{1-3}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Blk?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ FD    }\\\cline{1-3}
+\endhead
+mutt   &S   &AOSF    \\\cline{1-3}
+vsftpd   &S   &AOSF    \\\cline{1-3}
+exim   &S   &AOSFx    \\\cline{1-3}
+wget   &S   &AOSF    \\\cline{1-3}
+Fossil   &S   &BIOc    \\\cline{1-3}
+librabbitmq   &A   &BIOx    \\\cline{1-3}
+ngircd   &A   &AOSF    \\\cline{1-3}
+stunnel   &A   &AOSFx    \\\cline{1-3}
+Postfix   &A   &AOSF    \\\cline{1-3}
+socat   &A   &AOSF    \\\cline{1-3}
+HAProxy   &A   &BIOx    \\\cline{1-3}
+Dovecot   &A   &BIOm    \\\cline{1-3}
+Apache httpd   &A   &BIOx    \\\cline{1-3}
+Unreal\+IRCd   &A   &AOSF    \\\cline{1-3}
+wpa\+\_\+supplicant   &A   &BIOm    \\\cline{1-3}
+icecast   &A   &AOSF    \\\cline{1-3}
+nginx   &A   &AOSF    \\\cline{1-3}
+curl   &A   &AOSF    \\\cline{1-3}
+Asterisk   &A   &AOSF    \\\cline{1-3}
+Asterisk (DTLS)   &A   &BIOm/x    \\\cline{1-3}
+pgbouncer   &A   &AOSF, BIOc   \\\cline{1-3}
+\end{longtabu}
+
+
+
+\begin{DoxyItemize}
+\item Blk\+: Whether the application uses blocking or non-\/blocking I/O.
+\begin{DoxyItemize}
+\item S\+: Blocking (Synchronous)
+\item A\+: Nonblocking (Asynchronous)
+\end{DoxyItemize}
+\item FD\+: Whether the application creates and owns its own FD.
+\begin{DoxyItemize}
+\item AOSF\+: Application owns, calls SSL\+\_\+set\+\_\+fd.
+\item AOSFx\+: Application owns, calls SSL\+\_\+set\+\_\+\mbox{[}rw\mbox{]}fd, different FDs for read/write.
+\item BIOs\+: Application creates a socket/\+FD BIO and calls SSL\+\_\+set\+\_\+bio. Application created the connection.
+\item BIOx\+: Application creates a BIO with a custom BIO method and calls SSL\+\_\+set\+\_\+bio.
+\item BIOm\+: Application creates a memory BIO and does its own pumping to/from actual socket, treating libssl as a pure state machine which does no I/O itself.
+\item BIOc\+: Application uses BIO\+\_\+s\+\_\+connect-\/based methods such as BIO\+\_\+new\+\_\+ssl\+\_\+connect and leaves connection establishment to Open\+SSL.
+\end{DoxyItemize}
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2ddd_2_r_e_a_d_m_e_autotoc_md190}{}\doxysection{\texorpdfstring{Demos}{Demos}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2ddd_2_r_e_a_d_m_e_autotoc_md190}
+The demos found in this directory are\+:
+
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{3}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Type   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Description    }\\\cline{1-3}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Type   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Description    }\\\cline{1-3}
+\endhead
+\href{ddd-01-conn-blocking.c}{\texttt{ ddd-\/01-\/conn-\/blocking}}   &S-\/\+BIOc   &A {\ttfamily BIO\+\_\+s\+\_\+connect}-\/based blocking example demonstrating exemplary Open\+SSL API usage    \\\cline{1-3}
+\href{ddd-02-conn-nonblocking.c}{\texttt{ ddd-\/02-\/conn-\/nonblocking}}   &A-\/\+BIOc   &A {\ttfamily BIO\+\_\+s\+\_\+connect}-\/based nonblocking example demonstrating exemplary Open\+SSL API usage, with use of a buffering BIO    \\\cline{1-3}
+\href{ddd-03-fd-blocking.c}{\texttt{ ddd-\/03-\/fd-\/blocking}}   &S-\/\+AOSF   &A {\ttfamily SSL\+\_\+set\+\_\+fd}-\/based blocking example demonstrating real-\/world Open\+SSL API usage (corresponding to S-\/\+AOSF applications above)    \\\cline{1-3}
+\href{ddd-04-fd-nonblocking.c}{\texttt{ ddd-\/04-\/fd-\/nonblocking}}   &A-\/\+AOSF   &A {\ttfamily SSL\+\_\+set\+\_\+fd}-\/based non-\/blocking example demonstrating real-\/world Open\+SSL API usage (corresponding to A-\/\+AOSF applications above)    \\\cline{1-3}
+\href{ddd-05-mem-nonblocking.c}{\texttt{ ddd-\/05-\/mem-\/nonblocking}}   &A-\/\+BIOm   &A non-\/blocking example based on use of a memory buffer to feed Open\+SSL encrypted data (corresponding to A-\/\+BIOm applications above)    \\\cline{1-3}
+\href{ddd-06-mem-uv.c}{\texttt{ ddd-\/06-\/mem-\/uv}}   &A-\/\+BIOm   &A non-\/blocking example based on use of a memory buffer to feed Open\+SSL encrypted data; uses libuv, a real-\/world async I/O library   \\\cline{1-3}
+\end{longtabu}
+
+
+On Ubuntu, libuv can be obtained by installing the package "{}libuv1-\/dev"{}.
+
+Availability of a default certificate store is assumed. {\ttfamily SSL\+\_\+\+CERT\+\_\+\+DIR} may be set when running the demos if necessary. 

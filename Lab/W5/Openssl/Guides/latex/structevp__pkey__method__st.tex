@@ -1,0 +1,109 @@
+\doxysection{evp\+\_\+pkey\+\_\+method\+\_\+st Struct Reference}
+\hypertarget{structevp__pkey__method__st}{}\label{structevp__pkey__method__st}\index{evp\_pkey\_method\_st@{evp\_pkey\_method\_st}}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{structevp__pkey__method__st_a20a65baaf84c9f6d3f94e298908ddb2f}\label{structevp__pkey__method__st_a20a65baaf84c9f6d3f94e298908ddb2f} 
+int {\bfseries pkey\+\_\+id}
+\item 
+\Hypertarget{structevp__pkey__method__st_aa1697a9c1bf04ca88dc830d7325f05ec}\label{structevp__pkey__method__st_aa1697a9c1bf04ca88dc830d7325f05ec} 
+int {\bfseries flags}
+\item 
+\Hypertarget{structevp__pkey__method__st_ab2ac5565c706053748ab9d2755ac9a0b}\label{structevp__pkey__method__st_ab2ac5565c706053748ab9d2755ac9a0b} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries init} )(EVP\+\_\+\+PKEY\+\_\+\+CTX \texorpdfstring{$\ast$}{*}ctx)
+\item 
+\Hypertarget{structevp__pkey__method__st_a75cadb9c007d0c03986c826396a23c93}\label{structevp__pkey__method__st_a75cadb9c007d0c03986c826396a23c93} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries copy} )(EVP\+\_\+\+PKEY\+\_\+\+CTX \texorpdfstring{$\ast$}{*}dst, const EVP\+\_\+\+PKEY\+\_\+\+CTX \texorpdfstring{$\ast$}{*}src)
+\item 
+\Hypertarget{structevp__pkey__method__st_aca007d4a7ba7c8469cebac9e346f7eb0}\label{structevp__pkey__method__st_aca007d4a7ba7c8469cebac9e346f7eb0} 
+void(\texorpdfstring{$\ast$}{*} {\bfseries cleanup} )(EVP\+\_\+\+PKEY\+\_\+\+CTX \texorpdfstring{$\ast$}{*}ctx)
+\item 
+\Hypertarget{structevp__pkey__method__st_a71d5d0511587c03b4fd821aae3e5aa49}\label{structevp__pkey__method__st_a71d5d0511587c03b4fd821aae3e5aa49} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries paramgen\+\_\+init} )(EVP\+\_\+\+PKEY\+\_\+\+CTX \texorpdfstring{$\ast$}{*}ctx)
+\item 
+\Hypertarget{structevp__pkey__method__st_a874770419049d3ca01abb187583b3767}\label{structevp__pkey__method__st_a874770419049d3ca01abb187583b3767} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries paramgen} )(EVP\+\_\+\+PKEY\+\_\+\+CTX \texorpdfstring{$\ast$}{*}ctx, EVP\+\_\+\+PKEY \texorpdfstring{$\ast$}{*}pkey)
+\item 
+\Hypertarget{structevp__pkey__method__st_a3fa09883753f1d83801a07c4316363bf}\label{structevp__pkey__method__st_a3fa09883753f1d83801a07c4316363bf} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries keygen\+\_\+init} )(EVP\+\_\+\+PKEY\+\_\+\+CTX \texorpdfstring{$\ast$}{*}ctx)
+\item 
+\Hypertarget{structevp__pkey__method__st_a4c1022728d5055477874a23be66f20b5}\label{structevp__pkey__method__st_a4c1022728d5055477874a23be66f20b5} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries keygen} )(EVP\+\_\+\+PKEY\+\_\+\+CTX \texorpdfstring{$\ast$}{*}ctx, EVP\+\_\+\+PKEY \texorpdfstring{$\ast$}{*}pkey)
+\item 
+\Hypertarget{structevp__pkey__method__st_a912f544597194d52a2eec488e711697c}\label{structevp__pkey__method__st_a912f544597194d52a2eec488e711697c} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries sign\+\_\+init} )(EVP\+\_\+\+PKEY\+\_\+\+CTX \texorpdfstring{$\ast$}{*}ctx)
+\item 
+\Hypertarget{structevp__pkey__method__st_aab704e6d3660dbb3fab4bb3a4bc65955}\label{structevp__pkey__method__st_aab704e6d3660dbb3fab4bb3a4bc65955} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries sign} )(EVP\+\_\+\+PKEY\+\_\+\+CTX \texorpdfstring{$\ast$}{*}ctx, unsigned char \texorpdfstring{$\ast$}{*}sig, size\+\_\+t \texorpdfstring{$\ast$}{*}siglen, const unsigned char \texorpdfstring{$\ast$}{*}tbs, size\+\_\+t tbslen)
+\item 
+\Hypertarget{structevp__pkey__method__st_a6f280f232572920990bb1133a9cd8266}\label{structevp__pkey__method__st_a6f280f232572920990bb1133a9cd8266} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries verify\+\_\+init} )(EVP\+\_\+\+PKEY\+\_\+\+CTX \texorpdfstring{$\ast$}{*}ctx)
+\item 
+\Hypertarget{structevp__pkey__method__st_a82a0f53ed50ac0bd42dae390a0e200dc}\label{structevp__pkey__method__st_a82a0f53ed50ac0bd42dae390a0e200dc} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries verify} )(EVP\+\_\+\+PKEY\+\_\+\+CTX \texorpdfstring{$\ast$}{*}ctx, const unsigned char \texorpdfstring{$\ast$}{*}sig, size\+\_\+t siglen, const unsigned char \texorpdfstring{$\ast$}{*}tbs, size\+\_\+t tbslen)
+\item 
+\Hypertarget{structevp__pkey__method__st_a6c88b823db03db160d3893d6c5f95fe8}\label{structevp__pkey__method__st_a6c88b823db03db160d3893d6c5f95fe8} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries verify\+\_\+recover\+\_\+init} )(EVP\+\_\+\+PKEY\+\_\+\+CTX \texorpdfstring{$\ast$}{*}ctx)
+\item 
+\Hypertarget{structevp__pkey__method__st_a3f26b0492db6faad63cc3bf977167f4a}\label{structevp__pkey__method__st_a3f26b0492db6faad63cc3bf977167f4a} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries verify\+\_\+recover} )(EVP\+\_\+\+PKEY\+\_\+\+CTX \texorpdfstring{$\ast$}{*}ctx, unsigned char \texorpdfstring{$\ast$}{*}rout, size\+\_\+t \texorpdfstring{$\ast$}{*}routlen, const unsigned char \texorpdfstring{$\ast$}{*}sig, size\+\_\+t siglen)
+\item 
+\Hypertarget{structevp__pkey__method__st_ae2bdd7dd42fba45d6063f93235ec01d0}\label{structevp__pkey__method__st_ae2bdd7dd42fba45d6063f93235ec01d0} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries signctx\+\_\+init} )(EVP\+\_\+\+PKEY\+\_\+\+CTX \texorpdfstring{$\ast$}{*}ctx, EVP\+\_\+\+MD\+\_\+\+CTX \texorpdfstring{$\ast$}{*}mctx)
+\item 
+\Hypertarget{structevp__pkey__method__st_a07a1472a0155f2e27de898302aa281a6}\label{structevp__pkey__method__st_a07a1472a0155f2e27de898302aa281a6} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries signctx} )(EVP\+\_\+\+PKEY\+\_\+\+CTX \texorpdfstring{$\ast$}{*}ctx, unsigned char \texorpdfstring{$\ast$}{*}sig, size\+\_\+t \texorpdfstring{$\ast$}{*}siglen, EVP\+\_\+\+MD\+\_\+\+CTX \texorpdfstring{$\ast$}{*}mctx)
+\item 
+\Hypertarget{structevp__pkey__method__st_ab0b027dc6e41e3a575cac784e69c2d50}\label{structevp__pkey__method__st_ab0b027dc6e41e3a575cac784e69c2d50} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries verifyctx\+\_\+init} )(EVP\+\_\+\+PKEY\+\_\+\+CTX \texorpdfstring{$\ast$}{*}ctx, EVP\+\_\+\+MD\+\_\+\+CTX \texorpdfstring{$\ast$}{*}mctx)
+\item 
+\Hypertarget{structevp__pkey__method__st_ac54379139bdf46352db18d15b0337e0e}\label{structevp__pkey__method__st_ac54379139bdf46352db18d15b0337e0e} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries verifyctx} )(EVP\+\_\+\+PKEY\+\_\+\+CTX \texorpdfstring{$\ast$}{*}ctx, const unsigned char \texorpdfstring{$\ast$}{*}sig, int siglen, EVP\+\_\+\+MD\+\_\+\+CTX \texorpdfstring{$\ast$}{*}mctx)
+\item 
+\Hypertarget{structevp__pkey__method__st_a1c7295fe4d2ab98507667724e4e2fd1e}\label{structevp__pkey__method__st_a1c7295fe4d2ab98507667724e4e2fd1e} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries encrypt\+\_\+init} )(EVP\+\_\+\+PKEY\+\_\+\+CTX \texorpdfstring{$\ast$}{*}ctx)
+\item 
+\Hypertarget{structevp__pkey__method__st_ae8f8118d41de270e6c7992afea6dfb01}\label{structevp__pkey__method__st_ae8f8118d41de270e6c7992afea6dfb01} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries encrypt} )(EVP\+\_\+\+PKEY\+\_\+\+CTX \texorpdfstring{$\ast$}{*}ctx, unsigned char \texorpdfstring{$\ast$}{*}out, size\+\_\+t \texorpdfstring{$\ast$}{*}outlen, const unsigned char \texorpdfstring{$\ast$}{*}in, size\+\_\+t inlen)
+\item 
+\Hypertarget{structevp__pkey__method__st_a82d5558ce8805fd96a20b01f8bc6c5fb}\label{structevp__pkey__method__st_a82d5558ce8805fd96a20b01f8bc6c5fb} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries decrypt\+\_\+init} )(EVP\+\_\+\+PKEY\+\_\+\+CTX \texorpdfstring{$\ast$}{*}ctx)
+\item 
+\Hypertarget{structevp__pkey__method__st_a6c0310cdd25c0cfa54540e60a35ef7d1}\label{structevp__pkey__method__st_a6c0310cdd25c0cfa54540e60a35ef7d1} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries decrypt} )(EVP\+\_\+\+PKEY\+\_\+\+CTX \texorpdfstring{$\ast$}{*}ctx, unsigned char \texorpdfstring{$\ast$}{*}out, size\+\_\+t \texorpdfstring{$\ast$}{*}outlen, const unsigned char \texorpdfstring{$\ast$}{*}in, size\+\_\+t inlen)
+\item 
+\Hypertarget{structevp__pkey__method__st_a67aa20c70793611b350dfb8a7ae96288}\label{structevp__pkey__method__st_a67aa20c70793611b350dfb8a7ae96288} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries derive\+\_\+init} )(EVP\+\_\+\+PKEY\+\_\+\+CTX \texorpdfstring{$\ast$}{*}ctx)
+\item 
+\Hypertarget{structevp__pkey__method__st_a399ae0554a270edc82446adf96f6f9ad}\label{structevp__pkey__method__st_a399ae0554a270edc82446adf96f6f9ad} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries derive} )(EVP\+\_\+\+PKEY\+\_\+\+CTX \texorpdfstring{$\ast$}{*}ctx, unsigned char \texorpdfstring{$\ast$}{*}key, size\+\_\+t \texorpdfstring{$\ast$}{*}keylen)
+\item 
+\Hypertarget{structevp__pkey__method__st_a679f3d099145fb705683a9ac03e51d19}\label{structevp__pkey__method__st_a679f3d099145fb705683a9ac03e51d19} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries ctrl} )(EVP\+\_\+\+PKEY\+\_\+\+CTX \texorpdfstring{$\ast$}{*}ctx, int type, int p1, void \texorpdfstring{$\ast$}{*}p2)
+\item 
+\Hypertarget{structevp__pkey__method__st_a16a1c3ffdaad990abb069fd32248fd20}\label{structevp__pkey__method__st_a16a1c3ffdaad990abb069fd32248fd20} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries ctrl\+\_\+str} )(EVP\+\_\+\+PKEY\+\_\+\+CTX \texorpdfstring{$\ast$}{*}ctx, const char \texorpdfstring{$\ast$}{*}type, const char \texorpdfstring{$\ast$}{*}value)
+\item 
+\Hypertarget{structevp__pkey__method__st_af3ba59aef893e19571e6b756f9165134}\label{structevp__pkey__method__st_af3ba59aef893e19571e6b756f9165134} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries digestsign} )(EVP\+\_\+\+MD\+\_\+\+CTX \texorpdfstring{$\ast$}{*}ctx, unsigned char \texorpdfstring{$\ast$}{*}sig, size\+\_\+t \texorpdfstring{$\ast$}{*}siglen, const unsigned char \texorpdfstring{$\ast$}{*}tbs, size\+\_\+t tbslen)
+\item 
+\Hypertarget{structevp__pkey__method__st_aec1f62bc5e4111ec4024f8078a845c6c}\label{structevp__pkey__method__st_aec1f62bc5e4111ec4024f8078a845c6c} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries digestverify} )(EVP\+\_\+\+MD\+\_\+\+CTX \texorpdfstring{$\ast$}{*}ctx, const unsigned char \texorpdfstring{$\ast$}{*}sig, size\+\_\+t siglen, const unsigned char \texorpdfstring{$\ast$}{*}tbs, size\+\_\+t tbslen)
+\item 
+\Hypertarget{structevp__pkey__method__st_a1de595e7565b76bad6ee112b65005d86}\label{structevp__pkey__method__st_a1de595e7565b76bad6ee112b65005d86} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries check} )(EVP\+\_\+\+PKEY \texorpdfstring{$\ast$}{*}pkey)
+\item 
+\Hypertarget{structevp__pkey__method__st_a75741841dad76396b7c47e747f07ad64}\label{structevp__pkey__method__st_a75741841dad76396b7c47e747f07ad64} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries public\+\_\+check} )(EVP\+\_\+\+PKEY \texorpdfstring{$\ast$}{*}pkey)
+\item 
+\Hypertarget{structevp__pkey__method__st_ab4e14cc43edf8990fd5fa521233422b9}\label{structevp__pkey__method__st_ab4e14cc43edf8990fd5fa521233422b9} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries param\+\_\+check} )(EVP\+\_\+\+PKEY \texorpdfstring{$\ast$}{*}pkey)
+\item 
+\Hypertarget{structevp__pkey__method__st_afadd4d683125a438927ebaf3e617c2bb}\label{structevp__pkey__method__st_afadd4d683125a438927ebaf3e617c2bb} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries digest\+\_\+custom} )(EVP\+\_\+\+PKEY\+\_\+\+CTX \texorpdfstring{$\ast$}{*}ctx, EVP\+\_\+\+MD\+\_\+\+CTX \texorpdfstring{$\ast$}{*}mctx)
+\end{DoxyCompactItemize}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/namph/\+Downloads/openssl/openssl-\/3.\+2.\+1/include/crypto/evp.\+h\end{DoxyCompactItemize}

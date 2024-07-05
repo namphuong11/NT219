@@ -1,0 +1,163 @@
+\chapter{Documenting public Functions and Macros}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2_h_o_w_t_o_2documenting-functions-and-macros}{}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2_h_o_w_t_o_2documenting-functions-and-macros}\index{Documenting public Functions and Macros@{Documenting public Functions and Macros}}
+In the last few years, the Open\+SSL project has strived to improve the quality and coverage of the API documentation. A while ago, this goal has been turned into an official \href{https://www.openssl.org/policies/technical/documentation-policy.html}{\texttt{ documentation-\/policy}}. This policy is actively enforced by the {\ttfamily make doc-\/nits} target resp. {\ttfamily check-\/docs} Git\+Hub action.
+
+If you add a new public function or macro to a header file without documenting it, it will give you an error message like this\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{include/openssl/bio.h:\ macro\ BIO\_set\_dgram\_origin(3)\ undocumented}
+\DoxyCodeLine{include/openssl/bio.h:\ macro\ BIO\_get\_dgram\_origin(3)\ undocumented}
+\DoxyCodeLine{include/openssl/bio.h:\ macro\ BIO\_set\_dgram\_dest(3)\ undocumented}
+\DoxyCodeLine{include/openssl/bio.h:\ macro\ BIO\_get\_dgram\_dest(3)\ undocumented}
+
+\end{DoxyCode}
+
+
+and you\textquotesingle{}ll want to document this.
+
+So, create a new {\ttfamily .pod} file named {\ttfamily doc/man3/\+FUNCTION.\+pod}.
+
+If you are asked to document several related functions in that file, you can create a single pod file in which you document them together. In this case, use the name of the first function as the file name, like for the above example\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{doc/man3/BIO\_set\_dgram\_origin.pod}
+
+\end{DoxyCode}
+
+
+If you do use an unrelated name (like {\ttfamily BIO\+\_\+dgram.\+pod}) then you\textquotesingle{}ll get a warning about that.
+
+Next, you need to add your new file to the {\ttfamily doc/build.\+info} file. This command does it automatically for you\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\$\ make\ generate\_doc\_buildinfo}
+
+\end{DoxyCode}
+
+
+this will update {\ttfamily doc/build.\+info}. You should git add the result as {\ttfamily generate\+\_\+doc\+\_\+buildinfo} is not run on every build.
+
+With these two changes, running {\ttfamily make doc-\/nits} locally should now agree with you that you have documented all your new defines, but it might then complain\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{BIO\_get\_dgram\_dest(3)\ is\ supposedly\ internal}
+\DoxyCodeLine{(maybe\ missing\ from\ other.syms)\ but\ is\ documented\ as\ public}
+
+\end{DoxyCode}
+
+
+If it is the case that your interface is meant to be public, then you need to edit the file {\ttfamily util/other.\+syms} to add the names of your {\ttfamily \#define} functions. This file gets sorted alphabetically prior to each major release, but new additions should be placed at the end of the file.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2_h_o_w_t_o_2documenting-functions-and-macros_autotoc_md517}{}\doxysection{\texorpdfstring{Example}{Example}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2_h_o_w_t_o_2documenting-functions-and-macros_autotoc_md517}
+For demonstration purposes, two new public symbols have been added by "{}implementing"{} a public function {\ttfamily BIO\+\_\+set\+\_\+dgram\+\_\+foo()} and a public function-\/like macro {\ttfamily BIO\+\_\+set\+\_\+dgram\+\_\+bar()}\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{diff\ -\/-\/git\ a/crypto/bio/bss\_dgram.c\ b/crypto/bio/bss\_dgram.c}
+\DoxyCodeLine{index\ 82d382cf4e..30382f0abe\ 100644}
+\DoxyCodeLine{-\/-\/-\/\ a/crypto/bio/bss\_dgram.c}
+\DoxyCodeLine{+++\ b/crypto/bio/bss\_dgram.c}
+\DoxyCodeLine{@@\ -\/192,6\ +192,13\ @@\ BIO\ *BIO\_new\_dgram(int\ fd,\ int\ close\_flag)}
+\DoxyCodeLine{\ \ \ \ \ return\ ret;}
+\DoxyCodeLine{\ \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{+}
+\DoxyCodeLine{+int\ BIO\_set\_dgram\_foo(BIO*\ b,\ int\ foo)}
+\DoxyCodeLine{+\{}
+\DoxyCodeLine{+\ \ \ \ return\ foo;}
+\DoxyCodeLine{+\}}
+\DoxyCodeLine{+}
+\DoxyCodeLine{+}
+\DoxyCodeLine{\ static\ int\ dgram\_new(BIO\ *bi)}
+\DoxyCodeLine{\ \{}
+\DoxyCodeLine{\ \ \ \ \ bio\_dgram\_data\ *data\ =\ OPENSSL\_zalloc(sizeof(*data));}
+\DoxyCodeLine{diff\ -\/-\/git\ a/include/openssl/bio.h.in\ b/include/openssl/bio.h.in}
+\DoxyCodeLine{index\ c70185db34..4ddea2f96b\ 100644}
+\DoxyCodeLine{-\/-\/-\/\ a/include/openssl/bio.h.in}
+\DoxyCodeLine{+++\ b/include/openssl/bio.h.in}
+\DoxyCodeLine{@@\ -\/485,6\ +485,9\ @@\ struct\ bio\_dgram\_sctp\_prinfo\ \{}
+\DoxyCodeLine{\ \#define\ BIO\_set\_dgram\_dest(b,\ addr)\ \ \ BIO\_ctrl(b,\ BIO\_CTRL\_DGRAM\_SET\_PEER,\ 0,\ addr)}
+\DoxyCodeLine{\ \#define\ BIO\_get\_dgram\_dest(b,\ addr)\ \ \ BIO\_ctrl(b,\ BIO\_CTRL\_DGRAM\_GET\_PEER,\ 0,\ addr)}
+\DoxyCodeLine{}
+\DoxyCodeLine{+int\ BIO\_set\_dgram\_foo(BIO*\ b,\ int\ foo);}
+\DoxyCodeLine{+\#define\ BIO\_set\_dgram\_bar(b,\ bar)\ BIO\_ctrl(b,\ BIO\_CTRL\_DGRAM\_SET\_ADDR,\ 0,\ bar)}
+\DoxyCodeLine{+}
+\DoxyCodeLine{\ /*}
+\DoxyCodeLine{\ \ *\ name\ is\ cast\ to\ lose\ const,\ but\ might\ be\ better\ to\ route\ through\ a}
+\DoxyCodeLine{\ \ *\ function\ so\ we\ can\ do\ it\ safely}
+
+\end{DoxyCode}
+
+
+If you run {\ttfamily make doc-\/nits}, you might be surprised that it only complains about the undocumented macro, not the function\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\$\ make\ doc-\/nits}
+\DoxyCodeLine{}
+\DoxyCodeLine{/usr/bin/perl\ ./util/find-\/doc-\/nits\ -\/c\ -\/n\ -\/l\ -\/e}
+\DoxyCodeLine{include/openssl/bio.h:\ macro\ BIO\_set\_dgram\_bar(3)\ undocumented}
+\DoxyCodeLine{\#\ 1\ macros\ undocumented\ (count\ is\ approximate)}
+\DoxyCodeLine{make:\ ***\ [Makefile:3833:\ doc-\/nits]\ Error\ 1}
+
+\end{DoxyCode}
+
+
+The explanation for this is that one important step is still missing, it needs to be done first\+: you need to run
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\$\ make\ update}
+
+\end{DoxyCode}
+
+
+which triggers a scan of the public headers for new API functions.
+
+All new functions will be added to either {\ttfamily util/libcrypto.\+num} or {\ttfamily util/libssl.\+num}. Those files store the information about the symbols which need to be exported from the shared library resp. DLL. Among other stuff, they contain the ordinal numbers for the \href{https://docs.microsoft.com/en-us/cpp/build/exporting-from-a-dll-using-def-files}{\texttt{ module definition file}} of the Windows DLL, which is the reason for the {\ttfamily .num} extension.
+
+After running {\ttfamily make update}, you can use {\ttfamily git diff} to check the outcome\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{diff\ -\/-\/git\ a/util/libcrypto.num\ b/util/libcrypto.num}
+\DoxyCodeLine{index\ 394f454732..fc3c67313a\ 100644}
+\DoxyCodeLine{-\/-\/-\/\ a/util/libcrypto.num}
+\DoxyCodeLine{+++\ b/util/libcrypto.num}
+\DoxyCodeLine{@@\ -\/5437,3\ +5437,4\ @@\ BN\_signed\_bn2native\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ?\ 3\_1\_0\ \ \ EXIST::FUNCTION:}
+\DoxyCodeLine{\ ASYNC\_set\_mem\_functions\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ?\ \ 3\_1\_0\ \ \ EXIST::FUNCTION:}
+\DoxyCodeLine{\ ASYNC\_get\_mem\_functions\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ?\ \ 3\_1\_0\ \ \ EXIST::FUNCTION:}
+\DoxyCodeLine{\ BIO\_ADDR\_dup\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ?\ \ 3\_1\_0\ \ \ EXIST::FUNCTION:SOCK}
+\DoxyCodeLine{+BIO\_set\_dgram\_foo\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ?\ \ 3\_1\_0\ \ \ EXIST::FUNCTION:}
+
+\end{DoxyCode}
+
+
+The changes need to be committed, ideally as a separate commit\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\$\ git\ commit\ -\/a\ -\/m\ "{}make\ update"{}}
+
+\end{DoxyCode}
+
+
+which has the advantage that it can easily be discarded when it becomes necessary to rerun {\ttfamily make update}.
+
+Finally, we reached the point where {\ttfamily make doc-\/nits} complains about both symbols\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\$\ make\ doc-\/nits}
+\DoxyCodeLine{/usr/bin/perl\ ./util/find-\/doc-\/nits\ -\/c\ -\/n\ -\/l\ -\/e}
+\DoxyCodeLine{crypto:\ function\ BIO\_set\_dgram\_foo(3)\ undocumented}
+\DoxyCodeLine{\#\ 1\ libcrypto\ names\ are\ not\ documented}
+\DoxyCodeLine{include/openssl/bio.h:\ macro\ BIO\_set\_dgram\_bar(3)\ undocumented}
+\DoxyCodeLine{\#\ 1\ macros\ undocumented\ (count\ is\ approximate)}
+\DoxyCodeLine{make:\ ***\ [Makefile:3833:\ doc-\/nits]\ Error\ 1}
+
+\end{DoxyCode}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2_h_o_w_t_o_2documenting-functions-and-macros_autotoc_md518}{}\doxysection{\texorpdfstring{Summary}{Summary}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2_h_o_w_t_o_2documenting-functions-and-macros_autotoc_md518}
+The bottom line is that only the way how the public symbols are recorded is different between functions and macros, the rest of the documentation procedure is analogous. 

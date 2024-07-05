@@ -1,0 +1,36 @@
+\doxysection{seeding.\+h}
+\hypertarget{seeding_8h_source}{}\label{seeding_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/providers/implementations/include/prov/seeding.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/providers/implementations/include/prov/seeding.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2020-\/2021\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ "{}prov/provider\_ctx.h"{}}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ "{}crypto/rand\_pool.h"{}}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{comment}{/*\ Hardware-\/based\ seeding\ functions.\ */}}
+\DoxyCodeLine{00014\ \textcolor{keywordtype}{size\_t}\ ossl\_prov\_acquire\_entropy\_from\_tsc(\mbox{\hyperlink{structrand__pool__st}{RAND\_POOL}}\ *pool);}
+\DoxyCodeLine{00015\ \textcolor{keywordtype}{size\_t}\ ossl\_prov\_acquire\_entropy\_from\_cpu(\mbox{\hyperlink{structrand__pool__st}{RAND\_POOL}}\ *pool);}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ *\ External\ seeding\ functions\ from\ the\ core\ dispatch\ table.}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00020\ \textcolor{keywordtype}{int}\ ossl\_prov\_seeding\_from\_dispatch(\textcolor{keyword}{const}\ OSSL\_DISPATCH\ *fns);}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{keywordtype}{size\_t}\ ossl\_prov\_get\_entropy(\mbox{\hyperlink{structprov__ctx__st}{PROV\_CTX}}\ *prov\_ctx,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **pout,}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ entropy,\ \textcolor{keywordtype}{size\_t}\ min\_len,\ \textcolor{keywordtype}{size\_t}\ max\_len);}
+\DoxyCodeLine{00024\ \textcolor{keywordtype}{void}\ ossl\_prov\_cleanup\_entropy(\mbox{\hyperlink{structprov__ctx__st}{PROV\_CTX}}\ *prov\_ctx,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *buf,}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ len);}
+\DoxyCodeLine{00026\ \textcolor{keywordtype}{size\_t}\ ossl\_prov\_get\_nonce(\mbox{\hyperlink{structprov__ctx__st}{PROV\_CTX}}\ *prov\_ctx,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **pout,}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ min\_len,\ \textcolor{keywordtype}{size\_t}\ max\_len,}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *salt,\ \textcolor{keywordtype}{size\_t}\ salt\_len);}
+\DoxyCodeLine{00029\ \textcolor{keywordtype}{void}\ ossl\_prov\_cleanup\_nonce(\mbox{\hyperlink{structprov__ctx__st}{PROV\_CTX}}\ *prov\_ctx,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *buf,}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ len);}
+
+\end{DoxyCode}

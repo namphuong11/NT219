@@ -1,0 +1,169 @@
+\doxysection{event\+\_\+queue.\+h}
+\hypertarget{event__queue_8h_source}{}\label{event__queue_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/event\_queue.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/event\_queue.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2022-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_INTERNAL\_EVENT\_QUEUE\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_INTERNAL\_EVENT\_QUEUE\_H}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#\ pragma\ once}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ include\ "{}internal/priority\_queue.h"{}}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#\ include\ "{}internal/time.h"{}}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ *\ Opaque\ type\ holding\ an\ event.}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00020\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__event__st}{ossl\_event\_st}}\ \mbox{\hyperlink{structossl__event__st}{OSSL\_EVENT}};}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ DEFINE\_PRIORITY\_QUEUE\_OF(\mbox{\hyperlink{structossl__event__st}{OSSL\_EVENT}});}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00025\ \textcolor{comment}{\ *\ Public\ type\ representing\ an\ event\ queue,\ the\ underlying\ structure\ being}}
+\DoxyCodeLine{00026\ \textcolor{comment}{\ *\ opaque.}}
+\DoxyCodeLine{00027\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00028\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__event__queue__st}{ossl\_event\_queue\_st}}\ \mbox{\hyperlink{structossl__event__queue__st}{OSSL\_EVENT\_QUEUE}};}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00031\ \textcolor{comment}{\ *\ Public\ type\ representing\ a\ event\ queue\ entry.}}
+\DoxyCodeLine{00032\ \textcolor{comment}{\ *\ It\ is\ (internally)\ public\ so\ that\ it\ can\ be\ embedded\ into\ other\ structures,}}
+\DoxyCodeLine{00033\ \textcolor{comment}{\ *\ it\ should\ otherwise\ be\ treated\ as\ opaque.}}
+\DoxyCodeLine{00034\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00035\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__event__st}{ossl\_event\_st}}\ \{}
+\DoxyCodeLine{00036\ \ \ \ \ uint32\_t\ type;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ What\ type\ of\ event\ this\ is\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00037\ \ \ \ \ uint32\_t\ priority;\ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ What\ priority\ this\ event\ has\ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00038\ \ \ \ \ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ when;\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ When\ the\ event\ is\ scheduled\ to\ happen\ \ \ \ */}}
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keywordtype}{void}\ *ctx;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ User\ argument\ passed\ to\ call\ backs\ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{keywordtype}{void}\ *payload;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Event\ specific\ data\ of\ unknown\ kind\ \ \ \ \ \ */}}
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ payload\_size;\ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Length\ (in\ bytes)\ of\ event\ specific\ data\ */}}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{comment}{/*\ These\ fields\ are\ for\ internal\ use\ only\ */}}
+\DoxyCodeLine{00044\ \ \ \ \ PRIORITY\_QUEUE\_OF(\mbox{\hyperlink{structossl__event__st}{OSSL\_EVENT}})\ *queue;\ \ \ \ \textcolor{comment}{/*\ Queue\ containing\ this\ event\ */}}
+\DoxyCodeLine{00045\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ ref;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ ID\ for\ this\ event\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00046\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ flag\_dynamic\ :\ 1;\ \ \textcolor{comment}{/*\ Malloced\ or\ not?\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00047\ \};}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00050\ \textcolor{comment}{\ *\ Utility\ function\ to\ populate\ an\ event\ structure\ and\ add\ it\ to\ the\ queue}}
+\DoxyCodeLine{00051\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00052\ \textcolor{keywordtype}{int}\ ossl\_event\_queue\_add(\mbox{\hyperlink{structossl__event__queue__st}{OSSL\_EVENT\_QUEUE}}\ *queue,\ \mbox{\hyperlink{structossl__event__st}{OSSL\_EVENT}}\ *event,}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ type,\ uint32\_t\ priority,}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ when,\ \textcolor{keywordtype}{void}\ *ctx,}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *payload,\ \textcolor{keywordtype}{size\_t}\ payload\_size);}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00058\ \textcolor{comment}{\ *\ Utility\ functions\ to\ extract\ event\ fields}}
+\DoxyCodeLine{00059\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00060\ \textcolor{keyword}{static}\ ossl\_unused\ ossl\_inline}
+\DoxyCodeLine{00061\ uint32\_t\ ossl\_event\_get\_type(\textcolor{keyword}{const}\ \mbox{\hyperlink{structossl__event__st}{OSSL\_EVENT}}\ *event)}
+\DoxyCodeLine{00062\ \{}
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{event}-\/>type;}
+\DoxyCodeLine{00064\ \}}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \textcolor{keyword}{static}\ ossl\_unused\ ossl\_inline}
+\DoxyCodeLine{00067\ uint32\_t\ ossl\_event\_get\_priority(\textcolor{keyword}{const}\ \mbox{\hyperlink{structossl__event__st}{OSSL\_EVENT}}\ *event)}
+\DoxyCodeLine{00068\ \{}
+\DoxyCodeLine{00069\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{event}-\/>priority;}
+\DoxyCodeLine{00070\ \}}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00072\ \textcolor{keyword}{static}\ ossl\_unused\ ossl\_inline}
+\DoxyCodeLine{00073\ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ ossl\_event\_get\_when(\textcolor{keyword}{const}\ \mbox{\hyperlink{structossl__event__st}{OSSL\_EVENT}}\ *event)}
+\DoxyCodeLine{00074\ \{}
+\DoxyCodeLine{00075\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{event}-\/>when;}
+\DoxyCodeLine{00076\ \}}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ \textcolor{keyword}{static}\ ossl\_unused\ ossl\_inline}
+\DoxyCodeLine{00079\ \textcolor{keywordtype}{void}\ *ossl\_event\_get0\_ctx(\textcolor{keyword}{const}\ \mbox{\hyperlink{structossl__event__st}{OSSL\_EVENT}}\ *event)}
+\DoxyCodeLine{00080\ \{}
+\DoxyCodeLine{00081\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{event}-\/>ctx;}
+\DoxyCodeLine{00082\ \}}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \textcolor{keyword}{static}\ ossl\_unused\ ossl\_inline}
+\DoxyCodeLine{00085\ \textcolor{keywordtype}{void}\ *ossl\_event\_get0\_payload(\textcolor{keyword}{const}\ \mbox{\hyperlink{structossl__event__st}{OSSL\_EVENT}}\ *event,\ \textcolor{keywordtype}{size\_t}\ *length)}
+\DoxyCodeLine{00086\ \{}
+\DoxyCodeLine{00087\ \ \ \ \ \textcolor{keywordflow}{if}\ (length\ !=\ NULL)}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ *length\ =\ \textcolor{keyword}{event}-\/>payload\_size;}
+\DoxyCodeLine{00089\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{event}-\/>payload;}
+\DoxyCodeLine{00090\ \}}
+\DoxyCodeLine{00091\ }
+\DoxyCodeLine{00092\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00093\ \textcolor{comment}{\ *\ Create\ and\ free\ a\ queue.}}
+\DoxyCodeLine{00094\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00095\ \mbox{\hyperlink{structossl__event__queue__st}{OSSL\_EVENT\_QUEUE}}\ *ossl\_event\_queue\_new(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00096\ \textcolor{keywordtype}{void}\ ossl\_event\_queue\_free(\mbox{\hyperlink{structossl__event__queue__st}{OSSL\_EVENT\_QUEUE}}\ *queue);}
+\DoxyCodeLine{00097\ }
+\DoxyCodeLine{00098\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00099\ \textcolor{comment}{\ *\ Schedule\ a\ new\ event\ into\ an\ event\ queue.}}
+\DoxyCodeLine{00100\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00101\ \textcolor{comment}{\ *\ The\ event\ parameters\ are\ taken\ from\ the\ function\ arguments.}}
+\DoxyCodeLine{00102\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00103\ \textcolor{comment}{\ *\ The\ function\ returns\ NULL\ on\ failure\ and\ the\ added\ event\ on\ success.}}
+\DoxyCodeLine{00104\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00105\ \mbox{\hyperlink{structossl__event__st}{OSSL\_EVENT}}\ *ossl\_event\_queue\_add\_new(\mbox{\hyperlink{structossl__event__queue__st}{OSSL\_EVENT\_QUEUE}}\ *queue,\ }
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ type,\ uint32\_t\ priority,}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ when,\ \textcolor{keywordtype}{void}\ *ctx,}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *payload,\ \textcolor{keywordtype}{size\_t}\ payload\_size)}
+\DoxyCodeLine{00109\ ;}
+\DoxyCodeLine{00110\ }
+\DoxyCodeLine{00111\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00112\ \textcolor{comment}{\ *\ Schedule\ an\ event\ into\ an\ event\ queue.}}
+\DoxyCodeLine{00113\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00114\ \textcolor{comment}{\ *\ The\ event\ parameters\ are\ taken\ from\ the\ function\ arguments.}}
+\DoxyCodeLine{00115\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00116\ \textcolor{comment}{\ *\ The\ function\ returns\ 0\ on\ failure\ and\ 1\ on\ success.}}
+\DoxyCodeLine{00117\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00118\ \textcolor{keywordtype}{int}\ ossl\_event\_queue\_add(\mbox{\hyperlink{structossl__event__queue__st}{OSSL\_EVENT\_QUEUE}}\ *queue,\ \mbox{\hyperlink{structossl__event__st}{OSSL\_EVENT}}\ *event,}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ type,\ uint32\_t\ priority,}
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ when,\ \textcolor{keywordtype}{void}\ *ctx,}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *payload,\ \textcolor{keywordtype}{size\_t}\ payload\_size);}
+\DoxyCodeLine{00122\ }
+\DoxyCodeLine{00123\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00124\ \textcolor{comment}{\ *\ Delete\ an\ event\ from\ the\ queue.}}
+\DoxyCodeLine{00125\ \textcolor{comment}{\ *\ This\ will\ cause\ the\ early\ deletion\ function\ to\ be\ called\ if\ it\ is\ non-\/NULL.}}
+\DoxyCodeLine{00126\ \textcolor{comment}{\ *\ A\ pointer\ to\ the\ event\ structure\ is\ returned.}}
+\DoxyCodeLine{00127\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00128\ \textcolor{keywordtype}{int}\ ossl\_event\_queue\_remove(\mbox{\hyperlink{structossl__event__queue__st}{OSSL\_EVENT\_QUEUE}}\ *queue,\ \mbox{\hyperlink{structossl__event__st}{OSSL\_EVENT}}\ *event);}
+\DoxyCodeLine{00129\ }
+\DoxyCodeLine{00130\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00131\ \textcolor{comment}{\ *\ Free\ a\ dynamic\ event.}}
+\DoxyCodeLine{00132\ \textcolor{comment}{\ *\ Is\ a\ NOP\ for\ a\ static\ event.}}
+\DoxyCodeLine{00133\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00134\ \textcolor{keywordtype}{void}\ ossl\_event\_free(\mbox{\hyperlink{structossl__event__st}{OSSL\_EVENT}}\ *event);}
+\DoxyCodeLine{00135\ }
+\DoxyCodeLine{00136\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00137\ \textcolor{comment}{\ *\ Return\ the\ time\ until\ the\ next\ event\ for\ the\ specified\ event,\ if\ the\ event's}}
+\DoxyCodeLine{00138\ \textcolor{comment}{\ *\ time\ is\ past,\ zero\ is\ returned.\ \ Once\ activated,\ the\ event\ reference\ becomes}}
+\DoxyCodeLine{00139\ \textcolor{comment}{\ *\ invalid\ and\ this\ function\ becomes\ undefined.}}
+\DoxyCodeLine{00140\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00141\ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ ossl\_event\_time\_until(\textcolor{keyword}{const}\ \mbox{\hyperlink{structossl__event__st}{OSSL\_EVENT}}\ *event);}
+\DoxyCodeLine{00142\ }
+\DoxyCodeLine{00143\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00144\ \textcolor{comment}{\ *\ Return\ the\ time\ until\ the\ next\ event\ in\ the\ queue.}}
+\DoxyCodeLine{00145\ \textcolor{comment}{\ *\ If\ the\ next\ event\ is\ in\ the\ past,\ zero\ is\ returned.}}
+\DoxyCodeLine{00146\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00147\ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ ossl\_event\_queue\_time\_until\_next(\textcolor{keyword}{const}\ \mbox{\hyperlink{structossl__event__queue__st}{OSSL\_EVENT\_QUEUE}}\ *queue);}
+\DoxyCodeLine{00148\ }
+\DoxyCodeLine{00149\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00150\ \textcolor{comment}{\ *\ Postpone\ an\ event\ to\ trigger\ at\ the\ specified\ time.}}
+\DoxyCodeLine{00151\ \textcolor{comment}{\ *\ If\ the\ event\ has\ triggered,\ this\ function's\ behaviour\ is\ undefined.}}
+\DoxyCodeLine{00152\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00153\ \textcolor{keywordtype}{int}\ ossl\_event\_queue\_postpone\_until(\mbox{\hyperlink{structossl__event__queue__st}{OSSL\_EVENT\_QUEUE}}\ *queue,}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structossl__event__st}{OSSL\_EVENT}}\ *event,}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ when);}
+\DoxyCodeLine{00156\ }
+\DoxyCodeLine{00157\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00158\ \textcolor{comment}{\ *\ Return\ the\ next\ event\ to\ process.}}
+\DoxyCodeLine{00159\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00160\ \textcolor{keywordtype}{int}\ ossl\_event\_queue\_get1\_next\_event(\mbox{\hyperlink{structossl__event__queue__st}{OSSL\_EVENT\_QUEUE}}\ *queue,}
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structossl__event__st}{OSSL\_EVENT}}\ **event);}
+\DoxyCodeLine{00162\ }
+\DoxyCodeLine{00163\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

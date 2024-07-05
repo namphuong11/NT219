@@ -1,0 +1,35 @@
+\doxysection{apps\+\_\+ui.\+h}
+\hypertarget{apps__ui_8h_source}{}\label{apps__ui_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/apps/include/apps\_ui.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/apps/include/apps\_ui.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2018-\/2020\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_APPS\_UI\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_APPS\_UI\_H}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ define\ PW\_MIN\_LENGTH\ 4}}
+\DoxyCodeLine{00015\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structpw__cb__data}{pw\_cb\_data}}\ \{}
+\DoxyCodeLine{00016\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *password;}
+\DoxyCodeLine{00017\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *prompt\_info;}
+\DoxyCodeLine{00018\ \}\ \mbox{\hyperlink{structpw__cb__data}{PW\_CB\_DATA}};}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{keywordtype}{int}\ password\_callback(\textcolor{keywordtype}{char}\ *buf,\ \textcolor{keywordtype}{int}\ bufsiz,\ \textcolor{keywordtype}{int}\ verify,\ \mbox{\hyperlink{structpw__cb__data}{PW\_CB\_DATA}}\ *cb\_data);}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{keywordtype}{int}\ setup\_ui\_method(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00023\ \textcolor{keywordtype}{void}\ destroy\_ui\_method(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00024\ \textcolor{keywordtype}{int}\ set\_base\_ui\_method(\textcolor{keyword}{const}\ UI\_METHOD\ *ui\_method);}
+\DoxyCodeLine{00025\ \textcolor{keyword}{const}\ UI\_METHOD\ *get\_ui\_method(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \textcolor{keyword}{extern}\ BIO\ *bio\_err;}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

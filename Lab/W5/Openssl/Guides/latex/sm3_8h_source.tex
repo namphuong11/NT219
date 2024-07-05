@@ -1,0 +1,45 @@
+\doxysection{sm3.\+h}
+\hypertarget{sm3_8h_source}{}\label{sm3_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/sm3.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/sm3.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2017-\/2021\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *\ Copyright\ 2017\ Ribose\ Inc.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{comment}{/*\ This\ header\ can\ move\ into\ provider\ when\ legacy\ support\ is\ removed\ */}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#ifndef\ OSSL\_INTERNAL\_SM3\_H}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#\ define\ OSSL\_INTERNAL\_SM3\_H}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ pragma\ once}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#\ include\ <openssl/opensslconf.h>}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#\ ifdef\ OPENSSL\_NO\_SM3}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#\ \ error\ SM3\ is\ disabled.}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#\ define\ SM3\_DIGEST\_LENGTH\ 32}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#\ define\ SM3\_WORD\ unsigned\ int}}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#\ define\ SM3\_CBLOCK\ \ \ \ \ \ 64}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#\ define\ SM3\_LBLOCK\ \ \ \ \ \ (SM3\_CBLOCK/4)}}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_s_m3state__st}{SM3state\_st}}\ \{}
+\DoxyCodeLine{00029\ \ \ \ SM3\_WORD\ A,\ B,\ C,\ D,\ E,\ F,\ G,\ H;}
+\DoxyCodeLine{00030\ \ \ \ SM3\_WORD\ Nl,\ Nh;}
+\DoxyCodeLine{00031\ \ \ \ SM3\_WORD\ data[SM3\_LBLOCK];}
+\DoxyCodeLine{00032\ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ num;}
+\DoxyCodeLine{00033\ \}\ \mbox{\hyperlink{struct_s_m3state__st}{SM3\_CTX}};}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \textcolor{keywordtype}{int}\ ossl\_sm3\_init(\mbox{\hyperlink{struct_s_m3state__st}{SM3\_CTX}}\ *c);}
+\DoxyCodeLine{00036\ \textcolor{keywordtype}{int}\ ossl\_sm3\_update(\mbox{\hyperlink{struct_s_m3state__st}{SM3\_CTX}}\ *c,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *data,\ \textcolor{keywordtype}{size\_t}\ len);}
+\DoxyCodeLine{00037\ \textcolor{keywordtype}{int}\ ossl\_sm3\_final(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *md,\ \mbox{\hyperlink{struct_s_m3state__st}{SM3\_CTX}}\ *c);}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ OSSL\_INTERNAL\_SM3\_H\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

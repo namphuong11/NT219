@@ -1,0 +1,88 @@
+\doxysection{curve448utils.\+h}
+\hypertarget{curve448utils_8h_source}{}\label{curve448utils_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/ec/curve448/curve448utils.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/ec/curve448/curve448utils.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2017-\/2021\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *\ Copyright\ 2015\ Cryptography\ Research,\ Inc.}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ *\ Originally\ written\ by\ Mike\ Hamburg}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#ifndef\ OSSL\_CRYPTO\_EC\_CURVE448UTILS\_H}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ define\ OSSL\_CRYPTO\_EC\_CURVE448UTILS\_H}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#\ include\ <openssl/e\_os2.h>}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#\ include\ "{}internal/numbers.h"{}}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00021\ \textcolor{comment}{\ *\ Internal\ word\ types.\ Somewhat\ tricky.\ \ This\ could\ be\ decided\ separately\ per}}
+\DoxyCodeLine{00022\ \textcolor{comment}{\ *\ platform.\ \ However,\ the\ structs\ do\ need\ to\ be\ all\ the\ same\ size\ and}}
+\DoxyCodeLine{00023\ \textcolor{comment}{\ *\ alignment\ on\ a\ given\ platform\ to\ support\ dynamic\ linking,\ since\ even\ if\ you}}
+\DoxyCodeLine{00024\ \textcolor{comment}{\ *\ header\ was\ built\ with\ eg\ arch\_neon,\ you\ might\ end\ up\ linking\ a\ library\ built}}
+\DoxyCodeLine{00025\ \textcolor{comment}{\ *\ with\ arch\_arm32.}}
+\DoxyCodeLine{00026\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#\ ifndef\ C448\_WORD\_BITS}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#\ \ if\ (defined(\_\_SIZEOF\_INT128\_\_)\ \&\&\ (\_\_SIZEOF\_INT128\_\_\ ==\ 16))\ \(\backslash\)}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\ \ \ \ \ \ \&\&\ !defined(\_\_sparc\_\_)\ \(\backslash\)}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\ \ \ \ \ \ \&\&\ (!defined(\_\_SIZEOF\_LONG\_\_)\ ||\ (\_\_SIZEOF\_LONG\_\_\ ==\ 8))}}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#\ \ \ define\ C448\_WORD\_BITS\ 64\ \ \ \ \ \ }\textcolor{comment}{/*\ The\ number\ of\ bits\ in\ a\ word\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#\ \ else}}
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#\ \ \ define\ C448\_WORD\_BITS\ 32\ \ \ \ \ \ }\textcolor{comment}{/*\ The\ number\ of\ bits\ in\ a\ word\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#\ \ endif}}
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#\ if\ C448\_WORD\_BITS\ ==\ 64}}
+\DoxyCodeLine{00039\ \textcolor{comment}{/*\ Word\ size\ for\ internal\ computations\ */}}
+\DoxyCodeLine{00040\ \textcolor{keyword}{typedef}\ uint64\_t\ c448\_word\_t;}
+\DoxyCodeLine{00041\ \textcolor{comment}{/*\ Signed\ word\ size\ for\ internal\ computations\ */}}
+\DoxyCodeLine{00042\ \textcolor{keyword}{typedef}\ int64\_t\ c448\_sword\_t;}
+\DoxyCodeLine{00043\ \textcolor{comment}{/*\ "{}Boolean"{}\ type,\ will\ be\ set\ to\ all-\/zero\ or\ all-\/one\ (i.e.\ -\/1u)\ */}}
+\DoxyCodeLine{00044\ \textcolor{keyword}{typedef}\ uint64\_t\ c448\_bool\_t;}
+\DoxyCodeLine{00045\ \textcolor{comment}{/*\ Double-\/word\ size\ for\ internal\ computations\ */}}
+\DoxyCodeLine{00046\ \textcolor{keyword}{typedef}\ uint128\_t\ c448\_dword\_t;}
+\DoxyCodeLine{00047\ \textcolor{comment}{/*\ Signed\ double-\/word\ size\ for\ internal\ computations\ */}}
+\DoxyCodeLine{00048\ \textcolor{keyword}{typedef}\ int128\_t\ c448\_dsword\_t;}
+\DoxyCodeLine{00049\ \textcolor{preprocessor}{\#\ elif\ C448\_WORD\_BITS\ ==\ 32}}
+\DoxyCodeLine{00050\ \textcolor{comment}{/*\ Word\ size\ for\ internal\ computations\ */}}
+\DoxyCodeLine{00051\ \textcolor{keyword}{typedef}\ uint32\_t\ c448\_word\_t;}
+\DoxyCodeLine{00052\ \textcolor{comment}{/*\ Signed\ word\ size\ for\ internal\ computations\ */}}
+\DoxyCodeLine{00053\ \textcolor{keyword}{typedef}\ int32\_t\ c448\_sword\_t;}
+\DoxyCodeLine{00054\ \textcolor{comment}{/*\ "{}Boolean"{}\ type,\ will\ be\ set\ to\ all-\/zero\ or\ all-\/one\ (i.e.\ -\/1u)\ */}}
+\DoxyCodeLine{00055\ \textcolor{keyword}{typedef}\ uint32\_t\ c448\_bool\_t;}
+\DoxyCodeLine{00056\ \textcolor{comment}{/*\ Double-\/word\ size\ for\ internal\ computations\ */}}
+\DoxyCodeLine{00057\ \textcolor{keyword}{typedef}\ uint64\_t\ c448\_dword\_t;}
+\DoxyCodeLine{00058\ \textcolor{comment}{/*\ Signed\ double-\/word\ size\ for\ internal\ computations\ */}}
+\DoxyCodeLine{00059\ \textcolor{keyword}{typedef}\ int64\_t\ c448\_dsword\_t;}
+\DoxyCodeLine{00060\ \textcolor{preprocessor}{\#\ else}}
+\DoxyCodeLine{00061\ \textcolor{preprocessor}{\#\ \ error\ "{}Only\ supporting\ C448\_WORD\_BITS\ =\ 32\ or\ 64\ for\ now"{}}}
+\DoxyCodeLine{00062\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00064\ \textcolor{comment}{/*\ C448\_TRUE\ =\ -\/1\ so\ that\ C448\_TRUE\ \&\ x\ =\ x\ */}}
+\DoxyCodeLine{00065\ \textcolor{preprocessor}{\#\ define\ C448\_TRUE\ \ \ \ \ \ (0\ -\/\ (c448\_bool\_t)1)}}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00067\ \textcolor{comment}{/*\ C448\_FALSE\ =\ 0\ so\ that\ C448\_FALSE\ \&\ x\ =\ 0\ */}}
+\DoxyCodeLine{00068\ \textcolor{preprocessor}{\#\ define\ C448\_FALSE\ \ \ \ \ 0}}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ \textcolor{comment}{/*\ Another\ boolean\ type\ used\ to\ indicate\ success\ or\ failure.\ */}}
+\DoxyCodeLine{00071\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}\ \{}
+\DoxyCodeLine{00072\ \ \ \ \ C448\_SUCCESS\ =\ -\/1,\ }
+\DoxyCodeLine{00073\ \ \ \ \ C448\_FAILURE\ =\ 0\ \ \ }
+\DoxyCodeLine{00074\ \}\ c448\_error\_t;}
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00076\ \textcolor{comment}{/*\ Return\ success\ if\ x\ is\ true\ */}}
+\DoxyCodeLine{00077\ \textcolor{keyword}{static}\ ossl\_inline\ c448\_error\_t\ c448\_succeed\_if(c448\_bool\_t\ x)}
+\DoxyCodeLine{00078\ \{}
+\DoxyCodeLine{00079\ \ \ \ \ \textcolor{keywordflow}{return}\ (c448\_error\_t)\ x;}
+\DoxyCodeLine{00080\ \}}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00082\ \textcolor{preprocessor}{\#endif\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{/*\ \_\_C448\_COMMON\_H\_\_\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

@@ -1,0 +1,14 @@
+var searchData=
+[
+  ['4_2009_20aug_201999_0',['Changes between 0.9.3a and 0.9.4  [09 Aug 1999]',['../md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_c_h_a_n_g_e_s.html#autotoc_md165',1,'']]],
+  ['4_2021_20jun_202022_1',['4 21 Jun 2022',['../md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_c_h_a_n_g_e_s.html#autotoc_md17',1,'Changes between 3.0.3 and 3.0.4 [21 Jun 2022]'],['../md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s.html#autotoc_md719',1,'Major changes between OpenSSL 3.0.3 and OpenSSL 3.0.4 [21 Jun 2022]']]],
+  ['4_2024_20oct_202023_2',['4 24 Oct 2023',['../md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_c_h_a_n_g_e_s.html#autotoc_md7',1,'Changes between 3.1.3 and 3.1.4 [24 Oct 2023]'],['../md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s.html#autotoc_md709',1,'Major changes between OpenSSL 3.1.3 and OpenSSL 3.1.4 [24 Oct 2023]']]],
+  ['4_209_20aug_201999_3',['Major changes between OpenSSL 0.9.3 and OpenSSL 0.9.4 [9 Aug 1999]',['../md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s.html#autotoc_md862',1,'']]],
+  ['4_20and_200_209_205_2028_20feb_202000_4',['Changes between 0.9.4 and 0.9.5  [28 Feb 2000]',['../md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_c_h_a_n_g_e_s.html#autotoc_md164',1,'']]],
+  ['4_20and_203_200_205_205_20jul_202022_5',['Changes between 3.0.4 and 3.0.5 [5 Jul 2022]',['../md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_c_h_a_n_g_e_s.html#autotoc_md16',1,'']]],
+  ['4_20and_20openssl_200_209_205_2025_20may_202000_6',['Major changes between OpenSSL 0.9.4 and OpenSSL 0.9.5 [25 May 2000]',['../md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s.html#autotoc_md861',1,'']]],
+  ['4_20and_20openssl_203_200_205_205_20jul_202022_7',['Major changes between OpenSSL 3.0.4 and OpenSSL 3.0.5 [5 Jul 2022]',['../md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s.html#autotoc_md718',1,'']]],
+  ['4_20feb_202013_8',['Major changes between OpenSSL 1.0.1c and OpenSSL 1.0.1d [4 Feb 2013]',['../md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s.html#autotoc_md792',1,'']]],
+  ['4_20jan_202012_9',['4 Jan 2012',['../md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_c_h_a_n_g_e_s.html#autotoc_md112',1,'Changes between 1.0.0e and 1.0.0f [4 Jan 2012]'],['../md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s.html#autotoc_md812',1,'Major changes between OpenSSL 1.0.0e and OpenSSL 1.0.0f [4 Jan 2012]']]],
+  ['4_20may_202006_10',['4 May 2006',['../md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s.html#autotoc_md837',1,'Major changes between OpenSSL 0.9.7i and OpenSSL 0.9.7j [4 May 2006]'],['../md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s.html#autotoc_md831',1,'Major changes between OpenSSL 0.9.8a and OpenSSL 0.9.8b [4 May 2006]']]]
+];

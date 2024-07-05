@@ -1,0 +1,635 @@
+\doxysection{quic\+\_\+wire\+\_\+pkt.\+h}
+\hypertarget{quic__wire__pkt_8h_source}{}\label{quic__wire__pkt_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/quic\_wire\_pkt.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/quic\_wire\_pkt.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2022-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_QUIC\_WIRE\_PKT\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_QUIC\_WIRE\_PKT\_H}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#\ include\ <openssl/ssl.h>}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ include\ "{}internal/packet\_quic.h"{}}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#\ include\ "{}internal/quic\_types.h"{}}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#\ ifndef\ OPENSSL\_NO\_QUIC}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_VERSION\_NONE\ \ \ ((uint32\_t)0)\ \ \ }\textcolor{comment}{/*\ Used\ for\ version\ negotiation\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_VERSION\_1\ \ \ \ \ \ ((uint32\_t)1)\ \ \ }\textcolor{comment}{/*\ QUIC\ v1\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{comment}{/*\ QUIC\ logical\ packet\ type.\ These\ do\ not\ match\ wire\ values.\ */}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_PKT\_TYPE\_INITIAL\ \ \ \ \ \ \ \ 1}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_PKT\_TYPE\_0RTT\ \ \ \ \ \ \ \ \ \ \ 2}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_PKT\_TYPE\_HANDSHAKE\ \ \ \ \ \ 3}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_PKT\_TYPE\_RETRY\ \ \ \ \ \ \ \ \ \ 4}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_PKT\_TYPE\_1RTT\ \ \ \ \ \ \ \ \ \ \ 5}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_PKT\_TYPE\_VERSION\_NEG\ \ \ \ 6}}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00031\ \textcolor{comment}{\ *\ Determine\ encryption\ level\ from\ packet\ type.\ Returns\ QUIC\_ENC\_LEVEL\_NUM\ if}}
+\DoxyCodeLine{00032\ \textcolor{comment}{\ *\ the\ packet\ is\ not\ of\ a\ type\ which\ is\ encrypted.}}
+\DoxyCodeLine{00033\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00034\ \textcolor{keyword}{static}\ ossl\_inline\ ossl\_unused\ uint32\_t}
+\DoxyCodeLine{00035\ ossl\_quic\_pkt\_type\_to\_enc\_level(uint32\_t\ pkt\_type)}
+\DoxyCodeLine{00036\ \{}
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{keywordflow}{switch}\ (pkt\_type)\ \{}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ QUIC\_PKT\_TYPE\_INITIAL:}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ QUIC\_ENC\_LEVEL\_INITIAL;}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ QUIC\_PKT\_TYPE\_HANDSHAKE:}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ QUIC\_ENC\_LEVEL\_HANDSHAKE;}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ QUIC\_PKT\_TYPE\_0RTT:}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ QUIC\_ENC\_LEVEL\_0RTT;}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ QUIC\_PKT\_TYPE\_1RTT:}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ QUIC\_ENC\_LEVEL\_1RTT;}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ QUIC\_ENC\_LEVEL\_NUM;}
+\DoxyCodeLine{00048\ \ \ \ \ \}}
+\DoxyCodeLine{00049\ \}}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \textcolor{keyword}{static}\ ossl\_inline\ ossl\_unused\ uint32\_t}
+\DoxyCodeLine{00052\ ossl\_quic\_enc\_level\_to\_pkt\_type(uint32\_t\ enc\_level)}
+\DoxyCodeLine{00053\ \{}
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{keywordflow}{switch}\ (enc\_level)\ \{}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ QUIC\_ENC\_LEVEL\_INITIAL:}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ QUIC\_PKT\_TYPE\_INITIAL;}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ QUIC\_ENC\_LEVEL\_HANDSHAKE:}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ QUIC\_PKT\_TYPE\_HANDSHAKE;}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ QUIC\_ENC\_LEVEL\_0RTT:}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ QUIC\_PKT\_TYPE\_0RTT;}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ QUIC\_ENC\_LEVEL\_1RTT:}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ QUIC\_PKT\_TYPE\_1RTT;}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ UINT32\_MAX;}
+\DoxyCodeLine{00065\ \ \ \ \ \}}
+\DoxyCodeLine{00066\ \}}
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00068\ \textcolor{comment}{/*\ Determine\ if\ a\ packet\ type\ contains\ an\ encrypted\ payload.\ */}}
+\DoxyCodeLine{00069\ \textcolor{keyword}{static}\ ossl\_inline\ ossl\_unused\ \textcolor{keywordtype}{int}}
+\DoxyCodeLine{00070\ ossl\_quic\_pkt\_type\_is\_encrypted(uint32\_t\ pkt\_type)}
+\DoxyCodeLine{00071\ \{}
+\DoxyCodeLine{00072\ \ \ \ \ \textcolor{keywordflow}{switch}\ (pkt\_type)\ \{}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ QUIC\_PKT\_TYPE\_RETRY:}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ QUIC\_PKT\_TYPE\_VERSION\_NEG:}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00078\ \ \ \ \ \}}
+\DoxyCodeLine{00079\ \}}
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00081\ \textcolor{comment}{/*\ Determine\ if\ a\ packet\ type\ contains\ a\ PN\ field.\ */}}
+\DoxyCodeLine{00082\ \textcolor{keyword}{static}\ ossl\_inline\ ossl\_unused\ \textcolor{keywordtype}{int}}
+\DoxyCodeLine{00083\ ossl\_quic\_pkt\_type\_has\_pn(uint32\_t\ pkt\_type)}
+\DoxyCodeLine{00084\ \{}
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00086\ \textcolor{comment}{\ \ \ \ \ *\ Currently\ a\ packet\ has\ a\ PN\ iff\ it\ is\ encrypted.\ This\ could\ change}}
+\DoxyCodeLine{00087\ \textcolor{comment}{\ \ \ \ \ *\ someday.}}
+\DoxyCodeLine{00088\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00089\ \ \ \ \ \textcolor{keywordflow}{return}\ ossl\_quic\_pkt\_type\_is\_encrypted(pkt\_type);}
+\DoxyCodeLine{00090\ \}}
+\DoxyCodeLine{00091\ }
+\DoxyCodeLine{00092\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00093\ \textcolor{comment}{\ *\ Determine\ if\ a\ packet\ type\ can\ appear\ with\ other\ packets\ in\ a\ datagram.\ Some}}
+\DoxyCodeLine{00094\ \textcolor{comment}{\ *\ packet\ types\ must\ be\ the\ sole\ packet\ in\ a\ datagram.}}
+\DoxyCodeLine{00095\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00096\ \textcolor{keyword}{static}\ ossl\_inline\ ossl\_unused\ \textcolor{keywordtype}{int}}
+\DoxyCodeLine{00097\ ossl\_quic\_pkt\_type\_can\_share\_dgram(uint32\_t\ pkt\_type)}
+\DoxyCodeLine{00098\ \{}
+\DoxyCodeLine{00099\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00100\ \textcolor{comment}{\ \ \ \ \ *\ Currently\ only\ the\ encrypted\ packet\ types\ can\ share\ a\ datagram.\ This}}
+\DoxyCodeLine{00101\ \textcolor{comment}{\ \ \ \ \ *\ could\ change\ someday.}}
+\DoxyCodeLine{00102\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00103\ \ \ \ \ \textcolor{keywordflow}{return}\ ossl\_quic\_pkt\_type\_is\_encrypted(pkt\_type);}
+\DoxyCodeLine{00104\ \}}
+\DoxyCodeLine{00105\ }
+\DoxyCodeLine{00106\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00107\ \textcolor{comment}{\ *\ Determine\ if\ the\ packet\ type\ must\ come\ at\ the\ end\ of\ the\ datagram\ (due\ to\ the}}
+\DoxyCodeLine{00108\ \textcolor{comment}{\ *\ lack\ of\ a\ length\ field).}}
+\DoxyCodeLine{00109\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00110\ \textcolor{keyword}{static}\ ossl\_inline\ ossl\_unused\ \textcolor{keywordtype}{int}}
+\DoxyCodeLine{00111\ ossl\_quic\_pkt\_type\_must\_be\_last(uint32\_t\ pkt\_type)}
+\DoxyCodeLine{00112\ \{}
+\DoxyCodeLine{00113\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00114\ \textcolor{comment}{\ \ \ \ \ *\ Any\ packet\ type\ which\ cannot\ share\ a\ datagram\ obviously\ must\ come\ last.}}
+\DoxyCodeLine{00115\ \textcolor{comment}{\ \ \ \ \ *\ 1-\/RTT\ also\ must\ come\ last\ as\ it\ lacks\ a\ length\ field.}}
+\DoxyCodeLine{00116\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00117\ \ \ \ \ \textcolor{keywordflow}{return}\ !ossl\_quic\_pkt\_type\_can\_share\_dgram(pkt\_type)}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ ||\ pkt\_type\ ==\ QUIC\_PKT\_TYPE\_1RTT;}
+\DoxyCodeLine{00119\ \}}
+\DoxyCodeLine{00120\ }
+\DoxyCodeLine{00121\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00122\ \textcolor{comment}{\ *\ Determine\ if\ the\ packet\ type\ has\ a\ version\ field.}}
+\DoxyCodeLine{00123\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00124\ \textcolor{keyword}{static}\ ossl\_inline\ ossl\_unused\ \textcolor{keywordtype}{int}}
+\DoxyCodeLine{00125\ ossl\_quic\_pkt\_type\_has\_version(uint32\_t\ pkt\_type)}
+\DoxyCodeLine{00126\ \{}
+\DoxyCodeLine{00127\ \ \ \ \ \textcolor{keywordflow}{return}\ pkt\_type\ !=\ QUIC\_PKT\_TYPE\_1RTT\ \&\&\ pkt\_type\ !=\ QUIC\_PKT\_TYPE\_VERSION\_NEG;}
+\DoxyCodeLine{00128\ \}}
+\DoxyCodeLine{00129\ }
+\DoxyCodeLine{00130\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00131\ \textcolor{comment}{\ *\ Determine\ if\ the\ packet\ type\ has\ a\ SCID\ field.}}
+\DoxyCodeLine{00132\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00133\ \textcolor{keyword}{static}\ ossl\_inline\ ossl\_unused\ \textcolor{keywordtype}{int}}
+\DoxyCodeLine{00134\ ossl\_quic\_pkt\_type\_has\_scid(uint32\_t\ pkt\_type)}
+\DoxyCodeLine{00135\ \{}
+\DoxyCodeLine{00136\ \ \ \ \ \textcolor{keywordflow}{return}\ pkt\_type\ !=\ QUIC\_PKT\_TYPE\_1RTT;}
+\DoxyCodeLine{00137\ \}}
+\DoxyCodeLine{00138\ }
+\DoxyCodeLine{00139\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00140\ \textcolor{comment}{\ *\ Smallest\ possible\ QUIC\ packet\ size\ as\ per\ RFC\ (aside\ from\ version\ negotiation}}
+\DoxyCodeLine{00141\ \textcolor{comment}{\ *\ packets).}}
+\DoxyCodeLine{00142\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00143\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_MIN\_VALID\_PKT\_LEN\_CRYPTO\ \ \ \ \ \ 21}}
+\DoxyCodeLine{00144\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_MIN\_VALID\_PKT\_LEN\_VERSION\_NEG\ \ 7}}
+\DoxyCodeLine{00145\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_MIN\_VALID\_PKT\_LEN\ \ \ \ \ \ \ \ \ \ \ \ \ \ QUIC\_MIN\_VALID\_PKT\_LEN\_VERSION\_NEG}}
+\DoxyCodeLine{00146\ }
+\DoxyCodeLine{00147\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structquic__pkt__hdr__ptrs__st}{quic\_pkt\_hdr\_ptrs\_st}}\ \mbox{\hyperlink{structquic__pkt__hdr__ptrs__st}{QUIC\_PKT\_HDR\_PTRS}};}
+\DoxyCodeLine{00148\ }
+\DoxyCodeLine{00149\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00150\ \textcolor{comment}{\ *\ QUIC\ Packet\ Header\ Protection}}
+\DoxyCodeLine{00151\ \textcolor{comment}{\ *\ =============================}}
+\DoxyCodeLine{00152\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00153\ \textcolor{comment}{\ *\ Functions\ to\ apply\ and\ remove\ QUIC\ packet\ header\ protection.\ A\ header}}
+\DoxyCodeLine{00154\ \textcolor{comment}{\ *\ protector\ is\ initialised\ using\ ossl\_quic\_hdr\_protector\_init\ and\ must\ be}}
+\DoxyCodeLine{00155\ \textcolor{comment}{\ *\ destroyed\ using\ ossl\_quic\_hdr\_protector\_cleanup\ when\ no\ longer\ needed.}}
+\DoxyCodeLine{00156\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00157\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structquic__hdr__protector__st}{quic\_hdr\_protector\_st}}\ \{}
+\DoxyCodeLine{00158\ \ \ \ \ OSSL\_LIB\_CTX\ \ \ \ \ \ \ *libctx;}
+\DoxyCodeLine{00159\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ \ \ \ \ \ \ \ \ *propq;}
+\DoxyCodeLine{00160\ \ \ \ \ EVP\_CIPHER\_CTX\ \ \ \ \ *\mbox{\hyperlink{structcipher__ctx}{cipher\_ctx}};}
+\DoxyCodeLine{00161\ \ \ \ \ EVP\_CIPHER\ \ \ \ \ \ \ \ \ *cipher;}
+\DoxyCodeLine{00162\ \ \ \ \ uint32\_t\ \ \ \ \ \ \ \ \ \ \ \ cipher\_id;}
+\DoxyCodeLine{00163\ \}\ \mbox{\hyperlink{structquic__hdr__protector__st}{QUIC\_HDR\_PROTECTOR}};}
+\DoxyCodeLine{00164\ }
+\DoxyCodeLine{00165\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_HDR\_PROT\_CIPHER\_AES\_128\ \ \ \ 1}}
+\DoxyCodeLine{00166\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_HDR\_PROT\_CIPHER\_AES\_256\ \ \ \ 2}}
+\DoxyCodeLine{00167\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_HDR\_PROT\_CIPHER\_CHACHA\ \ \ \ \ 3}}
+\DoxyCodeLine{00168\ }
+\DoxyCodeLine{00169\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00170\ \textcolor{comment}{\ *\ Initialises\ a\ header\ protector.}}
+\DoxyCodeLine{00171\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00172\ \textcolor{comment}{\ *\ \ \ cipher\_id:}}
+\DoxyCodeLine{00173\ \textcolor{comment}{\ *\ \ \ \ \ \ The\ header\ protection\ cipher\ method\ to\ use.\ One\ of}}
+\DoxyCodeLine{00174\ \textcolor{comment}{\ *\ \ \ \ \ \ QUIC\_HDR\_PROT\_CIPHER\_*.\ Must\ be\ chosen\ based\ on\ negotiated\ TLS\ cipher}}
+\DoxyCodeLine{00175\ \textcolor{comment}{\ *\ \ \ \ \ \ suite.}}
+\DoxyCodeLine{00176\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00177\ \textcolor{comment}{\ *\ \ \ quic\_hp\_key:}}
+\DoxyCodeLine{00178\ \textcolor{comment}{\ *\ \ \ \ \ \ This\ must\ be\ the\ "{}quic\ hp"{}\ key\ derived\ from\ a\ traffic\ secret.}}
+\DoxyCodeLine{00179\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00180\ \textcolor{comment}{\ *\ \ \ \ \ \ The\ length\ of\ the\ quic\_hp\_key\ must\ correspond\ to\ that\ expected\ for\ the}}
+\DoxyCodeLine{00181\ \textcolor{comment}{\ *\ \ \ \ \ \ given\ cipher\ ID.}}
+\DoxyCodeLine{00182\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00183\ \textcolor{comment}{\ *\ The\ header\ protector\ performs\ amortisable\ initialisation\ in\ this\ function,}}
+\DoxyCodeLine{00184\ \textcolor{comment}{\ *\ therefore\ a\ header\ protector\ should\ be\ used\ for\ as\ long\ as\ possible.}}
+\DoxyCodeLine{00185\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00186\ \textcolor{comment}{\ *\ Returns\ 1\ on\ success\ and\ 0\ on\ failure.}}
+\DoxyCodeLine{00187\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00188\ \textcolor{keywordtype}{int}\ ossl\_quic\_hdr\_protector\_init(\mbox{\hyperlink{structquic__hdr__protector__st}{QUIC\_HDR\_PROTECTOR}}\ *hpr,}
+\DoxyCodeLine{00189\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OSSL\_LIB\_CTX\ *libctx,}
+\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *propq,}
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ cipher\_id,}
+\DoxyCodeLine{00192\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *quic\_hp\_key,}
+\DoxyCodeLine{00193\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ quic\_hp\_key\_len);}
+\DoxyCodeLine{00194\ }
+\DoxyCodeLine{00195\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00196\ \textcolor{comment}{\ *\ Destroys\ a\ header\ protector.\ This\ is\ also\ safe\ to\ call\ on\ a\ zero-\/initialized}}
+\DoxyCodeLine{00197\ \textcolor{comment}{\ *\ OSSL\_QUIC\_HDR\_PROTECTOR\ structure\ which\ has\ not\ been\ initialized,\ or\ which}}
+\DoxyCodeLine{00198\ \textcolor{comment}{\ *\ has\ already\ been\ destroyed.}}
+\DoxyCodeLine{00199\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00200\ \textcolor{keywordtype}{void}\ ossl\_quic\_hdr\_protector\_cleanup(\mbox{\hyperlink{structquic__hdr__protector__st}{QUIC\_HDR\_PROTECTOR}}\ *hpr);}
+\DoxyCodeLine{00201\ }
+\DoxyCodeLine{00202\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00203\ \textcolor{comment}{\ *\ Removes\ header\ protection\ from\ a\ packet.\ The\ packet\ payload\ must\ currently\ be}}
+\DoxyCodeLine{00204\ \textcolor{comment}{\ *\ encrypted\ (i.e.,\ you\ must\ remove\ header\ protection\ before\ decrypting\ packets}}
+\DoxyCodeLine{00205\ \textcolor{comment}{\ *\ received).\ The\ function\ examines\ the\ header\ buffer\ to\ determine\ which\ bytes}}
+\DoxyCodeLine{00206\ \textcolor{comment}{\ *\ of\ the\ header\ need\ to\ be\ decrypted.}}
+\DoxyCodeLine{00207\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00208\ \textcolor{comment}{\ *\ If\ this\ function\ fails,\ no\ data\ is\ modified.}}
+\DoxyCodeLine{00209\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00210\ \textcolor{comment}{\ *\ This\ is\ implemented\ as\ a\ call\ to\ ossl\_quic\_hdr\_protector\_decrypt\_fields().}}
+\DoxyCodeLine{00211\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00212\ \textcolor{comment}{\ *\ Returns\ 1\ on\ success\ and\ 0\ on\ failure.}}
+\DoxyCodeLine{00213\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00214\ \textcolor{keywordtype}{int}\ ossl\_quic\_hdr\_protector\_decrypt(\mbox{\hyperlink{structquic__hdr__protector__st}{QUIC\_HDR\_PROTECTOR}}\ *hpr,}
+\DoxyCodeLine{00215\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structquic__pkt__hdr__ptrs__st}{QUIC\_PKT\_HDR\_PTRS}}\ *ptrs);}
+\DoxyCodeLine{00216\ }
+\DoxyCodeLine{00217\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00218\ \textcolor{comment}{\ *\ Applies\ header\ protection\ to\ a\ packet.\ The\ packet\ payload\ must\ already\ have}}
+\DoxyCodeLine{00219\ \textcolor{comment}{\ *\ been\ encrypted\ (i.e.,\ you\ must\ apply\ header\ protection\ after\ encrypting}}
+\DoxyCodeLine{00220\ \textcolor{comment}{\ *\ a\ packet).\ The\ function\ examines\ the\ header\ buffer\ to\ determine\ which\ bytes}}
+\DoxyCodeLine{00221\ \textcolor{comment}{\ *\ of\ the\ header\ need\ to\ be\ encrypted.}}
+\DoxyCodeLine{00222\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00223\ \textcolor{comment}{\ *\ This\ is\ implemented\ as\ a\ call\ to\ ossl\_quic\_hdr\_protector\_encrypt\_fields().}}
+\DoxyCodeLine{00224\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00225\ \textcolor{comment}{\ *\ Returns\ 1\ on\ success\ and\ 0\ on\ failure.}}
+\DoxyCodeLine{00226\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00227\ \textcolor{keywordtype}{int}\ ossl\_quic\_hdr\_protector\_encrypt(\mbox{\hyperlink{structquic__hdr__protector__st}{QUIC\_HDR\_PROTECTOR}}\ *hpr,}
+\DoxyCodeLine{00228\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structquic__pkt__hdr__ptrs__st}{QUIC\_PKT\_HDR\_PTRS}}\ *ptrs);}
+\DoxyCodeLine{00229\ }
+\DoxyCodeLine{00230\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00231\ \textcolor{comment}{\ *\ Removes\ header\ protection\ from\ a\ packet.\ The\ packet\ payload\ must\ currently}}
+\DoxyCodeLine{00232\ \textcolor{comment}{\ *\ be\ encrypted.\ This\ is\ a\ low-\/level\ function\ which\ assumes\ you\ have\ already}}
+\DoxyCodeLine{00233\ \textcolor{comment}{\ *\ determined\ which\ parts\ of\ the\ packet\ header\ need\ to\ be\ decrypted.}}
+\DoxyCodeLine{00234\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00235\ \textcolor{comment}{\ *\ sample:}}
+\DoxyCodeLine{00236\ \textcolor{comment}{\ *\ \ \ The\ range\ of\ bytes\ in\ the\ packet\ to\ be\ used\ to\ generate\ the\ header}}
+\DoxyCodeLine{00237\ \textcolor{comment}{\ *\ \ \ protection\ mask.\ It\ is\ permissible\ to\ set\ sample\_len\ to\ the\ size\ of\ the}}
+\DoxyCodeLine{00238\ \textcolor{comment}{\ *\ \ \ remainder\ of\ the\ packet;\ this\ function\ will\ only\ use\ as\ many\ bytes\ as}}
+\DoxyCodeLine{00239\ \textcolor{comment}{\ *\ \ \ needed.\ If\ not\ enough\ sample\ bytes\ are\ provided,\ this\ function\ fails.}}
+\DoxyCodeLine{00240\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00241\ \textcolor{comment}{\ *\ first\_byte:}}
+\DoxyCodeLine{00242\ \textcolor{comment}{\ *\ \ \ The\ first\ byte\ of\ the\ QUIC\ packet\ header\ to\ be\ decrypted.}}
+\DoxyCodeLine{00243\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00244\ \textcolor{comment}{\ *\ pn:}}
+\DoxyCodeLine{00245\ \textcolor{comment}{\ *\ \ \ Pointer\ to\ the\ start\ of\ the\ PN\ field.\ The\ caller\ is\ responsible}}
+\DoxyCodeLine{00246\ \textcolor{comment}{\ *\ \ \ for\ ensuring\ at\ least\ four\ bytes\ follow\ this\ pointer.}}
+\DoxyCodeLine{00247\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00248\ \textcolor{comment}{\ *\ Returns\ 1\ on\ success\ and\ 0\ on\ failure.}}
+\DoxyCodeLine{00249\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00250\ \textcolor{keywordtype}{int}\ ossl\_quic\_hdr\_protector\_decrypt\_fields(\mbox{\hyperlink{structquic__hdr__protector__st}{QUIC\_HDR\_PROTECTOR}}\ *hpr,}
+\DoxyCodeLine{00251\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *sample,}
+\DoxyCodeLine{00252\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ sample\_len,}
+\DoxyCodeLine{00253\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *first\_byte,}
+\DoxyCodeLine{00254\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *pn\_bytes);}
+\DoxyCodeLine{00255\ }
+\DoxyCodeLine{00256\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00257\ \textcolor{comment}{\ *\ Works\ analogously\ to\ ossl\_hdr\_protector\_decrypt\_fields,\ but\ applies\ header}}
+\DoxyCodeLine{00258\ \textcolor{comment}{\ *\ protection\ instead\ of\ removing\ it.}}
+\DoxyCodeLine{00259\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00260\ \textcolor{keywordtype}{int}\ ossl\_quic\_hdr\_protector\_encrypt\_fields(\mbox{\hyperlink{structquic__hdr__protector__st}{QUIC\_HDR\_PROTECTOR}}\ *hpr,}
+\DoxyCodeLine{00261\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *sample,}
+\DoxyCodeLine{00262\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ sample\_len,}
+\DoxyCodeLine{00263\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *first\_byte,}
+\DoxyCodeLine{00264\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *pn\_bytes);}
+\DoxyCodeLine{00265\ }
+\DoxyCodeLine{00266\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00267\ \textcolor{comment}{\ *\ QUIC\ Packet\ Header}}
+\DoxyCodeLine{00268\ \textcolor{comment}{\ *\ ==================}}
+\DoxyCodeLine{00269\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00270\ \textcolor{comment}{\ *\ This\ structure\ provides\ a\ logical\ representation\ of\ a\ QUIC\ packet\ header.}}
+\DoxyCodeLine{00271\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00272\ \textcolor{comment}{\ *\ QUIC\ packet\ formats\ fall\ into\ the\ following\ categories:}}
+\DoxyCodeLine{00273\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00274\ \textcolor{comment}{\ *\ \ \ Long\ Packets,\ which\ is\ subdivided\ into\ five\ possible\ packet\ types:}}
+\DoxyCodeLine{00275\ \textcolor{comment}{\ *\ \ \ \ \ Version\ Negotiation\ (a\ special\ case);}}
+\DoxyCodeLine{00276\ \textcolor{comment}{\ *\ \ \ \ \ Initial;}}
+\DoxyCodeLine{00277\ \textcolor{comment}{\ *\ \ \ \ \ 0-\/RTT;}}
+\DoxyCodeLine{00278\ \textcolor{comment}{\ *\ \ \ \ \ Handshake;\ and}}
+\DoxyCodeLine{00279\ \textcolor{comment}{\ *\ \ \ \ \ Retry}}
+\DoxyCodeLine{00280\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00281\ \textcolor{comment}{\ *\ \ \ Short\ Packets,\ which\ comprises\ only\ a\ single\ packet\ type\ (1-\/RTT).}}
+\DoxyCodeLine{00282\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00283\ \textcolor{comment}{\ *\ The\ packet\ formats\ vary\ and\ common\ fields\ are\ found\ in\ some\ packets\ but}}
+\DoxyCodeLine{00284\ \textcolor{comment}{\ *\ not\ others.\ The\ below\ table\ indicates\ which\ fields\ are\ present\ in\ which}}
+\DoxyCodeLine{00285\ \textcolor{comment}{\ *\ kinds\ of\ packet.\ *\ indicates\ header\ protection\ is\ applied.}}
+\DoxyCodeLine{00286\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00287\ \textcolor{comment}{\ *\ \ \ SLLLLL\ \ \ \ \ \ \ \ \ Legend:\ 1=1-\/RTT,\ i=Initial,\ 0=0-\/RTT,\ h=Handshake}}
+\DoxyCodeLine{00288\ \textcolor{comment}{\ *\ \ \ 1i0hrv\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ r=Retry,\ v=Version\ Negotiation}}
+\DoxyCodeLine{00289\ \textcolor{comment}{\ *\ \ \ -\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00290\ \textcolor{comment}{\ *\ \ \ 1i0hrv\ \ \ \ \ \ \ \ \ Header\ Form\ (0=Short,\ 1=Long)}}
+\DoxyCodeLine{00291\ \textcolor{comment}{\ *\ \ \ 1i0hr\ \ \ \ \ \ \ \ \ \ Fixed\ Bit\ (always\ 1)}}
+\DoxyCodeLine{00292\ \textcolor{comment}{\ *\ \ \ 1\ \ \ \ \ \ \ \ \ \ \ \ \ \ Spin\ Bit}}
+\DoxyCodeLine{00293\ \textcolor{comment}{\ *\ \ \ 1\ \ \ \ \ \ \ *\ \ \ \ \ \ Reserved\ Bits}}
+\DoxyCodeLine{00294\ \textcolor{comment}{\ *\ \ \ 1\ \ \ \ \ \ \ *\ \ \ \ \ \ Key\ Phase}}
+\DoxyCodeLine{00295\ \textcolor{comment}{\ *\ \ \ 1i0h\ \ \ \ *\ \ \ \ \ \ Packet\ Number\ Length}}
+\DoxyCodeLine{00296\ \textcolor{comment}{\ *\ \ \ \ i0hr?\ \ \ \ \ \ \ \ \ Long\ Packet\ Type}}
+\DoxyCodeLine{00297\ \textcolor{comment}{\ *\ \ \ \ i0h\ \ \ \ \ \ \ \ \ \ \ Type-\/Specific\ Bits}}
+\DoxyCodeLine{00298\ \textcolor{comment}{\ *\ \ \ \ i0hr\ \ \ \ \ \ \ \ \ \ Version\ (note:\ always\ 0\ for\ Version\ Negotiation\ packets)}}
+\DoxyCodeLine{00299\ \textcolor{comment}{\ *\ \ \ 1i0hrv\ \ \ \ \ \ \ \ \ Destination\ Connection\ ID}}
+\DoxyCodeLine{00300\ \textcolor{comment}{\ *\ \ \ \ i0hrv\ \ \ \ \ \ \ \ \ Source\ Connection\ ID}}
+\DoxyCodeLine{00301\ \textcolor{comment}{\ *\ \ \ 1i0h\ \ \ \ *\ \ \ \ \ \ Packet\ Number}}
+\DoxyCodeLine{00302\ \textcolor{comment}{\ *\ \ \ \ i\ \ \ \ \ \ \ \ \ \ \ \ \ Token}}
+\DoxyCodeLine{00303\ \textcolor{comment}{\ *\ \ \ \ i0h\ \ \ \ \ \ \ \ \ \ \ Length}}
+\DoxyCodeLine{00304\ \textcolor{comment}{\ *\ \ \ \ \ \ \ r\ \ \ \ \ \ \ \ \ \ Retry\ Token}}
+\DoxyCodeLine{00305\ \textcolor{comment}{\ *\ \ \ \ \ \ \ r\ \ \ \ \ \ \ \ \ \ Retry\ Integrity\ Tag}}
+\DoxyCodeLine{00306\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00307\ \textcolor{comment}{\ *\ For\ each\ field\ below,\ the\ conditions\ under\ which\ the\ field\ is\ valid\ are}}
+\DoxyCodeLine{00308\ \textcolor{comment}{\ *\ specified.\ If\ a\ field\ is\ not\ currently\ valid,\ it\ is\ initialized\ to\ a\ zero\ or}}
+\DoxyCodeLine{00309\ \textcolor{comment}{\ *\ NULL\ value.}}
+\DoxyCodeLine{00310\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00311\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structquic__pkt__hdr__st}{quic\_pkt\_hdr\_st}}\ \{}
+\DoxyCodeLine{00312\ \ \ \ \ \textcolor{comment}{/*\ [ALL]\ A\ QUIC\_PKT\_TYPE\_*\ value.\ Always\ valid.\ */}}
+\DoxyCodeLine{00313\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ type\ \ \ \ \ \ \ \ :8;}
+\DoxyCodeLine{00314\ }
+\DoxyCodeLine{00315\ \ \ \ \ \textcolor{comment}{/*\ [S]\ Value\ of\ the\ spin\ bit.\ Valid\ if\ (type\ ==\ 1RTT).\ */}}
+\DoxyCodeLine{00316\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ spin\_bit\ \ \ \ :1;}
+\DoxyCodeLine{00317\ }
+\DoxyCodeLine{00318\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00319\ \textcolor{comment}{\ \ \ \ \ *\ [S]\ Value\ of\ the\ Key\ Phase\ bit\ in\ the\ short\ packet.}}
+\DoxyCodeLine{00320\ \textcolor{comment}{\ \ \ \ \ *\ Valid\ if\ (type\ ==\ 1RTT\ \&\&\ !partial).}}
+\DoxyCodeLine{00321\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00322\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ key\_phase\ \ \ :1;}
+\DoxyCodeLine{00323\ }
+\DoxyCodeLine{00324\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00325\ \textcolor{comment}{\ \ \ \ \ *\ [1i0h]\ Length\ of\ packet\ number\ in\ bytes.\ This\ is\ the\ decoded\ value.}}
+\DoxyCodeLine{00326\ \textcolor{comment}{\ \ \ \ \ *\ Valid\ if\ ((type\ ==\ 1RTT\ ||\ (version\ \&\&\ type\ !=\ RETRY))\ \&\&\ !partial).}}
+\DoxyCodeLine{00327\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00328\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ pn\_len\ \ \ \ \ \ :4;}
+\DoxyCodeLine{00329\ }
+\DoxyCodeLine{00330\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00331\ \textcolor{comment}{\ \ \ \ \ *\ [ALL]\ Set\ to\ 1\ if\ this\ is\ a\ partial\ decode\ because\ the\ packet\ header}}
+\DoxyCodeLine{00332\ \textcolor{comment}{\ \ \ \ \ *\ has\ not\ yet\ been\ deprotected.\ pn\_len,\ pn\ and\ key\_phase\ are\ not\ valid\ if}}
+\DoxyCodeLine{00333\ \textcolor{comment}{\ \ \ \ \ *\ this\ is\ set.}}
+\DoxyCodeLine{00334\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00335\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ partial\ \ \ \ \ :1;}
+\DoxyCodeLine{00336\ }
+\DoxyCodeLine{00337\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00338\ \textcolor{comment}{\ \ \ \ \ *\ [ALL]\ Whether\ the\ fixed\ bit\ was\ set.\ Note\ that\ only\ Version\ Negotiation}}
+\DoxyCodeLine{00339\ \textcolor{comment}{\ \ \ \ \ *\ packets\ are\ allowed\ to\ have\ this\ unset,\ so\ this\ will\ always\ be\ 1\ for\ all}}
+\DoxyCodeLine{00340\ \textcolor{comment}{\ \ \ \ \ *\ other\ packet\ types\ (decode\ will\ fail\ if\ it\ is\ not\ set).\ Ignored\ when}}
+\DoxyCodeLine{00341\ \textcolor{comment}{\ \ \ \ \ *\ encoding\ unless\ encoding\ a\ Version\ Negotiation\ packet.}}
+\DoxyCodeLine{00342\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00343\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ fixed\ \ \ \ \ \ \ :1;}
+\DoxyCodeLine{00344\ }
+\DoxyCodeLine{00345\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00346\ \textcolor{comment}{\ \ \ \ \ *\ The\ unused\ bits\ in\ the\ low\ 4\ bits\ of\ a\ Retry\ packet\ header's\ first\ byte.}}
+\DoxyCodeLine{00347\ \textcolor{comment}{\ \ \ \ \ *\ This\ is\ used\ to\ ensure\ that\ Retry\ packets\ have\ the\ same\ bit-\/for-\/bit}}
+\DoxyCodeLine{00348\ \textcolor{comment}{\ \ \ \ \ *\ representation\ in\ their\ header\ when\ decoding\ and\ encoding\ them\ again.}}
+\DoxyCodeLine{00349\ \textcolor{comment}{\ \ \ \ \ *\ This\ is\ necessary\ to\ validate\ Retry\ packet\ headers.}}
+\DoxyCodeLine{00350\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00351\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ unused\ \ \ \ \ \ :4;}
+\DoxyCodeLine{00352\ }
+\DoxyCodeLine{00353\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00354\ \textcolor{comment}{\ \ \ \ \ *\ The\ 'Reserved'\ bits\ in\ an\ Initial,\ Handshake,\ 0-\/RTT\ or\ 1-\/RTT\ packet}}
+\DoxyCodeLine{00355\ \textcolor{comment}{\ \ \ \ \ *\ header's\ first\ byte.\ These\ are\ provided\ so\ that\ the\ caller\ can\ validate}}
+\DoxyCodeLine{00356\ \textcolor{comment}{\ \ \ \ \ *\ that\ they\ are\ zero,\ as\ this\ must\ be\ done\ after\ packet\ protection\ is}}
+\DoxyCodeLine{00357\ \textcolor{comment}{\ \ \ \ \ *\ successfully\ removed\ to\ avoid\ creating\ a\ timing\ channel.}}
+\DoxyCodeLine{00358\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00359\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ reserved\ \ \ \ :2;}
+\DoxyCodeLine{00360\ }
+\DoxyCodeLine{00361\ \ \ \ \ \textcolor{comment}{/*\ [L]\ Version\ field.\ Valid\ if\ (type\ !=\ 1RTT).\ */}}
+\DoxyCodeLine{00362\ \ \ \ \ uint32\_t\ \ \ \ \ \ \ \ version;}
+\DoxyCodeLine{00363\ }
+\DoxyCodeLine{00364\ \ \ \ \ \textcolor{comment}{/*\ [ALL]\ The\ destination\ connection\ ID.\ Always\ valid.\ */}}
+\DoxyCodeLine{00365\ \ \ \ \ \mbox{\hyperlink{structquic__conn__id__st}{QUIC\_CONN\_ID}}\ \ \ \ dst\_conn\_id;}
+\DoxyCodeLine{00366\ }
+\DoxyCodeLine{00367\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00368\ \textcolor{comment}{\ \ \ \ \ *\ [L]\ The\ source\ connection\ ID.}}
+\DoxyCodeLine{00369\ \textcolor{comment}{\ \ \ \ \ *\ Valid\ if\ (type\ !=\ 1RTT).}}
+\DoxyCodeLine{00370\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00371\ \ \ \ \ \mbox{\hyperlink{structquic__conn__id__st}{QUIC\_CONN\_ID}}\ \ \ \ src\_conn\_id;}
+\DoxyCodeLine{00372\ }
+\DoxyCodeLine{00373\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00374\ \textcolor{comment}{\ \ \ \ \ *\ [1i0h]\ Relatively-\/encoded\ packet\ number\ in\ raw,\ encoded\ form.\ The\ correct}}
+\DoxyCodeLine{00375\ \textcolor{comment}{\ \ \ \ \ *\ decoding\ of\ this\ value\ is\ context-\/dependent.\ The\ number\ of\ bytes\ valid\ in}}
+\DoxyCodeLine{00376\ \textcolor{comment}{\ \ \ \ \ *\ this\ buffer\ is\ determined\ by\ pn\_len\ above.\ If\ the\ decode\ was\ partial,}}
+\DoxyCodeLine{00377\ \textcolor{comment}{\ \ \ \ \ *\ this\ field\ is\ not\ valid.}}
+\DoxyCodeLine{00378\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00379\ \textcolor{comment}{\ \ \ \ \ *\ Valid\ if\ ((type\ ==\ 1RTT\ ||\ (version\ \&\&\ type\ !=\ RETRY))\ \&\&\ !partial).}}
+\DoxyCodeLine{00380\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00381\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \ \ \ \ \ \ \ \ \ \ pn[4];}
+\DoxyCodeLine{00382\ }
+\DoxyCodeLine{00383\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00384\ \textcolor{comment}{\ \ \ \ \ *\ [i]\ Token\ field\ in\ Initial\ packet.\ Points\ to\ memory\ inside\ the\ decoded}}
+\DoxyCodeLine{00385\ \textcolor{comment}{\ \ \ \ \ *\ PACKET,\ and\ therefore\ is\ valid\ for\ as\ long\ as\ the\ PACKET's\ buffer\ is}}
+\DoxyCodeLine{00386\ \textcolor{comment}{\ \ \ \ \ *\ valid.\ token\_len\ is\ the\ length\ of\ the\ token\ in\ bytes.}}
+\DoxyCodeLine{00387\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00388\ \textcolor{comment}{\ \ \ \ \ *\ Valid\ if\ (type\ ==\ INITIAL).}}
+\DoxyCodeLine{00389\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00390\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \ \ \ *token;}
+\DoxyCodeLine{00391\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ token\_len;}
+\DoxyCodeLine{00392\ }
+\DoxyCodeLine{00393\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00394\ \textcolor{comment}{\ \ \ \ \ *\ [ALL]\ Payload\ length\ in\ bytes.}}
+\DoxyCodeLine{00395\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00396\ \textcolor{comment}{\ \ \ \ \ *\ Though\ 1-\/RTT,\ Retry\ and\ Version\ Negotiation\ packets\ do\ not\ contain\ an}}
+\DoxyCodeLine{00397\ \textcolor{comment}{\ \ \ \ \ *\ explicit\ length\ field,\ this\ field\ is\ always\ valid\ and\ is\ used\ by\ the}}
+\DoxyCodeLine{00398\ \textcolor{comment}{\ \ \ \ \ *\ packet\ header\ encoding\ and\ decoding\ routines\ to\ describe\ the\ payload}}
+\DoxyCodeLine{00399\ \textcolor{comment}{\ \ \ \ \ *\ length,\ regardless\ of\ whether\ the\ packet\ type\ encoded\ or\ decoded\ uses\ an}}
+\DoxyCodeLine{00400\ \textcolor{comment}{\ \ \ \ \ *\ explicit\ length\ indication.}}
+\DoxyCodeLine{00401\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00402\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ len;}
+\DoxyCodeLine{00403\ }
+\DoxyCodeLine{00404\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00405\ \textcolor{comment}{\ \ \ \ \ *\ Pointer\ to\ start\ of\ payload\ data\ in\ the\ packet.\ Points\ to\ memory\ inside}}
+\DoxyCodeLine{00406\ \textcolor{comment}{\ \ \ \ \ *\ the\ decoded\ PACKET,\ and\ therefore\ is\ valid\ for\ as\ long\ as\ the\ PACKET'S}}
+\DoxyCodeLine{00407\ \textcolor{comment}{\ \ \ \ \ *\ buffer\ is\ valid.\ The\ length\ of\ the\ buffer\ in\ bytes\ is\ in\ len\ above.}}
+\DoxyCodeLine{00408\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00409\ \textcolor{comment}{\ \ \ \ \ *\ For\ Version\ Negotiation\ packets,\ points\ to\ the\ array\ of\ supported}}
+\DoxyCodeLine{00410\ \textcolor{comment}{\ \ \ \ \ *\ versions.}}
+\DoxyCodeLine{00411\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00412\ \textcolor{comment}{\ \ \ \ \ *\ For\ Retry\ packets,\ points\ to\ the\ Retry\ packet\ payload,\ which\ comprises}}
+\DoxyCodeLine{00413\ \textcolor{comment}{\ \ \ \ \ *\ the\ Retry\ Token\ followed\ by\ a\ 16-\/byte\ Retry\ Integrity\ Tag.}}
+\DoxyCodeLine{00414\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00415\ \textcolor{comment}{\ \ \ \ \ *\ Regardless\ of\ whether\ a\ packet\ is\ a\ Version\ Negotiation\ packet\ (where\ the}}
+\DoxyCodeLine{00416\ \textcolor{comment}{\ \ \ \ \ *\ payload\ contains\ a\ list\ of\ supported\ versions),\ a\ Retry\ packet\ (where\ the}}
+\DoxyCodeLine{00417\ \textcolor{comment}{\ \ \ \ \ *\ payload\ contains\ a\ Retry\ Token\ and\ Retry\ Integrity\ Tag),\ or\ any\ other}}
+\DoxyCodeLine{00418\ \textcolor{comment}{\ \ \ \ \ *\ packet\ type\ (where\ the\ payload\ contains\ frames),\ the\ payload\ is\ not}}
+\DoxyCodeLine{00419\ \textcolor{comment}{\ \ \ \ \ *\ validated\ and\ the\ user\ must\ parse\ the\ payload\ bearing\ this\ in\ mind.}}
+\DoxyCodeLine{00420\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00421\ \textcolor{comment}{\ \ \ \ \ *\ If\ the\ decode\ was\ partial\ (partial\ is\ set),\ this\ points\ to\ the\ start\ of}}
+\DoxyCodeLine{00422\ \textcolor{comment}{\ \ \ \ \ *\ the\ packet\ number\ field,\ rather\ than\ the\ protected\ payload,\ as\ the\ length}}
+\DoxyCodeLine{00423\ \textcolor{comment}{\ \ \ \ \ *\ of\ the\ packet\ number\ field\ is\ unknown.\ The\ len\ field\ reflects\ this\ in}}
+\DoxyCodeLine{00424\ \textcolor{comment}{\ \ \ \ \ *\ this\ case\ (i.e.,\ the\ len\ field\ is\ the\ number\ of\ payload\ bytes\ plus\ the}}
+\DoxyCodeLine{00425\ \textcolor{comment}{\ \ \ \ \ *\ number\ of\ bytes\ comprising\ the\ PN).}}
+\DoxyCodeLine{00426\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00427\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \ \ \ *data;}
+\DoxyCodeLine{00428\ \}\ \mbox{\hyperlink{structquic__pkt__hdr__st}{QUIC\_PKT\_HDR}};}
+\DoxyCodeLine{00429\ }
+\DoxyCodeLine{00430\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00431\ \textcolor{comment}{\ *\ Extra\ information\ which\ can\ be\ output\ by\ the\ packet\ header\ decode\ functions}}
+\DoxyCodeLine{00432\ \textcolor{comment}{\ *\ for\ the\ assistance\ of\ the\ header\ protector.\ This\ avoids\ the\ header\ protector}}
+\DoxyCodeLine{00433\ \textcolor{comment}{\ *\ needing\ to\ partially\ re-\/decode\ the\ packet\ header.}}
+\DoxyCodeLine{00434\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00435\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structquic__pkt__hdr__ptrs__st}{quic\_pkt\_hdr\_ptrs\_st}}\ \{}
+\DoxyCodeLine{00436\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \ \ \ *raw\_start;\ \ \ \ \ \ \ \ \textcolor{comment}{/*\ start\ of\ packet\ */}}
+\DoxyCodeLine{00437\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \ \ \ *raw\_sample;\ \ \ \ \ \ \ \textcolor{comment}{/*\ start\ of\ sampling\ range\ */}}
+\DoxyCodeLine{00438\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \ \ \ \ \ \ \ \ \ \ \ raw\_sample\_len;\ \ \ \textcolor{comment}{/*\ maximum\ length\ of\ sampling\ range\ */}}
+\DoxyCodeLine{00439\ }
+\DoxyCodeLine{00440\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00441\ \textcolor{comment}{\ \ \ \ \ *\ Start\ of\ PN\ field.\ Guaranteed\ to\ be\ NULL\ unless\ at\ least\ four\ bytes\ are}}
+\DoxyCodeLine{00442\ \textcolor{comment}{\ \ \ \ \ *\ available\ via\ this\ pointer.}}
+\DoxyCodeLine{00443\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00444\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \ \ \ *raw\_pn;}
+\DoxyCodeLine{00445\ \};}
+\DoxyCodeLine{00446\ }
+\DoxyCodeLine{00447\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00448\ \textcolor{comment}{\ *\ If\ partial\ is\ 1,\ reads\ the\ unprotected\ parts\ of\ a\ protected\ packet\ header}}
+\DoxyCodeLine{00449\ \textcolor{comment}{\ *\ from\ a\ PACKET,\ performing\ a\ partial\ decode.}}
+\DoxyCodeLine{00450\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00451\ \textcolor{comment}{\ *\ If\ partial\ is\ 0,\ the\ input\ is\ assumed\ to\ have\ already\ had\ header\ protection}}
+\DoxyCodeLine{00452\ \textcolor{comment}{\ *\ removed,\ and\ all\ header\ fields\ are\ decoded.}}
+\DoxyCodeLine{00453\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00454\ \textcolor{comment}{\ *\ If\ nodata\ is\ 1,\ the\ input\ is\ assumed\ to\ have\ no\ payload\ data\ in\ it.\ Otherwise}}
+\DoxyCodeLine{00455\ \textcolor{comment}{\ *\ payload\ data\ must\ be\ present.}}
+\DoxyCodeLine{00456\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00457\ \textcolor{comment}{\ *\ On\ success,\ the\ logical\ decode\ of\ the\ packet\ header\ is\ written\ to\ *hdr.}}
+\DoxyCodeLine{00458\ \textcolor{comment}{\ *\ hdr-\/>partial\ is\ set\ or\ cleared\ according\ to\ whether\ a\ partial\ decode\ was}}
+\DoxyCodeLine{00459\ \textcolor{comment}{\ *\ performed.\ *ptrs\ is\ filled\ with\ pointers\ to\ various\ parts\ of\ the\ packet}}
+\DoxyCodeLine{00460\ \textcolor{comment}{\ *\ buffer.}}
+\DoxyCodeLine{00461\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00462\ \textcolor{comment}{\ *\ In\ order\ to\ decode\ short\ packets,\ the\ connection\ ID\ length\ being\ used\ must\ be}}
+\DoxyCodeLine{00463\ \textcolor{comment}{\ *\ known\ contextually,\ and\ should\ be\ passed\ as\ short\_conn\_id\_len.\ If}}
+\DoxyCodeLine{00464\ \textcolor{comment}{\ *\ short\_conn\_id\_len\ is\ set\ to\ an\ invalid\ value\ (a\ value\ greater\ than}}
+\DoxyCodeLine{00465\ \textcolor{comment}{\ *\ QUIC\_MAX\_CONN\_ID\_LEN),\ this\ function\ fails\ when\ trying\ to\ decode\ a\ short}}
+\DoxyCodeLine{00466\ \textcolor{comment}{\ *\ packet,\ but\ succeeds\ for\ long\ packets.}}
+\DoxyCodeLine{00467\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00468\ \textcolor{comment}{\ *\ Returns\ 1\ on\ success\ and\ 0\ on\ failure.}}
+\DoxyCodeLine{00469\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00470\ \textcolor{keywordtype}{int}\ ossl\_quic\_wire\_decode\_pkt\_hdr(\mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00471\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ short\_conn\_id\_len,}
+\DoxyCodeLine{00472\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ partial,}
+\DoxyCodeLine{00473\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ nodata,}
+\DoxyCodeLine{00474\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structquic__pkt__hdr__st}{QUIC\_PKT\_HDR}}\ *hdr,}
+\DoxyCodeLine{00475\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structquic__pkt__hdr__ptrs__st}{QUIC\_PKT\_HDR\_PTRS}}\ *ptrs);}
+\DoxyCodeLine{00476\ }
+\DoxyCodeLine{00477\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00478\ \textcolor{comment}{\ *\ Encodes\ a\ packet\ header.\ The\ packet\ is\ written\ to\ pkt.}}
+\DoxyCodeLine{00479\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00480\ \textcolor{comment}{\ *\ The\ length\ of\ the\ (encrypted)\ packet\ payload\ should\ be\ written\ to\ hdr-\/>len}}
+\DoxyCodeLine{00481\ \textcolor{comment}{\ *\ and\ will\ be\ placed\ in\ the\ serialized\ packet\ header.\ The\ payload\ data\ itself}}
+\DoxyCodeLine{00482\ \textcolor{comment}{\ *\ is\ not\ copied;\ the\ caller\ should\ write\ hdr-\/>len\ bytes\ of\ encrypted\ payload\ to}}
+\DoxyCodeLine{00483\ \textcolor{comment}{\ *\ the\ WPACKET\ immediately\ after\ the\ call\ to\ this\ function.\ However,}}
+\DoxyCodeLine{00484\ \textcolor{comment}{\ *\ WPACKET\_reserve\_bytes\ is\ called\ for\ the\ payload\ size.}}
+\DoxyCodeLine{00485\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00486\ \textcolor{comment}{\ *\ This\ function\ does\ not\ apply\ header\ protection.\ You\ must\ apply\ header}}
+\DoxyCodeLine{00487\ \textcolor{comment}{\ *\ protection\ yourself\ after\ calling\ this\ function.\ *ptrs\ is\ filled\ with}}
+\DoxyCodeLine{00488\ \textcolor{comment}{\ *\ pointers\ which\ can\ be\ passed\ to\ a\ header\ protector,\ but\ this\ must\ be}}
+\DoxyCodeLine{00489\ \textcolor{comment}{\ *\ performed\ after\ the\ encrypted\ payload\ is\ written.}}
+\DoxyCodeLine{00490\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00491\ \textcolor{comment}{\ *\ The\ pointers\ in\ *ptrs\ are\ direct\ pointers\ into\ the\ WPACKET\ buffer.\ If\ more}}
+\DoxyCodeLine{00492\ \textcolor{comment}{\ *\ data\ is\ written\ to\ the\ WPACKET\ buffer,\ WPACKET\ buffer\ reallocations\ may}}
+\DoxyCodeLine{00493\ \textcolor{comment}{\ *\ occur,\ causing\ these\ pointers\ to\ become\ invalid.\ Therefore,\ you\ must\ not\ call}}
+\DoxyCodeLine{00494\ \textcolor{comment}{\ *\ any\ write\ WPACKET\ function\ between\ this\ call\ and\ the\ call\ to}}
+\DoxyCodeLine{00495\ \textcolor{comment}{\ *\ ossl\_quic\_hdr\_protector\_encrypt.\ This\ function\ calls\ WPACKET\_reserve\_bytes}}
+\DoxyCodeLine{00496\ \textcolor{comment}{\ *\ for\ the\ payload\ length,\ so\ you\ may\ assume\ hdr-\/>len\ bytes\ are\ already\ free\ to}}
+\DoxyCodeLine{00497\ \textcolor{comment}{\ *\ write\ at\ the\ WPACKET\ cursor\ location\ once\ this\ function\ returns\ successfully.}}
+\DoxyCodeLine{00498\ \textcolor{comment}{\ *\ It\ is\ recommended\ that\ you\ call\ this\ function,\ write\ the\ encrypted\ payload,}}
+\DoxyCodeLine{00499\ \textcolor{comment}{\ *\ call\ ossl\_quic\_hdr\_protector\_encrypt,\ and\ then\ call}}
+\DoxyCodeLine{00500\ \textcolor{comment}{\ *\ WPACKET\_allocate\_bytes(hdr-\/>len).}}
+\DoxyCodeLine{00501\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00502\ \textcolor{comment}{\ *\ Version\ Negotiation\ and\ Retry\ packets\ do\ not\ use\ header\ protection;\ for\ these}}
+\DoxyCodeLine{00503\ \textcolor{comment}{\ *\ header\ types,\ the\ fields\ in\ *ptrs\ are\ all\ written\ as\ zero.\ Version}}
+\DoxyCodeLine{00504\ \textcolor{comment}{\ *\ Negotiation,\ Retry\ and\ 1-\/RTT\ packets\ do\ not\ contain\ a\ Length\ field,\ but}}
+\DoxyCodeLine{00505\ \textcolor{comment}{\ *\ hdr-\/>len\ bytes\ of\ data\ are\ still\ reserved\ in\ the\ WPACKET.}}
+\DoxyCodeLine{00506\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00507\ \textcolor{comment}{\ *\ If\ serializing\ a\ short\ packet\ and\ short\_conn\_id\_len\ does\ not\ match\ the\ DCID}}
+\DoxyCodeLine{00508\ \textcolor{comment}{\ *\ specified\ in\ hdr,\ the\ function\ fails.}}
+\DoxyCodeLine{00509\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00510\ \textcolor{comment}{\ *\ Returns\ 1\ on\ success\ and\ 0\ on\ failure.}}
+\DoxyCodeLine{00511\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00512\ \textcolor{keywordtype}{int}\ ossl\_quic\_wire\_encode\_pkt\_hdr(\mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00513\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ short\_conn\_id\_len,}
+\DoxyCodeLine{00514\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__pkt__hdr__st}{QUIC\_PKT\_HDR}}\ *hdr,}
+\DoxyCodeLine{00515\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structquic__pkt__hdr__ptrs__st}{QUIC\_PKT\_HDR\_PTRS}}\ *ptrs);}
+\DoxyCodeLine{00516\ }
+\DoxyCodeLine{00517\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00518\ \textcolor{comment}{\ *\ Retrieves\ only\ the\ DCID\ from\ a\ packet\ header.\ This\ is\ intended\ for\ demuxer}}
+\DoxyCodeLine{00519\ \textcolor{comment}{\ *\ use.\ It\ avoids\ the\ need\ to\ parse\ the\ rest\ of\ the\ packet\ header\ twice.}}
+\DoxyCodeLine{00520\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00521\ \textcolor{comment}{\ *\ Information\ on\ packet\ length\ is\ not\ decoded,\ as\ this\ only\ needs\ to\ be\ used\ on}}
+\DoxyCodeLine{00522\ \textcolor{comment}{\ *\ the\ first\ packet\ in\ a\ datagram,\ therefore\ this\ takes\ a\ buffer\ and\ not\ a}}
+\DoxyCodeLine{00523\ \textcolor{comment}{\ *\ PACKET.}}
+\DoxyCodeLine{00524\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00525\ \textcolor{comment}{\ *\ Returns\ 1\ on\ success\ and\ 0\ on\ failure.}}
+\DoxyCodeLine{00526\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00527\ \textcolor{keywordtype}{int}\ ossl\_quic\_wire\_get\_pkt\_hdr\_dst\_conn\_id(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *buf,}
+\DoxyCodeLine{00528\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ buf\_len,}
+\DoxyCodeLine{00529\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ short\_conn\_id\_len,}
+\DoxyCodeLine{00530\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structquic__conn__id__st}{QUIC\_CONN\_ID}}\ *dst\_conn\_id);}
+\DoxyCodeLine{00531\ }
+\DoxyCodeLine{00532\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00533\ \textcolor{comment}{\ *\ Precisely\ predicts\ the\ encoded\ length\ of\ a\ packet\ header\ structure.}}
+\DoxyCodeLine{00534\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00535\ \textcolor{comment}{\ *\ May\ return\ 0\ if\ the\ packet\ header\ is\ not\ valid,\ but\ the\ fact\ that\ this}}
+\DoxyCodeLine{00536\ \textcolor{comment}{\ *\ function\ returns\ non-\/zero\ does\ not\ guarantee\ that}}
+\DoxyCodeLine{00537\ \textcolor{comment}{\ *\ ossl\_quic\_wire\_encode\_pkt\_hdr()\ will\ succeed.}}
+\DoxyCodeLine{00538\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00539\ \textcolor{keywordtype}{int}\ ossl\_quic\_wire\_get\_encoded\_pkt\_hdr\_len(\textcolor{keywordtype}{size\_t}\ short\_conn\_id\_len,}
+\DoxyCodeLine{00540\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__pkt__hdr__st}{QUIC\_PKT\_HDR}}\ *hdr);}
+\DoxyCodeLine{00541\ }
+\DoxyCodeLine{00542\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00543\ \textcolor{comment}{\ *\ Packet\ Number\ Encoding}}
+\DoxyCodeLine{00544\ \textcolor{comment}{\ *\ ======================}}
+\DoxyCodeLine{00545\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00546\ }
+\DoxyCodeLine{00547\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00548\ \textcolor{comment}{\ *\ Decode\ an\ encoded\ packet\ header\ QUIC\ PN.}}
+\DoxyCodeLine{00549\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00550\ \textcolor{comment}{\ *\ enc\_pn\ is\ the\ raw\ encoded\ PN\ to\ decode.\ enc\_pn\_len\ is\ its\ length\ in\ bytes\ as}}
+\DoxyCodeLine{00551\ \textcolor{comment}{\ *\ indicated\ by\ packet\ headers.\ largest\_pn\ is\ the\ largest\ PN\ successfully}}
+\DoxyCodeLine{00552\ \textcolor{comment}{\ *\ processed\ in\ the\ relevant\ PN\ space.}}
+\DoxyCodeLine{00553\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00554\ \textcolor{comment}{\ *\ The\ resulting\ PN\ is\ written\ to\ *res\_pn.}}
+\DoxyCodeLine{00555\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00556\ \textcolor{comment}{\ *\ Returns\ 1\ on\ success\ or\ 0\ on\ failure.}}
+\DoxyCodeLine{00557\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00558\ \textcolor{keywordtype}{int}\ ossl\_quic\_wire\_decode\_pkt\_hdr\_pn(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *enc\_pn,}
+\DoxyCodeLine{00559\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ enc\_pn\_len,}
+\DoxyCodeLine{00560\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ QUIC\_PN\ largest\_pn,}
+\DoxyCodeLine{00561\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ QUIC\_PN\ *res\_pn);}
+\DoxyCodeLine{00562\ }
+\DoxyCodeLine{00563\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00564\ \textcolor{comment}{\ *\ Determine\ how\ many\ bytes\ should\ be\ used\ to\ encode\ a\ PN.\ Returns\ the\ number\ of}}
+\DoxyCodeLine{00565\ \textcolor{comment}{\ *\ bytes\ (which\ will\ be\ in\ range\ [1,\ 4]).}}
+\DoxyCodeLine{00566\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00567\ \textcolor{keywordtype}{int}\ ossl\_quic\_wire\_determine\_pn\_len(QUIC\_PN\ pn,\ QUIC\_PN\ largest\_acked);}
+\DoxyCodeLine{00568\ }
+\DoxyCodeLine{00569\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00570\ \textcolor{comment}{\ *\ Encode\ a\ PN\ for\ a\ packet\ header\ using\ the\ specified\ number\ of\ bytes,\ which}}
+\DoxyCodeLine{00571\ \textcolor{comment}{\ *\ should\ have\ been\ determined\ by\ calling\ ossl\_quic\_wire\_determine\_pn\_len.\ The}}
+\DoxyCodeLine{00572\ \textcolor{comment}{\ *\ PN\ encoding\ process\ is\ done\ in\ two\ parts\ to\ allow\ the\ caller\ to\ override\ PN}}
+\DoxyCodeLine{00573\ \textcolor{comment}{\ *\ encoding\ length\ if\ it\ wishes.}}
+\DoxyCodeLine{00574\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00575\ \textcolor{comment}{\ *\ Returns\ 1\ on\ success\ and\ 0\ on\ failure.}}
+\DoxyCodeLine{00576\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00577\ \textcolor{keywordtype}{int}\ ossl\_quic\_wire\_encode\_pkt\_hdr\_pn(QUIC\_PN\ pn,}
+\DoxyCodeLine{00578\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *enc\_pn,}
+\DoxyCodeLine{00579\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ enc\_pn\_len);}
+\DoxyCodeLine{00580\ }
+\DoxyCodeLine{00581\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00582\ \textcolor{comment}{\ *\ Retry\ Integrity\ Tags}}
+\DoxyCodeLine{00583\ \textcolor{comment}{\ *\ ====================}}
+\DoxyCodeLine{00584\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00585\ }
+\DoxyCodeLine{00586\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_RETRY\_INTEGRITY\_TAG\_LEN\ \ \ \ 16}}
+\DoxyCodeLine{00587\ }
+\DoxyCodeLine{00588\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00589\ \textcolor{comment}{\ *\ Validate\ a\ retry\ integrity\ tag.\ Returns\ 1\ if\ the\ tag\ is\ valid.}}
+\DoxyCodeLine{00590\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00591\ \textcolor{comment}{\ *\ Must\ be\ called\ on\ a\ hdr\ with\ a\ type\ of\ QUIC\_PKT\_TYPE\_RETRY\ with\ a\ valid\ data}}
+\DoxyCodeLine{00592\ \textcolor{comment}{\ *\ pointer.}}
+\DoxyCodeLine{00593\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00594\ \textcolor{comment}{\ *\ client\_initial\_dcid\ must\ be\ the\ original\ DCID\ used\ by\ the\ client\ in\ its\ first}}
+\DoxyCodeLine{00595\ \textcolor{comment}{\ *\ Initial\ packet,\ as\ this\ is\ used\ to\ calculate\ the\ Retry\ Integrity\ Tag.}}
+\DoxyCodeLine{00596\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00597\ \textcolor{comment}{\ *\ Returns\ 0\ if\ the\ tag\ is\ invalid,\ if\ called\ on\ any\ other\ type\ of\ packet\ or\ if}}
+\DoxyCodeLine{00598\ \textcolor{comment}{\ *\ the\ body\ is\ too\ short.}}
+\DoxyCodeLine{00599\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00600\ \textcolor{keywordtype}{int}\ ossl\_quic\_validate\_retry\_integrity\_tag(OSSL\_LIB\_CTX\ *libctx,}
+\DoxyCodeLine{00601\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *propq,}
+\DoxyCodeLine{00602\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__pkt__hdr__st}{QUIC\_PKT\_HDR}}\ *hdr,}
+\DoxyCodeLine{00603\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__conn__id__st}{QUIC\_CONN\_ID}}\ *client\_initial\_dcid);}
+\DoxyCodeLine{00604\ }
+\DoxyCodeLine{00605\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00606\ \textcolor{comment}{\ *\ Calculates\ a\ retry\ integrity\ tag.\ Returns\ 0\ on\ error,\ for\ example\ if\ hdr\ does}}
+\DoxyCodeLine{00607\ \textcolor{comment}{\ *\ not\ have\ a\ type\ of\ QUIC\_PKT\_TYPE\_RETRY.}}
+\DoxyCodeLine{00608\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00609\ \textcolor{comment}{\ *\ client\_initial\_dcid\ must\ be\ the\ original\ DCID\ used\ by\ the\ client\ in\ its\ first}}
+\DoxyCodeLine{00610\ \textcolor{comment}{\ *\ Initial\ packet,\ as\ this\ is\ used\ to\ calculate\ the\ Retry\ Integrity\ Tag.}}
+\DoxyCodeLine{00611\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00612\ \textcolor{comment}{\ *\ tag\ must\ point\ to\ a\ buffer\ of\ QUIC\_RETRY\_INTEGRITY\_TAG\_LEN\ bytes\ in\ size.}}
+\DoxyCodeLine{00613\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00614\ \textcolor{comment}{\ *\ Note\ that\ hdr-\/>data\ must\ point\ to\ the\ Retry\ packet\ body,\ and\ hdr-\/>len\ must}}
+\DoxyCodeLine{00615\ \textcolor{comment}{\ *\ include\ the\ space\ for\ the\ Retry\ Integrity\ Tag.\ (This\ means\ that\ you\ can}}
+\DoxyCodeLine{00616\ \textcolor{comment}{\ *\ easily\ fill\ in\ a\ tag\ in\ a\ Retry\ packet\ you\ are\ generating\ by\ calling\ this}}
+\DoxyCodeLine{00617\ \textcolor{comment}{\ *\ function\ and\ passing\ (hdr-\/>data\ +\ hdr-\/>len\ -\/\ QUIC\_RETRY\_INTEGRITY\_TAG\_LEN)\ as}}
+\DoxyCodeLine{00618\ \textcolor{comment}{\ *\ the\ tag\ argument.)\ This\ function\ fails\ if\ hdr-\/>len\ is\ too\ short\ to\ contain\ a}}
+\DoxyCodeLine{00619\ \textcolor{comment}{\ *\ Retry\ Integrity\ Tag.}}
+\DoxyCodeLine{00620\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00621\ \textcolor{keywordtype}{int}\ ossl\_quic\_calculate\_retry\_integrity\_tag(OSSL\_LIB\_CTX\ *libctx,}
+\DoxyCodeLine{00622\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *propq,}
+\DoxyCodeLine{00623\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__pkt__hdr__st}{QUIC\_PKT\_HDR}}\ *hdr,}
+\DoxyCodeLine{00624\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__conn__id__st}{QUIC\_CONN\_ID}}\ *client\_initial\_dcid,}
+\DoxyCodeLine{00625\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *tag);}
+\DoxyCodeLine{00626\ }
+\DoxyCodeLine{00627\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00628\ }
+\DoxyCodeLine{00629\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

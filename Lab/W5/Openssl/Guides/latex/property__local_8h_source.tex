@@ -1,0 +1,61 @@
+\doxysection{property\+\_\+local.\+h}
+\hypertarget{property__local_8h_source}{}\label{property__local_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/property/property\_local.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/property/property\_local.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2019-\/2021\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *\ Copyright\ (c)\ 2019,\ Oracle\ and/or\ its\ affiliates.\ \ All\ rights\ reserved.}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ <openssl/crypto.h>}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ "{}internal/property.h"{}}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{keyword}{typedef}\ \textcolor{keywordtype}{int}\ OSSL\_PROPERTY\_IDX;}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}\ \{}
+\DoxyCodeLine{00017\ \ \ \ \ OSSL\_PROPERTY\_OPER\_EQ,\ OSSL\_PROPERTY\_OPER\_NE,\ OSSL\_PROPERTY\_OVERRIDE}
+\DoxyCodeLine{00018\ \}\ OSSL\_PROPERTY\_OPER;}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__property__definition__st}{ossl\_property\_definition\_st}}\ \{}
+\DoxyCodeLine{00021\ \ \ \ \ OSSL\_PROPERTY\_IDX\ name\_idx;}
+\DoxyCodeLine{00022\ \ \ \ \ OSSL\_PROPERTY\_TYPE\ type;}
+\DoxyCodeLine{00023\ \ \ \ \ OSSL\_PROPERTY\_OPER\ oper;}
+\DoxyCodeLine{00024\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ optional\ :\ 1;}
+\DoxyCodeLine{00025\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ int64\_t\ \ \ \ \ \ \ \ \ \ \ \ \ int\_val;\ \ \ \ \ \textcolor{comment}{/*\ Signed\ integer\ */}}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ OSSL\_PROPERTY\_IDX\ \ \ str\_val;\ \ \ \ \ \textcolor{comment}{/*\ String\ */}}
+\DoxyCodeLine{00028\ \ \ \ \ \}\ v;}
+\DoxyCodeLine{00029\ \};}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__property__list__st}{ossl\_property\_list\_st}}\ \{}
+\DoxyCodeLine{00032\ \ \ \ \ \textcolor{keywordtype}{int}\ num\_properties;}
+\DoxyCodeLine{00033\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ has\_optional\ :\ 1;}
+\DoxyCodeLine{00034\ \ \ \ \ \mbox{\hyperlink{structossl__property__definition__st}{OSSL\_PROPERTY\_DEFINITION}}\ properties[1];}
+\DoxyCodeLine{00035\ \};}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#define\ OSSL\_PROPERTY\_TRUE\ \ \ \ \ \ 1}}
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#define\ OSSL\_PROPERTY\_FALSE\ \ \ \ \ 2}}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \textcolor{comment}{/*\ Property\ string\ functions\ */}}
+\DoxyCodeLine{00041\ OSSL\_PROPERTY\_IDX\ ossl\_property\_name(OSSL\_LIB\_CTX\ *ctx,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *s,}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ create);}
+\DoxyCodeLine{00043\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *ossl\_property\_name\_str(OSSL\_LIB\_CTX\ *ctx,\ OSSL\_PROPERTY\_IDX\ idx);}
+\DoxyCodeLine{00044\ OSSL\_PROPERTY\_IDX\ ossl\_property\_value(OSSL\_LIB\_CTX\ *ctx,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *s,}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ create);}
+\DoxyCodeLine{00046\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *ossl\_property\_value\_str(OSSL\_LIB\_CTX\ *ctx,\ OSSL\_PROPERTY\_IDX\ idx);}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \textcolor{comment}{/*\ Property\ list\ functions\ */}}
+\DoxyCodeLine{00049\ \textcolor{keywordtype}{void}\ ossl\_property\_free(\mbox{\hyperlink{structossl__property__list__st}{OSSL\_PROPERTY\_LIST}}\ *p);}
+\DoxyCodeLine{00050\ \textcolor{keywordtype}{int}\ ossl\_property\_has\_optional(\textcolor{keyword}{const}\ \mbox{\hyperlink{structossl__property__list__st}{OSSL\_PROPERTY\_LIST}}\ *query);}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ \textcolor{comment}{/*\ Property\ definition\ cache\ functions\ */}}
+\DoxyCodeLine{00053\ \mbox{\hyperlink{structossl__property__list__st}{OSSL\_PROPERTY\_LIST}}\ *ossl\_prop\_defn\_get(OSSL\_LIB\_CTX\ *ctx,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *prop);}
+\DoxyCodeLine{00054\ \textcolor{keywordtype}{int}\ ossl\_prop\_defn\_set(OSSL\_LIB\_CTX\ *ctx,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *prop,}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structossl__property__list__st}{OSSL\_PROPERTY\_LIST}}\ **pl);}
+
+\end{DoxyCode}

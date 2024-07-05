@@ -1,0 +1,51 @@
+\doxysection{fmt.\+h}
+\hypertarget{fmt_8h_source}{}\label{fmt_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/apps/include/fmt.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/apps/include/fmt.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2018-\/2021\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ *\ Options\ are\ shared\ by\ apps\ (see\ apps.h)\ and\ the\ test\ system}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ *\ (see\ test/testutil.h').}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ *\ In\ order\ to\ remove\ the\ dependency\ between\ apps\ and\ options,\ the\ following}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ *\ shared\ fields\ have\ been\ moved\ into\ this\ file.}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#ifndef\ OSSL\_APPS\_FMT\_H}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#define\ OSSL\_APPS\_FMT\_H}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00021\ \textcolor{comment}{\ *\ On\ some\ platforms,\ it's\ important\ to\ distinguish\ between\ text\ and\ binary}}
+\DoxyCodeLine{00022\ \textcolor{comment}{\ *\ files.\ \ On\ some,\ there\ might\ even\ be\ specific\ file\ formats\ for\ different}}
+\DoxyCodeLine{00023\ \textcolor{comment}{\ *\ contents.\ \ The\ FORMAT\_xxx\ macros\ are\ meant\ to\ express\ an\ intent\ with\ the}}
+\DoxyCodeLine{00024\ \textcolor{comment}{\ *\ file\ being\ read\ or\ created.}}
+\DoxyCodeLine{00025\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#\ define\ B\_FORMAT\_TEXT\ \ \ 0x8000}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#\ define\ FORMAT\_UNDEF\ \ \ \ 0}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#\ define\ FORMAT\_TEXT\ \ \ \ (1\ |\ B\_FORMAT\_TEXT)\ \ \ \ \ }\textcolor{comment}{/*\ Generic\ text\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#\ define\ FORMAT\_BINARY\ \ \ 2\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{/*\ Generic\ binary\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#\ define\ FORMAT\_BASE64\ \ (3\ |\ B\_FORMAT\_TEXT)\ \ \ \ \ }\textcolor{comment}{/*\ Base64\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#\ define\ FORMAT\_ASN1\ \ \ \ \ 4\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{/*\ ASN.1/DER\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#\ define\ FORMAT\_PEM\ \ \ \ \ (5\ |\ B\_FORMAT\_TEXT)}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#\ define\ FORMAT\_PKCS12\ \ \ 6}}
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#\ define\ FORMAT\_SMIME\ \ \ (7\ |\ B\_FORMAT\_TEXT)}}
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#\ define\ FORMAT\_ENGINE\ \ \ 8\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{/*\ Not\ really\ a\ file\ format\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#\ define\ FORMAT\_PEMRSA\ \ (9\ |\ B\_FORMAT\_TEXT)\ \ \ \ \ }\textcolor{comment}{/*\ PEM\ RSAPublicKey\ format\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#\ define\ FORMAT\_ASN1RSA\ \ 10\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{/*\ DER\ RSAPublicKey\ format\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#\ define\ FORMAT\_MSBLOB\ \ \ 11\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{/*\ MS\ Key\ blob\ format\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00039\ \textcolor{preprocessor}{\#\ define\ FORMAT\_PVK\ \ \ \ \ \ 12\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{/*\ MS\ PVK\ file\ format\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00040\ \textcolor{preprocessor}{\#\ define\ FORMAT\_HTTP\ \ \ \ \ 13\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{/*\ Download\ using\ HTTP\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00041\ \textcolor{preprocessor}{\#\ define\ FORMAT\_NSS\ \ \ \ \ \ 14\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{/*\ NSS\ keylog\ format\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \textcolor{keywordtype}{int}\ FMT\_istext(\textcolor{keywordtype}{int}\ format);}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ OSSL\_APPS\_FMT\_H\_\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

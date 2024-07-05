@@ -1,0 +1,271 @@
+\doxysection{ssl\+\_\+test\+\_\+ctx.\+h}
+\hypertarget{ssl__test__ctx_8h_source}{}\label{ssl__test__ctx_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/test/helpers/ssl\_test\_ctx.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/test/helpers/ssl\_test\_ctx.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2016-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_TEST\_SSL\_TEST\_CTX\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#define\ OSSL\_TEST\_SSL\_TEST\_CTX\_H}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ <openssl/conf.h>}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ <openssl/ssl.h>}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}\ \{}
+\DoxyCodeLine{00017\ \ \ \ \ SSL\_TEST\_SUCCESS\ =\ 0,\ \ \textcolor{comment}{/*\ Default\ */}}
+\DoxyCodeLine{00018\ \ \ \ \ SSL\_TEST\_SERVER\_FAIL,}
+\DoxyCodeLine{00019\ \ \ \ \ SSL\_TEST\_CLIENT\_FAIL,}
+\DoxyCodeLine{00020\ \ \ \ \ SSL\_TEST\_INTERNAL\_ERROR,}
+\DoxyCodeLine{00021\ \ \ \ \ \textcolor{comment}{/*\ Couldn't\ test\ resumption/renegotiation:\ original\ handshake\ failed.\ */}}
+\DoxyCodeLine{00022\ \ \ \ \ SSL\_TEST\_FIRST\_HANDSHAKE\_FAILED}
+\DoxyCodeLine{00023\ \}\ ssl\_test\_result\_t;}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}\ \{}
+\DoxyCodeLine{00026\ \ \ \ \ SSL\_TEST\_VERIFY\_NONE\ =\ 0,\ \textcolor{comment}{/*\ Default\ */}}
+\DoxyCodeLine{00027\ \ \ \ \ SSL\_TEST\_VERIFY\_ACCEPT\_ALL,}
+\DoxyCodeLine{00028\ \ \ \ \ SSL\_TEST\_VERIFY\_RETRY\_ONCE,}
+\DoxyCodeLine{00029\ \ \ \ \ SSL\_TEST\_VERIFY\_REJECT\_ALL}
+\DoxyCodeLine{00030\ \}\ ssl\_verify\_callback\_t;}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}\ \{}
+\DoxyCodeLine{00033\ \ \ \ \ SSL\_TEST\_SERVERNAME\_NONE\ =\ 0,\ \textcolor{comment}{/*\ Default\ */}}
+\DoxyCodeLine{00034\ \ \ \ \ SSL\_TEST\_SERVERNAME\_SERVER1,}
+\DoxyCodeLine{00035\ \ \ \ \ SSL\_TEST\_SERVERNAME\_SERVER2,}
+\DoxyCodeLine{00036\ \ \ \ \ SSL\_TEST\_SERVERNAME\_INVALID}
+\DoxyCodeLine{00037\ \}\ ssl\_servername\_t;}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}\ \{}
+\DoxyCodeLine{00040\ \ \ \ \ SSL\_TEST\_SERVERNAME\_CB\_NONE\ =\ 0,\ \ \textcolor{comment}{/*\ Default\ */}}
+\DoxyCodeLine{00041\ \ \ \ \ SSL\_TEST\_SERVERNAME\_IGNORE\_MISMATCH,}
+\DoxyCodeLine{00042\ \ \ \ \ SSL\_TEST\_SERVERNAME\_REJECT\_MISMATCH,}
+\DoxyCodeLine{00043\ \ \ \ \ SSL\_TEST\_SERVERNAME\_CLIENT\_HELLO\_IGNORE\_MISMATCH,}
+\DoxyCodeLine{00044\ \ \ \ \ SSL\_TEST\_SERVERNAME\_CLIENT\_HELLO\_REJECT\_MISMATCH,}
+\DoxyCodeLine{00045\ \ \ \ \ SSL\_TEST\_SERVERNAME\_CLIENT\_HELLO\_NO\_V12}
+\DoxyCodeLine{00046\ \}\ ssl\_servername\_callback\_t;}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}\ \{}
+\DoxyCodeLine{00049\ \ \ \ \ SSL\_TEST\_SESSION\_TICKET\_IGNORE\ =\ 0,\ \textcolor{comment}{/*\ Default\ */}}
+\DoxyCodeLine{00050\ \ \ \ \ SSL\_TEST\_SESSION\_TICKET\_YES,}
+\DoxyCodeLine{00051\ \ \ \ \ SSL\_TEST\_SESSION\_TICKET\_NO,}
+\DoxyCodeLine{00052\ \ \ \ \ SSL\_TEST\_SESSION\_TICKET\_BROKEN\ \textcolor{comment}{/*\ Special\ test\ */}}
+\DoxyCodeLine{00053\ \}\ ssl\_session\_ticket\_t;}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}\ \{}
+\DoxyCodeLine{00056\ \ \ \ \ SSL\_TEST\_COMPRESSION\_NO\ =\ 0,\ \textcolor{comment}{/*\ Default\ */}}
+\DoxyCodeLine{00057\ \ \ \ \ SSL\_TEST\_COMPRESSION\_YES}
+\DoxyCodeLine{00058\ \}\ ssl\_compression\_t;}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}\ \{}
+\DoxyCodeLine{00061\ \ \ \ \ SSL\_TEST\_SESSION\_ID\_IGNORE\ =\ 0,\ \textcolor{comment}{/*\ Default\ */}}
+\DoxyCodeLine{00062\ \ \ \ \ SSL\_TEST\_SESSION\_ID\_YES,}
+\DoxyCodeLine{00063\ \ \ \ \ SSL\_TEST\_SESSION\_ID\_NO}
+\DoxyCodeLine{00064\ \}\ ssl\_session\_id\_t;}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}\ \{}
+\DoxyCodeLine{00067\ \ \ \ \ SSL\_TEST\_METHOD\_TLS\ =\ 0,\ \textcolor{comment}{/*\ Default\ */}}
+\DoxyCodeLine{00068\ \ \ \ \ SSL\_TEST\_METHOD\_DTLS,}
+\DoxyCodeLine{00069\ \ \ \ \ SSL\_TEST\_METHOD\_QUIC}
+\DoxyCodeLine{00070\ \}\ ssl\_test\_method\_t;}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00072\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}\ \{}
+\DoxyCodeLine{00073\ \ \ \ \ SSL\_TEST\_HANDSHAKE\_SIMPLE\ =\ 0,\ \textcolor{comment}{/*\ Default\ */}}
+\DoxyCodeLine{00074\ \ \ \ \ SSL\_TEST\_HANDSHAKE\_RESUME,}
+\DoxyCodeLine{00075\ \ \ \ \ SSL\_TEST\_HANDSHAKE\_RENEG\_SERVER,}
+\DoxyCodeLine{00076\ \ \ \ \ SSL\_TEST\_HANDSHAKE\_RENEG\_CLIENT,}
+\DoxyCodeLine{00077\ \ \ \ \ SSL\_TEST\_HANDSHAKE\_KEY\_UPDATE\_SERVER,}
+\DoxyCodeLine{00078\ \ \ \ \ SSL\_TEST\_HANDSHAKE\_KEY\_UPDATE\_CLIENT,}
+\DoxyCodeLine{00079\ \ \ \ \ SSL\_TEST\_HANDSHAKE\_POST\_HANDSHAKE\_AUTH}
+\DoxyCodeLine{00080\ \}\ ssl\_handshake\_mode\_t;}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00082\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}\ \{}
+\DoxyCodeLine{00083\ \ \ \ \ SSL\_TEST\_CT\_VALIDATION\_NONE\ =\ 0,\ \textcolor{comment}{/*\ Default\ */}}
+\DoxyCodeLine{00084\ \ \ \ \ SSL\_TEST\_CT\_VALIDATION\_PERMISSIVE,}
+\DoxyCodeLine{00085\ \ \ \ \ SSL\_TEST\_CT\_VALIDATION\_STRICT}
+\DoxyCodeLine{00086\ \}\ ssl\_ct\_validation\_t;}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00088\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}\ \{}
+\DoxyCodeLine{00089\ \ \ \ \ SSL\_TEST\_CERT\_STATUS\_NONE\ =\ 0,\ \textcolor{comment}{/*\ Default\ */}}
+\DoxyCodeLine{00090\ \ \ \ \ SSL\_TEST\_CERT\_STATUS\_GOOD\_RESPONSE,}
+\DoxyCodeLine{00091\ \ \ \ \ SSL\_TEST\_CERT\_STATUS\_BAD\_RESPONSE}
+\DoxyCodeLine{00092\ \}\ ssl\_cert\_status\_t;}
+\DoxyCodeLine{00093\ }
+\DoxyCodeLine{00094\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00095\ \textcolor{comment}{\ *\ Server/client\ settings\ that\ aren't\ supported\ by\ the\ SSL\ CONF\ library,}}
+\DoxyCodeLine{00096\ \textcolor{comment}{\ *\ such\ as\ callbacks.}}
+\DoxyCodeLine{00097\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00098\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00099\ \ \ \ \ \textcolor{comment}{/*\ One\ of\ a\ number\ of\ predefined\ custom\ callbacks.\ */}}
+\DoxyCodeLine{00100\ \ \ \ \ ssl\_verify\_callback\_t\ verify\_callback;}
+\DoxyCodeLine{00101\ \ \ \ \ \textcolor{comment}{/*\ One\ of\ a\ number\ of\ predefined\ server\ names\ use\ by\ the\ client\ */}}
+\DoxyCodeLine{00102\ \ \ \ \ ssl\_servername\_t\ servername;}
+\DoxyCodeLine{00103\ \ \ \ \ \textcolor{comment}{/*\ Maximum\ Fragment\ Length\ extension\ mode\ */}}
+\DoxyCodeLine{00104\ \ \ \ \ \textcolor{keywordtype}{int}\ max\_fragment\_len\_mode;}
+\DoxyCodeLine{00105\ \ \ \ \ \textcolor{comment}{/*\ Supported\ NPN\ and\ ALPN\ protocols.\ A\ comma-\/separated\ list.\ */}}
+\DoxyCodeLine{00106\ \ \ \ \ \textcolor{keywordtype}{char}\ *npn\_protocols;}
+\DoxyCodeLine{00107\ \ \ \ \ \textcolor{keywordtype}{char}\ *alpn\_protocols;}
+\DoxyCodeLine{00108\ \ \ \ \ ssl\_ct\_validation\_t\ ct\_validation;}
+\DoxyCodeLine{00109\ \ \ \ \ \textcolor{comment}{/*\ Ciphersuites\ to\ set\ on\ a\ renegotiation\ */}}
+\DoxyCodeLine{00110\ \ \ \ \ \textcolor{keywordtype}{char}\ *reneg\_ciphers;}
+\DoxyCodeLine{00111\ \ \ \ \ \textcolor{keywordtype}{char}\ *srp\_user;}
+\DoxyCodeLine{00112\ \ \ \ \ \textcolor{keywordtype}{char}\ *srp\_password;}
+\DoxyCodeLine{00113\ \ \ \ \ \textcolor{comment}{/*\ PHA\ enabled\ */}}
+\DoxyCodeLine{00114\ \ \ \ \ \textcolor{keywordtype}{int}\ enable\_pha;}
+\DoxyCodeLine{00115\ \ \ \ \ \textcolor{comment}{/*\ Do\ not\ send\ extms\ on\ renegotiation\ */}}
+\DoxyCodeLine{00116\ \ \ \ \ \textcolor{keywordtype}{int}\ no\_extms\_on\_reneg;}
+\DoxyCodeLine{00117\ \}\ \mbox{\hyperlink{struct_s_s_l___t_e_s_t___c_l_i_e_n_t___c_o_n_f}{SSL\_TEST\_CLIENT\_CONF}};}
+\DoxyCodeLine{00118\ }
+\DoxyCodeLine{00119\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00120\ \ \ \ \ \textcolor{comment}{/*\ SNI\ callback\ (server-\/side).\ */}}
+\DoxyCodeLine{00121\ \ \ \ \ ssl\_servername\_callback\_t\ servername\_callback;}
+\DoxyCodeLine{00122\ \ \ \ \ \textcolor{comment}{/*\ Supported\ NPN\ and\ ALPN\ protocols.\ A\ comma-\/separated\ list.\ */}}
+\DoxyCodeLine{00123\ \ \ \ \ \textcolor{keywordtype}{char}\ *npn\_protocols;}
+\DoxyCodeLine{00124\ \ \ \ \ \textcolor{keywordtype}{char}\ *alpn\_protocols;}
+\DoxyCodeLine{00125\ \ \ \ \ \textcolor{comment}{/*\ Whether\ to\ set\ a\ broken\ session\ ticket\ callback.\ */}}
+\DoxyCodeLine{00126\ \ \ \ \ \textcolor{keywordtype}{int}\ broken\_session\_ticket;}
+\DoxyCodeLine{00127\ \ \ \ \ \textcolor{comment}{/*\ Should\ we\ send\ a\ CertStatus\ message?\ */}}
+\DoxyCodeLine{00128\ \ \ \ \ ssl\_cert\_status\_t\ cert\_status;}
+\DoxyCodeLine{00129\ \ \ \ \ \textcolor{comment}{/*\ An\ SRP\ user\ known\ to\ the\ server.\ */}}
+\DoxyCodeLine{00130\ \ \ \ \ \textcolor{keywordtype}{char}\ *srp\_user;}
+\DoxyCodeLine{00131\ \ \ \ \ \textcolor{keywordtype}{char}\ *srp\_password;}
+\DoxyCodeLine{00132\ \ \ \ \ \textcolor{comment}{/*\ Forced\ PHA\ */}}
+\DoxyCodeLine{00133\ \ \ \ \ \textcolor{keywordtype}{int}\ force\_pha;}
+\DoxyCodeLine{00134\ \ \ \ \ \textcolor{keywordtype}{char}\ *session\_ticket\_app\_data;}
+\DoxyCodeLine{00135\ \}\ \mbox{\hyperlink{struct_s_s_l___t_e_s_t___s_e_r_v_e_r___c_o_n_f}{SSL\_TEST\_SERVER\_CONF}};}
+\DoxyCodeLine{00136\ }
+\DoxyCodeLine{00137\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00138\ \ \ \ \ \mbox{\hyperlink{struct_s_s_l___t_e_s_t___c_l_i_e_n_t___c_o_n_f}{SSL\_TEST\_CLIENT\_CONF}}\ client;}
+\DoxyCodeLine{00139\ \ \ \ \ \mbox{\hyperlink{struct_s_s_l___t_e_s_t___s_e_r_v_e_r___c_o_n_f}{SSL\_TEST\_SERVER\_CONF}}\ server;}
+\DoxyCodeLine{00140\ \ \ \ \ \mbox{\hyperlink{struct_s_s_l___t_e_s_t___s_e_r_v_e_r___c_o_n_f}{SSL\_TEST\_SERVER\_CONF}}\ server2;}
+\DoxyCodeLine{00141\ \}\ \mbox{\hyperlink{struct_s_s_l___t_e_s_t___e_x_t_r_a___c_o_n_f}{SSL\_TEST\_EXTRA\_CONF}};}
+\DoxyCodeLine{00142\ }
+\DoxyCodeLine{00143\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00144\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00145\ \textcolor{comment}{\ \ \ \ \ *\ Global\ test\ configuration.\ Does\ not\ change\ between\ handshakes.}}
+\DoxyCodeLine{00146\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00147\ \ \ \ \ \textcolor{comment}{/*\ Whether\ the\ server/client\ CTX\ should\ use\ DTLS\ or\ TLS.\ */}}
+\DoxyCodeLine{00148\ \ \ \ \ ssl\_test\_method\_t\ method;}
+\DoxyCodeLine{00149\ \ \ \ \ \textcolor{comment}{/*\ Whether\ to\ test\ a\ resumed/renegotiated\ handshake.\ */}}
+\DoxyCodeLine{00150\ \ \ \ \ ssl\_handshake\_mode\_t\ handshake\_mode;}
+\DoxyCodeLine{00151\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00152\ \textcolor{comment}{\ \ \ \ \ *\ How\ much\ application\ data\ to\ exchange\ (default\ is\ 256\ bytes).}}
+\DoxyCodeLine{00153\ \textcolor{comment}{\ \ \ \ \ *\ Both\ peers\ will\ send\ |app\_data\_size|\ bytes\ interleaved.}}
+\DoxyCodeLine{00154\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00155\ \ \ \ \ \textcolor{keywordtype}{int}\ app\_data\_size;}
+\DoxyCodeLine{00156\ \ \ \ \ \textcolor{comment}{/*\ Maximum\ send\ fragment\ size.\ */}}
+\DoxyCodeLine{00157\ \ \ \ \ \textcolor{keywordtype}{int}\ max\_fragment\_size;}
+\DoxyCodeLine{00158\ \ \ \ \ \textcolor{comment}{/*\ KeyUpdate\ type\ */}}
+\DoxyCodeLine{00159\ \ \ \ \ \textcolor{keywordtype}{int}\ key\_update\_type;}
+\DoxyCodeLine{00160\ }
+\DoxyCodeLine{00161\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00162\ \textcolor{comment}{\ \ \ \ \ *\ Extra\ server/client\ configurations.\ Per-\/handshake.}}
+\DoxyCodeLine{00163\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00164\ \ \ \ \ \textcolor{comment}{/*\ First\ handshake.\ */}}
+\DoxyCodeLine{00165\ \ \ \ \ \mbox{\hyperlink{struct_s_s_l___t_e_s_t___e_x_t_r_a___c_o_n_f}{SSL\_TEST\_EXTRA\_CONF}}\ extra;}
+\DoxyCodeLine{00166\ \ \ \ \ \textcolor{comment}{/*\ Resumed\ handshake.\ */}}
+\DoxyCodeLine{00167\ \ \ \ \ \mbox{\hyperlink{struct_s_s_l___t_e_s_t___e_x_t_r_a___c_o_n_f}{SSL\_TEST\_EXTRA\_CONF}}\ resume\_extra;}
+\DoxyCodeLine{00168\ }
+\DoxyCodeLine{00169\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00170\ \textcolor{comment}{\ \ \ \ \ *\ Test\ expectations.\ These\ apply\ to\ the\ LAST\ handshake.}}
+\DoxyCodeLine{00171\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00172\ \ \ \ \ \textcolor{comment}{/*\ Defaults\ to\ SUCCESS.\ */}}
+\DoxyCodeLine{00173\ \ \ \ \ ssl\_test\_result\_t\ expected\_result;}
+\DoxyCodeLine{00174\ \ \ \ \ \textcolor{comment}{/*\ Alerts.\ 0\ if\ no\ expectation.\ */}}
+\DoxyCodeLine{00175\ \ \ \ \ \textcolor{comment}{/*\ See\ ssl.h\ for\ alert\ codes.\ */}}
+\DoxyCodeLine{00176\ \ \ \ \ \textcolor{comment}{/*\ Alert\ sent\ by\ the\ client\ /\ received\ by\ the\ server.\ */}}
+\DoxyCodeLine{00177\ \ \ \ \ \textcolor{keywordtype}{int}\ expected\_client\_alert;}
+\DoxyCodeLine{00178\ \ \ \ \ \textcolor{comment}{/*\ Alert\ sent\ by\ the\ server\ /\ received\ by\ the\ client.\ */}}
+\DoxyCodeLine{00179\ \ \ \ \ \textcolor{keywordtype}{int}\ expected\_server\_alert;}
+\DoxyCodeLine{00180\ \ \ \ \ \textcolor{comment}{/*\ Negotiated\ protocol\ version.\ 0\ if\ no\ expectation.\ */}}
+\DoxyCodeLine{00181\ \ \ \ \ \textcolor{comment}{/*\ See\ ssl.h\ for\ protocol\ versions.\ */}}
+\DoxyCodeLine{00182\ \ \ \ \ \textcolor{keywordtype}{int}\ expected\_protocol;}
+\DoxyCodeLine{00183\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00184\ \textcolor{comment}{\ \ \ \ \ *\ The\ expected\ SNI\ context\ to\ use.}}
+\DoxyCodeLine{00185\ \textcolor{comment}{\ \ \ \ \ *\ We\ test\ server-\/side\ that\ the\ server\ switched\ to\ the\ expected\ context.}}
+\DoxyCodeLine{00186\ \textcolor{comment}{\ \ \ \ \ *\ Set\ by\ the\ callback\ upon\ success,\ so\ if\ the\ callback\ wasn't\ called\ or}}
+\DoxyCodeLine{00187\ \textcolor{comment}{\ \ \ \ \ *\ terminated\ with\ an\ alert,\ the\ servername\ will\ match\ with}}
+\DoxyCodeLine{00188\ \textcolor{comment}{\ \ \ \ \ *\ SSL\_TEST\_SERVERNAME\_NONE.}}
+\DoxyCodeLine{00189\ \textcolor{comment}{\ \ \ \ \ *\ Note:\ in\ the\ event\ that\ the\ servername\ was\ accepted,\ the\ client\ should}}
+\DoxyCodeLine{00190\ \textcolor{comment}{\ \ \ \ \ *\ also\ receive\ an\ empty\ SNI\ extension\ back\ but\ we\ have\ no\ way\ of\ probing}}
+\DoxyCodeLine{00191\ \textcolor{comment}{\ \ \ \ \ *\ client-\/side\ via\ the\ API\ that\ this\ was\ the\ case.}}
+\DoxyCodeLine{00192\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00193\ \ \ \ \ ssl\_servername\_t\ expected\_servername;}
+\DoxyCodeLine{00194\ \ \ \ \ ssl\_session\_ticket\_t\ session\_ticket\_expected;}
+\DoxyCodeLine{00195\ \ \ \ \ \textcolor{keywordtype}{int}\ compression\_expected;}
+\DoxyCodeLine{00196\ \ \ \ \ \textcolor{comment}{/*\ The\ expected\ NPN/ALPN\ protocol\ to\ negotiate.\ */}}
+\DoxyCodeLine{00197\ \ \ \ \ \textcolor{keywordtype}{char}\ *expected\_npn\_protocol;}
+\DoxyCodeLine{00198\ \ \ \ \ \textcolor{keywordtype}{char}\ *expected\_alpn\_protocol;}
+\DoxyCodeLine{00199\ \ \ \ \ \textcolor{comment}{/*\ Whether\ the\ second\ handshake\ is\ resumed\ or\ a\ full\ handshake\ (boolean).\ */}}
+\DoxyCodeLine{00200\ \ \ \ \ \textcolor{keywordtype}{int}\ resumption\_expected;}
+\DoxyCodeLine{00201\ \ \ \ \ \textcolor{comment}{/*\ Expected\ temporary\ key\ type\ */}}
+\DoxyCodeLine{00202\ \ \ \ \ \textcolor{keywordtype}{int}\ expected\_tmp\_key\_type;}
+\DoxyCodeLine{00203\ \ \ \ \ \textcolor{comment}{/*\ Expected\ server\ certificate\ key\ type\ */}}
+\DoxyCodeLine{00204\ \ \ \ \ \textcolor{keywordtype}{int}\ expected\_server\_cert\_type;}
+\DoxyCodeLine{00205\ \ \ \ \ \textcolor{comment}{/*\ Expected\ server\ signing\ hash\ */}}
+\DoxyCodeLine{00206\ \ \ \ \ \textcolor{keywordtype}{int}\ expected\_server\_sign\_hash;}
+\DoxyCodeLine{00207\ \ \ \ \ \textcolor{comment}{/*\ Expected\ server\ signature\ type\ */}}
+\DoxyCodeLine{00208\ \ \ \ \ \textcolor{keywordtype}{int}\ expected\_server\_sign\_type;}
+\DoxyCodeLine{00209\ \ \ \ \ \textcolor{comment}{/*\ Expected\ server\ CA\ names\ */}}
+\DoxyCodeLine{00210\ \ \ \ \ STACK\_OF(X509\_NAME)\ *expected\_server\_ca\_names;}
+\DoxyCodeLine{00211\ \ \ \ \ \textcolor{comment}{/*\ Expected\ client\ certificate\ key\ type\ */}}
+\DoxyCodeLine{00212\ \ \ \ \ \textcolor{keywordtype}{int}\ expected\_client\_cert\_type;}
+\DoxyCodeLine{00213\ \ \ \ \ \textcolor{comment}{/*\ Expected\ client\ signing\ hash\ */}}
+\DoxyCodeLine{00214\ \ \ \ \ \textcolor{keywordtype}{int}\ expected\_client\_sign\_hash;}
+\DoxyCodeLine{00215\ \ \ \ \ \textcolor{comment}{/*\ Expected\ client\ signature\ type\ */}}
+\DoxyCodeLine{00216\ \ \ \ \ \textcolor{keywordtype}{int}\ expected\_client\_sign\_type;}
+\DoxyCodeLine{00217\ \ \ \ \ \textcolor{comment}{/*\ Expected\ CA\ names\ for\ client\ auth\ */}}
+\DoxyCodeLine{00218\ \ \ \ \ STACK\_OF(X509\_NAME)\ *expected\_client\_ca\_names;}
+\DoxyCodeLine{00219\ \ \ \ \ \textcolor{comment}{/*\ Whether\ to\ use\ SCTP\ for\ the\ transport\ */}}
+\DoxyCodeLine{00220\ \ \ \ \ \textcolor{keywordtype}{int}\ use\_sctp;}
+\DoxyCodeLine{00221\ \ \ \ \ \textcolor{comment}{/*\ Whether\ to\ pre-\/compress\ server\ certificates\ */}}
+\DoxyCodeLine{00222\ \ \ \ \ \textcolor{keywordtype}{int}\ compress\_certificates;}
+\DoxyCodeLine{00223\ \ \ \ \ \textcolor{comment}{/*\ Enable\ SSL\_MODE\_DTLS\_SCTP\_LABEL\_LENGTH\_BUG\ on\ client\ side\ */}}
+\DoxyCodeLine{00224\ \ \ \ \ \textcolor{keywordtype}{int}\ enable\_client\_sctp\_label\_bug;}
+\DoxyCodeLine{00225\ \ \ \ \ \textcolor{comment}{/*\ Enable\ SSL\_MODE\_DTLS\_SCTP\_LABEL\_LENGTH\_BUG\ on\ server\ side\ */}}
+\DoxyCodeLine{00226\ \ \ \ \ \textcolor{keywordtype}{int}\ enable\_server\_sctp\_label\_bug;}
+\DoxyCodeLine{00227\ \ \ \ \ \textcolor{comment}{/*\ Whether\ to\ expect\ a\ session\ id\ from\ the\ server\ */}}
+\DoxyCodeLine{00228\ \ \ \ \ ssl\_session\_id\_t\ session\_id\_expected;}
+\DoxyCodeLine{00229\ \ \ \ \ \textcolor{keywordtype}{char}\ *expected\_cipher;}
+\DoxyCodeLine{00230\ \ \ \ \ \textcolor{comment}{/*\ Expected\ Session\ Ticket\ Application\ Data\ */}}
+\DoxyCodeLine{00231\ \ \ \ \ \textcolor{keywordtype}{char}\ *expected\_session\_ticket\_app\_data;}
+\DoxyCodeLine{00232\ }
+\DoxyCodeLine{00233\ \ \ \ \ OSSL\_LIB\_CTX\ *libctx;}
+\DoxyCodeLine{00234\ }
+\DoxyCodeLine{00235\ \ \ \ \ \textcolor{comment}{/*\ FIPS\ version\ string\ to\ check\ for\ compatibility\ */}}
+\DoxyCodeLine{00236\ \ \ \ \ \textcolor{keywordtype}{char}\ *fips\_version;}
+\DoxyCodeLine{00237\ \}\ \mbox{\hyperlink{struct_s_s_l___t_e_s_t___c_t_x}{SSL\_TEST\_CTX}};}
+\DoxyCodeLine{00238\ }
+\DoxyCodeLine{00239\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *ssl\_test\_result\_name(ssl\_test\_result\_t\ result);}
+\DoxyCodeLine{00240\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *ssl\_alert\_name(\textcolor{keywordtype}{int}\ alert);}
+\DoxyCodeLine{00241\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *ssl\_protocol\_name(\textcolor{keywordtype}{int}\ protocol);}
+\DoxyCodeLine{00242\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *ssl\_verify\_callback\_name(ssl\_verify\_callback\_t\ verify\_callback);}
+\DoxyCodeLine{00243\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *ssl\_servername\_name(ssl\_servername\_t\ server);}
+\DoxyCodeLine{00244\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *ssl\_servername\_callback\_name(ssl\_servername\_callback\_t}
+\DoxyCodeLine{00245\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ servername\_callback);}
+\DoxyCodeLine{00246\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *ssl\_session\_ticket\_name(ssl\_session\_ticket\_t\ server);}
+\DoxyCodeLine{00247\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *ssl\_session\_id\_name(ssl\_session\_id\_t\ server);}
+\DoxyCodeLine{00248\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *ssl\_test\_method\_name(ssl\_test\_method\_t\ method);}
+\DoxyCodeLine{00249\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *ssl\_handshake\_mode\_name(ssl\_handshake\_mode\_t\ mode);}
+\DoxyCodeLine{00250\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *ssl\_ct\_validation\_name(ssl\_ct\_validation\_t\ mode);}
+\DoxyCodeLine{00251\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *ssl\_certstatus\_name(ssl\_cert\_status\_t\ cert\_status);}
+\DoxyCodeLine{00252\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *ssl\_max\_fragment\_len\_name(\textcolor{keywordtype}{int}\ MFL\_mode);}
+\DoxyCodeLine{00253\ }
+\DoxyCodeLine{00254\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00255\ \textcolor{comment}{\ *\ Load\ the\ test\ case\ context\ from\ |conf|.}}
+\DoxyCodeLine{00256\ \textcolor{comment}{\ *\ See\ test/README.ssltest.md\ for\ details\ on\ the\ conf\ file\ format.}}
+\DoxyCodeLine{00257\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00258\ \mbox{\hyperlink{struct_s_s_l___t_e_s_t___c_t_x}{SSL\_TEST\_CTX}}\ *SSL\_TEST\_CTX\_create(\textcolor{keyword}{const}\ CONF\ *conf,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *test\_section,}
+\DoxyCodeLine{00259\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OSSL\_LIB\_CTX\ *libctx);}
+\DoxyCodeLine{00260\ }
+\DoxyCodeLine{00261\ \mbox{\hyperlink{struct_s_s_l___t_e_s_t___c_t_x}{SSL\_TEST\_CTX}}\ *SSL\_TEST\_CTX\_new(OSSL\_LIB\_CTX\ *libctx);}
+\DoxyCodeLine{00262\ }
+\DoxyCodeLine{00263\ \textcolor{keywordtype}{void}\ SSL\_TEST\_CTX\_free(\mbox{\hyperlink{struct_s_s_l___t_e_s_t___c_t_x}{SSL\_TEST\_CTX}}\ *ctx);}
+\DoxyCodeLine{00264\ }
+\DoxyCodeLine{00265\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{/*\ OSSL\_TEST\_SSL\_TEST\_CTX\_H\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

@@ -1,0 +1,242 @@
+\doxysection{modes.\+h}
+\hypertarget{crypto_2modes_8h_source}{}\label{crypto_2modes_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/crypto/modes.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/crypto/modes.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2010-\/2022\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{comment}{/*\ This\ header\ can\ move\ into\ provider\ when\ legacy\ support\ is\ removed\ */}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ <openssl/modes.h>}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#if\ (defined(\_WIN32)\ ||\ defined(\_WIN64))\ \&\&\ !defined(\_\_MINGW32\_\_)}}
+\DoxyCodeLine{00014\ \textcolor{keyword}{typedef}\ \_\_int64\ i64;}
+\DoxyCodeLine{00015\ \textcolor{keyword}{typedef}\ \textcolor{keywordtype}{unsigned}\ \_\_int64\ u64;}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#\ define\ U64(C)\ C\#\#UI64}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#elif\ defined(\_\_arch64\_\_)}}
+\DoxyCodeLine{00018\ \textcolor{keyword}{typedef}\ \textcolor{keywordtype}{long}\ i64;}
+\DoxyCodeLine{00019\ \textcolor{keyword}{typedef}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ u64;}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#\ define\ U64(C)\ C\#\#UL}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00022\ \textcolor{keyword}{typedef}\ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{long}\ i64;}
+\DoxyCodeLine{00023\ \textcolor{keyword}{typedef}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{long}\ u64;}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#\ define\ U64(C)\ C\#\#ULL}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \textcolor{keyword}{typedef}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ u32;}
+\DoxyCodeLine{00028\ \textcolor{keyword}{typedef}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ u8;}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#define\ STRICT\_ALIGNMENT\ 1}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#ifndef\ PEDANTIC}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#\ if\ defined(\_\_i386)\ \ \ \ ||\ defined(\_\_i386\_\_)\ \ \ \ ||\ \(\backslash\)}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\ \ \ \ \ defined(\_\_x86\_64)\ \ ||\ defined(\_\_x86\_64\_\_)\ \ ||\ \(\backslash\)}}
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\ \ \ \ \ defined(\_M\_IX86)\ \ \ ||\ defined(\_M\_AMD64)\ \ \ \ ||\ defined(\_M\_X64)\ ||\ \(\backslash\)}}
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\ \ \ \ \ defined(\_\_aarch64\_\_)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ||\ \(\backslash\)}}
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\ \ \ \ \ defined(\_\_s390\_\_)\ \ ||\ defined(\_\_s390x\_\_)}}
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#\ \ undef\ STRICT\_ALIGNMENT}}
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00039\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \textcolor{preprocessor}{\#if\ !defined(PEDANTIC)\ \&\&\ !defined(OPENSSL\_NO\_ASM)\ \&\&\ !defined(OPENSSL\_NO\_INLINE\_ASM)}}
+\DoxyCodeLine{00042\ \textcolor{preprocessor}{\#\ if\ defined(\_\_GNUC\_\_)\ \&\&\ \_\_GNUC\_\_>=2}}
+\DoxyCodeLine{00043\ \textcolor{preprocessor}{\#\ \ if\ defined(\_\_x86\_64)\ ||\ defined(\_\_x86\_64\_\_)}}
+\DoxyCodeLine{00044\ \textcolor{preprocessor}{\#\ \ \ define\ BSWAP8(x)\ (\{\ u64\ ret\_=(x);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00045\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ asm\ ("{}bswapq\ \%0"{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00046\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ "{}+r"{}(ret\_));\ \ \ ret\_;\ \ \ \ \ \ \ \ \ \ \})}}
+\DoxyCodeLine{00047\ \textcolor{preprocessor}{\#\ \ \ define\ BSWAP4(x)\ (\{\ u32\ ret\_=(x);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00048\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ asm\ ("{}bswapl\ \%0"{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00049\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ "{}+r"{}(ret\_));\ \ \ ret\_;\ \ \ \ \ \ \ \ \ \ \})}}
+\DoxyCodeLine{00050\ \textcolor{preprocessor}{\#\ \ elif\ (defined(\_\_i386)\ ||\ defined(\_\_i386\_\_))\ \&\&\ !defined(I386\_ONLY)}}
+\DoxyCodeLine{00051\ \textcolor{preprocessor}{\#\ \ \ define\ BSWAP8(x)\ (\{\ u32\ lo\_=(u64)(x)>>32,hi\_=(x);\ \ \ \(\backslash\)}}
+\DoxyCodeLine{00052\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ asm\ ("{}bswapl\ \%0;\ bswapl\ \%1"{}\ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00053\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ "{}+r"{}(hi\_),"{}+r"{}(lo\_));\ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00054\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (u64)hi\_<<32|lo\_;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \})}}
+\DoxyCodeLine{00055\ \textcolor{preprocessor}{\#\ \ \ define\ BSWAP4(x)\ (\{\ u32\ ret\_=(x);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00056\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ asm\ ("{}bswapl\ \%0"{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00057\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ "{}+r"{}(ret\_));\ \ \ ret\_;\ \ \ \ \ \ \ \ \ \ \})}}
+\DoxyCodeLine{00058\ \textcolor{preprocessor}{\#\ \ elif\ defined(\_\_aarch64\_\_)}}
+\DoxyCodeLine{00059\ \textcolor{preprocessor}{\#\ \ \ if\ defined(\_\_BYTE\_ORDER\_\_)\ \&\&\ defined(\_\_ORDER\_LITTLE\_ENDIAN\_\_)\ \&\&\ \(\backslash\)}}
+\DoxyCodeLine{00060\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \_\_BYTE\_ORDER\_\_==\_\_ORDER\_LITTLE\_ENDIAN\_\_}}
+\DoxyCodeLine{00061\ \textcolor{preprocessor}{\#\ \ \ \ define\ BSWAP8(x)\ (\{\ u64\ ret\_;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00062\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ asm\ ("{}rev\ \%0,\%1"{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00063\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ "{}=r"{}(ret\_)\ :\ "{}r"{}(x));\ ret\_;\ \ \ \})}}
+\DoxyCodeLine{00064\ \textcolor{preprocessor}{\#\ \ \ \ define\ BSWAP4(x)\ (\{\ u32\ ret\_;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00065\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ asm\ ("{}rev\ \%w0,\%w1"{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00066\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ "{}=r"{}(ret\_)\ :\ "{}r"{}(x));\ ret\_;\ \ \ \})}}
+\DoxyCodeLine{00067\ \textcolor{preprocessor}{\#\ \ \ endif}}
+\DoxyCodeLine{00068\ \textcolor{preprocessor}{\#\ \ elif\ (defined(\_\_arm\_\_)\ ||\ defined(\_\_arm))\ \&\&\ !defined(STRICT\_ALIGNMENT)}}
+\DoxyCodeLine{00069\ \textcolor{preprocessor}{\#\ \ \ define\ BSWAP8(x)\ (\{\ u32\ lo\_=(u64)(x)>>32,hi\_=(x);\ \ \ \(\backslash\)}}
+\DoxyCodeLine{00070\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ asm\ ("{}rev\ \%0,\%0;\ rev\ \%1,\%1"{}\ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00071\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ "{}+r"{}(hi\_),"{}+r"{}(lo\_));\ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00072\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (u64)hi\_<<32|lo\_;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \})}}
+\DoxyCodeLine{00073\ \textcolor{preprocessor}{\#\ \ \ define\ BSWAP4(x)\ (\{\ u32\ ret\_;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00074\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ asm\ ("{}rev\ \%0,\%1"{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00075\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ "{}=r"{}(ret\_)\ :\ "{}r"{}((u32)(x)));\ \ \(\backslash\)}}
+\DoxyCodeLine{00076\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ret\_;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \})}}
+\DoxyCodeLine{00077\ \textcolor{preprocessor}{\#\ \ elif\ (defined(\_\_riscv\_zbb)\ ||\ defined(\_\_riscv\_zbkb))\ \&\&\ \_\_riscv\_xlen\ ==\ 64}}
+\DoxyCodeLine{00078\ \textcolor{preprocessor}{\#\ \ \ define\ BSWAP8(x)\ (\{\ u64\ ret\_=(x);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00079\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ asm\ ("{}rev8\ \%0,\%0"{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00080\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ "{}+r"{}(ret\_));\ \ \ ret\_;\ \ \ \ \ \ \ \ \ \ \})}}
+\DoxyCodeLine{00081\ \textcolor{preprocessor}{\#\ \ \ define\ BSWAP4(x)\ (\{\ u32\ ret\_=(x);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00082\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ asm\ ("{}rev8\ \%0,\%0;\ srli\ \%0,\%0,32"{}\(\backslash\)}}
+\DoxyCodeLine{00083\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ "{}+\&r"{}(ret\_));\ \ ret\_;\ \ \ \ \ \ \ \ \ \ \})}}
+\DoxyCodeLine{00084\ \textcolor{preprocessor}{\#\ \ endif}}
+\DoxyCodeLine{00085\ \textcolor{preprocessor}{\#\ elif\ defined(\_MSC\_VER)}}
+\DoxyCodeLine{00086\ \textcolor{preprocessor}{\#\ \ if\ \_MSC\_VER>=1300}}
+\DoxyCodeLine{00087\ \textcolor{preprocessor}{\#\ \ \ include\ <stdlib.h>}}
+\DoxyCodeLine{00088\ \textcolor{preprocessor}{\#\ \ \ pragma\ intrinsic(\_byteswap\_uint64,\_byteswap\_ulong)}}
+\DoxyCodeLine{00089\ \textcolor{preprocessor}{\#\ \ \ define\ BSWAP8(x)\ \ \ \ \_byteswap\_uint64((u64)(x))}}
+\DoxyCodeLine{00090\ \textcolor{preprocessor}{\#\ \ \ define\ BSWAP4(x)\ \ \ \ \_byteswap\_ulong((u32)(x))}}
+\DoxyCodeLine{00091\ \textcolor{preprocessor}{\#\ \ elif\ defined(\_M\_IX86)}}
+\DoxyCodeLine{00092\ \_\_inline\ u32\ \_bswap4(u32\ val)}
+\DoxyCodeLine{00093\ \{}
+\DoxyCodeLine{00094\ \_asm\ mov\ eax,\ val\ \_asm\ bswap\ eax\}}
+\DoxyCodeLine{00095\ \textcolor{preprocessor}{\#\ \ \ define\ BSWAP4(x)\ \ \ \ \_bswap4(x)}}
+\DoxyCodeLine{00096\ \textcolor{preprocessor}{\#\ \ endif}}
+\DoxyCodeLine{00097\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00098\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00099\ \textcolor{preprocessor}{\#if\ defined(BSWAP4)\ \&\&\ !defined(STRICT\_ALIGNMENT)}}
+\DoxyCodeLine{00100\ \textcolor{preprocessor}{\#\ define\ GETU32(p)\ \ \ \ \ \ \ BSWAP4(*(const\ u32\ *)(p))}}
+\DoxyCodeLine{00101\ \textcolor{preprocessor}{\#\ define\ PUTU32(p,v)\ \ \ \ \ *(u32\ *)(p)\ =\ BSWAP4(v)}}
+\DoxyCodeLine{00102\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00103\ \textcolor{preprocessor}{\#\ define\ GETU32(p)\ \ \ \ \ \ \ ((u32)(p)[0]<<24|(u32)(p)[1]<<16|(u32)(p)[2]<<8|(u32)(p)[3])}}
+\DoxyCodeLine{00104\ \textcolor{preprocessor}{\#\ define\ PUTU32(p,v)\ \ \ \ \ ((p)[0]=(u8)((v)>>24),(p)[1]=(u8)((v)>>16),(p)[2]=(u8)((v)>>8),(p)[3]=(u8)(v))}}
+\DoxyCodeLine{00105\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00106\ \textcolor{comment}{/*-\/\ GCM\ definitions\ */}\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00107\ \ \ \ \ u64\ hi,\ lo;}
+\DoxyCodeLine{00108\ \}\ \mbox{\hyperlink{structu128}{u128}};}
+\DoxyCodeLine{00109\ }
+\DoxyCodeLine{00110\ \textcolor{keyword}{typedef}\ void\ (*gcm\_init\_fn)(\mbox{\hyperlink{structu128}{u128}}\ Htable[16],\ \textcolor{keyword}{const}\ u64\ H[2]);}
+\DoxyCodeLine{00111\ \textcolor{keyword}{typedef}\ void\ (*gcm\_ghash\_fn)(u64\ Xi[2],\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structu128}{u128}}\ Htable[16],\ \textcolor{keyword}{const}\ u8\ *inp,\ \textcolor{keywordtype}{size\_t}\ len);}
+\DoxyCodeLine{00112\ \textcolor{keyword}{typedef}\ void\ (*gcm\_gmult\_fn)(u64\ Xi[2],\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structu128}{u128}}\ Htable[16]);}
+\DoxyCodeLine{00113\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structgcm__funcs__st}{gcm\_funcs\_st}}\ \{}
+\DoxyCodeLine{00114\ \ \ \ \ gcm\_init\_fn\ ginit;}
+\DoxyCodeLine{00115\ \ \ \ \ gcm\_ghash\_fn\ ghash;}
+\DoxyCodeLine{00116\ \ \ \ \ gcm\_gmult\_fn\ gmult;}
+\DoxyCodeLine{00117\ \};}
+\DoxyCodeLine{00118\ }
+\DoxyCodeLine{00119\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structgcm128__context}{gcm128\_context}}\ \{}
+\DoxyCodeLine{00120\ \ \ \ \ \textcolor{comment}{/*\ Following\ 6\ names\ follow\ names\ in\ GCM\ specification\ */}}
+\DoxyCodeLine{00121\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ u64\ u[2];}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ u32\ d[4];}
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ u8\ c[16];}
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ t[16\ /\ \textcolor{keyword}{sizeof}(size\_t)];}
+\DoxyCodeLine{00126\ \ \ \ \ \}\ Yi,\ EKi,\ EK0,\ len,\ Xi,\ H;}
+\DoxyCodeLine{00127\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00128\ \textcolor{comment}{\ \ \ \ \ *\ Relative\ position\ of\ Yi,\ EKi,\ EK0,\ len,\ Xi,\ H\ and\ pre-\/computed\ Htable\ is}}
+\DoxyCodeLine{00129\ \textcolor{comment}{\ \ \ \ \ *\ used\ in\ some\ assembler\ modules,\ i.e.\ don't\ change\ the\ order!}}
+\DoxyCodeLine{00130\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00131\ \ \ \ \ \mbox{\hyperlink{structu128}{u128}}\ Htable[16];}
+\DoxyCodeLine{00132\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structgcm__funcs__st}{gcm\_funcs\_st}}\ funcs;}
+\DoxyCodeLine{00133\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ mres,\ ares;}
+\DoxyCodeLine{00134\ \ \ \ \ block128\_f\ block;}
+\DoxyCodeLine{00135\ \ \ \ \ \textcolor{keywordtype}{void}\ *key;}
+\DoxyCodeLine{00136\ \textcolor{preprocessor}{\#if\ !defined(OPENSSL\_SMALL\_FOOTPRINT)}}
+\DoxyCodeLine{00137\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ Xn[48];}
+\DoxyCodeLine{00138\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00139\ \};}
+\DoxyCodeLine{00140\ }
+\DoxyCodeLine{00141\ \textcolor{comment}{/*\ GHASH\ functions\ */}}
+\DoxyCodeLine{00142\ \textcolor{keywordtype}{void}\ ossl\_gcm\_init\_4bit(\mbox{\hyperlink{structu128}{u128}}\ Htable[16],\ \textcolor{keyword}{const}\ u64\ H[2]);}
+\DoxyCodeLine{00143\ \textcolor{keywordtype}{void}\ ossl\_gcm\_ghash\_4bit(u64\ Xi[2],\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structu128}{u128}}\ Htable[16],}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ u8\ *inp,\ \textcolor{keywordtype}{size\_t}\ len);}
+\DoxyCodeLine{00145\ \textcolor{keywordtype}{void}\ ossl\_gcm\_gmult\_4bit(u64\ Xi[2],\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structu128}{u128}}\ Htable[16]);}
+\DoxyCodeLine{00146\ }
+\DoxyCodeLine{00147\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00148\ \textcolor{comment}{\ *\ The\ maximum\ permitted\ number\ of\ cipher\ blocks\ per\ data\ unit\ in\ XTS\ mode.}}
+\DoxyCodeLine{00149\ \textcolor{comment}{\ *\ Reference\ IEEE\ Std\ 1619-\/2018.}}
+\DoxyCodeLine{00150\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00151\ \textcolor{preprocessor}{\#define\ XTS\_MAX\_BLOCKS\_PER\_DATA\_UNIT\ \ \ \ \ \ \ \ \ \ \ \ (1<<20)}}
+\DoxyCodeLine{00152\ }
+\DoxyCodeLine{00153\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structxts128__context}{xts128\_context}}\ \{}
+\DoxyCodeLine{00154\ \ \ \ \ \textcolor{keywordtype}{void}\ *key1,\ *key2;}
+\DoxyCodeLine{00155\ \ \ \ \ block128\_f\ block1,\ block2;}
+\DoxyCodeLine{00156\ \};}
+\DoxyCodeLine{00157\ }
+\DoxyCodeLine{00158\ \textcolor{comment}{/*\ XTS\ mode\ for\ SM4\ algorithm\ specified\ by\ GB/T\ 17964-\/2021\ */}}
+\DoxyCodeLine{00159\ \textcolor{keywordtype}{int}\ ossl\_crypto\_xts128gb\_encrypt(\textcolor{keyword}{const}\ XTS128\_CONTEXT\ *ctx,}
+\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ iv[16],}
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *inp,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,}
+\DoxyCodeLine{00162\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ len,\ \textcolor{keywordtype}{int}\ enc);}
+\DoxyCodeLine{00163\ }
+\DoxyCodeLine{00164\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structccm128__context}{ccm128\_context}}\ \{}
+\DoxyCodeLine{00165\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00166\ \ \ \ \ \ \ \ \ u64\ u[2];}
+\DoxyCodeLine{00167\ \ \ \ \ \ \ \ \ u8\ c[16];}
+\DoxyCodeLine{00168\ \ \ \ \ \}\ nonce,\ cmac;}
+\DoxyCodeLine{00169\ \ \ \ \ u64\ blocks;}
+\DoxyCodeLine{00170\ \ \ \ \ block128\_f\ block;}
+\DoxyCodeLine{00171\ \ \ \ \ \textcolor{keywordtype}{void}\ *key;}
+\DoxyCodeLine{00172\ \};}
+\DoxyCodeLine{00173\ }
+\DoxyCodeLine{00174\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_OCB}}
+\DoxyCodeLine{00175\ }
+\DoxyCodeLine{00176\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00177\ \ \ \ \ u64\ a[2];}
+\DoxyCodeLine{00178\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ c[16];}
+\DoxyCodeLine{00179\ \}\ \mbox{\hyperlink{union_o_c_b___b_l_o_c_k}{OCB\_BLOCK}};}
+\DoxyCodeLine{00180\ \textcolor{preprocessor}{\#\ define\ ocb\_block16\_xor(in1,in2,out)\ \(\backslash\)}}
+\DoxyCodeLine{00181\ \textcolor{preprocessor}{\ \ \ \ (\ (out)-\/>a[0]=(in1)-\/>a[0]\string^(in2)-\/>a[0],\ \(\backslash\)}}
+\DoxyCodeLine{00182\ \textcolor{preprocessor}{\ \ \ \ \ \ (out)-\/>a[1]=(in1)-\/>a[1]\string^(in2)-\/>a[1]\ )}}
+\DoxyCodeLine{00183\ \textcolor{preprocessor}{\#\ if\ STRICT\_ALIGNMENT}}
+\DoxyCodeLine{00184\ \textcolor{preprocessor}{\#\ \ define\ ocb\_block16\_xor\_misaligned(in1,in2,out)\ \(\backslash\)}}
+\DoxyCodeLine{00185\ \textcolor{preprocessor}{\ \ \ \ ocb\_block\_xor((in1)-\/>c,(in2)-\/>c,16,(out)-\/>c)}}
+\DoxyCodeLine{00186\ \textcolor{preprocessor}{\#\ else}}
+\DoxyCodeLine{00187\ \textcolor{preprocessor}{\#\ \ define\ ocb\_block16\_xor\_misaligned\ ocb\_block16\_xor}}
+\DoxyCodeLine{00188\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00189\ }
+\DoxyCodeLine{00190\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structocb128__context}{ocb128\_context}}\ \{}
+\DoxyCodeLine{00191\ \ \ \ \ \textcolor{comment}{/*\ Need\ both\ encrypt\ and\ decrypt\ key\ schedules\ for\ decryption\ */}}
+\DoxyCodeLine{00192\ \ \ \ \ block128\_f\ encrypt;}
+\DoxyCodeLine{00193\ \ \ \ \ block128\_f\ decrypt;}
+\DoxyCodeLine{00194\ \ \ \ \ \textcolor{keywordtype}{void}\ *keyenc;}
+\DoxyCodeLine{00195\ \ \ \ \ \textcolor{keywordtype}{void}\ *keydec;}
+\DoxyCodeLine{00196\ \ \ \ \ ocb128\_f\ stream;\ \ \ \ \textcolor{comment}{/*\ direction\ dependent\ */}}
+\DoxyCodeLine{00197\ \ \ \ \ \textcolor{comment}{/*\ Key\ dependent\ variables.\ Can\ be\ reused\ if\ key\ remains\ the\ same\ */}}
+\DoxyCodeLine{00198\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ l\_index;}
+\DoxyCodeLine{00199\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ max\_l\_index;}
+\DoxyCodeLine{00200\ \ \ \ \ \mbox{\hyperlink{union_o_c_b___b_l_o_c_k}{OCB\_BLOCK}}\ l\_star;}
+\DoxyCodeLine{00201\ \ \ \ \ \mbox{\hyperlink{union_o_c_b___b_l_o_c_k}{OCB\_BLOCK}}\ l\_dollar;}
+\DoxyCodeLine{00202\ \ \ \ \ \mbox{\hyperlink{union_o_c_b___b_l_o_c_k}{OCB\_BLOCK}}\ *l;}
+\DoxyCodeLine{00203\ \ \ \ \ \textcolor{comment}{/*\ Must\ be\ reset\ for\ each\ session\ */}}
+\DoxyCodeLine{00204\ \ \ \ \ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00205\ \ \ \ \ \ \ \ \ u64\ blocks\_hashed;}
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ u64\ blocks\_processed;}
+\DoxyCodeLine{00207\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{union_o_c_b___b_l_o_c_k}{OCB\_BLOCK}}\ offset\_aad;}
+\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{union_o_c_b___b_l_o_c_k}{OCB\_BLOCK}}\ sum;}
+\DoxyCodeLine{00209\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{union_o_c_b___b_l_o_c_k}{OCB\_BLOCK}}\ offset;}
+\DoxyCodeLine{00210\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{union_o_c_b___b_l_o_c_k}{OCB\_BLOCK}}\ checksum;}
+\DoxyCodeLine{00211\ \ \ \ \ \}\ sess;}
+\DoxyCodeLine{00212\ \};}
+\DoxyCodeLine{00213\ \textcolor{preprocessor}{\#endif\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{/*\ OPENSSL\_NO\_OCB\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00214\ }
+\DoxyCodeLine{00215\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_SIV}}
+\DoxyCodeLine{00216\ }
+\DoxyCodeLine{00217\ \textcolor{preprocessor}{\#define\ SIV\_LEN\ 16}}
+\DoxyCodeLine{00218\ }
+\DoxyCodeLine{00219\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{union\ }\mbox{\hyperlink{unionsiv__block__u}{siv\_block\_u}}\ \{}
+\DoxyCodeLine{00220\ \ \ \ \ uint64\_t\ word[SIV\_LEN/\textcolor{keyword}{sizeof}(uint64\_t)];}
+\DoxyCodeLine{00221\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \textcolor{keywordtype}{byte}[SIV\_LEN];}
+\DoxyCodeLine{00222\ \}\ \mbox{\hyperlink{unionsiv__block__u}{SIV\_BLOCK}};}
+\DoxyCodeLine{00223\ }
+\DoxyCodeLine{00224\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structsiv128__context}{siv128\_context}}\ \{}
+\DoxyCodeLine{00225\ \ \ \ \ \textcolor{comment}{/*\ d\ stores\ intermediate\ results\ of\ S2V;\ it\ corresponds\ to\ D\ from\ the}}
+\DoxyCodeLine{00226\ \textcolor{comment}{\ \ \ \ \ \ \ pseudocode\ in\ section\ 2.4\ of\ RFC\ 5297.\ */}}
+\DoxyCodeLine{00227\ \ \ \ \ \mbox{\hyperlink{unionsiv__block__u}{SIV\_BLOCK}}\ d;}
+\DoxyCodeLine{00228\ \ \ \ \ \mbox{\hyperlink{unionsiv__block__u}{SIV\_BLOCK}}\ tag;}
+\DoxyCodeLine{00229\ \ \ \ \ EVP\_CIPHER\_CTX\ *\mbox{\hyperlink{structcipher__ctx}{cipher\_ctx}};}
+\DoxyCodeLine{00230\ \ \ \ \ EVP\_MAC\ *mac;}
+\DoxyCodeLine{00231\ \ \ \ \ EVP\_MAC\_CTX\ *mac\_ctx\_init;}
+\DoxyCodeLine{00232\ \ \ \ \ \textcolor{keywordtype}{int}\ final\_ret;}
+\DoxyCodeLine{00233\ \ \ \ \ \textcolor{keywordtype}{int}\ crypto\_ok;}
+\DoxyCodeLine{00234\ \};}
+\DoxyCodeLine{00235\ }
+\DoxyCodeLine{00236\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ OPENSSL\_NO\_SIV\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

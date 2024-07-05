@@ -1,0 +1,164 @@
+\doxysection{ecx.\+h}
+\hypertarget{include_2crypto_2ecx_8h_source}{}\label{include_2crypto_2ecx_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/crypto/ecx.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/crypto/ecx.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2020-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{comment}{/*\ Internal\ EC\ functions\ for\ other\ submodules:\ not\ for\ application\ use\ */}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#ifndef\ OSSL\_CRYPTO\_ECX\_H}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#\ define\ OSSL\_CRYPTO\_ECX\_H}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ pragma\ once}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#\ include\ <openssl/opensslconf.h>}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#\ ifndef\ OPENSSL\_NO\_ECX}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#\ \ include\ <openssl/core.h>}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#\ \ include\ <openssl/e\_os2.h>}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#\ \ include\ <openssl/crypto.h>}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#\ \ include\ "{}internal/refcount.h"{}}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#\ \ include\ "{}crypto/types.h"{}}}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#\ \ define\ X25519\_KEYLEN\ \ \ \ \ \ \ \ \ 32}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#\ \ define\ X448\_KEYLEN\ \ \ \ \ \ \ \ \ \ \ 56}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#\ \ define\ ED25519\_KEYLEN\ \ \ \ \ \ \ \ 32}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#\ \ define\ ED448\_KEYLEN\ \ \ \ \ \ \ \ \ \ 57}}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#\ \ define\ MAX\_KEYLEN\ \ ED448\_KEYLEN}}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#\ \ define\ X25519\_BITS\ \ \ \ \ \ \ \ \ \ \ 253}}
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#\ \ define\ X25519\_SECURITY\_BITS\ \ 128}}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#\ \ define\ X448\_BITS\ \ \ \ \ \ \ \ \ \ \ \ \ 448}}
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#\ \ define\ X448\_SECURITY\_BITS\ \ \ \ 224}}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \textcolor{preprocessor}{\#\ \ define\ ED25519\_BITS\ \ \ \ \ \ \ \ \ \ 256}}
+\DoxyCodeLine{00040\ \textcolor{comment}{/*\ RFC8032\ Section\ 8.5\ */}}
+\DoxyCodeLine{00041\ \textcolor{preprocessor}{\#\ \ define\ ED25519\_SECURITY\_BITS\ 128}}
+\DoxyCodeLine{00042\ \textcolor{preprocessor}{\#\ \ define\ ED25519\_SIGSIZE\ \ \ \ \ \ \ 64}}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ \textcolor{preprocessor}{\#\ \ define\ ED448\_BITS\ \ \ \ \ \ \ \ \ \ \ \ 456}}
+\DoxyCodeLine{00045\ \textcolor{comment}{/*\ RFC8032\ Section\ 8.5\ */}}
+\DoxyCodeLine{00046\ \textcolor{preprocessor}{\#\ \ define\ ED448\_SECURITY\_BITS\ \ \ 224}}
+\DoxyCodeLine{00047\ \textcolor{preprocessor}{\#\ \ define\ ED448\_SIGSIZE\ \ \ \ \ \ \ \ \ 114}}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}\ \{}
+\DoxyCodeLine{00051\ \ \ \ \ ECX\_KEY\_TYPE\_X25519,}
+\DoxyCodeLine{00052\ \ \ \ \ ECX\_KEY\_TYPE\_X448,}
+\DoxyCodeLine{00053\ \ \ \ \ ECX\_KEY\_TYPE\_ED25519,}
+\DoxyCodeLine{00054\ \ \ \ \ ECX\_KEY\_TYPE\_ED448}
+\DoxyCodeLine{00055\ \}\ ECX\_KEY\_TYPE;}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \textcolor{preprocessor}{\#define\ KEYTYPE2NID(type)\ \(\backslash\)}}
+\DoxyCodeLine{00058\ \textcolor{preprocessor}{\ \ \ \ ((type)\ ==\ ECX\_KEY\_TYPE\_X25519\ \(\backslash\)}}
+\DoxyCodeLine{00059\ \textcolor{preprocessor}{\ \ \ \ \ ?\ \ EVP\_PKEY\_X25519\ \(\backslash\)}}
+\DoxyCodeLine{00060\ \textcolor{preprocessor}{\ \ \ \ \ :\ ((type)\ ==\ ECX\_KEY\_TYPE\_X448\ \(\backslash\)}}
+\DoxyCodeLine{00061\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ ?\ EVP\_PKEY\_X448\ \(\backslash\)}}
+\DoxyCodeLine{00062\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ :\ ((type)\ ==\ ECX\_KEY\_TYPE\_ED25519\ \(\backslash\)}}
+\DoxyCodeLine{00063\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ ?\ EVP\_PKEY\_ED25519\ \(\backslash\)}}
+\DoxyCodeLine{00064\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ :\ EVP\_PKEY\_ED448)))}}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structecx__key__st}{ecx\_key\_st}}\ \{}
+\DoxyCodeLine{00067\ \ \ \ \ OSSL\_LIB\_CTX\ *libctx;}
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{keywordtype}{char}\ *propq;}
+\DoxyCodeLine{00069\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ haspubkey:1;}
+\DoxyCodeLine{00070\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \mbox{\hyperlink{structpubkey}{pubkey}}[MAX\_KEYLEN];}
+\DoxyCodeLine{00071\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *privkey;}
+\DoxyCodeLine{00072\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ keylen;}
+\DoxyCodeLine{00073\ \ \ \ \ ECX\_KEY\_TYPE\ type;}
+\DoxyCodeLine{00074\ \ \ \ \ \mbox{\hyperlink{struct_c_r_y_p_t_o___r_e_f___c_o_u_n_t}{CRYPTO\_REF\_COUNT}}\ references;}
+\DoxyCodeLine{00075\ \};}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00077\ \textcolor{keywordtype}{size\_t}\ ossl\_ecx\_key\_length(ECX\_KEY\_TYPE\ type);}
+\DoxyCodeLine{00078\ \mbox{\hyperlink{structecx__key__st}{ECX\_KEY}}\ *ossl\_ecx\_key\_new(OSSL\_LIB\_CTX\ *libctx,\ ECX\_KEY\_TYPE\ type,}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ haspubkey,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *propq);}
+\DoxyCodeLine{00080\ \textcolor{keywordtype}{void}\ ossl\_ecx\_key\_set0\_libctx(\mbox{\hyperlink{structecx__key__st}{ECX\_KEY}}\ *key,\ OSSL\_LIB\_CTX\ *libctx);}
+\DoxyCodeLine{00081\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *ossl\_ecx\_key\_allocate\_privkey(\mbox{\hyperlink{structecx__key__st}{ECX\_KEY}}\ *key);}
+\DoxyCodeLine{00082\ \textcolor{keywordtype}{void}\ ossl\_ecx\_key\_free(\mbox{\hyperlink{structecx__key__st}{ECX\_KEY}}\ *key);}
+\DoxyCodeLine{00083\ \textcolor{keywordtype}{int}\ ossl\_ecx\_key\_up\_ref(\mbox{\hyperlink{structecx__key__st}{ECX\_KEY}}\ *key);}
+\DoxyCodeLine{00084\ \mbox{\hyperlink{structecx__key__st}{ECX\_KEY}}\ *ossl\_ecx\_key\_dup(\textcolor{keyword}{const}\ \mbox{\hyperlink{structecx__key__st}{ECX\_KEY}}\ *key,\ \textcolor{keywordtype}{int}\ selection);}
+\DoxyCodeLine{00085\ \textcolor{keywordtype}{int}\ ossl\_ecx\_compute\_key(\mbox{\hyperlink{structecx__key__st}{ECX\_KEY}}\ *peer,\ \mbox{\hyperlink{structecx__key__st}{ECX\_KEY}}\ *priv,\ \textcolor{keywordtype}{size\_t}\ keylen,}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *secret,\ \textcolor{keywordtype}{size\_t}\ *secretlen,}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ outlen);}
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00089\ \textcolor{keywordtype}{int}\ ossl\_x25519(uint8\_t\ out\_shared\_key[32],\ \textcolor{keyword}{const}\ uint8\_t\ private\_key[32],}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ uint8\_t\ peer\_public\_value[32]);}
+\DoxyCodeLine{00091\ \textcolor{keywordtype}{void}\ ossl\_x25519\_public\_from\_private(uint8\_t\ out\_public\_value[32],}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ uint8\_t\ private\_key[32]);}
+\DoxyCodeLine{00093\ }
+\DoxyCodeLine{00094\ \textcolor{keywordtype}{int}}
+\DoxyCodeLine{00095\ ossl\_ed25519\_public\_from\_private(OSSL\_LIB\_CTX\ *ctx,\ uint8\_t\ out\_public\_key[32],}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ uint8\_t\ private\_key[32],}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *propq);}
+\DoxyCodeLine{00098\ \textcolor{keywordtype}{int}}
+\DoxyCodeLine{00099\ ossl\_ed25519\_sign(uint8\_t\ *out\_sig,\ \textcolor{keyword}{const}\ uint8\_t\ *tbs,\ \textcolor{keywordtype}{size\_t}\ tbs\_len,}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ uint8\_t\ public\_key[32],\ \textcolor{keyword}{const}\ uint8\_t\ private\_key[32],}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ uint8\_t\ dom2flag,\ \textcolor{keyword}{const}\ uint8\_t\ phflag,\ \textcolor{keyword}{const}\ uint8\_t\ csflag,}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ uint8\_t\ *context,\ \textcolor{keywordtype}{size\_t}\ context\_len,}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OSSL\_LIB\_CTX\ *libctx,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *propq);}
+\DoxyCodeLine{00104\ \textcolor{keywordtype}{int}}
+\DoxyCodeLine{00105\ ossl\_ed25519\_verify(\textcolor{keyword}{const}\ uint8\_t\ *tbs,\ \textcolor{keywordtype}{size\_t}\ tbs\_len,}
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ uint8\_t\ signature[64],\ \textcolor{keyword}{const}\ uint8\_t\ public\_key[32],}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ uint8\_t\ dom2flag,\ \textcolor{keyword}{const}\ uint8\_t\ phflag,\ \textcolor{keyword}{const}\ uint8\_t\ csflag,}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ uint8\_t\ *context,\ \textcolor{keywordtype}{size\_t}\ context\_len,}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OSSL\_LIB\_CTX\ *libctx,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *propq);}
+\DoxyCodeLine{00110\ \textcolor{keywordtype}{int}}
+\DoxyCodeLine{00111\ ossl\_ed448\_public\_from\_private(OSSL\_LIB\_CTX\ *ctx,\ uint8\_t\ out\_public\_key[57],}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ uint8\_t\ private\_key[57],\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *propq);}
+\DoxyCodeLine{00113\ \textcolor{keywordtype}{int}}
+\DoxyCodeLine{00114\ ossl\_ed448\_sign(OSSL\_LIB\_CTX\ *ctx,\ uint8\_t\ *out\_sig,}
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ uint8\_t\ *message,\ \textcolor{keywordtype}{size\_t}\ message\_len,}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ uint8\_t\ public\_key[57],\ \textcolor{keyword}{const}\ uint8\_t\ private\_key[57],}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ uint8\_t\ *context,\ \textcolor{keywordtype}{size\_t}\ context\_len,}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ uint8\_t\ phflag,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *propq);}
+\DoxyCodeLine{00119\ }
+\DoxyCodeLine{00120\ \textcolor{keywordtype}{int}}
+\DoxyCodeLine{00121\ ossl\_ed448\_verify(OSSL\_LIB\_CTX\ *ctx,}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ uint8\_t\ *message,\ \textcolor{keywordtype}{size\_t}\ message\_len,}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ uint8\_t\ signature[114],\ \textcolor{keyword}{const}\ uint8\_t\ public\_key[57],}
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ uint8\_t\ *context,\ \textcolor{keywordtype}{size\_t}\ context\_len,}
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ uint8\_t\ phflag,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *propq);}
+\DoxyCodeLine{00126\ }
+\DoxyCodeLine{00127\ \textcolor{keywordtype}{int}}
+\DoxyCodeLine{00128\ ossl\_x448(uint8\_t\ out\_shared\_key[56],\ \textcolor{keyword}{const}\ uint8\_t\ private\_key[56],}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ uint8\_t\ peer\_public\_value[56]);}
+\DoxyCodeLine{00130\ \textcolor{keywordtype}{void}}
+\DoxyCodeLine{00131\ ossl\_x448\_public\_from\_private(uint8\_t\ out\_public\_value[56],}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ uint8\_t\ private\_key[56]);}
+\DoxyCodeLine{00133\ }
+\DoxyCodeLine{00134\ }
+\DoxyCodeLine{00135\ \textcolor{comment}{/*\ Backend\ support\ */}}
+\DoxyCodeLine{00136\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}\ \{}
+\DoxyCodeLine{00137\ \ \ \ \ KEY\_OP\_PUBLIC,}
+\DoxyCodeLine{00138\ \ \ \ \ KEY\_OP\_PRIVATE,}
+\DoxyCodeLine{00139\ \ \ \ \ KEY\_OP\_KEYGEN}
+\DoxyCodeLine{00140\ \}\ ecx\_key\_op\_t;}
+\DoxyCodeLine{00141\ }
+\DoxyCodeLine{00142\ \mbox{\hyperlink{structecx__key__st}{ECX\_KEY}}\ *ossl\_ecx\_key\_op(\textcolor{keyword}{const}\ X509\_ALGOR\ *palg,}
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *p,\ \textcolor{keywordtype}{int}\ plen,}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ pkey\_id,\ ecx\_key\_op\_t\ op,}
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OSSL\_LIB\_CTX\ *libctx,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *propq);}
+\DoxyCodeLine{00146\ }
+\DoxyCodeLine{00147\ \textcolor{keywordtype}{int}\ ossl\_ecx\_public\_from\_private(\mbox{\hyperlink{structecx__key__st}{ECX\_KEY}}\ *key);}
+\DoxyCodeLine{00148\ \textcolor{keywordtype}{int}\ ossl\_ecx\_key\_fromdata(\mbox{\hyperlink{structecx__key__st}{ECX\_KEY}}\ *ecx,\ \textcolor{keyword}{const}\ OSSL\_PARAM\ params[],}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ include\_private);}
+\DoxyCodeLine{00150\ \mbox{\hyperlink{structecx__key__st}{ECX\_KEY}}\ *ossl\_ecx\_key\_from\_pkcs8(\textcolor{keyword}{const}\ PKCS8\_PRIV\_KEY\_INFO\ *p8inf,}
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OSSL\_LIB\_CTX\ *libctx,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *propq);}
+\DoxyCodeLine{00152\ }
+\DoxyCodeLine{00153\ \mbox{\hyperlink{structecx__key__st}{ECX\_KEY}}\ *ossl\_evp\_pkey\_get1\_X25519(EVP\_PKEY\ *pkey);}
+\DoxyCodeLine{00154\ \mbox{\hyperlink{structecx__key__st}{ECX\_KEY}}\ *ossl\_evp\_pkey\_get1\_X448(EVP\_PKEY\ *pkey);}
+\DoxyCodeLine{00155\ \mbox{\hyperlink{structecx__key__st}{ECX\_KEY}}\ *ossl\_evp\_pkey\_get1\_ED25519(EVP\_PKEY\ *pkey);}
+\DoxyCodeLine{00156\ \mbox{\hyperlink{structecx__key__st}{ECX\_KEY}}\ *ossl\_evp\_pkey\_get1\_ED448(EVP\_PKEY\ *pkey);}
+\DoxyCodeLine{00157\ \textcolor{preprocessor}{\#\ endif\ }\textcolor{comment}{/*\ OPENSSL\_NO\_ECX\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00158\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

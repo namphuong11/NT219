@@ -1,0 +1,33 @@
+\doxysection{arch\+\_\+intrinsics.\+h}
+\hypertarget{arch__32_2arch__intrinsics_8h_source}{}\label{arch__32_2arch__intrinsics_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/ec/curve448/arch\_32/arch\_intrinsics.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/ec/curve448/arch\_32/arch\_intrinsics.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2017-\/2018\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *\ Copyright\ 2016\ Cryptography\ Research,\ Inc.}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ *\ Originally\ written\ by\ Mike\ Hamburg}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#ifndef\ OSSL\_CRYPTO\_EC\_CURVE448\_ARCH\_32\_INTRINSICS\_H}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ define\ OSSL\_CRYPTO\_EC\_CURVE448\_ARCH\_32\_INTRINSICS\_H}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#include\ "{}internal/constant\_time.h"{}}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#\ define\ ARCH\_WORD\_BITS\ 32}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#define\ word\_is\_zero(a)\ \ \ \ \ constant\_time\_is\_zero\_32(a)}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{keyword}{static}\ ossl\_inline\ uint64\_t\ widemul(uint32\_t\ a,\ uint32\_t\ \mbox{\hyperlink{structb}{b}})}
+\DoxyCodeLine{00023\ \{}
+\DoxyCodeLine{00024\ \ \ \ \ \textcolor{keywordflow}{return}\ ((uint64\_t)a)\ *\ \mbox{\hyperlink{structb}{b}};}
+\DoxyCodeLine{00025\ \}}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#endif\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{/*\ OSSL\_CRYPTO\_EC\_CURVE448\_ARCH\_32\_INTRINSICS\_H\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

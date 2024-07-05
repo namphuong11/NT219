@@ -1,0 +1,122 @@
+\doxysection{quic\+\_\+types.\+h}
+\hypertarget{quic__types_8h_source}{}\label{quic__types_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/quic\_types.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/quic\_types.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2022-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_QUIC\_TYPES\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_QUIC\_TYPES\_H}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#\ include\ <openssl/ssl.h>}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ include\ <internal/ssl.h>}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#\ include\ <assert.h>}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#\ include\ <string.h>}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#\ ifndef\ OPENSSL\_NO\_QUIC}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{comment}{/*\ QUIC\ encryption\ levels.\ */}}
+\DoxyCodeLine{00021\ \textcolor{keyword}{enum}\ \{}
+\DoxyCodeLine{00022\ \ \ \ \ QUIC\_ENC\_LEVEL\_INITIAL\ =\ 0,}
+\DoxyCodeLine{00023\ \ \ \ \ QUIC\_ENC\_LEVEL\_HANDSHAKE,}
+\DoxyCodeLine{00024\ \ \ \ \ QUIC\_ENC\_LEVEL\_0RTT,}
+\DoxyCodeLine{00025\ \ \ \ \ QUIC\_ENC\_LEVEL\_1RTT,}
+\DoxyCodeLine{00026\ \ \ \ \ QUIC\_ENC\_LEVEL\_NUM\ \ \ \ \ \ \ \textcolor{comment}{/*\ Must\ be\ the\ ultimate\ entry\ */}}
+\DoxyCodeLine{00027\ \};}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \textcolor{comment}{/*\ QUIC\ packet\ number\ spaces.\ */}}
+\DoxyCodeLine{00030\ \textcolor{keyword}{enum}\ \{}
+\DoxyCodeLine{00031\ \ \ \ \ QUIC\_PN\_SPACE\_INITIAL\ =\ 0,}
+\DoxyCodeLine{00032\ \ \ \ \ QUIC\_PN\_SPACE\_HANDSHAKE,}
+\DoxyCodeLine{00033\ \ \ \ \ \textcolor{comment}{/*\ New\ entries\ must\ go\ here,\ so\ that\ QUIC\_PN\_SPACE\_APP\ is\ the\ penultimate\ */}}
+\DoxyCodeLine{00034\ \ \ \ \ QUIC\_PN\_SPACE\_APP,}
+\DoxyCodeLine{00035\ \ \ \ \ QUIC\_PN\_SPACE\_NUM\ \ \ \ \ \ \ \textcolor{comment}{/*\ Must\ be\ the\ ultimate\ entry\ */}}
+\DoxyCodeLine{00036\ \};}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \textcolor{keyword}{static}\ ossl\_unused\ ossl\_inline\ uint32\_t}
+\DoxyCodeLine{00039\ ossl\_quic\_enc\_level\_to\_pn\_space(uint32\_t\ enc\_level)}
+\DoxyCodeLine{00040\ \{}
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{keywordflow}{switch}\ (enc\_level)\ \{}
+\DoxyCodeLine{00042\ \ \ \ \ \textcolor{keywordflow}{case}\ QUIC\_ENC\_LEVEL\_INITIAL:}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ QUIC\_PN\_SPACE\_INITIAL;}
+\DoxyCodeLine{00044\ \ \ \ \ \textcolor{keywordflow}{case}\ QUIC\_ENC\_LEVEL\_HANDSHAKE:}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ QUIC\_PN\_SPACE\_HANDSHAKE;}
+\DoxyCodeLine{00046\ \ \ \ \ \textcolor{keywordflow}{case}\ QUIC\_ENC\_LEVEL\_0RTT:}
+\DoxyCodeLine{00047\ \ \ \ \ \textcolor{keywordflow}{case}\ QUIC\_ENC\_LEVEL\_1RTT:}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ QUIC\_PN\_SPACE\_APP;}
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ assert(0);}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ QUIC\_PN\_SPACE\_APP;}
+\DoxyCodeLine{00052\ \ \ \ \ \}}
+\DoxyCodeLine{00053\ \}}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ \textcolor{comment}{/*\ QUIC\ packet\ number\ representation.\ */}}
+\DoxyCodeLine{00056\ \textcolor{keyword}{typedef}\ uint64\_t\ QUIC\_PN;}
+\DoxyCodeLine{00057\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_PN\_INVALID\ \ \ \ \ \ \ \ \ \ \ \ UINT64\_MAX}}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ \textcolor{keyword}{static}\ ossl\_unused\ ossl\_inline\ QUIC\_PN\ ossl\_quic\_pn\_max(QUIC\_PN\ a,\ QUIC\_PN\ \mbox{\hyperlink{structb}{b}})}
+\DoxyCodeLine{00060\ \{}
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{keywordflow}{return}\ a\ >\ \mbox{\hyperlink{structb}{b}}\ ?\ a\ :\ \mbox{\hyperlink{structb}{b}};}
+\DoxyCodeLine{00062\ \}}
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00064\ \textcolor{keyword}{static}\ ossl\_unused\ ossl\_inline\ QUIC\_PN\ ossl\_quic\_pn\_min(QUIC\_PN\ a,\ QUIC\_PN\ \mbox{\hyperlink{structb}{b}})}
+\DoxyCodeLine{00065\ \{}
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{keywordflow}{return}\ a\ <\ \mbox{\hyperlink{structb}{b}}\ ?\ a\ :\ \mbox{\hyperlink{structb}{b}};}
+\DoxyCodeLine{00067\ \}}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ \textcolor{keyword}{static}\ ossl\_unused\ ossl\_inline\ \textcolor{keywordtype}{int}\ ossl\_quic\_pn\_valid(QUIC\_PN\ pn)}
+\DoxyCodeLine{00070\ \{}
+\DoxyCodeLine{00071\ \ \ \ \ \textcolor{keywordflow}{return}\ pn\ <\ (((QUIC\_PN)1)\ <<\ 62);}
+\DoxyCodeLine{00072\ \}}
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00074\ \textcolor{comment}{/*\ QUIC\ connection\ ID\ representation.\ */}}
+\DoxyCodeLine{00075\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_MAX\_CONN\_ID\_LEN\ \ \ 20}}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00077\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structquic__conn__id__st}{quic\_conn\_id\_st}}\ \{}
+\DoxyCodeLine{00078\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ id\_len,\ \textcolor{keywordtype}{id}[QUIC\_MAX\_CONN\_ID\_LEN];}
+\DoxyCodeLine{00079\ \}\ \mbox{\hyperlink{structquic__conn__id__st}{QUIC\_CONN\_ID}};}
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00081\ \textcolor{keyword}{static}\ ossl\_unused\ ossl\_inline\ \textcolor{keywordtype}{int}\ ossl\_quic\_conn\_id\_eq(\textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__conn__id__st}{QUIC\_CONN\_ID}}\ *a,}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__conn__id__st}{QUIC\_CONN\_ID}}\ *\mbox{\hyperlink{structb}{b}})}
+\DoxyCodeLine{00083\ \{}
+\DoxyCodeLine{00084\ \ \ \ \ \textcolor{keywordflow}{if}\ (a-\/>id\_len\ !=\ \mbox{\hyperlink{structb}{b}}-\/>id\_len\ ||\ a-\/>id\_len\ >\ QUIC\_MAX\_CONN\_ID\_LEN)}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00086\ \ \ \ \ \textcolor{keywordflow}{return}\ memcmp(a-\/>id,\ \mbox{\hyperlink{structb}{b}}-\/>id,\ a-\/>id\_len)\ ==\ 0;}
+\DoxyCodeLine{00087\ \}}
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00089\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_MIN\_INITIAL\_DGRAM\_LEN\ \ 1200}}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_DEFAULT\_ACK\_DELAY\_EXP\ \ 3}}
+\DoxyCodeLine{00092\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_MAX\_ACK\_DELAY\_EXP\ \ \ \ \ \ 20}}
+\DoxyCodeLine{00093\ }
+\DoxyCodeLine{00094\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_DEFAULT\_MAX\_ACK\_DELAY\ \ 25}}
+\DoxyCodeLine{00095\ }
+\DoxyCodeLine{00096\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_MIN\_ACTIVE\_CONN\_ID\_LIMIT\ \ \ 2}}
+\DoxyCodeLine{00097\ }
+\DoxyCodeLine{00098\ \textcolor{comment}{/*\ Arbitrary\ choice\ of\ default\ idle\ timeout\ (not\ an\ RFC\ value).\ */}}
+\DoxyCodeLine{00099\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_DEFAULT\_IDLE\_TIMEOUT\ \ \ 30000}}
+\DoxyCodeLine{00100\ }
+\DoxyCodeLine{00101\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_STATELESS\_RESET\_TOKEN\_LEN\ \ \ \ 16}}
+\DoxyCodeLine{00102\ }
+\DoxyCodeLine{00103\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00104\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ token[QUIC\_STATELESS\_RESET\_TOKEN\_LEN];}
+\DoxyCodeLine{00105\ \}\ \mbox{\hyperlink{struct_q_u_i_c___s_t_a_t_e_l_e_s_s___r_e_s_e_t___t_o_k_e_n}{QUIC\_STATELESS\_RESET\_TOKEN}};}
+\DoxyCodeLine{00106\ }
+\DoxyCodeLine{00107\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00108\ \textcolor{comment}{\ *\ An\ encoded\ preferred\_addr\ transport\ parameter\ cannot\ be\ shorter\ or\ longer}}
+\DoxyCodeLine{00109\ \textcolor{comment}{\ *\ than\ these\ lengths\ in\ bytes.}}
+\DoxyCodeLine{00110\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00111\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_MIN\_ENCODED\_PREFERRED\_ADDR\_LEN\ \ \ 41}}
+\DoxyCodeLine{00112\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_MAX\_ENCODED\_PREFERRED\_ADDR\_LEN\ \ \ 61}}
+\DoxyCodeLine{00113\ }
+\DoxyCodeLine{00114\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00115\ }
+\DoxyCodeLine{00116\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

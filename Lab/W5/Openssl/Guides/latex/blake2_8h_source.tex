@@ -1,0 +1,134 @@
+\doxysection{blake2.\+h}
+\hypertarget{blake2_8h_source}{}\label{blake2_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/providers/implementations/include/prov/blake2.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/providers/implementations/include/prov/blake2.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2019-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_PROV\_BLAKE2\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_PROV\_BLAKE2\_H}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#\ include\ <openssl/opensslconf.h>}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#\ include\ <openssl/e\_os2.h>}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#\ include\ <stddef.h>}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#\ include\ <crypto/evp.h>}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#\ define\ BLAKE2S\_BLOCKBYTES\ \ \ \ 64}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#\ define\ BLAKE2S\_OUTBYTES\ \ \ \ \ \ 32}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#\ define\ BLAKE2S\_KEYBYTES\ \ \ \ \ \ 32}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#\ define\ BLAKE2S\_SALTBYTES\ \ \ \ \ 8}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#\ define\ BLAKE2S\_PERSONALBYTES\ 8}}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#\ define\ BLAKE2B\_BLOCKBYTES\ \ \ \ 128}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#\ define\ BLAKE2B\_OUTBYTES\ \ \ \ \ \ 64}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#\ define\ BLAKE2B\_KEYBYTES\ \ \ \ \ \ 64}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#\ define\ BLAKE2B\_SALTBYTES\ \ \ \ \ 16}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#\ define\ BLAKE2B\_PERSONALBYTES\ 16}}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structblake2s__param__st}{blake2s\_param\_st}}\ \{}
+\DoxyCodeLine{00032\ \ \ \ \ uint8\_t\ \ digest\_length;\ \textcolor{comment}{/*\ 1\ */}}
+\DoxyCodeLine{00033\ \ \ \ \ uint8\_t\ \ key\_length;\ \ \ \ \textcolor{comment}{/*\ 2\ */}}
+\DoxyCodeLine{00034\ \ \ \ \ uint8\_t\ \ fanout;\ \ \ \ \ \ \ \ \textcolor{comment}{/*\ 3\ */}}
+\DoxyCodeLine{00035\ \ \ \ \ uint8\_t\ \ depth;\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ 4\ */}}
+\DoxyCodeLine{00036\ \ \ \ \ uint8\_t\ \ leaf\_length[4];\textcolor{comment}{/*\ 8\ */}}
+\DoxyCodeLine{00037\ \ \ \ \ uint8\_t\ \ node\_offset[6];\textcolor{comment}{/*\ 14\ */}}
+\DoxyCodeLine{00038\ \ \ \ \ uint8\_t\ \ node\_depth;\ \ \ \ \textcolor{comment}{/*\ 15\ */}}
+\DoxyCodeLine{00039\ \ \ \ \ uint8\_t\ \ inner\_length;\ \ \textcolor{comment}{/*\ 16\ */}}
+\DoxyCodeLine{00040\ \ \ \ \ uint8\_t\ \ salt[BLAKE2S\_SALTBYTES];\ \textcolor{comment}{/*\ 24\ */}}
+\DoxyCodeLine{00041\ \ \ \ \ uint8\_t\ \ personal[BLAKE2S\_PERSONALBYTES];\ \ \textcolor{comment}{/*\ 32\ */}}
+\DoxyCodeLine{00042\ \};}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structblake2s__param__st}{blake2s\_param\_st}}\ \mbox{\hyperlink{structblake2s__param__st}{BLAKE2S\_PARAM}};}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structblake2s__ctx__st}{blake2s\_ctx\_st}}\ \{}
+\DoxyCodeLine{00047\ \ \ \ \ uint32\_t\ h[8];}
+\DoxyCodeLine{00048\ \ \ \ \ uint32\_t\ t[2];}
+\DoxyCodeLine{00049\ \ \ \ \ uint32\_t\ f[2];}
+\DoxyCodeLine{00050\ \ \ \ \ uint8\_t\ \ buf[BLAKE2S\_BLOCKBYTES];}
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \ \ buflen;}
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \ \ outlen;}
+\DoxyCodeLine{00053\ \};}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structblake2b__param__st}{blake2b\_param\_st}}\ \{}
+\DoxyCodeLine{00056\ \ \ \ \ uint8\_t\ \ digest\_length;\ \textcolor{comment}{/*\ 1\ */}}
+\DoxyCodeLine{00057\ \ \ \ \ uint8\_t\ \ key\_length;\ \ \ \ \textcolor{comment}{/*\ 2\ */}}
+\DoxyCodeLine{00058\ \ \ \ \ uint8\_t\ \ fanout;\ \ \ \ \ \ \ \ \textcolor{comment}{/*\ 3\ */}}
+\DoxyCodeLine{00059\ \ \ \ \ uint8\_t\ \ depth;\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ 4\ */}}
+\DoxyCodeLine{00060\ \ \ \ \ uint8\_t\ \ leaf\_length[4];\textcolor{comment}{/*\ 8\ */}}
+\DoxyCodeLine{00061\ \ \ \ \ uint8\_t\ \ node\_offset[8];\textcolor{comment}{/*\ 16\ */}}
+\DoxyCodeLine{00062\ \ \ \ \ uint8\_t\ \ node\_depth;\ \ \ \ \textcolor{comment}{/*\ 17\ */}}
+\DoxyCodeLine{00063\ \ \ \ \ uint8\_t\ \ inner\_length;\ \ \textcolor{comment}{/*\ 18\ */}}
+\DoxyCodeLine{00064\ \ \ \ \ uint8\_t\ \ reserved[14];\ \ \textcolor{comment}{/*\ 32\ */}}
+\DoxyCodeLine{00065\ \ \ \ \ uint8\_t\ \ salt[BLAKE2B\_SALTBYTES];\ \textcolor{comment}{/*\ 48\ */}}
+\DoxyCodeLine{00066\ \ \ \ \ uint8\_t\ \ personal[BLAKE2B\_PERSONALBYTES];\ \ \textcolor{comment}{/*\ 64\ */}}
+\DoxyCodeLine{00067\ \};}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structblake2b__param__st}{blake2b\_param\_st}}\ \mbox{\hyperlink{structblake2b__param__st}{BLAKE2B\_PARAM}};}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00071\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structblake2b__ctx__st}{blake2b\_ctx\_st}}\ \{}
+\DoxyCodeLine{00072\ \ \ \ \ uint64\_t\ h[8];}
+\DoxyCodeLine{00073\ \ \ \ \ uint64\_t\ t[2];}
+\DoxyCodeLine{00074\ \ \ \ \ uint64\_t\ f[2];}
+\DoxyCodeLine{00075\ \ \ \ \ uint8\_t\ \ buf[BLAKE2B\_BLOCKBYTES];}
+\DoxyCodeLine{00076\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \ \ buflen;}
+\DoxyCodeLine{00077\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \ \ outlen;}
+\DoxyCodeLine{00078\ \};}
+\DoxyCodeLine{00079\ }
+\DoxyCodeLine{00080\ \textcolor{preprocessor}{\#define\ BLAKE2B\_DIGEST\_LENGTH\ 64}}
+\DoxyCodeLine{00081\ \textcolor{preprocessor}{\#define\ BLAKE2S\_DIGEST\_LENGTH\ 32}}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00083\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structblake2s__ctx__st}{blake2s\_ctx\_st}}\ \mbox{\hyperlink{structblake2s__ctx__st}{BLAKE2S\_CTX}};}
+\DoxyCodeLine{00084\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structblake2b__ctx__st}{blake2b\_ctx\_st}}\ \mbox{\hyperlink{structblake2b__ctx__st}{BLAKE2B\_CTX}};}
+\DoxyCodeLine{00085\ }
+\DoxyCodeLine{00086\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structblake2b__md__data__st}{blake2b\_md\_data\_st}}\ \{}
+\DoxyCodeLine{00087\ \ \ \ \ \mbox{\hyperlink{structblake2b__ctx__st}{BLAKE2B\_CTX}}\ ctx;}
+\DoxyCodeLine{00088\ \ \ \ \ \mbox{\hyperlink{structblake2b__param__st}{BLAKE2B\_PARAM}}\ params;}
+\DoxyCodeLine{00089\ \};}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ \textcolor{keywordtype}{int}\ ossl\_blake2b\_init(\mbox{\hyperlink{structblake2b__ctx__st}{BLAKE2B\_CTX}}\ *c,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structblake2b__param__st}{BLAKE2B\_PARAM}}\ *P);}
+\DoxyCodeLine{00092\ \textcolor{keywordtype}{int}\ ossl\_blake2b\_init\_key(\mbox{\hyperlink{structblake2b__ctx__st}{BLAKE2B\_CTX}}\ *c,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structblake2b__param__st}{BLAKE2B\_PARAM}}\ *P,}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *key);}
+\DoxyCodeLine{00094\ \textcolor{keywordtype}{int}\ ossl\_blake2b\_update(\mbox{\hyperlink{structblake2b__ctx__st}{BLAKE2B\_CTX}}\ *c,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *data,\ \textcolor{keywordtype}{size\_t}\ datalen);}
+\DoxyCodeLine{00095\ \textcolor{keywordtype}{int}\ ossl\_blake2b\_final(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *md,\ \mbox{\hyperlink{structblake2b__ctx__st}{BLAKE2B\_CTX}}\ *c);}
+\DoxyCodeLine{00096\ }
+\DoxyCodeLine{00097\ OSSL\_FUNC\_digest\_get\_ctx\_params\_fn\ ossl\_blake2b\_get\_ctx\_params;}
+\DoxyCodeLine{00098\ OSSL\_FUNC\_digest\_set\_ctx\_params\_fn\ ossl\_blake2b\_set\_ctx\_params;}
+\DoxyCodeLine{00099\ OSSL\_FUNC\_digest\_gettable\_ctx\_params\_fn\ ossl\_blake2b\_gettable\_ctx\_params;}
+\DoxyCodeLine{00100\ OSSL\_FUNC\_digest\_settable\_ctx\_params\_fn\ ossl\_blake2b\_settable\_ctx\_params;}
+\DoxyCodeLine{00101\ }
+\DoxyCodeLine{00102\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00103\ \textcolor{comment}{\ *\ These\ setters\ are\ internal\ and\ do\ not\ check\ the\ validity\ of\ their\ parameters.}}
+\DoxyCodeLine{00104\ \textcolor{comment}{\ *\ See\ blake2b\_mac\_ctrl\ for\ validation\ logic.}}
+\DoxyCodeLine{00105\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00106\ }
+\DoxyCodeLine{00107\ \textcolor{keywordtype}{void}\ ossl\_blake2b\_param\_init(\mbox{\hyperlink{structblake2b__param__st}{BLAKE2B\_PARAM}}\ *P);}
+\DoxyCodeLine{00108\ \textcolor{keywordtype}{void}\ ossl\_blake2b\_param\_set\_digest\_length(\mbox{\hyperlink{structblake2b__param__st}{BLAKE2B\_PARAM}}\ *P,\ uint8\_t\ outlen);}
+\DoxyCodeLine{00109\ \textcolor{keywordtype}{void}\ ossl\_blake2b\_param\_set\_key\_length(\mbox{\hyperlink{structblake2b__param__st}{BLAKE2B\_PARAM}}\ *P,\ uint8\_t\ keylen);}
+\DoxyCodeLine{00110\ \textcolor{keywordtype}{void}\ ossl\_blake2b\_param\_set\_personal(\mbox{\hyperlink{structblake2b__param__st}{BLAKE2B\_PARAM}}\ *P,\ \textcolor{keyword}{const}\ uint8\_t\ *personal,}
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ length);}
+\DoxyCodeLine{00112\ \textcolor{keywordtype}{void}\ ossl\_blake2b\_param\_set\_salt(\mbox{\hyperlink{structblake2b__param__st}{BLAKE2B\_PARAM}}\ *P,\ \textcolor{keyword}{const}\ uint8\_t\ *salt,}
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ length);}
+\DoxyCodeLine{00114\ \textcolor{keywordtype}{int}\ ossl\_blake2s\_init(\mbox{\hyperlink{structblake2s__ctx__st}{BLAKE2S\_CTX}}\ *c,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structblake2s__param__st}{BLAKE2S\_PARAM}}\ *P);}
+\DoxyCodeLine{00115\ \textcolor{keywordtype}{int}\ ossl\_blake2s\_init\_key(\mbox{\hyperlink{structblake2s__ctx__st}{BLAKE2S\_CTX}}\ *c,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structblake2s__param__st}{BLAKE2S\_PARAM}}\ *P,}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *key);}
+\DoxyCodeLine{00117\ \textcolor{keywordtype}{int}\ ossl\_blake2s\_update(\mbox{\hyperlink{structblake2s__ctx__st}{BLAKE2S\_CTX}}\ *c,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *data,\ \textcolor{keywordtype}{size\_t}\ datalen);}
+\DoxyCodeLine{00118\ \textcolor{keywordtype}{int}\ ossl\_blake2s\_final(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *md,\ \mbox{\hyperlink{structblake2s__ctx__st}{BLAKE2S\_CTX}}\ *c);}
+\DoxyCodeLine{00119\ }
+\DoxyCodeLine{00120\ \textcolor{keywordtype}{void}\ ossl\_blake2s\_param\_init(\mbox{\hyperlink{structblake2s__param__st}{BLAKE2S\_PARAM}}\ *P);}
+\DoxyCodeLine{00121\ \textcolor{keywordtype}{void}\ ossl\_blake2s\_param\_set\_digest\_length(\mbox{\hyperlink{structblake2s__param__st}{BLAKE2S\_PARAM}}\ *P,\ uint8\_t\ outlen);}
+\DoxyCodeLine{00122\ \textcolor{keywordtype}{void}\ ossl\_blake2s\_param\_set\_key\_length(\mbox{\hyperlink{structblake2s__param__st}{BLAKE2S\_PARAM}}\ *P,\ uint8\_t\ keylen);}
+\DoxyCodeLine{00123\ \textcolor{keywordtype}{void}\ ossl\_blake2s\_param\_set\_personal(\mbox{\hyperlink{structblake2s__param__st}{BLAKE2S\_PARAM}}\ *P,\ \textcolor{keyword}{const}\ uint8\_t\ *personal,}
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ length);}
+\DoxyCodeLine{00125\ \textcolor{keywordtype}{void}\ ossl\_blake2s\_param\_set\_salt(\mbox{\hyperlink{structblake2s__param__st}{BLAKE2S\_PARAM}}\ *P,\ \textcolor{keyword}{const}\ uint8\_t\ *salt,}
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ length);}
+\DoxyCodeLine{00127\ }
+\DoxyCodeLine{00128\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ OSSL\_PROV\_BLAKE2\_H\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

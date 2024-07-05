@@ -1,0 +1,52 @@
+\doxysection{ssl3\+\_\+enc\+\_\+method Struct Reference}
+\hypertarget{structssl3__enc__method}{}\label{structssl3__enc__method}\index{ssl3\_enc\_method@{ssl3\_enc\_method}}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{structssl3__enc__method_ab31b16d819ddd0f1491f195809281cf0}\label{structssl3__enc__method_ab31b16d819ddd0f1491f195809281cf0} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries setup\+\_\+key\+\_\+block} )(\mbox{\hyperlink{structssl__connection__st}{SSL\+\_\+\+CONNECTION}} \texorpdfstring{$\ast$}{*})
+\item 
+\Hypertarget{structssl3__enc__method_a8c0dee948db4b8440d3f3973e6d8ab87}\label{structssl3__enc__method_a8c0dee948db4b8440d3f3973e6d8ab87} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries generate\+\_\+master\+\_\+secret} )(\mbox{\hyperlink{structssl__connection__st}{SSL\+\_\+\+CONNECTION}} \texorpdfstring{$\ast$}{*}, unsigned char \texorpdfstring{$\ast$}{*}, unsigned char \texorpdfstring{$\ast$}{*}, size\+\_\+t, size\+\_\+t \texorpdfstring{$\ast$}{*})
+\item 
+\Hypertarget{structssl3__enc__method_a685c990dd4a6c990538caf611e1490a7}\label{structssl3__enc__method_a685c990dd4a6c990538caf611e1490a7} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries change\+\_\+cipher\+\_\+state} )(\mbox{\hyperlink{structssl__connection__st}{SSL\+\_\+\+CONNECTION}} \texorpdfstring{$\ast$}{*}, int)
+\item 
+\Hypertarget{structssl3__enc__method_ac79ee8ec2f8920fdf85f5c5600168940}\label{structssl3__enc__method_ac79ee8ec2f8920fdf85f5c5600168940} 
+size\+\_\+t(\texorpdfstring{$\ast$}{*} {\bfseries final\+\_\+finish\+\_\+mac} )(\mbox{\hyperlink{structssl__connection__st}{SSL\+\_\+\+CONNECTION}} \texorpdfstring{$\ast$}{*}, const char \texorpdfstring{$\ast$}{*}, size\+\_\+t, unsigned char \texorpdfstring{$\ast$}{*})
+\item 
+\Hypertarget{structssl3__enc__method_a87df6867ae53bc91ec4c499762e1d33b}\label{structssl3__enc__method_a87df6867ae53bc91ec4c499762e1d33b} 
+const char \texorpdfstring{$\ast$}{*} {\bfseries client\+\_\+finished\+\_\+label}
+\item 
+\Hypertarget{structssl3__enc__method_ad7ea8515d435fe228135a39316a37a62}\label{structssl3__enc__method_ad7ea8515d435fe228135a39316a37a62} 
+size\+\_\+t {\bfseries client\+\_\+finished\+\_\+label\+\_\+len}
+\item 
+\Hypertarget{structssl3__enc__method_a395147aef41fded62c7690876b1c016a}\label{structssl3__enc__method_a395147aef41fded62c7690876b1c016a} 
+const char \texorpdfstring{$\ast$}{*} {\bfseries server\+\_\+finished\+\_\+label}
+\item 
+\Hypertarget{structssl3__enc__method_a08b9ec2dc312e2ac364eaf286fc69290}\label{structssl3__enc__method_a08b9ec2dc312e2ac364eaf286fc69290} 
+size\+\_\+t {\bfseries server\+\_\+finished\+\_\+label\+\_\+len}
+\item 
+\Hypertarget{structssl3__enc__method_a103d09b3bb7fbd10331c151feb5600a0}\label{structssl3__enc__method_a103d09b3bb7fbd10331c151feb5600a0} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries alert\+\_\+value} )(int)
+\item 
+\Hypertarget{structssl3__enc__method_a887c8d4b74a314b07f5b0a0513f45af0}\label{structssl3__enc__method_a887c8d4b74a314b07f5b0a0513f45af0} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries export\+\_\+keying\+\_\+material} )(\mbox{\hyperlink{structssl__connection__st}{SSL\+\_\+\+CONNECTION}} \texorpdfstring{$\ast$}{*}, unsigned char \texorpdfstring{$\ast$}{*}, size\+\_\+t, const char \texorpdfstring{$\ast$}{*}, size\+\_\+t, const unsigned char \texorpdfstring{$\ast$}{*}, size\+\_\+t, int use\+\_\+context)
+\item 
+\Hypertarget{structssl3__enc__method_afe15334a6aa6dc9f9bd7a18e13e2fbf0}\label{structssl3__enc__method_afe15334a6aa6dc9f9bd7a18e13e2fbf0} 
+uint32\+\_\+t {\bfseries enc\+\_\+flags}
+\item 
+\Hypertarget{structssl3__enc__method_a7bb241f0021e2035d5eab2c92b4c28fb}\label{structssl3__enc__method_a7bb241f0021e2035d5eab2c92b4c28fb} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries set\+\_\+handshake\+\_\+header} )(\mbox{\hyperlink{structssl__connection__st}{SSL\+\_\+\+CONNECTION}} \texorpdfstring{$\ast$}{*}s, \mbox{\hyperlink{structwpacket__st}{WPACKET}} \texorpdfstring{$\ast$}{*}pkt, int type)
+\item 
+\Hypertarget{structssl3__enc__method_af81354a7cba56e7f00221dd345c9600f}\label{structssl3__enc__method_af81354a7cba56e7f00221dd345c9600f} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries close\+\_\+construct\+\_\+packet} )(\mbox{\hyperlink{structssl__connection__st}{SSL\+\_\+\+CONNECTION}} \texorpdfstring{$\ast$}{*}s, \mbox{\hyperlink{structwpacket__st}{WPACKET}} \texorpdfstring{$\ast$}{*}pkt, int htype)
+\item 
+\Hypertarget{structssl3__enc__method_a017b2262433e8623101161e379604277}\label{structssl3__enc__method_a017b2262433e8623101161e379604277} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries do\+\_\+write} )(\mbox{\hyperlink{structssl__connection__st}{SSL\+\_\+\+CONNECTION}} \texorpdfstring{$\ast$}{*}s)
+\end{DoxyCompactItemize}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/namph/\+Downloads/openssl/openssl-\/3.\+2.\+1/ssl/ssl\+\_\+local.\+h\end{DoxyCompactItemize}

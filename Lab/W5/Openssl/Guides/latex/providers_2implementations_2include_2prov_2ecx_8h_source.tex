@@ -1,0 +1,37 @@
+\doxysection{ecx.\+h}
+\hypertarget{providers_2implementations_2include_2prov_2ecx_8h_source}{}\label{providers_2implementations_2include_2prov_2ecx_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/providers/implementations/include/prov/ecx.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/providers/implementations/include/prov/ecx.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2022\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ "{}crypto/types.h"{}}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_EC}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{comment}{/*\ RFC\ 9180\ Labels\ used\ for\ Extract\ and\ Expand\ operations\ */}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{comment}{/*\ ASCII:\ "{}eae\_prk"{},\ in\ hex\ for\ EBCDIC\ compatibility\ */}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ OSSL\_DHKEM\_LABEL\_EAE\_PRK\ "{}\(\backslash\)x65\(\backslash\)x61\(\backslash\)x65\(\backslash\)x5F\(\backslash\)x70\(\backslash\)x72\(\backslash\)x6B"{}}}
+\DoxyCodeLine{00018\ \textcolor{comment}{/*\ ASCII:\ "{}shared\_secret"{},\ in\ hex\ for\ EBCDIC\ compatibility\ */}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#define\ OSSL\_DHKEM\_LABEL\_SHARED\_SECRET\ "{}\(\backslash\)x73\(\backslash\)x68\(\backslash\)x61\(\backslash\)x72\(\backslash\)x65\(\backslash\)x64\(\backslash\)x5F\(\backslash\)x73\(\backslash\)x65\(\backslash\)x63\(\backslash\)x72\(\backslash\)x65\(\backslash\)x74"{}}}
+\DoxyCodeLine{00020\ \textcolor{comment}{/*\ ASCII:\ "{}dkp\_prk"{},\ in\ hex\ for\ EBCDIC\ compatibility\ */}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#define\ OSSL\_DHKEM\_LABEL\_DKP\_PRK\ "{}\(\backslash\)x64\(\backslash\)x6B\(\backslash\)x70\(\backslash\)x5F\(\backslash\)x70\(\backslash\)x72\(\backslash\)x6B"{}}}
+\DoxyCodeLine{00022\ \textcolor{comment}{/*\ ASCII:\ "{}candidate"{},\ in\ hex\ for\ EBCDIC\ compatibility\ */}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#define\ OSSL\_DHKEM\_LABEL\_CANDIDATE\ "{}\(\backslash\)x63\(\backslash\)x61\(\backslash\)x6E\(\backslash\)x64\(\backslash\)x69\(\backslash\)x64\(\backslash\)x61\(\backslash\)x74\(\backslash\)x65"{}}}
+\DoxyCodeLine{00024\ \textcolor{comment}{/*\ ASCII:\ "{}sk"{},\ in\ hex\ for\ EBCDIC\ compatibility\ */}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#define\ OSSL\_DHKEM\_LABEL\_SK\ "{}\(\backslash\)x73\(\backslash\)x6B"{}}}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \textcolor{keywordtype}{int}\ ossl\_ecx\_dhkem\_derive\_private(\mbox{\hyperlink{structecx__key__st}{ECX\_KEY}}\ *ecx,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *privout,}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *ikm,\ \textcolor{keywordtype}{size\_t}\ ikmlen);}
+\DoxyCodeLine{00029\ \textcolor{keywordtype}{int}\ ossl\_ec\_dhkem\_derive\_private(EC\_KEY\ *ec,\ BIGNUM\ *privout,}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *ikm,\ \textcolor{keywordtype}{size\_t}\ ikmlen);}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

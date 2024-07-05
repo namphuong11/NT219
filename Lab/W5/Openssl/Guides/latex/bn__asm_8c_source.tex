@@ -1,0 +1,1048 @@
+\doxysection{bn\+\_\+asm.\+c}
+\hypertarget{bn__asm_8c_source}{}\label{bn__asm_8c_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/bn/bn\_asm.c@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/bn/bn\_asm.c}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 1995-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <assert.h>}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ <openssl/crypto.h>}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ "{}internal/cryptlib.h"{}}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ "{}bn\_local.h"{}}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#if\ defined(BN\_LLONG)\ ||\ defined(BN\_UMULT\_HIGH)}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ BN\_ULONG\ bn\_mul\_add\_words(BN\_ULONG\ *rp,\ \textcolor{keyword}{const}\ BN\_ULONG\ *ap,\ \textcolor{keywordtype}{int}\ num,}
+\DoxyCodeLine{00018\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BN\_ULONG\ w)}
+\DoxyCodeLine{00019\ \{}
+\DoxyCodeLine{00020\ \ \ \ \ BN\_ULONG\ c1\ =\ 0;}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \ \ \ \ assert(num\ >=\ 0);}
+\DoxyCodeLine{00023\ \ \ \ \ \textcolor{keywordflow}{if}\ (num\ <=\ 0)}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ c1;}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#\ ifndef\ OPENSSL\_SMALL\_FOOTPRINT}}
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keywordflow}{while}\ (num\ \&\ \string~3)\ \{}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ mul\_add(rp[0],\ ap[0],\ w,\ c1);}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ mul\_add(rp[1],\ ap[1],\ w,\ c1);}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ mul\_add(rp[2],\ ap[2],\ w,\ c1);}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ mul\_add(rp[3],\ ap[3],\ w,\ c1);}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ ap\ +=\ 4;}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ rp\ +=\ 4;}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ num\ -\/=\ 4;}
+\DoxyCodeLine{00035\ \ \ \ \ \}}
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{keywordflow}{while}\ (num)\ \{}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ mul\_add(rp[0],\ ap[0],\ w,\ c1);}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ ap++;}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ rp++;}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ num-\/-\/;}
+\DoxyCodeLine{00042\ \ \ \ \ \}}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ \ \ \ \ \textcolor{keywordflow}{return}\ c1;}
+\DoxyCodeLine{00045\ \}}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ BN\_ULONG\ bn\_mul\_words(BN\_ULONG\ *rp,\ \textcolor{keyword}{const}\ BN\_ULONG\ *ap,\ \textcolor{keywordtype}{int}\ num,\ BN\_ULONG\ w)}
+\DoxyCodeLine{00048\ \{}
+\DoxyCodeLine{00049\ \ \ \ \ BN\_ULONG\ c1\ =\ 0;}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \ \ \ \ assert(num\ >=\ 0);}
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{keywordflow}{if}\ (num\ <=\ 0)}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ c1;}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ \textcolor{preprocessor}{\#\ ifndef\ OPENSSL\_SMALL\_FOOTPRINT}}
+\DoxyCodeLine{00056\ \ \ \ \ \textcolor{keywordflow}{while}\ (num\ \&\ \string~3)\ \{}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ mul(rp[0],\ ap[0],\ w,\ c1);}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ mul(rp[1],\ ap[1],\ w,\ c1);}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ mul(rp[2],\ ap[2],\ w,\ c1);}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ mul(rp[3],\ ap[3],\ w,\ c1);}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ ap\ +=\ 4;}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ rp\ +=\ 4;}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ num\ -\/=\ 4;}
+\DoxyCodeLine{00064\ \ \ \ \ \}}
+\DoxyCodeLine{00065\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{keywordflow}{while}\ (num)\ \{}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ mul(rp[0],\ ap[0],\ w,\ c1);}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ ap++;}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ rp++;}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ num-\/-\/;}
+\DoxyCodeLine{00071\ \ \ \ \ \}}
+\DoxyCodeLine{00072\ \ \ \ \ \textcolor{keywordflow}{return}\ c1;}
+\DoxyCodeLine{00073\ \}}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00075\ \textcolor{keywordtype}{void}\ bn\_sqr\_words(BN\_ULONG\ *r,\ \textcolor{keyword}{const}\ BN\_ULONG\ *a,\ \textcolor{keywordtype}{int}\ n)}
+\DoxyCodeLine{00076\ \{}
+\DoxyCodeLine{00077\ \ \ \ \ assert(n\ >=\ 0);}
+\DoxyCodeLine{00078\ \ \ \ \ \textcolor{keywordflow}{if}\ (n\ <=\ 0)}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00081\ \textcolor{preprocessor}{\#\ ifndef\ OPENSSL\_SMALL\_FOOTPRINT}}
+\DoxyCodeLine{00082\ \ \ \ \ \textcolor{keywordflow}{while}\ (n\ \&\ \string~3)\ \{}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ sqr(r[0],\ r[1],\ a[0]);}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ sqr(r[2],\ r[3],\ a[1]);}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ sqr(r[4],\ r[5],\ a[2]);}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ sqr(r[6],\ r[7],\ a[3]);}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ a\ +=\ 4;}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ r\ +=\ 8;}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ n\ -\/=\ 4;}
+\DoxyCodeLine{00090\ \ \ \ \ \}}
+\DoxyCodeLine{00091\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00092\ \ \ \ \ \textcolor{keywordflow}{while}\ (n)\ \{}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ sqr(r[0],\ r[1],\ a[0]);}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ a++;}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ r\ +=\ 2;}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ n-\/-\/;}
+\DoxyCodeLine{00097\ \ \ \ \ \}}
+\DoxyCodeLine{00098\ \}}
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00100\ \textcolor{preprocessor}{\#else\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{/*\ !(defined(BN\_LLONG)\ ||}}
+\DoxyCodeLine{00101\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *\ defined(BN\_UMULT\_HIGH))\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00102\ }
+\DoxyCodeLine{00103\ BN\_ULONG\ bn\_mul\_add\_words(BN\_ULONG\ *rp,\ \textcolor{keyword}{const}\ BN\_ULONG\ *ap,\ \textcolor{keywordtype}{int}\ num,}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BN\_ULONG\ w)}
+\DoxyCodeLine{00105\ \{}
+\DoxyCodeLine{00106\ \ \ \ \ BN\_ULONG\ c\ =\ 0;}
+\DoxyCodeLine{00107\ \ \ \ \ BN\_ULONG\ bl,\ bh;}
+\DoxyCodeLine{00108\ }
+\DoxyCodeLine{00109\ \ \ \ \ assert(num\ >=\ 0);}
+\DoxyCodeLine{00110\ \ \ \ \ \textcolor{keywordflow}{if}\ (num\ <=\ 0)}
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (BN\_ULONG)0;}
+\DoxyCodeLine{00112\ }
+\DoxyCodeLine{00113\ \ \ \ \ bl\ =\ LBITS(w);}
+\DoxyCodeLine{00114\ \ \ \ \ bh\ =\ HBITS(w);}
+\DoxyCodeLine{00115\ }
+\DoxyCodeLine{00116\ \textcolor{preprocessor}{\#\ ifndef\ OPENSSL\_SMALL\_FOOTPRINT}}
+\DoxyCodeLine{00117\ \ \ \ \ \textcolor{keywordflow}{while}\ (num\ \&\ \string~3)\ \{}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ mul\_add(rp[0],\ ap[0],\ bl,\ bh,\ c);}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ mul\_add(rp[1],\ ap[1],\ bl,\ bh,\ c);}
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ mul\_add(rp[2],\ ap[2],\ bl,\ bh,\ c);}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ mul\_add(rp[3],\ ap[3],\ bl,\ bh,\ c);}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ ap\ +=\ 4;}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ rp\ +=\ 4;}
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ num\ -\/=\ 4;}
+\DoxyCodeLine{00125\ \ \ \ \ \}}
+\DoxyCodeLine{00126\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00127\ \ \ \ \ \textcolor{keywordflow}{while}\ (num)\ \{}
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ mul\_add(rp[0],\ ap[0],\ bl,\ bh,\ c);}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ ap++;}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ rp++;}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ num-\/-\/;}
+\DoxyCodeLine{00132\ \ \ \ \ \}}
+\DoxyCodeLine{00133\ \ \ \ \ \textcolor{keywordflow}{return}\ c;}
+\DoxyCodeLine{00134\ \}}
+\DoxyCodeLine{00135\ }
+\DoxyCodeLine{00136\ BN\_ULONG\ bn\_mul\_words(BN\_ULONG\ *rp,\ \textcolor{keyword}{const}\ BN\_ULONG\ *ap,\ \textcolor{keywordtype}{int}\ num,\ BN\_ULONG\ w)}
+\DoxyCodeLine{00137\ \{}
+\DoxyCodeLine{00138\ \ \ \ \ BN\_ULONG\ carry\ =\ 0;}
+\DoxyCodeLine{00139\ \ \ \ \ BN\_ULONG\ bl,\ bh;}
+\DoxyCodeLine{00140\ }
+\DoxyCodeLine{00141\ \ \ \ \ assert(num\ >=\ 0);}
+\DoxyCodeLine{00142\ \ \ \ \ \textcolor{keywordflow}{if}\ (num\ <=\ 0)}
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (BN\_ULONG)0;}
+\DoxyCodeLine{00144\ }
+\DoxyCodeLine{00145\ \ \ \ \ bl\ =\ LBITS(w);}
+\DoxyCodeLine{00146\ \ \ \ \ bh\ =\ HBITS(w);}
+\DoxyCodeLine{00147\ }
+\DoxyCodeLine{00148\ \textcolor{preprocessor}{\#\ ifndef\ OPENSSL\_SMALL\_FOOTPRINT}}
+\DoxyCodeLine{00149\ \ \ \ \ \textcolor{keywordflow}{while}\ (num\ \&\ \string~3)\ \{}
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ mul(rp[0],\ ap[0],\ bl,\ bh,\ carry);}
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ mul(rp[1],\ ap[1],\ bl,\ bh,\ carry);}
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ mul(rp[2],\ ap[2],\ bl,\ bh,\ carry);}
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ mul(rp[3],\ ap[3],\ bl,\ bh,\ carry);}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ ap\ +=\ 4;}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ rp\ +=\ 4;}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ num\ -\/=\ 4;}
+\DoxyCodeLine{00157\ \ \ \ \ \}}
+\DoxyCodeLine{00158\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00159\ \ \ \ \ \textcolor{keywordflow}{while}\ (num)\ \{}
+\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ mul(rp[0],\ ap[0],\ bl,\ bh,\ carry);}
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ ap++;}
+\DoxyCodeLine{00162\ \ \ \ \ \ \ \ \ rp++;}
+\DoxyCodeLine{00163\ \ \ \ \ \ \ \ \ num-\/-\/;}
+\DoxyCodeLine{00164\ \ \ \ \ \}}
+\DoxyCodeLine{00165\ \ \ \ \ \textcolor{keywordflow}{return}\ carry;}
+\DoxyCodeLine{00166\ \}}
+\DoxyCodeLine{00167\ }
+\DoxyCodeLine{00168\ \textcolor{keywordtype}{void}\ bn\_sqr\_words(BN\_ULONG\ *r,\ \textcolor{keyword}{const}\ BN\_ULONG\ *a,\ \textcolor{keywordtype}{int}\ n)}
+\DoxyCodeLine{00169\ \{}
+\DoxyCodeLine{00170\ \ \ \ \ assert(n\ >=\ 0);}
+\DoxyCodeLine{00171\ \ \ \ \ \textcolor{keywordflow}{if}\ (n\ <=\ 0)}
+\DoxyCodeLine{00172\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00173\ }
+\DoxyCodeLine{00174\ \textcolor{preprocessor}{\#\ ifndef\ OPENSSL\_SMALL\_FOOTPRINT}}
+\DoxyCodeLine{00175\ \ \ \ \ \textcolor{keywordflow}{while}\ (n\ \&\ \string~3)\ \{}
+\DoxyCodeLine{00176\ \ \ \ \ \ \ \ \ sqr64(r[0],\ r[1],\ a[0]);}
+\DoxyCodeLine{00177\ \ \ \ \ \ \ \ \ sqr64(r[2],\ r[3],\ a[1]);}
+\DoxyCodeLine{00178\ \ \ \ \ \ \ \ \ sqr64(r[4],\ r[5],\ a[2]);}
+\DoxyCodeLine{00179\ \ \ \ \ \ \ \ \ sqr64(r[6],\ r[7],\ a[3]);}
+\DoxyCodeLine{00180\ \ \ \ \ \ \ \ \ a\ +=\ 4;}
+\DoxyCodeLine{00181\ \ \ \ \ \ \ \ \ r\ +=\ 8;}
+\DoxyCodeLine{00182\ \ \ \ \ \ \ \ \ n\ -\/=\ 4;}
+\DoxyCodeLine{00183\ \ \ \ \ \}}
+\DoxyCodeLine{00184\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00185\ \ \ \ \ \textcolor{keywordflow}{while}\ (n)\ \{}
+\DoxyCodeLine{00186\ \ \ \ \ \ \ \ \ sqr64(r[0],\ r[1],\ a[0]);}
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ a++;}
+\DoxyCodeLine{00188\ \ \ \ \ \ \ \ \ r\ +=\ 2;}
+\DoxyCodeLine{00189\ \ \ \ \ \ \ \ \ n-\/-\/;}
+\DoxyCodeLine{00190\ \ \ \ \ \}}
+\DoxyCodeLine{00191\ \}}
+\DoxyCodeLine{00192\ }
+\DoxyCodeLine{00193\ \textcolor{preprocessor}{\#endif\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{/*\ !(defined(BN\_LLONG)\ ||}}
+\DoxyCodeLine{00194\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *\ defined(BN\_UMULT\_HIGH))\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00195\ }
+\DoxyCodeLine{00196\ \textcolor{preprocessor}{\#if\ defined(BN\_LLONG)\ \&\&\ defined(BN\_DIV2W)}}
+\DoxyCodeLine{00197\ }
+\DoxyCodeLine{00198\ BN\_ULONG\ bn\_div\_words(BN\_ULONG\ h,\ BN\_ULONG\ l,\ BN\_ULONG\ d)}
+\DoxyCodeLine{00199\ \{}
+\DoxyCodeLine{00200\ \ \ \ \ \textcolor{keywordflow}{return}\ ((BN\_ULONG)(((((BN\_ULLONG)\ h)\ <<\ BN\_BITS2)\ |\ l)\ /\ (BN\_ULLONG)\ d));}
+\DoxyCodeLine{00201\ \}}
+\DoxyCodeLine{00202\ }
+\DoxyCodeLine{00203\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00204\ }
+\DoxyCodeLine{00205\ \textcolor{comment}{/*\ Divide\ h,l\ by\ d\ and\ return\ the\ result.\ */}}
+\DoxyCodeLine{00206\ \textcolor{comment}{/*\ I\ need\ to\ test\ this\ some\ more\ :-\/(\ */}}
+\DoxyCodeLine{00207\ BN\_ULONG\ bn\_div\_words(BN\_ULONG\ h,\ BN\_ULONG\ l,\ BN\_ULONG\ d)}
+\DoxyCodeLine{00208\ \{}
+\DoxyCodeLine{00209\ \ \ \ \ BN\_ULONG\ dh,\ dl,\ q,\ ret\ =\ 0,\ th,\ tl,\ t;}
+\DoxyCodeLine{00210\ \ \ \ \ \textcolor{keywordtype}{int}\ i,\ count\ =\ 2;}
+\DoxyCodeLine{00211\ }
+\DoxyCodeLine{00212\ \ \ \ \ \textcolor{keywordflow}{if}\ (d\ ==\ 0)}
+\DoxyCodeLine{00213\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ BN\_MASK2;}
+\DoxyCodeLine{00214\ }
+\DoxyCodeLine{00215\ \ \ \ \ i\ =\ BN\_num\_bits\_word(d);}
+\DoxyCodeLine{00216\ \ \ \ \ assert((i\ ==\ BN\_BITS2)\ ||\ (h\ <=\ (BN\_ULONG)1\ <<\ i));}
+\DoxyCodeLine{00217\ }
+\DoxyCodeLine{00218\ \ \ \ \ i\ =\ BN\_BITS2\ -\/\ i;}
+\DoxyCodeLine{00219\ \ \ \ \ \textcolor{keywordflow}{if}\ (h\ >=\ d)}
+\DoxyCodeLine{00220\ \ \ \ \ \ \ \ \ h\ -\/=\ d;}
+\DoxyCodeLine{00221\ }
+\DoxyCodeLine{00222\ \ \ \ \ \textcolor{keywordflow}{if}\ (i)\ \{}
+\DoxyCodeLine{00223\ \ \ \ \ \ \ \ \ d\ <<=\ i;}
+\DoxyCodeLine{00224\ \ \ \ \ \ \ \ \ h\ =\ (h\ <<\ i)\ |\ (l\ >>\ (BN\_BITS2\ -\/\ i));}
+\DoxyCodeLine{00225\ \ \ \ \ \ \ \ \ l\ <<=\ i;}
+\DoxyCodeLine{00226\ \ \ \ \ \}}
+\DoxyCodeLine{00227\ \ \ \ \ dh\ =\ (d\ \&\ BN\_MASK2h)\ >>\ BN\_BITS4;}
+\DoxyCodeLine{00228\ \ \ \ \ dl\ =\ (d\ \&\ BN\_MASK2l);}
+\DoxyCodeLine{00229\ \ \ \ \ \textcolor{keywordflow}{for}\ (;;)\ \{}
+\DoxyCodeLine{00230\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((h\ >>\ BN\_BITS4)\ ==\ dh)}
+\DoxyCodeLine{00231\ \ \ \ \ \ \ \ \ \ \ \ \ q\ =\ BN\_MASK2l;}
+\DoxyCodeLine{00232\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00233\ \ \ \ \ \ \ \ \ \ \ \ \ q\ =\ h\ /\ dh;}
+\DoxyCodeLine{00234\ }
+\DoxyCodeLine{00235\ \ \ \ \ \ \ \ \ th\ =\ q\ *\ dh;}
+\DoxyCodeLine{00236\ \ \ \ \ \ \ \ \ tl\ =\ dl\ *\ q;}
+\DoxyCodeLine{00237\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (;;)\ \{}
+\DoxyCodeLine{00238\ \ \ \ \ \ \ \ \ \ \ \ \ t\ =\ h\ -\/\ th;}
+\DoxyCodeLine{00239\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((t\ \&\ BN\_MASK2h)\ ||}
+\DoxyCodeLine{00240\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ((tl)\ <=\ ((t\ <<\ BN\_BITS4)\ |\ ((l\ \&\ BN\_MASK2h)\ >>\ BN\_BITS4))))}
+\DoxyCodeLine{00241\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00242\ \ \ \ \ \ \ \ \ \ \ \ \ q-\/-\/;}
+\DoxyCodeLine{00243\ \ \ \ \ \ \ \ \ \ \ \ \ th\ -\/=\ dh;}
+\DoxyCodeLine{00244\ \ \ \ \ \ \ \ \ \ \ \ \ tl\ -\/=\ dl;}
+\DoxyCodeLine{00245\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00246\ \ \ \ \ \ \ \ \ t\ =\ (tl\ >>\ BN\_BITS4);}
+\DoxyCodeLine{00247\ \ \ \ \ \ \ \ \ tl\ =\ (tl\ <<\ BN\_BITS4)\ \&\ BN\_MASK2h;}
+\DoxyCodeLine{00248\ \ \ \ \ \ \ \ \ th\ +=\ t;}
+\DoxyCodeLine{00249\ }
+\DoxyCodeLine{00250\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (l\ <\ tl)}
+\DoxyCodeLine{00251\ \ \ \ \ \ \ \ \ \ \ \ \ th++;}
+\DoxyCodeLine{00252\ \ \ \ \ \ \ \ \ l\ -\/=\ tl;}
+\DoxyCodeLine{00253\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (h\ <\ th)\ \{}
+\DoxyCodeLine{00254\ \ \ \ \ \ \ \ \ \ \ \ \ h\ +=\ d;}
+\DoxyCodeLine{00255\ \ \ \ \ \ \ \ \ \ \ \ \ q-\/-\/;}
+\DoxyCodeLine{00256\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00257\ \ \ \ \ \ \ \ \ h\ -\/=\ th;}
+\DoxyCodeLine{00258\ }
+\DoxyCodeLine{00259\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (-\/-\/count\ ==\ 0)}
+\DoxyCodeLine{00260\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00261\ }
+\DoxyCodeLine{00262\ \ \ \ \ \ \ \ \ ret\ =\ q\ <<\ BN\_BITS4;}
+\DoxyCodeLine{00263\ \ \ \ \ \ \ \ \ h\ =\ ((h\ <<\ BN\_BITS4)\ |\ (l\ >>\ BN\_BITS4))\ \&\ BN\_MASK2;}
+\DoxyCodeLine{00264\ \ \ \ \ \ \ \ \ l\ =\ (l\ \&\ BN\_MASK2l)\ <<\ BN\_BITS4;}
+\DoxyCodeLine{00265\ \ \ \ \ \}}
+\DoxyCodeLine{00266\ \ \ \ \ ret\ |=\ q;}
+\DoxyCodeLine{00267\ \ \ \ \ \textcolor{keywordflow}{return}\ ret;}
+\DoxyCodeLine{00268\ \}}
+\DoxyCodeLine{00269\ \textcolor{preprocessor}{\#endif\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{/*\ !defined(BN\_LLONG)\ \&\&\ defined(BN\_DIV2W)\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00270\ }
+\DoxyCodeLine{00271\ \textcolor{preprocessor}{\#ifdef\ BN\_LLONG}}
+\DoxyCodeLine{00272\ BN\_ULONG\ bn\_add\_words(BN\_ULONG\ *r,\ \textcolor{keyword}{const}\ BN\_ULONG\ *a,\ \textcolor{keyword}{const}\ BN\_ULONG\ *\mbox{\hyperlink{structb}{b}},}
+\DoxyCodeLine{00273\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ n)}
+\DoxyCodeLine{00274\ \{}
+\DoxyCodeLine{00275\ \ \ \ \ BN\_ULLONG\ ll\ =\ 0;}
+\DoxyCodeLine{00276\ }
+\DoxyCodeLine{00277\ \ \ \ \ assert(n\ >=\ 0);}
+\DoxyCodeLine{00278\ \ \ \ \ \textcolor{keywordflow}{if}\ (n\ <=\ 0)}
+\DoxyCodeLine{00279\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (BN\_ULONG)0;}
+\DoxyCodeLine{00280\ }
+\DoxyCodeLine{00281\ \textcolor{preprocessor}{\#\ ifndef\ OPENSSL\_SMALL\_FOOTPRINT}}
+\DoxyCodeLine{00282\ \ \ \ \ \textcolor{keywordflow}{while}\ (n\ \&\ \string~3)\ \{}
+\DoxyCodeLine{00283\ \ \ \ \ \ \ \ \ ll\ +=\ (BN\_ULLONG)\ a[0]\ +\ \mbox{\hyperlink{structb}{b}}[0];}
+\DoxyCodeLine{00284\ \ \ \ \ \ \ \ \ r[0]\ =\ (BN\_ULONG)ll\ \&\ BN\_MASK2;}
+\DoxyCodeLine{00285\ \ \ \ \ \ \ \ \ ll\ >>=\ BN\_BITS2;}
+\DoxyCodeLine{00286\ \ \ \ \ \ \ \ \ ll\ +=\ (BN\_ULLONG)\ a[1]\ +\ \mbox{\hyperlink{structb}{b}}[1];}
+\DoxyCodeLine{00287\ \ \ \ \ \ \ \ \ r[1]\ =\ (BN\_ULONG)ll\ \&\ BN\_MASK2;}
+\DoxyCodeLine{00288\ \ \ \ \ \ \ \ \ ll\ >>=\ BN\_BITS2;}
+\DoxyCodeLine{00289\ \ \ \ \ \ \ \ \ ll\ +=\ (BN\_ULLONG)\ a[2]\ +\ \mbox{\hyperlink{structb}{b}}[2];}
+\DoxyCodeLine{00290\ \ \ \ \ \ \ \ \ r[2]\ =\ (BN\_ULONG)ll\ \&\ BN\_MASK2;}
+\DoxyCodeLine{00291\ \ \ \ \ \ \ \ \ ll\ >>=\ BN\_BITS2;}
+\DoxyCodeLine{00292\ \ \ \ \ \ \ \ \ ll\ +=\ (BN\_ULLONG)\ a[3]\ +\ \mbox{\hyperlink{structb}{b}}[3];}
+\DoxyCodeLine{00293\ \ \ \ \ \ \ \ \ r[3]\ =\ (BN\_ULONG)ll\ \&\ BN\_MASK2;}
+\DoxyCodeLine{00294\ \ \ \ \ \ \ \ \ ll\ >>=\ BN\_BITS2;}
+\DoxyCodeLine{00295\ \ \ \ \ \ \ \ \ a\ +=\ 4;}
+\DoxyCodeLine{00296\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structb}{b}}\ +=\ 4;}
+\DoxyCodeLine{00297\ \ \ \ \ \ \ \ \ r\ +=\ 4;}
+\DoxyCodeLine{00298\ \ \ \ \ \ \ \ \ n\ -\/=\ 4;}
+\DoxyCodeLine{00299\ \ \ \ \ \}}
+\DoxyCodeLine{00300\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00301\ \ \ \ \ \textcolor{keywordflow}{while}\ (n)\ \{}
+\DoxyCodeLine{00302\ \ \ \ \ \ \ \ \ ll\ +=\ (BN\_ULLONG)\ a[0]\ +\ \mbox{\hyperlink{structb}{b}}[0];}
+\DoxyCodeLine{00303\ \ \ \ \ \ \ \ \ r[0]\ =\ (BN\_ULONG)ll\ \&\ BN\_MASK2;}
+\DoxyCodeLine{00304\ \ \ \ \ \ \ \ \ ll\ >>=\ BN\_BITS2;}
+\DoxyCodeLine{00305\ \ \ \ \ \ \ \ \ a++;}
+\DoxyCodeLine{00306\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structb}{b}}++;}
+\DoxyCodeLine{00307\ \ \ \ \ \ \ \ \ r++;}
+\DoxyCodeLine{00308\ \ \ \ \ \ \ \ \ n-\/-\/;}
+\DoxyCodeLine{00309\ \ \ \ \ \}}
+\DoxyCodeLine{00310\ \ \ \ \ \textcolor{keywordflow}{return}\ (BN\_ULONG)ll;}
+\DoxyCodeLine{00311\ \}}
+\DoxyCodeLine{00312\ \textcolor{preprocessor}{\#else\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{/*\ !BN\_LLONG\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00313\ BN\_ULONG\ bn\_add\_words(BN\_ULONG\ *r,\ \textcolor{keyword}{const}\ BN\_ULONG\ *a,\ \textcolor{keyword}{const}\ BN\_ULONG\ *\mbox{\hyperlink{structb}{b}},}
+\DoxyCodeLine{00314\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ n)}
+\DoxyCodeLine{00315\ \{}
+\DoxyCodeLine{00316\ \ \ \ \ BN\_ULONG\ c,\ l,\ t;}
+\DoxyCodeLine{00317\ }
+\DoxyCodeLine{00318\ \ \ \ \ assert(n\ >=\ 0);}
+\DoxyCodeLine{00319\ \ \ \ \ \textcolor{keywordflow}{if}\ (n\ <=\ 0)}
+\DoxyCodeLine{00320\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (BN\_ULONG)0;}
+\DoxyCodeLine{00321\ }
+\DoxyCodeLine{00322\ \ \ \ \ c\ =\ 0;}
+\DoxyCodeLine{00323\ \textcolor{preprocessor}{\#\ ifndef\ OPENSSL\_SMALL\_FOOTPRINT}}
+\DoxyCodeLine{00324\ \ \ \ \ \textcolor{keywordflow}{while}\ (n\ \&\ \string~3)\ \{}
+\DoxyCodeLine{00325\ \ \ \ \ \ \ \ \ t\ =\ a[0];}
+\DoxyCodeLine{00326\ \ \ \ \ \ \ \ \ t\ =\ (t\ +\ c)\ \&\ BN\_MASK2;}
+\DoxyCodeLine{00327\ \ \ \ \ \ \ \ \ c\ =\ (t\ <\ c);}
+\DoxyCodeLine{00328\ \ \ \ \ \ \ \ \ l\ =\ (t\ +\ \mbox{\hyperlink{structb}{b}}[0])\ \&\ BN\_MASK2;}
+\DoxyCodeLine{00329\ \ \ \ \ \ \ \ \ c\ +=\ (l\ <\ t);}
+\DoxyCodeLine{00330\ \ \ \ \ \ \ \ \ r[0]\ =\ l;}
+\DoxyCodeLine{00331\ \ \ \ \ \ \ \ \ t\ =\ a[1];}
+\DoxyCodeLine{00332\ \ \ \ \ \ \ \ \ t\ =\ (t\ +\ c)\ \&\ BN\_MASK2;}
+\DoxyCodeLine{00333\ \ \ \ \ \ \ \ \ c\ =\ (t\ <\ c);}
+\DoxyCodeLine{00334\ \ \ \ \ \ \ \ \ l\ =\ (t\ +\ \mbox{\hyperlink{structb}{b}}[1])\ \&\ BN\_MASK2;}
+\DoxyCodeLine{00335\ \ \ \ \ \ \ \ \ c\ +=\ (l\ <\ t);}
+\DoxyCodeLine{00336\ \ \ \ \ \ \ \ \ r[1]\ =\ l;}
+\DoxyCodeLine{00337\ \ \ \ \ \ \ \ \ t\ =\ a[2];}
+\DoxyCodeLine{00338\ \ \ \ \ \ \ \ \ t\ =\ (t\ +\ c)\ \&\ BN\_MASK2;}
+\DoxyCodeLine{00339\ \ \ \ \ \ \ \ \ c\ =\ (t\ <\ c);}
+\DoxyCodeLine{00340\ \ \ \ \ \ \ \ \ l\ =\ (t\ +\ \mbox{\hyperlink{structb}{b}}[2])\ \&\ BN\_MASK2;}
+\DoxyCodeLine{00341\ \ \ \ \ \ \ \ \ c\ +=\ (l\ <\ t);}
+\DoxyCodeLine{00342\ \ \ \ \ \ \ \ \ r[2]\ =\ l;}
+\DoxyCodeLine{00343\ \ \ \ \ \ \ \ \ t\ =\ a[3];}
+\DoxyCodeLine{00344\ \ \ \ \ \ \ \ \ t\ =\ (t\ +\ c)\ \&\ BN\_MASK2;}
+\DoxyCodeLine{00345\ \ \ \ \ \ \ \ \ c\ =\ (t\ <\ c);}
+\DoxyCodeLine{00346\ \ \ \ \ \ \ \ \ l\ =\ (t\ +\ \mbox{\hyperlink{structb}{b}}[3])\ \&\ BN\_MASK2;}
+\DoxyCodeLine{00347\ \ \ \ \ \ \ \ \ c\ +=\ (l\ <\ t);}
+\DoxyCodeLine{00348\ \ \ \ \ \ \ \ \ r[3]\ =\ l;}
+\DoxyCodeLine{00349\ \ \ \ \ \ \ \ \ a\ +=\ 4;}
+\DoxyCodeLine{00350\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structb}{b}}\ +=\ 4;}
+\DoxyCodeLine{00351\ \ \ \ \ \ \ \ \ r\ +=\ 4;}
+\DoxyCodeLine{00352\ \ \ \ \ \ \ \ \ n\ -\/=\ 4;}
+\DoxyCodeLine{00353\ \ \ \ \ \}}
+\DoxyCodeLine{00354\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00355\ \ \ \ \ \textcolor{keywordflow}{while}\ (n)\ \{}
+\DoxyCodeLine{00356\ \ \ \ \ \ \ \ \ t\ =\ a[0];}
+\DoxyCodeLine{00357\ \ \ \ \ \ \ \ \ t\ =\ (t\ +\ c)\ \&\ BN\_MASK2;}
+\DoxyCodeLine{00358\ \ \ \ \ \ \ \ \ c\ =\ (t\ <\ c);}
+\DoxyCodeLine{00359\ \ \ \ \ \ \ \ \ l\ =\ (t\ +\ \mbox{\hyperlink{structb}{b}}[0])\ \&\ BN\_MASK2;}
+\DoxyCodeLine{00360\ \ \ \ \ \ \ \ \ c\ +=\ (l\ <\ t);}
+\DoxyCodeLine{00361\ \ \ \ \ \ \ \ \ r[0]\ =\ l;}
+\DoxyCodeLine{00362\ \ \ \ \ \ \ \ \ a++;}
+\DoxyCodeLine{00363\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structb}{b}}++;}
+\DoxyCodeLine{00364\ \ \ \ \ \ \ \ \ r++;}
+\DoxyCodeLine{00365\ \ \ \ \ \ \ \ \ n-\/-\/;}
+\DoxyCodeLine{00366\ \ \ \ \ \}}
+\DoxyCodeLine{00367\ \ \ \ \ \textcolor{keywordflow}{return}\ (BN\_ULONG)c;}
+\DoxyCodeLine{00368\ \}}
+\DoxyCodeLine{00369\ \textcolor{preprocessor}{\#endif\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{/*\ !BN\_LLONG\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00370\ }
+\DoxyCodeLine{00371\ BN\_ULONG\ bn\_sub\_words(BN\_ULONG\ *r,\ \textcolor{keyword}{const}\ BN\_ULONG\ *a,\ \textcolor{keyword}{const}\ BN\_ULONG\ *\mbox{\hyperlink{structb}{b}},}
+\DoxyCodeLine{00372\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ n)}
+\DoxyCodeLine{00373\ \{}
+\DoxyCodeLine{00374\ \ \ \ \ BN\_ULONG\ t1,\ t2;}
+\DoxyCodeLine{00375\ \ \ \ \ \textcolor{keywordtype}{int}\ c\ =\ 0;}
+\DoxyCodeLine{00376\ }
+\DoxyCodeLine{00377\ \ \ \ \ assert(n\ >=\ 0);}
+\DoxyCodeLine{00378\ \ \ \ \ \textcolor{keywordflow}{if}\ (n\ <=\ 0)}
+\DoxyCodeLine{00379\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (BN\_ULONG)0;}
+\DoxyCodeLine{00380\ }
+\DoxyCodeLine{00381\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_SMALL\_FOOTPRINT}}
+\DoxyCodeLine{00382\ \ \ \ \ \textcolor{keywordflow}{while}\ (n\ \&\ \string~3)\ \{}
+\DoxyCodeLine{00383\ \ \ \ \ \ \ \ \ t1\ =\ a[0];}
+\DoxyCodeLine{00384\ \ \ \ \ \ \ \ \ t2\ =\ (t1\ -\/\ c)\ \&\ BN\_MASK2;}
+\DoxyCodeLine{00385\ \ \ \ \ \ \ \ \ c\ \ =\ (t2\ >\ t1);}
+\DoxyCodeLine{00386\ \ \ \ \ \ \ \ \ t1\ =\ \mbox{\hyperlink{structb}{b}}[0];}
+\DoxyCodeLine{00387\ \ \ \ \ \ \ \ \ t1\ =\ (t2\ -\/\ t1)\ \&\ BN\_MASK2;}
+\DoxyCodeLine{00388\ \ \ \ \ \ \ \ \ r[0]\ =\ t1;}
+\DoxyCodeLine{00389\ \ \ \ \ \ \ \ \ c\ +=\ (t1\ >\ t2);}
+\DoxyCodeLine{00390\ \ \ \ \ \ \ \ \ t1\ =\ a[1];}
+\DoxyCodeLine{00391\ \ \ \ \ \ \ \ \ t2\ =\ (t1\ -\/\ c)\ \&\ BN\_MASK2;}
+\DoxyCodeLine{00392\ \ \ \ \ \ \ \ \ c\ \ =\ (t2\ >\ t1);}
+\DoxyCodeLine{00393\ \ \ \ \ \ \ \ \ t1\ =\ \mbox{\hyperlink{structb}{b}}[1];}
+\DoxyCodeLine{00394\ \ \ \ \ \ \ \ \ t1\ =\ (t2\ -\/\ t1)\ \&\ BN\_MASK2;}
+\DoxyCodeLine{00395\ \ \ \ \ \ \ \ \ r[1]\ =\ t1;}
+\DoxyCodeLine{00396\ \ \ \ \ \ \ \ \ c\ +=\ (t1\ >\ t2);}
+\DoxyCodeLine{00397\ \ \ \ \ \ \ \ \ t1\ =\ a[2];}
+\DoxyCodeLine{00398\ \ \ \ \ \ \ \ \ t2\ =\ (t1\ -\/\ c)\ \&\ BN\_MASK2;}
+\DoxyCodeLine{00399\ \ \ \ \ \ \ \ \ c\ \ =\ (t2\ >\ t1);}
+\DoxyCodeLine{00400\ \ \ \ \ \ \ \ \ t1\ =\ \mbox{\hyperlink{structb}{b}}[2];}
+\DoxyCodeLine{00401\ \ \ \ \ \ \ \ \ t1\ =\ (t2\ -\/\ t1)\ \&\ BN\_MASK2;}
+\DoxyCodeLine{00402\ \ \ \ \ \ \ \ \ r[2]\ =\ t1;}
+\DoxyCodeLine{00403\ \ \ \ \ \ \ \ \ c\ +=\ (t1\ >\ t2);}
+\DoxyCodeLine{00404\ \ \ \ \ \ \ \ \ t1\ =\ a[3];}
+\DoxyCodeLine{00405\ \ \ \ \ \ \ \ \ t2\ =\ (t1\ -\/\ c)\ \&\ BN\_MASK2;}
+\DoxyCodeLine{00406\ \ \ \ \ \ \ \ \ c\ \ =\ (t2\ >\ t1);}
+\DoxyCodeLine{00407\ \ \ \ \ \ \ \ \ t1\ =\ \mbox{\hyperlink{structb}{b}}[3];}
+\DoxyCodeLine{00408\ \ \ \ \ \ \ \ \ t1\ =\ (t2\ -\/\ t1)\ \&\ BN\_MASK2;}
+\DoxyCodeLine{00409\ \ \ \ \ \ \ \ \ r[3]\ =\ t1;}
+\DoxyCodeLine{00410\ \ \ \ \ \ \ \ \ c\ +=\ (t1\ >\ t2);}
+\DoxyCodeLine{00411\ \ \ \ \ \ \ \ \ a\ +=\ 4;}
+\DoxyCodeLine{00412\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structb}{b}}\ +=\ 4;}
+\DoxyCodeLine{00413\ \ \ \ \ \ \ \ \ r\ +=\ 4;}
+\DoxyCodeLine{00414\ \ \ \ \ \ \ \ \ n\ -\/=\ 4;}
+\DoxyCodeLine{00415\ \ \ \ \ \}}
+\DoxyCodeLine{00416\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00417\ \ \ \ \ \textcolor{keywordflow}{while}\ (n)\ \{}
+\DoxyCodeLine{00418\ \ \ \ \ \ \ \ \ t1\ =\ a[0];}
+\DoxyCodeLine{00419\ \ \ \ \ \ \ \ \ t2\ =\ (t1\ -\/\ c)\ \&\ BN\_MASK2;}
+\DoxyCodeLine{00420\ \ \ \ \ \ \ \ \ c\ \ =\ (t2\ >\ t1);}
+\DoxyCodeLine{00421\ \ \ \ \ \ \ \ \ t1\ =\ \mbox{\hyperlink{structb}{b}}[0];}
+\DoxyCodeLine{00422\ \ \ \ \ \ \ \ \ t1\ =\ (t2\ -\/\ t1)\ \&\ BN\_MASK2;}
+\DoxyCodeLine{00423\ \ \ \ \ \ \ \ \ r[0]\ =\ t1;}
+\DoxyCodeLine{00424\ \ \ \ \ \ \ \ \ c\ +=\ (t1\ >\ t2);}
+\DoxyCodeLine{00425\ \ \ \ \ \ \ \ \ a++;}
+\DoxyCodeLine{00426\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structb}{b}}++;}
+\DoxyCodeLine{00427\ \ \ \ \ \ \ \ \ r++;}
+\DoxyCodeLine{00428\ \ \ \ \ \ \ \ \ n-\/-\/;}
+\DoxyCodeLine{00429\ \ \ \ \ \}}
+\DoxyCodeLine{00430\ \ \ \ \ \textcolor{keywordflow}{return}\ c;}
+\DoxyCodeLine{00431\ \}}
+\DoxyCodeLine{00432\ }
+\DoxyCodeLine{00433\ \textcolor{preprocessor}{\#if\ defined(BN\_MUL\_COMBA)\ \&\&\ !defined(OPENSSL\_SMALL\_FOOTPRINT)}}
+\DoxyCodeLine{00434\ }
+\DoxyCodeLine{00435\ \textcolor{comment}{/*\ mul\_add\_c(a,b,c0,c1,c2)\ \ -\/-\/\ c+=a*b\ for\ three\ word\ number\ c=(c2,c1,c0)\ */}}
+\DoxyCodeLine{00436\ \textcolor{comment}{/*\ mul\_add\_c2(a,b,c0,c1,c2)\ -\/-\/\ c+=2*a*b\ for\ three\ word\ number\ c=(c2,c1,c0)\ */}}
+\DoxyCodeLine{00437\ \textcolor{comment}{/*\ sqr\_add\_c(a,i,c0,c1,c2)\ \ -\/-\/\ c+=a[i]\string^2\ for\ three\ word\ number\ c=(c2,c1,c0)\ */}}
+\DoxyCodeLine{00438\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00439\ \textcolor{comment}{\ *\ sqr\_add\_c2(a,i,c0,c1,c2)\ -\/-\/\ c+=2*a[i]*a[j]\ for\ three\ word\ number}}
+\DoxyCodeLine{00440\ \textcolor{comment}{\ *\ c=(c2,c1,c0)}}
+\DoxyCodeLine{00441\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00442\ }
+\DoxyCodeLine{00443\ \textcolor{preprocessor}{\#\ ifdef\ BN\_LLONG}}
+\DoxyCodeLine{00444\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00445\ \textcolor{comment}{\ *\ Keep\ in\ mind\ that\ additions\ to\ multiplication\ result\ can\ not}}
+\DoxyCodeLine{00446\ \textcolor{comment}{\ *\ overflow,\ because\ its\ high\ half\ cannot\ be\ all-\/ones.}}
+\DoxyCodeLine{00447\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00448\ \textcolor{preprocessor}{\#\ \ define\ mul\_add\_c(a,b,c0,c1,c2)\ \ \ \ \ \ \ do\ \{\ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00449\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ BN\_ULONG\ hi;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00450\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ BN\_ULLONG\ t\ =\ (BN\_ULLONG)(a)*(b);\ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00451\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ t\ +=\ c0;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{/*\ no\ carry\ */}\textcolor{preprocessor}{\ \ \(\backslash\)}}
+\DoxyCodeLine{00452\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ c0\ =\ (BN\_ULONG)Lw(t);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00453\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ hi\ =\ (BN\_ULONG)Hw(t);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00454\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ c1\ =\ (c1+hi)\&BN\_MASK2;\ c2\ +=\ (c1<hi);\ \ \ \(\backslash\)}}
+\DoxyCodeLine{00455\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \}\ while(0)}}
+\DoxyCodeLine{00456\ }
+\DoxyCodeLine{00457\ \textcolor{preprocessor}{\#\ \ define\ mul\_add\_c2(a,b,c0,c1,c2)\ \ \ \ \ \ do\ \{\ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00458\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ BN\_ULONG\ hi;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00459\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ BN\_ULLONG\ t\ =\ (BN\_ULLONG)(a)*(b);\ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00460\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ BN\_ULLONG\ tt\ =\ t+c0;\ \ \ \ }\textcolor{comment}{/*\ no\ carry\ */}\textcolor{preprocessor}{\ \ \(\backslash\)}}
+\DoxyCodeLine{00461\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ c0\ =\ (BN\_ULONG)Lw(tt);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00462\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ hi\ =\ (BN\_ULONG)Hw(tt);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00463\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ c1\ =\ (c1+hi)\&BN\_MASK2;\ c2\ +=\ (c1<hi);\ \ \ \(\backslash\)}}
+\DoxyCodeLine{00464\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ t\ +=\ c0;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{/*\ no\ carry\ */}\textcolor{preprocessor}{\ \ \(\backslash\)}}
+\DoxyCodeLine{00465\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ c0\ =\ (BN\_ULONG)Lw(t);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00466\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ hi\ =\ (BN\_ULONG)Hw(t);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00467\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ c1\ =\ (c1+hi)\&BN\_MASK2;\ c2\ +=\ (c1<hi);\ \ \ \(\backslash\)}}
+\DoxyCodeLine{00468\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \}\ while(0)}}
+\DoxyCodeLine{00469\ }
+\DoxyCodeLine{00470\ \textcolor{preprocessor}{\#\ \ define\ sqr\_add\_c(a,i,c0,c1,c2)\ \ \ \ \ \ \ do\ \{\ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00471\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ BN\_ULONG\ hi;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00472\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ BN\_ULLONG\ t\ =\ (BN\_ULLONG)a[i]*a[i];\ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00473\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ t\ +=\ c0;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{/*\ no\ carry\ */}\textcolor{preprocessor}{\ \ \(\backslash\)}}
+\DoxyCodeLine{00474\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ c0\ =\ (BN\_ULONG)Lw(t);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00475\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ hi\ =\ (BN\_ULONG)Hw(t);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00476\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ c1\ =\ (c1+hi)\&BN\_MASK2;\ c2\ +=\ (c1<hi);\ \ \ \(\backslash\)}}
+\DoxyCodeLine{00477\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \}\ while(0)}}
+\DoxyCodeLine{00478\ }
+\DoxyCodeLine{00479\ \textcolor{preprocessor}{\#\ \ define\ sqr\_add\_c2(a,i,j,c0,c1,c2)\ \(\backslash\)}}
+\DoxyCodeLine{00480\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ mul\_add\_c2((a)[i],(a)[j],c0,c1,c2)}}
+\DoxyCodeLine{00481\ }
+\DoxyCodeLine{00482\ \textcolor{preprocessor}{\#\ elif\ defined(BN\_UMULT\_LOHI)}}
+\DoxyCodeLine{00483\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00484\ \textcolor{comment}{\ *\ Keep\ in\ mind\ that\ additions\ to\ hi\ can\ not\ overflow,\ because}}
+\DoxyCodeLine{00485\ \textcolor{comment}{\ *\ the\ high\ word\ of\ a\ multiplication\ result\ cannot\ be\ all-\/ones.}}
+\DoxyCodeLine{00486\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00487\ \textcolor{preprocessor}{\#\ \ define\ mul\_add\_c(a,b,c0,c1,c2)\ \ \ \ \ \ \ do\ \{\ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00488\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ BN\_ULONG\ ta\ =\ (a),\ tb\ =\ (b);\ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00489\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ BN\_ULONG\ lo,\ hi;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00490\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ BN\_UMULT\_LOHI(lo,hi,ta,tb);\ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00491\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ c0\ +=\ lo;\ hi\ +=\ (c0<lo);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00492\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ c1\ +=\ hi;\ c2\ +=\ (c1<hi);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00493\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \}\ while(0)}}
+\DoxyCodeLine{00494\ }
+\DoxyCodeLine{00495\ \textcolor{preprocessor}{\#\ \ define\ mul\_add\_c2(a,b,c0,c1,c2)\ \ \ \ \ \ do\ \{\ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00496\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ BN\_ULONG\ ta\ =\ (a),\ tb\ =\ (b);\ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00497\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ BN\_ULONG\ lo,\ hi,\ tt;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00498\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ BN\_UMULT\_LOHI(lo,hi,ta,tb);\ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00499\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ c0\ +=\ lo;\ tt\ =\ hi\ +\ (c0<lo);\ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00500\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ c1\ +=\ tt;\ c2\ +=\ (c1<tt);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00501\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ c0\ +=\ lo;\ hi\ +=\ (c0<lo);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00502\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ c1\ +=\ hi;\ c2\ +=\ (c1<hi);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00503\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \}\ while(0)}}
+\DoxyCodeLine{00504\ }
+\DoxyCodeLine{00505\ \textcolor{preprocessor}{\#\ \ define\ sqr\_add\_c(a,i,c0,c1,c2)\ \ \ \ \ \ \ do\ \{\ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00506\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ BN\_ULONG\ ta\ =\ (a)[i];\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00507\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ BN\_ULONG\ lo,\ hi;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00508\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ BN\_UMULT\_LOHI(lo,hi,ta,ta);\ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00509\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ c0\ +=\ lo;\ hi\ +=\ (c0<lo);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00510\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ c1\ +=\ hi;\ c2\ +=\ (c1<hi);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00511\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \}\ while(0)}}
+\DoxyCodeLine{00512\ }
+\DoxyCodeLine{00513\ \textcolor{preprocessor}{\#\ \ define\ sqr\_add\_c2(a,i,j,c0,c1,c2)\ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00514\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ mul\_add\_c2((a)[i],(a)[j],c0,c1,c2)}}
+\DoxyCodeLine{00515\ }
+\DoxyCodeLine{00516\ \textcolor{preprocessor}{\#\ elif\ defined(BN\_UMULT\_HIGH)}}
+\DoxyCodeLine{00517\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00518\ \textcolor{comment}{\ *\ Keep\ in\ mind\ that\ additions\ to\ hi\ can\ not\ overflow,\ because}}
+\DoxyCodeLine{00519\ \textcolor{comment}{\ *\ the\ high\ word\ of\ a\ multiplication\ result\ cannot\ be\ all-\/ones.}}
+\DoxyCodeLine{00520\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00521\ \textcolor{preprocessor}{\#\ \ define\ mul\_add\_c(a,b,c0,c1,c2)\ \ \ \ \ \ \ do\ \{\ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00522\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ BN\_ULONG\ ta\ =\ (a),\ tb\ =\ (b);\ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00523\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ BN\_ULONG\ lo\ =\ ta\ *\ tb;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00524\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ BN\_ULONG\ hi\ =\ BN\_UMULT\_HIGH(ta,tb);\ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00525\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ c0\ +=\ lo;\ hi\ +=\ (c0<lo);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00526\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ c1\ +=\ hi;\ c2\ +=\ (c1<hi);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00527\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \}\ while(0)}}
+\DoxyCodeLine{00528\ }
+\DoxyCodeLine{00529\ \textcolor{preprocessor}{\#\ \ define\ mul\_add\_c2(a,b,c0,c1,c2)\ \ \ \ \ \ do\ \{\ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00530\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ BN\_ULONG\ ta\ =\ (a),\ tb\ =\ (b),\ tt;\ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00531\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ BN\_ULONG\ lo\ =\ ta\ *\ tb;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00532\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ BN\_ULONG\ hi\ =\ BN\_UMULT\_HIGH(ta,tb);\ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00533\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ c0\ +=\ lo;\ tt\ =\ hi\ +\ (c0<lo);\ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00534\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ c1\ +=\ tt;\ c2\ +=\ (c1<tt);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00535\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ c0\ +=\ lo;\ hi\ +=\ (c0<lo);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00536\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ c1\ +=\ hi;\ c2\ +=\ (c1<hi);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00537\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \}\ while(0)}}
+\DoxyCodeLine{00538\ }
+\DoxyCodeLine{00539\ \textcolor{preprocessor}{\#\ \ define\ sqr\_add\_c(a,i,c0,c1,c2)\ \ \ \ \ \ \ do\ \{\ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00540\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ BN\_ULONG\ ta\ =\ (a)[i];\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00541\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ BN\_ULONG\ lo\ =\ ta\ *\ ta;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00542\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ BN\_ULONG\ hi\ =\ BN\_UMULT\_HIGH(ta,ta);\ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00543\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ c0\ +=\ lo;\ hi\ +=\ (c0<lo);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00544\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ c1\ +=\ hi;\ c2\ +=\ (c1<hi);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00545\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \}\ while(0)}}
+\DoxyCodeLine{00546\ }
+\DoxyCodeLine{00547\ \textcolor{preprocessor}{\#\ \ define\ sqr\_add\_c2(a,i,j,c0,c1,c2)\ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00548\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ mul\_add\_c2((a)[i],(a)[j],c0,c1,c2)}}
+\DoxyCodeLine{00549\ }
+\DoxyCodeLine{00550\ \textcolor{preprocessor}{\#\ else\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{/*\ !BN\_LLONG\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00551\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00552\ \textcolor{comment}{\ *\ Keep\ in\ mind\ that\ additions\ to\ hi\ can\ not\ overflow,\ because}}
+\DoxyCodeLine{00553\ \textcolor{comment}{\ *\ the\ high\ word\ of\ a\ multiplication\ result\ cannot\ be\ all-\/ones.}}
+\DoxyCodeLine{00554\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00555\ \textcolor{preprocessor}{\#\ \ define\ mul\_add\_c(a,b,c0,c1,c2)\ \ \ \ \ \ \ do\ \{\ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00556\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ BN\_ULONG\ lo\ =\ LBITS(a),\ hi\ =\ HBITS(a);\ \ \(\backslash\)}}
+\DoxyCodeLine{00557\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ BN\_ULONG\ bl\ =\ LBITS(b),\ bh\ =\ HBITS(b);\ \ \(\backslash\)}}
+\DoxyCodeLine{00558\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ mul64(lo,hi,bl,bh);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00559\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ c0\ =\ (c0+lo)\&BN\_MASK2;\ hi\ +=\ (c0<lo);\ \ \ \(\backslash\)}}
+\DoxyCodeLine{00560\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ c1\ =\ (c1+hi)\&BN\_MASK2;\ c2\ +=\ (c1<hi);\ \ \ \(\backslash\)}}
+\DoxyCodeLine{00561\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \}\ while(0)}}
+\DoxyCodeLine{00562\ }
+\DoxyCodeLine{00563\ \textcolor{preprocessor}{\#\ \ define\ mul\_add\_c2(a,b,c0,c1,c2)\ \ \ \ \ \ do\ \{\ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00564\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ BN\_ULONG\ tt;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00565\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ BN\_ULONG\ lo\ =\ LBITS(a),\ hi\ =\ HBITS(a);\ \ \(\backslash\)}}
+\DoxyCodeLine{00566\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ BN\_ULONG\ bl\ =\ LBITS(b),\ bh\ =\ HBITS(b);\ \ \(\backslash\)}}
+\DoxyCodeLine{00567\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ mul64(lo,hi,bl,bh);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00568\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ tt\ =\ hi;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00569\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ c0\ =\ (c0+lo)\&BN\_MASK2;\ tt\ +=\ (c0<lo);\ \ \ \(\backslash\)}}
+\DoxyCodeLine{00570\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ c1\ =\ (c1+tt)\&BN\_MASK2;\ c2\ +=\ (c1<tt);\ \ \ \(\backslash\)}}
+\DoxyCodeLine{00571\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ c0\ =\ (c0+lo)\&BN\_MASK2;\ hi\ +=\ (c0<lo);\ \ \ \(\backslash\)}}
+\DoxyCodeLine{00572\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ c1\ =\ (c1+hi)\&BN\_MASK2;\ c2\ +=\ (c1<hi);\ \ \ \(\backslash\)}}
+\DoxyCodeLine{00573\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \}\ while(0)}}
+\DoxyCodeLine{00574\ }
+\DoxyCodeLine{00575\ \textcolor{preprocessor}{\#\ \ define\ sqr\_add\_c(a,i,c0,c1,c2)\ \ \ \ \ \ \ do\ \{\ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00576\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ BN\_ULONG\ lo,\ hi;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00577\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ sqr64(lo,hi,(a)[i]);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00578\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ c0\ =\ (c0+lo)\&BN\_MASK2;\ hi\ +=\ (c0<lo);\ \ \ \(\backslash\)}}
+\DoxyCodeLine{00579\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ c1\ =\ (c1+hi)\&BN\_MASK2;\ c2\ +=\ (c1<hi);\ \ \ \(\backslash\)}}
+\DoxyCodeLine{00580\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \}\ while(0)}}
+\DoxyCodeLine{00581\ }
+\DoxyCodeLine{00582\ \textcolor{preprocessor}{\#\ \ define\ sqr\_add\_c2(a,i,j,c0,c1,c2)\ \(\backslash\)}}
+\DoxyCodeLine{00583\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ mul\_add\_c2((a)[i],(a)[j],c0,c1,c2)}}
+\DoxyCodeLine{00584\ \textcolor{preprocessor}{\#\ endif\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{/*\ !BN\_LLONG\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00585\ }
+\DoxyCodeLine{00586\ \textcolor{keywordtype}{void}\ bn\_mul\_comba8(BN\_ULONG\ *r,\ BN\_ULONG\ *a,\ BN\_ULONG\ *\mbox{\hyperlink{structb}{b}})}
+\DoxyCodeLine{00587\ \{}
+\DoxyCodeLine{00588\ \ \ \ \ BN\_ULONG\ c1,\ c2,\ c3;}
+\DoxyCodeLine{00589\ }
+\DoxyCodeLine{00590\ \ \ \ \ c1\ =\ 0;}
+\DoxyCodeLine{00591\ \ \ \ \ c2\ =\ 0;}
+\DoxyCodeLine{00592\ \ \ \ \ c3\ =\ 0;}
+\DoxyCodeLine{00593\ \ \ \ \ mul\_add\_c(a[0],\ \mbox{\hyperlink{structb}{b}}[0],\ c1,\ c2,\ c3);}
+\DoxyCodeLine{00594\ \ \ \ \ r[0]\ =\ c1;}
+\DoxyCodeLine{00595\ \ \ \ \ c1\ =\ 0;}
+\DoxyCodeLine{00596\ \ \ \ \ mul\_add\_c(a[0],\ \mbox{\hyperlink{structb}{b}}[1],\ c2,\ c3,\ c1);}
+\DoxyCodeLine{00597\ \ \ \ \ mul\_add\_c(a[1],\ \mbox{\hyperlink{structb}{b}}[0],\ c2,\ c3,\ c1);}
+\DoxyCodeLine{00598\ \ \ \ \ r[1]\ =\ c2;}
+\DoxyCodeLine{00599\ \ \ \ \ c2\ =\ 0;}
+\DoxyCodeLine{00600\ \ \ \ \ mul\_add\_c(a[2],\ \mbox{\hyperlink{structb}{b}}[0],\ c3,\ c1,\ c2);}
+\DoxyCodeLine{00601\ \ \ \ \ mul\_add\_c(a[1],\ \mbox{\hyperlink{structb}{b}}[1],\ c3,\ c1,\ c2);}
+\DoxyCodeLine{00602\ \ \ \ \ mul\_add\_c(a[0],\ \mbox{\hyperlink{structb}{b}}[2],\ c3,\ c1,\ c2);}
+\DoxyCodeLine{00603\ \ \ \ \ r[2]\ =\ c3;}
+\DoxyCodeLine{00604\ \ \ \ \ c3\ =\ 0;}
+\DoxyCodeLine{00605\ \ \ \ \ mul\_add\_c(a[0],\ \mbox{\hyperlink{structb}{b}}[3],\ c1,\ c2,\ c3);}
+\DoxyCodeLine{00606\ \ \ \ \ mul\_add\_c(a[1],\ \mbox{\hyperlink{structb}{b}}[2],\ c1,\ c2,\ c3);}
+\DoxyCodeLine{00607\ \ \ \ \ mul\_add\_c(a[2],\ \mbox{\hyperlink{structb}{b}}[1],\ c1,\ c2,\ c3);}
+\DoxyCodeLine{00608\ \ \ \ \ mul\_add\_c(a[3],\ \mbox{\hyperlink{structb}{b}}[0],\ c1,\ c2,\ c3);}
+\DoxyCodeLine{00609\ \ \ \ \ r[3]\ =\ c1;}
+\DoxyCodeLine{00610\ \ \ \ \ c1\ =\ 0;}
+\DoxyCodeLine{00611\ \ \ \ \ mul\_add\_c(a[4],\ \mbox{\hyperlink{structb}{b}}[0],\ c2,\ c3,\ c1);}
+\DoxyCodeLine{00612\ \ \ \ \ mul\_add\_c(a[3],\ \mbox{\hyperlink{structb}{b}}[1],\ c2,\ c3,\ c1);}
+\DoxyCodeLine{00613\ \ \ \ \ mul\_add\_c(a[2],\ \mbox{\hyperlink{structb}{b}}[2],\ c2,\ c3,\ c1);}
+\DoxyCodeLine{00614\ \ \ \ \ mul\_add\_c(a[1],\ \mbox{\hyperlink{structb}{b}}[3],\ c2,\ c3,\ c1);}
+\DoxyCodeLine{00615\ \ \ \ \ mul\_add\_c(a[0],\ \mbox{\hyperlink{structb}{b}}[4],\ c2,\ c3,\ c1);}
+\DoxyCodeLine{00616\ \ \ \ \ r[4]\ =\ c2;}
+\DoxyCodeLine{00617\ \ \ \ \ c2\ =\ 0;}
+\DoxyCodeLine{00618\ \ \ \ \ mul\_add\_c(a[0],\ \mbox{\hyperlink{structb}{b}}[5],\ c3,\ c1,\ c2);}
+\DoxyCodeLine{00619\ \ \ \ \ mul\_add\_c(a[1],\ \mbox{\hyperlink{structb}{b}}[4],\ c3,\ c1,\ c2);}
+\DoxyCodeLine{00620\ \ \ \ \ mul\_add\_c(a[2],\ \mbox{\hyperlink{structb}{b}}[3],\ c3,\ c1,\ c2);}
+\DoxyCodeLine{00621\ \ \ \ \ mul\_add\_c(a[3],\ \mbox{\hyperlink{structb}{b}}[2],\ c3,\ c1,\ c2);}
+\DoxyCodeLine{00622\ \ \ \ \ mul\_add\_c(a[4],\ \mbox{\hyperlink{structb}{b}}[1],\ c3,\ c1,\ c2);}
+\DoxyCodeLine{00623\ \ \ \ \ mul\_add\_c(a[5],\ \mbox{\hyperlink{structb}{b}}[0],\ c3,\ c1,\ c2);}
+\DoxyCodeLine{00624\ \ \ \ \ r[5]\ =\ c3;}
+\DoxyCodeLine{00625\ \ \ \ \ c3\ =\ 0;}
+\DoxyCodeLine{00626\ \ \ \ \ mul\_add\_c(a[6],\ \mbox{\hyperlink{structb}{b}}[0],\ c1,\ c2,\ c3);}
+\DoxyCodeLine{00627\ \ \ \ \ mul\_add\_c(a[5],\ \mbox{\hyperlink{structb}{b}}[1],\ c1,\ c2,\ c3);}
+\DoxyCodeLine{00628\ \ \ \ \ mul\_add\_c(a[4],\ \mbox{\hyperlink{structb}{b}}[2],\ c1,\ c2,\ c3);}
+\DoxyCodeLine{00629\ \ \ \ \ mul\_add\_c(a[3],\ \mbox{\hyperlink{structb}{b}}[3],\ c1,\ c2,\ c3);}
+\DoxyCodeLine{00630\ \ \ \ \ mul\_add\_c(a[2],\ \mbox{\hyperlink{structb}{b}}[4],\ c1,\ c2,\ c3);}
+\DoxyCodeLine{00631\ \ \ \ \ mul\_add\_c(a[1],\ \mbox{\hyperlink{structb}{b}}[5],\ c1,\ c2,\ c3);}
+\DoxyCodeLine{00632\ \ \ \ \ mul\_add\_c(a[0],\ \mbox{\hyperlink{structb}{b}}[6],\ c1,\ c2,\ c3);}
+\DoxyCodeLine{00633\ \ \ \ \ r[6]\ =\ c1;}
+\DoxyCodeLine{00634\ \ \ \ \ c1\ =\ 0;}
+\DoxyCodeLine{00635\ \ \ \ \ mul\_add\_c(a[0],\ \mbox{\hyperlink{structb}{b}}[7],\ c2,\ c3,\ c1);}
+\DoxyCodeLine{00636\ \ \ \ \ mul\_add\_c(a[1],\ \mbox{\hyperlink{structb}{b}}[6],\ c2,\ c3,\ c1);}
+\DoxyCodeLine{00637\ \ \ \ \ mul\_add\_c(a[2],\ \mbox{\hyperlink{structb}{b}}[5],\ c2,\ c3,\ c1);}
+\DoxyCodeLine{00638\ \ \ \ \ mul\_add\_c(a[3],\ \mbox{\hyperlink{structb}{b}}[4],\ c2,\ c3,\ c1);}
+\DoxyCodeLine{00639\ \ \ \ \ mul\_add\_c(a[4],\ \mbox{\hyperlink{structb}{b}}[3],\ c2,\ c3,\ c1);}
+\DoxyCodeLine{00640\ \ \ \ \ mul\_add\_c(a[5],\ \mbox{\hyperlink{structb}{b}}[2],\ c2,\ c3,\ c1);}
+\DoxyCodeLine{00641\ \ \ \ \ mul\_add\_c(a[6],\ \mbox{\hyperlink{structb}{b}}[1],\ c2,\ c3,\ c1);}
+\DoxyCodeLine{00642\ \ \ \ \ mul\_add\_c(a[7],\ \mbox{\hyperlink{structb}{b}}[0],\ c2,\ c3,\ c1);}
+\DoxyCodeLine{00643\ \ \ \ \ r[7]\ =\ c2;}
+\DoxyCodeLine{00644\ \ \ \ \ c2\ =\ 0;}
+\DoxyCodeLine{00645\ \ \ \ \ mul\_add\_c(a[7],\ \mbox{\hyperlink{structb}{b}}[1],\ c3,\ c1,\ c2);}
+\DoxyCodeLine{00646\ \ \ \ \ mul\_add\_c(a[6],\ \mbox{\hyperlink{structb}{b}}[2],\ c3,\ c1,\ c2);}
+\DoxyCodeLine{00647\ \ \ \ \ mul\_add\_c(a[5],\ \mbox{\hyperlink{structb}{b}}[3],\ c3,\ c1,\ c2);}
+\DoxyCodeLine{00648\ \ \ \ \ mul\_add\_c(a[4],\ \mbox{\hyperlink{structb}{b}}[4],\ c3,\ c1,\ c2);}
+\DoxyCodeLine{00649\ \ \ \ \ mul\_add\_c(a[3],\ \mbox{\hyperlink{structb}{b}}[5],\ c3,\ c1,\ c2);}
+\DoxyCodeLine{00650\ \ \ \ \ mul\_add\_c(a[2],\ \mbox{\hyperlink{structb}{b}}[6],\ c3,\ c1,\ c2);}
+\DoxyCodeLine{00651\ \ \ \ \ mul\_add\_c(a[1],\ \mbox{\hyperlink{structb}{b}}[7],\ c3,\ c1,\ c2);}
+\DoxyCodeLine{00652\ \ \ \ \ r[8]\ =\ c3;}
+\DoxyCodeLine{00653\ \ \ \ \ c3\ =\ 0;}
+\DoxyCodeLine{00654\ \ \ \ \ mul\_add\_c(a[2],\ \mbox{\hyperlink{structb}{b}}[7],\ c1,\ c2,\ c3);}
+\DoxyCodeLine{00655\ \ \ \ \ mul\_add\_c(a[3],\ \mbox{\hyperlink{structb}{b}}[6],\ c1,\ c2,\ c3);}
+\DoxyCodeLine{00656\ \ \ \ \ mul\_add\_c(a[4],\ \mbox{\hyperlink{structb}{b}}[5],\ c1,\ c2,\ c3);}
+\DoxyCodeLine{00657\ \ \ \ \ mul\_add\_c(a[5],\ \mbox{\hyperlink{structb}{b}}[4],\ c1,\ c2,\ c3);}
+\DoxyCodeLine{00658\ \ \ \ \ mul\_add\_c(a[6],\ \mbox{\hyperlink{structb}{b}}[3],\ c1,\ c2,\ c3);}
+\DoxyCodeLine{00659\ \ \ \ \ mul\_add\_c(a[7],\ \mbox{\hyperlink{structb}{b}}[2],\ c1,\ c2,\ c3);}
+\DoxyCodeLine{00660\ \ \ \ \ r[9]\ =\ c1;}
+\DoxyCodeLine{00661\ \ \ \ \ c1\ =\ 0;}
+\DoxyCodeLine{00662\ \ \ \ \ mul\_add\_c(a[7],\ \mbox{\hyperlink{structb}{b}}[3],\ c2,\ c3,\ c1);}
+\DoxyCodeLine{00663\ \ \ \ \ mul\_add\_c(a[6],\ \mbox{\hyperlink{structb}{b}}[4],\ c2,\ c3,\ c1);}
+\DoxyCodeLine{00664\ \ \ \ \ mul\_add\_c(a[5],\ \mbox{\hyperlink{structb}{b}}[5],\ c2,\ c3,\ c1);}
+\DoxyCodeLine{00665\ \ \ \ \ mul\_add\_c(a[4],\ \mbox{\hyperlink{structb}{b}}[6],\ c2,\ c3,\ c1);}
+\DoxyCodeLine{00666\ \ \ \ \ mul\_add\_c(a[3],\ \mbox{\hyperlink{structb}{b}}[7],\ c2,\ c3,\ c1);}
+\DoxyCodeLine{00667\ \ \ \ \ r[10]\ =\ c2;}
+\DoxyCodeLine{00668\ \ \ \ \ c2\ =\ 0;}
+\DoxyCodeLine{00669\ \ \ \ \ mul\_add\_c(a[4],\ \mbox{\hyperlink{structb}{b}}[7],\ c3,\ c1,\ c2);}
+\DoxyCodeLine{00670\ \ \ \ \ mul\_add\_c(a[5],\ \mbox{\hyperlink{structb}{b}}[6],\ c3,\ c1,\ c2);}
+\DoxyCodeLine{00671\ \ \ \ \ mul\_add\_c(a[6],\ \mbox{\hyperlink{structb}{b}}[5],\ c3,\ c1,\ c2);}
+\DoxyCodeLine{00672\ \ \ \ \ mul\_add\_c(a[7],\ \mbox{\hyperlink{structb}{b}}[4],\ c3,\ c1,\ c2);}
+\DoxyCodeLine{00673\ \ \ \ \ r[11]\ =\ c3;}
+\DoxyCodeLine{00674\ \ \ \ \ c3\ =\ 0;}
+\DoxyCodeLine{00675\ \ \ \ \ mul\_add\_c(a[7],\ \mbox{\hyperlink{structb}{b}}[5],\ c1,\ c2,\ c3);}
+\DoxyCodeLine{00676\ \ \ \ \ mul\_add\_c(a[6],\ \mbox{\hyperlink{structb}{b}}[6],\ c1,\ c2,\ c3);}
+\DoxyCodeLine{00677\ \ \ \ \ mul\_add\_c(a[5],\ \mbox{\hyperlink{structb}{b}}[7],\ c1,\ c2,\ c3);}
+\DoxyCodeLine{00678\ \ \ \ \ r[12]\ =\ c1;}
+\DoxyCodeLine{00679\ \ \ \ \ c1\ =\ 0;}
+\DoxyCodeLine{00680\ \ \ \ \ mul\_add\_c(a[6],\ \mbox{\hyperlink{structb}{b}}[7],\ c2,\ c3,\ c1);}
+\DoxyCodeLine{00681\ \ \ \ \ mul\_add\_c(a[7],\ \mbox{\hyperlink{structb}{b}}[6],\ c2,\ c3,\ c1);}
+\DoxyCodeLine{00682\ \ \ \ \ r[13]\ =\ c2;}
+\DoxyCodeLine{00683\ \ \ \ \ c2\ =\ 0;}
+\DoxyCodeLine{00684\ \ \ \ \ mul\_add\_c(a[7],\ \mbox{\hyperlink{structb}{b}}[7],\ c3,\ c1,\ c2);}
+\DoxyCodeLine{00685\ \ \ \ \ r[14]\ =\ c3;}
+\DoxyCodeLine{00686\ \ \ \ \ r[15]\ =\ c1;}
+\DoxyCodeLine{00687\ \}}
+\DoxyCodeLine{00688\ }
+\DoxyCodeLine{00689\ \textcolor{keywordtype}{void}\ bn\_mul\_comba4(BN\_ULONG\ *r,\ BN\_ULONG\ *a,\ BN\_ULONG\ *\mbox{\hyperlink{structb}{b}})}
+\DoxyCodeLine{00690\ \{}
+\DoxyCodeLine{00691\ \ \ \ \ BN\_ULONG\ c1,\ c2,\ c3;}
+\DoxyCodeLine{00692\ }
+\DoxyCodeLine{00693\ \ \ \ \ c1\ =\ 0;}
+\DoxyCodeLine{00694\ \ \ \ \ c2\ =\ 0;}
+\DoxyCodeLine{00695\ \ \ \ \ c3\ =\ 0;}
+\DoxyCodeLine{00696\ \ \ \ \ mul\_add\_c(a[0],\ \mbox{\hyperlink{structb}{b}}[0],\ c1,\ c2,\ c3);}
+\DoxyCodeLine{00697\ \ \ \ \ r[0]\ =\ c1;}
+\DoxyCodeLine{00698\ \ \ \ \ c1\ =\ 0;}
+\DoxyCodeLine{00699\ \ \ \ \ mul\_add\_c(a[0],\ \mbox{\hyperlink{structb}{b}}[1],\ c2,\ c3,\ c1);}
+\DoxyCodeLine{00700\ \ \ \ \ mul\_add\_c(a[1],\ \mbox{\hyperlink{structb}{b}}[0],\ c2,\ c3,\ c1);}
+\DoxyCodeLine{00701\ \ \ \ \ r[1]\ =\ c2;}
+\DoxyCodeLine{00702\ \ \ \ \ c2\ =\ 0;}
+\DoxyCodeLine{00703\ \ \ \ \ mul\_add\_c(a[2],\ \mbox{\hyperlink{structb}{b}}[0],\ c3,\ c1,\ c2);}
+\DoxyCodeLine{00704\ \ \ \ \ mul\_add\_c(a[1],\ \mbox{\hyperlink{structb}{b}}[1],\ c3,\ c1,\ c2);}
+\DoxyCodeLine{00705\ \ \ \ \ mul\_add\_c(a[0],\ \mbox{\hyperlink{structb}{b}}[2],\ c3,\ c1,\ c2);}
+\DoxyCodeLine{00706\ \ \ \ \ r[2]\ =\ c3;}
+\DoxyCodeLine{00707\ \ \ \ \ c3\ =\ 0;}
+\DoxyCodeLine{00708\ \ \ \ \ mul\_add\_c(a[0],\ \mbox{\hyperlink{structb}{b}}[3],\ c1,\ c2,\ c3);}
+\DoxyCodeLine{00709\ \ \ \ \ mul\_add\_c(a[1],\ \mbox{\hyperlink{structb}{b}}[2],\ c1,\ c2,\ c3);}
+\DoxyCodeLine{00710\ \ \ \ \ mul\_add\_c(a[2],\ \mbox{\hyperlink{structb}{b}}[1],\ c1,\ c2,\ c3);}
+\DoxyCodeLine{00711\ \ \ \ \ mul\_add\_c(a[3],\ \mbox{\hyperlink{structb}{b}}[0],\ c1,\ c2,\ c3);}
+\DoxyCodeLine{00712\ \ \ \ \ r[3]\ =\ c1;}
+\DoxyCodeLine{00713\ \ \ \ \ c1\ =\ 0;}
+\DoxyCodeLine{00714\ \ \ \ \ mul\_add\_c(a[3],\ \mbox{\hyperlink{structb}{b}}[1],\ c2,\ c3,\ c1);}
+\DoxyCodeLine{00715\ \ \ \ \ mul\_add\_c(a[2],\ \mbox{\hyperlink{structb}{b}}[2],\ c2,\ c3,\ c1);}
+\DoxyCodeLine{00716\ \ \ \ \ mul\_add\_c(a[1],\ \mbox{\hyperlink{structb}{b}}[3],\ c2,\ c3,\ c1);}
+\DoxyCodeLine{00717\ \ \ \ \ r[4]\ =\ c2;}
+\DoxyCodeLine{00718\ \ \ \ \ c2\ =\ 0;}
+\DoxyCodeLine{00719\ \ \ \ \ mul\_add\_c(a[2],\ \mbox{\hyperlink{structb}{b}}[3],\ c3,\ c1,\ c2);}
+\DoxyCodeLine{00720\ \ \ \ \ mul\_add\_c(a[3],\ \mbox{\hyperlink{structb}{b}}[2],\ c3,\ c1,\ c2);}
+\DoxyCodeLine{00721\ \ \ \ \ r[5]\ =\ c3;}
+\DoxyCodeLine{00722\ \ \ \ \ c3\ =\ 0;}
+\DoxyCodeLine{00723\ \ \ \ \ mul\_add\_c(a[3],\ \mbox{\hyperlink{structb}{b}}[3],\ c1,\ c2,\ c3);}
+\DoxyCodeLine{00724\ \ \ \ \ r[6]\ =\ c1;}
+\DoxyCodeLine{00725\ \ \ \ \ r[7]\ =\ c2;}
+\DoxyCodeLine{00726\ \}}
+\DoxyCodeLine{00727\ }
+\DoxyCodeLine{00728\ \textcolor{keywordtype}{void}\ bn\_sqr\_comba8(BN\_ULONG\ *r,\ \textcolor{keyword}{const}\ BN\_ULONG\ *a)}
+\DoxyCodeLine{00729\ \{}
+\DoxyCodeLine{00730\ \ \ \ \ BN\_ULONG\ c1,\ c2,\ c3;}
+\DoxyCodeLine{00731\ }
+\DoxyCodeLine{00732\ \ \ \ \ c1\ =\ 0;}
+\DoxyCodeLine{00733\ \ \ \ \ c2\ =\ 0;}
+\DoxyCodeLine{00734\ \ \ \ \ c3\ =\ 0;}
+\DoxyCodeLine{00735\ \ \ \ \ sqr\_add\_c(a,\ 0,\ c1,\ c2,\ c3);}
+\DoxyCodeLine{00736\ \ \ \ \ r[0]\ =\ c1;}
+\DoxyCodeLine{00737\ \ \ \ \ c1\ =\ 0;}
+\DoxyCodeLine{00738\ \ \ \ \ sqr\_add\_c2(a,\ 1,\ 0,\ c2,\ c3,\ c1);}
+\DoxyCodeLine{00739\ \ \ \ \ r[1]\ =\ c2;}
+\DoxyCodeLine{00740\ \ \ \ \ c2\ =\ 0;}
+\DoxyCodeLine{00741\ \ \ \ \ sqr\_add\_c(a,\ 1,\ c3,\ c1,\ c2);}
+\DoxyCodeLine{00742\ \ \ \ \ sqr\_add\_c2(a,\ 2,\ 0,\ c3,\ c1,\ c2);}
+\DoxyCodeLine{00743\ \ \ \ \ r[2]\ =\ c3;}
+\DoxyCodeLine{00744\ \ \ \ \ c3\ =\ 0;}
+\DoxyCodeLine{00745\ \ \ \ \ sqr\_add\_c2(a,\ 3,\ 0,\ c1,\ c2,\ c3);}
+\DoxyCodeLine{00746\ \ \ \ \ sqr\_add\_c2(a,\ 2,\ 1,\ c1,\ c2,\ c3);}
+\DoxyCodeLine{00747\ \ \ \ \ r[3]\ =\ c1;}
+\DoxyCodeLine{00748\ \ \ \ \ c1\ =\ 0;}
+\DoxyCodeLine{00749\ \ \ \ \ sqr\_add\_c(a,\ 2,\ c2,\ c3,\ c1);}
+\DoxyCodeLine{00750\ \ \ \ \ sqr\_add\_c2(a,\ 3,\ 1,\ c2,\ c3,\ c1);}
+\DoxyCodeLine{00751\ \ \ \ \ sqr\_add\_c2(a,\ 4,\ 0,\ c2,\ c3,\ c1);}
+\DoxyCodeLine{00752\ \ \ \ \ r[4]\ =\ c2;}
+\DoxyCodeLine{00753\ \ \ \ \ c2\ =\ 0;}
+\DoxyCodeLine{00754\ \ \ \ \ sqr\_add\_c2(a,\ 5,\ 0,\ c3,\ c1,\ c2);}
+\DoxyCodeLine{00755\ \ \ \ \ sqr\_add\_c2(a,\ 4,\ 1,\ c3,\ c1,\ c2);}
+\DoxyCodeLine{00756\ \ \ \ \ sqr\_add\_c2(a,\ 3,\ 2,\ c3,\ c1,\ c2);}
+\DoxyCodeLine{00757\ \ \ \ \ r[5]\ =\ c3;}
+\DoxyCodeLine{00758\ \ \ \ \ c3\ =\ 0;}
+\DoxyCodeLine{00759\ \ \ \ \ sqr\_add\_c(a,\ 3,\ c1,\ c2,\ c3);}
+\DoxyCodeLine{00760\ \ \ \ \ sqr\_add\_c2(a,\ 4,\ 2,\ c1,\ c2,\ c3);}
+\DoxyCodeLine{00761\ \ \ \ \ sqr\_add\_c2(a,\ 5,\ 1,\ c1,\ c2,\ c3);}
+\DoxyCodeLine{00762\ \ \ \ \ sqr\_add\_c2(a,\ 6,\ 0,\ c1,\ c2,\ c3);}
+\DoxyCodeLine{00763\ \ \ \ \ r[6]\ =\ c1;}
+\DoxyCodeLine{00764\ \ \ \ \ c1\ =\ 0;}
+\DoxyCodeLine{00765\ \ \ \ \ sqr\_add\_c2(a,\ 7,\ 0,\ c2,\ c3,\ c1);}
+\DoxyCodeLine{00766\ \ \ \ \ sqr\_add\_c2(a,\ 6,\ 1,\ c2,\ c3,\ c1);}
+\DoxyCodeLine{00767\ \ \ \ \ sqr\_add\_c2(a,\ 5,\ 2,\ c2,\ c3,\ c1);}
+\DoxyCodeLine{00768\ \ \ \ \ sqr\_add\_c2(a,\ 4,\ 3,\ c2,\ c3,\ c1);}
+\DoxyCodeLine{00769\ \ \ \ \ r[7]\ =\ c2;}
+\DoxyCodeLine{00770\ \ \ \ \ c2\ =\ 0;}
+\DoxyCodeLine{00771\ \ \ \ \ sqr\_add\_c(a,\ 4,\ c3,\ c1,\ c2);}
+\DoxyCodeLine{00772\ \ \ \ \ sqr\_add\_c2(a,\ 5,\ 3,\ c3,\ c1,\ c2);}
+\DoxyCodeLine{00773\ \ \ \ \ sqr\_add\_c2(a,\ 6,\ 2,\ c3,\ c1,\ c2);}
+\DoxyCodeLine{00774\ \ \ \ \ sqr\_add\_c2(a,\ 7,\ 1,\ c3,\ c1,\ c2);}
+\DoxyCodeLine{00775\ \ \ \ \ r[8]\ =\ c3;}
+\DoxyCodeLine{00776\ \ \ \ \ c3\ =\ 0;}
+\DoxyCodeLine{00777\ \ \ \ \ sqr\_add\_c2(a,\ 7,\ 2,\ c1,\ c2,\ c3);}
+\DoxyCodeLine{00778\ \ \ \ \ sqr\_add\_c2(a,\ 6,\ 3,\ c1,\ c2,\ c3);}
+\DoxyCodeLine{00779\ \ \ \ \ sqr\_add\_c2(a,\ 5,\ 4,\ c1,\ c2,\ c3);}
+\DoxyCodeLine{00780\ \ \ \ \ r[9]\ =\ c1;}
+\DoxyCodeLine{00781\ \ \ \ \ c1\ =\ 0;}
+\DoxyCodeLine{00782\ \ \ \ \ sqr\_add\_c(a,\ 5,\ c2,\ c3,\ c1);}
+\DoxyCodeLine{00783\ \ \ \ \ sqr\_add\_c2(a,\ 6,\ 4,\ c2,\ c3,\ c1);}
+\DoxyCodeLine{00784\ \ \ \ \ sqr\_add\_c2(a,\ 7,\ 3,\ c2,\ c3,\ c1);}
+\DoxyCodeLine{00785\ \ \ \ \ r[10]\ =\ c2;}
+\DoxyCodeLine{00786\ \ \ \ \ c2\ =\ 0;}
+\DoxyCodeLine{00787\ \ \ \ \ sqr\_add\_c2(a,\ 7,\ 4,\ c3,\ c1,\ c2);}
+\DoxyCodeLine{00788\ \ \ \ \ sqr\_add\_c2(a,\ 6,\ 5,\ c3,\ c1,\ c2);}
+\DoxyCodeLine{00789\ \ \ \ \ r[11]\ =\ c3;}
+\DoxyCodeLine{00790\ \ \ \ \ c3\ =\ 0;}
+\DoxyCodeLine{00791\ \ \ \ \ sqr\_add\_c(a,\ 6,\ c1,\ c2,\ c3);}
+\DoxyCodeLine{00792\ \ \ \ \ sqr\_add\_c2(a,\ 7,\ 5,\ c1,\ c2,\ c3);}
+\DoxyCodeLine{00793\ \ \ \ \ r[12]\ =\ c1;}
+\DoxyCodeLine{00794\ \ \ \ \ c1\ =\ 0;}
+\DoxyCodeLine{00795\ \ \ \ \ sqr\_add\_c2(a,\ 7,\ 6,\ c2,\ c3,\ c1);}
+\DoxyCodeLine{00796\ \ \ \ \ r[13]\ =\ c2;}
+\DoxyCodeLine{00797\ \ \ \ \ c2\ =\ 0;}
+\DoxyCodeLine{00798\ \ \ \ \ sqr\_add\_c(a,\ 7,\ c3,\ c1,\ c2);}
+\DoxyCodeLine{00799\ \ \ \ \ r[14]\ =\ c3;}
+\DoxyCodeLine{00800\ \ \ \ \ r[15]\ =\ c1;}
+\DoxyCodeLine{00801\ \}}
+\DoxyCodeLine{00802\ }
+\DoxyCodeLine{00803\ \textcolor{keywordtype}{void}\ bn\_sqr\_comba4(BN\_ULONG\ *r,\ \textcolor{keyword}{const}\ BN\_ULONG\ *a)}
+\DoxyCodeLine{00804\ \{}
+\DoxyCodeLine{00805\ \ \ \ \ BN\_ULONG\ c1,\ c2,\ c3;}
+\DoxyCodeLine{00806\ }
+\DoxyCodeLine{00807\ \ \ \ \ c1\ =\ 0;}
+\DoxyCodeLine{00808\ \ \ \ \ c2\ =\ 0;}
+\DoxyCodeLine{00809\ \ \ \ \ c3\ =\ 0;}
+\DoxyCodeLine{00810\ \ \ \ \ sqr\_add\_c(a,\ 0,\ c1,\ c2,\ c3);}
+\DoxyCodeLine{00811\ \ \ \ \ r[0]\ =\ c1;}
+\DoxyCodeLine{00812\ \ \ \ \ c1\ =\ 0;}
+\DoxyCodeLine{00813\ \ \ \ \ sqr\_add\_c2(a,\ 1,\ 0,\ c2,\ c3,\ c1);}
+\DoxyCodeLine{00814\ \ \ \ \ r[1]\ =\ c2;}
+\DoxyCodeLine{00815\ \ \ \ \ c2\ =\ 0;}
+\DoxyCodeLine{00816\ \ \ \ \ sqr\_add\_c(a,\ 1,\ c3,\ c1,\ c2);}
+\DoxyCodeLine{00817\ \ \ \ \ sqr\_add\_c2(a,\ 2,\ 0,\ c3,\ c1,\ c2);}
+\DoxyCodeLine{00818\ \ \ \ \ r[2]\ =\ c3;}
+\DoxyCodeLine{00819\ \ \ \ \ c3\ =\ 0;}
+\DoxyCodeLine{00820\ \ \ \ \ sqr\_add\_c2(a,\ 3,\ 0,\ c1,\ c2,\ c3);}
+\DoxyCodeLine{00821\ \ \ \ \ sqr\_add\_c2(a,\ 2,\ 1,\ c1,\ c2,\ c3);}
+\DoxyCodeLine{00822\ \ \ \ \ r[3]\ =\ c1;}
+\DoxyCodeLine{00823\ \ \ \ \ c1\ =\ 0;}
+\DoxyCodeLine{00824\ \ \ \ \ sqr\_add\_c(a,\ 2,\ c2,\ c3,\ c1);}
+\DoxyCodeLine{00825\ \ \ \ \ sqr\_add\_c2(a,\ 3,\ 1,\ c2,\ c3,\ c1);}
+\DoxyCodeLine{00826\ \ \ \ \ r[4]\ =\ c2;}
+\DoxyCodeLine{00827\ \ \ \ \ c2\ =\ 0;}
+\DoxyCodeLine{00828\ \ \ \ \ sqr\_add\_c2(a,\ 3,\ 2,\ c3,\ c1,\ c2);}
+\DoxyCodeLine{00829\ \ \ \ \ r[5]\ =\ c3;}
+\DoxyCodeLine{00830\ \ \ \ \ c3\ =\ 0;}
+\DoxyCodeLine{00831\ \ \ \ \ sqr\_add\_c(a,\ 3,\ c1,\ c2,\ c3);}
+\DoxyCodeLine{00832\ \ \ \ \ r[6]\ =\ c1;}
+\DoxyCodeLine{00833\ \ \ \ \ r[7]\ =\ c2;}
+\DoxyCodeLine{00834\ \}}
+\DoxyCodeLine{00835\ }
+\DoxyCodeLine{00836\ \textcolor{preprocessor}{\#\ ifdef\ OPENSSL\_NO\_ASM}}
+\DoxyCodeLine{00837\ \textcolor{preprocessor}{\#\ \ ifdef\ OPENSSL\_BN\_ASM\_MONT}}
+\DoxyCodeLine{00838\ \textcolor{preprocessor}{\#\ \ \ include\ <alloca.h>}}
+\DoxyCodeLine{00839\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00840\ \textcolor{comment}{\ *\ This\ is\ essentially\ reference\ implementation,\ which\ may\ or\ may\ not}}
+\DoxyCodeLine{00841\ \textcolor{comment}{\ *\ result\ in\ performance\ improvement.\ E.g.\ on\ IA-\/32\ this\ routine\ was}}
+\DoxyCodeLine{00842\ \textcolor{comment}{\ *\ observed\ to\ give\ 40\%\ faster\ rsa1024\ private\ key\ operations\ and\ 10\%}}
+\DoxyCodeLine{00843\ \textcolor{comment}{\ *\ faster\ rsa4096\ ones,\ while\ on\ AMD64\ it\ improves\ rsa1024\ sign\ only}}
+\DoxyCodeLine{00844\ \textcolor{comment}{\ *\ by\ 10\%\ and\ *worsens*\ rsa4096\ sign\ by\ 15\%.\ Once\ again,\ it's\ a}}
+\DoxyCodeLine{00845\ \textcolor{comment}{\ *\ reference\ implementation,\ one\ to\ be\ used\ as\ starting\ point\ for}}
+\DoxyCodeLine{00846\ \textcolor{comment}{\ *\ platform-\/specific\ assembler.\ Mentioned\ numbers\ apply\ to\ compiler}}
+\DoxyCodeLine{00847\ \textcolor{comment}{\ *\ generated\ code\ compiled\ with\ and\ without\ -\/DOPENSSL\_BN\_ASM\_MONT\ and}}
+\DoxyCodeLine{00848\ \textcolor{comment}{\ *\ can\ vary\ not\ only\ from\ platform\ to\ platform,\ but\ even\ for\ compiler}}
+\DoxyCodeLine{00849\ \textcolor{comment}{\ *\ versions.\ Assembler\ vs.\ assembler\ improvement\ coefficients\ can}}
+\DoxyCodeLine{00850\ \textcolor{comment}{\ *\ [and\ are\ known\ to]\ differ\ and\ are\ to\ be\ documented\ elsewhere.}}
+\DoxyCodeLine{00851\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00852\ \textcolor{keywordtype}{int}\ bn\_mul\_mont(BN\_ULONG\ *rp,\ \textcolor{keyword}{const}\ BN\_ULONG\ *ap,\ \textcolor{keyword}{const}\ BN\_ULONG\ *bp,}
+\DoxyCodeLine{00853\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BN\_ULONG\ *np,\ \textcolor{keyword}{const}\ BN\_ULONG\ *n0p,\ \textcolor{keywordtype}{int}\ num)}
+\DoxyCodeLine{00854\ \{}
+\DoxyCodeLine{00855\ \ \ \ \ BN\_ULONG\ c0,\ c1,\ ml,\ *tp,\ n0;}
+\DoxyCodeLine{00856\ \textcolor{preprocessor}{\#\ \ \ ifdef\ mul64}}
+\DoxyCodeLine{00857\ \ \ \ \ BN\_ULONG\ mh;}
+\DoxyCodeLine{00858\ \textcolor{preprocessor}{\#\ \ \ endif}}
+\DoxyCodeLine{00859\ \ \ \ \ \textcolor{keyword}{volatile}\ BN\_ULONG\ *vp;}
+\DoxyCodeLine{00860\ \ \ \ \ \textcolor{keywordtype}{int}\ i\ =\ 0,\ j;}
+\DoxyCodeLine{00861\ }
+\DoxyCodeLine{00862\ \textcolor{preprocessor}{\#\ \ \ if\ 0\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{/*\ template\ for\ platform-\/specific}}
+\DoxyCodeLine{00863\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *\ implementation\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00864\ \ \ \ \ \textcolor{keywordflow}{if}\ (ap\ ==\ bp)}
+\DoxyCodeLine{00865\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ bn\_sqr\_mont(rp,\ ap,\ np,\ n0p,\ num);}
+\DoxyCodeLine{00866\ \textcolor{preprocessor}{\#\ \ \ endif}}
+\DoxyCodeLine{00867\ \ \ \ \ vp\ =\ tp\ =\ alloca((num\ +\ 2)\ *\ \textcolor{keyword}{sizeof}(BN\_ULONG));}
+\DoxyCodeLine{00868\ }
+\DoxyCodeLine{00869\ \ \ \ \ n0\ =\ *n0p;}
+\DoxyCodeLine{00870\ }
+\DoxyCodeLine{00871\ \ \ \ \ c0\ =\ 0;}
+\DoxyCodeLine{00872\ \ \ \ \ ml\ =\ bp[0];}
+\DoxyCodeLine{00873\ \textcolor{preprocessor}{\#\ \ \ ifdef\ mul64}}
+\DoxyCodeLine{00874\ \ \ \ \ mh\ =\ HBITS(ml);}
+\DoxyCodeLine{00875\ \ \ \ \ ml\ =\ LBITS(ml);}
+\DoxyCodeLine{00876\ \ \ \ \ \textcolor{keywordflow}{for}\ (j\ =\ 0;\ j\ <\ num;\ ++j)}
+\DoxyCodeLine{00877\ \ \ \ \ \ \ \ \ mul(tp[j],\ ap[j],\ ml,\ mh,\ c0);}
+\DoxyCodeLine{00878\ \textcolor{preprocessor}{\#\ \ \ else}}
+\DoxyCodeLine{00879\ \ \ \ \ \textcolor{keywordflow}{for}\ (j\ =\ 0;\ j\ <\ num;\ ++j)}
+\DoxyCodeLine{00880\ \ \ \ \ \ \ \ \ mul(tp[j],\ ap[j],\ ml,\ c0);}
+\DoxyCodeLine{00881\ \textcolor{preprocessor}{\#\ \ \ endif}}
+\DoxyCodeLine{00882\ }
+\DoxyCodeLine{00883\ \ \ \ \ tp[num]\ =\ c0;}
+\DoxyCodeLine{00884\ \ \ \ \ tp[num\ +\ 1]\ =\ 0;}
+\DoxyCodeLine{00885\ \ \ \ \ \textcolor{keywordflow}{goto}\ enter;}
+\DoxyCodeLine{00886\ }
+\DoxyCodeLine{00887\ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ num;\ i++)\ \{}
+\DoxyCodeLine{00888\ \ \ \ \ \ \ \ \ c0\ =\ 0;}
+\DoxyCodeLine{00889\ \ \ \ \ \ \ \ \ ml\ =\ bp[i];}
+\DoxyCodeLine{00890\ \textcolor{preprocessor}{\#\ \ \ ifdef\ mul64}}
+\DoxyCodeLine{00891\ \ \ \ \ \ \ \ \ mh\ =\ HBITS(ml);}
+\DoxyCodeLine{00892\ \ \ \ \ \ \ \ \ ml\ =\ LBITS(ml);}
+\DoxyCodeLine{00893\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (j\ =\ 0;\ j\ <\ num;\ ++j)}
+\DoxyCodeLine{00894\ \ \ \ \ \ \ \ \ \ \ \ \ mul\_add(tp[j],\ ap[j],\ ml,\ mh,\ c0);}
+\DoxyCodeLine{00895\ \textcolor{preprocessor}{\#\ \ \ else}}
+\DoxyCodeLine{00896\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (j\ =\ 0;\ j\ <\ num;\ ++j)}
+\DoxyCodeLine{00897\ \ \ \ \ \ \ \ \ \ \ \ \ mul\_add(tp[j],\ ap[j],\ ml,\ c0);}
+\DoxyCodeLine{00898\ \textcolor{preprocessor}{\#\ \ \ endif}}
+\DoxyCodeLine{00899\ \ \ \ \ \ \ \ \ c1\ =\ (tp[num]\ +\ c0)\ \&\ BN\_MASK2;}
+\DoxyCodeLine{00900\ \ \ \ \ \ \ \ \ tp[num]\ =\ c1;}
+\DoxyCodeLine{00901\ \ \ \ \ \ \ \ \ tp[num\ +\ 1]\ =\ (c1\ <\ c0\ ?\ 1\ :\ 0);}
+\DoxyCodeLine{00902\ \ enter:}
+\DoxyCodeLine{00903\ \ \ \ \ \ \ \ \ c1\ =\ tp[0];}
+\DoxyCodeLine{00904\ \ \ \ \ \ \ \ \ ml\ =\ (c1\ *\ n0)\ \&\ BN\_MASK2;}
+\DoxyCodeLine{00905\ \ \ \ \ \ \ \ \ c0\ =\ 0;}
+\DoxyCodeLine{00906\ \textcolor{preprocessor}{\#\ \ \ ifdef\ mul64}}
+\DoxyCodeLine{00907\ \ \ \ \ \ \ \ \ mh\ =\ HBITS(ml);}
+\DoxyCodeLine{00908\ \ \ \ \ \ \ \ \ ml\ =\ LBITS(ml);}
+\DoxyCodeLine{00909\ \ \ \ \ \ \ \ \ mul\_add(c1,\ np[0],\ ml,\ mh,\ c0);}
+\DoxyCodeLine{00910\ \textcolor{preprocessor}{\#\ \ \ else}}
+\DoxyCodeLine{00911\ \ \ \ \ \ \ \ \ mul\_add(c1,\ ml,\ np[0],\ c0);}
+\DoxyCodeLine{00912\ \textcolor{preprocessor}{\#\ \ \ endif}}
+\DoxyCodeLine{00913\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (j\ =\ 1;\ j\ <\ num;\ j++)\ \{}
+\DoxyCodeLine{00914\ \ \ \ \ \ \ \ \ \ \ \ \ c1\ =\ tp[j];}
+\DoxyCodeLine{00915\ \textcolor{preprocessor}{\#\ \ \ ifdef\ mul64}}
+\DoxyCodeLine{00916\ \ \ \ \ \ \ \ \ \ \ \ \ mul\_add(c1,\ np[j],\ ml,\ mh,\ c0);}
+\DoxyCodeLine{00917\ \textcolor{preprocessor}{\#\ \ \ else}}
+\DoxyCodeLine{00918\ \ \ \ \ \ \ \ \ \ \ \ \ mul\_add(c1,\ ml,\ np[j],\ c0);}
+\DoxyCodeLine{00919\ \textcolor{preprocessor}{\#\ \ \ endif}}
+\DoxyCodeLine{00920\ \ \ \ \ \ \ \ \ \ \ \ \ tp[j\ -\/\ 1]\ =\ c1\ \&\ BN\_MASK2;}
+\DoxyCodeLine{00921\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00922\ \ \ \ \ \ \ \ \ c1\ =\ (tp[num]\ +\ c0)\ \&\ BN\_MASK2;}
+\DoxyCodeLine{00923\ \ \ \ \ \ \ \ \ tp[num\ -\/\ 1]\ =\ c1;}
+\DoxyCodeLine{00924\ \ \ \ \ \ \ \ \ tp[num]\ =\ tp[num\ +\ 1]\ +\ (c1\ <\ c0\ ?\ 1\ :\ 0);}
+\DoxyCodeLine{00925\ \ \ \ \ \}}
+\DoxyCodeLine{00926\ }
+\DoxyCodeLine{00927\ \ \ \ \ \textcolor{keywordflow}{if}\ (tp[num]\ !=\ 0\ ||\ tp[num\ -\/\ 1]\ >=\ np[num\ -\/\ 1])\ \{}
+\DoxyCodeLine{00928\ \ \ \ \ \ \ \ \ c0\ =\ bn\_sub\_words(rp,\ tp,\ np,\ num);}
+\DoxyCodeLine{00929\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (tp[num]\ !=\ 0\ ||\ c0\ ==\ 0)\ \{}
+\DoxyCodeLine{00930\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ num\ +\ 2;\ i++)}
+\DoxyCodeLine{00931\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ vp[i]\ =\ 0;}
+\DoxyCodeLine{00932\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00933\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00934\ \ \ \ \ \}}
+\DoxyCodeLine{00935\ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ num;\ i++)}
+\DoxyCodeLine{00936\ \ \ \ \ \ \ \ \ rp[i]\ =\ tp[i],\ vp[i]\ =\ 0;}
+\DoxyCodeLine{00937\ \ \ \ \ vp[num]\ =\ 0;}
+\DoxyCodeLine{00938\ \ \ \ \ vp[num\ +\ 1]\ =\ 0;}
+\DoxyCodeLine{00939\ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00940\ \}}
+\DoxyCodeLine{00941\ \textcolor{preprocessor}{\#\ \ else}}
+\DoxyCodeLine{00942\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00943\ \textcolor{comment}{\ *\ Return\ value\ of\ 0\ indicates\ that\ multiplication/convolution\ was\ not}}
+\DoxyCodeLine{00944\ \textcolor{comment}{\ *\ performed\ to\ signal\ the\ caller\ to\ fall\ down\ to\ alternative/original}}
+\DoxyCodeLine{00945\ \textcolor{comment}{\ *\ code-\/path.}}
+\DoxyCodeLine{00946\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00947\ \textcolor{keywordtype}{int}\ bn\_mul\_mont(BN\_ULONG\ *rp,\ \textcolor{keyword}{const}\ BN\_ULONG\ *ap,\ \textcolor{keyword}{const}\ BN\_ULONG\ *bp,}
+\DoxyCodeLine{00948\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BN\_ULONG\ *np,\ \textcolor{keyword}{const}\ BN\_ULONG\ *n0,\ \textcolor{keywordtype}{int}\ num)}
+\DoxyCodeLine{00949\ \{}
+\DoxyCodeLine{00950\ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00951\ \}}
+\DoxyCodeLine{00952\ \textcolor{preprocessor}{\#\ \ endif\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{/*\ OPENSSL\_BN\_ASM\_MONT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00953\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00954\ }
+\DoxyCodeLine{00955\ \textcolor{preprocessor}{\#else\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{/*\ !BN\_MUL\_COMBA\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00956\ }
+\DoxyCodeLine{00957\ \textcolor{comment}{/*\ hmm...\ is\ it\ faster\ just\ to\ do\ a\ multiply?\ */}}
+\DoxyCodeLine{00958\ \textcolor{keywordtype}{void}\ bn\_sqr\_comba4(BN\_ULONG\ *r,\ \textcolor{keyword}{const}\ BN\_ULONG\ *a)}
+\DoxyCodeLine{00959\ \{}
+\DoxyCodeLine{00960\ \ \ \ \ BN\_ULONG\ t[8];}
+\DoxyCodeLine{00961\ \ \ \ \ bn\_sqr\_normal(r,\ a,\ 4,\ t);}
+\DoxyCodeLine{00962\ \}}
+\DoxyCodeLine{00963\ }
+\DoxyCodeLine{00964\ \textcolor{keywordtype}{void}\ bn\_sqr\_comba8(BN\_ULONG\ *r,\ \textcolor{keyword}{const}\ BN\_ULONG\ *a)}
+\DoxyCodeLine{00965\ \{}
+\DoxyCodeLine{00966\ \ \ \ \ BN\_ULONG\ t[16];}
+\DoxyCodeLine{00967\ \ \ \ \ bn\_sqr\_normal(r,\ a,\ 8,\ t);}
+\DoxyCodeLine{00968\ \}}
+\DoxyCodeLine{00969\ }
+\DoxyCodeLine{00970\ \textcolor{keywordtype}{void}\ bn\_mul\_comba4(BN\_ULONG\ *r,\ BN\_ULONG\ *a,\ BN\_ULONG\ *\mbox{\hyperlink{structb}{b}})}
+\DoxyCodeLine{00971\ \{}
+\DoxyCodeLine{00972\ \ \ \ \ r[4]\ =\ bn\_mul\_words(\&(r[0]),\ a,\ 4,\ \mbox{\hyperlink{structb}{b}}[0]);}
+\DoxyCodeLine{00973\ \ \ \ \ r[5]\ =\ bn\_mul\_add\_words(\&(r[1]),\ a,\ 4,\ \mbox{\hyperlink{structb}{b}}[1]);}
+\DoxyCodeLine{00974\ \ \ \ \ r[6]\ =\ bn\_mul\_add\_words(\&(r[2]),\ a,\ 4,\ \mbox{\hyperlink{structb}{b}}[2]);}
+\DoxyCodeLine{00975\ \ \ \ \ r[7]\ =\ bn\_mul\_add\_words(\&(r[3]),\ a,\ 4,\ \mbox{\hyperlink{structb}{b}}[3]);}
+\DoxyCodeLine{00976\ \}}
+\DoxyCodeLine{00977\ }
+\DoxyCodeLine{00978\ \textcolor{keywordtype}{void}\ bn\_mul\_comba8(BN\_ULONG\ *r,\ BN\_ULONG\ *a,\ BN\_ULONG\ *\mbox{\hyperlink{structb}{b}})}
+\DoxyCodeLine{00979\ \{}
+\DoxyCodeLine{00980\ \ \ \ \ r[8]\ =\ bn\_mul\_words(\&(r[0]),\ a,\ 8,\ \mbox{\hyperlink{structb}{b}}[0]);}
+\DoxyCodeLine{00981\ \ \ \ \ r[9]\ =\ bn\_mul\_add\_words(\&(r[1]),\ a,\ 8,\ \mbox{\hyperlink{structb}{b}}[1]);}
+\DoxyCodeLine{00982\ \ \ \ \ r[10]\ =\ bn\_mul\_add\_words(\&(r[2]),\ a,\ 8,\ \mbox{\hyperlink{structb}{b}}[2]);}
+\DoxyCodeLine{00983\ \ \ \ \ r[11]\ =\ bn\_mul\_add\_words(\&(r[3]),\ a,\ 8,\ \mbox{\hyperlink{structb}{b}}[3]);}
+\DoxyCodeLine{00984\ \ \ \ \ r[12]\ =\ bn\_mul\_add\_words(\&(r[4]),\ a,\ 8,\ \mbox{\hyperlink{structb}{b}}[4]);}
+\DoxyCodeLine{00985\ \ \ \ \ r[13]\ =\ bn\_mul\_add\_words(\&(r[5]),\ a,\ 8,\ \mbox{\hyperlink{structb}{b}}[5]);}
+\DoxyCodeLine{00986\ \ \ \ \ r[14]\ =\ bn\_mul\_add\_words(\&(r[6]),\ a,\ 8,\ \mbox{\hyperlink{structb}{b}}[6]);}
+\DoxyCodeLine{00987\ \ \ \ \ r[15]\ =\ bn\_mul\_add\_words(\&(r[7]),\ a,\ 8,\ \mbox{\hyperlink{structb}{b}}[7]);}
+\DoxyCodeLine{00988\ \}}
+\DoxyCodeLine{00989\ }
+\DoxyCodeLine{00990\ \textcolor{preprocessor}{\#\ ifdef\ OPENSSL\_NO\_ASM}}
+\DoxyCodeLine{00991\ \textcolor{preprocessor}{\#\ \ ifdef\ OPENSSL\_BN\_ASM\_MONT}}
+\DoxyCodeLine{00992\ \textcolor{preprocessor}{\#\ \ \ include\ <alloca.h>}}
+\DoxyCodeLine{00993\ \textcolor{keywordtype}{int}\ bn\_mul\_mont(BN\_ULONG\ *rp,\ \textcolor{keyword}{const}\ BN\_ULONG\ *ap,\ \textcolor{keyword}{const}\ BN\_ULONG\ *bp,}
+\DoxyCodeLine{00994\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BN\_ULONG\ *np,\ \textcolor{keyword}{const}\ BN\_ULONG\ *n0p,\ \textcolor{keywordtype}{int}\ num)}
+\DoxyCodeLine{00995\ \{}
+\DoxyCodeLine{00996\ \ \ \ \ BN\_ULONG\ c0,\ c1,\ *tp,\ n0\ =\ *n0p;}
+\DoxyCodeLine{00997\ \ \ \ \ \textcolor{keyword}{volatile}\ BN\_ULONG\ *vp;}
+\DoxyCodeLine{00998\ \ \ \ \ \textcolor{keywordtype}{int}\ i\ =\ 0,\ j;}
+\DoxyCodeLine{00999\ }
+\DoxyCodeLine{01000\ \ \ \ \ vp\ =\ tp\ =\ alloca((num\ +\ 2)\ *\ \textcolor{keyword}{sizeof}(BN\_ULONG));}
+\DoxyCodeLine{01001\ }
+\DoxyCodeLine{01002\ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <=\ num;\ i++)}
+\DoxyCodeLine{01003\ \ \ \ \ \ \ \ \ tp[i]\ =\ 0;}
+\DoxyCodeLine{01004\ }
+\DoxyCodeLine{01005\ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ num;\ i++)\ \{}
+\DoxyCodeLine{01006\ \ \ \ \ \ \ \ \ c0\ =\ bn\_mul\_add\_words(tp,\ ap,\ num,\ bp[i]);}
+\DoxyCodeLine{01007\ \ \ \ \ \ \ \ \ c1\ =\ (tp[num]\ +\ c0)\ \&\ BN\_MASK2;}
+\DoxyCodeLine{01008\ \ \ \ \ \ \ \ \ tp[num]\ =\ c1;}
+\DoxyCodeLine{01009\ \ \ \ \ \ \ \ \ tp[num\ +\ 1]\ =\ (c1\ <\ c0\ ?\ 1\ :\ 0);}
+\DoxyCodeLine{01010\ }
+\DoxyCodeLine{01011\ \ \ \ \ \ \ \ \ c0\ =\ bn\_mul\_add\_words(tp,\ np,\ num,\ tp[0]\ *\ n0);}
+\DoxyCodeLine{01012\ \ \ \ \ \ \ \ \ c1\ =\ (tp[num]\ +\ c0)\ \&\ BN\_MASK2;}
+\DoxyCodeLine{01013\ \ \ \ \ \ \ \ \ tp[num]\ =\ c1;}
+\DoxyCodeLine{01014\ \ \ \ \ \ \ \ \ tp[num\ +\ 1]\ +=\ (c1\ <\ c0\ ?\ 1\ :\ 0);}
+\DoxyCodeLine{01015\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (j\ =\ 0;\ j\ <=\ num;\ j++)}
+\DoxyCodeLine{01016\ \ \ \ \ \ \ \ \ \ \ \ \ tp[j]\ =\ tp[j\ +\ 1];}
+\DoxyCodeLine{01017\ \ \ \ \ \}}
+\DoxyCodeLine{01018\ }
+\DoxyCodeLine{01019\ \ \ \ \ \textcolor{keywordflow}{if}\ (tp[num]\ !=\ 0\ ||\ tp[num\ -\/\ 1]\ >=\ np[num\ -\/\ 1])\ \{}
+\DoxyCodeLine{01020\ \ \ \ \ \ \ \ \ c0\ =\ bn\_sub\_words(rp,\ tp,\ np,\ num);}
+\DoxyCodeLine{01021\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (tp[num]\ !=\ 0\ ||\ c0\ ==\ 0)\ \{}
+\DoxyCodeLine{01022\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ num\ +\ 2;\ i++)}
+\DoxyCodeLine{01023\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ vp[i]\ =\ 0;}
+\DoxyCodeLine{01024\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{01025\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01026\ \ \ \ \ \}}
+\DoxyCodeLine{01027\ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ num;\ i++)}
+\DoxyCodeLine{01028\ \ \ \ \ \ \ \ \ rp[i]\ =\ tp[i],\ vp[i]\ =\ 0;}
+\DoxyCodeLine{01029\ \ \ \ \ vp[num]\ =\ 0;}
+\DoxyCodeLine{01030\ \ \ \ \ vp[num\ +\ 1]\ =\ 0;}
+\DoxyCodeLine{01031\ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{01032\ \}}
+\DoxyCodeLine{01033\ \textcolor{preprocessor}{\#\ \ else}}
+\DoxyCodeLine{01034\ \textcolor{keywordtype}{int}\ bn\_mul\_mont(BN\_ULONG\ *rp,\ \textcolor{keyword}{const}\ BN\_ULONG\ *ap,\ \textcolor{keyword}{const}\ BN\_ULONG\ *bp,}
+\DoxyCodeLine{01035\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BN\_ULONG\ *np,\ \textcolor{keyword}{const}\ BN\_ULONG\ *n0,\ \textcolor{keywordtype}{int}\ num)}
+\DoxyCodeLine{01036\ \{}
+\DoxyCodeLine{01037\ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{01038\ \}}
+\DoxyCodeLine{01039\ \textcolor{preprocessor}{\#\ \ endif\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{/*\ OPENSSL\_BN\_ASM\_MONT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{01040\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{01041\ }
+\DoxyCodeLine{01042\ \textcolor{preprocessor}{\#endif\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{/*\ !BN\_MUL\_COMBA\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

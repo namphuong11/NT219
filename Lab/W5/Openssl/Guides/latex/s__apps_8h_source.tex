@@ -1,0 +1,120 @@
+\doxysection{s\+\_\+apps.\+h}
+\hypertarget{s__apps_8h_source}{}\label{s__apps_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/apps/include/s\_apps.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/apps/include/s\_apps.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 1995-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <openssl/opensslconf.h>}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ <openssl/ssl.h>}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ <openssl/srp.h>}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#define\ PORT\ \ \ \ \ \ \ \ \ \ \ \ "{}4433"{}}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#define\ PROTOCOL\ \ \ \ \ \ \ \ "{}tcp"{}}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#define\ SSL\_VERSION\_ALLOWS\_RENEGOTIATION(s)\ \(\backslash\)}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\ \ \ \ (SSL\_is\_dtls(s)\ ||\ (SSL\_version(s)\ <\ TLS1\_3\_VERSION))}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{keyword}{typedef}\ int\ (*do\_server\_cb)(\textcolor{keywordtype}{int}\ s,\ \textcolor{keywordtype}{int}\ stype,\ \textcolor{keywordtype}{int}\ prot,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *context);}
+\DoxyCodeLine{00022\ \textcolor{keywordtype}{void}\ get\_sock\_info\_address(\textcolor{keywordtype}{int}\ asock,\ \textcolor{keywordtype}{char}\ **hostname,\ \textcolor{keywordtype}{char}\ **service);}
+\DoxyCodeLine{00023\ \textcolor{keywordtype}{int}\ report\_server\_accept(BIO\ *out,\ \textcolor{keywordtype}{int}\ asock,\ \textcolor{keywordtype}{int}\ with\_address,\ \textcolor{keywordtype}{int}\ with\_pid);}
+\DoxyCodeLine{00024\ \textcolor{keywordtype}{int}\ do\_server(\textcolor{keywordtype}{int}\ *accept\_sock,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *host,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *port,}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ family,\ \textcolor{keywordtype}{int}\ type,\ \textcolor{keywordtype}{int}\ protocol,\ do\_server\_cb\ cb,}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *context,\ \textcolor{keywordtype}{int}\ naccept,\ BIO\ *bio\_s\_out,}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ tfo);}
+\DoxyCodeLine{00028\ \textcolor{keywordtype}{int}\ verify\_callback(\textcolor{keywordtype}{int}\ ok,\ X509\_STORE\_CTX\ *ctx);}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \textcolor{keywordtype}{int}\ set\_cert\_stuff(SSL\_CTX\ *ctx,\ \textcolor{keywordtype}{char}\ *cert\_file,\ \textcolor{keywordtype}{char}\ *key\_file);}
+\DoxyCodeLine{00031\ \textcolor{keywordtype}{int}\ set\_cert\_key\_stuff(SSL\_CTX\ *ctx,\ X509\ *cert,\ EVP\_PKEY\ *key,}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ STACK\_OF(X509)\ *chain,\ \textcolor{keywordtype}{int}\ build\_chain);}
+\DoxyCodeLine{00033\ \textcolor{keywordtype}{int}\ ssl\_print\_sigalgs(BIO\ *out,\ SSL\ *s);}
+\DoxyCodeLine{00034\ \textcolor{keywordtype}{int}\ ssl\_print\_point\_formats(BIO\ *out,\ SSL\ *s);}
+\DoxyCodeLine{00035\ \textcolor{keywordtype}{int}\ ssl\_print\_groups(BIO\ *out,\ SSL\ *s,\ \textcolor{keywordtype}{int}\ noshared);}
+\DoxyCodeLine{00036\ \textcolor{keywordtype}{int}\ ssl\_print\_tmp\_key(BIO\ *out,\ SSL\ *s);}
+\DoxyCodeLine{00037\ \textcolor{keywordtype}{int}\ init\_client(\textcolor{keywordtype}{int}\ *sock,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *host,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *port,}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *bindhost,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *bindport,}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ family,\ \textcolor{keywordtype}{int}\ type,\ \textcolor{keywordtype}{int}\ protocol,\ \textcolor{keywordtype}{int}\ tfo,\ \textcolor{keywordtype}{int}\ doconn,}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BIO\_ADDR\ **ba\_ret);}
+\DoxyCodeLine{00041\ \textcolor{keywordtype}{int}\ should\_retry(\textcolor{keywordtype}{int}\ i);}
+\DoxyCodeLine{00042\ \textcolor{keywordtype}{void}\ do\_ssl\_shutdown(SSL\ *ssl);}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ \textcolor{keywordtype}{long}\ bio\_dump\_callback(BIO\ *bio,\ \textcolor{keywordtype}{int}\ cmd,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *argp,\ \textcolor{keywordtype}{size\_t}\ len,}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ argi,\ \textcolor{keywordtype}{long}\ argl,\ \textcolor{keywordtype}{int}\ ret,\ \textcolor{keywordtype}{size\_t}\ *processed);}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \textcolor{keywordtype}{void}\ apps\_ssl\_info\_callback(\textcolor{keyword}{const}\ SSL\ *s,\ \textcolor{keywordtype}{int}\ where,\ \textcolor{keywordtype}{int}\ ret);}
+\DoxyCodeLine{00048\ \textcolor{keywordtype}{void}\ msg\_cb(\textcolor{keywordtype}{int}\ write\_p,\ \textcolor{keywordtype}{int}\ version,\ \textcolor{keywordtype}{int}\ content\_type,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *buf,}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ len,\ SSL\ *ssl,\ \textcolor{keywordtype}{void}\ *arg);}
+\DoxyCodeLine{00050\ \textcolor{keywordtype}{void}\ tlsext\_cb(SSL\ *s,\ \textcolor{keywordtype}{int}\ client\_server,\ \textcolor{keywordtype}{int}\ type,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *data,}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ len,\ \textcolor{keywordtype}{void}\ *arg);}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \textcolor{keywordtype}{int}\ generate\_cookie\_callback(SSL\ *ssl,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *cookie,}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ *cookie\_len);}
+\DoxyCodeLine{00055\ \textcolor{keywordtype}{int}\ verify\_cookie\_callback(SSL\ *ssl,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *cookie,}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ cookie\_len);}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \textcolor{preprocessor}{\#ifdef\ \_\_VMS\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{/*\ 31\ char\ symbol\ name\ limit\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00059\ \textcolor{preprocessor}{\#\ define\ generate\_stateless\_cookie\_callback\ \ \ \ \ \ generate\_stateless\_cookie\_cb}}
+\DoxyCodeLine{00060\ \textcolor{preprocessor}{\#\ define\ verify\_stateless\_cookie\_callback\ \ \ \ \ \ \ \ verify\_stateless\_cookie\_cb}}
+\DoxyCodeLine{00061\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00063\ \textcolor{keywordtype}{int}\ generate\_stateless\_cookie\_callback(SSL\ *ssl,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *cookie,}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ *cookie\_len);}
+\DoxyCodeLine{00065\ \textcolor{keywordtype}{int}\ verify\_stateless\_cookie\_callback(SSL\ *ssl,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *cookie,}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ cookie\_len);}
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00068\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structssl__excert__st}{ssl\_excert\_st}}\ \mbox{\hyperlink{structssl__excert__st}{SSL\_EXCERT}};}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ \textcolor{keywordtype}{void}\ ssl\_ctx\_set\_excert(SSL\_CTX\ *ctx,\ \mbox{\hyperlink{structssl__excert__st}{SSL\_EXCERT}}\ *exc);}
+\DoxyCodeLine{00071\ \textcolor{keywordtype}{void}\ ssl\_excert\_free(\mbox{\hyperlink{structssl__excert__st}{SSL\_EXCERT}}\ *exc);}
+\DoxyCodeLine{00072\ \textcolor{keywordtype}{int}\ args\_excert(\textcolor{keywordtype}{int}\ option,\ \mbox{\hyperlink{structssl__excert__st}{SSL\_EXCERT}}\ **pexc);}
+\DoxyCodeLine{00073\ \textcolor{keywordtype}{int}\ load\_excert(\mbox{\hyperlink{structssl__excert__st}{SSL\_EXCERT}}\ **pexc);}
+\DoxyCodeLine{00074\ \textcolor{keywordtype}{void}\ print\_verify\_detail(SSL\ *s,\ BIO\ *bio);}
+\DoxyCodeLine{00075\ \textcolor{keywordtype}{void}\ print\_ssl\_summary(SSL\ *s);}
+\DoxyCodeLine{00076\ \textcolor{keywordtype}{int}\ config\_ctx(SSL\_CONF\_CTX\ *cctx,\ STACK\_OF(OPENSSL\_STRING)\ *str,\ SSL\_CTX\ *ctx);}
+\DoxyCodeLine{00077\ \textcolor{keywordtype}{int}\ ssl\_ctx\_add\_crls(SSL\_CTX\ *ctx,\ STACK\_OF(X509\_CRL)\ *crls,}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ crl\_download);}
+\DoxyCodeLine{00079\ \textcolor{keywordtype}{int}\ ssl\_load\_stores(SSL\_CTX\ *ctx,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *vfyCApath,}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *vfyCAfile,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *vfyCAstore,}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *chCApath,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *chCAfile,}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *chCAstore,\ STACK\_OF(X509\_CRL)\ *crls,}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ crl\_download);}
+\DoxyCodeLine{00084\ \textcolor{keywordtype}{void}\ ssl\_ctx\_security\_debug(SSL\_CTX\ *ctx,\ \textcolor{keywordtype}{int}\ verbose);}
+\DoxyCodeLine{00085\ \textcolor{keywordtype}{int}\ set\_keylog\_file(SSL\_CTX\ *ctx,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *keylog\_file);}
+\DoxyCodeLine{00086\ \textcolor{keywordtype}{void}\ print\_ca\_names(BIO\ *bio,\ SSL\ *s);}
+\DoxyCodeLine{00087\ \textcolor{keywordtype}{void}\ ssl\_print\_secure\_renegotiation\_notes(BIO\ *bio,\ SSL\ *s);}
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00089\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_SRP}}
+\DoxyCodeLine{00090\ \textcolor{comment}{/*\ The\ client\ side\ SRP\ context\ that\ we\ pass\ to\ all\ SRP\ related\ callbacks\ */}}
+\DoxyCodeLine{00091\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structsrp__arg__st}{srp\_arg\_st}}\ \{}
+\DoxyCodeLine{00092\ \ \ \ \ \textcolor{keywordtype}{char}\ *srppassin;}
+\DoxyCodeLine{00093\ \ \ \ \ \textcolor{keywordtype}{char}\ *srplogin;}
+\DoxyCodeLine{00094\ \ \ \ \ \textcolor{keywordtype}{int}\ msg;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ copy\ from\ c\_msg\ */}}
+\DoxyCodeLine{00095\ \ \ \ \ \textcolor{keywordtype}{int}\ debug;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ copy\ from\ c\_debug\ */}}
+\DoxyCodeLine{00096\ \ \ \ \ \textcolor{keywordtype}{int}\ amp;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ allow\ more\ groups\ */}}
+\DoxyCodeLine{00097\ \ \ \ \ \textcolor{keywordtype}{int}\ strength;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ minimal\ size\ for\ N\ */}}
+\DoxyCodeLine{00098\ \}\ \mbox{\hyperlink{structsrp__arg__st}{SRP\_ARG}};}
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00100\ \textcolor{keywordtype}{int}\ set\_up\_srp\_arg(SSL\_CTX\ *ctx,\ \mbox{\hyperlink{structsrp__arg__st}{SRP\_ARG}}\ *srp\_arg,\ \textcolor{keywordtype}{int}\ srp\_lateuser,\ \textcolor{keywordtype}{int}\ c\_msg,}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ c\_debug);}
+\DoxyCodeLine{00102\ \textcolor{keywordtype}{void}\ set\_up\_dummy\_srp(SSL\_CTX\ *ctx);}
+\DoxyCodeLine{00103\ }
+\DoxyCodeLine{00104\ \textcolor{comment}{/*\ The\ server\ side\ SRP\ context\ that\ we\ pass\ to\ all\ SRP\ related\ callbacks\ */}}
+\DoxyCodeLine{00105\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structsrpsrvparm__st}{srpsrvparm\_st}}\ \{}
+\DoxyCodeLine{00106\ \ \ \ \ \textcolor{keywordtype}{char}\ *login;}
+\DoxyCodeLine{00107\ \ \ \ \ SRP\_VBASE\ *vb;}
+\DoxyCodeLine{00108\ \ \ \ \ SRP\_user\_pwd\ *user;}
+\DoxyCodeLine{00109\ \}\ \mbox{\hyperlink{structsrpsrvparm__st}{srpsrvparm}};}
+\DoxyCodeLine{00110\ }
+\DoxyCodeLine{00111\ \textcolor{keywordtype}{int}\ set\_up\_srp\_verifier\_file(SSL\_CTX\ *ctx,\ \mbox{\hyperlink{structsrpsrvparm__st}{srpsrvparm}}\ *srp\_callback\_parm,}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{char}\ *srpuserseed,\ \textcolor{keywordtype}{char}\ *srp\_verifier\_file);}
+\DoxyCodeLine{00113\ \textcolor{keywordtype}{void}\ lookup\_srp\_user(\mbox{\hyperlink{structsrpsrvparm__st}{srpsrvparm}}\ *srp\_callback\_parm,\ BIO\ *bio\_s\_out);}
+\DoxyCodeLine{00114\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ OPENSSL\_NO\_SRP\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

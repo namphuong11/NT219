@@ -1,0 +1,46 @@
+\doxysection{decoder.\+h}
+\hypertarget{crypto_2decoder_8h_source}{}\label{crypto_2decoder_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/crypto/decoder.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/crypto/decoder.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2020-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_CRYPTO\_DECODER\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_CRYPTO\_DECODER\_H}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#\ pragma\ once}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ include\ <openssl/decoder.h>}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ *\ These\ are\ specially\ made\ for\ the\ 'file:'\ provider-\/native\ loader,\ which}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ *\ uses\ this\ to\ install\ a\ DER\ to\ anything\ decoder,\ which\ doesn't\ do\ much}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ *\ except\ read\ a\ DER\ blob\ and\ pass\ it\ on\ as\ a\ provider\ object\ abstraction}}
+\DoxyCodeLine{00020\ \textcolor{comment}{\ *\ (provider-\/object(7)).}}
+\DoxyCodeLine{00021\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00022\ \textcolor{keywordtype}{void}\ *ossl\_decoder\_from\_algorithm(\textcolor{keywordtype}{int}\ \textcolor{keywordtype}{id},\ \textcolor{keyword}{const}\ OSSL\_ALGORITHM\ *algodef,}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OSSL\_PROVIDER\ *prov);}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ OSSL\_DECODER\_INSTANCE\ *}
+\DoxyCodeLine{00026\ ossl\_decoder\_instance\_new(OSSL\_DECODER\ *decoder,\ \textcolor{keywordtype}{void}\ *decoderctx);}
+\DoxyCodeLine{00027\ \textcolor{keywordtype}{void}\ ossl\_decoder\_instance\_free(OSSL\_DECODER\_INSTANCE\ *decoder\_inst);}
+\DoxyCodeLine{00028\ OSSL\_DECODER\_INSTANCE\ *ossl\_decoder\_instance\_dup(\textcolor{keyword}{const}\ OSSL\_DECODER\_INSTANCE\ *src);}
+\DoxyCodeLine{00029\ \textcolor{keywordtype}{int}\ ossl\_decoder\_ctx\_add\_decoder\_inst(OSSL\_DECODER\_CTX\ *ctx,}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OSSL\_DECODER\_INSTANCE\ *di);}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \textcolor{keywordtype}{int}\ ossl\_decoder\_get\_number(\textcolor{keyword}{const}\ OSSL\_DECODER\ *encoder);}
+\DoxyCodeLine{00033\ \textcolor{keywordtype}{int}\ ossl\_decoder\_store\_cache\_flush(OSSL\_LIB\_CTX\ *libctx);}
+\DoxyCodeLine{00034\ \textcolor{keywordtype}{int}\ ossl\_decoder\_store\_remove\_all\_provided(\textcolor{keyword}{const}\ OSSL\_PROVIDER\ *prov);}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \textcolor{keywordtype}{void}\ *ossl\_decoder\_cache\_new(OSSL\_LIB\_CTX\ *ctx);}
+\DoxyCodeLine{00037\ \textcolor{keywordtype}{void}\ ossl\_decoder\_cache\_free(\textcolor{keywordtype}{void}\ *vcache);}
+\DoxyCodeLine{00038\ \textcolor{keywordtype}{int}\ ossl\_decoder\_cache\_flush(OSSL\_LIB\_CTX\ *libctx);}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

@@ -1,0 +1,57 @@
+\doxysection{endian.\+h}
+\hypertarget{endian_8h_source}{}\label{endian_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/endian.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/endian.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2019-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_INTERNAL\_ENDIAN\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_INTERNAL\_ENDIAN\_H}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#\ pragma\ once}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ *\ IS\_LITTLE\_ENDIAN\ and\ IS\_BIG\_ENDIAN\ can\ be\ used\ to\ detect\ the\ endianness}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ *\ at\ compile\ time.\ To\ use\ it,\ DECLARE\_IS\_ENDIAN\ must\ be\ used\ to\ declare}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ *\ a\ variable.}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ *\ L\_ENDIAN\ and\ B\_ENDIAN\ can\ be\ used\ at\ preprocessor\ time.\ They\ can\ be\ set}}
+\DoxyCodeLine{00020\ \textcolor{comment}{\ *\ in\ the\ configarion\ using\ the\ lib\_cppflags\ variable.\ If\ neither\ is}}
+\DoxyCodeLine{00021\ \textcolor{comment}{\ *\ set,\ it\ will\ fall\ back\ to\ code\ works\ with\ either\ endianness.}}
+\DoxyCodeLine{00022\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#\ if\ defined(\_\_BYTE\_ORDER\_\_)\ \&\&\ defined(\_\_ORDER\_LITTLE\_ENDIAN\_\_)}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#\ \ define\ DECLARE\_IS\_ENDIAN\ const\ int\ ossl\_is\_little\_endian\ =\ \_\_BYTE\_ORDER\_\_\ ==\ \_\_ORDER\_LITTLE\_ENDIAN\_\_}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#\ \ define\ IS\_LITTLE\_ENDIAN\ (ossl\_is\_little\_endian)}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#\ \ define\ IS\_BIG\_ENDIAN\ (!ossl\_is\_little\_endian)}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#\ \ if\ defined(L\_ENDIAN)\ \&\&\ (\_\_BYTE\_ORDER\_\_\ !=\ \_\_ORDER\_LITTLE\_ENDIAN\_\_)}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#\ \ \ error\ "{}L\_ENDIAN\ defined\ on\ a\ big\ endian\ machine"{}}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#\ \ endif}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#\ \ if\ defined(B\_ENDIAN)\ \&\&\ (\_\_BYTE\_ORDER\_\_\ ==\ \_\_ORDER\_LITTLE\_ENDIAN\_\_)}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#\ \ \ error\ "{}B\_ENDIAN\ defined\ on\ a\ little\ endian\ machine"{}}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#\ \ endif}}
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#\ \ if\ !defined(L\_ENDIAN)\ \&\&\ (\_\_BYTE\_ORDER\_\_\ ==\ \_\_ORDER\_LITTLE\_ENDIAN\_\_)}}
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#\ \ \ define\ L\_ENDIAN}}
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#\ \ endif}}
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#\ \ if\ !defined(B\_ENDIAN)\ \&\&\ (\_\_BYTE\_ORDER\_\_\ !=\ \_\_ORDER\_LITTLE\_ENDIAN\_\_)}}
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#\ \ \ define\ B\_ENDIAN}}
+\DoxyCodeLine{00039\ \textcolor{preprocessor}{\#\ \ endif}}
+\DoxyCodeLine{00040\ \textcolor{preprocessor}{\#\ else}}
+\DoxyCodeLine{00041\ \textcolor{preprocessor}{\#\ \ define\ DECLARE\_IS\_ENDIAN\ \(\backslash\)}}
+\DoxyCodeLine{00042\ \textcolor{preprocessor}{\ \ \ \ const\ union\ \{\ \(\backslash\)}}
+\DoxyCodeLine{00043\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ long\ one;\ \(\backslash\)}}
+\DoxyCodeLine{00044\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ char\ little;\ \(\backslash\)}}
+\DoxyCodeLine{00045\ \textcolor{preprocessor}{\ \ \ \ \}\ ossl\_is\_endian\ =\ \{\ 1\ \}}}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \textcolor{preprocessor}{\#\ \ define\ IS\_LITTLE\_ENDIAN\ (ossl\_is\_endian.little\ !=\ 0)}}
+\DoxyCodeLine{00048\ \textcolor{preprocessor}{\#\ \ define\ IS\_BIG\_ENDIAN\ \ \ \ (ossl\_is\_endian.little\ ==\ 0)}}
+\DoxyCodeLine{00049\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

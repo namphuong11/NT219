@@ -1,0 +1,110 @@
+\doxysection{pkcs12.\+h}
+\hypertarget{test_2helpers_2pkcs12_8h_source}{}\label{test_2helpers_2pkcs12_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/test/helpers/pkcs12.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/test/helpers/pkcs12.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2020-\/2021\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <stdio.h>}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ <string.h>}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ <stdlib.h>}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ "{}internal/nelem.h"{}}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#include\ <openssl/pkcs12.h>}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#include\ <openssl/x509.h>}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#include\ <openssl/x509v3.h>}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ <openssl/pem.h>}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ "{}../testutil.h"{}}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{comment}{/*\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00025\ \textcolor{comment}{\ *\ PKCS\#12\ Test\ structures}}
+\DoxyCodeLine{00026\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \textcolor{comment}{/*\ Holds\ a\ set\ of\ Attributes\ */}}
+\DoxyCodeLine{00029\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structpkcs12__attr}{pkcs12\_attr}}\ \{}
+\DoxyCodeLine{00030\ \ \ \ \ \textcolor{keywordtype}{char}\ *oid;}
+\DoxyCodeLine{00031\ \ \ \ \ \textcolor{keywordtype}{char}\ *value;}
+\DoxyCodeLine{00032\ \}\ \mbox{\hyperlink{structpkcs12__attr}{PKCS12\_ATTR}};}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \textcolor{comment}{/*\ Holds\ encryption\ parameters\ */}}
+\DoxyCodeLine{00036\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structpkcs12__enc}{pkcs12\_enc}}\ \{}
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ nid;}
+\DoxyCodeLine{00038\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *pass;}
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ iter;}
+\DoxyCodeLine{00040\ \}\ \mbox{\hyperlink{structpkcs12__enc}{PKCS12\_ENC}};}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \textcolor{comment}{/*\ Set\ of\ variables\ required\ for\ constructing\ the\ PKCS\#12\ structure\ */}}
+\DoxyCodeLine{00043\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structpkcs12__builder}{pkcs12\_builder}}\ \{}
+\DoxyCodeLine{00044\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *filename;}
+\DoxyCodeLine{00045\ \ \ \ \ \textcolor{keywordtype}{int}\ success;}
+\DoxyCodeLine{00046\ \ \ \ \ BIO\ *p12bio;}
+\DoxyCodeLine{00047\ \ \ \ \ STACK\_OF(PKCS7)\ *safes;}
+\DoxyCodeLine{00048\ \ \ \ \ \textcolor{keywordtype}{int}\ safe\_idx;}
+\DoxyCodeLine{00049\ \ \ \ \ STACK\_OF(PKCS12\_SAFEBAG)\ *bags;}
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{keywordtype}{int}\ bag\_idx;}
+\DoxyCodeLine{00051\ \}\ \mbox{\hyperlink{structpkcs12__builder}{PKCS12\_BUILDER}};}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \textcolor{comment}{/*\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00055\ \textcolor{comment}{\ *\ PKCS\#12\ Test\ function\ declarations}}
+\DoxyCodeLine{00056\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \textcolor{comment}{/*\ Global\ settings\ */}}
+\DoxyCodeLine{00059\ \textcolor{keywordtype}{void}\ PKCS12\_helper\_set\_write\_files(\textcolor{keywordtype}{int}\ enable);}
+\DoxyCodeLine{00060\ \textcolor{keywordtype}{void}\ PKCS12\_helper\_set\_legacy(\textcolor{keywordtype}{int}\ enable);}
+\DoxyCodeLine{00061\ \textcolor{keywordtype}{void}\ PKCS12\_helper\_set\_libctx(OSSL\_LIB\_CTX\ *libctx);}
+\DoxyCodeLine{00062\ \textcolor{keywordtype}{void}\ PKCS12\_helper\_set\_propq(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *propq);}
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00064\ \textcolor{comment}{/*\ Allocate\ and\ initialise\ a\ PKCS\#12\ builder\ object\ */}}
+\DoxyCodeLine{00065\ \mbox{\hyperlink{structpkcs12__builder}{PKCS12\_BUILDER}}\ *new\_pkcs12\_builder(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *filename);}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00067\ \textcolor{comment}{/*\ Finalise\ and\ free\ the\ PKCS\#12\ builder\ object,\ returning\ the\ success/fail\ flag\ */}}
+\DoxyCodeLine{00068\ \textcolor{keywordtype}{int}\ end\_pkcs12\_builder(\mbox{\hyperlink{structpkcs12__builder}{PKCS12\_BUILDER}}\ *pb);}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ \textcolor{comment}{/*\ Encode/build\ functions\ */}}
+\DoxyCodeLine{00071\ \textcolor{keywordtype}{void}\ start\_pkcs12(\mbox{\hyperlink{structpkcs12__builder}{PKCS12\_BUILDER}}\ *pb);}
+\DoxyCodeLine{00072\ \textcolor{keywordtype}{void}\ end\_pkcs12(\mbox{\hyperlink{structpkcs12__builder}{PKCS12\_BUILDER}}\ *pb);}
+\DoxyCodeLine{00073\ \textcolor{keywordtype}{void}\ end\_pkcs12\_with\_mac(\mbox{\hyperlink{structpkcs12__builder}{PKCS12\_BUILDER}}\ *pb,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structpkcs12__enc}{PKCS12\_ENC}}\ *mac);}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00075\ \textcolor{keywordtype}{void}\ start\_contentinfo(\mbox{\hyperlink{structpkcs12__builder}{PKCS12\_BUILDER}}\ *pb);}
+\DoxyCodeLine{00076\ \textcolor{keywordtype}{void}\ end\_contentinfo(\mbox{\hyperlink{structpkcs12__builder}{PKCS12\_BUILDER}}\ *pb);}
+\DoxyCodeLine{00077\ \textcolor{keywordtype}{void}\ end\_contentinfo\_encrypted(\mbox{\hyperlink{structpkcs12__builder}{PKCS12\_BUILDER}}\ *pb,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structpkcs12__enc}{PKCS12\_ENC}}\ *enc);}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \textcolor{keywordtype}{void}\ add\_certbag(\mbox{\hyperlink{structpkcs12__builder}{PKCS12\_BUILDER}}\ *pb,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *bytes,\ \textcolor{keywordtype}{int}\ len,}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structpkcs12__attr}{PKCS12\_ATTR}}\ *attrs);}
+\DoxyCodeLine{00081\ \textcolor{keywordtype}{void}\ add\_keybag(\mbox{\hyperlink{structpkcs12__builder}{PKCS12\_BUILDER}}\ *pb,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *bytes,\ \textcolor{keywordtype}{int}\ len,}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structpkcs12__attr}{PKCS12\_ATTR}}\ *attrs,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structpkcs12__enc}{PKCS12\_ENC}}\ *enc);}
+\DoxyCodeLine{00083\ \textcolor{keywordtype}{void}\ add\_secretbag(\mbox{\hyperlink{structpkcs12__builder}{PKCS12\_BUILDER}}\ *pb,\ \textcolor{keywordtype}{int}\ secret\_nid,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *secret,}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structpkcs12__attr}{PKCS12\_ATTR}}\ *attrs);}
+\DoxyCodeLine{00085\ \textcolor{keywordtype}{void}\ add\_extra\_attr(\mbox{\hyperlink{structpkcs12__builder}{PKCS12\_BUILDER}}\ *pb);}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00087\ \textcolor{comment}{/*\ Decode/check\ functions\ */}}
+\DoxyCodeLine{00088\ \textcolor{keywordtype}{void}\ start\_check\_pkcs12(\mbox{\hyperlink{structpkcs12__builder}{PKCS12\_BUILDER}}\ *pb);}
+\DoxyCodeLine{00089\ \textcolor{keywordtype}{void}\ start\_check\_pkcs12\_with\_mac(\mbox{\hyperlink{structpkcs12__builder}{PKCS12\_BUILDER}}\ *pb,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structpkcs12__enc}{PKCS12\_ENC}}\ *mac);}
+\DoxyCodeLine{00090\ \textcolor{keywordtype}{void}\ start\_check\_pkcs12\_file(\mbox{\hyperlink{structpkcs12__builder}{PKCS12\_BUILDER}}\ *pb);}
+\DoxyCodeLine{00091\ \textcolor{keywordtype}{void}\ start\_check\_pkcs12\_file\_with\_mac(\mbox{\hyperlink{structpkcs12__builder}{PKCS12\_BUILDER}}\ *pb,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structpkcs12__enc}{PKCS12\_ENC}}\ *mac);}
+\DoxyCodeLine{00092\ \textcolor{keywordtype}{void}\ end\_check\_pkcs12(\mbox{\hyperlink{structpkcs12__builder}{PKCS12\_BUILDER}}\ *pb);}
+\DoxyCodeLine{00093\ }
+\DoxyCodeLine{00094\ \textcolor{keywordtype}{void}\ start\_check\_contentinfo(\mbox{\hyperlink{structpkcs12__builder}{PKCS12\_BUILDER}}\ *pb);}
+\DoxyCodeLine{00095\ \textcolor{keywordtype}{void}\ start\_check\_contentinfo\_encrypted(\mbox{\hyperlink{structpkcs12__builder}{PKCS12\_BUILDER}}\ *pb,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structpkcs12__enc}{PKCS12\_ENC}}\ *enc);}
+\DoxyCodeLine{00096\ \textcolor{keywordtype}{void}\ end\_check\_contentinfo(\mbox{\hyperlink{structpkcs12__builder}{PKCS12\_BUILDER}}\ *pb);}
+\DoxyCodeLine{00097\ }
+\DoxyCodeLine{00098\ \textcolor{keywordtype}{void}\ check\_certbag(\mbox{\hyperlink{structpkcs12__builder}{PKCS12\_BUILDER}}\ *pb,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *bytes,\ \textcolor{keywordtype}{int}\ len,}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structpkcs12__attr}{PKCS12\_ATTR}}\ *attrs);}
+\DoxyCodeLine{00100\ \textcolor{keywordtype}{void}\ check\_keybag(\mbox{\hyperlink{structpkcs12__builder}{PKCS12\_BUILDER}}\ *pb,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *bytes,\ \textcolor{keywordtype}{int}\ len,}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structpkcs12__attr}{PKCS12\_ATTR}}\ *attrs,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structpkcs12__enc}{PKCS12\_ENC}}\ *enc);}
+\DoxyCodeLine{00102\ \textcolor{keywordtype}{void}\ check\_secretbag(\mbox{\hyperlink{structpkcs12__builder}{PKCS12\_BUILDER}}\ *pb,\ \textcolor{keywordtype}{int}\ secret\_nid,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *secret,}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structpkcs12__attr}{PKCS12\_ATTR}}\ *attrs);}
+\DoxyCodeLine{00104\ }
+
+\end{DoxyCode}

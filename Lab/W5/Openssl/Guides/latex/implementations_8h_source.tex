@@ -1,0 +1,547 @@
+\doxysection{implementations.\+h}
+\hypertarget{implementations_8h_source}{}\label{implementations_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/providers/implementations/include/prov/implementations.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/providers/implementations/include/prov/implementations.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2019-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <openssl/core.h>}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ <openssl/types.h>}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{comment}{/*\ Digests\ */}}
+\DoxyCodeLine{00014\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_sha1\_functions[];}
+\DoxyCodeLine{00015\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_sha224\_functions[];}
+\DoxyCodeLine{00016\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_sha256\_functions[];}
+\DoxyCodeLine{00017\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_sha256\_192\_functions[];}
+\DoxyCodeLine{00018\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_sha384\_functions[];}
+\DoxyCodeLine{00019\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_sha512\_functions[];}
+\DoxyCodeLine{00020\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_sha512\_224\_functions[];}
+\DoxyCodeLine{00021\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_sha512\_256\_functions[];}
+\DoxyCodeLine{00022\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_sha3\_224\_functions[];}
+\DoxyCodeLine{00023\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_sha3\_256\_functions[];}
+\DoxyCodeLine{00024\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_sha3\_384\_functions[];}
+\DoxyCodeLine{00025\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_sha3\_512\_functions[];}
+\DoxyCodeLine{00026\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_keccak\_224\_functions[];}
+\DoxyCodeLine{00027\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_keccak\_256\_functions[];}
+\DoxyCodeLine{00028\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_keccak\_384\_functions[];}
+\DoxyCodeLine{00029\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_keccak\_512\_functions[];}
+\DoxyCodeLine{00030\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_keccak\_kmac\_128\_functions[];}
+\DoxyCodeLine{00031\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_keccak\_kmac\_256\_functions[];}
+\DoxyCodeLine{00032\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_shake\_128\_functions[];}
+\DoxyCodeLine{00033\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_shake\_256\_functions[];}
+\DoxyCodeLine{00034\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_blake2s256\_functions[];}
+\DoxyCodeLine{00035\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_blake2b512\_functions[];}
+\DoxyCodeLine{00036\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_md5\_functions[];}
+\DoxyCodeLine{00037\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_md5\_sha1\_functions[];}
+\DoxyCodeLine{00038\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_sm3\_functions[];}
+\DoxyCodeLine{00039\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_md2\_functions[];}
+\DoxyCodeLine{00040\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_md4\_functions[];}
+\DoxyCodeLine{00041\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_mdc2\_functions[];}
+\DoxyCodeLine{00042\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_wp\_functions[];}
+\DoxyCodeLine{00043\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_ripemd160\_functions[];}
+\DoxyCodeLine{00044\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_nullmd\_functions[];}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \textcolor{comment}{/*\ Ciphers\ */}}
+\DoxyCodeLine{00047\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_null\_functions[];}
+\DoxyCodeLine{00048\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aes256ecb\_functions[];}
+\DoxyCodeLine{00049\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aes192ecb\_functions[];}
+\DoxyCodeLine{00050\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aes128ecb\_functions[];}
+\DoxyCodeLine{00051\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aes256cbc\_functions[];}
+\DoxyCodeLine{00052\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aes192cbc\_functions[];}
+\DoxyCodeLine{00053\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aes128cbc\_functions[];}
+\DoxyCodeLine{00054\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aes256cbc\_cts\_functions[];}
+\DoxyCodeLine{00055\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aes192cbc\_cts\_functions[];}
+\DoxyCodeLine{00056\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aes128cbc\_cts\_functions[];}
+\DoxyCodeLine{00057\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aes256ofb\_functions[];}
+\DoxyCodeLine{00058\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aes192ofb\_functions[];}
+\DoxyCodeLine{00059\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aes128ofb\_functions[];}
+\DoxyCodeLine{00060\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aes256cfb\_functions[];}
+\DoxyCodeLine{00061\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aes192cfb\_functions[];}
+\DoxyCodeLine{00062\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aes128cfb\_functions[];}
+\DoxyCodeLine{00063\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aes256cfb1\_functions[];}
+\DoxyCodeLine{00064\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aes192cfb1\_functions[];}
+\DoxyCodeLine{00065\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aes128cfb1\_functions[];}
+\DoxyCodeLine{00066\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aes256cfb8\_functions[];}
+\DoxyCodeLine{00067\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aes192cfb8\_functions[];}
+\DoxyCodeLine{00068\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aes128cfb8\_functions[];}
+\DoxyCodeLine{00069\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aes256ctr\_functions[];}
+\DoxyCodeLine{00070\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aes192ctr\_functions[];}
+\DoxyCodeLine{00071\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aes128ctr\_functions[];}
+\DoxyCodeLine{00072\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aes256xts\_functions[];}
+\DoxyCodeLine{00073\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aes128xts\_functions[];}
+\DoxyCodeLine{00074\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_OCB}}
+\DoxyCodeLine{00075\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aes256ocb\_functions[];}
+\DoxyCodeLine{00076\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aes192ocb\_functions[];}
+\DoxyCodeLine{00077\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aes128ocb\_functions[];}
+\DoxyCodeLine{00078\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ OPENSSL\_NO\_OCB\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00079\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aes256gcm\_functions[];}
+\DoxyCodeLine{00080\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aes192gcm\_functions[];}
+\DoxyCodeLine{00081\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aes128gcm\_functions[];}
+\DoxyCodeLine{00082\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aes256ccm\_functions[];}
+\DoxyCodeLine{00083\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aes192ccm\_functions[];}
+\DoxyCodeLine{00084\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aes128ccm\_functions[];}
+\DoxyCodeLine{00085\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aes256wrap\_functions[];}
+\DoxyCodeLine{00086\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aes192wrap\_functions[];}
+\DoxyCodeLine{00087\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aes128wrap\_functions[];}
+\DoxyCodeLine{00088\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aes256wrappad\_functions[];}
+\DoxyCodeLine{00089\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aes192wrappad\_functions[];}
+\DoxyCodeLine{00090\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aes128wrappad\_functions[];}
+\DoxyCodeLine{00091\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aes256wrapinv\_functions[];}
+\DoxyCodeLine{00092\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aes192wrapinv\_functions[];}
+\DoxyCodeLine{00093\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aes128wrapinv\_functions[];}
+\DoxyCodeLine{00094\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aes256wrappadinv\_functions[];}
+\DoxyCodeLine{00095\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aes192wrappadinv\_functions[];}
+\DoxyCodeLine{00096\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aes128wrappadinv\_functions[];}
+\DoxyCodeLine{00097\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aes256cbc\_hmac\_sha1\_functions[];}
+\DoxyCodeLine{00098\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aes128cbc\_hmac\_sha1\_functions[];}
+\DoxyCodeLine{00099\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aes256cbc\_hmac\_sha256\_functions[];}
+\DoxyCodeLine{00100\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aes128cbc\_hmac\_sha256\_functions[];}
+\DoxyCodeLine{00101\ }
+\DoxyCodeLine{00102\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_ARIA}}
+\DoxyCodeLine{00103\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aria256gcm\_functions[];}
+\DoxyCodeLine{00104\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aria192gcm\_functions[];}
+\DoxyCodeLine{00105\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aria128gcm\_functions[];}
+\DoxyCodeLine{00106\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aria256ccm\_functions[];}
+\DoxyCodeLine{00107\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aria192ccm\_functions[];}
+\DoxyCodeLine{00108\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aria128ccm\_functions[];}
+\DoxyCodeLine{00109\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aria256ecb\_functions[];}
+\DoxyCodeLine{00110\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aria192ecb\_functions[];}
+\DoxyCodeLine{00111\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aria128ecb\_functions[];}
+\DoxyCodeLine{00112\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aria256cbc\_functions[];}
+\DoxyCodeLine{00113\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aria192cbc\_functions[];}
+\DoxyCodeLine{00114\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aria128cbc\_functions[];}
+\DoxyCodeLine{00115\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aria256ofb\_functions[];}
+\DoxyCodeLine{00116\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aria192ofb\_functions[];}
+\DoxyCodeLine{00117\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aria128ofb\_functions[];}
+\DoxyCodeLine{00118\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aria256cfb\_functions[];}
+\DoxyCodeLine{00119\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aria192cfb\_functions[];}
+\DoxyCodeLine{00120\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aria128cfb\_functions[];}
+\DoxyCodeLine{00121\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aria256cfb1\_functions[];}
+\DoxyCodeLine{00122\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aria192cfb1\_functions[];}
+\DoxyCodeLine{00123\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aria128cfb1\_functions[];}
+\DoxyCodeLine{00124\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aria256cfb8\_functions[];}
+\DoxyCodeLine{00125\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aria192cfb8\_functions[];}
+\DoxyCodeLine{00126\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aria128cfb8\_functions[];}
+\DoxyCodeLine{00127\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aria256ctr\_functions[];}
+\DoxyCodeLine{00128\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aria192ctr\_functions[];}
+\DoxyCodeLine{00129\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aria128ctr\_functions[];}
+\DoxyCodeLine{00130\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ OPENSSL\_NO\_ARIA\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00131\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_CAMELLIA}}
+\DoxyCodeLine{00132\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_camellia256ecb\_functions[];}
+\DoxyCodeLine{00133\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_camellia192ecb\_functions[];}
+\DoxyCodeLine{00134\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_camellia128ecb\_functions[];}
+\DoxyCodeLine{00135\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_camellia256cbc\_functions[];}
+\DoxyCodeLine{00136\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_camellia192cbc\_functions[];}
+\DoxyCodeLine{00137\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_camellia128cbc\_functions[];}
+\DoxyCodeLine{00138\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_camellia256cbc\_cts\_functions[];}
+\DoxyCodeLine{00139\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_camellia192cbc\_cts\_functions[];}
+\DoxyCodeLine{00140\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_camellia128cbc\_cts\_functions[];}
+\DoxyCodeLine{00141\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_camellia256ofb\_functions[];}
+\DoxyCodeLine{00142\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_camellia192ofb\_functions[];}
+\DoxyCodeLine{00143\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_camellia128ofb\_functions[];}
+\DoxyCodeLine{00144\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_camellia256cfb\_functions[];}
+\DoxyCodeLine{00145\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_camellia192cfb\_functions[];}
+\DoxyCodeLine{00146\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_camellia128cfb\_functions[];}
+\DoxyCodeLine{00147\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_camellia256cfb1\_functions[];}
+\DoxyCodeLine{00148\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_camellia192cfb1\_functions[];}
+\DoxyCodeLine{00149\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_camellia128cfb1\_functions[];}
+\DoxyCodeLine{00150\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_camellia256cfb8\_functions[];}
+\DoxyCodeLine{00151\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_camellia192cfb8\_functions[];}
+\DoxyCodeLine{00152\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_camellia128cfb8\_functions[];}
+\DoxyCodeLine{00153\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_camellia256ctr\_functions[];}
+\DoxyCodeLine{00154\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_camellia192ctr\_functions[];}
+\DoxyCodeLine{00155\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_camellia128ctr\_functions[];}
+\DoxyCodeLine{00156\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ OPENSSL\_NO\_CAMELLIA\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00157\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_BF}}
+\DoxyCodeLine{00158\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_blowfish128ecb\_functions[];}
+\DoxyCodeLine{00159\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_blowfish128cbc\_functions[];}
+\DoxyCodeLine{00160\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_blowfish128ofb64\_functions[];}
+\DoxyCodeLine{00161\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_blowfish128cfb64\_functions[];}
+\DoxyCodeLine{00162\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ OPENSSL\_NO\_BF\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00163\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_IDEA}}
+\DoxyCodeLine{00164\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_idea128ecb\_functions[];}
+\DoxyCodeLine{00165\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_idea128cbc\_functions[];}
+\DoxyCodeLine{00166\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_idea128ofb64\_functions[];}
+\DoxyCodeLine{00167\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_idea128cfb64\_functions[];}
+\DoxyCodeLine{00168\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ OPENSSL\_NO\_IDEA\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00169\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_CAST}}
+\DoxyCodeLine{00170\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_cast5128ecb\_functions[];}
+\DoxyCodeLine{00171\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_cast5128cbc\_functions[];}
+\DoxyCodeLine{00172\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_cast5128ofb64\_functions[];}
+\DoxyCodeLine{00173\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_cast5128cfb64\_functions[];}
+\DoxyCodeLine{00174\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ OPENSSL\_NO\_CAST\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00175\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_SEED}}
+\DoxyCodeLine{00176\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_seed128ecb\_functions[];}
+\DoxyCodeLine{00177\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_seed128cbc\_functions[];}
+\DoxyCodeLine{00178\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_seed128ofb128\_functions[];}
+\DoxyCodeLine{00179\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_seed128cfb128\_functions[];}
+\DoxyCodeLine{00180\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ OPENSSL\_NO\_SEED\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00181\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_SM4}}
+\DoxyCodeLine{00182\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_sm4128gcm\_functions[];}
+\DoxyCodeLine{00183\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_sm4128ccm\_functions[];}
+\DoxyCodeLine{00184\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_sm4128ecb\_functions[];}
+\DoxyCodeLine{00185\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_sm4128cbc\_functions[];}
+\DoxyCodeLine{00186\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_sm4128ctr\_functions[];}
+\DoxyCodeLine{00187\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_sm4128ofb128\_functions[];}
+\DoxyCodeLine{00188\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_sm4128cfb128\_functions[];}
+\DoxyCodeLine{00189\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_sm4128xts\_functions[];}
+\DoxyCodeLine{00190\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ OPENSSL\_NO\_SM4\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00191\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_RC5}}
+\DoxyCodeLine{00192\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_rc5128ecb\_functions[];}
+\DoxyCodeLine{00193\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_rc5128cbc\_functions[];}
+\DoxyCodeLine{00194\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_rc5128ofb64\_functions[];}
+\DoxyCodeLine{00195\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_rc5128cfb64\_functions[];}
+\DoxyCodeLine{00196\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ OPENSSL\_NO\_RC5\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00197\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_RC2}}
+\DoxyCodeLine{00198\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_rc2128ecb\_functions[];}
+\DoxyCodeLine{00199\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_rc2128cbc\_functions[];}
+\DoxyCodeLine{00200\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_rc240cbc\_functions[];}
+\DoxyCodeLine{00201\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_rc264cbc\_functions[];}
+\DoxyCodeLine{00202\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_rc2128cfb128\_functions[];}
+\DoxyCodeLine{00203\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_rc2128ofb128\_functions[];}
+\DoxyCodeLine{00204\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ OPENSSL\_NO\_RC2\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00205\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_DES}}
+\DoxyCodeLine{00206\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_tdes\_ede3\_ecb\_functions[];}
+\DoxyCodeLine{00207\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_tdes\_ede3\_cbc\_functions[];}
+\DoxyCodeLine{00208\ \textcolor{preprocessor}{\#\ ifndef\ FIPS\_MODULE}}
+\DoxyCodeLine{00209\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_tdes\_ede3\_ofb\_functions[];}
+\DoxyCodeLine{00210\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_tdes\_ede3\_cfb\_functions[];}
+\DoxyCodeLine{00211\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_tdes\_ede3\_cfb8\_functions[];}
+\DoxyCodeLine{00212\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_tdes\_ede3\_cfb1\_functions[];}
+\DoxyCodeLine{00213\ }
+\DoxyCodeLine{00214\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_tdes\_ede2\_ecb\_functions[];}
+\DoxyCodeLine{00215\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_tdes\_ede2\_cbc\_functions[];}
+\DoxyCodeLine{00216\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_tdes\_ede2\_ofb\_functions[];}
+\DoxyCodeLine{00217\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_tdes\_ede2\_cfb\_functions[];}
+\DoxyCodeLine{00218\ }
+\DoxyCodeLine{00219\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_tdes\_desx\_cbc\_functions[];}
+\DoxyCodeLine{00220\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_tdes\_wrap\_cbc\_functions[];}
+\DoxyCodeLine{00221\ }
+\DoxyCodeLine{00222\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_des\_ecb\_functions[];}
+\DoxyCodeLine{00223\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_des\_cbc\_functions[];}
+\DoxyCodeLine{00224\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_des\_ofb64\_functions[];}
+\DoxyCodeLine{00225\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_des\_cfb64\_functions[];}
+\DoxyCodeLine{00226\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_des\_cfb1\_functions[];}
+\DoxyCodeLine{00227\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_des\_cfb8\_functions[];}
+\DoxyCodeLine{00228\ \textcolor{preprocessor}{\#\ endif\ }\textcolor{comment}{/*\ FIPS\_MODULE\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00229\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ OPENSSL\_NO\_DES\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00230\ }
+\DoxyCodeLine{00231\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_RC4}}
+\DoxyCodeLine{00232\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_rc440\_functions[];}
+\DoxyCodeLine{00233\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_rc4128\_functions[];}
+\DoxyCodeLine{00234\ \textcolor{preprocessor}{\#\ ifndef\ OPENSSL\_NO\_MD5}}
+\DoxyCodeLine{00235\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_rc4\_hmac\_ossl\_md5\_functions[];}
+\DoxyCodeLine{00236\ \textcolor{preprocessor}{\#\ endif\ }\textcolor{comment}{/*\ OPENSSL\_NO\_MD5\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00237\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ OPENSSL\_NO\_RC4\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00238\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_CHACHA}}
+\DoxyCodeLine{00239\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_chacha20\_functions[];}
+\DoxyCodeLine{00240\ \textcolor{preprocessor}{\#\ ifndef\ OPENSSL\_NO\_POLY1305}}
+\DoxyCodeLine{00241\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_chacha20\_ossl\_poly1305\_functions[];}
+\DoxyCodeLine{00242\ \textcolor{preprocessor}{\#\ endif\ }\textcolor{comment}{/*\ OPENSSL\_NO\_POLY1305\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00243\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ OPENSSL\_NO\_CHACHA\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00244\ }
+\DoxyCodeLine{00245\ }
+\DoxyCodeLine{00246\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_SIV}}
+\DoxyCodeLine{00247\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aes128siv\_functions[];}
+\DoxyCodeLine{00248\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aes192siv\_functions[];}
+\DoxyCodeLine{00249\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aes256siv\_functions[];}
+\DoxyCodeLine{00250\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aes128gcm\_siv\_functions[];}
+\DoxyCodeLine{00251\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aes192gcm\_siv\_functions[];}
+\DoxyCodeLine{00252\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_aes256gcm\_siv\_functions[];}
+\DoxyCodeLine{00253\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ OPENSSL\_NO\_SIV\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00254\ }
+\DoxyCodeLine{00255\ \textcolor{comment}{/*\ MACs\ */}}
+\DoxyCodeLine{00256\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_blake2bmac\_functions[];}
+\DoxyCodeLine{00257\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_blake2smac\_functions[];}
+\DoxyCodeLine{00258\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_cmac\_functions[];}
+\DoxyCodeLine{00259\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_gmac\_functions[];}
+\DoxyCodeLine{00260\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_hmac\_functions[];}
+\DoxyCodeLine{00261\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_kmac128\_functions[];}
+\DoxyCodeLine{00262\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_kmac256\_functions[];}
+\DoxyCodeLine{00263\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_siphash\_functions[];}
+\DoxyCodeLine{00264\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_poly1305\_functions[];}
+\DoxyCodeLine{00265\ }
+\DoxyCodeLine{00266\ \textcolor{comment}{/*\ KDFs\ /\ PRFs\ */}}
+\DoxyCodeLine{00267\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_kdf\_pbkdf1\_functions[];}
+\DoxyCodeLine{00268\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_kdf\_pbkdf2\_functions[];}
+\DoxyCodeLine{00269\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_kdf\_pvk\_functions[];}
+\DoxyCodeLine{00270\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_kdf\_pkcs12\_functions[];}
+\DoxyCodeLine{00271\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_SCRYPT}}
+\DoxyCodeLine{00272\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_kdf\_scrypt\_functions[];}
+\DoxyCodeLine{00273\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00274\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_kdf\_tls1\_prf\_functions[];}
+\DoxyCodeLine{00275\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_kdf\_hkdf\_functions[];}
+\DoxyCodeLine{00276\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_kdf\_tls1\_3\_kdf\_functions[];}
+\DoxyCodeLine{00277\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_kdf\_sshkdf\_functions[];}
+\DoxyCodeLine{00278\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_kdf\_sskdf\_functions[];}
+\DoxyCodeLine{00279\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_kdf\_x963\_kdf\_functions[];}
+\DoxyCodeLine{00280\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_kdf\_kbkdf\_functions[];}
+\DoxyCodeLine{00281\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_kdf\_x942\_kdf\_functions[];}
+\DoxyCodeLine{00282\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_kdf\_krb5kdf\_functions[];}
+\DoxyCodeLine{00283\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_kdf\_hmac\_drbg\_functions[];}
+\DoxyCodeLine{00284\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_ARGON2}}
+\DoxyCodeLine{00285\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_kdf\_argon2i\_functions[];}
+\DoxyCodeLine{00286\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_kdf\_argon2d\_functions[];}
+\DoxyCodeLine{00287\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_kdf\_argon2id\_functions[];}
+\DoxyCodeLine{00288\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00289\ }
+\DoxyCodeLine{00290\ \textcolor{comment}{/*\ RNGs\ */}}
+\DoxyCodeLine{00291\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_test\_rng\_functions[];}
+\DoxyCodeLine{00292\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_seed\_src\_functions[];}
+\DoxyCodeLine{00293\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_drbg\_hash\_functions[];}
+\DoxyCodeLine{00294\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_drbg\_ossl\_hmac\_functions[];}
+\DoxyCodeLine{00295\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_drbg\_ctr\_functions[];}
+\DoxyCodeLine{00296\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ crngt\_functions[];}
+\DoxyCodeLine{00297\ }
+\DoxyCodeLine{00298\ \textcolor{comment}{/*\ Key\ management\ */}}
+\DoxyCodeLine{00299\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_dh\_keymgmt\_functions[];}
+\DoxyCodeLine{00300\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_dhx\_keymgmt\_functions[];}
+\DoxyCodeLine{00301\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_dsa\_keymgmt\_functions[];}
+\DoxyCodeLine{00302\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_rsa\_keymgmt\_functions[];}
+\DoxyCodeLine{00303\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_rsapss\_keymgmt\_functions[];}
+\DoxyCodeLine{00304\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_ECX}}
+\DoxyCodeLine{00305\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_x25519\_keymgmt\_functions[];}
+\DoxyCodeLine{00306\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_x448\_keymgmt\_functions[];}
+\DoxyCodeLine{00307\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_ed25519\_keymgmt\_functions[];}
+\DoxyCodeLine{00308\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_ed448\_keymgmt\_functions[];}
+\DoxyCodeLine{00309\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00310\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_ec\_keymgmt\_functions[];}
+\DoxyCodeLine{00311\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_kdf\_keymgmt\_functions[];}
+\DoxyCodeLine{00312\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_mac\_legacy\_keymgmt\_functions[];}
+\DoxyCodeLine{00313\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_cmac\_legacy\_keymgmt\_functions[];}
+\DoxyCodeLine{00314\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_SM2}}
+\DoxyCodeLine{00315\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_sm2\_keymgmt\_functions[];}
+\DoxyCodeLine{00316\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00317\ }
+\DoxyCodeLine{00318\ \textcolor{comment}{/*\ Key\ Exchange\ */}}
+\DoxyCodeLine{00319\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_dh\_keyexch\_functions[];}
+\DoxyCodeLine{00320\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_x25519\_keyexch\_functions[];}
+\DoxyCodeLine{00321\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_x448\_keyexch\_functions[];}
+\DoxyCodeLine{00322\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_ecdh\_keyexch\_functions[];}
+\DoxyCodeLine{00323\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_kdf\_tls1\_prf\_keyexch\_functions[];}
+\DoxyCodeLine{00324\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_kdf\_hkdf\_keyexch\_functions[];}
+\DoxyCodeLine{00325\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_kdf\_scrypt\_keyexch\_functions[];}
+\DoxyCodeLine{00326\ }
+\DoxyCodeLine{00327\ \textcolor{comment}{/*\ Signature\ */}}
+\DoxyCodeLine{00328\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_dsa\_signature\_functions[];}
+\DoxyCodeLine{00329\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_rsa\_signature\_functions[];}
+\DoxyCodeLine{00330\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_ed25519\_signature\_functions[];}
+\DoxyCodeLine{00331\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_ed448\_signature\_functions[];}
+\DoxyCodeLine{00332\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_ecdsa\_signature\_functions[];}
+\DoxyCodeLine{00333\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_mac\_legacy\_hmac\_signature\_functions[];}
+\DoxyCodeLine{00334\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_mac\_legacy\_siphash\_signature\_functions[];}
+\DoxyCodeLine{00335\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_mac\_legacy\_poly1305\_signature\_functions[];}
+\DoxyCodeLine{00336\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_mac\_legacy\_cmac\_signature\_functions[];}
+\DoxyCodeLine{00337\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_sm2\_signature\_functions[];}
+\DoxyCodeLine{00338\ }
+\DoxyCodeLine{00339\ \textcolor{comment}{/*\ Asym\ Cipher\ */}}
+\DoxyCodeLine{00340\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_rsa\_asym\_cipher\_functions[];}
+\DoxyCodeLine{00341\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_SM2}}
+\DoxyCodeLine{00342\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_sm2\_asym\_cipher\_functions[];}
+\DoxyCodeLine{00343\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00344\ }
+\DoxyCodeLine{00345\ \textcolor{comment}{/*\ Asym\ Key\ encapsulation\ \ */}}
+\DoxyCodeLine{00346\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_rsa\_asym\_kem\_functions[];}
+\DoxyCodeLine{00347\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_ecx\_asym\_kem\_functions[];}
+\DoxyCodeLine{00348\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_ec\_asym\_kem\_functions[];}
+\DoxyCodeLine{00349\ }
+\DoxyCodeLine{00350\ \textcolor{comment}{/*\ Encoders\ */}}
+\DoxyCodeLine{00351\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_rsa\_to\_PKCS1\_der\_encoder\_functions[];}
+\DoxyCodeLine{00352\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_rsa\_to\_PKCS1\_pem\_encoder\_functions[];}
+\DoxyCodeLine{00353\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_rsa\_to\_EncryptedPrivateKeyInfo\_der\_encoder\_functions[];}
+\DoxyCodeLine{00354\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_rsa\_to\_EncryptedPrivateKeyInfo\_pem\_encoder\_functions[];}
+\DoxyCodeLine{00355\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_rsa\_to\_PrivateKeyInfo\_der\_encoder\_functions[];}
+\DoxyCodeLine{00356\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_rsa\_to\_PrivateKeyInfo\_pem\_encoder\_functions[];}
+\DoxyCodeLine{00357\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_rsa\_to\_RSA\_der\_encoder\_functions[];}
+\DoxyCodeLine{00358\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_rsa\_to\_RSA\_pem\_encoder\_functions[];}
+\DoxyCodeLine{00359\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_rsa\_to\_SubjectPublicKeyInfo\_der\_encoder\_functions[];}
+\DoxyCodeLine{00360\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_rsa\_to\_SubjectPublicKeyInfo\_pem\_encoder\_functions[];}
+\DoxyCodeLine{00361\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_rsa\_to\_msblob\_encoder\_functions[];}
+\DoxyCodeLine{00362\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_rsa\_to\_pvk\_encoder\_functions[];}
+\DoxyCodeLine{00363\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_rsa\_to\_text\_encoder\_functions[];}
+\DoxyCodeLine{00364\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_rsa\_to\_type\_specific\_keypair\_der\_encoder\_functions[];}
+\DoxyCodeLine{00365\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_rsa\_to\_type\_specific\_keypair\_pem\_encoder\_functions[];}
+\DoxyCodeLine{00366\ }
+\DoxyCodeLine{00367\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_rsapss\_to\_PKCS1\_der\_encoder\_functions[];}
+\DoxyCodeLine{00368\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_rsapss\_to\_PKCS1\_pem\_encoder\_functions[];}
+\DoxyCodeLine{00369\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_rsapss\_to\_EncryptedPrivateKeyInfo\_der\_encoder\_functions[];}
+\DoxyCodeLine{00370\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_rsapss\_to\_EncryptedPrivateKeyInfo\_pem\_encoder\_functions[];}
+\DoxyCodeLine{00371\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_rsapss\_to\_PrivateKeyInfo\_der\_encoder\_functions[];}
+\DoxyCodeLine{00372\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_rsapss\_to\_PrivateKeyInfo\_pem\_encoder\_functions[];}
+\DoxyCodeLine{00373\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_rsapss\_to\_SubjectPublicKeyInfo\_der\_encoder\_functions[];}
+\DoxyCodeLine{00374\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_rsapss\_to\_SubjectPublicKeyInfo\_pem\_encoder\_functions[];}
+\DoxyCodeLine{00375\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_rsapss\_to\_text\_encoder\_functions[];}
+\DoxyCodeLine{00376\ }
+\DoxyCodeLine{00377\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_dh\_to\_DH\_der\_encoder\_functions[];}
+\DoxyCodeLine{00378\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_dh\_to\_DH\_pem\_encoder\_functions[];}
+\DoxyCodeLine{00379\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_dh\_to\_PKCS3\_der\_encoder\_functions[];}
+\DoxyCodeLine{00380\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_dh\_to\_PKCS3\_pem\_encoder\_functions[];}
+\DoxyCodeLine{00381\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_dh\_to\_EncryptedPrivateKeyInfo\_der\_encoder\_functions[];}
+\DoxyCodeLine{00382\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_dh\_to\_EncryptedPrivateKeyInfo\_pem\_encoder\_functions[];}
+\DoxyCodeLine{00383\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_dh\_to\_PrivateKeyInfo\_der\_encoder\_functions[];}
+\DoxyCodeLine{00384\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_dh\_to\_PrivateKeyInfo\_pem\_encoder\_functions[];}
+\DoxyCodeLine{00385\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_dh\_to\_SubjectPublicKeyInfo\_der\_encoder\_functions[];}
+\DoxyCodeLine{00386\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_dh\_to\_SubjectPublicKeyInfo\_pem\_encoder\_functions[];}
+\DoxyCodeLine{00387\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_dh\_to\_type\_specific\_params\_der\_encoder\_functions[];}
+\DoxyCodeLine{00388\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_dh\_to\_type\_specific\_params\_pem\_encoder\_functions[];}
+\DoxyCodeLine{00389\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_dh\_to\_text\_encoder\_functions[];}
+\DoxyCodeLine{00390\ }
+\DoxyCodeLine{00391\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_dhx\_to\_DHX\_der\_encoder\_functions[];}
+\DoxyCodeLine{00392\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_dhx\_to\_DHX\_pem\_encoder\_functions[];}
+\DoxyCodeLine{00393\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_dhx\_to\_EncryptedPrivateKeyInfo\_der\_encoder\_functions[];}
+\DoxyCodeLine{00394\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_dhx\_to\_EncryptedPrivateKeyInfo\_pem\_encoder\_functions[];}
+\DoxyCodeLine{00395\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_dhx\_to\_PrivateKeyInfo\_der\_encoder\_functions[];}
+\DoxyCodeLine{00396\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_dhx\_to\_PrivateKeyInfo\_pem\_encoder\_functions[];}
+\DoxyCodeLine{00397\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_dhx\_to\_SubjectPublicKeyInfo\_der\_encoder\_functions[];}
+\DoxyCodeLine{00398\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_dhx\_to\_SubjectPublicKeyInfo\_pem\_encoder\_functions[];}
+\DoxyCodeLine{00399\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_dhx\_to\_X9\_42\_der\_encoder\_functions[];}
+\DoxyCodeLine{00400\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_dhx\_to\_X9\_42\_pem\_encoder\_functions[];}
+\DoxyCodeLine{00401\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_dhx\_to\_type\_specific\_params\_der\_encoder\_functions[];}
+\DoxyCodeLine{00402\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_dhx\_to\_type\_specific\_params\_pem\_encoder\_functions[];}
+\DoxyCodeLine{00403\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_dhx\_to\_text\_encoder\_functions[];}
+\DoxyCodeLine{00404\ }
+\DoxyCodeLine{00405\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_dsa\_to\_DSA\_der\_encoder\_functions[];}
+\DoxyCodeLine{00406\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_dsa\_to\_DSA\_pem\_encoder\_functions[];}
+\DoxyCodeLine{00407\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_dsa\_to\_EncryptedPrivateKeyInfo\_der\_encoder\_functions[];}
+\DoxyCodeLine{00408\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_dsa\_to\_EncryptedPrivateKeyInfo\_pem\_encoder\_functions[];}
+\DoxyCodeLine{00409\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_dsa\_to\_PrivateKeyInfo\_der\_encoder\_functions[];}
+\DoxyCodeLine{00410\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_dsa\_to\_PrivateKeyInfo\_pem\_encoder\_functions[];}
+\DoxyCodeLine{00411\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_dsa\_to\_SubjectPublicKeyInfo\_der\_encoder\_functions[];}
+\DoxyCodeLine{00412\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_dsa\_to\_SubjectPublicKeyInfo\_pem\_encoder\_functions[];}
+\DoxyCodeLine{00413\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_dsa\_to\_type\_specific\_pem\_encoder\_functions[];}
+\DoxyCodeLine{00414\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_dsa\_to\_type\_specific\_der\_encoder\_functions[];}
+\DoxyCodeLine{00415\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_dsa\_to\_msblob\_encoder\_functions[];}
+\DoxyCodeLine{00416\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_dsa\_to\_pvk\_encoder\_functions[];}
+\DoxyCodeLine{00417\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_dsa\_to\_text\_encoder\_functions[];}
+\DoxyCodeLine{00418\ }
+\DoxyCodeLine{00419\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_ec\_to\_EC\_der\_encoder\_functions[];}
+\DoxyCodeLine{00420\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_ec\_to\_EC\_pem\_encoder\_functions[];}
+\DoxyCodeLine{00421\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_ec\_to\_blob\_encoder\_functions[];}
+\DoxyCodeLine{00422\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_ec\_to\_EncryptedPrivateKeyInfo\_der\_encoder\_functions[];}
+\DoxyCodeLine{00423\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_ec\_to\_EncryptedPrivateKeyInfo\_pem\_encoder\_functions[];}
+\DoxyCodeLine{00424\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_ec\_to\_PrivateKeyInfo\_der\_encoder\_functions[];}
+\DoxyCodeLine{00425\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_ec\_to\_PrivateKeyInfo\_pem\_encoder\_functions[];}
+\DoxyCodeLine{00426\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_ec\_to\_SubjectPublicKeyInfo\_der\_encoder\_functions[];}
+\DoxyCodeLine{00427\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_ec\_to\_SubjectPublicKeyInfo\_pem\_encoder\_functions[];}
+\DoxyCodeLine{00428\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_ec\_to\_X9\_62\_der\_encoder\_functions[];}
+\DoxyCodeLine{00429\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_ec\_to\_X9\_62\_pem\_encoder\_functions[];}
+\DoxyCodeLine{00430\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_ec\_to\_type\_specific\_no\_pub\_pem\_encoder\_functions[];}
+\DoxyCodeLine{00431\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_ec\_to\_type\_specific\_no\_pub\_der\_encoder\_functions[];}
+\DoxyCodeLine{00432\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_ec\_to\_text\_encoder\_functions[];}
+\DoxyCodeLine{00433\ }
+\DoxyCodeLine{00434\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_SM2}}
+\DoxyCodeLine{00435\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_sm2\_to\_SM2\_der\_encoder\_functions[];}
+\DoxyCodeLine{00436\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_sm2\_to\_SM2\_pem\_encoder\_functions[];}
+\DoxyCodeLine{00437\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_sm2\_to\_blob\_encoder\_functions[];}
+\DoxyCodeLine{00438\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_sm2\_to\_EncryptedPrivateKeyInfo\_der\_encoder\_functions[];}
+\DoxyCodeLine{00439\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_sm2\_to\_EncryptedPrivateKeyInfo\_pem\_encoder\_functions[];}
+\DoxyCodeLine{00440\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_sm2\_to\_PrivateKeyInfo\_der\_encoder\_functions[];}
+\DoxyCodeLine{00441\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_sm2\_to\_PrivateKeyInfo\_pem\_encoder\_functions[];}
+\DoxyCodeLine{00442\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_sm2\_to\_SubjectPublicKeyInfo\_der\_encoder\_functions[];}
+\DoxyCodeLine{00443\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_sm2\_to\_SubjectPublicKeyInfo\_pem\_encoder\_functions[];}
+\DoxyCodeLine{00444\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_sm2\_to\_type\_specific\_no\_pub\_pem\_encoder\_functions[];}
+\DoxyCodeLine{00445\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_sm2\_to\_type\_specific\_no\_pub\_der\_encoder\_functions[];}
+\DoxyCodeLine{00446\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_sm2\_to\_text\_encoder\_functions[];}
+\DoxyCodeLine{00447\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00448\ }
+\DoxyCodeLine{00449\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_ed25519\_to\_EncryptedPrivateKeyInfo\_der\_encoder\_functions[];}
+\DoxyCodeLine{00450\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_ed25519\_to\_EncryptedPrivateKeyInfo\_pem\_encoder\_functions[];}
+\DoxyCodeLine{00451\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_ed25519\_to\_PrivateKeyInfo\_der\_encoder\_functions[];}
+\DoxyCodeLine{00452\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_ed25519\_to\_PrivateKeyInfo\_pem\_encoder\_functions[];}
+\DoxyCodeLine{00453\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_ed25519\_to\_SubjectPublicKeyInfo\_der\_encoder\_functions[];}
+\DoxyCodeLine{00454\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_ed25519\_to\_SubjectPublicKeyInfo\_pem\_encoder\_functions[];}
+\DoxyCodeLine{00455\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_ed25519\_to\_OSSL\_current\_der\_encoder\_functions[];}
+\DoxyCodeLine{00456\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_ed25519\_to\_text\_encoder\_functions[];}
+\DoxyCodeLine{00457\ }
+\DoxyCodeLine{00458\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_ed448\_to\_EncryptedPrivateKeyInfo\_der\_encoder\_functions[];}
+\DoxyCodeLine{00459\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_ed448\_to\_EncryptedPrivateKeyInfo\_pem\_encoder\_functions[];}
+\DoxyCodeLine{00460\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_ed448\_to\_PrivateKeyInfo\_der\_encoder\_functions[];}
+\DoxyCodeLine{00461\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_ed448\_to\_PrivateKeyInfo\_pem\_encoder\_functions[];}
+\DoxyCodeLine{00462\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_ed448\_to\_SubjectPublicKeyInfo\_der\_encoder\_functions[];}
+\DoxyCodeLine{00463\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_ed448\_to\_SubjectPublicKeyInfo\_pem\_encoder\_functions[];}
+\DoxyCodeLine{00464\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_ed448\_to\_OSSL\_current\_der\_encoder\_functions[];}
+\DoxyCodeLine{00465\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_ed448\_to\_text\_encoder\_functions[];}
+\DoxyCodeLine{00466\ }
+\DoxyCodeLine{00467\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_x25519\_to\_EncryptedPrivateKeyInfo\_der\_encoder\_functions[];}
+\DoxyCodeLine{00468\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_x25519\_to\_EncryptedPrivateKeyInfo\_pem\_encoder\_functions[];}
+\DoxyCodeLine{00469\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_x25519\_to\_PrivateKeyInfo\_der\_encoder\_functions[];}
+\DoxyCodeLine{00470\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_x25519\_to\_PrivateKeyInfo\_pem\_encoder\_functions[];}
+\DoxyCodeLine{00471\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_x25519\_to\_SubjectPublicKeyInfo\_der\_encoder\_functions[];}
+\DoxyCodeLine{00472\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_x25519\_to\_SubjectPublicKeyInfo\_pem\_encoder\_functions[];}
+\DoxyCodeLine{00473\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_x25519\_to\_OSSL\_current\_der\_encoder\_functions[];}
+\DoxyCodeLine{00474\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_x25519\_to\_text\_encoder\_functions[];}
+\DoxyCodeLine{00475\ }
+\DoxyCodeLine{00476\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_x448\_to\_EncryptedPrivateKeyInfo\_der\_encoder\_functions[];}
+\DoxyCodeLine{00477\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_x448\_to\_EncryptedPrivateKeyInfo\_pem\_encoder\_functions[];}
+\DoxyCodeLine{00478\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_x448\_to\_PrivateKeyInfo\_der\_encoder\_functions[];}
+\DoxyCodeLine{00479\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_x448\_to\_PrivateKeyInfo\_pem\_encoder\_functions[];}
+\DoxyCodeLine{00480\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_x448\_to\_SubjectPublicKeyInfo\_der\_encoder\_functions[];}
+\DoxyCodeLine{00481\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_x448\_to\_SubjectPublicKeyInfo\_pem\_encoder\_functions[];}
+\DoxyCodeLine{00482\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_x448\_to\_OSSL\_current\_der\_encoder\_functions[];}
+\DoxyCodeLine{00483\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_x448\_to\_text\_encoder\_functions[];}
+\DoxyCodeLine{00484\ }
+\DoxyCodeLine{00485\ \textcolor{comment}{/*\ Decoders\ */}}
+\DoxyCodeLine{00486\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_PrivateKeyInfo\_der\_to\_dh\_decoder\_functions[];}
+\DoxyCodeLine{00487\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_SubjectPublicKeyInfo\_der\_to\_dh\_decoder\_functions[];}
+\DoxyCodeLine{00488\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_type\_specific\_params\_der\_to\_dh\_decoder\_functions[];}
+\DoxyCodeLine{00489\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_DH\_der\_to\_dh\_decoder\_functions[];}
+\DoxyCodeLine{00490\ }
+\DoxyCodeLine{00491\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_PrivateKeyInfo\_der\_to\_dhx\_decoder\_functions[];}
+\DoxyCodeLine{00492\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_SubjectPublicKeyInfo\_der\_to\_dhx\_decoder\_functions[];}
+\DoxyCodeLine{00493\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_type\_specific\_params\_der\_to\_dhx\_decoder\_functions[];}
+\DoxyCodeLine{00494\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_DHX\_der\_to\_dhx\_decoder\_functions[];}
+\DoxyCodeLine{00495\ }
+\DoxyCodeLine{00496\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_PrivateKeyInfo\_der\_to\_dsa\_decoder\_functions[];}
+\DoxyCodeLine{00497\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_SubjectPublicKeyInfo\_der\_to\_dsa\_decoder\_functions[];}
+\DoxyCodeLine{00498\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_type\_specific\_der\_to\_dsa\_decoder\_functions[];}
+\DoxyCodeLine{00499\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_DSA\_der\_to\_dsa\_decoder\_functions[];}
+\DoxyCodeLine{00500\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_msblob\_to\_dsa\_decoder\_functions[];}
+\DoxyCodeLine{00501\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_pvk\_to\_dsa\_decoder\_functions[];}
+\DoxyCodeLine{00502\ }
+\DoxyCodeLine{00503\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_PrivateKeyInfo\_der\_to\_ec\_decoder\_functions[];}
+\DoxyCodeLine{00504\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_SubjectPublicKeyInfo\_der\_to\_ec\_decoder\_functions[];}
+\DoxyCodeLine{00505\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_type\_specific\_no\_pub\_der\_to\_ec\_decoder\_functions[];}
+\DoxyCodeLine{00506\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_EC\_der\_to\_ec\_decoder\_functions[];}
+\DoxyCodeLine{00507\ }
+\DoxyCodeLine{00508\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_PrivateKeyInfo\_der\_to\_x25519\_decoder\_functions[];}
+\DoxyCodeLine{00509\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_SubjectPublicKeyInfo\_der\_to\_x25519\_decoder\_functions[];}
+\DoxyCodeLine{00510\ }
+\DoxyCodeLine{00511\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_PrivateKeyInfo\_der\_to\_x448\_decoder\_functions[];}
+\DoxyCodeLine{00512\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_SubjectPublicKeyInfo\_der\_to\_x448\_decoder\_functions[];}
+\DoxyCodeLine{00513\ }
+\DoxyCodeLine{00514\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_PrivateKeyInfo\_der\_to\_ed25519\_decoder\_functions[];}
+\DoxyCodeLine{00515\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_SubjectPublicKeyInfo\_der\_to\_ed25519\_decoder\_functions[];}
+\DoxyCodeLine{00516\ }
+\DoxyCodeLine{00517\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_PrivateKeyInfo\_der\_to\_ed448\_decoder\_functions[];}
+\DoxyCodeLine{00518\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_SubjectPublicKeyInfo\_der\_to\_ed448\_decoder\_functions[];}
+\DoxyCodeLine{00519\ }
+\DoxyCodeLine{00520\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_SM2}}
+\DoxyCodeLine{00521\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_PrivateKeyInfo\_der\_to\_sm2\_decoder\_functions[];}
+\DoxyCodeLine{00522\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_SubjectPublicKeyInfo\_der\_to\_sm2\_decoder\_functions[];}
+\DoxyCodeLine{00523\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_type\_specific\_no\_pub\_der\_to\_sm2\_decoder\_functions[];}
+\DoxyCodeLine{00524\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00525\ }
+\DoxyCodeLine{00526\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_PrivateKeyInfo\_der\_to\_rsa\_decoder\_functions[];}
+\DoxyCodeLine{00527\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_SubjectPublicKeyInfo\_der\_to\_rsa\_decoder\_functions[];}
+\DoxyCodeLine{00528\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_type\_specific\_keypair\_der\_to\_rsa\_decoder\_functions[];}
+\DoxyCodeLine{00529\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_RSA\_der\_to\_rsa\_decoder\_functions[];}
+\DoxyCodeLine{00530\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_msblob\_to\_rsa\_decoder\_functions[];}
+\DoxyCodeLine{00531\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_pvk\_to\_rsa\_decoder\_functions[];}
+\DoxyCodeLine{00532\ }
+\DoxyCodeLine{00533\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_PrivateKeyInfo\_der\_to\_rsapss\_decoder\_functions[];}
+\DoxyCodeLine{00534\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_SubjectPublicKeyInfo\_der\_to\_rsapss\_decoder\_functions[];}
+\DoxyCodeLine{00535\ }
+\DoxyCodeLine{00536\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_EncryptedPrivateKeyInfo\_der\_to\_der\_decoder\_functions[];}
+\DoxyCodeLine{00537\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_SubjectPublicKeyInfo\_der\_to\_der\_decoder\_functions[];}
+\DoxyCodeLine{00538\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_pem\_to\_der\_decoder\_functions[];}
+\DoxyCodeLine{00539\ }
+\DoxyCodeLine{00540\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_file\_store\_functions[];}
+\DoxyCodeLine{00541\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ ossl\_winstore\_store\_functions[];}
+
+\end{DoxyCode}

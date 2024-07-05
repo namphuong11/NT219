@@ -1,0 +1,46 @@
+\doxysection{x509\+\_\+lookup\+\_\+method\+\_\+st Struct Reference}
+\hypertarget{structx509__lookup__method__st}{}\label{structx509__lookup__method__st}\index{x509\_lookup\_method\_st@{x509\_lookup\_method\_st}}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{structx509__lookup__method__st_a45131c755b0511a8c42a44bfd8c08dc5}\label{structx509__lookup__method__st_a45131c755b0511a8c42a44bfd8c08dc5} 
+char \texorpdfstring{$\ast$}{*} {\bfseries name}
+\item 
+\Hypertarget{structx509__lookup__method__st_a308b007d8cb1b10bc525d9a8a794926e}\label{structx509__lookup__method__st_a308b007d8cb1b10bc525d9a8a794926e} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries new\+\_\+item} )(X509\+\_\+\+LOOKUP \texorpdfstring{$\ast$}{*}ctx)
+\item 
+\Hypertarget{structx509__lookup__method__st_a0ef0e21d7fe023bc976d002e1dd5a810}\label{structx509__lookup__method__st_a0ef0e21d7fe023bc976d002e1dd5a810} 
+void(\texorpdfstring{$\ast$}{*} {\bfseries free} )(X509\+\_\+\+LOOKUP \texorpdfstring{$\ast$}{*}ctx)
+\item 
+\Hypertarget{structx509__lookup__method__st_a04ca0ebad723cae3fa9cb487c56e09a0}\label{structx509__lookup__method__st_a04ca0ebad723cae3fa9cb487c56e09a0} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries init} )(X509\+\_\+\+LOOKUP \texorpdfstring{$\ast$}{*}ctx)
+\item 
+\Hypertarget{structx509__lookup__method__st_aa201108d16466a85c87dd0b86288087a}\label{structx509__lookup__method__st_aa201108d16466a85c87dd0b86288087a} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries shutdown} )(X509\+\_\+\+LOOKUP \texorpdfstring{$\ast$}{*}ctx)
+\item 
+\Hypertarget{structx509__lookup__method__st_a87357ddd14742495a20e4e7be7cdfab2}\label{structx509__lookup__method__st_a87357ddd14742495a20e4e7be7cdfab2} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries ctrl} )(X509\+\_\+\+LOOKUP \texorpdfstring{$\ast$}{*}ctx, int cmd, const char \texorpdfstring{$\ast$}{*}argc, long argl, char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}ret)
+\item 
+\Hypertarget{structx509__lookup__method__st_a95bc800778140241acd742e57ac6372a}\label{structx509__lookup__method__st_a95bc800778140241acd742e57ac6372a} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries get\+\_\+by\+\_\+subject} )(X509\+\_\+\+LOOKUP \texorpdfstring{$\ast$}{*}ctx, X509\+\_\+\+LOOKUP\+\_\+\+TYPE type, const X509\+\_\+\+NAME \texorpdfstring{$\ast$}{*}name, X509\+\_\+\+OBJECT \texorpdfstring{$\ast$}{*}ret)
+\item 
+\Hypertarget{structx509__lookup__method__st_ae7d6c70033d539027b876db95748d638}\label{structx509__lookup__method__st_ae7d6c70033d539027b876db95748d638} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries get\+\_\+by\+\_\+issuer\+\_\+serial} )(X509\+\_\+\+LOOKUP \texorpdfstring{$\ast$}{*}ctx, X509\+\_\+\+LOOKUP\+\_\+\+TYPE type, const X509\+\_\+\+NAME \texorpdfstring{$\ast$}{*}name, const ASN1\+\_\+\+INTEGER \texorpdfstring{$\ast$}{*}serial, X509\+\_\+\+OBJECT \texorpdfstring{$\ast$}{*}ret)
+\item 
+\Hypertarget{structx509__lookup__method__st_ab8da5301a12826d3057219a8763d5646}\label{structx509__lookup__method__st_ab8da5301a12826d3057219a8763d5646} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries get\+\_\+by\+\_\+fingerprint} )(X509\+\_\+\+LOOKUP \texorpdfstring{$\ast$}{*}ctx, X509\+\_\+\+LOOKUP\+\_\+\+TYPE type, const unsigned char \texorpdfstring{$\ast$}{*}bytes, int len, X509\+\_\+\+OBJECT \texorpdfstring{$\ast$}{*}ret)
+\item 
+\Hypertarget{structx509__lookup__method__st_afad3068c0851504d1dce8ff4e1ca06b8}\label{structx509__lookup__method__st_afad3068c0851504d1dce8ff4e1ca06b8} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries get\+\_\+by\+\_\+alias} )(X509\+\_\+\+LOOKUP \texorpdfstring{$\ast$}{*}ctx, X509\+\_\+\+LOOKUP\+\_\+\+TYPE type, const char \texorpdfstring{$\ast$}{*}str, int len, X509\+\_\+\+OBJECT \texorpdfstring{$\ast$}{*}ret)
+\item 
+\Hypertarget{structx509__lookup__method__st_a9e1e592e980526740f731edf5cad9f4b}\label{structx509__lookup__method__st_a9e1e592e980526740f731edf5cad9f4b} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries get\+\_\+by\+\_\+subject\+\_\+ex} )(X509\+\_\+\+LOOKUP \texorpdfstring{$\ast$}{*}ctx, X509\+\_\+\+LOOKUP\+\_\+\+TYPE type, const X509\+\_\+\+NAME \texorpdfstring{$\ast$}{*}name, X509\+\_\+\+OBJECT \texorpdfstring{$\ast$}{*}ret, OSSL\+\_\+\+LIB\+\_\+\+CTX \texorpdfstring{$\ast$}{*}libctx, const char \texorpdfstring{$\ast$}{*}propq)
+\item 
+\Hypertarget{structx509__lookup__method__st_a8586b7a6c57449a4cf82f86d028ed99b}\label{structx509__lookup__method__st_a8586b7a6c57449a4cf82f86d028ed99b} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries ctrl\+\_\+ex} )(X509\+\_\+\+LOOKUP \texorpdfstring{$\ast$}{*}ctx, int cmd, const char \texorpdfstring{$\ast$}{*}argc, long argl, char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}ret, OSSL\+\_\+\+LIB\+\_\+\+CTX \texorpdfstring{$\ast$}{*}libctx, const char \texorpdfstring{$\ast$}{*}propq)
+\end{DoxyCompactItemize}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/namph/\+Downloads/openssl/openssl-\/3.\+2.\+1/crypto/x509/x509\+\_\+local.\+h\end{DoxyCompactItemize}

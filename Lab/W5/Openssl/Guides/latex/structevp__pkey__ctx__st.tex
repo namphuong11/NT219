@@ -1,0 +1,98 @@
+\doxysection{evp\+\_\+pkey\+\_\+ctx\+\_\+st Struct Reference}
+\hypertarget{structevp__pkey__ctx__st}{}\label{structevp__pkey__ctx__st}\index{evp\_pkey\_ctx\_st@{evp\_pkey\_ctx\_st}}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{structevp__pkey__ctx__st_a4f4bf4a8cfc43e63a84e17641a864ade}\label{structevp__pkey__ctx__st_a4f4bf4a8cfc43e63a84e17641a864ade} 
+int {\bfseries operation}
+\item 
+\Hypertarget{structevp__pkey__ctx__st_abfcdef6cc00e9a3cc480d67f1ef11bf0}\label{structevp__pkey__ctx__st_abfcdef6cc00e9a3cc480d67f1ef11bf0} 
+OSSL\+\_\+\+LIB\+\_\+\+CTX \texorpdfstring{$\ast$}{*} {\bfseries libctx}
+\item 
+\Hypertarget{structevp__pkey__ctx__st_aa22cf68148cf1204d3158bd6ddc09948}\label{structevp__pkey__ctx__st_aa22cf68148cf1204d3158bd6ddc09948} 
+char \texorpdfstring{$\ast$}{*} {\bfseries propquery}
+\item 
+\Hypertarget{structevp__pkey__ctx__st_a29c6043bd83d39cbc9ac29610448f9c4}\label{structevp__pkey__ctx__st_a29c6043bd83d39cbc9ac29610448f9c4} 
+const char \texorpdfstring{$\ast$}{*} {\bfseries keytype}
+\item 
+\Hypertarget{structevp__pkey__ctx__st_aba2ec9c060521165810fce1116b190e8}\label{structevp__pkey__ctx__st_aba2ec9c060521165810fce1116b190e8} 
+EVP\+\_\+\+KEYMGMT \texorpdfstring{$\ast$}{*} {\bfseries keymgmt}
+\item 
+\Hypertarget{structevp__pkey__ctx__st_a47e2c053d32fab94c79a2c3382989dfa}\label{structevp__pkey__ctx__st_a47e2c053d32fab94c79a2c3382989dfa} 
+\begin{tabbing}
+xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=\kill
+union \{\\
+\>struct \{\\
+\>\>void \texorpdfstring{$\ast$}{*} {\bfseries genctx}\\
+\>\} {\bfseries keymgmt}\\
+\>struct \{\\
+\>\>EVP\_KEYEXCH \texorpdfstring{$\ast$}{*} {\bfseries exchange}\\
+\>\>void \texorpdfstring{$\ast$}{*} {\bfseries algctx}\\
+\>\} {\bfseries kex}\\
+\>struct \{\\
+\>\>EVP\_SIGNATURE \texorpdfstring{$\ast$}{*} {\bfseries signature}\\
+\>\>void \texorpdfstring{$\ast$}{*} {\bfseries algctx}\\
+\>\} {\bfseries sig}\\
+\>struct \{\\
+\>\>EVP\_ASYM\_CIPHER \texorpdfstring{$\ast$}{*} {\bfseries cipher}\\
+\>\>void \texorpdfstring{$\ast$}{*} {\bfseries algctx}\\
+\>\} {\bfseries ciph}\\
+\>struct \{\\
+\>\>EVP\_KEM \texorpdfstring{$\ast$}{*} {\bfseries kem}\\
+\>\>void \texorpdfstring{$\ast$}{*} {\bfseries algctx}\\
+\>\} {\bfseries encap}\\
+\} {\bfseries op}\\
+
+\end{tabbing}\item 
+\Hypertarget{structevp__pkey__ctx__st_acaa0fa8fe470a47396eb832ee2b2b7b1}\label{structevp__pkey__ctx__st_acaa0fa8fe470a47396eb832ee2b2b7b1} 
+\begin{tabbing}
+xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=\kill
+struct \{\\
+\>char \texorpdfstring{$\ast$}{*} {\bfseries dist\_id\_name}\\
+\>void \texorpdfstring{$\ast$}{*} {\bfseries dist\_id}\\
+\>size\_t {\bfseries dist\_id\_len}\\
+\>unsigned int {\bfseries dist\_id\_set}: 1\\
+\} {\bfseries cached\_parameters}\\
+
+\end{tabbing}\item 
+\Hypertarget{structevp__pkey__ctx__st_a0e6ee8df1a883533f8eb2e5c2951a8a9}\label{structevp__pkey__ctx__st_a0e6ee8df1a883533f8eb2e5c2951a8a9} 
+void \texorpdfstring{$\ast$}{*} {\bfseries app\+\_\+data}
+\item 
+\Hypertarget{structevp__pkey__ctx__st_a085afe68134b10942fa7dd97ff7f83ef}\label{structevp__pkey__ctx__st_a085afe68134b10942fa7dd97ff7f83ef} 
+EVP\+\_\+\+PKEY\+\_\+gen\+\_\+cb \texorpdfstring{$\ast$}{*} {\bfseries pkey\+\_\+gencb}
+\item 
+\Hypertarget{structevp__pkey__ctx__st_aeddc8bd426061a7638e2e5c2031443f7}\label{structevp__pkey__ctx__st_aeddc8bd426061a7638e2e5c2031443f7} 
+int \texorpdfstring{$\ast$}{*} {\bfseries keygen\+\_\+info}
+\item 
+\Hypertarget{structevp__pkey__ctx__st_a1b51337dcae120259e5b505924995a8e}\label{structevp__pkey__ctx__st_a1b51337dcae120259e5b505924995a8e} 
+int {\bfseries keygen\+\_\+info\+\_\+count}
+\item 
+\Hypertarget{structevp__pkey__ctx__st_a3839461ce8bc3f08e05acd5045f98de1}\label{structevp__pkey__ctx__st_a3839461ce8bc3f08e05acd5045f98de1} 
+int {\bfseries legacy\+\_\+keytype}
+\item 
+\Hypertarget{structevp__pkey__ctx__st_a6883de7293150cd245435286117023f6}\label{structevp__pkey__ctx__st_a6883de7293150cd245435286117023f6} 
+const EVP\+\_\+\+PKEY\+\_\+\+METHOD \texorpdfstring{$\ast$}{*} {\bfseries pmeth}
+\item 
+\Hypertarget{structevp__pkey__ctx__st_a4f5ef2553d7c65b5f86a51617e8d80c9}\label{structevp__pkey__ctx__st_a4f5ef2553d7c65b5f86a51617e8d80c9} 
+ENGINE \texorpdfstring{$\ast$}{*} {\bfseries engine}
+\item 
+\Hypertarget{structevp__pkey__ctx__st_a8365f6eb42897335a2496b8f6a594a94}\label{structevp__pkey__ctx__st_a8365f6eb42897335a2496b8f6a594a94} 
+EVP\+\_\+\+PKEY \texorpdfstring{$\ast$}{*} {\bfseries pkey}
+\item 
+\Hypertarget{structevp__pkey__ctx__st_a7f874f63b0a2cc249155694e8d982d8f}\label{structevp__pkey__ctx__st_a7f874f63b0a2cc249155694e8d982d8f} 
+EVP\+\_\+\+PKEY \texorpdfstring{$\ast$}{*} {\bfseries peerkey}
+\item 
+\Hypertarget{structevp__pkey__ctx__st_aef3363ec6ce1081c46a89a9d900dd0d6}\label{structevp__pkey__ctx__st_aef3363ec6ce1081c46a89a9d900dd0d6} 
+void \texorpdfstring{$\ast$}{*} {\bfseries data}
+\item 
+\Hypertarget{structevp__pkey__ctx__st_ab107ae595290a16d1d0c9f8eb851cdf8}\label{structevp__pkey__ctx__st_ab107ae595290a16d1d0c9f8eb851cdf8} 
+unsigned int {\bfseries flag\+\_\+call\+\_\+digest\+\_\+custom}\+:1
+\item 
+\Hypertarget{structevp__pkey__ctx__st_a3790f661da3a2b0a7b043004027bb957}\label{structevp__pkey__ctx__st_a3790f661da3a2b0a7b043004027bb957} 
+BIGNUM \texorpdfstring{$\ast$}{*} {\bfseries rsa\+\_\+pubexp}
+\end{DoxyCompactItemize}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/namph/\+Downloads/openssl/openssl-\/3.\+2.\+1/include/crypto/evp.\+h\end{DoxyCompactItemize}

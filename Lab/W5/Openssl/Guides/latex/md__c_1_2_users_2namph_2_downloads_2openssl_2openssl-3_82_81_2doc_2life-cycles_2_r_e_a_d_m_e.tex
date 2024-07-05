@@ -1,0 +1,12 @@
+\chapter{Algorithm Life-\/\+Cycle Diagrams}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2life-cycles_2_r_e_a_d_m_e}{}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2life-cycles_2_r_e_a_d_m_e}\index{Algorithm Life-\/Cycle Diagrams@{Algorithm Life-\/Cycle Diagrams}}
+This directory contains the algorithm life-\/cycle diagram sources.
+
+The canonical life-\/cycles are in the spreadsheet.
+
+The various .dot files are graph descriptions for the \href{https://www.graphviz.org/}{\texttt{ Graph\+Viz}} tool. These omit edges and should be used for guidance only.
+
+To generate the rendered images, you need to install the following packages\+: \begin{DoxyVerb}sudo apt install graphviz cpanminus
+sudo cpanm Graph::Easy
+\end{DoxyVerb}
+ Running {\ttfamily make} will produce a number of {\ttfamily .txt} and {\ttfamily .png} files. These are the rendered {\ttfamily .dot} files. The {\ttfamily .txt} files require additional editing before they can be added to the manual pages in {\ttfamily internal/man7/life\+\_\+cycle-\/\texorpdfstring{$\ast$}{*}.pod}. 

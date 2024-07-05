@@ -1,0 +1,32 @@
+\doxysection{cipher\+\_\+sm4.\+h}
+\hypertarget{cipher__sm4_8h_source}{}\label{cipher__sm4_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/providers/implementations/ciphers/cipher\_sm4.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/providers/implementations/ciphers/cipher\_sm4.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2019-\/2022\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ "{}prov/ciphercommon.h"{}}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ "{}crypto/sm4.h"{}}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ "{}crypto/sm4\_platform.h"{}}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structprov__cast__ctx__st}{prov\_cast\_ctx\_st}}\ \{}
+\DoxyCodeLine{00015\ \ \ \ \ \mbox{\hyperlink{structprov__cipher__ctx__st}{PROV\_CIPHER\_CTX}}\ base;\ \ \ \ \ \ \textcolor{comment}{/*\ Must\ be\ first\ */}}
+\DoxyCodeLine{00016\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00017\ \ \ \ \ \ \ \ \ OSSL\_UNION\_ALIGN;}
+\DoxyCodeLine{00018\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_s_m4___k_e_y__st}{SM4\_KEY}}\ ks;}
+\DoxyCodeLine{00019\ \ \ \ \ \}\ ks;}
+\DoxyCodeLine{00020\ \}\ \mbox{\hyperlink{structprov__cast__ctx__st}{PROV\_SM4\_CTX}};}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structprov__cipher__hw__st}{PROV\_CIPHER\_HW}}\ *ossl\_prov\_cipher\_hw\_sm4\_cbc(\textcolor{keywordtype}{size\_t}\ keybits);}
+\DoxyCodeLine{00023\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structprov__cipher__hw__st}{PROV\_CIPHER\_HW}}\ *ossl\_prov\_cipher\_hw\_sm4\_ecb(\textcolor{keywordtype}{size\_t}\ keybits);}
+\DoxyCodeLine{00024\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structprov__cipher__hw__st}{PROV\_CIPHER\_HW}}\ *ossl\_prov\_cipher\_hw\_sm4\_ctr(\textcolor{keywordtype}{size\_t}\ keybits);}
+\DoxyCodeLine{00025\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structprov__cipher__hw__st}{PROV\_CIPHER\_HW}}\ *ossl\_prov\_cipher\_hw\_sm4\_ofb128(\textcolor{keywordtype}{size\_t}\ keybits);}
+\DoxyCodeLine{00026\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structprov__cipher__hw__st}{PROV\_CIPHER\_HW}}\ *ossl\_prov\_cipher\_hw\_sm4\_cfb128(\textcolor{keywordtype}{size\_t}\ keybits);}
+
+\end{DoxyCode}

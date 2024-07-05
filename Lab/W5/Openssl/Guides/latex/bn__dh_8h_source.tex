@@ -1,0 +1,49 @@
+\doxysection{bn\+\_\+dh.\+h}
+\hypertarget{bn__dh_8h_source}{}\label{bn__dh_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/crypto/bn\_dh.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/crypto/bn\_dh.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2015-\/2021\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#define\ declare\_dh\_bn(x)\ \(\backslash\)}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\ \ \ \ extern\ const\ BIGNUM\ ossl\_bignum\_dh\#\#x\#\#\_p;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\ \ \ \ extern\ const\ BIGNUM\ ossl\_bignum\_dh\#\#x\#\#\_q;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\ \ \ \ extern\ const\ BIGNUM\ ossl\_bignum\_dh\#\#x\#\#\_g;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{}}
+\DoxyCodeLine{00015\ declare\_dh\_bn(1024\_160)}
+\DoxyCodeLine{00016\ declare\_dh\_bn(2048\_224)}
+\DoxyCodeLine{00017\ declare\_dh\_bn(2048\_256)}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ BIGNUM\ ossl\_bignum\_const\_2;}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ BIGNUM\ ossl\_bignum\_ffdhe2048\_p;}
+\DoxyCodeLine{00022\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ BIGNUM\ ossl\_bignum\_ffdhe3072\_p;}
+\DoxyCodeLine{00023\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ BIGNUM\ ossl\_bignum\_ffdhe4096\_p;}
+\DoxyCodeLine{00024\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ BIGNUM\ ossl\_bignum\_ffdhe6144\_p;}
+\DoxyCodeLine{00025\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ BIGNUM\ ossl\_bignum\_ffdhe8192\_p;}
+\DoxyCodeLine{00026\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ BIGNUM\ ossl\_bignum\_ffdhe2048\_q;}
+\DoxyCodeLine{00027\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ BIGNUM\ ossl\_bignum\_ffdhe3072\_q;}
+\DoxyCodeLine{00028\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ BIGNUM\ ossl\_bignum\_ffdhe4096\_q;}
+\DoxyCodeLine{00029\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ BIGNUM\ ossl\_bignum\_ffdhe6144\_q;}
+\DoxyCodeLine{00030\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ BIGNUM\ ossl\_bignum\_ffdhe8192\_q;}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ BIGNUM\ ossl\_bignum\_modp\_1536\_p;}
+\DoxyCodeLine{00033\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ BIGNUM\ ossl\_bignum\_modp\_2048\_p;}
+\DoxyCodeLine{00034\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ BIGNUM\ ossl\_bignum\_modp\_3072\_p;}
+\DoxyCodeLine{00035\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ BIGNUM\ ossl\_bignum\_modp\_4096\_p;}
+\DoxyCodeLine{00036\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ BIGNUM\ ossl\_bignum\_modp\_6144\_p;}
+\DoxyCodeLine{00037\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ BIGNUM\ ossl\_bignum\_modp\_8192\_p;}
+\DoxyCodeLine{00038\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ BIGNUM\ ossl\_bignum\_modp\_1536\_q;}
+\DoxyCodeLine{00039\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ BIGNUM\ ossl\_bignum\_modp\_2048\_q;}
+\DoxyCodeLine{00040\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ BIGNUM\ ossl\_bignum\_modp\_3072\_q;}
+\DoxyCodeLine{00041\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ BIGNUM\ ossl\_bignum\_modp\_4096\_q;}
+\DoxyCodeLine{00042\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ BIGNUM\ ossl\_bignum\_modp\_6144\_q;}
+\DoxyCodeLine{00043\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ BIGNUM\ ossl\_bignum\_modp\_8192\_q;}
+
+\end{DoxyCode}

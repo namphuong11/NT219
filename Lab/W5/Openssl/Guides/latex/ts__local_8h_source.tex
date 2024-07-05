@@ -1,0 +1,158 @@
+\doxysection{ts\+\_\+local.\+h}
+\hypertarget{ts__local_8h_source}{}\label{ts__local_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/ts/ts\_local.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/ts/ts\_local.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2015-\/2021\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ *\ MessageImprint\ ::=\ SEQUENCE\ \ \{}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ *\ \ \ \ \ \ hashAlgorithm\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ AlgorithmIdentifier,}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ *\ \ \ \ \ \ hashedMessage\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OCTET\ STRING\ \ \}}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00015\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_t_s__msg__imprint__st}{TS\_msg\_imprint\_st}}\ \{}
+\DoxyCodeLine{00016\ \ \ \ \ X509\_ALGOR\ *hash\_algo;}
+\DoxyCodeLine{00017\ \ \ \ \ ASN1\_OCTET\_STRING\ *hashed\_msg;}
+\DoxyCodeLine{00018\ \};}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00021\ \textcolor{comment}{\ *\ TimeStampResp\ ::=\ SEQUENCE\ \ \{}}
+\DoxyCodeLine{00022\ \textcolor{comment}{\ *\ \ \ \ \ status\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ PKIStatusInfo,}}
+\DoxyCodeLine{00023\ \textcolor{comment}{\ *\ \ \ \ \ timeStampToken\ \ \ \ \ \ \ \ \ \ TimeStampToken\ \ \ \ \ OPTIONAL\ \}}}
+\DoxyCodeLine{00024\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00025\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_t_s__resp__st}{TS\_resp\_st}}\ \{}
+\DoxyCodeLine{00026\ \ \ \ \ TS\_STATUS\_INFO\ *status\_info;}
+\DoxyCodeLine{00027\ \ \ \ \ PKCS7\ *token;}
+\DoxyCodeLine{00028\ \ \ \ \ TS\_TST\_INFO\ *tst\_info;}
+\DoxyCodeLine{00029\ \};}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00032\ \textcolor{comment}{\ *\ TimeStampReq\ ::=\ SEQUENCE\ \ \{}}
+\DoxyCodeLine{00033\ \textcolor{comment}{\ *\ \ \ \ version\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ INTEGER\ \ \{\ v1(1)\ \},}}
+\DoxyCodeLine{00034\ \textcolor{comment}{\ *\ \ \ \ messageImprint\ \ \ \ \ \ \ \ \ \ \ MessageImprint,}}
+\DoxyCodeLine{00035\ \textcolor{comment}{\ *\ \ \ \ \ \ -\/-\/a\ hash\ algorithm\ OID\ and\ the\ hash\ value\ of\ the\ data\ to\ be}}
+\DoxyCodeLine{00036\ \textcolor{comment}{\ *\ \ \ \ \ \ -\/-\/time-\/stamped}}
+\DoxyCodeLine{00037\ \textcolor{comment}{\ *\ \ \ \ reqPolicy\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ TSAPolicyId\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OPTIONAL,}}
+\DoxyCodeLine{00038\ \textcolor{comment}{\ *\ \ \ \ nonce\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ INTEGER\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OPTIONAL,}}
+\DoxyCodeLine{00039\ \textcolor{comment}{\ *\ \ \ \ certReq\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BOOLEAN\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ DEFAULT\ FALSE,}}
+\DoxyCodeLine{00040\ \textcolor{comment}{\ *\ \ \ \ extensions\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ [0]\ IMPLICIT\ Extensions\ \ \ \ OPTIONAL\ \ \}}}
+\DoxyCodeLine{00041\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00042\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_t_s__req__st}{TS\_req\_st}}\ \{}
+\DoxyCodeLine{00043\ \ \ \ \ ASN1\_INTEGER\ *version;}
+\DoxyCodeLine{00044\ \ \ \ \ TS\_MSG\_IMPRINT\ *msg\_imprint;}
+\DoxyCodeLine{00045\ \ \ \ \ ASN1\_OBJECT\ *policy\_id;}
+\DoxyCodeLine{00046\ \ \ \ \ ASN1\_INTEGER\ *nonce;}
+\DoxyCodeLine{00047\ \ \ \ \ ASN1\_BOOLEAN\ cert\_req;}
+\DoxyCodeLine{00048\ \ \ \ \ STACK\_OF(X509\_EXTENSION)\ *extensions;}
+\DoxyCodeLine{00049\ \};}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00052\ \textcolor{comment}{\ *\ Accuracy\ ::=\ SEQUENCE\ \{}}
+\DoxyCodeLine{00053\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ seconds\ \ \ \ \ \ \ \ INTEGER\ \ \ \ \ \ \ \ \ \ \ OPTIONAL,}}
+\DoxyCodeLine{00054\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ millis\ \ \ \ \ [0]\ INTEGER\ \ (1..999)\ OPTIONAL,}}
+\DoxyCodeLine{00055\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ micros\ \ \ \ \ [1]\ INTEGER\ \ (1..999)\ OPTIONAL\ \ \}}}
+\DoxyCodeLine{00056\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00057\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_t_s__accuracy__st}{TS\_accuracy\_st}}\ \{}
+\DoxyCodeLine{00058\ \ \ \ \ ASN1\_INTEGER\ *seconds;}
+\DoxyCodeLine{00059\ \ \ \ \ ASN1\_INTEGER\ *millis;}
+\DoxyCodeLine{00060\ \ \ \ \ ASN1\_INTEGER\ *micros;}
+\DoxyCodeLine{00061\ \};}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00063\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00064\ \textcolor{comment}{\ *\ TSTInfo\ ::=\ SEQUENCE\ \ \{}}
+\DoxyCodeLine{00065\ \textcolor{comment}{\ *\ \ \ \ \ version\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ INTEGER\ \ \{\ v1(1)\ \},}}
+\DoxyCodeLine{00066\ \textcolor{comment}{\ *\ \ \ \ \ policy\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ TSAPolicyId,}}
+\DoxyCodeLine{00067\ \textcolor{comment}{\ *\ \ \ \ \ messageImprint\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ MessageImprint,}}
+\DoxyCodeLine{00068\ \textcolor{comment}{\ *\ \ \ \ \ \ \ -\/-\/\ MUST\ have\ the\ same\ value\ as\ the\ similar\ field\ in}}
+\DoxyCodeLine{00069\ \textcolor{comment}{\ *\ \ \ \ \ \ \ -\/-\/\ TimeStampReq}}
+\DoxyCodeLine{00070\ \textcolor{comment}{\ *\ \ \ \ \ serialNumber\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ INTEGER,}}
+\DoxyCodeLine{00071\ \textcolor{comment}{\ *\ \ \ \ \ \ -\/-\/\ Time-\/Stamping\ users\ MUST\ be\ ready\ to\ accommodate\ integers}}
+\DoxyCodeLine{00072\ \textcolor{comment}{\ *\ \ \ \ \ \ -\/-\/\ up\ to\ 160\ bits.}}
+\DoxyCodeLine{00073\ \textcolor{comment}{\ *\ \ \ \ \ genTime\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ GeneralizedTime,}}
+\DoxyCodeLine{00074\ \textcolor{comment}{\ *\ \ \ \ \ accuracy\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Accuracy\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OPTIONAL,}}
+\DoxyCodeLine{00075\ \textcolor{comment}{\ *\ \ \ \ \ ordering\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BOOLEAN\ \ \ \ \ \ \ \ \ \ \ \ \ DEFAULT\ FALSE,}}
+\DoxyCodeLine{00076\ \textcolor{comment}{\ *\ \ \ \ \ nonce\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ INTEGER\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OPTIONAL,}}
+\DoxyCodeLine{00077\ \textcolor{comment}{\ *\ \ \ \ \ \ \ -\/-\/\ MUST\ be\ present\ if\ the\ similar\ field\ was\ present}}
+\DoxyCodeLine{00078\ \textcolor{comment}{\ *\ \ \ \ \ \ \ -\/-\/\ in\ TimeStampReq.\ \ In\ that\ case\ it\ MUST\ have\ the\ same\ value.}}
+\DoxyCodeLine{00079\ \textcolor{comment}{\ *\ \ \ \ \ tsa\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ [0]\ GeneralName\ \ \ \ \ \ \ \ \ \ OPTIONAL,}}
+\DoxyCodeLine{00080\ \textcolor{comment}{\ *\ \ \ \ \ extensions\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ [1]\ IMPLICIT\ Extensions\ \ OPTIONAL\ \ \ \}}}
+\DoxyCodeLine{00081\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00082\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_t_s__tst__info__st}{TS\_tst\_info\_st}}\ \{}
+\DoxyCodeLine{00083\ \ \ \ \ ASN1\_INTEGER\ *version;}
+\DoxyCodeLine{00084\ \ \ \ \ ASN1\_OBJECT\ *policy\_id;}
+\DoxyCodeLine{00085\ \ \ \ \ TS\_MSG\_IMPRINT\ *msg\_imprint;}
+\DoxyCodeLine{00086\ \ \ \ \ ASN1\_INTEGER\ *serial;}
+\DoxyCodeLine{00087\ \ \ \ \ ASN1\_GENERALIZEDTIME\ *time;}
+\DoxyCodeLine{00088\ \ \ \ \ TS\_ACCURACY\ *accuracy;}
+\DoxyCodeLine{00089\ \ \ \ \ ASN1\_BOOLEAN\ ordering;}
+\DoxyCodeLine{00090\ \ \ \ \ ASN1\_INTEGER\ *nonce;}
+\DoxyCodeLine{00091\ \ \ \ \ GENERAL\_NAME\ *tsa;}
+\DoxyCodeLine{00092\ \ \ \ \ STACK\_OF(X509\_EXTENSION)\ *extensions;}
+\DoxyCodeLine{00093\ \};}
+\DoxyCodeLine{00094\ }
+\DoxyCodeLine{00095\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_t_s__status__info__st}{TS\_status\_info\_st}}\ \{}
+\DoxyCodeLine{00096\ \ \ \ \ ASN1\_INTEGER\ *status;}
+\DoxyCodeLine{00097\ \ \ \ \ STACK\_OF(ASN1\_UTF8STRING)\ *text;}
+\DoxyCodeLine{00098\ \ \ \ \ ASN1\_BIT\_STRING\ *failure\_info;}
+\DoxyCodeLine{00099\ \};}
+\DoxyCodeLine{00100\ }
+\DoxyCodeLine{00101\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_t_s__resp__ctx}{TS\_resp\_ctx}}\ \{}
+\DoxyCodeLine{00102\ \ \ \ \ X509\ *signer\_cert;}
+\DoxyCodeLine{00103\ \ \ \ \ EVP\_PKEY\ *signer\_key;}
+\DoxyCodeLine{00104\ \ \ \ \ \textcolor{keyword}{const}\ EVP\_MD\ *signer\_md;}
+\DoxyCodeLine{00105\ \ \ \ \ \textcolor{keyword}{const}\ EVP\_MD\ *ess\_cert\_id\_digest;}
+\DoxyCodeLine{00106\ \ \ \ \ STACK\_OF(X509)\ *certs;\ \ \ \ \ \ \textcolor{comment}{/*\ Certs\ to\ include\ in\ signed\ data.\ */}}
+\DoxyCodeLine{00107\ \ \ \ \ STACK\_OF(ASN1\_OBJECT)\ *policies;\ \textcolor{comment}{/*\ Acceptable\ policies.\ */}}
+\DoxyCodeLine{00108\ \ \ \ \ ASN1\_OBJECT\ *default\_policy;\ \textcolor{comment}{/*\ It\ may\ appear\ in\ policies,\ too.\ */}}
+\DoxyCodeLine{00109\ \ \ \ \ STACK\_OF(EVP\_MD)\ *mds;\ \ \ \ \ \ \textcolor{comment}{/*\ Acceptable\ message\ digests.\ */}}
+\DoxyCodeLine{00110\ \ \ \ \ ASN1\_INTEGER\ *seconds;\ \ \ \ \ \ \textcolor{comment}{/*\ accuracy,\ 0\ means\ not\ specified.\ */}}
+\DoxyCodeLine{00111\ \ \ \ \ ASN1\_INTEGER\ *millis;\ \ \ \ \ \ \ \textcolor{comment}{/*\ accuracy,\ 0\ means\ not\ specified.\ */}}
+\DoxyCodeLine{00112\ \ \ \ \ ASN1\_INTEGER\ *micros;\ \ \ \ \ \ \ \textcolor{comment}{/*\ accuracy,\ 0\ means\ not\ specified.\ */}}
+\DoxyCodeLine{00113\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ clock\_precision\_digits;\ \textcolor{comment}{/*\ fraction\ of\ seconds\ in\ timestamp}}
+\DoxyCodeLine{00114\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *\ token.\ */}}
+\DoxyCodeLine{00115\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ flags;\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Optional\ info,\ see\ values\ above.\ */}}
+\DoxyCodeLine{00116\ \ \ \ \ \textcolor{comment}{/*\ Callback\ functions.\ */}}
+\DoxyCodeLine{00117\ \ \ \ \ TS\_serial\_cb\ serial\_cb;}
+\DoxyCodeLine{00118\ \ \ \ \ \textcolor{keywordtype}{void}\ *serial\_cb\_data;\ \ \ \ \ \ \ \textcolor{comment}{/*\ User\ data\ for\ serial\_cb.\ */}}
+\DoxyCodeLine{00119\ \ \ \ \ TS\_time\_cb\ time\_cb;}
+\DoxyCodeLine{00120\ \ \ \ \ \textcolor{keywordtype}{void}\ *time\_cb\_data;\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ User\ data\ for\ time\_cb.\ */}}
+\DoxyCodeLine{00121\ \ \ \ \ TS\_extension\_cb\ extension\_cb;}
+\DoxyCodeLine{00122\ \ \ \ \ \textcolor{keywordtype}{void}\ *extension\_cb\_data;\ \ \ \ \textcolor{comment}{/*\ User\ data\ for\ extension\_cb.\ */}}
+\DoxyCodeLine{00123\ \ \ \ \ \textcolor{comment}{/*\ These\ members\ are\ used\ only\ while\ creating\ the\ response.\ */}}
+\DoxyCodeLine{00124\ \ \ \ \ TS\_REQ\ *request;}
+\DoxyCodeLine{00125\ \ \ \ \ TS\_RESP\ *response;}
+\DoxyCodeLine{00126\ \ \ \ \ TS\_TST\_INFO\ *tst\_info;}
+\DoxyCodeLine{00127\ \ \ \ \ OSSL\_LIB\_CTX\ *libctx;}
+\DoxyCodeLine{00128\ \ \ \ \ \textcolor{keywordtype}{char}\ *propq;}
+\DoxyCodeLine{00129\ \};}
+\DoxyCodeLine{00130\ }
+\DoxyCodeLine{00131\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_t_s__verify__ctx}{TS\_verify\_ctx}}\ \{}
+\DoxyCodeLine{00132\ \ \ \ \ \textcolor{comment}{/*\ Set\ this\ to\ the\ union\ of\ TS\_VFY\_...\ flags\ you\ want\ to\ carry\ out.\ */}}
+\DoxyCodeLine{00133\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ flags;}
+\DoxyCodeLine{00134\ \ \ \ \ \textcolor{comment}{/*\ Must\ be\ set\ only\ with\ TS\_VFY\_SIGNATURE.\ certs\ is\ optional.\ */}}
+\DoxyCodeLine{00135\ \ \ \ \ X509\_STORE\ *store;}
+\DoxyCodeLine{00136\ \ \ \ \ STACK\_OF(X509)\ *certs;}
+\DoxyCodeLine{00137\ \ \ \ \ \textcolor{comment}{/*\ Must\ be\ set\ only\ with\ TS\_VFY\_POLICY.\ */}}
+\DoxyCodeLine{00138\ \ \ \ \ ASN1\_OBJECT\ *policy;}
+\DoxyCodeLine{00139\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00140\ \textcolor{comment}{\ \ \ \ \ *\ Must\ be\ set\ only\ with\ TS\_VFY\_IMPRINT.\ If\ md\_alg\ is\ NULL,\ the}}
+\DoxyCodeLine{00141\ \textcolor{comment}{\ \ \ \ \ *\ algorithm\ from\ the\ response\ is\ used.}}
+\DoxyCodeLine{00142\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00143\ \ \ \ \ X509\_ALGOR\ *md\_alg;}
+\DoxyCodeLine{00144\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *imprint;}
+\DoxyCodeLine{00145\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ imprint\_len;}
+\DoxyCodeLine{00146\ \ \ \ \ \textcolor{comment}{/*\ Must\ be\ set\ only\ with\ TS\_VFY\_DATA.\ */}}
+\DoxyCodeLine{00147\ \ \ \ \ BIO\ *data;}
+\DoxyCodeLine{00148\ \ \ \ \ \textcolor{comment}{/*\ Must\ be\ set\ only\ with\ TS\_VFY\_TSA\_NAME.\ */}}
+\DoxyCodeLine{00149\ \ \ \ \ ASN1\_INTEGER\ *nonce;}
+\DoxyCodeLine{00150\ \ \ \ \ \textcolor{comment}{/*\ Must\ be\ set\ only\ with\ TS\_VFY\_TSA\_NAME.\ */}}
+\DoxyCodeLine{00151\ \ \ \ \ GENERAL\_NAME\ *tsa\_name;}
+\DoxyCodeLine{00152\ \};}
+
+\end{DoxyCode}

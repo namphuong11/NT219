@@ -1,0 +1,124 @@
+\doxysection{ossl\+\_\+ackm\+\_\+st Struct Reference}
+\hypertarget{structossl__ackm__st}{}\label{structossl__ackm__st}\index{ossl\_ackm\_st@{ossl\_ackm\_st}}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{structossl__ackm__st_a47c5e1d85e186b6ee239dea1400eaab8}\label{structossl__ackm__st_a47c5e1d85e186b6ee239dea1400eaab8} 
+struct \mbox{\hyperlink{structtx__pkt__history__st}{tx\+\_\+pkt\+\_\+history\+\_\+st}} {\bfseries tx\+\_\+history} \mbox{[}QUIC\+\_\+\+PN\+\_\+\+SPACE\+\_\+\+NUM\mbox{]}
+\item 
+\Hypertarget{structossl__ackm__st_ae98f63ba135122ef60b2f30589850641}\label{structossl__ackm__st_ae98f63ba135122ef60b2f30589850641} 
+struct \mbox{\hyperlink{structrx__pkt__history__st}{rx\+\_\+pkt\+\_\+history\+\_\+st}} {\bfseries rx\+\_\+history} \mbox{[}QUIC\+\_\+\+PN\+\_\+\+SPACE\+\_\+\+NUM\mbox{]}
+\item 
+\Hypertarget{structossl__ackm__st_a761e989250606eae8fadb62d5ab7f55c}\label{structossl__ackm__st_a761e989250606eae8fadb62d5ab7f55c} 
+\mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\+\_\+\+TIME}}(\texorpdfstring{$\ast$}{*} {\bfseries now} )(void \texorpdfstring{$\ast$}{*}arg)
+\item 
+\Hypertarget{structossl__ackm__st_a59e710fffdbce2f38ccf6ccab1d8bb11}\label{structossl__ackm__st_a59e710fffdbce2f38ccf6ccab1d8bb11} 
+void \texorpdfstring{$\ast$}{*} {\bfseries now\+\_\+arg}
+\item 
+\Hypertarget{structossl__ackm__st_a227544ae0047d41540b628dd98498d32}\label{structossl__ackm__st_a227544ae0047d41540b628dd98498d32} 
+\mbox{\hyperlink{structossl__statm__st}{OSSL\+\_\+\+STATM}} \texorpdfstring{$\ast$}{*} {\bfseries statm}
+\item 
+\Hypertarget{structossl__ackm__st_a29272846d6a609274ed13c997ad3b7a6}\label{structossl__ackm__st_a29272846d6a609274ed13c997ad3b7a6} 
+const \mbox{\hyperlink{structossl__cc__method__st}{OSSL\+\_\+\+CC\+\_\+\+METHOD}} \texorpdfstring{$\ast$}{*} {\bfseries cc\+\_\+method}
+\item 
+\Hypertarget{structossl__ackm__st_acd755364bf70c28a5efdb91565ba9dc5}\label{structossl__ackm__st_acd755364bf70c28a5efdb91565ba9dc5} 
+OSSL\+\_\+\+CC\+\_\+\+DATA \texorpdfstring{$\ast$}{*} {\bfseries cc\+\_\+data}
+\item 
+\Hypertarget{structossl__ackm__st_af3e826c3f1dc3d9e4a3bf8becfb9222c}\label{structossl__ackm__st_af3e826c3f1dc3d9e4a3bf8becfb9222c} 
+uint32\+\_\+t {\bfseries pto\+\_\+count}
+\item 
+\Hypertarget{structossl__ackm__st_a616bb52558577ca0eb680be6191d3fe9}\label{structossl__ackm__st_a616bb52558577ca0eb680be6191d3fe9} 
+QUIC\+\_\+\+PN {\bfseries largest\+\_\+acked\+\_\+pkt} \mbox{[}QUIC\+\_\+\+PN\+\_\+\+SPACE\+\_\+\+NUM\mbox{]}
+\item 
+\Hypertarget{structossl__ackm__st_a2f997ff9f21b7e6c8db246418b23aac8}\label{structossl__ackm__st_a2f997ff9f21b7e6c8db246418b23aac8} 
+\mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\+\_\+\+TIME}} {\bfseries time\+\_\+of\+\_\+last\+\_\+ack\+\_\+eliciting\+\_\+pkt} \mbox{[}QUIC\+\_\+\+PN\+\_\+\+SPACE\+\_\+\+NUM\mbox{]}
+\item 
+\Hypertarget{structossl__ackm__st_a5e513d05ba49b00d62338825b9bf1b18}\label{structossl__ackm__st_a5e513d05ba49b00d62338825b9bf1b18} 
+\mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\+\_\+\+TIME}} {\bfseries loss\+\_\+time} \mbox{[}QUIC\+\_\+\+PN\+\_\+\+SPACE\+\_\+\+NUM\mbox{]}
+\item 
+\Hypertarget{structossl__ackm__st_aa760565b79d7ed9037cb4a14843b48d8}\label{structossl__ackm__st_aa760565b79d7ed9037cb4a14843b48d8} 
+\mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\+\_\+\+TIME}} {\bfseries loss\+\_\+detection\+\_\+deadline}
+\item 
+\Hypertarget{structossl__ackm__st_afe1a0ccec7bf35d4bfec7343ebacb5a4}\label{structossl__ackm__st_afe1a0ccec7bf35d4bfec7343ebacb5a4} 
+QUIC\+\_\+\+PN {\bfseries lowest\+\_\+unacked\+\_\+pkt} \mbox{[}QUIC\+\_\+\+PN\+\_\+\+SPACE\+\_\+\+NUM\mbox{]}
+\item 
+\Hypertarget{structossl__ackm__st_a1f2e4b64c4c6a0fa50abc55f9a38828a}\label{structossl__ackm__st_a1f2e4b64c4c6a0fa50abc55f9a38828a} 
+\mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\+\_\+\+TIME}} {\bfseries first\+\_\+rtt\+\_\+sample}
+\item 
+\Hypertarget{structossl__ackm__st_a1bd3c0ba7044b1df23802e7fc83e7969}\label{structossl__ackm__st_a1bd3c0ba7044b1df23802e7fc83e7969} 
+uint64\+\_\+t {\bfseries bytes\+\_\+in\+\_\+flight}
+\item 
+\Hypertarget{structossl__ackm__st_a6fd48e6ab029e1d16c9e7ac87ad750be}\label{structossl__ackm__st_a6fd48e6ab029e1d16c9e7ac87ad750be} 
+uint64\+\_\+t {\bfseries ack\+\_\+eliciting\+\_\+bytes\+\_\+in\+\_\+flight} \mbox{[}QUIC\+\_\+\+PN\+\_\+\+SPACE\+\_\+\+NUM\mbox{]}
+\item 
+\Hypertarget{structossl__ackm__st_a67a6e1ddcc9514573a612f86738e7895}\label{structossl__ackm__st_a67a6e1ddcc9514573a612f86738e7895} 
+uint64\+\_\+t {\bfseries peer\+\_\+ecnce} \mbox{[}QUIC\+\_\+\+PN\+\_\+\+SPACE\+\_\+\+NUM\mbox{]}
+\item 
+\Hypertarget{structossl__ackm__st_a7f2dfcda6fb52c1ad0f8a7eb1a231c85}\label{structossl__ackm__st_a7f2dfcda6fb52c1ad0f8a7eb1a231c85} 
+char {\bfseries handshake\+\_\+confirmed}
+\item 
+\Hypertarget{structossl__ackm__st_a23ddd90470f48ca98944ec9feeb2f201}\label{structossl__ackm__st_a23ddd90470f48ca98944ec9feeb2f201} 
+char {\bfseries peer\+\_\+completed\+\_\+addr\+\_\+validation}
+\item 
+\Hypertarget{structossl__ackm__st_a1512eaa4c4f5f6be29f194ba47a1781d}\label{structossl__ackm__st_a1512eaa4c4f5f6be29f194ba47a1781d} 
+char {\bfseries discarded} \mbox{[}QUIC\+\_\+\+PN\+\_\+\+SPACE\+\_\+\+NUM\mbox{]}
+\item 
+\Hypertarget{structossl__ackm__st_a37af45ce88a348b1ef94d0dd5fdb082b}\label{structossl__ackm__st_a37af45ce88a348b1ef94d0dd5fdb082b} 
+char {\bfseries rx\+\_\+ack\+\_\+desired} \mbox{[}QUIC\+\_\+\+PN\+\_\+\+SPACE\+\_\+\+NUM\mbox{]}
+\item 
+\Hypertarget{structossl__ackm__st_aa6c95f25a93e0fa38191b4c852053dfd}\label{structossl__ackm__st_aa6c95f25a93e0fa38191b4c852053dfd} 
+char {\bfseries rx\+\_\+ack\+\_\+generated} \mbox{[}QUIC\+\_\+\+PN\+\_\+\+SPACE\+\_\+\+NUM\mbox{]}
+\item 
+\Hypertarget{structossl__ackm__st_aaab5c49a2157f00a95ebfd1dc796027a}\label{structossl__ackm__st_aaab5c49a2157f00a95ebfd1dc796027a} 
+\mbox{\hyperlink{structossl__ackm__probe__info__st}{OSSL\+\_\+\+ACKM\+\_\+\+PROBE\+\_\+\+INFO}} {\bfseries pending\+\_\+probe}
+\item 
+\Hypertarget{structossl__ackm__st_a5e0dbbf3f76b397958a68f70bd3e3dd3}\label{structossl__ackm__st_a5e0dbbf3f76b397958a68f70bd3e3dd3} 
+\mbox{\hyperlink{structossl__quic__frame__ack__st}{OSSL\+\_\+\+QUIC\+\_\+\+FRAME\+\_\+\+ACK}} {\bfseries ack} \mbox{[}QUIC\+\_\+\+PN\+\_\+\+SPACE\+\_\+\+NUM\mbox{]}
+\item 
+\Hypertarget{structossl__ackm__st_a590cd7ed6634067f0d083ff4a293e702}\label{structossl__ackm__st_a590cd7ed6634067f0d083ff4a293e702} 
+\mbox{\hyperlink{structossl__quic__ack__range__st}{OSSL\+\_\+\+QUIC\+\_\+\+ACK\+\_\+\+RANGE}} {\bfseries ack\+\_\+ranges} \mbox{[}QUIC\+\_\+\+PN\+\_\+\+SPACE\+\_\+\+NUM\mbox{]}\mbox{[}MAX\+\_\+\+RX\+\_\+\+ACK\+\_\+\+RANGES\mbox{]}
+\item 
+\Hypertarget{structossl__ackm__st_ae321e9f6a2a1b13572595fa7434fcc60}\label{structossl__ackm__st_ae321e9f6a2a1b13572595fa7434fcc60} 
+QUIC\+\_\+\+PN {\bfseries rx\+\_\+largest\+\_\+pn} \mbox{[}QUIC\+\_\+\+PN\+\_\+\+SPACE\+\_\+\+NUM\mbox{]}
+\item 
+\Hypertarget{structossl__ackm__st_a5496da04b1850f796a5b7ff77b1fd1c5}\label{structossl__ackm__st_a5496da04b1850f796a5b7ff77b1fd1c5} 
+\mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\+\_\+\+TIME}} {\bfseries rx\+\_\+largest\+\_\+time} \mbox{[}QUIC\+\_\+\+PN\+\_\+\+SPACE\+\_\+\+NUM\mbox{]}
+\item 
+\Hypertarget{structossl__ackm__st_a5e2e82825899a371b74cf059406e0ee9}\label{structossl__ackm__st_a5e2e82825899a371b74cf059406e0ee9} 
+uint64\+\_\+t {\bfseries rx\+\_\+ect0} \mbox{[}QUIC\+\_\+\+PN\+\_\+\+SPACE\+\_\+\+NUM\mbox{]}
+\item 
+\Hypertarget{structossl__ackm__st_a8b700e92f7ff77f4b79258ad0cc6e9da}\label{structossl__ackm__st_a8b700e92f7ff77f4b79258ad0cc6e9da} 
+uint64\+\_\+t {\bfseries rx\+\_\+ect1} \mbox{[}QUIC\+\_\+\+PN\+\_\+\+SPACE\+\_\+\+NUM\mbox{]}
+\item 
+\Hypertarget{structossl__ackm__st_a994a75a1756db8323ea2bef905abecdd}\label{structossl__ackm__st_a994a75a1756db8323ea2bef905abecdd} 
+uint64\+\_\+t {\bfseries rx\+\_\+ecnce} \mbox{[}QUIC\+\_\+\+PN\+\_\+\+SPACE\+\_\+\+NUM\mbox{]}
+\item 
+\Hypertarget{structossl__ackm__st_a96d9e5767f0ed974af31d3e2b55afb43}\label{structossl__ackm__st_a96d9e5767f0ed974af31d3e2b55afb43} 
+uint32\+\_\+t {\bfseries rx\+\_\+ack\+\_\+eliciting\+\_\+pkts\+\_\+since\+\_\+last\+\_\+ack} \mbox{[}QUIC\+\_\+\+PN\+\_\+\+SPACE\+\_\+\+NUM\mbox{]}
+\item 
+\Hypertarget{structossl__ackm__st_af6e53fafdbf3e09a4b65567c4151dd5c}\label{structossl__ackm__st_af6e53fafdbf3e09a4b65567c4151dd5c} 
+\mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\+\_\+\+TIME}} {\bfseries rx\+\_\+ack\+\_\+flush\+\_\+deadline} \mbox{[}QUIC\+\_\+\+PN\+\_\+\+SPACE\+\_\+\+NUM\mbox{]}
+\item 
+\Hypertarget{structossl__ackm__st_a1df72d2b2f499323c958784b402e87d9}\label{structossl__ackm__st_a1df72d2b2f499323c958784b402e87d9} 
+\mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\+\_\+\+TIME}} {\bfseries rx\+\_\+max\+\_\+ack\+\_\+delay}
+\item 
+\Hypertarget{structossl__ackm__st_ac64e37d5d8bafccdeea5d977b68eb756}\label{structossl__ackm__st_ac64e37d5d8bafccdeea5d977b68eb756} 
+\mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\+\_\+\+TIME}} {\bfseries tx\+\_\+max\+\_\+ack\+\_\+delay}
+\item 
+\Hypertarget{structossl__ackm__st_ab12069cbd2fd3f49b866294b65a4b778}\label{structossl__ackm__st_ab12069cbd2fd3f49b866294b65a4b778} 
+void(\texorpdfstring{$\ast$}{*} {\bfseries loss\+\_\+detection\+\_\+deadline\+\_\+cb} )(\mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\+\_\+\+TIME}} deadline, void \texorpdfstring{$\ast$}{*}arg)
+\item 
+\Hypertarget{structossl__ackm__st_a00bfd6828f35b8bfed5d75e150031785}\label{structossl__ackm__st_a00bfd6828f35b8bfed5d75e150031785} 
+void \texorpdfstring{$\ast$}{*} {\bfseries loss\+\_\+detection\+\_\+deadline\+\_\+cb\+\_\+arg}
+\item 
+\Hypertarget{structossl__ackm__st_a2f93585c60f110f0d771d9f14fd7b1de}\label{structossl__ackm__st_a2f93585c60f110f0d771d9f14fd7b1de} 
+void(\texorpdfstring{$\ast$}{*} {\bfseries ack\+\_\+deadline\+\_\+cb} )(\mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\+\_\+\+TIME}} deadline, int pkt\+\_\+space, void \texorpdfstring{$\ast$}{*}arg)
+\item 
+\Hypertarget{structossl__ackm__st_a102123396e539e375f6d945a24b53a5d}\label{structossl__ackm__st_a102123396e539e375f6d945a24b53a5d} 
+void \texorpdfstring{$\ast$}{*} {\bfseries ack\+\_\+deadline\+\_\+cb\+\_\+arg}
+\end{DoxyCompactItemize}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/namph/\+Downloads/openssl/openssl-\/3.\+2.\+1/ssl/quic/quic\+\_\+ackm.\+c\end{DoxyCompactItemize}

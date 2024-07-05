@@ -1,0 +1,790 @@
+\doxysection{quic\+\_\+wire.\+h}
+\hypertarget{quic__wire_8h_source}{}\label{quic__wire_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/quic\_wire.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/quic\_wire.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{*\ Copyright\ 2022-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{*}}
+\DoxyCodeLine{00004\ \textcolor{comment}{*\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{*\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{*\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{*\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_INTERNAL\_QUIC\_WIRE\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_INTERNAL\_QUIC\_WIRE\_H}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#\ pragma\ once}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ include\ "{}internal/e\_os.h"{}}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#\ include\ "{}internal/time.h"{}}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#\ include\ "{}internal/quic\_types.h"{}}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#\ include\ "{}internal/packet\_quic.h"{}}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#\ ifndef\ OPENSSL\_NO\_QUIC}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#\ \ define\ OSSL\_QUIC\_FRAME\_TYPE\_PADDING\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 0x00}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#\ \ define\ OSSL\_QUIC\_FRAME\_TYPE\_PING\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 0x01}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#\ \ define\ OSSL\_QUIC\_FRAME\_TYPE\_ACK\_WITHOUT\_ECN\ \ \ \ \ \ \ \ 0x02}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#\ \ define\ OSSL\_QUIC\_FRAME\_TYPE\_ACK\_WITH\_ECN\ \ \ \ \ \ \ \ \ \ \ 0x03}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#\ \ define\ OSSL\_QUIC\_FRAME\_TYPE\_RESET\_STREAM\ \ \ \ \ \ \ \ \ \ \ 0x04}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#\ \ define\ OSSL\_QUIC\_FRAME\_TYPE\_STOP\_SENDING\ \ \ \ \ \ \ \ \ \ \ 0x05}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#\ \ define\ OSSL\_QUIC\_FRAME\_TYPE\_CRYPTO\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 0x06}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#\ \ define\ OSSL\_QUIC\_FRAME\_TYPE\_NEW\_TOKEN\ \ \ \ \ \ \ \ \ \ \ \ \ \ 0x07}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#\ \ define\ OSSL\_QUIC\_FRAME\_TYPE\_MAX\_DATA\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 0x10}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#\ \ define\ OSSL\_QUIC\_FRAME\_TYPE\_MAX\_STREAM\_DATA\ \ \ \ \ \ \ \ 0x11}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#\ \ define\ OSSL\_QUIC\_FRAME\_TYPE\_MAX\_STREAMS\_BIDI\ \ \ \ \ \ \ 0x12}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#\ \ define\ OSSL\_QUIC\_FRAME\_TYPE\_MAX\_STREAMS\_UNI\ \ \ \ \ \ \ \ 0x13}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#\ \ define\ OSSL\_QUIC\_FRAME\_TYPE\_DATA\_BLOCKED\ \ \ \ \ \ \ \ \ \ \ 0x14}}
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#\ \ define\ OSSL\_QUIC\_FRAME\_TYPE\_STREAM\_DATA\_BLOCKED\ \ \ \ 0x15}}
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#\ \ define\ OSSL\_QUIC\_FRAME\_TYPE\_STREAMS\_BLOCKED\_BIDI\ \ \ 0x16}}
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#\ \ define\ OSSL\_QUIC\_FRAME\_TYPE\_STREAMS\_BLOCKED\_UNI\ \ \ \ 0x17}}
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#\ \ define\ OSSL\_QUIC\_FRAME\_TYPE\_NEW\_CONN\_ID\ \ \ \ \ \ \ \ \ \ \ \ 0x18}}
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#\ \ define\ OSSL\_QUIC\_FRAME\_TYPE\_RETIRE\_CONN\_ID\ \ \ \ \ \ \ \ \ 0x19}}
+\DoxyCodeLine{00039\ \textcolor{preprocessor}{\#\ \ define\ OSSL\_QUIC\_FRAME\_TYPE\_PATH\_CHALLENGE\ \ \ \ \ \ \ \ \ 0x1A}}
+\DoxyCodeLine{00040\ \textcolor{preprocessor}{\#\ \ define\ OSSL\_QUIC\_FRAME\_TYPE\_PATH\_RESPONSE\ \ \ \ \ \ \ \ \ \ 0x1B}}
+\DoxyCodeLine{00041\ \textcolor{preprocessor}{\#\ \ define\ OSSL\_QUIC\_FRAME\_TYPE\_CONN\_CLOSE\_TRANSPORT\ \ \ 0x1C}}
+\DoxyCodeLine{00042\ \textcolor{preprocessor}{\#\ \ define\ OSSL\_QUIC\_FRAME\_TYPE\_CONN\_CLOSE\_APP\ \ \ \ \ \ \ \ \ 0x1D}}
+\DoxyCodeLine{00043\ \textcolor{preprocessor}{\#\ \ define\ OSSL\_QUIC\_FRAME\_TYPE\_HANDSHAKE\_DONE\ \ \ \ \ \ \ \ \ 0x1E}}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \textcolor{preprocessor}{\#\ \ define\ OSSL\_QUIC\_FRAME\_FLAG\_STREAM\_FIN\ \ \ \ \ \ \ \ \ 0x01}}
+\DoxyCodeLine{00046\ \textcolor{preprocessor}{\#\ \ define\ OSSL\_QUIC\_FRAME\_FLAG\_STREAM\_LEN\ \ \ \ \ \ \ \ \ 0x02}}
+\DoxyCodeLine{00047\ \textcolor{preprocessor}{\#\ \ define\ OSSL\_QUIC\_FRAME\_FLAG\_STREAM\_OFF\ \ \ \ \ \ \ \ \ 0x04}}
+\DoxyCodeLine{00048\ \textcolor{preprocessor}{\#\ \ define\ OSSL\_QUIC\_FRAME\_FLAG\_STREAM\_MASK\ \ \ \ \ \ \ \ ((uint64\_t)0x07)}}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \textcolor{comment}{/*\ Low\ 3\ bits\ of\ the\ type\ contain\ flags\ */}}
+\DoxyCodeLine{00051\ \textcolor{preprocessor}{\#\ \ define\ OSSL\_QUIC\_FRAME\_TYPE\_STREAM\ \ \ \ \ \ \ \ \ \ \ \ \ 0x08\ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{/*\ base\ ID\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00052\ \textcolor{preprocessor}{\#\ \ define\ OSSL\_QUIC\_FRAME\_TYPE\_STREAM\_FIN\ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00053\ \textcolor{preprocessor}{\ \ \ \ (OSSL\_QUIC\_FRAME\_TYPE\_STREAM\ |\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00054\ \textcolor{preprocessor}{\ \ \ \ \ OSSL\_QUIC\_FRAME\_FLAG\_STREAM\_FIN)}}
+\DoxyCodeLine{00055\ \textcolor{preprocessor}{\#\ \ define\ OSSL\_QUIC\_FRAME\_TYPE\_STREAM\_LEN\ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00056\ \textcolor{preprocessor}{\ \ \ \ (OSSL\_QUIC\_FRAME\_TYPE\_STREAM\ |\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00057\ \textcolor{preprocessor}{\ \ \ \ \ OSSL\_QUIC\_FRAME\_FLAG\_STREAM\_LEN)}}
+\DoxyCodeLine{00058\ \textcolor{preprocessor}{\#\ \ define\ OSSL\_QUIC\_FRAME\_TYPE\_STREAM\_LEN\_FIN\ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00059\ \textcolor{preprocessor}{\ \ \ \ (OSSL\_QUIC\_FRAME\_TYPE\_STREAM\ |\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00060\ \textcolor{preprocessor}{\ \ \ \ \ OSSL\_QUIC\_FRAME\_FLAG\_STREAM\_LEN\ |\ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00061\ \textcolor{preprocessor}{\ \ \ \ \ OSSL\_QUIC\_FRAME\_FLAG\_STREAM\_FIN)}}
+\DoxyCodeLine{00062\ \textcolor{preprocessor}{\#\ \ define\ OSSL\_QUIC\_FRAME\_TYPE\_STREAM\_OFF\ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00063\ \textcolor{preprocessor}{\ \ \ \ (OSSL\_QUIC\_FRAME\_TYPE\_STREAM\ |\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00064\ \textcolor{preprocessor}{\ \ \ \ \ OSSL\_QUIC\_FRAME\_FLAG\_STREAM\_OFF)}}
+\DoxyCodeLine{00065\ \textcolor{preprocessor}{\#\ \ define\ OSSL\_QUIC\_FRAME\_TYPE\_STREAM\_OFF\_FIN\ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00066\ \textcolor{preprocessor}{\ \ \ \ (OSSL\_QUIC\_FRAME\_TYPE\_STREAM\ |\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00067\ \textcolor{preprocessor}{\ \ \ \ \ OSSL\_QUIC\_FRAME\_FLAG\_STREAM\_OFF\ |\ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00068\ \textcolor{preprocessor}{\ \ \ \ \ OSSL\_QUIC\_FRAME\_FLAG\_STREAM\_FIN)}}
+\DoxyCodeLine{00069\ \textcolor{preprocessor}{\#\ \ define\ OSSL\_QUIC\_FRAME\_TYPE\_STREAM\_OFF\_LEN\ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00070\ \textcolor{preprocessor}{\ \ \ \ (OSSL\_QUIC\_FRAME\_TYPE\_STREAM\ |\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00071\ \textcolor{preprocessor}{\ \ \ \ \ OSSL\_QUIC\_FRAME\_FLAG\_STREAM\_OFF\ |\ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00072\ \textcolor{preprocessor}{\ \ \ \ \ OSSL\_QUIC\_FRAME\_FLAG\_STREAM\_LEN)}}
+\DoxyCodeLine{00073\ \textcolor{preprocessor}{\#\ \ define\ OSSL\_QUIC\_FRAME\_TYPE\_STREAM\_OFF\_LEN\_FIN\ \(\backslash\)}}
+\DoxyCodeLine{00074\ \textcolor{preprocessor}{\ \ \ \ (OSSL\_QUIC\_FRAME\_TYPE\_STREAM\ |\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00075\ \textcolor{preprocessor}{\ \ \ \ \ OSSL\_QUIC\_FRAME\_FLAG\_STREAM\_OFF\ |\ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00076\ \textcolor{preprocessor}{\ \ \ \ \ OSSL\_QUIC\_FRAME\_FLAG\_STREAM\_LEN\ |\ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00077\ \textcolor{preprocessor}{\ \ \ \ \ OSSL\_QUIC\_FRAME\_FLAG\_STREAM\_FIN)}}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \textcolor{preprocessor}{\#\ \ define\ OSSL\_QUIC\_FRAME\_TYPE\_IS\_STREAM(x)\ \(\backslash\)}}
+\DoxyCodeLine{00080\ \textcolor{preprocessor}{\ \ \ \ (((x)\ \&\ \string~OSSL\_QUIC\_FRAME\_FLAG\_STREAM\_MASK)\ ==\ OSSL\_QUIC\_FRAME\_TYPE\_STREAM)}}
+\DoxyCodeLine{00081\ \textcolor{preprocessor}{\#\ \ define\ OSSL\_QUIC\_FRAME\_TYPE\_IS\_ACK(x)\ \(\backslash\)}}
+\DoxyCodeLine{00082\ \textcolor{preprocessor}{\ \ \ \ (((x)\ \&\ \string~(uint64\_t)1)\ ==\ OSSL\_QUIC\_FRAME\_TYPE\_ACK\_WITHOUT\_ECN)}}
+\DoxyCodeLine{00083\ \textcolor{preprocessor}{\#\ \ define\ OSSL\_QUIC\_FRAME\_TYPE\_IS\_MAX\_STREAMS(x)\ \(\backslash\)}}
+\DoxyCodeLine{00084\ \textcolor{preprocessor}{\ \ \ \ (((x)\ \&\ \string~(uint64\_t)1)\ ==\ OSSL\_QUIC\_FRAME\_TYPE\_MAX\_STREAMS\_BIDI)}}
+\DoxyCodeLine{00085\ \textcolor{preprocessor}{\#\ \ define\ OSSL\_QUIC\_FRAME\_TYPE\_IS\_STREAMS\_BLOCKED(x)\ \(\backslash\)}}
+\DoxyCodeLine{00086\ \textcolor{preprocessor}{\ \ \ \ (((x)\ \&\ \string~(uint64\_t)1)\ ==\ OSSL\_QUIC\_FRAME\_TYPE\_STREAMS\_BLOCKED\_BIDI)}}
+\DoxyCodeLine{00087\ \textcolor{preprocessor}{\#\ \ define\ OSSL\_QUIC\_FRAME\_TYPE\_IS\_CONN\_CLOSE(x)\ \(\backslash\)}}
+\DoxyCodeLine{00088\ \textcolor{preprocessor}{\ \ \ \ (((x)\ \&\ \string~(uint64\_t)1)\ ==\ OSSL\_QUIC\_FRAME\_TYPE\_CONN\_CLOSE\_TRANSPORT)}}
+\DoxyCodeLine{00089\ }
+\DoxyCodeLine{00090\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *ossl\_quic\_frame\_type\_to\_string(uint64\_t\ frame\_type);}
+\DoxyCodeLine{00091\ }
+\DoxyCodeLine{00092\ \textcolor{keyword}{static}\ ossl\_unused\ ossl\_inline\ \textcolor{keywordtype}{int}}
+\DoxyCodeLine{00093\ ossl\_quic\_frame\_type\_is\_ack\_eliciting(uint64\_t\ frame\_type)}
+\DoxyCodeLine{00094\ \{}
+\DoxyCodeLine{00095\ \ \ \ \ \textcolor{keywordflow}{switch}\ (frame\_type)\ \{}
+\DoxyCodeLine{00096\ \ \ \ \ \textcolor{keywordflow}{case}\ OSSL\_QUIC\_FRAME\_TYPE\_PADDING:}
+\DoxyCodeLine{00097\ \ \ \ \ \textcolor{keywordflow}{case}\ OSSL\_QUIC\_FRAME\_TYPE\_ACK\_WITHOUT\_ECN:}
+\DoxyCodeLine{00098\ \ \ \ \ \textcolor{keywordflow}{case}\ OSSL\_QUIC\_FRAME\_TYPE\_ACK\_WITH\_ECN:}
+\DoxyCodeLine{00099\ \ \ \ \ \textcolor{keywordflow}{case}\ OSSL\_QUIC\_FRAME\_TYPE\_CONN\_CLOSE\_TRANSPORT:}
+\DoxyCodeLine{00100\ \ \ \ \ \textcolor{keywordflow}{case}\ OSSL\_QUIC\_FRAME\_TYPE\_CONN\_CLOSE\_APP:}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00102\ \ \ \ \ \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00104\ \ \ \ \ \}}
+\DoxyCodeLine{00105\ \}}
+\DoxyCodeLine{00106\ }
+\DoxyCodeLine{00107\ \textcolor{comment}{/*\ QUIC\ Transport\ Parameter\ Types\ */}}
+\DoxyCodeLine{00108\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_TPARAM\_ORIG\_DCID\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 0x00}}
+\DoxyCodeLine{00109\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_TPARAM\_MAX\_IDLE\_TIMEOUT\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 0x01}}
+\DoxyCodeLine{00110\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_TPARAM\_STATELESS\_RESET\_TOKEN\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 0x02}}
+\DoxyCodeLine{00111\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_TPARAM\_MAX\_UDP\_PAYLOAD\_SIZE\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 0x03}}
+\DoxyCodeLine{00112\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_TPARAM\_INITIAL\_MAX\_DATA\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 0x04}}
+\DoxyCodeLine{00113\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_TPARAM\_INITIAL\_MAX\_STREAM\_DATA\_BIDI\_LOCAL\ \ 0x05}}
+\DoxyCodeLine{00114\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_TPARAM\_INITIAL\_MAX\_STREAM\_DATA\_BIDI\_REMOTE\ 0x06}}
+\DoxyCodeLine{00115\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_TPARAM\_INITIAL\_MAX\_STREAM\_DATA\_UNI\ \ \ \ \ \ \ \ \ 0x07}}
+\DoxyCodeLine{00116\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_TPARAM\_INITIAL\_MAX\_STREAMS\_BIDI\ \ \ \ \ \ \ \ \ \ \ \ 0x08}}
+\DoxyCodeLine{00117\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_TPARAM\_INITIAL\_MAX\_STREAMS\_UNI\ \ \ \ \ \ \ \ \ \ \ \ \ 0x09}}
+\DoxyCodeLine{00118\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_TPARAM\_ACK\_DELAY\_EXP\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 0x0A}}
+\DoxyCodeLine{00119\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_TPARAM\_MAX\_ACK\_DELAY\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 0x0B}}
+\DoxyCodeLine{00120\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_TPARAM\_DISABLE\_ACTIVE\_MIGRATION\ \ \ \ \ \ \ \ \ \ \ \ 0x0C}}
+\DoxyCodeLine{00121\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_TPARAM\_PREFERRED\_ADDR\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 0x0D}}
+\DoxyCodeLine{00122\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_TPARAM\_ACTIVE\_CONN\_ID\_LIMIT\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 0x0E}}
+\DoxyCodeLine{00123\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_TPARAM\_INITIAL\_SCID\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 0x0F}}
+\DoxyCodeLine{00124\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_TPARAM\_RETRY\_SCID\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 0x10}}
+\DoxyCodeLine{00125\ }
+\DoxyCodeLine{00126\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00127\ \textcolor{comment}{\ *\ QUIC\ Frame\ Logical\ Representations}}
+\DoxyCodeLine{00128\ \textcolor{comment}{\ *\ ==================================}}
+\DoxyCodeLine{00129\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00130\ }
+\DoxyCodeLine{00131\ \textcolor{comment}{/*\ QUIC\ Frame:\ ACK\ */}}
+\DoxyCodeLine{00132\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__quic__ack__range__st}{ossl\_quic\_ack\_range\_st}}\ \{}
+\DoxyCodeLine{00133\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00134\ \textcolor{comment}{\ \ \ \ \ *\ Represents\ an\ inclusive\ range\ of\ packet\ numbers\ [start,\ end].}}
+\DoxyCodeLine{00135\ \textcolor{comment}{\ \ \ \ \ *\ start\ must\ be\ <=\ end.}}
+\DoxyCodeLine{00136\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00137\ \ \ \ \ QUIC\_PN\ start,\ end;}
+\DoxyCodeLine{00138\ \}\ \mbox{\hyperlink{structossl__quic__ack__range__st}{OSSL\_QUIC\_ACK\_RANGE}};}
+\DoxyCodeLine{00139\ }
+\DoxyCodeLine{00140\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__quic__frame__ack__st}{ossl\_quic\_frame\_ack\_st}}\ \{}
+\DoxyCodeLine{00141\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00142\ \textcolor{comment}{\ \ \ \ \ *\ A\ sequence\ of\ packet\ number\ ranges\ [[start,\ end]...].}}
+\DoxyCodeLine{00143\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00144\ \textcolor{comment}{\ \ \ \ \ *\ The\ ranges\ must\ be\ sorted\ in\ descending\ order,\ for\ example:}}
+\DoxyCodeLine{00145\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ [\ 95,\ 100]}}
+\DoxyCodeLine{00146\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ [\ 90,\ \ 92]}}
+\DoxyCodeLine{00147\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ etc.}}
+\DoxyCodeLine{00148\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00149\ \textcolor{comment}{\ \ \ \ \ *\ As\ such,\ ack\_ranges[0].end\ is\ always\ the\ highest\ packet\ number}}
+\DoxyCodeLine{00150\ \textcolor{comment}{\ \ \ \ \ *\ being\ acknowledged\ and\ ack\_ranges[num\_ack\_ranges-\/1].start\ is}}
+\DoxyCodeLine{00151\ \textcolor{comment}{\ \ \ \ \ *\ always\ the\ lowest\ packet\ number\ being\ acknowledged.}}
+\DoxyCodeLine{00152\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00153\ \textcolor{comment}{\ \ \ \ \ *\ num\_ack\_ranges\ must\ be\ greater\ than\ zero,\ as\ an\ ACK\ frame\ must}}
+\DoxyCodeLine{00154\ \textcolor{comment}{\ \ \ \ \ *\ acknowledge\ at\ least\ one\ packet\ number.}}
+\DoxyCodeLine{00155\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00156\ \ \ \ \ \mbox{\hyperlink{structossl__quic__ack__range__st}{OSSL\_QUIC\_ACK\_RANGE}}\ \ \ \ \ \ \ \ *ack\_ranges;}
+\DoxyCodeLine{00157\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ num\_ack\_ranges;}
+\DoxyCodeLine{00158\ }
+\DoxyCodeLine{00159\ \ \ \ \ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ delay\_time;}
+\DoxyCodeLine{00160\ \ \ \ \ uint64\_t\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ect0,\ ect1,\ ecnce;}
+\DoxyCodeLine{00161\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ecn\_present\ :\ 1;}
+\DoxyCodeLine{00162\ \}\ \mbox{\hyperlink{structossl__quic__frame__ack__st}{OSSL\_QUIC\_FRAME\_ACK}};}
+\DoxyCodeLine{00163\ }
+\DoxyCodeLine{00164\ \textcolor{comment}{/*\ Returns\ 1\ if\ the\ given\ frame\ contains\ the\ given\ PN.\ */}}
+\DoxyCodeLine{00165\ \textcolor{keywordtype}{int}\ ossl\_quic\_frame\_ack\_contains\_pn(\textcolor{keyword}{const}\ \mbox{\hyperlink{structossl__quic__frame__ack__st}{OSSL\_QUIC\_FRAME\_ACK}}\ *ack,\ QUIC\_PN\ pn);}
+\DoxyCodeLine{00166\ }
+\DoxyCodeLine{00167\ \textcolor{comment}{/*\ QUIC\ Frame:\ STREAM\ */}}
+\DoxyCodeLine{00168\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__quic__frame__stream__st}{ossl\_quic\_frame\_stream\_st}}\ \{}
+\DoxyCodeLine{00169\ \ \ \ \ uint64\_t\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stream\_id;\ \ \textcolor{comment}{/*\ Stream\ ID\ */}}
+\DoxyCodeLine{00170\ \ \ \ \ uint64\_t\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ offset;\ \ \ \ \ \textcolor{comment}{/*\ Logical\ offset\ in\ stream\ */}}
+\DoxyCodeLine{00171\ \ \ \ \ uint64\_t\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ len;\ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Length\ of\ data\ in\ bytes\ */}}
+\DoxyCodeLine{00172\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \ \ \ *data;}
+\DoxyCodeLine{00173\ }
+\DoxyCodeLine{00174\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00175\ \textcolor{comment}{\ \ \ \ \ *\ On\ encode,\ this\ determines\ whether\ the\ len\ field\ should\ be\ encoded\ or}}
+\DoxyCodeLine{00176\ \textcolor{comment}{\ \ \ \ \ *\ not.\ If\ zero,\ the\ len\ field\ is\ not\ encoded\ and\ it\ is\ assumed\ the\ frame}}
+\DoxyCodeLine{00177\ \textcolor{comment}{\ \ \ \ \ *\ runs\ to\ the\ end\ of\ the\ packet.}}
+\DoxyCodeLine{00178\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00179\ \textcolor{comment}{\ \ \ \ \ *\ On\ decode,\ this\ determines\ whether\ the\ frame\ had\ an\ explicitly\ encoded}}
+\DoxyCodeLine{00180\ \textcolor{comment}{\ \ \ \ \ *\ length.\ If\ not\ set,\ the\ frame\ runs\ to\ the\ end\ of\ the\ packet\ and\ len\ has}}
+\DoxyCodeLine{00181\ \textcolor{comment}{\ \ \ \ \ *\ been\ set\ accordingly.}}
+\DoxyCodeLine{00182\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00183\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ has\_explicit\_len\ :\ 1;}
+\DoxyCodeLine{00184\ }
+\DoxyCodeLine{00185\ \ \ \ \ \textcolor{comment}{/*\ 1\ if\ this\ is\ the\ end\ of\ the\ stream\ */}}
+\DoxyCodeLine{00186\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ is\_fin\ :\ 1;}
+\DoxyCodeLine{00187\ \}\ \mbox{\hyperlink{structossl__quic__frame__stream__st}{OSSL\_QUIC\_FRAME\_STREAM}};}
+\DoxyCodeLine{00188\ }
+\DoxyCodeLine{00189\ \textcolor{comment}{/*\ QUIC\ Frame:\ CRYPTO\ */}}
+\DoxyCodeLine{00190\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__quic__frame__crypto__st}{ossl\_quic\_frame\_crypto\_st}}\ \{}
+\DoxyCodeLine{00191\ \ \ \ \ uint64\_t\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ offset;\ \textcolor{comment}{/*\ Logical\ offset\ in\ stream\ */}}
+\DoxyCodeLine{00192\ \ \ \ \ uint64\_t\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ len;\ \ \ \ \textcolor{comment}{/*\ Length\ of\ the\ data\ in\ bytes\ */}}
+\DoxyCodeLine{00193\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \ \ \ *data;}
+\DoxyCodeLine{00194\ \}\ \mbox{\hyperlink{structossl__quic__frame__crypto__st}{OSSL\_QUIC\_FRAME\_CRYPTO}};}
+\DoxyCodeLine{00195\ }
+\DoxyCodeLine{00196\ \textcolor{comment}{/*\ QUIC\ Frame:\ RESET\_STREAM\ */}}
+\DoxyCodeLine{00197\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__quic__frame__reset__stream__st}{ossl\_quic\_frame\_reset\_stream\_st}}\ \{}
+\DoxyCodeLine{00198\ \ \ \ \ uint64\_t\ \ \ \ stream\_id;}
+\DoxyCodeLine{00199\ \ \ \ \ uint64\_t\ \ \ \ app\_error\_code;}
+\DoxyCodeLine{00200\ \ \ \ \ uint64\_t\ \ \ \ final\_size;}
+\DoxyCodeLine{00201\ \}\ \mbox{\hyperlink{structossl__quic__frame__reset__stream__st}{OSSL\_QUIC\_FRAME\_RESET\_STREAM}};}
+\DoxyCodeLine{00202\ }
+\DoxyCodeLine{00203\ \textcolor{comment}{/*\ QUIC\ Frame:\ STOP\_SENDING\ */}}
+\DoxyCodeLine{00204\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__quic__frame__stop__sending__st}{ossl\_quic\_frame\_stop\_sending\_st}}\ \{}
+\DoxyCodeLine{00205\ \ \ \ \ uint64\_t\ \ \ \ stream\_id;}
+\DoxyCodeLine{00206\ \ \ \ \ uint64\_t\ \ \ \ app\_error\_code;}
+\DoxyCodeLine{00207\ \}\ \mbox{\hyperlink{structossl__quic__frame__stop__sending__st}{OSSL\_QUIC\_FRAME\_STOP\_SENDING}};}
+\DoxyCodeLine{00208\ }
+\DoxyCodeLine{00209\ \textcolor{comment}{/*\ QUIC\ Frame:\ NEW\_CONNECTION\_ID\ */}}
+\DoxyCodeLine{00210\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__quic__frame__new__conn__id__st}{ossl\_quic\_frame\_new\_conn\_id\_st}}\ \{}
+\DoxyCodeLine{00211\ \ \ \ \ uint64\_t\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ seq\_num;}
+\DoxyCodeLine{00212\ \ \ \ \ uint64\_t\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ retire\_prior\_to;}
+\DoxyCodeLine{00213\ \ \ \ \ \mbox{\hyperlink{structquic__conn__id__st}{QUIC\_CONN\_ID}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ conn\_id;}
+\DoxyCodeLine{00214\ \ \ \ \ \mbox{\hyperlink{struct_q_u_i_c___s_t_a_t_e_l_e_s_s___r_e_s_e_t___t_o_k_e_n}{QUIC\_STATELESS\_RESET\_TOKEN}}\ \ stateless\_reset;}
+\DoxyCodeLine{00215\ \}\ \mbox{\hyperlink{structossl__quic__frame__new__conn__id__st}{OSSL\_QUIC\_FRAME\_NEW\_CONN\_ID}};}
+\DoxyCodeLine{00216\ }
+\DoxyCodeLine{00217\ \textcolor{comment}{/*\ QUIC\ Frame:\ CONNECTION\_CLOSE\ */}}
+\DoxyCodeLine{00218\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__quic__frame__conn__close__st}{ossl\_quic\_frame\_conn\_close\_st}}\ \{}
+\DoxyCodeLine{00219\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ is\_app\ :\ 1;\ \textcolor{comment}{/*\ 0:\ transport\ error,\ 1:\ app\ error\ */}}
+\DoxyCodeLine{00220\ \ \ \ \ uint64\_t\ \ \ \ \ \ \ \ error\_code;\ \textcolor{comment}{/*\ 62-\/bit\ transport\ or\ app\ error\ code\ */}}
+\DoxyCodeLine{00221\ \ \ \ \ uint64\_t\ \ \ \ \ \ \ \ frame\_type;\ \textcolor{comment}{/*\ transport\ errors\ only\ */}}
+\DoxyCodeLine{00222\ \ \ \ \ \textcolor{keywordtype}{char}\ \ \ \ \ \ \ \ \ \ \ \ *reason;\ \ \ \ \textcolor{comment}{/*\ UTF-\/8\ string,\ not\ necessarily\ zero-\/terminated\ */}}
+\DoxyCodeLine{00223\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \ \ \ \ \ \ \ \ \ reason\_len;\ \textcolor{comment}{/*\ Length\ of\ reason\ in\ bytes\ */}}
+\DoxyCodeLine{00224\ \}\ \mbox{\hyperlink{structossl__quic__frame__conn__close__st}{OSSL\_QUIC\_FRAME\_CONN\_CLOSE}};}
+\DoxyCodeLine{00225\ }
+\DoxyCodeLine{00226\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00227\ \textcolor{comment}{\ *\ QUIC\ Wire\ Format\ Encoding}}
+\DoxyCodeLine{00228\ \textcolor{comment}{\ *\ =========================}}
+\DoxyCodeLine{00229\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00230\ \textcolor{comment}{\ *\ These\ functions\ return\ 1\ on\ success\ and\ 0\ on\ failure.}}
+\DoxyCodeLine{00231\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00232\ }
+\DoxyCodeLine{00233\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00234\ \textcolor{comment}{\ *\ Encodes\ zero\ or\ more\ QUIC\ PADDING\ frames\ to\ the\ packet\ writer.\ Each\ PADDING}}
+\DoxyCodeLine{00235\ \textcolor{comment}{\ *\ frame\ consumes\ one\ byte;\ num\_bytes\ specifies\ the\ number\ of\ bytes\ of\ padding}}
+\DoxyCodeLine{00236\ \textcolor{comment}{\ *\ to\ write.}}
+\DoxyCodeLine{00237\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00238\ \textcolor{keywordtype}{int}\ ossl\_quic\_wire\_encode\_padding(\mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,\ \textcolor{keywordtype}{size\_t}\ num\_bytes);}
+\DoxyCodeLine{00239\ }
+\DoxyCodeLine{00240\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00241\ \textcolor{comment}{\ *\ Encodes\ a\ QUIC\ PING\ frame\ to\ the\ packet\ writer.\ This\ frame\ type\ takes}}
+\DoxyCodeLine{00242\ \textcolor{comment}{\ *\ no\ arguments.}}
+\DoxyCodeLine{00243\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00244\ \textcolor{keywordtype}{int}\ ossl\_quic\_wire\_encode\_frame\_ping(\mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt);}
+\DoxyCodeLine{00245\ }
+\DoxyCodeLine{00246\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00247\ \textcolor{comment}{\ *\ Encodes\ a\ QUIC\ ACK\ frame\ to\ the\ packet\ writer,\ given\ a\ logical\ representation}}
+\DoxyCodeLine{00248\ \textcolor{comment}{\ *\ of\ the\ ACK\ frame.}}
+\DoxyCodeLine{00249\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00250\ \textcolor{comment}{\ *\ The\ ACK\ ranges\ passed\ must\ be\ sorted\ in\ descending\ order.}}
+\DoxyCodeLine{00251\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00252\ \textcolor{comment}{\ *\ The\ logical\ representation\ stores\ a\ list\ of\ packet\ number\ ranges.\ The\ wire}}
+\DoxyCodeLine{00253\ \textcolor{comment}{\ *\ encoding\ is\ slightly\ different\ and\ stores\ the\ first\ range\ in\ the\ list}}
+\DoxyCodeLine{00254\ \textcolor{comment}{\ *\ in\ a\ different\ manner.}}
+\DoxyCodeLine{00255\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00256\ \textcolor{comment}{\ *\ The\ ack\_delay\_exponent\ argument\ specifies\ the\ index\ of\ a\ power\ of\ two\ by}}
+\DoxyCodeLine{00257\ \textcolor{comment}{\ *\ which\ the\ ack-\/>ack\_delay\ field\ is\ be\ divided.\ This\ exponent\ value\ must\ match}}
+\DoxyCodeLine{00258\ \textcolor{comment}{\ *\ the\ value\ used\ when\ decoding.}}
+\DoxyCodeLine{00259\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00260\ \textcolor{keywordtype}{int}\ ossl\_quic\_wire\_encode\_frame\_ack(\mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00261\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ ack\_delay\_exponent,}
+\DoxyCodeLine{00262\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structossl__quic__frame__ack__st}{OSSL\_QUIC\_FRAME\_ACK}}\ *ack);}
+\DoxyCodeLine{00263\ }
+\DoxyCodeLine{00264\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00265\ \textcolor{comment}{\ *\ Encodes\ a\ QUIC\ RESET\_STREAM\ frame\ to\ the\ packet\ writer,\ given\ a\ logical}}
+\DoxyCodeLine{00266\ \textcolor{comment}{\ *\ representation\ of\ the\ RESET\_STREAM\ frame.}}
+\DoxyCodeLine{00267\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00268\ \textcolor{keywordtype}{int}\ ossl\_quic\_wire\_encode\_frame\_reset\_stream(\mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00269\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structossl__quic__frame__reset__stream__st}{OSSL\_QUIC\_FRAME\_RESET\_STREAM}}\ *f);}
+\DoxyCodeLine{00270\ }
+\DoxyCodeLine{00271\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00272\ \textcolor{comment}{\ *\ Encodes\ a\ QUIC\ STOP\_SENDING\ frame\ to\ the\ packet\ writer,\ given\ a\ logical}}
+\DoxyCodeLine{00273\ \textcolor{comment}{\ *\ representation\ of\ the\ STOP\_SENDING\ frame.}}
+\DoxyCodeLine{00274\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00275\ \textcolor{keywordtype}{int}\ ossl\_quic\_wire\_encode\_frame\_stop\_sending(\mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00276\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structossl__quic__frame__stop__sending__st}{OSSL\_QUIC\_FRAME\_STOP\_SENDING}}\ *f);}
+\DoxyCodeLine{00277\ }
+\DoxyCodeLine{00278\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00279\ \textcolor{comment}{\ *\ Encodes\ a\ QUIC\ CRYPTO\ frame\ header\ to\ the\ packet\ writer.}}
+\DoxyCodeLine{00280\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00281\ \textcolor{comment}{\ *\ To\ create\ a\ well-\/formed\ frame,\ the\ data\ written\ using\ this\ function\ must\ be}}
+\DoxyCodeLine{00282\ \textcolor{comment}{\ *\ immediately\ followed\ by\ f-\/>len\ bytes\ of\ data.}}
+\DoxyCodeLine{00283\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00284\ \textcolor{keywordtype}{int}\ ossl\_quic\_wire\_encode\_frame\_crypto\_hdr(\mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *hdr,}
+\DoxyCodeLine{00285\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structossl__quic__frame__crypto__st}{OSSL\_QUIC\_FRAME\_CRYPTO}}\ *f);}
+\DoxyCodeLine{00286\ }
+\DoxyCodeLine{00287\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00288\ \textcolor{comment}{\ *\ Returns\ the\ number\ of\ bytes\ which\ will\ be\ required\ to\ encode\ the\ given}}
+\DoxyCodeLine{00289\ \textcolor{comment}{\ *\ CRYPTO\ frame\ header.\ Does\ not\ include\ the\ payload\ bytes\ in\ the\ count.}}
+\DoxyCodeLine{00290\ \textcolor{comment}{\ *\ Returns\ 0\ if\ input\ is\ invalid.}}
+\DoxyCodeLine{00291\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00292\ \textcolor{keywordtype}{size\_t}\ ossl\_quic\_wire\_get\_encoded\_frame\_len\_crypto\_hdr(\textcolor{keyword}{const}\ \mbox{\hyperlink{structossl__quic__frame__crypto__st}{OSSL\_QUIC\_FRAME\_CRYPTO}}\ *f);}
+\DoxyCodeLine{00293\ }
+\DoxyCodeLine{00294\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00295\ \textcolor{comment}{\ *\ Encodes\ a\ QUIC\ CRYPTO\ frame\ to\ the\ packet\ writer.}}
+\DoxyCodeLine{00296\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00297\ \textcolor{comment}{\ *\ This\ function\ returns\ a\ pointer\ to\ a\ buffer\ of\ f-\/>len\ bytes\ which\ the\ caller}}
+\DoxyCodeLine{00298\ \textcolor{comment}{\ *\ should\ fill\ however\ it\ wishes.\ If\ f-\/>data\ is\ non-\/NULL,\ it\ is\ automatically}}
+\DoxyCodeLine{00299\ \textcolor{comment}{\ *\ copied\ to\ the\ target\ buffer,\ otherwise\ the\ caller\ must\ fill\ the\ returned}}
+\DoxyCodeLine{00300\ \textcolor{comment}{\ *\ buffer.\ Returns\ NULL\ on\ failure.}}
+\DoxyCodeLine{00301\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00302\ \textcolor{keywordtype}{void}\ *ossl\_quic\_wire\_encode\_frame\_crypto(\mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00303\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structossl__quic__frame__crypto__st}{OSSL\_QUIC\_FRAME\_CRYPTO}}\ *f);}
+\DoxyCodeLine{00304\ }
+\DoxyCodeLine{00305\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00306\ \textcolor{comment}{\ *\ Encodes\ a\ QUIC\ NEW\_TOKEN\ frame\ to\ the\ packet\ writer.}}
+\DoxyCodeLine{00307\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00308\ \textcolor{keywordtype}{int}\ ossl\_quic\_wire\_encode\_frame\_new\_token(\mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00309\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *token,}
+\DoxyCodeLine{00310\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ token\_len);}
+\DoxyCodeLine{00311\ }
+\DoxyCodeLine{00312\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00313\ \textcolor{comment}{\ *\ Encodes\ a\ QUIC\ STREAM\ frame's\ header\ to\ the\ packet\ writer.\ The\ f-\/>stream\_id,}}
+\DoxyCodeLine{00314\ \textcolor{comment}{\ *\ f-\/>offset\ and\ f-\/>len\ fields\ are\ the\ values\ for\ the\ respective\ Stream\ ID,}}
+\DoxyCodeLine{00315\ \textcolor{comment}{\ *\ Offset\ and\ Length\ fields.}}
+\DoxyCodeLine{00316\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00317\ \textcolor{comment}{\ *\ If\ f-\/>is\_fin\ is\ non-\/zero,\ the\ frame\ is\ marked\ as\ the\ final\ frame\ in\ the}}
+\DoxyCodeLine{00318\ \textcolor{comment}{\ *\ stream.}}
+\DoxyCodeLine{00319\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00320\ \textcolor{comment}{\ *\ If\ f-\/>has\_explicit\_len\ is\ zerro,\ the\ frame\ is\ assumed\ to\ be\ the\ final\ frame}}
+\DoxyCodeLine{00321\ \textcolor{comment}{\ *\ in\ the\ packet,\ which\ the\ caller\ is\ responsible\ for\ ensuring;\ the\ Length}}
+\DoxyCodeLine{00322\ \textcolor{comment}{\ *\ field\ is\ then\ omitted.}}
+\DoxyCodeLine{00323\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00324\ \textcolor{comment}{\ *\ To\ create\ a\ well-\/formed\ frame,\ the\ data\ written\ using\ this\ function\ must\ be}}
+\DoxyCodeLine{00325\ \textcolor{comment}{\ *\ immediately\ followed\ by\ f-\/>len\ bytes\ of\ stream\ data.}}
+\DoxyCodeLine{00326\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00327\ \textcolor{keywordtype}{int}\ ossl\_quic\_wire\_encode\_frame\_stream\_hdr(\mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00328\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structossl__quic__frame__stream__st}{OSSL\_QUIC\_FRAME\_STREAM}}\ *f);}
+\DoxyCodeLine{00329\ }
+\DoxyCodeLine{00330\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00331\ \textcolor{comment}{\ *\ Returns\ the\ number\ of\ bytes\ which\ will\ be\ required\ to\ encode\ the\ given}}
+\DoxyCodeLine{00332\ \textcolor{comment}{\ *\ STREAM\ frame\ header.\ Does\ not\ include\ the\ payload\ bytes\ in\ the\ count.}}
+\DoxyCodeLine{00333\ \textcolor{comment}{\ *\ Returns\ 0\ if\ input\ is\ invalid.}}
+\DoxyCodeLine{00334\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00335\ \textcolor{keywordtype}{size\_t}\ ossl\_quic\_wire\_get\_encoded\_frame\_len\_stream\_hdr(\textcolor{keyword}{const}\ \mbox{\hyperlink{structossl__quic__frame__stream__st}{OSSL\_QUIC\_FRAME\_STREAM}}\ *f);}
+\DoxyCodeLine{00336\ }
+\DoxyCodeLine{00337\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00338\ \textcolor{comment}{\ *\ Functions\ similarly\ to\ ossl\_quic\_wire\_encode\_frame\_stream\_hdr,\ but\ it\ also}}
+\DoxyCodeLine{00339\ \textcolor{comment}{\ *\ allocates\ space\ for\ f-\/>len\ bytes\ of\ data\ after\ the\ header,\ creating\ a}}
+\DoxyCodeLine{00340\ \textcolor{comment}{\ *\ well-\/formed\ QUIC\ STREAM\ frame\ in\ one\ call.}}
+\DoxyCodeLine{00341\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00342\ \textcolor{comment}{\ *\ A\ pointer\ to\ the\ bytes\ allocated\ for\ the\ framme\ payload\ is\ returned,}}
+\DoxyCodeLine{00343\ \textcolor{comment}{\ *\ which\ the\ caller\ can\ fill\ however\ it\ wishes.\ If\ f-\/>data\ is\ non-\/NULL,}}
+\DoxyCodeLine{00344\ \textcolor{comment}{\ *\ it\ is\ automatically\ copied\ to\ the\ target\ buffer,\ otherwise\ the\ caller}}
+\DoxyCodeLine{00345\ \textcolor{comment}{\ *\ must\ fill\ the\ returned\ buffer.\ Returns\ NULL\ on\ failure.}}
+\DoxyCodeLine{00346\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00347\ \textcolor{keywordtype}{void}\ *ossl\_quic\_wire\_encode\_frame\_stream(\mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00348\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structossl__quic__frame__stream__st}{OSSL\_QUIC\_FRAME\_STREAM}}\ *f);}
+\DoxyCodeLine{00349\ }
+\DoxyCodeLine{00350\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00351\ \textcolor{comment}{\ *\ Encodes\ a\ QUIC\ MAX\_DATA\ frame\ to\ the\ packet\ writer.}}
+\DoxyCodeLine{00352\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00353\ \textcolor{keywordtype}{int}\ ossl\_quic\_wire\_encode\_frame\_max\_data(\mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00354\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ max\_data);}
+\DoxyCodeLine{00355\ }
+\DoxyCodeLine{00356\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00357\ \textcolor{comment}{\ *\ Encodes\ a\ QUIC\ MAX\_STREAM\_DATA\ frame\ to\ the\ packet\ writer.}}
+\DoxyCodeLine{00358\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00359\ \textcolor{keywordtype}{int}\ ossl\_quic\_wire\_encode\_frame\_max\_stream\_data(\mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00360\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ stream\_id,}
+\DoxyCodeLine{00361\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ max\_data);}
+\DoxyCodeLine{00362\ }
+\DoxyCodeLine{00363\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00364\ \textcolor{comment}{\ *\ Encodes\ a\ QUIC\ MAX\_STREAMS\ frame\ to\ the\ packet\ writer.}}
+\DoxyCodeLine{00365\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00366\ \textcolor{comment}{\ *\ If\ is\_uni\ is\ 0,\ the\ count\ specifies\ the\ maximum\ number\ of}}
+\DoxyCodeLine{00367\ \textcolor{comment}{\ *\ bidirectional\ streams;\ else\ it\ specifies\ the\ maximum\ number\ of\ unidirectional}}
+\DoxyCodeLine{00368\ \textcolor{comment}{\ *\ streams.}}
+\DoxyCodeLine{00369\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00370\ \textcolor{keywordtype}{int}\ ossl\_quic\_wire\_encode\_frame\_max\_streams(\mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00371\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{char}\ \ \ \ \ is\_uni,}
+\DoxyCodeLine{00372\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ max\_streams);}
+\DoxyCodeLine{00373\ }
+\DoxyCodeLine{00374\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00375\ \textcolor{comment}{\ *\ Encodes\ a\ QUIC\ DATA\_BLOCKED\ frame\ to\ the\ packet\ writer.}}
+\DoxyCodeLine{00376\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00377\ \textcolor{keywordtype}{int}\ ossl\_quic\_wire\_encode\_frame\_data\_blocked(\mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00378\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ max\_data);}
+\DoxyCodeLine{00379\ }
+\DoxyCodeLine{00380\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00381\ \textcolor{comment}{\ *\ Encodes\ a\ QUIC\ STREAM\_DATA\_BLOCKED\ frame\ to\ the\ packet\ writer.}}
+\DoxyCodeLine{00382\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00383\ \textcolor{keywordtype}{int}\ ossl\_quic\_wire\_encode\_frame\_stream\_data\_blocked(\mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00384\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ stream\_id,}
+\DoxyCodeLine{00385\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ max\_stream\_data);}
+\DoxyCodeLine{00386\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00387\ \textcolor{comment}{\ *\ Encodes\ a\ QUIC\ STREAMS\_BLOCKED\ frame\ to\ the\ packet\ writer.}}
+\DoxyCodeLine{00388\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00389\ \textcolor{comment}{\ *\ If\ is\_uni\ is\ 0,\ the\ count\ specifies\ the\ maximum\ number\ of}}
+\DoxyCodeLine{00390\ \textcolor{comment}{\ *\ bidirectional\ streams;\ else\ it\ specifies\ the\ maximum\ number\ of\ unidirectional}}
+\DoxyCodeLine{00391\ \textcolor{comment}{\ *\ streams.}}
+\DoxyCodeLine{00392\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00393\ \textcolor{keywordtype}{int}\ ossl\_quic\_wire\_encode\_frame\_streams\_blocked(\mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00394\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{char}\ is\_uni,}
+\DoxyCodeLine{00395\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ max\_streams);}
+\DoxyCodeLine{00396\ }
+\DoxyCodeLine{00397\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00398\ \textcolor{comment}{\ *\ Encodes\ a\ QUIC\ NEW\_CONNECTION\_ID\ frame\ to\ the\ packet\ writer,\ given\ a\ logical}}
+\DoxyCodeLine{00399\ \textcolor{comment}{\ *\ representation\ of\ the\ NEW\_CONNECTION\_ID\ frame.}}
+\DoxyCodeLine{00400\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00401\ \textcolor{comment}{\ *\ The\ buffer\ pointed\ to\ by\ the\ conn\_id\ field\ must\ be\ valid\ for\ the\ duration\ of}}
+\DoxyCodeLine{00402\ \textcolor{comment}{\ *\ the\ call.}}
+\DoxyCodeLine{00403\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00404\ \textcolor{keywordtype}{int}\ ossl\_quic\_wire\_encode\_frame\_new\_conn\_id(\mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00405\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structossl__quic__frame__new__conn__id__st}{OSSL\_QUIC\_FRAME\_NEW\_CONN\_ID}}\ *f);}
+\DoxyCodeLine{00406\ }
+\DoxyCodeLine{00407\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00408\ \textcolor{comment}{\ *\ Encodes\ a\ QUIC\ RETIRE\_CONNECTION\_ID\ frame\ to\ the\ packet\ writer.}}
+\DoxyCodeLine{00409\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00410\ \textcolor{keywordtype}{int}\ ossl\_quic\_wire\_encode\_frame\_retire\_conn\_id(\mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00411\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ seq\_num);}
+\DoxyCodeLine{00412\ }
+\DoxyCodeLine{00413\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00414\ \textcolor{comment}{\ *\ Encodes\ a\ QUIC\ PATH\_CHALLENGE\ frame\ to\ the\ packet\ writer.}}
+\DoxyCodeLine{00415\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00416\ \textcolor{keywordtype}{int}\ ossl\_quic\_wire\_encode\_frame\_path\_challenge(\mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00417\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ data);}
+\DoxyCodeLine{00418\ }
+\DoxyCodeLine{00419\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00420\ \textcolor{comment}{\ *\ Encodes\ a\ QUIC\ PATH\_RESPONSE\ frame\ to\ the\ packet\ writer.}}
+\DoxyCodeLine{00421\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00422\ \textcolor{keywordtype}{int}\ ossl\_quic\_wire\_encode\_frame\_path\_response(\mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00423\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ data);}
+\DoxyCodeLine{00424\ }
+\DoxyCodeLine{00425\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00426\ \textcolor{comment}{\ *\ Encodes\ a\ QUIC\ CONNECTION\_CLOSE\ frame\ to\ the\ packet\ writer,\ given\ a\ logical}}
+\DoxyCodeLine{00427\ \textcolor{comment}{\ *\ representation\ of\ the\ CONNECTION\_CLOSE\ frame.}}
+\DoxyCodeLine{00428\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00429\ \textcolor{comment}{\ *\ The\ reason\ field\ may\ be\ NULL,\ in\ which\ case\ no\ reason\ is\ encoded.\ If\ the}}
+\DoxyCodeLine{00430\ \textcolor{comment}{\ *\ reason\ field\ is\ non-\/NULL,\ it\ must\ point\ to\ a\ valid\ UTF-\/8\ string\ and}}
+\DoxyCodeLine{00431\ \textcolor{comment}{\ *\ reason\_len\ must\ be\ set\ to\ the\ length\ of\ the\ reason\ string\ in\ bytes.\ The}}
+\DoxyCodeLine{00432\ \textcolor{comment}{\ *\ reason\ string\ need\ not\ be\ zero\ terminated.}}
+\DoxyCodeLine{00433\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00434\ \textcolor{keywordtype}{int}\ ossl\_quic\_wire\_encode\_frame\_conn\_close(\mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00435\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structossl__quic__frame__conn__close__st}{OSSL\_QUIC\_FRAME\_CONN\_CLOSE}}\ *f);}
+\DoxyCodeLine{00436\ }
+\DoxyCodeLine{00437\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00438\ \textcolor{comment}{\ *\ Encodes\ a\ QUIC\ HANDSHAKE\_DONE\ frame\ to\ the\ packet\ writer.\ This\ frame\ type}}
+\DoxyCodeLine{00439\ \textcolor{comment}{\ *\ takes\ no\ arguiments.}}
+\DoxyCodeLine{00440\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00441\ \textcolor{keywordtype}{int}\ ossl\_quic\_wire\_encode\_frame\_handshake\_done(\mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt);}
+\DoxyCodeLine{00442\ }
+\DoxyCodeLine{00443\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00444\ \textcolor{comment}{\ *\ Encodes\ a\ QUIC\ transport\ parameter\ TLV\ with\ the\ given\ ID\ into\ the\ WPACKET.}}
+\DoxyCodeLine{00445\ \textcolor{comment}{\ *\ The\ payload\ is\ an\ arbitrary\ buffer.}}
+\DoxyCodeLine{00446\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00447\ \textcolor{comment}{\ *\ If\ value\ is\ non-\/NULL,\ the\ value\ is\ copied\ into\ the\ packet.}}
+\DoxyCodeLine{00448\ \textcolor{comment}{\ *\ If\ it\ is\ NULL,\ value\_len\ bytes\ are\ allocated\ for\ the\ payload\ and\ the\ caller}}
+\DoxyCodeLine{00449\ \textcolor{comment}{\ *\ should\ fill\ the\ buffer\ using\ the\ returned\ pointer.}}
+\DoxyCodeLine{00450\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00451\ \textcolor{comment}{\ *\ Returns\ a\ pointer\ to\ the\ start\ of\ the\ payload\ on\ success,\ or\ NULL\ on\ failure.}}
+\DoxyCodeLine{00452\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00453\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *ossl\_quic\_wire\_encode\_transport\_param\_bytes(\mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00454\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ \textcolor{keywordtype}{id},}
+\DoxyCodeLine{00455\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *value,}
+\DoxyCodeLine{00456\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ value\_len);}
+\DoxyCodeLine{00457\ }
+\DoxyCodeLine{00458\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00459\ \textcolor{comment}{\ *\ Encodes\ a\ QUIC\ transport\ parameter\ TLV\ with\ the\ given\ ID\ into\ the\ WPACKET.}}
+\DoxyCodeLine{00460\ \textcolor{comment}{\ *\ The\ payload\ is\ a\ QUIC\ variable-\/length\ integer\ with\ the\ given\ value.}}
+\DoxyCodeLine{00461\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00462\ \textcolor{keywordtype}{int}\ ossl\_quic\_wire\_encode\_transport\_param\_int(\mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00463\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ \textcolor{keywordtype}{id},}
+\DoxyCodeLine{00464\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ value);}
+\DoxyCodeLine{00465\ }
+\DoxyCodeLine{00466\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00467\ \textcolor{comment}{\ *\ Encodes\ a\ QUIC\ transport\ parameter\ TLV\ with\ a\ given\ ID\ into\ the\ WPACKET.}}
+\DoxyCodeLine{00468\ \textcolor{comment}{\ *\ The\ payload\ is\ a\ QUIC\ connection\ ID.}}
+\DoxyCodeLine{00469\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00470\ \textcolor{keywordtype}{int}\ ossl\_quic\_wire\_encode\_transport\_param\_cid(\mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *wpkt,}
+\DoxyCodeLine{00471\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ \textcolor{keywordtype}{id},}
+\DoxyCodeLine{00472\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__conn__id__st}{QUIC\_CONN\_ID}}\ *cid);}
+\DoxyCodeLine{00473\ }
+\DoxyCodeLine{00474\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00475\ \textcolor{comment}{\ *\ QUIC\ Wire\ Format\ Decoding}}
+\DoxyCodeLine{00476\ \textcolor{comment}{\ *\ =========================}}
+\DoxyCodeLine{00477\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00478\ \textcolor{comment}{\ *\ These\ functions\ return\ 1\ on\ success\ or\ 0\ for\ failure.\ Typical\ reasons}}
+\DoxyCodeLine{00479\ \textcolor{comment}{\ *\ why\ these\ functions\ may\ fail\ include:}}
+\DoxyCodeLine{00480\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00481\ \textcolor{comment}{\ *\ \ \ -\/\ A\ frame\ decode\ function\ is\ called\ but\ the\ frame\ in\ the\ PACKET's\ buffer}}
+\DoxyCodeLine{00482\ \textcolor{comment}{\ *\ \ \ \ \ is\ not\ of\ the\ correct\ type.}}
+\DoxyCodeLine{00483\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00484\ \textcolor{comment}{\ *\ \ \ -\/\ A\ variable-\/length\ field\ in\ the\ encoded\ frame\ appears\ to\ exceed\ the\ bounds}}
+\DoxyCodeLine{00485\ \textcolor{comment}{\ *\ \ \ \ \ of\ the\ PACKET's\ buffer.}}
+\DoxyCodeLine{00486\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00487\ \textcolor{comment}{\ *\ These\ functions\ should\ be\ called\ with\ the\ PACKET\ pointing\ to\ the\ start\ of\ the}}
+\DoxyCodeLine{00488\ \textcolor{comment}{\ *\ frame\ (including\ the\ initial\ type\ field),\ and\ consume\ an\ entire\ frame}}
+\DoxyCodeLine{00489\ \textcolor{comment}{\ *\ including\ its\ type\ field.\ The\ expectation\ is\ that\ the\ caller\ will\ have}}
+\DoxyCodeLine{00490\ \textcolor{comment}{\ *\ already\ discerned\ the\ frame\ type\ using\ ossl\_quic\_wire\_peek\_frame\_header().}}
+\DoxyCodeLine{00491\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00492\ }
+\DoxyCodeLine{00493\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00494\ \textcolor{comment}{\ *\ Decodes\ the\ type\ field\ header\ of\ a\ QUIC\ frame\ (without\ advancing\ the\ current}}
+\DoxyCodeLine{00495\ \textcolor{comment}{\ *\ position).\ This\ can\ be\ used\ to\ determine\ the\ frame\ type\ and\ determine\ which}}
+\DoxyCodeLine{00496\ \textcolor{comment}{\ *\ frame\ decoding\ function\ to\ call.}}
+\DoxyCodeLine{00497\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00498\ \textcolor{keywordtype}{int}\ ossl\_quic\_wire\_peek\_frame\_header(\mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,\ uint64\_t\ *type,}
+\DoxyCodeLine{00499\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ *was\_minimal);}
+\DoxyCodeLine{00500\ }
+\DoxyCodeLine{00501\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00502\ \textcolor{comment}{\ *\ Like\ ossl\_quic\_wire\_peek\_frame\_header,\ but\ advances\ the\ current\ position}}
+\DoxyCodeLine{00503\ \textcolor{comment}{\ *\ so\ that\ the\ type\ field\ is\ consumed.\ For\ advanced\ use\ only.}}
+\DoxyCodeLine{00504\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00505\ \textcolor{keywordtype}{int}\ ossl\_quic\_wire\_skip\_frame\_header(\mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,\ uint64\_t\ *type);}
+\DoxyCodeLine{00506\ }
+\DoxyCodeLine{00507\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00508\ \textcolor{comment}{\ *\ Determines\ how\ many\ ranges\ are\ needed\ to\ decode\ a\ QUIC\ ACK\ frame.}}
+\DoxyCodeLine{00509\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00510\ \textcolor{comment}{\ *\ The\ number\ of\ ranges\ which\ must\ be\ allocated\ before\ the\ call\ to}}
+\DoxyCodeLine{00511\ \textcolor{comment}{\ *\ ossl\_quic\_wire\_decode\_frame\_ack\ is\ written\ to\ *total\_ranges.}}
+\DoxyCodeLine{00512\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00513\ \textcolor{comment}{\ *\ The\ PACKET\ is\ not\ advanced.}}
+\DoxyCodeLine{00514\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00515\ \textcolor{keywordtype}{int}\ ossl\_quic\_wire\_peek\_frame\_ack\_num\_ranges(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00516\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ *total\_ranges);}
+\DoxyCodeLine{00517\ }
+\DoxyCodeLine{00518\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00519\ \textcolor{comment}{\ *\ Decodes\ a\ QUIC\ ACK\ frame.\ The\ ack\_ranges\ field\ of\ the\ passed\ structure\ should}}
+\DoxyCodeLine{00520\ \textcolor{comment}{\ *\ point\ to\ a\ preallocated\ array\ of\ ACK\ ranges\ and\ the\ num\_ack\_ranges\ field}}
+\DoxyCodeLine{00521\ \textcolor{comment}{\ *\ should\ specify\ the\ length\ of\ allocation.}}
+\DoxyCodeLine{00522\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00523\ \textcolor{comment}{\ *\ *total\_ranges\ is\ written\ with\ the\ number\ of\ ranges\ in\ the\ decoded\ frame,}}
+\DoxyCodeLine{00524\ \textcolor{comment}{\ *\ which\ may\ be\ greater\ than\ the\ number\ of\ ranges\ which\ were\ decoded\ (i.e.\ if}}
+\DoxyCodeLine{00525\ \textcolor{comment}{\ *\ num\_ack\_ranges\ was\ too\ small\ to\ decode\ all\ ranges).}}
+\DoxyCodeLine{00526\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00527\ \textcolor{comment}{\ *\ On\ success,\ this\ function\ modifies\ the\ num\_ack\_ranges\ field\ to\ indicate\ the}}
+\DoxyCodeLine{00528\ \textcolor{comment}{\ *\ number\ of\ ranges\ in\ the\ decoded\ frame.\ This\ is\ the\ number\ of\ entries\ in\ the}}
+\DoxyCodeLine{00529\ \textcolor{comment}{\ *\ ACK\ ranges\ array\ written\ by\ this\ function;\ any\ additional\ entries\ are\ not}}
+\DoxyCodeLine{00530\ \textcolor{comment}{\ *\ modified.}}
+\DoxyCodeLine{00531\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00532\ \textcolor{comment}{\ *\ If\ the\ number\ of\ ACK\ ranges\ in\ the\ decoded\ frame\ exceeds\ that\ in}}
+\DoxyCodeLine{00533\ \textcolor{comment}{\ *\ num\_ack\_ranges,\ as\ many\ ACK\ ranges\ as\ possible\ are\ decoded\ into\ the\ range}}
+\DoxyCodeLine{00534\ \textcolor{comment}{\ *\ array.\ The\ caller\ can\ use\ the\ value\ written\ to\ *total\_ranges\ to\ detect\ this}}
+\DoxyCodeLine{00535\ \textcolor{comment}{\ *\ condition,\ as\ *total\_ranges\ will\ exceed\ num\_ack\_ranges.}}
+\DoxyCodeLine{00536\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00537\ \textcolor{comment}{\ *\ If\ ack\ is\ NULL,\ the\ frame\ is\ still\ decoded,\ but\ only\ *total\_ranges\ is}}
+\DoxyCodeLine{00538\ \textcolor{comment}{\ *\ written.\ This\ can\ be\ used\ to\ determine\ the\ number\ of\ ranges\ which\ must\ be}}
+\DoxyCodeLine{00539\ \textcolor{comment}{\ *\ allocated.}}
+\DoxyCodeLine{00540\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00541\ \textcolor{comment}{\ *\ The\ ack\_delay\_exponent\ argument\ specifies\ the\ index\ of\ a\ power\ of\ two\ used\ to}}
+\DoxyCodeLine{00542\ \textcolor{comment}{\ *\ decode\ the\ ack\_delay\ field.\ This\ must\ match\ the\ ack\_delay\_exponent\ value\ used}}
+\DoxyCodeLine{00543\ \textcolor{comment}{\ *\ to\ encode\ the\ frame.}}
+\DoxyCodeLine{00544\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00545\ \textcolor{keywordtype}{int}\ ossl\_quic\_wire\_decode\_frame\_ack(\mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00546\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ ack\_delay\_exponent,}
+\DoxyCodeLine{00547\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structossl__quic__frame__ack__st}{OSSL\_QUIC\_FRAME\_ACK}}\ *ack,}
+\DoxyCodeLine{00548\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ *total\_ranges);}
+\DoxyCodeLine{00549\ }
+\DoxyCodeLine{00550\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00551\ \textcolor{comment}{\ *\ Decodes\ a\ QUIC\ RESET\_STREAM\ frame.}}
+\DoxyCodeLine{00552\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00553\ \textcolor{keywordtype}{int}\ ossl\_quic\_wire\_decode\_frame\_reset\_stream(\mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00554\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structossl__quic__frame__reset__stream__st}{OSSL\_QUIC\_FRAME\_RESET\_STREAM}}\ *f);}
+\DoxyCodeLine{00555\ }
+\DoxyCodeLine{00556\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00557\ \textcolor{comment}{\ *\ Decodes\ a\ QUIC\ STOP\_SENDING\ frame.}}
+\DoxyCodeLine{00558\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00559\ \textcolor{keywordtype}{int}\ ossl\_quic\_wire\_decode\_frame\_stop\_sending(\mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00560\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structossl__quic__frame__stop__sending__st}{OSSL\_QUIC\_FRAME\_STOP\_SENDING}}\ *f);}
+\DoxyCodeLine{00561\ }
+\DoxyCodeLine{00562\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00563\ \textcolor{comment}{\ *\ Decodes\ a\ QUIC\ CRYPTO\ frame.}}
+\DoxyCodeLine{00564\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00565\ \textcolor{comment}{\ *\ f-\/>data\ is\ set\ to\ point\ inside\ the\ packet\ buffer\ inside\ the\ PACKET,\ therefore}}
+\DoxyCodeLine{00566\ \textcolor{comment}{\ *\ it\ is\ safe\ to\ access\ for\ as\ long\ as\ the\ packet\ buffer\ exists.\ If\ nodata\ is}}
+\DoxyCodeLine{00567\ \textcolor{comment}{\ *\ set\ to\ 1\ then\ reading\ the\ PACKET\ stops\ after\ the\ frame\ header\ and\ f-\/>data\ is}}
+\DoxyCodeLine{00568\ \textcolor{comment}{\ *\ set\ to\ NULL.}}
+\DoxyCodeLine{00569\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00570\ \textcolor{keywordtype}{int}\ ossl\_quic\_wire\_decode\_frame\_crypto(\mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,\ \textcolor{keywordtype}{int}\ nodata,}
+\DoxyCodeLine{00571\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structossl__quic__frame__crypto__st}{OSSL\_QUIC\_FRAME\_CRYPTO}}\ *f);}
+\DoxyCodeLine{00572\ }
+\DoxyCodeLine{00573\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00574\ \textcolor{comment}{\ *\ Decodes\ a\ QUIC\ NEW\_TOKEN\ frame.\ *token\ is\ written\ with\ a\ pointer\ to\ the\ token}}
+\DoxyCodeLine{00575\ \textcolor{comment}{\ *\ bytes\ and\ *token\_len\ is\ written\ with\ the\ length\ of\ the\ token\ in\ bytes.}}
+\DoxyCodeLine{00576\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00577\ \textcolor{keywordtype}{int}\ ossl\_quic\_wire\_decode\_frame\_new\_token(\mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *pkt,}
+\DoxyCodeLine{00578\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **token,}
+\DoxyCodeLine{00579\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *token\_len);}
+\DoxyCodeLine{00580\ }
+\DoxyCodeLine{00581\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00582\ \textcolor{comment}{\ *\ Decodes\ a\ QUIC\ STREAM\ frame.}}
+\DoxyCodeLine{00583\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00584\ \textcolor{comment}{\ *\ If\ nodata\ is\ set\ to\ 1\ then\ reading\ the\ PACKET\ stops\ after\ the\ frame\ header}}
+\DoxyCodeLine{00585\ \textcolor{comment}{\ *\ and\ f-\/>data\ is\ set\ to\ NULL.\ In\ this\ case\ f-\/>len\ will\ also\ be\ 0\ in\ the\ event}}
+\DoxyCodeLine{00586\ \textcolor{comment}{\ *\ that\ "{}has\_explicit\_len"{}\ is\ 0.}}
+\DoxyCodeLine{00587\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00588\ \textcolor{comment}{\ *\ If\ the\ frame\ did\ not\ contain\ an\ offset\ field,\ f-\/>offset\ is\ set\ to\ 0,\ as\ the}}
+\DoxyCodeLine{00589\ \textcolor{comment}{\ *\ absence\ of\ an\ offset\ field\ is\ equivalent\ to\ an\ offset\ of\ 0.}}
+\DoxyCodeLine{00590\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00591\ \textcolor{comment}{\ *\ If\ the\ frame\ contained\ a\ length\ field,\ f-\/>has\_explicit\_len\ is\ set\ to\ 1\ and}}
+\DoxyCodeLine{00592\ \textcolor{comment}{\ *\ the\ length\ of\ the\ data\ is\ placed\ in\ f-\/>len.\ This\ function\ ensures\ that\ the}}
+\DoxyCodeLine{00593\ \textcolor{comment}{\ *\ length\ does\ not\ exceed\ the\ packet\ buffer,\ thus\ it\ is\ safe\ to\ access\ f-\/>data.}}
+\DoxyCodeLine{00594\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00595\ \textcolor{comment}{\ *\ If\ the\ frame\ did\ not\ contain\ a\ length\ field,\ this\ means\ that\ the\ frame\ runs}}
+\DoxyCodeLine{00596\ \textcolor{comment}{\ *\ until\ the\ end\ of\ the\ packet.\ This\ function\ sets\ f-\/>has\_explicit\_len\ to\ zero,}}
+\DoxyCodeLine{00597\ \textcolor{comment}{\ *\ and\ f-\/>len\ to\ the\ amount\ of\ data\ remaining\ in\ the\ input\ buffer.\ Therefore,}}
+\DoxyCodeLine{00598\ \textcolor{comment}{\ *\ this\ function\ should\ be\ used\ with\ a\ PACKET\ representing\ a\ single\ packet\ (and}}
+\DoxyCodeLine{00599\ \textcolor{comment}{\ *\ not\ e.g.\ multiple\ packets).}}
+\DoxyCodeLine{00600\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00601\ \textcolor{comment}{\ *\ Note\ also\ that\ this\ means\ f-\/>len\ is\ always\ valid\ after\ this\ function\ returns}}
+\DoxyCodeLine{00602\ \textcolor{comment}{\ *\ successfully,\ regardless\ of\ the\ value\ of\ f-\/>has\_explicit\_len.}}
+\DoxyCodeLine{00603\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00604\ \textcolor{comment}{\ *\ f-\/>data\ points\ inside\ the\ packet\ buffer\ inside\ the\ PACKET,\ therefore\ it\ is}}
+\DoxyCodeLine{00605\ \textcolor{comment}{\ *\ safe\ to\ access\ for\ as\ long\ as\ the\ packet\ buffer\ exists.}}
+\DoxyCodeLine{00606\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00607\ \textcolor{comment}{\ *\ f-\/>is\_fin\ is\ set\ according\ to\ whether\ the\ frame\ was\ marked\ as\ ending\ the}}
+\DoxyCodeLine{00608\ \textcolor{comment}{\ *\ stream.}}
+\DoxyCodeLine{00609\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00610\ \textcolor{keywordtype}{int}\ ossl\_quic\_wire\_decode\_frame\_stream(\mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,\ \textcolor{keywordtype}{int}\ nodata,}
+\DoxyCodeLine{00611\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structossl__quic__frame__stream__st}{OSSL\_QUIC\_FRAME\_STREAM}}\ *f);}
+\DoxyCodeLine{00612\ }
+\DoxyCodeLine{00613\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00614\ \textcolor{comment}{\ *\ Decodes\ a\ QUIC\ MAX\_DATA\ frame.\ The\ Maximum\ Data\ field\ is\ written\ to}}
+\DoxyCodeLine{00615\ \textcolor{comment}{\ *\ *max\_data.}}
+\DoxyCodeLine{00616\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00617\ \textcolor{keywordtype}{int}\ ossl\_quic\_wire\_decode\_frame\_max\_data(\mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00618\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ *max\_data);}
+\DoxyCodeLine{00619\ }
+\DoxyCodeLine{00620\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00621\ \textcolor{comment}{\ *\ Decodes\ a\ QUIC\ MAX\_STREAM\_DATA\ frame.\ The\ Stream\ ID\ is\ written\ to\ *stream\_id}}
+\DoxyCodeLine{00622\ \textcolor{comment}{\ *\ and\ Maximum\ Stream\ Data\ field\ is\ written\ to\ *max\_stream\_data.}}
+\DoxyCodeLine{00623\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00624\ \textcolor{keywordtype}{int}\ ossl\_quic\_wire\_decode\_frame\_max\_stream\_data(\mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00625\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ *stream\_id,}
+\DoxyCodeLine{00626\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ *max\_stream\_data);}
+\DoxyCodeLine{00627\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00628\ \textcolor{comment}{\ *\ Decodes\ a\ QUIC\ MAX\_STREAMS\ frame.\ The\ Maximum\ Streams\ field\ is\ written\ to}}
+\DoxyCodeLine{00629\ \textcolor{comment}{\ *\ *max\_streams.}}
+\DoxyCodeLine{00630\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00631\ \textcolor{comment}{\ *\ Whether\ the\ limit\ concerns\ bidirectional\ streams\ or\ unidirectional\ streams\ is}}
+\DoxyCodeLine{00632\ \textcolor{comment}{\ *\ denoted\ by\ the\ frame\ type;\ the\ caller\ should\ examine\ the\ frame\ type\ to}}
+\DoxyCodeLine{00633\ \textcolor{comment}{\ *\ determine\ this.}}
+\DoxyCodeLine{00634\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00635\ \textcolor{keywordtype}{int}\ ossl\_quic\_wire\_decode\_frame\_max\_streams(\mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00636\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ *max\_streams);}
+\DoxyCodeLine{00637\ }
+\DoxyCodeLine{00638\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00639\ \textcolor{comment}{\ *\ Decodes\ a\ QUIC\ DATA\_BLOCKED\ frame.\ The\ Maximum\ Data\ field\ is\ written\ to}}
+\DoxyCodeLine{00640\ \textcolor{comment}{\ *\ *max\_data.}}
+\DoxyCodeLine{00641\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00642\ \textcolor{keywordtype}{int}\ ossl\_quic\_wire\_decode\_frame\_data\_blocked(\mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00643\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ *max\_data);}
+\DoxyCodeLine{00644\ }
+\DoxyCodeLine{00645\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00646\ \textcolor{comment}{\ *\ Decodes\ a\ QUIC\ STREAM\_DATA\_BLOCKED\ frame.\ The\ Stream\ ID\ and\ Maximum\ Stream}}
+\DoxyCodeLine{00647\ \textcolor{comment}{\ *\ Data\ fields\ are\ written\ to\ *stream\_id\ and\ *max\_stream\_data\ respectively.}}
+\DoxyCodeLine{00648\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00649\ \textcolor{keywordtype}{int}\ ossl\_quic\_wire\_decode\_frame\_stream\_data\_blocked(\mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00650\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ *stream\_id,}
+\DoxyCodeLine{00651\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ *max\_stream\_data);}
+\DoxyCodeLine{00652\ }
+\DoxyCodeLine{00653\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00654\ \textcolor{comment}{\ *\ Decodes\ a\ QUIC\ STREAMS\_BLOCKED\ frame.\ The\ Maximum\ Streams\ field\ is\ written\ to}}
+\DoxyCodeLine{00655\ \textcolor{comment}{\ *\ *max\_streams.}}
+\DoxyCodeLine{00656\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00657\ \textcolor{comment}{\ *\ Whether\ the\ limit\ concerns\ bidirectional\ streams\ or\ unidirectional\ streams\ is}}
+\DoxyCodeLine{00658\ \textcolor{comment}{\ *\ denoted\ by\ the\ frame\ type;\ the\ caller\ should\ examine\ the\ frame\ type\ to}}
+\DoxyCodeLine{00659\ \textcolor{comment}{\ *\ determine\ this.}}
+\DoxyCodeLine{00660\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00661\ \textcolor{keywordtype}{int}\ ossl\_quic\_wire\_decode\_frame\_streams\_blocked(\mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00662\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ *max\_streams);}
+\DoxyCodeLine{00663\ }
+\DoxyCodeLine{00664\ }
+\DoxyCodeLine{00665\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00666\ \textcolor{comment}{\ *\ Decodes\ a\ QUIC\ NEW\_CONNECTION\_ID\ frame.\ The\ logical\ representation\ of\ the}}
+\DoxyCodeLine{00667\ \textcolor{comment}{\ *\ frame\ is\ written\ to\ *f.}}
+\DoxyCodeLine{00668\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00669\ \textcolor{comment}{\ *\ The\ conn\_id\ field\ is\ set\ to\ point\ to\ the\ connection\ ID\ string\ inside\ the}}
+\DoxyCodeLine{00670\ \textcolor{comment}{\ *\ packet\ buffer;\ it\ is\ therefore\ valid\ for\ as\ long\ as\ the\ PACKET's\ buffer\ is}}
+\DoxyCodeLine{00671\ \textcolor{comment}{\ *\ valid.\ The\ conn\_id\_len\ field\ is\ set\ to\ the\ length\ of\ the\ connection\ ID\ string}}
+\DoxyCodeLine{00672\ \textcolor{comment}{\ *\ in\ bytes.}}
+\DoxyCodeLine{00673\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00674\ \textcolor{keywordtype}{int}\ ossl\_quic\_wire\_decode\_frame\_new\_conn\_id(\mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00675\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structossl__quic__frame__new__conn__id__st}{OSSL\_QUIC\_FRAME\_NEW\_CONN\_ID}}\ *f);}
+\DoxyCodeLine{00676\ }
+\DoxyCodeLine{00677\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00678\ \textcolor{comment}{\ *\ Decodes\ a\ QUIC\ RETIRE\_CONNECTION\_ID\ frame.\ The\ Sequence\ Number\ field}}
+\DoxyCodeLine{00679\ \textcolor{comment}{\ *\ is\ written\ to\ *seq\_num.}}
+\DoxyCodeLine{00680\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00681\ \textcolor{keywordtype}{int}\ ossl\_quic\_wire\_decode\_frame\_retire\_conn\_id(\mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00682\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ *seq\_num);}
+\DoxyCodeLine{00683\ }
+\DoxyCodeLine{00684\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00685\ \textcolor{comment}{\ *\ Decodes\ a\ QUIC\ PATH\_CHALLENGE\ frame.\ The\ Data\ field\ is\ written\ to\ *data.}}
+\DoxyCodeLine{00686\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00687\ \textcolor{keywordtype}{int}\ ossl\_quic\_wire\_decode\_frame\_path\_challenge(\mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00688\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ *data);}
+\DoxyCodeLine{00689\ }
+\DoxyCodeLine{00690\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00691\ \textcolor{comment}{\ *\ Decodes\ a\ QUIC\ PATH\_CHALLENGE\ frame.\ The\ Data\ field\ is\ written\ to\ *data.}}
+\DoxyCodeLine{00692\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00693\ \textcolor{keywordtype}{int}\ ossl\_quic\_wire\_decode\_frame\_path\_response(\mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00694\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ *data);}
+\DoxyCodeLine{00695\ }
+\DoxyCodeLine{00696\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00697\ \textcolor{comment}{\ *\ Decodes\ a\ QUIC\ CONNECTION\_CLOSE\ frame.\ The\ logical\ representation}}
+\DoxyCodeLine{00698\ \textcolor{comment}{\ *\ of\ the\ frame\ is\ written\ to\ *f.}}
+\DoxyCodeLine{00699\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00700\ \textcolor{comment}{\ *\ The\ reason\ field\ is\ set\ to\ point\ to\ the\ UTF-\/8\ reason\ string\ inside}}
+\DoxyCodeLine{00701\ \textcolor{comment}{\ *\ the\ packet\ buffer;\ it\ is\ therefore\ valid\ for\ as\ long\ as\ the\ PACKET's}}
+\DoxyCodeLine{00702\ \textcolor{comment}{\ *\ buffer\ is\ valid.\ The\ reason\_len\ field\ is\ set\ to\ the\ length\ of\ the}}
+\DoxyCodeLine{00703\ \textcolor{comment}{\ *\ reason\ string\ in\ bytes.}}
+\DoxyCodeLine{00704\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00705\ \textcolor{comment}{\ *\ IMPORTANT:\ The\ reason\ string\ is\ not\ zero-\/terminated.}}
+\DoxyCodeLine{00706\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00707\ \textcolor{comment}{\ *\ Returns\ 1\ on\ success\ or\ 0\ on\ failure.}}
+\DoxyCodeLine{00708\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00709\ \textcolor{keywordtype}{int}\ ossl\_quic\_wire\_decode\_frame\_conn\_close(\mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00710\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structossl__quic__frame__conn__close__st}{OSSL\_QUIC\_FRAME\_CONN\_CLOSE}}\ *f);}
+\DoxyCodeLine{00711\ }
+\DoxyCodeLine{00712\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00713\ \textcolor{comment}{\ *\ Decodes\ one\ or\ more\ PADDING\ frames.\ PADDING\ frames\ have\ no\ arguments.}}
+\DoxyCodeLine{00714\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00715\ \textcolor{comment}{\ *\ Returns\ the\ number\ of\ PADDING\ frames\ decoded\ or\ 0\ on\ error.}}
+\DoxyCodeLine{00716\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00717\ \textcolor{keywordtype}{size\_t}\ ossl\_quic\_wire\_decode\_padding(\mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt);}
+\DoxyCodeLine{00718\ }
+\DoxyCodeLine{00719\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00720\ \textcolor{comment}{\ *\ Decodes\ a\ PING\ frame.\ The\ frame\ has\ no\ arguments.}}
+\DoxyCodeLine{00721\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00722\ \textcolor{keywordtype}{int}\ ossl\_quic\_wire\_decode\_frame\_ping(\mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt);}
+\DoxyCodeLine{00723\ }
+\DoxyCodeLine{00724\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00725\ \textcolor{comment}{\ *\ Decodes\ a\ HANDSHAKE\_DONE\ frame.\ The\ frame\ has\ no\ arguments.}}
+\DoxyCodeLine{00726\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00727\ \textcolor{keywordtype}{int}\ ossl\_quic\_wire\_decode\_frame\_handshake\_done(\mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt);}
+\DoxyCodeLine{00728\ }
+\DoxyCodeLine{00729\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00730\ \textcolor{comment}{\ *\ Peeks\ at\ the\ ID\ of\ the\ next\ QUIC\ transport\ parameter\ TLV\ in\ the\ stream.}}
+\DoxyCodeLine{00731\ \textcolor{comment}{\ *\ The\ ID\ is\ written\ to\ *id.}}
+\DoxyCodeLine{00732\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00733\ \textcolor{keywordtype}{int}\ ossl\_quic\_wire\_peek\_transport\_param(\mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,\ uint64\_t\ *\textcolor{keywordtype}{id});}
+\DoxyCodeLine{00734\ }
+\DoxyCodeLine{00735\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00736\ \textcolor{comment}{\ *\ Decodes\ a\ QUIC\ transport\ parameter\ TLV.\ A\ pointer\ to\ the\ value\ buffer\ is}}
+\DoxyCodeLine{00737\ \textcolor{comment}{\ *\ returned\ on\ success.\ This\ points\ inside\ the\ PACKET's\ buffer\ and\ is\ therefore}}
+\DoxyCodeLine{00738\ \textcolor{comment}{\ *\ valid\ as\ long\ as\ the\ PACKET's\ buffer\ is\ valid.}}
+\DoxyCodeLine{00739\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00740\ \textcolor{comment}{\ *\ The\ transport\ parameter\ ID\ is\ written\ to\ *id\ (if\ non-\/NULL)\ and\ the\ length\ of}}
+\DoxyCodeLine{00741\ \textcolor{comment}{\ *\ the\ payload\ in\ bytes\ is\ written\ to\ *len.}}
+\DoxyCodeLine{00742\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00743\ \textcolor{comment}{\ *\ Returns\ NULL\ on\ failure.}}
+\DoxyCodeLine{00744\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00745\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *ossl\_quic\_wire\_decode\_transport\_param\_bytes(\mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00746\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ *\textcolor{keywordtype}{id},}
+\DoxyCodeLine{00747\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ *len);}
+\DoxyCodeLine{00748\ }
+\DoxyCodeLine{00749\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00750\ \textcolor{comment}{\ *\ Decodes\ a\ QUIC\ transport\ parameter\ TLV\ containing\ a\ variable-\/length\ integer.}}
+\DoxyCodeLine{00751\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00752\ \textcolor{comment}{\ *\ The\ transport\ parameter\ ID\ is\ written\ to\ *id\ (if\ non-\/NULL)\ and\ the\ value\ is}}
+\DoxyCodeLine{00753\ \textcolor{comment}{\ *\ written\ to\ *value.}}
+\DoxyCodeLine{00754\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00755\ \textcolor{keywordtype}{int}\ ossl\_quic\_wire\_decode\_transport\_param\_int(\mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00756\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ *\textcolor{keywordtype}{id},}
+\DoxyCodeLine{00757\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ *value);}
+\DoxyCodeLine{00758\ }
+\DoxyCodeLine{00759\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00760\ \textcolor{comment}{\ *\ Decodes\ a\ QUIC\ transport\ parameter\ TLV\ containing\ a\ connection\ ID.}}
+\DoxyCodeLine{00761\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00762\ \textcolor{comment}{\ *\ The\ transport\ parameter\ ID\ is\ written\ to\ *id\ (if\ non-\/NULL)\ and\ the\ value\ is}}
+\DoxyCodeLine{00763\ \textcolor{comment}{\ *\ written\ to\ *value.}}
+\DoxyCodeLine{00764\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00765\ \textcolor{keywordtype}{int}\ ossl\_quic\_wire\_decode\_transport\_param\_cid(\mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00766\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ *\textcolor{keywordtype}{id},}
+\DoxyCodeLine{00767\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structquic__conn__id__st}{QUIC\_CONN\_ID}}\ *cid);}
+\DoxyCodeLine{00768\ }
+\DoxyCodeLine{00769\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00770\ \textcolor{comment}{\ *\ Decodes\ a\ QUIC\ transport\ parameter\ TLV\ containing\ a\ preferred\_address.}}
+\DoxyCodeLine{00771\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00772\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structquic__preferred__addr__st}{quic\_preferred\_addr\_st}}\ \{}
+\DoxyCodeLine{00773\ \ \ \ \ uint16\_t\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ipv4\_port,\ ipv6\_port;}
+\DoxyCodeLine{00774\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ipv4[4],\ ipv6[16];}
+\DoxyCodeLine{00775\ \ \ \ \ \mbox{\hyperlink{struct_q_u_i_c___s_t_a_t_e_l_e_s_s___r_e_s_e_t___t_o_k_e_n}{QUIC\_STATELESS\_RESET\_TOKEN}}\ \ stateless\_reset;}
+\DoxyCodeLine{00776\ \ \ \ \ \mbox{\hyperlink{structquic__conn__id__st}{QUIC\_CONN\_ID}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cid;}
+\DoxyCodeLine{00777\ \}\ \mbox{\hyperlink{structquic__preferred__addr__st}{QUIC\_PREFERRED\_ADDR}};}
+\DoxyCodeLine{00778\ }
+\DoxyCodeLine{00779\ \textcolor{keywordtype}{int}\ ossl\_quic\_wire\_decode\_transport\_param\_preferred\_addr(\mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00780\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structquic__preferred__addr__st}{QUIC\_PREFERRED\_ADDR}}\ *p);}
+\DoxyCodeLine{00781\ }
+\DoxyCodeLine{00782\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00783\ }
+\DoxyCodeLine{00784\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

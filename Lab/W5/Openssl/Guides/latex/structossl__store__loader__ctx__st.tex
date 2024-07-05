@@ -1,0 +1,72 @@
+\doxysection{ossl\+\_\+store\+\_\+loader\+\_\+ctx\+\_\+st Struct Reference}
+\hypertarget{structossl__store__loader__ctx__st}{}\label{structossl__store__loader__ctx__st}\index{ossl\_store\_loader\_ctx\_st@{ossl\_store\_loader\_ctx\_st}}
+\doxysubsubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{structossl__store__loader__ctx__st_a6bcab9629e733e6090c2d3ba2a1e00ec}\label{structossl__store__loader__ctx__st_a6bcab9629e733e6090c2d3ba2a1e00ec} 
+enum \{ {\bfseries is\+\_\+raw} = 0
+, {\bfseries is\+\_\+pem}
+, {\bfseries is\+\_\+dir}
+ \}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{structossl__store__loader__ctx__st_aaf0d9c245f52d35ac151415ca98a86f8}\label{structossl__store__loader__ctx__st_aaf0d9c245f52d35ac151415ca98a86f8} 
+ENGINE \texorpdfstring{$\ast$}{*} {\bfseries e}
+\item 
+\Hypertarget{structossl__store__loader__ctx__st_a1b5e20f6ba578da08af17d3b5c8263f6}\label{structossl__store__loader__ctx__st_a1b5e20f6ba578da08af17d3b5c8263f6} 
+char \texorpdfstring{$\ast$}{*} {\bfseries keyid}
+\item 
+\Hypertarget{structossl__store__loader__ctx__st_aaddec25f0ed788b70d014467d77c6525}\label{structossl__store__loader__ctx__st_aaddec25f0ed788b70d014467d77c6525} 
+int {\bfseries expected}
+\item 
+\Hypertarget{structossl__store__loader__ctx__st_a1b56d983f17a35dcdc515e0d16cf6b8c}\label{structossl__store__loader__ctx__st_a1b56d983f17a35dcdc515e0d16cf6b8c} 
+int {\bfseries loaded}
+\item 
+\Hypertarget{structossl__store__loader__ctx__st_a30317e062b69671d1e414e91a401d091}\label{structossl__store__loader__ctx__st_a30317e062b69671d1e414e91a401d091} 
+char \texorpdfstring{$\ast$}{*} {\bfseries uri}
+\item 
+\Hypertarget{structossl__store__loader__ctx__st_a078d8687d61f72c0c1d106a685562298}\label{structossl__store__loader__ctx__st_a078d8687d61f72c0c1d106a685562298} 
+enum ossl\+\_\+store\+\_\+loader\+\_\+ctx\+\_\+st\+:: \{ ... \}  {\bfseries type}
+\item 
+\Hypertarget{structossl__store__loader__ctx__st_a4e676756c3eb5ddad69156cb4f7bb1dc}\label{structossl__store__loader__ctx__st_a4e676756c3eb5ddad69156cb4f7bb1dc} 
+int {\bfseries errcnt}
+\item 
+\Hypertarget{structossl__store__loader__ctx__st_ab71d7f9bf4e1ae95489e3d800453818e}\label{structossl__store__loader__ctx__st_ab71d7f9bf4e1ae95489e3d800453818e} 
+unsigned int {\bfseries flags}
+\item 
+\Hypertarget{structossl__store__loader__ctx__st_aa0307c9707c73e31299669881d91d606}\label{structossl__store__loader__ctx__st_aa0307c9707c73e31299669881d91d606} 
+\begin{tabbing}
+xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=\kill
+union \{\\
+\>struct \{\\
+\>\>BIO \texorpdfstring{$\ast$}{*} {\bfseries file}\\
+\>\>const \mbox{\hyperlink{structfile__handler__st}{FILE\_HANDLER}} \texorpdfstring{$\ast$}{*} {\bfseries last\_handler}\\
+\>\>void \texorpdfstring{$\ast$}{*} {\bfseries last\_handler\_ctx}\\
+\>\} {\bfseries file}\\
+\>struct \{\\
+\>\>OPENSSL\_DIR\_CTX \texorpdfstring{$\ast$}{*} {\bfseries ctx}\\
+\>\>int {\bfseries end\_reached}\\
+\>\>char {\bfseries search\_name} \mbox{[}9\mbox{]}\\
+\>\>const char \texorpdfstring{$\ast$}{*} {\bfseries last\_entry}\\
+\>\>int {\bfseries last\_errno}\\
+\>\} {\bfseries dir}\\
+\} {\bfseries \_}\\
+
+\end{tabbing}\item 
+\Hypertarget{structossl__store__loader__ctx__st_a7348a3f58a75a881fc846462880d0ba4}\label{structossl__store__loader__ctx__st_a7348a3f58a75a881fc846462880d0ba4} 
+int {\bfseries expected\+\_\+type}
+\item 
+\Hypertarget{structossl__store__loader__ctx__st_a5045764717d4b02770a81531ececd5d7}\label{structossl__store__loader__ctx__st_a5045764717d4b02770a81531ececd5d7} 
+OSSL\+\_\+\+LIB\+\_\+\+CTX \texorpdfstring{$\ast$}{*} {\bfseries libctx}
+\item 
+\Hypertarget{structossl__store__loader__ctx__st_a83e6e158ccbca67ef5cfc43460484929}\label{structossl__store__loader__ctx__st_a83e6e158ccbca67ef5cfc43460484929} 
+char \texorpdfstring{$\ast$}{*} {\bfseries propq}
+\end{DoxyCompactItemize}
+
+
+The documentation for this struct was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/namph/\+Downloads/openssl/openssl-\/3.\+2.\+1/apps/lib/engine\+\_\+loader.\+c\item 
+C\+:/\+Users/namph/\+Downloads/openssl/openssl-\/3.\+2.\+1/engines/e\+\_\+loader\+\_\+attic.\+c\end{DoxyCompactItemize}

@@ -1,0 +1,157 @@
+\chapter{Glossary of QUIC Terms}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2glossary}{}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2glossary}\index{Glossary of QUIC Terms@{Glossary of QUIC Terms}}
+{\bfseries{ACKM\+:}} ACK Manager. Responsible for tracking packets in flight and generating notifications when they are lost, or when they are successfully delivered.
+
+{\bfseries{Active Stream\+:}} A stream which has data or control frames ready for transmission. Active stream status is managed by the QSM.
+
+{\bfseries{AEC\+:}} Application error code. An error code provided by a local or remote application to be signalled as an error code value by QUIC. See QUIC RFCs ({\ttfamily STOP\+\_\+\+SENDING}, {\ttfamily RESET\+\_\+\+STREAM}, {\ttfamily CONNECTION\+\_\+\+CLOSE}).
+
+{\bfseries{APL\+:}} API Personality Layer. The QUIC API Personality Layer lives in {\ttfamily quic\+\_\+impl.\+c} and implements the libssl API personality ({\ttfamily SSL\+\_\+read}, etc.) in terms of an underlying {\ttfamily QUIC\+\_\+\+CHANNEL} object.
+
+{\bfseries{Bidi\+:}} Abbreviation of bidirectional, referring to a QUIC bidirectional stream.
+
+{\bfseries{CC\+:}} Congestion controller. Estimates network channel capacity and imposes limits on transmissions accordingly.
+
+{\bfseries{CFQ\+:}} Control Frame Queue. Considered part of the FIFM, this implements the CFQ strategy for frame in flight management. For details, see FIFM design document.
+
+{\bfseries{Channel\+:}} Core QUIC connection handling object and connection state machine implementation. This is fused tightly with the RXDP.
+
+{\bfseries{CID\+:}} Connection ID.
+
+{\bfseries{CMPL\+:}} The maximum number of bytes left to serialize another QUIC packet into the same datagram as one or more previous packets. This is just the MDPL minus the total size of all previous packets already serialized into to the same datagram.
+
+{\bfseries{CMPPL\+:}} The maximum number of payload bytes we can put in the payload of another QUIC packet which is to be coalesced with one or more previous QUIC packets and placed into the same datagram. Essentially, this is the room we have left for another packet payload.
+
+{\bfseries{CSM\+:}} Connection state machine. Refers to some aspects of a QUIC channel. Not implemented as an explicit state machine.
+
+{\bfseries{DCID\+:}} Destination Connection ID. Found in most QUIC packet headers.
+
+{\bfseries{DEMUX\+:}} The demuxer routes incoming packets to the correct connection QRX by DCID.
+
+{\bfseries{DGRAM\+:}} (UDP) datagram.
+
+{\bfseries{DISPATCH\+:}} Refers to the QUIC-\/specific dispatch code in {\ttfamily ssl\+\_\+lib.\+c}. This dispatches calls to libssl public APIs to the APL.
+
+{\bfseries{EL\+:}} Encryption level. See RFC 9000.
+
+{\bfseries{FC\+:}} Flow control. Comprises TXFC and RXFC.
+
+{\bfseries{FIFD\+:}} Frame-\/in-\/flight dispatcher. Ties together the CFQ and TXPIM to handle frame tracking and retransmission on loss.
+
+{\bfseries{FIFM\+:}} Frame-\/in-\/flight manager. Tracks frames in flight until their containing packets are deemed delivered or lost, so that frames can be retransmitted if necessary. Comprises the CFQ, TXPIM and FIFD.
+
+{\bfseries{GCR\+:}} Generic Control Frame Retransmission. A strategy for regenerating lost frames. Stores raw frame in a queue so that it can be retransmitted if lost. See FIFM design document for details.
+
+{\bfseries{Key epoch\+:}} Non-\/negative number designating a generation of QUIC keys used to encrypt or decrypt packets, starting at 0. This increases by 1 when a QUIC key update occurs.
+
+{\bfseries{Key Phase\+:}} Key phase bit in QUIC packet headers. See RFC 9000.
+
+{\bfseries{Keyslot}}\+: A set of cryptographic state used to encrypt or decrypt QUIC packets by a QRX or QTX. Due to the QUIC key update mechanism, multiple keyslots may be maintained at a given time. See {\ttfamily \doxylink{quic__record__rx_8h_source}{quic\+\_\+record\+\_\+rx.\+h}} for details.
+
+{\bfseries{KP\+:}} See Key Phase.
+
+{\bfseries{KS\+:}} See Keyslot.
+
+{\bfseries{KU\+:}} Key update. See also TXKU, RXKU.
+
+{\bfseries{Locally-\/initiated\+:}} Refers to a QUIC stream which was initiated by the local application rather than the remote peer.
+
+{\bfseries{MDPL\+:}} Maximum Datagram Payload Length. The maximum number of UDP payload bytes we can put in a UDP packet. This is derived from the applicable PMTU. This is also the maximum size of a single QUIC packet if we place only one packet in a datagram. The MDPL may vary based on both local source IP and destination IP due to different path MTUs.
+
+{\bfseries{Min\+DPL\+:}} In some cases we must ensure a datagram has a minimum size of a certain number of bytes. This does not need to be accomplished with a single packet, but we may need to add PADDING frames to the final packet added to a datagram in this case.
+
+{\bfseries{Min\+PL\+:}} The minimum serialized packet length we are using while serializing a given packet. May often be 0. Used to meet Min\+DPL requirements, and thus equal to Min\+DPL minus the length of any packets we have already encoded into the datagram.
+
+{\bfseries{Min\+PPL\+:}} The minimum number of bytes which must be placed into a packet payload in order to meet the Min\+PL minimum size when the packet is encoded.
+
+{\bfseries{MPL\+:}} Maximum Packet Length. The maximum size of a fully encrypted and serialized QUIC packet in bytes in some given context. Typically equal to the MDPL and never greater than it.
+
+{\bfseries{MPPL\+:}} The maximum number of plaintext bytes we can put in the payload of a QUIC packet. This is related to the MDPL by the size of the encoded header and the size of any AEAD authentication tag which will be attached to the ciphertext.
+
+{\bfseries{MSMT\+:}} Multi-\/stream multi-\/thread. Refers to a type of multi-\/stream QUIC usage in which API calls can be made on different threads.
+
+{\bfseries{MSST\+:}} Multi-\/stream single-\/thread. Refers to a type of multi-\/stream QUIC usage in which API calls must not be made concurrently.
+
+{\bfseries{PN\+:}} Packet number. Most QUIC packet types have a packet number (PN); see RFC 9000.
+
+{\bfseries{PTO\+:}} Probe timeout. See RFC 9000.
+
+{\bfseries{QC\+:}} See {\ttfamily QUIC\+\_\+\+CONNECTION}.
+
+{\bfseries{QCSO\+:}} QUIC Connection SSL Object. This is an SSL object created using {\ttfamily SSL\+\_\+new} using a QUIC method.
+
+{\bfseries{QCTX}}\+: QUIC Context. This is a utility object defined within the QUIC APL which helps to unwrap a SSL object pointer (a QCSO or QSSO) into the relevant structure pointers such as {\ttfamily QUIC\+\_\+\+CONNECTION} or {\ttfamily QUIC\+\_\+\+XSO}.
+
+{\bfseries{QRL\+:}} QUIC record layer. Refers collectively to the QRX and QTX.
+
+{\bfseries{QRX\+:}} QUIC Record Layer RX. Receives incoming datagrams and decrypts the packets contained in them. Manages decrypted packets in a queue pending processing by upper layers.
+
+{\bfseries{QS\+:}} See {\ttfamily QUIC\+\_\+\+STREAM}.
+
+{\bfseries{QSM\+:}} QUIC Streams Mapper. Manages internal {\ttfamily QUIC\+\_\+\+STREAM} objects and maps IDs to those objects. Allows iteration of active streams.
+
+{\bfseries{QSO\+:}} QUIC SSL Object. May be a QCSO or a QSSO.
+
+{\bfseries{QSSO\+:}} QUIC Stream SSL Object. This is an SSL object which is subsidiary to a given QCSO, obtained using (for example) {\ttfamily SSL\+\_\+new\+\_\+stream} or {\ttfamily SSL\+\_\+accept\+\_\+stream}.
+
+{\bfseries{QTLS}}, {\bfseries{QUIC\+\_\+\+TLS}}\+: Implements the QUIC handshake layer using TLS 1.\+3, wrapping libssl TLS code to implement the QUIC-\/specific aspects of QUIC TLS.
+
+{\bfseries{QTX\+:}} QUIC Record Layer TX. Encrypts and sends packets in datagrams.
+
+{\bfseries{QUIC\+\_\+\+CONNECTION\+:}} QUIC connection. This is the object representing a QUIC connection in the APL.
+
+{\bfseries{QUIC\+\_\+\+STREAM}}\+: Internal object tracking a QUIC stream. Unlike an XSO this is not part of the APL. An XSO wraps a QUIC\+\_\+\+STREAM once that stream is exposed as an API object. As such, a {\ttfamily QUIC\+\_\+\+CONNECTION} is to a {\ttfamily QUIC\+\_\+\+CHANNEL} what a {\ttfamily QUIC\+\_\+\+XSO} is to a {\ttfamily QUIC\+\_\+\+STREAM}.
+
+{\bfseries{REGEN\+:}} A strategy for regenerating lost frames. This strategy regenerates the frame from canonical data sources without having to store a copy of the frame which was transmitted. See FIFM design document for details.
+
+{\bfseries{Remotely-\/initiated\+:}} Refers to a QUIC stream which was initiated by the remote peer, rather than by the local application.
+
+{\bfseries{RSTREAM\+:}} Receive stream. Internal receive buffer management object used to store data which has been RX\textquotesingle{}d but not yet read by the application.
+
+{\bfseries{RTT\+:}} Round trip time. Time for a datagram to reach a given peer and a reply to reach the local machine, assuming the peer responds immediately.
+
+{\bfseries{RXDP\+:}} RX depacketiser. Handles frames in packets which have been decrypted by a QRX.
+
+{\bfseries{RXE\+:}} RX entry. Structure containing decrypted received packets awaiting processing. Stored in a queue known as the RXL. These structures belong to a QRX.
+
+{\bfseries{RXFC\+:}} RX flow control. This determines how much a peer may send to us and provides indication of when flow control frames increasing a peer\textquotesingle{}s flow control budget should be generated. Exists in both connection-\/level and stream-\/level instances.
+
+{\bfseries{RXKU\+:}} RX key update. The detected condition whereby a received packet has a flipped Key Phase bit, meaning the peer has initiated a key update. Causes a solicited TXKU. See also TXKU.
+
+{\bfseries{RXL\+:}} RXE list. See RXE.
+
+{\bfseries{RCMPPL\+:}} The number of bytes left in a packet whose payload we are currently forming. This is the CMPPL minus any bytes we have already put into the payload.
+
+{\bfseries{SCID\+:}} Source Connection ID. Found in some QUIC packet headers.
+
+{\bfseries{SSTREAM\+:}} Send stream. Internal send buffer management object used to store data which has been passed to libssl for sending but which has not yet been transmitted, or not yet been acknowledged.
+
+{\bfseries{STATM\+:}} Statistics manager. Measures estimated connection RTT.
+
+{\bfseries{TA\+:}} Thread assisted mode.
+
+{\bfseries{TPARAM\+:}} Transport parameter. See RFC 9000.
+
+{\bfseries{TSERVER\+:}} Test server. Internal test server object built around a channel.
+
+{\bfseries{TXE\+:}} TX entry. Structure containing encrypted data pending transmission. Owned by the QTX.
+
+{\bfseries{TXFC\+:}} TX flow control. This determines how much can be transmitted to the peer. Exists in both connection-\/level and stream-\/level instances.
+
+{\bfseries{TXKU\+:}} TX key update. This refers to when a QTX signals a key update for the TX direction by flipping the Key Phase bit in an outgoing packet. A TXKU can be either spontaneous (locally initiated) or in solicited (in response to receiving an RXKU). See also RXKU.
+
+{\bfseries{TXL\+:}} TXE list. See TXE.
+
+{\bfseries{TXP\+:}} TX packetiser. This is responsible for generating yet-\/unencrypted packets and passing them to a QTX for encryption and transmission. It must decide how to spend the space available in a datagram.
+
+{\bfseries{TXPIM\+:}} Transmitted Packet Information Manager. Stores information about transmitted packets and the frames contained within them. This information is needed to facilitate retransmission of frames if the packets they are in are lost. Note that the ACKM records only receipt or loss of entire packets, whereas TXPIM tracks information about individual frames in those packets.
+
+{\bfseries{TX/\+RX v. Send/\+Receive\+:}} The terms {\itshape TX} and {\itshape RX} are used for {\itshape network-\/level} communication, whereas {\itshape send} and {\itshape receive} are used for application-\/level communication. An application {\itshape sends} on a stream (causing data to be appended to a {\itshape send stream buffer}, and that data is eventually TX\textquotesingle{}d by the TXP and QTX.)
+
+{\bfseries{Uni\+:}} Abbreviation of unidirectional, referring to a QUIC unidirectional stream.
+
+{\bfseries{URXE\+:}} Unprocessed RX entry. Structure containing yet-\/undecrypted received datagrams pending processing. Stored in a queue known as the URXL. Ownership of URXEs is shared between DEMUX and QRX.
+
+{\bfseries{URXL\+:}} URXE list. See URXE.
+
+{\bfseries{XSO\+:}} External Stream Object. This is the API object representing a QUIC stream in the APL. Internally, it is the {\ttfamily QUIC\+\_\+\+XSO} structure, externally it is a {\ttfamily SSL \texorpdfstring{$\ast$}{*}} (and is a QSSO). 

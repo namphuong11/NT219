@@ -1,0 +1,56 @@
+\doxysection{log.\+h}
+\hypertarget{log_8h_source}{}\label{log_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/apps/include/log.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/apps/include/log.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 1995-\/2022\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_APPS\_LOG\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_APPS\_LOG\_H}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#\ include\ <openssl/bio.h>}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ if\ !defined(OPENSSL\_SYS\_VMS)\ \&\&\ !defined(OPENSSL\_SYS\_WINDOWS)\ \(\backslash\)}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\ \ \ \ \&\&\ !defined(OPENSSL\_NO\_SOCK)\ \&\&\ !defined(OPENSSL\_NO\_POSIX\_IO)}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#\ \ include\ <syslog.h>}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#\ else}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#\ \ define\ LOG\_EMERG\ \ \ 0}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#\ \ define\ LOG\_ALERT\ \ \ 1}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#\ \ define\ LOG\_CRIT\ \ \ \ 2}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#\ \ define\ LOG\_ERR\ \ \ \ \ 3}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#\ \ define\ LOG\_WARNING\ 4}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#\ \ define\ LOG\_NOTICE\ \ 5}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#\ \ define\ LOG\_INFO\ \ \ \ 6}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#\ \ define\ LOG\_DEBUG\ \ \ 7}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#\ undef\ LOG\_TRACE}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#\ define\ LOG\_TRACE\ (LOG\_DEBUG\ +\ 1)}}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \textcolor{keywordtype}{int}\ log\_set\_verbosity(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *prog,\ \textcolor{keywordtype}{int}\ level);}
+\DoxyCodeLine{00032\ \textcolor{keywordtype}{int}\ log\_get\_verbosity(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00035\ \textcolor{comment}{\ *\ Output\ a\ message\ using\ the\ trace\ API\ with\ the\ given\ category}}
+\DoxyCodeLine{00036\ \textcolor{comment}{\ *\ if\ the\ category\ is\ >=\ 0\ and\ tracing\ is\ enabled.}}
+\DoxyCodeLine{00037\ \textcolor{comment}{\ *\ Log\ the\ message\ to\ syslog\ if\ multi-\/threaded\ HTTP\_DAEMON,\ else\ to\ bio\_err}}
+\DoxyCodeLine{00038\ \textcolor{comment}{\ *\ if\ the\ verbosity\ is\ sufficient\ for\ the\ given\ level\ of\ severity.}}
+\DoxyCodeLine{00039\ \textcolor{comment}{\ *\ Yet\ cannot\ do\ both\ types\ of\ output\ in\ strict\ ANSI\ mode.}}
+\DoxyCodeLine{00040\ \textcolor{comment}{\ *\ category:\ trace\ category\ as\ defined\ in\ trace.h,\ or\ -\/1}}
+\DoxyCodeLine{00041\ \textcolor{comment}{\ *\ prog:\ the\ name\ of\ the\ current\ app,\ or\ NULL}}
+\DoxyCodeLine{00042\ \textcolor{comment}{\ *\ level:\ the\ severity\ of\ the\ message,\ e.g.,\ LOG\_ERR}}
+\DoxyCodeLine{00043\ \textcolor{comment}{\ *\ fmt:\ message\ format,\ which\ should\ not\ include\ a\ trailing\ newline}}
+\DoxyCodeLine{00044\ \textcolor{comment}{\ *\ ...:\ potential\ extra\ parameters\ like\ with\ printf()}}
+\DoxyCodeLine{00045\ \textcolor{comment}{\ *\ returns\ nothing}}
+\DoxyCodeLine{00046\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00047\ \textcolor{keywordtype}{void}\ trace\_log\_message(\textcolor{keywordtype}{int}\ category,}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *prog,\ \textcolor{keywordtype}{int}\ level,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *fmt,\ ...);}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ OSSL\_APPS\_LOG\_H\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

@@ -1,0 +1,23 @@
+\doxysection{stores.\+inc}
+\hypertarget{stores_8inc_source}{}\label{stores_8inc_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/providers/stores.inc@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/providers/stores.inc}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2020\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ STORE}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ error\ Macro\ STORE\ undefined}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ STORE(\textcolor{stringliteral}{"{}file"{}},\ \textcolor{stringliteral}{"{}yes"{}},\ ossl\_file\_store\_functions)}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_WINSTORE}}
+\DoxyCodeLine{00016\ STORE(\textcolor{stringliteral}{"{}org.openssl.winstore"{}},\ \textcolor{stringliteral}{"{}yes"{}},\ ossl\_winstore\_store\_functions)}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

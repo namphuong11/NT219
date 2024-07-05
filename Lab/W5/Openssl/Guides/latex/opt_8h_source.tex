@@ -1,0 +1,443 @@
+\doxysection{opt.\+h}
+\hypertarget{opt_8h_source}{}\label{opt_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/apps/include/opt.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/apps/include/opt.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2018-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#ifndef\ OSSL\_APPS\_OPT\_H}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#define\ OSSL\_APPS\_OPT\_H}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ <sys/types.h>}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ <openssl/e\_os2.h>}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ <openssl/types.h>}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#include\ <stdarg.h>}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ OPT\_COMMON\ OPT\_ERR\ =\ -\/1,\ OPT\_EOF\ =\ 0,\ OPT\_HELP}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00020\ \textcolor{comment}{\ *\ Common\ verification\ options.}}
+\DoxyCodeLine{00021\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#\ define\ OPT\_V\_ENUM\ \(\backslash\)}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ OPT\_V\_\_FIRST=2000,\ \(\backslash\)}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ OPT\_V\_POLICY,\ OPT\_V\_PURPOSE,\ OPT\_V\_VERIFY\_NAME,\ OPT\_V\_VERIFY\_DEPTH,\ \(\backslash\)}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ OPT\_V\_ATTIME,\ OPT\_V\_VERIFY\_HOSTNAME,\ OPT\_V\_VERIFY\_EMAIL,\ \(\backslash\)}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ OPT\_V\_VERIFY\_IP,\ OPT\_V\_IGNORE\_CRITICAL,\ OPT\_V\_ISSUER\_CHECKS,\ \(\backslash\)}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ OPT\_V\_CRL\_CHECK,\ OPT\_V\_CRL\_CHECK\_ALL,\ OPT\_V\_POLICY\_CHECK,\ \(\backslash\)}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ OPT\_V\_EXPLICIT\_POLICY,\ OPT\_V\_INHIBIT\_ANY,\ OPT\_V\_INHIBIT\_MAP,\ \(\backslash\)}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ OPT\_V\_X509\_STRICT,\ OPT\_V\_EXTENDED\_CRL,\ OPT\_V\_USE\_DELTAS,\ \(\backslash\)}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ OPT\_V\_POLICY\_PRINT,\ OPT\_V\_CHECK\_SS\_SIG,\ OPT\_V\_TRUSTED\_FIRST,\ \(\backslash\)}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ OPT\_V\_SUITEB\_128\_ONLY,\ OPT\_V\_SUITEB\_128,\ OPT\_V\_SUITEB\_192,\ \(\backslash\)}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ OPT\_V\_PARTIAL\_CHAIN,\ OPT\_V\_NO\_ALT\_CHAINS,\ OPT\_V\_NO\_CHECK\_TIME,\ \(\backslash\)}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ OPT\_V\_VERIFY\_AUTH\_LEVEL,\ OPT\_V\_ALLOW\_PROXY\_CERTS,\ \(\backslash\)}}
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ OPT\_V\_\_LAST}}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#\ define\ OPT\_V\_OPTIONS\ \(\backslash\)}}
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ OPT\_SECTION("{}Validation"{}),\ \(\backslash\)}}
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{\ "{}policy"{},\ OPT\_V\_POLICY,\ 's',\ "{}adds\ policy\ to\ the\ acceptable\ policy\ set"{}\},\ \(\backslash\)}}
+\DoxyCodeLine{00039\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{\ "{}purpose"{},\ OPT\_V\_PURPOSE,\ 's',\ \(\backslash\)}}
+\DoxyCodeLine{00040\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ "{}certificate\ chain\ purpose"{}\},\ \(\backslash\)}}
+\DoxyCodeLine{00041\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{\ "{}verify\_name"{},\ OPT\_V\_VERIFY\_NAME,\ 's',\ "{}verification\ policy\ name"{}\},\ \(\backslash\)}}
+\DoxyCodeLine{00042\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{\ "{}verify\_depth"{},\ OPT\_V\_VERIFY\_DEPTH,\ 'n',\ \(\backslash\)}}
+\DoxyCodeLine{00043\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ "{}chain\ depth\ limit"{}\ \},\ \(\backslash\)}}
+\DoxyCodeLine{00044\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{\ "{}auth\_level"{},\ OPT\_V\_VERIFY\_AUTH\_LEVEL,\ 'n',\ \(\backslash\)}}
+\DoxyCodeLine{00045\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ "{}chain\ authentication\ security\ level"{}\ \},\ \(\backslash\)}}
+\DoxyCodeLine{00046\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{\ "{}attime"{},\ OPT\_V\_ATTIME,\ 'M',\ "{}verification\ epoch\ time"{}\ \},\ \(\backslash\)}}
+\DoxyCodeLine{00047\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{\ "{}verify\_hostname"{},\ OPT\_V\_VERIFY\_HOSTNAME,\ 's',\ \(\backslash\)}}
+\DoxyCodeLine{00048\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ "{}expected\ peer\ hostname"{}\ \},\ \(\backslash\)}}
+\DoxyCodeLine{00049\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{\ "{}verify\_email"{},\ OPT\_V\_VERIFY\_EMAIL,\ 's',\ \(\backslash\)}}
+\DoxyCodeLine{00050\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ "{}expected\ peer\ email"{}\ \},\ \(\backslash\)}}
+\DoxyCodeLine{00051\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{\ "{}verify\_ip"{},\ OPT\_V\_VERIFY\_IP,\ 's',\ \(\backslash\)}}
+\DoxyCodeLine{00052\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ "{}expected\ peer\ IP\ address"{}\ \},\ \(\backslash\)}}
+\DoxyCodeLine{00053\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{\ "{}ignore\_critical"{},\ OPT\_V\_IGNORE\_CRITICAL,\ '-\/',\ \(\backslash\)}}
+\DoxyCodeLine{00054\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ "{}permit\ unhandled\ critical\ extensions"{}\},\ \(\backslash\)}}
+\DoxyCodeLine{00055\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{\ "{}issuer\_checks"{},\ OPT\_V\_ISSUER\_CHECKS,\ '-\/',\ "{}(deprecated)"{}\},\ \(\backslash\)}}
+\DoxyCodeLine{00056\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{\ "{}crl\_check"{},\ OPT\_V\_CRL\_CHECK,\ '-\/',\ "{}check\ leaf\ certificate\ revocation"{}\ \},\ \(\backslash\)}}
+\DoxyCodeLine{00057\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{\ "{}crl\_check\_all"{},\ OPT\_V\_CRL\_CHECK\_ALL,\ '-\/',\ "{}check\ full\ chain\ revocation"{}\ \},\ \(\backslash\)}}
+\DoxyCodeLine{00058\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{\ "{}policy\_check"{},\ OPT\_V\_POLICY\_CHECK,\ '-\/',\ "{}perform\ rfc5280\ policy\ checks"{}\},\ \(\backslash\)}}
+\DoxyCodeLine{00059\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{\ "{}explicit\_policy"{},\ OPT\_V\_EXPLICIT\_POLICY,\ '-\/',\ \(\backslash\)}}
+\DoxyCodeLine{00060\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ "{}set\ policy\ variable\ require-\/explicit-\/policy"{}\},\ \(\backslash\)}}
+\DoxyCodeLine{00061\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{\ "{}inhibit\_any"{},\ OPT\_V\_INHIBIT\_ANY,\ '-\/',\ \(\backslash\)}}
+\DoxyCodeLine{00062\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ "{}set\ policy\ variable\ inhibit-\/any-\/policy"{}\},\ \(\backslash\)}}
+\DoxyCodeLine{00063\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{\ "{}inhibit\_map"{},\ OPT\_V\_INHIBIT\_MAP,\ '-\/',\ \(\backslash\)}}
+\DoxyCodeLine{00064\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ "{}set\ policy\ variable\ inhibit-\/policy-\/mapping"{}\},\ \(\backslash\)}}
+\DoxyCodeLine{00065\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{\ "{}x509\_strict"{},\ OPT\_V\_X509\_STRICT,\ '-\/',\ \(\backslash\)}}
+\DoxyCodeLine{00066\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ "{}disable\ certificate\ compatibility\ work-\/arounds"{}\},\ \(\backslash\)}}
+\DoxyCodeLine{00067\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{\ "{}extended\_crl"{},\ OPT\_V\_EXTENDED\_CRL,\ '-\/',\ \(\backslash\)}}
+\DoxyCodeLine{00068\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ "{}enable\ extended\ CRL\ features"{}\},\ \(\backslash\)}}
+\DoxyCodeLine{00069\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{\ "{}use\_deltas"{},\ OPT\_V\_USE\_DELTAS,\ '-\/',\ \(\backslash\)}}
+\DoxyCodeLine{00070\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ "{}use\ delta\ CRLs"{}\},\ \(\backslash\)}}
+\DoxyCodeLine{00071\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{\ "{}policy\_print"{},\ OPT\_V\_POLICY\_PRINT,\ '-\/',\ \(\backslash\)}}
+\DoxyCodeLine{00072\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ "{}print\ policy\ processing\ diagnostics"{}\},\ \(\backslash\)}}
+\DoxyCodeLine{00073\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{\ "{}check\_ss\_sig"{},\ OPT\_V\_CHECK\_SS\_SIG,\ '-\/',\ \(\backslash\)}}
+\DoxyCodeLine{00074\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ "{}check\ root\ CA\ self-\/signatures"{}\},\ \(\backslash\)}}
+\DoxyCodeLine{00075\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{\ "{}trusted\_first"{},\ OPT\_V\_TRUSTED\_FIRST,\ '-\/',\ \(\backslash\)}}
+\DoxyCodeLine{00076\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ "{}search\ trust\ store\ first\ (default)"{}\ \},\ \(\backslash\)}}
+\DoxyCodeLine{00077\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{\ "{}suiteB\_128\_only"{},\ OPT\_V\_SUITEB\_128\_ONLY,\ '-\/',\ "{}Suite\ B\ 128-\/bit-\/only\ mode"{}\},\ \(\backslash\)}}
+\DoxyCodeLine{00078\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{\ "{}suiteB\_128"{},\ OPT\_V\_SUITEB\_128,\ '-\/',\ \(\backslash\)}}
+\DoxyCodeLine{00079\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ "{}Suite\ B\ 128-\/bit\ mode\ allowing\ 192-\/bit\ algorithms"{}\},\ \(\backslash\)}}
+\DoxyCodeLine{00080\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{\ "{}suiteB\_192"{},\ OPT\_V\_SUITEB\_192,\ '-\/',\ "{}Suite\ B\ 192-\/bit-\/only\ mode"{}\ \},\ \(\backslash\)}}
+\DoxyCodeLine{00081\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{\ "{}partial\_chain"{},\ OPT\_V\_PARTIAL\_CHAIN,\ '-\/',\ \(\backslash\)}}
+\DoxyCodeLine{00082\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ "{}accept\ chains\ anchored\ by\ intermediate\ trust-\/store\ CAs"{}\},\ \(\backslash\)}}
+\DoxyCodeLine{00083\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{\ "{}no\_alt\_chains"{},\ OPT\_V\_NO\_ALT\_CHAINS,\ '-\/',\ "{}(deprecated)"{}\ \},\ \(\backslash\)}}
+\DoxyCodeLine{00084\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{\ "{}no\_check\_time"{},\ OPT\_V\_NO\_CHECK\_TIME,\ '-\/',\ "{}ignore\ certificate\ validity\ time"{}\ \},\ \(\backslash\)}}
+\DoxyCodeLine{00085\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{\ "{}allow\_proxy\_certs"{},\ OPT\_V\_ALLOW\_PROXY\_CERTS,\ '-\/',\ "{}allow\ the\ use\ of\ proxy\ certificates"{}\ \}}}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00087\ \textcolor{preprocessor}{\#\ define\ OPT\_V\_CASES\ \(\backslash\)}}
+\DoxyCodeLine{00088\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ OPT\_V\_\_FIRST:\ case\ OPT\_V\_\_LAST:\ break;\ \(\backslash\)}}
+\DoxyCodeLine{00089\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_V\_POLICY:\ \(\backslash\)}}
+\DoxyCodeLine{00090\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_V\_PURPOSE:\ \(\backslash\)}}
+\DoxyCodeLine{00091\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_V\_VERIFY\_NAME:\ \(\backslash\)}}
+\DoxyCodeLine{00092\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_V\_VERIFY\_DEPTH:\ \(\backslash\)}}
+\DoxyCodeLine{00093\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_V\_VERIFY\_AUTH\_LEVEL:\ \(\backslash\)}}
+\DoxyCodeLine{00094\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_V\_ATTIME:\ \(\backslash\)}}
+\DoxyCodeLine{00095\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_V\_VERIFY\_HOSTNAME:\ \(\backslash\)}}
+\DoxyCodeLine{00096\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_V\_VERIFY\_EMAIL:\ \(\backslash\)}}
+\DoxyCodeLine{00097\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_V\_VERIFY\_IP:\ \(\backslash\)}}
+\DoxyCodeLine{00098\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_V\_IGNORE\_CRITICAL:\ \(\backslash\)}}
+\DoxyCodeLine{00099\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_V\_ISSUER\_CHECKS:\ \(\backslash\)}}
+\DoxyCodeLine{00100\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_V\_CRL\_CHECK:\ \(\backslash\)}}
+\DoxyCodeLine{00101\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_V\_CRL\_CHECK\_ALL:\ \(\backslash\)}}
+\DoxyCodeLine{00102\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_V\_POLICY\_CHECK:\ \(\backslash\)}}
+\DoxyCodeLine{00103\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_V\_EXPLICIT\_POLICY:\ \(\backslash\)}}
+\DoxyCodeLine{00104\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_V\_INHIBIT\_ANY:\ \(\backslash\)}}
+\DoxyCodeLine{00105\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_V\_INHIBIT\_MAP:\ \(\backslash\)}}
+\DoxyCodeLine{00106\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_V\_X509\_STRICT:\ \(\backslash\)}}
+\DoxyCodeLine{00107\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_V\_EXTENDED\_CRL:\ \(\backslash\)}}
+\DoxyCodeLine{00108\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_V\_USE\_DELTAS:\ \(\backslash\)}}
+\DoxyCodeLine{00109\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_V\_POLICY\_PRINT:\ \(\backslash\)}}
+\DoxyCodeLine{00110\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_V\_CHECK\_SS\_SIG:\ \(\backslash\)}}
+\DoxyCodeLine{00111\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_V\_TRUSTED\_FIRST:\ \(\backslash\)}}
+\DoxyCodeLine{00112\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_V\_SUITEB\_128\_ONLY:\ \(\backslash\)}}
+\DoxyCodeLine{00113\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_V\_SUITEB\_128:\ \(\backslash\)}}
+\DoxyCodeLine{00114\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_V\_SUITEB\_192:\ \(\backslash\)}}
+\DoxyCodeLine{00115\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_V\_PARTIAL\_CHAIN:\ \(\backslash\)}}
+\DoxyCodeLine{00116\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_V\_NO\_ALT\_CHAINS:\ \(\backslash\)}}
+\DoxyCodeLine{00117\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_V\_NO\_CHECK\_TIME:\ \(\backslash\)}}
+\DoxyCodeLine{00118\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_V\_ALLOW\_PROXY\_CERTS}}
+\DoxyCodeLine{00119\ }
+\DoxyCodeLine{00120\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00121\ \textcolor{comment}{\ *\ Common\ "{}extended\ validation"{}\ options.}}
+\DoxyCodeLine{00122\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00123\ \textcolor{preprocessor}{\#\ define\ OPT\_X\_ENUM\ \(\backslash\)}}
+\DoxyCodeLine{00124\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ OPT\_X\_\_FIRST=1000,\ \(\backslash\)}}
+\DoxyCodeLine{00125\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ OPT\_X\_KEY,\ OPT\_X\_CERT,\ OPT\_X\_CHAIN,\ OPT\_X\_CHAIN\_BUILD,\ \(\backslash\)}}
+\DoxyCodeLine{00126\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ OPT\_X\_CERTFORM,\ OPT\_X\_KEYFORM,\ \(\backslash\)}}
+\DoxyCodeLine{00127\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ OPT\_X\_\_LAST}}
+\DoxyCodeLine{00128\ }
+\DoxyCodeLine{00129\ \textcolor{preprocessor}{\#\ define\ OPT\_X\_OPTIONS\ \(\backslash\)}}
+\DoxyCodeLine{00130\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ OPT\_SECTION("{}Extended\ certificate"{}),\ \(\backslash\)}}
+\DoxyCodeLine{00131\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{\ "{}xkey"{},\ OPT\_X\_KEY,\ '<',\ "{}key\ for\ Extended\ certificates"{}\},\ \(\backslash\)}}
+\DoxyCodeLine{00132\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{\ "{}xcert"{},\ OPT\_X\_CERT,\ '<',\ "{}cert\ for\ Extended\ certificates"{}\},\ \(\backslash\)}}
+\DoxyCodeLine{00133\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{\ "{}xchain"{},\ OPT\_X\_CHAIN,\ '<',\ "{}chain\ for\ Extended\ certificates"{}\},\ \(\backslash\)}}
+\DoxyCodeLine{00134\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{\ "{}xchain\_build"{},\ OPT\_X\_CHAIN\_BUILD,\ '-\/',\ \(\backslash\)}}
+\DoxyCodeLine{00135\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ "{}build\ certificate\ chain\ for\ the\ extended\ certificates"{}\},\ \(\backslash\)}}
+\DoxyCodeLine{00136\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{\ "{}xcertform"{},\ OPT\_X\_CERTFORM,\ 'F',\ \(\backslash\)}}
+\DoxyCodeLine{00137\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ "{}format\ of\ Extended\ certificate\ (PEM/DER/P12);\ has\ no\ effect"{}\ \},\ \(\backslash\)}}
+\DoxyCodeLine{00138\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{\ "{}xkeyform"{},\ OPT\_X\_KEYFORM,\ 'F',\ \(\backslash\)}}
+\DoxyCodeLine{00139\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ "{}format\ of\ Extended\ certificate's\ key\ (DER/PEM/P12);\ has\ no\ effect"{}\}}}
+\DoxyCodeLine{00140\ }
+\DoxyCodeLine{00141\ \textcolor{preprocessor}{\#\ define\ OPT\_X\_CASES\ \(\backslash\)}}
+\DoxyCodeLine{00142\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ OPT\_X\_\_FIRST:\ case\ OPT\_X\_\_LAST:\ break;\ \(\backslash\)}}
+\DoxyCodeLine{00143\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_X\_KEY:\ \(\backslash\)}}
+\DoxyCodeLine{00144\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_X\_CERT:\ \(\backslash\)}}
+\DoxyCodeLine{00145\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_X\_CHAIN:\ \(\backslash\)}}
+\DoxyCodeLine{00146\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_X\_CHAIN\_BUILD:\ \(\backslash\)}}
+\DoxyCodeLine{00147\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_X\_CERTFORM:\ \(\backslash\)}}
+\DoxyCodeLine{00148\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_X\_KEYFORM}}
+\DoxyCodeLine{00149\ }
+\DoxyCodeLine{00150\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00151\ \textcolor{comment}{\ *\ Common\ SSL\ options.}}
+\DoxyCodeLine{00152\ \textcolor{comment}{\ *\ Any\ changes\ here\ must\ be\ coordinated\ with\ ../ssl/ssl\_conf.c}}
+\DoxyCodeLine{00153\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00154\ \textcolor{preprocessor}{\#\ define\ OPT\_S\_ENUM\ \(\backslash\)}}
+\DoxyCodeLine{00155\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ OPT\_S\_\_FIRST=3000,\ \(\backslash\)}}
+\DoxyCodeLine{00156\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ OPT\_S\_NOSSL3,\ OPT\_S\_NOTLS1,\ OPT\_S\_NOTLS1\_1,\ OPT\_S\_NOTLS1\_2,\ \(\backslash\)}}
+\DoxyCodeLine{00157\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ OPT\_S\_NOTLS1\_3,\ OPT\_S\_BUGS,\ OPT\_S\_NO\_COMP,\ OPT\_S\_NOTICKET,\ \(\backslash\)}}
+\DoxyCodeLine{00158\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ OPT\_S\_SERVERPREF,\ OPT\_S\_LEGACYRENEG,\ OPT\_S\_CLIENTRENEG,\ \(\backslash\)}}
+\DoxyCodeLine{00159\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ OPT\_S\_LEGACYCONN,\ \(\backslash\)}}
+\DoxyCodeLine{00160\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ OPT\_S\_ONRESUMP,\ OPT\_S\_NOLEGACYCONN,\ OPT\_S\_ALLOW\_NO\_DHE\_KEX,\ \(\backslash\)}}
+\DoxyCodeLine{00161\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ OPT\_S\_PRIORITIZE\_CHACHA,\ \(\backslash\)}}
+\DoxyCodeLine{00162\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ OPT\_S\_STRICT,\ OPT\_S\_SIGALGS,\ OPT\_S\_CLIENTSIGALGS,\ OPT\_S\_GROUPS,\ \(\backslash\)}}
+\DoxyCodeLine{00163\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ OPT\_S\_CURVES,\ OPT\_S\_NAMEDCURVE,\ OPT\_S\_CIPHER,\ OPT\_S\_CIPHERSUITES,\ \(\backslash\)}}
+\DoxyCodeLine{00164\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ OPT\_S\_RECORD\_PADDING,\ OPT\_S\_DEBUGBROKE,\ OPT\_S\_COMP,\ \(\backslash\)}}
+\DoxyCodeLine{00165\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ OPT\_S\_MINPROTO,\ OPT\_S\_MAXPROTO,\ \(\backslash\)}}
+\DoxyCodeLine{00166\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ OPT\_S\_NO\_RENEGOTIATION,\ OPT\_S\_NO\_MIDDLEBOX,\ OPT\_S\_NO\_ETM,\ \(\backslash\)}}
+\DoxyCodeLine{00167\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ OPT\_S\_NO\_EMS,\ \(\backslash\)}}
+\DoxyCodeLine{00168\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ OPT\_S\_NO\_TX\_CERT\_COMP,\ \(\backslash\)}}
+\DoxyCodeLine{00169\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ OPT\_S\_NO\_RX\_CERT\_COMP,\ \(\backslash\)}}
+\DoxyCodeLine{00170\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ OPT\_S\_\_LAST}}
+\DoxyCodeLine{00171\ }
+\DoxyCodeLine{00172\ \textcolor{preprocessor}{\#\ define\ OPT\_S\_OPTIONS\ \(\backslash\)}}
+\DoxyCodeLine{00173\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ OPT\_SECTION("{}TLS/SSL"{}),\ \(\backslash\)}}
+\DoxyCodeLine{00174\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{"{}no\_ssl3"{},\ OPT\_S\_NOSSL3,\ '-\/',"{}Just\ disable\ SSLv3"{}\ \},\ \(\backslash\)}}
+\DoxyCodeLine{00175\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{"{}no\_tls1"{},\ OPT\_S\_NOTLS1,\ '-\/',\ "{}Just\ disable\ TLSv1"{}\},\ \(\backslash\)}}
+\DoxyCodeLine{00176\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{"{}no\_tls1\_1"{},\ OPT\_S\_NOTLS1\_1,\ '-\/',\ "{}Just\ disable\ TLSv1.1"{}\ \},\ \(\backslash\)}}
+\DoxyCodeLine{00177\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{"{}no\_tls1\_2"{},\ OPT\_S\_NOTLS1\_2,\ '-\/',\ "{}Just\ disable\ TLSv1.2"{}\},\ \(\backslash\)}}
+\DoxyCodeLine{00178\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{"{}no\_tls1\_3"{},\ OPT\_S\_NOTLS1\_3,\ '-\/',\ "{}Just\ disable\ TLSv1.3"{}\},\ \(\backslash\)}}
+\DoxyCodeLine{00179\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{"{}bugs"{},\ OPT\_S\_BUGS,\ '-\/',\ "{}Turn\ on\ SSL\ bug\ compatibility"{}\},\ \(\backslash\)}}
+\DoxyCodeLine{00180\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{"{}no\_comp"{},\ OPT\_S\_NO\_COMP,\ '-\/',\ "{}Disable\ SSL/TLS\ compression\ (default)"{}\ \},\ \(\backslash\)}}
+\DoxyCodeLine{00181\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{"{}comp"{},\ OPT\_S\_COMP,\ '-\/',\ "{}Use\ SSL/TLS-\/level\ compression"{}\ \},\ \(\backslash\)}}
+\DoxyCodeLine{00182\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{"{}no\_tx\_cert\_comp"{},\ OPT\_S\_NO\_TX\_CERT\_COMP,\ '-\/',\ "{}Disable\ sending\ TLSv1.3\ compressed\ certificates"{}\ \},\ \(\backslash\)}}
+\DoxyCodeLine{00183\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{"{}no\_rx\_cert\_comp"{},\ OPT\_S\_NO\_RX\_CERT\_COMP,\ '-\/',\ "{}Disable\ receiving\ TLSv1.3\ compressed\ certificates"{}\ \},\ \(\backslash\)}}
+\DoxyCodeLine{00184\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{"{}no\_ticket"{},\ OPT\_S\_NOTICKET,\ '-\/',\ \(\backslash\)}}
+\DoxyCodeLine{00185\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ "{}Disable\ use\ of\ TLS\ session\ tickets"{}\},\ \(\backslash\)}}
+\DoxyCodeLine{00186\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{"{}serverpref"{},\ OPT\_S\_SERVERPREF,\ '-\/',\ "{}Use\ server's\ cipher\ preferences"{}\},\ \(\backslash\)}}
+\DoxyCodeLine{00187\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{"{}legacy\_renegotiation"{},\ OPT\_S\_LEGACYRENEG,\ '-\/',\ \(\backslash\)}}
+\DoxyCodeLine{00188\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ "{}Enable\ use\ of\ legacy\ renegotiation\ (dangerous)"{}\},\ \(\backslash\)}}
+\DoxyCodeLine{00189\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{"{}client\_renegotiation"{},\ OPT\_S\_CLIENTRENEG,\ '-\/',\ \(\backslash\)}}
+\DoxyCodeLine{00190\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ "{}Allow\ client-\/initiated\ renegotiation"{}\ \},\ \(\backslash\)}}
+\DoxyCodeLine{00191\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{"{}no\_renegotiation"{},\ OPT\_S\_NO\_RENEGOTIATION,\ '-\/',\ \(\backslash\)}}
+\DoxyCodeLine{00192\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ "{}Disable\ all\ renegotiation."{}\},\ \(\backslash\)}}
+\DoxyCodeLine{00193\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{"{}legacy\_server\_connect"{},\ OPT\_S\_LEGACYCONN,\ '-\/',\ \(\backslash\)}}
+\DoxyCodeLine{00194\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ "{}Allow\ initial\ connection\ to\ servers\ that\ don't\ support\ RI"{}\},\ \(\backslash\)}}
+\DoxyCodeLine{00195\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{"{}no\_resumption\_on\_reneg"{},\ OPT\_S\_ONRESUMP,\ '-\/',\ \(\backslash\)}}
+\DoxyCodeLine{00196\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ "{}Disallow\ session\ resumption\ on\ renegotiation"{}\},\ \(\backslash\)}}
+\DoxyCodeLine{00197\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{"{}no\_legacy\_server\_connect"{},\ OPT\_S\_NOLEGACYCONN,\ '-\/',\ \(\backslash\)}}
+\DoxyCodeLine{00198\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ "{}Disallow\ initial\ connection\ to\ servers\ that\ don't\ support\ RI"{}\},\ \(\backslash\)}}
+\DoxyCodeLine{00199\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{"{}allow\_no\_dhe\_kex"{},\ OPT\_S\_ALLOW\_NO\_DHE\_KEX,\ '-\/',\ \(\backslash\)}}
+\DoxyCodeLine{00200\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ "{}In\ TLSv1.3\ allow\ non-\/(ec)dhe\ based\ key\ exchange\ on\ resumption"{}\},\ \(\backslash\)}}
+\DoxyCodeLine{00201\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{"{}prioritize\_chacha"{},\ OPT\_S\_PRIORITIZE\_CHACHA,\ '-\/',\ \(\backslash\)}}
+\DoxyCodeLine{00202\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ "{}Prioritize\ ChaCha\ ciphers\ when\ preferred\ by\ clients"{}\},\ \(\backslash\)}}
+\DoxyCodeLine{00203\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{"{}strict"{},\ OPT\_S\_STRICT,\ '-\/',\ \(\backslash\)}}
+\DoxyCodeLine{00204\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ "{}Enforce\ strict\ certificate\ checks\ as\ per\ TLS\ standard"{}\},\ \(\backslash\)}}
+\DoxyCodeLine{00205\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{"{}sigalgs"{},\ OPT\_S\_SIGALGS,\ 's',\ \(\backslash\)}}
+\DoxyCodeLine{00206\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ "{}Signature\ algorithms\ to\ support\ (colon-\/separated\ list)"{}\ \},\ \(\backslash\)}}
+\DoxyCodeLine{00207\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{"{}client\_sigalgs"{},\ OPT\_S\_CLIENTSIGALGS,\ 's',\ \(\backslash\)}}
+\DoxyCodeLine{00208\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ "{}Signature\ algorithms\ to\ support\ for\ client\ certificate"{}\ \(\backslash\)}}
+\DoxyCodeLine{00209\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ "{}\ authentication\ (colon-\/separated\ list)"{}\ \},\ \(\backslash\)}}
+\DoxyCodeLine{00210\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{"{}groups"{},\ OPT\_S\_GROUPS,\ 's',\ \(\backslash\)}}
+\DoxyCodeLine{00211\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ "{}Groups\ to\ advertise\ (colon-\/separated\ list)"{}\ \},\ \(\backslash\)}}
+\DoxyCodeLine{00212\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{"{}curves"{},\ OPT\_S\_CURVES,\ 's',\ \(\backslash\)}}
+\DoxyCodeLine{00213\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ "{}Groups\ to\ advertise\ (colon-\/separated\ list)"{}\ \},\ \(\backslash\)}}
+\DoxyCodeLine{00214\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{"{}named\_curve"{},\ OPT\_S\_NAMEDCURVE,\ 's',\ \(\backslash\)}}
+\DoxyCodeLine{00215\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ "{}Elliptic\ curve\ used\ for\ ECDHE\ (server-\/side\ only)"{}\ \},\ \(\backslash\)}}
+\DoxyCodeLine{00216\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{"{}cipher"{},\ OPT\_S\_CIPHER,\ 's',\ "{}Specify\ TLSv1.2\ and\ below\ cipher\ list\ to\ be\ used"{}\},\ \(\backslash\)}}
+\DoxyCodeLine{00217\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{"{}ciphersuites"{},\ OPT\_S\_CIPHERSUITES,\ 's',\ "{}Specify\ TLSv1.3\ ciphersuites\ to\ be\ used"{}\},\ \(\backslash\)}}
+\DoxyCodeLine{00218\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{"{}min\_protocol"{},\ OPT\_S\_MINPROTO,\ 's',\ "{}Specify\ the\ minimum\ protocol\ version\ to\ be\ used"{}\},\ \(\backslash\)}}
+\DoxyCodeLine{00219\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{"{}max\_protocol"{},\ OPT\_S\_MAXPROTO,\ 's',\ "{}Specify\ the\ maximum\ protocol\ version\ to\ be\ used"{}\},\ \(\backslash\)}}
+\DoxyCodeLine{00220\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{"{}record\_padding"{},\ OPT\_S\_RECORD\_PADDING,\ 's',\ \(\backslash\)}}
+\DoxyCodeLine{00221\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ "{}Block\ size\ to\ pad\ TLS\ 1.3\ records\ to."{}\},\ \(\backslash\)}}
+\DoxyCodeLine{00222\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{"{}debug\_broken\_protocol"{},\ OPT\_S\_DEBUGBROKE,\ '-\/',\ \(\backslash\)}}
+\DoxyCodeLine{00223\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ "{}Perform\ all\ sorts\ of\ protocol\ violations\ for\ testing\ purposes"{}\},\ \(\backslash\)}}
+\DoxyCodeLine{00224\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{"{}no\_middlebox"{},\ OPT\_S\_NO\_MIDDLEBOX,\ '-\/',\ \(\backslash\)}}
+\DoxyCodeLine{00225\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ "{}Disable\ TLSv1.3\ middlebox\ compat\ mode"{}\ \},\ \(\backslash\)}}
+\DoxyCodeLine{00226\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{"{}no\_etm"{},\ OPT\_S\_NO\_ETM,\ '-\/',\ \(\backslash\)}}
+\DoxyCodeLine{00227\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ "{}Disable\ Encrypt-\/then-\/Mac\ extension"{}\},\ \(\backslash\)}}
+\DoxyCodeLine{00228\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{"{}no\_ems"{},\ OPT\_S\_NO\_EMS,\ '-\/',\ \(\backslash\)}}
+\DoxyCodeLine{00229\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ "{}Disable\ Extended\ master\ secret\ extension"{}\}}}
+\DoxyCodeLine{00230\ }
+\DoxyCodeLine{00231\ \textcolor{preprocessor}{\#\ define\ OPT\_S\_CASES\ \(\backslash\)}}
+\DoxyCodeLine{00232\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ OPT\_S\_\_FIRST:\ case\ OPT\_S\_\_LAST:\ break;\ \(\backslash\)}}
+\DoxyCodeLine{00233\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_S\_NOSSL3:\ \(\backslash\)}}
+\DoxyCodeLine{00234\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_S\_NOTLS1:\ \(\backslash\)}}
+\DoxyCodeLine{00235\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_S\_NOTLS1\_1:\ \(\backslash\)}}
+\DoxyCodeLine{00236\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_S\_NOTLS1\_2:\ \(\backslash\)}}
+\DoxyCodeLine{00237\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_S\_NOTLS1\_3:\ \(\backslash\)}}
+\DoxyCodeLine{00238\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_S\_BUGS:\ \(\backslash\)}}
+\DoxyCodeLine{00239\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_S\_NO\_COMP:\ \(\backslash\)}}
+\DoxyCodeLine{00240\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_S\_COMP:\ \(\backslash\)}}
+\DoxyCodeLine{00241\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_S\_NO\_TX\_CERT\_COMP:\ \(\backslash\)}}
+\DoxyCodeLine{00242\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_S\_NO\_RX\_CERT\_COMP:\ \(\backslash\)}}
+\DoxyCodeLine{00243\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_S\_NOTICKET:\ \(\backslash\)}}
+\DoxyCodeLine{00244\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_S\_SERVERPREF:\ \(\backslash\)}}
+\DoxyCodeLine{00245\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_S\_LEGACYRENEG:\ \(\backslash\)}}
+\DoxyCodeLine{00246\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_S\_CLIENTRENEG:\ \(\backslash\)}}
+\DoxyCodeLine{00247\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_S\_LEGACYCONN:\ \(\backslash\)}}
+\DoxyCodeLine{00248\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_S\_ONRESUMP:\ \(\backslash\)}}
+\DoxyCodeLine{00249\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_S\_NOLEGACYCONN:\ \(\backslash\)}}
+\DoxyCodeLine{00250\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_S\_ALLOW\_NO\_DHE\_KEX:\ \(\backslash\)}}
+\DoxyCodeLine{00251\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_S\_PRIORITIZE\_CHACHA:\ \(\backslash\)}}
+\DoxyCodeLine{00252\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_S\_STRICT:\ \(\backslash\)}}
+\DoxyCodeLine{00253\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_S\_SIGALGS:\ \(\backslash\)}}
+\DoxyCodeLine{00254\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_S\_CLIENTSIGALGS:\ \(\backslash\)}}
+\DoxyCodeLine{00255\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_S\_GROUPS:\ \(\backslash\)}}
+\DoxyCodeLine{00256\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_S\_CURVES:\ \(\backslash\)}}
+\DoxyCodeLine{00257\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_S\_NAMEDCURVE:\ \(\backslash\)}}
+\DoxyCodeLine{00258\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_S\_CIPHER:\ \(\backslash\)}}
+\DoxyCodeLine{00259\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_S\_CIPHERSUITES:\ \(\backslash\)}}
+\DoxyCodeLine{00260\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_S\_RECORD\_PADDING:\ \(\backslash\)}}
+\DoxyCodeLine{00261\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_S\_NO\_RENEGOTIATION:\ \(\backslash\)}}
+\DoxyCodeLine{00262\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_S\_MINPROTO:\ \(\backslash\)}}
+\DoxyCodeLine{00263\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_S\_MAXPROTO:\ \(\backslash\)}}
+\DoxyCodeLine{00264\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_S\_DEBUGBROKE:\ \(\backslash\)}}
+\DoxyCodeLine{00265\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_S\_NO\_MIDDLEBOX:\ \(\backslash\)}}
+\DoxyCodeLine{00266\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_S\_NO\_ETM:\ \(\backslash\)}}
+\DoxyCodeLine{00267\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_S\_NO\_EMS}}
+\DoxyCodeLine{00268\ }
+\DoxyCodeLine{00269\ \textcolor{preprocessor}{\#define\ IS\_NO\_PROT\_FLAG(o)\ \(\backslash\)}}
+\DoxyCodeLine{00270\ \textcolor{preprocessor}{\ (o\ ==\ OPT\_S\_NOSSL3\ ||\ o\ ==\ OPT\_S\_NOTLS1\ ||\ o\ ==\ OPT\_S\_NOTLS1\_1\ \(\backslash\)}}
+\DoxyCodeLine{00271\ \textcolor{preprocessor}{\ \ ||\ o\ ==\ OPT\_S\_NOTLS1\_2\ ||\ o\ ==\ OPT\_S\_NOTLS1\_3)}}
+\DoxyCodeLine{00272\ }
+\DoxyCodeLine{00273\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00274\ \textcolor{comment}{\ *\ Random\ state\ options.}}
+\DoxyCodeLine{00275\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00276\ \textcolor{preprocessor}{\#\ define\ OPT\_R\_ENUM\ \(\backslash\)}}
+\DoxyCodeLine{00277\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ OPT\_R\_\_FIRST=1500,\ OPT\_R\_RAND,\ OPT\_R\_WRITERAND,\ OPT\_R\_\_LAST}}
+\DoxyCodeLine{00278\ }
+\DoxyCodeLine{00279\ \textcolor{preprocessor}{\#\ define\ OPT\_R\_OPTIONS\ \(\backslash\)}}
+\DoxyCodeLine{00280\ \textcolor{preprocessor}{\ \ \ \ OPT\_SECTION("{}Random\ state"{}),\ \(\backslash\)}}
+\DoxyCodeLine{00281\ \textcolor{preprocessor}{\ \ \ \ \{"{}rand"{},\ OPT\_R\_RAND,\ 's',\ "{}Load\ the\ given\ file(s)\ into\ the\ random\ number\ generator"{}\},\ \(\backslash\)}}
+\DoxyCodeLine{00282\ \textcolor{preprocessor}{\ \ \ \ \{"{}writerand"{},\ OPT\_R\_WRITERAND,\ '>',\ "{}Write\ random\ data\ to\ the\ specified\ file"{}\}}}
+\DoxyCodeLine{00283\ }
+\DoxyCodeLine{00284\ \textcolor{preprocessor}{\#\ define\ OPT\_R\_CASES\ \(\backslash\)}}
+\DoxyCodeLine{00285\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ OPT\_R\_\_FIRST:\ case\ OPT\_R\_\_LAST:\ break;\ \(\backslash\)}}
+\DoxyCodeLine{00286\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_R\_RAND:\ case\ OPT\_R\_WRITERAND}}
+\DoxyCodeLine{00287\ }
+\DoxyCodeLine{00288\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00289\ \textcolor{comment}{\ *\ Provider\ options.}}
+\DoxyCodeLine{00290\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00291\ \textcolor{preprocessor}{\#\ define\ OPT\_PROV\_ENUM\ \(\backslash\)}}
+\DoxyCodeLine{00292\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ OPT\_PROV\_\_FIRST=1600,\ \(\backslash\)}}
+\DoxyCodeLine{00293\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ OPT\_PROV\_PROVIDER,\ OPT\_PROV\_PROVIDER\_PATH,\ OPT\_PROV\_PROPQUERY,\ \(\backslash\)}}
+\DoxyCodeLine{00294\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ OPT\_PROV\_\_LAST}}
+\DoxyCodeLine{00295\ }
+\DoxyCodeLine{00296\ \textcolor{preprocessor}{\#\ define\ OPT\_CONFIG\_OPTION\ \(\backslash\)}}
+\DoxyCodeLine{00297\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{\ "{}config"{},\ OPT\_CONFIG,\ '<',\ "{}Load\ a\ configuration\ file\ (this\ may\ load\ modules)"{}\ \}}}
+\DoxyCodeLine{00298\ }
+\DoxyCodeLine{00299\ \textcolor{preprocessor}{\#\ define\ OPT\_PROV\_OPTIONS\ \(\backslash\)}}
+\DoxyCodeLine{00300\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ OPT\_SECTION("{}Provider"{}),\ \(\backslash\)}}
+\DoxyCodeLine{00301\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{\ "{}provider-\/path"{},\ OPT\_PROV\_PROVIDER\_PATH,\ 's',\ "{}Provider\ load\ path\ (must\ be\ before\ 'provider'\ argument\ if\ required)"{}\ \},\ \(\backslash\)}}
+\DoxyCodeLine{00302\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{\ "{}provider"{},\ OPT\_PROV\_PROVIDER,\ 's',\ "{}Provider\ to\ load\ (can\ be\ specified\ multiple\ times)"{}\ \},\ \(\backslash\)}}
+\DoxyCodeLine{00303\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{\ "{}propquery"{},\ OPT\_PROV\_PROPQUERY,\ 's',\ "{}Property\ query\ used\ when\ fetching\ algorithms"{}\ \}}}
+\DoxyCodeLine{00304\ }
+\DoxyCodeLine{00305\ \textcolor{preprocessor}{\#\ define\ OPT\_PROV\_CASES\ \(\backslash\)}}
+\DoxyCodeLine{00306\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ OPT\_PROV\_\_FIRST:\ case\ OPT\_PROV\_\_LAST:\ break;\ \(\backslash\)}}
+\DoxyCodeLine{00307\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_PROV\_PROVIDER:\ \(\backslash\)}}
+\DoxyCodeLine{00308\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_PROV\_PROVIDER\_PATH:\ \(\backslash\)}}
+\DoxyCodeLine{00309\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ case\ OPT\_PROV\_PROPQUERY}}
+\DoxyCodeLine{00310\ }
+\DoxyCodeLine{00311\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00312\ \textcolor{comment}{\ *\ Option\ parsing.}}
+\DoxyCodeLine{00313\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00314\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ OPT\_HELP\_STR[];}
+\DoxyCodeLine{00315\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ OPT\_MORE\_STR[];}
+\DoxyCodeLine{00316\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ OPT\_SECTION\_STR[];}
+\DoxyCodeLine{00317\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ OPT\_PARAM\_STR[];}
+\DoxyCodeLine{00318\ }
+\DoxyCodeLine{00319\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structoptions__st}{options\_st}}\ \{}
+\DoxyCodeLine{00320\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *name;}
+\DoxyCodeLine{00321\ \ \ \ \ \textcolor{keywordtype}{int}\ retval;}
+\DoxyCodeLine{00322\ \ \ \ \ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00323\ \textcolor{comment}{\ \ \ \ \ *\ value\ type:}}
+\DoxyCodeLine{00324\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00325\ \textcolor{comment}{\ \ \ \ \ *\ \ \ '-\/'\ no\ value\ (also\ the\ value\ zero)}}
+\DoxyCodeLine{00326\ \textcolor{comment}{\ \ \ \ \ *\ \ \ 'n'\ number\ (type\ 'int')}}
+\DoxyCodeLine{00327\ \textcolor{comment}{\ \ \ \ \ *\ \ \ 'p'\ positive\ number\ (type\ 'int')}}
+\DoxyCodeLine{00328\ \textcolor{comment}{\ \ \ \ \ *\ \ \ 'u'\ unsigned\ number\ (type\ 'unsigned\ long')}}
+\DoxyCodeLine{00329\ \textcolor{comment}{\ \ \ \ \ *\ \ \ 'l'\ number\ (type\ 'unsigned\ long')}}
+\DoxyCodeLine{00330\ \textcolor{comment}{\ \ \ \ \ *\ \ \ 'M'\ number\ (type\ 'intmax\_t')}}
+\DoxyCodeLine{00331\ \textcolor{comment}{\ \ \ \ \ *\ \ \ 'U'\ unsigned\ number\ (type\ 'uintmax\_t')}}
+\DoxyCodeLine{00332\ \textcolor{comment}{\ \ \ \ \ *\ \ \ 's'\ string}}
+\DoxyCodeLine{00333\ \textcolor{comment}{\ \ \ \ \ *\ \ \ '<'\ input\ file}}
+\DoxyCodeLine{00334\ \textcolor{comment}{\ \ \ \ \ *\ \ \ '>'\ output\ file}}
+\DoxyCodeLine{00335\ \textcolor{comment}{\ \ \ \ \ *\ \ \ '/'\ directory}}
+\DoxyCodeLine{00336\ \textcolor{comment}{\ \ \ \ \ *\ \ \ 'f'\ any\ format\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ [OPT\_FMT\_ANY]}}
+\DoxyCodeLine{00337\ \textcolor{comment}{\ \ \ \ \ *\ \ \ 'F'\ der/pem\ format\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ [OPT\_FMT\_PEMDER]}}
+\DoxyCodeLine{00338\ \textcolor{comment}{\ \ \ \ \ *\ \ \ 'A'\ any\ ASN1,\ der/pem/b64\ format\ \ [OPT\_FMT\_ASN1]}}
+\DoxyCodeLine{00339\ \textcolor{comment}{\ \ \ \ \ *\ \ \ 'E'\ der/pem/engine\ format\ \ \ \ \ \ \ \ \ [OPT\_FMT\_PDE]}}
+\DoxyCodeLine{00340\ \textcolor{comment}{\ \ \ \ \ *\ \ \ 'c'\ pem/der/smime\ format\ \ \ \ \ \ \ \ \ \ [OPT\_FMT\_PDS]}}
+\DoxyCodeLine{00341\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00342\ \textcolor{comment}{\ \ \ \ \ *\ The\ 'l',\ 'n'\ and\ 'u'\ value\ types\ include\ the\ values\ zero,}}
+\DoxyCodeLine{00343\ \textcolor{comment}{\ \ \ \ \ *\ the\ 'p'\ value\ type\ does\ not.}}
+\DoxyCodeLine{00344\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00345\ \ \ \ \ \textcolor{keywordtype}{int}\ valtype;}
+\DoxyCodeLine{00346\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *helpstr;}
+\DoxyCodeLine{00347\ \}\ \mbox{\hyperlink{structoptions__st}{OPTIONS}};}
+\DoxyCodeLine{00348\ \textcolor{comment}{/*\ Special\ retval\ values:\ */}}
+\DoxyCodeLine{00349\ \textcolor{preprocessor}{\#define\ OPT\_PARAM\ 0\ }\textcolor{comment}{/*\ same\ as\ OPT\_EOF\ usually\ defined\ in\ apps\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00350\ \textcolor{preprocessor}{\#define\ OPT\_DUP\ -\/2\ }\textcolor{comment}{/*\ marks\ duplicate\ occurrence\ of\ option\ in\ help\ output\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00351\ }
+\DoxyCodeLine{00352\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00353\ \textcolor{comment}{\ *\ A\ string/int\ pairing;\ widely\ use\ for\ option\ value\ lookup,\ hence\ the}}
+\DoxyCodeLine{00354\ \textcolor{comment}{\ *\ name\ OPT\_PAIR.\ But\ that\ name\ is\ misleading\ in\ s\_cb.c,\ so\ we\ also\ use}}
+\DoxyCodeLine{00355\ \textcolor{comment}{\ *\ the\ "{}generic"{}\ name\ STRINT\_PAIR.}}
+\DoxyCodeLine{00356\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00357\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structstring__int__pair__st}{string\_int\_pair\_st}}\ \{}
+\DoxyCodeLine{00358\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *name;}
+\DoxyCodeLine{00359\ \ \ \ \ \textcolor{keywordtype}{int}\ retval;}
+\DoxyCodeLine{00360\ \}\ \mbox{\hyperlink{structstring__int__pair__st}{OPT\_PAIR}},\ \mbox{\hyperlink{structstring__int__pair__st}{STRINT\_PAIR}};}
+\DoxyCodeLine{00361\ }
+\DoxyCodeLine{00362\ \textcolor{comment}{/*\ Flags\ to\ pass\ into\ opt\_format;\ see\ FORMAT\_xxx,\ below.\ */}}
+\DoxyCodeLine{00363\ \textcolor{preprocessor}{\#\ define\ OPT\_FMT\_PEM\ \ \ \ \ \ \ \ \ \ \ \ \ (1L\ <<\ \ 1)}}
+\DoxyCodeLine{00364\ \textcolor{preprocessor}{\#\ define\ OPT\_FMT\_DER\ \ \ \ \ \ \ \ \ \ \ \ \ (1L\ <<\ \ 2)}}
+\DoxyCodeLine{00365\ \textcolor{preprocessor}{\#\ define\ OPT\_FMT\_B64\ \ \ \ \ \ \ \ \ \ \ \ \ (1L\ <<\ \ 3)}}
+\DoxyCodeLine{00366\ \textcolor{preprocessor}{\#\ define\ OPT\_FMT\_PKCS12\ \ \ \ \ \ \ \ \ \ (1L\ <<\ \ 4)}}
+\DoxyCodeLine{00367\ \textcolor{preprocessor}{\#\ define\ OPT\_FMT\_SMIME\ \ \ \ \ \ \ \ \ \ \ (1L\ <<\ \ 5)}}
+\DoxyCodeLine{00368\ \textcolor{preprocessor}{\#\ define\ OPT\_FMT\_ENGINE\ \ \ \ \ \ \ \ \ \ (1L\ <<\ \ 6)}}
+\DoxyCodeLine{00369\ \textcolor{preprocessor}{\#\ define\ OPT\_FMT\_MSBLOB\ \ \ \ \ \ \ \ \ \ (1L\ <<\ \ 7)}}
+\DoxyCodeLine{00370\ \textcolor{preprocessor}{\#\ define\ OPT\_FMT\_NSS\ \ \ \ \ \ \ \ \ \ \ \ \ (1L\ <<\ \ 8)}}
+\DoxyCodeLine{00371\ \textcolor{preprocessor}{\#\ define\ OPT\_FMT\_TEXT\ \ \ \ \ \ \ \ \ \ \ \ (1L\ <<\ \ 9)}}
+\DoxyCodeLine{00372\ \textcolor{preprocessor}{\#\ define\ OPT\_FMT\_HTTP\ \ \ \ \ \ \ \ \ \ \ \ (1L\ <<\ 10)}}
+\DoxyCodeLine{00373\ \textcolor{preprocessor}{\#\ define\ OPT\_FMT\_PVK\ \ \ \ \ \ \ \ \ \ \ \ \ (1L\ <<\ 11)}}
+\DoxyCodeLine{00374\ }
+\DoxyCodeLine{00375\ \textcolor{preprocessor}{\#\ define\ OPT\_FMT\_PEMDER\ \ (OPT\_FMT\_PEM\ |\ OPT\_FMT\_DER)}}
+\DoxyCodeLine{00376\ \textcolor{preprocessor}{\#\ define\ OPT\_FMT\_ASN1\ \ \ \ (OPT\_FMT\_PEM\ |\ OPT\_FMT\_DER\ |\ OPT\_FMT\_B64)}}
+\DoxyCodeLine{00377\ \textcolor{preprocessor}{\#\ define\ OPT\_FMT\_PDE\ \ \ \ \ (OPT\_FMT\_PEMDER\ |\ OPT\_FMT\_ENGINE)}}
+\DoxyCodeLine{00378\ \textcolor{preprocessor}{\#\ define\ OPT\_FMT\_PDS\ \ \ \ \ (OPT\_FMT\_PEMDER\ |\ OPT\_FMT\_SMIME)}}
+\DoxyCodeLine{00379\ \textcolor{preprocessor}{\#\ define\ OPT\_FMT\_ANY\ \ \ \ \ (\ \(\backslash\)}}
+\DoxyCodeLine{00380\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ OPT\_FMT\_PEM\ |\ OPT\_FMT\_DER\ |\ OPT\_FMT\_B64\ |\ \(\backslash\)}}
+\DoxyCodeLine{00381\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ OPT\_FMT\_PKCS12\ |\ OPT\_FMT\_SMIME\ |\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00382\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ OPT\_FMT\_ENGINE\ |\ OPT\_FMT\_MSBLOB\ |\ OPT\_FMT\_NSS\ |\ \(\backslash\)}}
+\DoxyCodeLine{00383\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ OPT\_FMT\_TEXT\ |\ OPT\_FMT\_HTTP\ |\ OPT\_FMT\_PVK)}}
+\DoxyCodeLine{00384\ }
+\DoxyCodeLine{00385\ \textcolor{comment}{/*\ Divide\ options\ into\ sections\ when\ displaying\ usage\ */}}
+\DoxyCodeLine{00386\ \textcolor{preprocessor}{\#define\ OPT\_SECTION(sec)\ \{\ OPT\_SECTION\_STR,\ 1,\ '-\/',\ sec\ "{}\ options:\(\backslash\)n"{}\ \}}}
+\DoxyCodeLine{00387\ \textcolor{preprocessor}{\#define\ OPT\_PARAMETERS()\ \{\ OPT\_PARAM\_STR,\ 1,\ '-\/',\ "{}Parameters:\(\backslash\)n"{}\ \}}}
+\DoxyCodeLine{00388\ }
+\DoxyCodeLine{00389\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *opt\_path\_end(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *filename);}
+\DoxyCodeLine{00390\ \textcolor{keywordtype}{char}\ *opt\_init(\textcolor{keywordtype}{int}\ ac,\ \textcolor{keywordtype}{char}\ **av,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structoptions__st}{OPTIONS}}\ *o);}
+\DoxyCodeLine{00391\ \textcolor{keywordtype}{char}\ *opt\_progname(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *argv0);}
+\DoxyCodeLine{00392\ \textcolor{keywordtype}{char}\ *opt\_appname(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *argv0);}
+\DoxyCodeLine{00393\ \textcolor{keywordtype}{char}\ *opt\_getprog(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00394\ \textcolor{keywordtype}{void}\ opt\_help(\textcolor{keyword}{const}\ \mbox{\hyperlink{structoptions__st}{OPTIONS}}\ *list);}
+\DoxyCodeLine{00395\ }
+\DoxyCodeLine{00396\ \textcolor{keywordtype}{void}\ opt\_begin(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00397\ \textcolor{keywordtype}{int}\ opt\_next(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00398\ \textcolor{keywordtype}{char}\ *opt\_flag(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00399\ \textcolor{keywordtype}{char}\ *opt\_arg(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00400\ \textcolor{keywordtype}{char}\ *opt\_unknown(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00401\ \textcolor{keywordtype}{void}\ reset\_unknown(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00402\ \textcolor{keywordtype}{int}\ opt\_cipher(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *name,\ EVP\_CIPHER\ **cipherp);}
+\DoxyCodeLine{00403\ \textcolor{keywordtype}{int}\ opt\_cipher\_any(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *name,\ EVP\_CIPHER\ **cipherp);}
+\DoxyCodeLine{00404\ \textcolor{keywordtype}{int}\ opt\_cipher\_silent(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *name,\ EVP\_CIPHER\ **cipherp);}
+\DoxyCodeLine{00405\ \textcolor{keywordtype}{int}\ opt\_check\_md(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *name);}
+\DoxyCodeLine{00406\ \textcolor{keywordtype}{int}\ opt\_md(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *name,\ EVP\_MD\ **mdp);}
+\DoxyCodeLine{00407\ \textcolor{keywordtype}{int}\ opt\_md\_silent(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *name,\ EVP\_MD\ **mdp);}
+\DoxyCodeLine{00408\ }
+\DoxyCodeLine{00409\ \textcolor{keywordtype}{int}\ opt\_int(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *arg,\ \textcolor{keywordtype}{int}\ *result);}
+\DoxyCodeLine{00410\ \textcolor{keywordtype}{void}\ opt\_set\_unknown\_name(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *name);}
+\DoxyCodeLine{00411\ \textcolor{keywordtype}{int}\ opt\_int\_arg(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00412\ \textcolor{keywordtype}{int}\ opt\_long(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *arg,\ \textcolor{keywordtype}{long}\ *result);}
+\DoxyCodeLine{00413\ \textcolor{keywordtype}{int}\ opt\_ulong(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *arg,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ *result);}
+\DoxyCodeLine{00414\ \textcolor{keywordtype}{int}\ opt\_intmax(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *arg,\ ossl\_intmax\_t\ *result);}
+\DoxyCodeLine{00415\ \textcolor{keywordtype}{int}\ opt\_uintmax(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *arg,\ ossl\_uintmax\_t\ *result);}
+\DoxyCodeLine{00416\ }
+\DoxyCodeLine{00417\ \textcolor{keywordtype}{int}\ opt\_isdir(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *name);}
+\DoxyCodeLine{00418\ \textcolor{keywordtype}{int}\ opt\_format(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *s,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ flags,\ \textcolor{keywordtype}{int}\ *result);}
+\DoxyCodeLine{00419\ \textcolor{keywordtype}{void}\ print\_format\_error(\textcolor{keywordtype}{int}\ format,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ flags);}
+\DoxyCodeLine{00420\ \textcolor{keywordtype}{int}\ opt\_printf\_stderr(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *fmt,\ ...);}
+\DoxyCodeLine{00421\ \textcolor{keywordtype}{int}\ opt\_string(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *name,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ **options);}
+\DoxyCodeLine{00422\ \textcolor{keywordtype}{int}\ opt\_pair(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *arg,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structstring__int__pair__st}{OPT\_PAIR}}\ *pairs,\ \textcolor{keywordtype}{int}\ *result);}
+\DoxyCodeLine{00423\ }
+\DoxyCodeLine{00424\ \textcolor{keywordtype}{int}\ opt\_verify(\textcolor{keywordtype}{int}\ i,\ X509\_VERIFY\_PARAM\ *vpm);}
+\DoxyCodeLine{00425\ \textcolor{keywordtype}{int}\ opt\_rand(\textcolor{keywordtype}{int}\ i);}
+\DoxyCodeLine{00426\ \textcolor{keywordtype}{int}\ opt\_provider(\textcolor{keywordtype}{int}\ i);}
+\DoxyCodeLine{00427\ \textcolor{keywordtype}{int}\ opt\_provider\_option\_given(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00428\ }
+\DoxyCodeLine{00429\ \textcolor{keywordtype}{char}\ **opt\_rest(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00430\ \textcolor{keywordtype}{int}\ opt\_num\_rest(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00431\ \textcolor{keywordtype}{int}\ opt\_check\_rest\_arg(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *expected);}
+\DoxyCodeLine{00432\ }
+\DoxyCodeLine{00433\ \textcolor{comment}{/*\ Returns\ non-\/zero\ if\ legacy\ paths\ are\ still\ available\ */}}
+\DoxyCodeLine{00434\ \textcolor{keywordtype}{int}\ opt\_legacy\_okay(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00435\ }
+\DoxyCodeLine{00436\ }
+\DoxyCodeLine{00437\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ OSSL\_APPS\_OPT\_H\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

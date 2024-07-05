@@ -1,0 +1,17 @@
+\chapter{MODIFYING OPENSSL SOURCE}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_h_a_c_k_i_n_g}{}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_h_a_c_k_i_n_g}\index{MODIFYING OPENSSL SOURCE@{MODIFYING OPENSSL SOURCE}}
+This document describes the way to add custom modifications to Open\+SSL sources.
+
+If you are adding new public functions to the custom library build, you need to either add a prototype in one of the existing Open\+SSL header files; or provide a new header file and edit \href{Configurations/unix-Makefile.tmpl}{\texttt{ Configurations/unix-\/\+Makefile.\+tmpl}} to pick up that file.
+
+After that, perform the following steps\+:
+
+./\+Configure -\/Werror --strict-\/warnings \mbox{[}your-\/options\mbox{]} make update make make test
+
+{\ttfamily make update} ensures that your functions declarations are added to {\ttfamily util/libcrypto.\+num} or {\ttfamily util/libssl.\+num}. If you plan to submit the changes you made to Open\+SSL (see \doxysectlink{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_c_o_n_t_r_i_b_u_t_i_n_g}{CONTRIBUTING.md}{0}), it\textquotesingle{}s worth running\+:
+
+make doc-\/nits
+
+after running {\ttfamily make update} to ensure that documentation has correct format.
+
+{\ttfamily make update} also generates files related to OIDs (in the {\ttfamily crypto/objects/} folder) and errors. If a merge error occurs in one of these generated files, then the generated files need to be removed and regenerated using {\ttfamily make update}. To aid in this process, the generated files can be committed separately so they can be removed easily. 

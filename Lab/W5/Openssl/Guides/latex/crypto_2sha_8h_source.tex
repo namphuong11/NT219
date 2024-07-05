@@ -1,0 +1,29 @@
+\doxysection{sha.\+h}
+\hypertarget{crypto_2sha_8h_source}{}\label{crypto_2sha_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/crypto/sha.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/crypto/sha.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2018-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *\ Copyright\ (c)\ 2018,\ Oracle\ and/or\ its\ affiliates.\ \ All\ rights\ reserved.}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#ifndef\ OSSL\_CRYPTO\_SHA\_H}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#\ define\ OSSL\_CRYPTO\_SHA\_H}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#\ pragma\ once}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#\ include\ <openssl/sha.h>}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{keywordtype}{int}\ ossl\_sha256\_192\_init(SHA256\_CTX\ *c);}
+\DoxyCodeLine{00018\ \textcolor{keywordtype}{int}\ sha512\_224\_init(SHA512\_CTX\ *);}
+\DoxyCodeLine{00019\ \textcolor{keywordtype}{int}\ sha512\_256\_init(SHA512\_CTX\ *);}
+\DoxyCodeLine{00020\ \textcolor{keywordtype}{int}\ ossl\_sha1\_ctrl(SHA\_CTX\ *ctx,\ \textcolor{keywordtype}{int}\ cmd,\ \textcolor{keywordtype}{int}\ mslen,\ \textcolor{keywordtype}{void}\ *ms);}
+\DoxyCodeLine{00021\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *ossl\_sha1(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *d,\ \textcolor{keywordtype}{size\_t}\ n,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *md);}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

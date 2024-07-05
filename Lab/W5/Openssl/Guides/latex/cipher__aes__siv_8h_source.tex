@@ -1,0 +1,42 @@
+\doxysection{cipher\+\_\+aes\+\_\+siv.\+h}
+\hypertarget{cipher__aes__siv_8h_source}{}\label{cipher__aes__siv_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/providers/implementations/ciphers/cipher\_aes\_siv.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/providers/implementations/ciphers/cipher\_aes\_siv.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2019-\/2021\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ "{}prov/ciphercommon.h"{}}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ "{}crypto/aes\_platform.h"{}}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ "{}crypto/siv.h"{}}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structprov__cipher__hw__aes__siv__st}{prov\_cipher\_hw\_aes\_siv\_st}}\ \{}
+\DoxyCodeLine{00015\ \ \ \ \ int\ (*initkey)(\textcolor{keywordtype}{void}\ *ctx,\ \textcolor{keyword}{const}\ uint8\_t\ *key,\ \textcolor{keywordtype}{size\_t}\ keylen);}
+\DoxyCodeLine{00016\ \ \ \ \ int\ (*cipher)(\textcolor{keywordtype}{void}\ *ctx,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,}
+\DoxyCodeLine{00017\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ len);}
+\DoxyCodeLine{00018\ \ \ \ \ void\ (*setspeed)(\textcolor{keywordtype}{void}\ *ctx,\ \textcolor{keywordtype}{int}\ speed);}
+\DoxyCodeLine{00019\ \ \ \ \ int\ (*settag)(\textcolor{keywordtype}{void}\ *ctx,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *tag,\ \textcolor{keywordtype}{size\_t}\ tagl);}
+\DoxyCodeLine{00020\ \ \ \ \ void\ (*cleanup)(\textcolor{keywordtype}{void}\ *ctx);}
+\DoxyCodeLine{00021\ \ \ \ \ int\ (*dupctx)(\textcolor{keywordtype}{void}\ *src,\ \textcolor{keywordtype}{void}\ *dst);}
+\DoxyCodeLine{00022\ \}\ \mbox{\hyperlink{structprov__cipher__hw__aes__siv__st}{PROV\_CIPHER\_HW\_AES\_SIV}};}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structprov__siv__ctx__st}{prov\_siv\_ctx\_st}}\ \{}
+\DoxyCodeLine{00025\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ mode;\ \ \ \ \ \ \ \textcolor{comment}{/*\ The\ mode\ that\ we\ are\ using\ */}}
+\DoxyCodeLine{00026\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ enc\ :\ 1;\ \ \ \ \textcolor{comment}{/*\ Set\ to\ 1\ if\ we\ are\ encrypting\ or\ 0\ otherwise\ */}}
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ keylen;\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ The\ input\ keylength\ (twice\ the\ alg\ key\ length)\ */}}
+\DoxyCodeLine{00028\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ taglen;\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ the\ taglen\ is\ the\ same\ as\ the\ sivlen\ */}}
+\DoxyCodeLine{00029\ \ \ \ \ \mbox{\hyperlink{structsiv128__context}{SIV128\_CONTEXT}}\ siv;}
+\DoxyCodeLine{00030\ \ \ \ \ EVP\_CIPHER\ *ctr;\ \ \ \ \ \ \ \ \textcolor{comment}{/*\ These\ are\ fetched\ -\/\ so\ we\ need\ to\ free\ them\ */}}
+\DoxyCodeLine{00031\ \ \ \ \ EVP\_CIPHER\ *cbc;}
+\DoxyCodeLine{00032\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structprov__cipher__hw__aes__siv__st}{PROV\_CIPHER\_HW\_AES\_SIV}}\ *hw;}
+\DoxyCodeLine{00033\ \ \ \ \ OSSL\_LIB\_CTX\ *libctx;}
+\DoxyCodeLine{00034\ \}\ \mbox{\hyperlink{structprov__siv__ctx__st}{PROV\_AES\_SIV\_CTX}};}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structprov__cipher__hw__aes__siv__st}{PROV\_CIPHER\_HW\_AES\_SIV}}\ *ossl\_prov\_cipher\_hw\_aes\_siv(\textcolor{keywordtype}{size\_t}\ keybits);}
+
+\end{DoxyCode}

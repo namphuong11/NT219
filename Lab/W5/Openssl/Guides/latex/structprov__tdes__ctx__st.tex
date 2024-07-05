@@ -1,0 +1,32 @@
+\doxysection{prov\+\_\+tdes\+\_\+ctx\+\_\+st Struct Reference}
+\hypertarget{structprov__tdes__ctx__st}{}\label{structprov__tdes__ctx__st}\index{prov\_tdes\_ctx\_st@{prov\_tdes\_ctx\_st}}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{structprov__tdes__ctx__st_af03bd50212f48b59e149d3d3e428e4a5}\label{structprov__tdes__ctx__st_af03bd50212f48b59e149d3d3e428e4a5} 
+\mbox{\hyperlink{structprov__cipher__ctx__st}{PROV\+\_\+\+CIPHER\+\_\+\+CTX}} {\bfseries base}
+\item 
+\Hypertarget{structprov__tdes__ctx__st_a4139f61887205d491ca09a6e459f4b0a}\label{structprov__tdes__ctx__st_a4139f61887205d491ca09a6e459f4b0a} 
+\begin{tabbing}
+xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=\kill
+union \{\\
+\>{\bfseries OSSL\_UNION\_ALIGN}\\
+\>DES\_key\_schedule {\bfseries ks} \mbox{[}3\mbox{]}\\
+\} {\bfseries tks}\\
+
+\end{tabbing}\item 
+\Hypertarget{structprov__tdes__ctx__st_a68947bc29d5ea72e7ca56fd7d4c7791e}\label{structprov__tdes__ctx__st_a68947bc29d5ea72e7ca56fd7d4c7791e} 
+\begin{tabbing}
+xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=\kill
+union \{\\
+\>void(\texorpdfstring{$\ast$}{*} {\bfseries cbc} )(const void \texorpdfstring{$\ast$}{*}, void \texorpdfstring{$\ast$}{*}, size\_t,\\
+\>\> const DES\_key\_schedule \texorpdfstring{$\ast$}{*},\\
+\>\> unsigned char \texorpdfstring{$\ast$}{*})\\
+\} {\bfseries tstream}\\
+
+\end{tabbing}\end{DoxyCompactItemize}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/namph/\+Downloads/openssl/openssl-\/3.\+2.\+1/providers/implementations/ciphers/cipher\+\_\+tdes.\+h\end{DoxyCompactItemize}

@@ -1,0 +1,149 @@
+\chapter{NOTES FOR THE HPE NONSTOP PLATFORM}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_n_o_n_s_t_o_p}{}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_n_o_n_s_t_o_p}\index{NOTES FOR THE HPE NONSTOP PLATFORM@{NOTES FOR THE HPE NONSTOP PLATFORM}}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_n_o_n_s_t_o_p_autotoc_md870}{}\doxysection{\texorpdfstring{Requirement details}{Requirement details}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_n_o_n_s_t_o_p_autotoc_md870}
+In addition to the requirements and instructions listed in \doxysectlink{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l}{INSTALL.md}{0}, the following are required as well\+:
+
+
+\begin{DoxyItemize}
+\item The TNS/X platform supports hardware randomization. Specify the {\ttfamily -\/-\/with-\/rand-\/seed=rdcpu} option to the {\ttfamily ./\+Configure} script. This is recommended but not required. {\ttfamily egd} is supported at 3.\+0 but cannot be used if FIPS is selected.
+\item The TNS/E platform does not support hardware randomization, so specify the {\ttfamily -\/-\/with-\/rand-\/seed=egd} option to the {\ttfamily ./\+Configure} script.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_n_o_n_s_t_o_p_autotoc_md871}{}\doxysection{\texorpdfstring{About c99 compiler}{About c99 compiler}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_n_o_n_s_t_o_p_autotoc_md871}
+The c99 compiler is required for building Open\+SSL from source. While c11 may work, it has not been broadly tested. c99 is the only compiler prerequisite needed to build Open\+SSL 3.\+0 on this platform. You should also have the FLOSS package installed on your system. The ITUGLIB FLOSS package is the only FLOSS variant that has been broadly tested.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_n_o_n_s_t_o_p_autotoc_md872}{}\doxysection{\texorpdfstring{Threading Models}{Threading Models}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_n_o_n_s_t_o_p_autotoc_md872}
+Open\+SSL can be built either using the POSIX User Threads (PUT) threading model, or with threading support disabled. Select the following build configuration for each on the TNS/X (L-\/\+Series) platform\+:
+
+
+\begin{DoxyItemize}
+\item {\ttfamily nonstop-\/nsx} or default will select an unthreaded 32-\/bit build.
+\item {\ttfamily nonstop-\/nsx\+\_\+64} selects an unthreaded 64-\/bit memory and file length build.
+\item {\ttfamily nonstop-\/nsx\+\_\+put} selects the PUT build.
+\item {\ttfamily nonstop-\/nsx\+\_\+64\+\_\+put} selects the 64-\/bit memory and file length PUT build.
+\end{DoxyItemize}
+
+The SPT threading model is no longer supported as of Open\+SSL 3.\+2.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_n_o_n_s_t_o_p_autotoc_md873}{}\doxysubsection{\texorpdfstring{TNS/E Considerations}{TNS/E Considerations}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_n_o_n_s_t_o_p_autotoc_md873}
+The TNS/E platform is build using the same set of builds specifying {\ttfamily nse} instead of {\ttfamily nsx} in the set above.
+
+You cannot build for TNS/E for FIPS, so you must specify the {\ttfamily no-\/fips} option to {\ttfamily ./\+Configure}.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_n_o_n_s_t_o_p_autotoc_md874}{}\doxysection{\texorpdfstring{Linking and Loading Considerations}{Linking and Loading Considerations}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_n_o_n_s_t_o_p_autotoc_md874}
+Because of how the Non\+Stop Common Runtime Environment (CRE) works, there are restrictions on how programs can link and load with Open\+SSL libraries. On current Non\+Stop platforms, programs cannot both statically link Open\+SSL libraries and dynamically load Open\+SSL shared libraries concurrently. If this is done, there is a high probability of encountering a SIGSEGV condition relating to {\ttfamily atexit()} processing when a shared library is unloaded and when the program terminates. This limitation applies to all Open\+SSL shared library components.
+
+A resolution to this situation is under investigation.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_n_o_n_s_t_o_p_autotoc_md875}{}\doxysection{\texorpdfstring{About Prefix and Open\+SSLDir}{About Prefix and Open\+SSLDir}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_n_o_n_s_t_o_p_autotoc_md875}
+Because there are many potential builds that must co-\/exist on any given Non\+Stop node, managing the location of your build distribution is crucial. Keep each destination separate and distinct. Mixing any mode described in this document can cause application instability. The recommended approach is to specify the Open\+SSL version and threading model in your configuration options, and keeping your memory and float options consistent, for example\+:
+
+
+\begin{DoxyItemize}
+\item For 1.\+1 {\ttfamily -\/-\/prefix=/usr/local-\/ssl1.1 -\/-\/openssldir=/usr/local-\/ssl1.1/ssl}
+\item For 1.\+1 PUT {\ttfamily -\/-\/prefix=/usr/local-\/ssl1.1\+\_\+put -\/-\/openssldir=/usr/local-\/ssl1.1\+\_\+put/ssl}
+\end{DoxyItemize}
+
+As of 3.\+0, the Non\+Stop configurations use the multilib attribute to distinguish between different models\+:
+
+
+\begin{DoxyItemize}
+\item For 3.\+0 {\ttfamily -\/-\/prefix=/usr/local-\/ssl3.0 -\/-\/openssldir=/usr/local-\/ssl3.0/ssl}
+\end{DoxyItemize}
+
+The PUT model is placed in {\ttfamily \$\{prefix\}/lib-\/put} for 32-\/bit models and {\ttfamily \$\{prefix\}/lib64-\/put} for 64-\/bit models.
+
+Use the {\ttfamily \+\_\+\+RLD\+\_\+\+LIB\+\_\+\+PATH} environment variable in OSS to select the appropriate directory containing {\ttfamily libcrypto.\+so} and {\ttfamily libssl.\+so}. In GUARDIAN, use the {\ttfamily =\+\_\+\+RLD\+\_\+\+LIB\+\_\+\+PATH} search define to locate the GUARDIAN subvolume where Open\+SSL is installed.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_n_o_n_s_t_o_p_autotoc_md876}{}\doxysection{\texorpdfstring{Float Considerations}{Float Considerations}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_n_o_n_s_t_o_p_autotoc_md876}
+Open\+SSL is built using IEEE Float mode by default. If you need a different IEEE mode, create a new configuration specifying {\ttfamily tfloat-\/x86-\/64} (for Tandem Float) or {\ttfamily nfloat-\/x86-\/64} (for Neutral Float).\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_n_o_n_s_t_o_p_autotoc_md877}{}\doxysection{\texorpdfstring{Memory Models}{Memory Models}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_n_o_n_s_t_o_p_autotoc_md877}
+The current Open\+SSL default memory model uses the default platform address model. If you need a different address model, you must specify the appropriate c99 options for compile ({\ttfamily CFLAGS}) and linkers ({\ttfamily LDFLAGS}).\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_n_o_n_s_t_o_p_autotoc_md878}{}\doxysection{\texorpdfstring{Cross Compiling on Windows}{Cross Compiling on Windows}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_n_o_n_s_t_o_p_autotoc_md878}
+To configure and compile Open\+SSL, you will need to set up a Cygwin environment. The Cygwin tools should include bash, make, and any other normal tools required for building programs.
+
+Your {\ttfamily PATH} must include the bin directory for the c99 cross-\/compiler, as in\+: \begin{DoxyVerb}export PATH=/cygdrive/c/Program\ Files\ \(x86\)/HPE\ NonStop/L16.05/usr/bin:$PATH
+\end{DoxyVerb}
+ This should be set before Configure is run. For the c99 cross-\/compiler to work correctly, you also need the {\ttfamily COMP\+\_\+\+ROOT} set, as in\+: \begin{DoxyVerb}export COMP_ROOT="C:\Program Files (x86)\HPE NonStop\L16.05"
+\end{DoxyVerb}
+ {\ttfamily COMP\+\_\+\+ROOT} needs to be in Windows form.
+
+{\ttfamily Configure} must specify the {\ttfamily no-\/makedepend} option otherwise errors will result when running the build because the c99 cross-\/compiler does not support the {\ttfamily gcc -\/MT} option. An example of a {\ttfamily Configure} command to be run from the Open\+SSL directory is\+: \begin{DoxyVerb}./Configure nonstop-nsx_64 no-makedepend --with-rand-seed=rdcpu
+\end{DoxyVerb}
+ Do not forget to include any Open\+SSL cross-\/compiling prefix and certificate options when creating your libraries.
+
+The Open\+SSL test suite will not run on your workstation. In order to verify the build, you will need to perform the build and test steps in OSS in your Non\+Stop server. You can also build under gcc and run the test suite for Windows but that is not equivalent.
+
+{\bfseries{Note\+:}} In the event that you are attempting a FIPS-\/compliant cross-\/compile, be aware that signatures may not match between builds done under OSS and under cross-\/compiles as the compilers do not necessarily generate identical objects. Anything and everything to do with FIPS is outside the scope of this document. Refer to the FIPS security policy for more information.
+
+The following build configurations have been successfully attempted at one point or another. If you are successful in your cross-\/compile efforts, please update this list\+:
+
+
+\begin{DoxyItemize}
+\item nonstop-\/nsx\+\_\+64
+\item nonstop-\/nsx\+\_\+64\+\_\+put
+\end{DoxyItemize}
+
+{\bfseries{Note\+:}} Cross-\/compile builds for TNS/E have not been attempted, but should follow the same considerations as for TNS/X above.
+
+Also see the NSDEE discussion below for more historical information.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_n_o_n_s_t_o_p_autotoc_md879}{}\doxysection{\texorpdfstring{Cross Compiling with NSDEE}{Cross Compiling with NSDEE}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_n_o_n_s_t_o_p_autotoc_md879}
+{\bfseries{Note\+:}} None of these builds have been tested by the platform maintainer and are supplied for historical value. Please submit a Pull Request to Open\+SSL should these need to be adjusted.
+
+If you are attempting to build Open\+SSL with NSDEE, you will need to specify the following variables. The following set of compiler defines are required\+: \begin{DoxyVerb}# COMP_ROOT must be a full path for the build system (e.g. windows)
+COMP_ROOT=$(cygpath -w /path/to/comp_root)
+# CC must be executable by your shell
+CC=/path/to/c99
+\end{DoxyVerb}
+ \hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_n_o_n_s_t_o_p_autotoc_md880}{}\doxysubsection{\texorpdfstring{Optional Build Variables}{Optional Build Variables}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_n_o_n_s_t_o_p_autotoc_md880}
+\begin{DoxyVerb}DBGFLAG="--debug"
+CIPHENABLES="enable-ssl3 enable-ssl3-method enable-weak-ssl-ciphers enable-rc4"
+\end{DoxyVerb}
+ \hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_n_o_n_s_t_o_p_autotoc_md881}{}\doxysubsection{\texorpdfstring{Internal Known TNS/X to TNS/E Cross Compile Variables}{Internal Known TNS/X to TNS/E Cross Compile Variables}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_n_o_n_s_t_o_p_autotoc_md881}
+The following definition is required if you are building on TNS/X for TNS/E and have access to a TNS/E machine on your EXPAND network -\/ with an example node named {\ttfamily \textbackslash{}CS3}\+: \begin{DoxyVerb}SYSTEMLIBS="-L/E/cs3/usr/local/lib"
+\end{DoxyVerb}
+ \hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_n_o_n_s_t_o_p_autotoc_md882}{}\doxysection{\texorpdfstring{Version Procedure (VPROC) Considerations}{Version Procedure (VPROC) Considerations}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_n_o_n_s_t_o_p_autotoc_md882}
+If you require a VPROC entry for platform version identification, use the following variables\+:\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_n_o_n_s_t_o_p_autotoc_md883}{}\doxysubsection{\texorpdfstring{For Itanium}{For Itanium}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_n_o_n_s_t_o_p_autotoc_md883}
+\begin{DoxyVerb}OPENSSL_VPROC_PREFIX=T0085H06
+\end{DoxyVerb}
+ \hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_n_o_n_s_t_o_p_autotoc_md884}{}\doxysubsection{\texorpdfstring{For x86}{For x86}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_n_o_n_s_t_o_p_autotoc_md884}
+\begin{DoxyVerb}OPENSSL_VPROC_PREFIX=T0085L01
+\end{DoxyVerb}
+ \hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_n_o_n_s_t_o_p_autotoc_md885}{}\doxysubsection{\texorpdfstring{Common Definition}{Common Definition}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_n_o_n_s_t_o_p_autotoc_md885}
+\begin{DoxyVerb}export OPENSSL_VPROC=${OPENSSL_VPROC_PREFIX}_$(
+    . VERSION.dat
+    if [ -n "$PRE_RELEASE_TAG" ]; then
+        PRE_RELEASE_TAG="-$PRE_RELEASE_TAG"
+    fi
+    if [ -n "$BUILD_METADATA" ]; then
+        BUILD_METADATA="+$BUILD_METADATA"
+    fi
+    echo "$MAJOR.$MINOR.$PATCH$PRE_RELEASE_TAG$BUILD_METADATA" |\
+        sed -e 's/[-.+]/_/g'
+    )
+\end{DoxyVerb}
+ \hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_n_o_n_s_t_o_p_autotoc_md886}{}\doxysection{\texorpdfstring{Example Configure Targets}{Example Configure Targets}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_n_o_n_s_t_o_p_autotoc_md886}
+For OSS targets, the main DLL names will be {\ttfamily libssl.\+so} and {\ttfamily libcrypto.\+so}. For GUARDIAN targets, DLL names will be {\ttfamily ssl} and {\ttfamily crypto}. The following assumes that your PWD is set according to your installation standards. \begin{DoxyVerb}./Configure nonstop-nsx           --prefix=${PWD} \
+    --openssldir=${PWD}/ssl no-threads \
+    --with-rand-seed=rdcpu ${CIPHENABLES} ${DBGFLAG} ${SYSTEMLIBS}
+./Configure nonstop-nsx_g         --prefix=${PWD} \
+    --openssldir=${PWD}/ssl no-threads \
+    --with-rand-seed=rdcpu ${CIPHENABLES} ${DBGFLAG} ${SYSTEMLIBS}
+./Configure nonstop-nsx_put       --prefix=${PWD} \
+    --openssldir=${PWD}/ssl threads "-D_REENTRANT" \
+    --with-rand-seed=rdcpu ${CIPHENABLES} ${DBGFLAG} ${SYSTEMLIBS}
+./Configure nonstop-nsx_64        --prefix=${PWD} \
+    --openssldir=${PWD}/ssl no-threads \
+    --with-rand-seed=rdcpu ${CIPHENABLES} ${DBGFLAG} ${SYSTEMLIBS}
+./Configure nonstop-nsx_64_put    --prefix=${PWD} \
+    --openssldir=${PWD}/ssl threads "-D_REENTRANT" \
+    --with-rand-seed=rdcpu ${CIPHENABLES} ${DBGFLAG} ${SYSTEMLIBS}
+./Configure nonstop-nsx_g_tandem  --prefix=${PWD} \
+    --openssldir=${PWD}/ssl no-threads \
+    --with-rand-seed=rdcpu ${CIPHENABLES} ${DBGFLAG} ${SYSTEMLIBS}
+
+./Configure nonstop-nse           --prefix=${PWD} \
+    --openssldir=${PWD}/ssl no-threads \
+    --with-rand-seed=egd ${CIPHENABLES} ${DBGFLAG} ${SYSTEMLIBS}
+./Configure nonstop-nse_g         --prefix=${PWD} \
+    --openssldir=${PWD}/ssl no-threads \
+    --with-rand-seed=egd ${CIPHENABLES} ${DBGFLAG} ${SYSTEMLIBS}
+./Configure nonstop-nse_put       --prefix=${PWD} \
+    --openssldir=${PWD}/ssl threads "-D_REENTRANT" \
+    --with-rand-seed=egd ${CIPHENABLES} ${DBGFLAG} ${SYSTEMLIBS}
+./Configure nonstop-nse_64        --prefix=${PWD} \
+    --openssldir=${PWD}/ssl no-threads \
+    --with-rand-seed=egd ${CIPHENABLES} ${DBGFLAG} ${SYSTEMLIBS}
+./Configure nonstop-nse_64_put    --prefix=${PWD} \
+    --openssldir=${PWD}/ssl threads "-D_REENTRANT"
+    --with-rand-seed=egd ${CIPHENABLES} ${DBGFLAG} ${SYSTEMLIBS}
+./Configure nonstop-nse_g_tandem  --prefix=${PWD} \
+    --openssldir=${PWD}/ssl no-threads \
+    --with-rand-seed=egd ${CIPHENABLES} ${DBGFLAG} ${SYSTEMLIBS}
+\end{DoxyVerb}
+ 

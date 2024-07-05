@@ -1,0 +1,115 @@
+\doxysection{rand\+\_\+pool.\+h}
+\hypertarget{rand__pool_8h_source}{}\label{rand__pool_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/crypto/rand\_pool.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/crypto/rand\_pool.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 1995-\/2021\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_PROVIDER\_RAND\_POOL\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_PROVIDER\_RAND\_POOL\_H}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#\ pragma\ once}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ include\ <stdio.h>}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#\ include\ <openssl/rand.h>}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ *\ Maximum\ allocation\ size\ for\ RANDOM\_POOL\ buffers}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00020\ \textcolor{comment}{\ *\ The\ max\_len\ value\ for\ the\ buffer\ provided\ to\ the\ rand\_drbg\_get\_entropy()}}
+\DoxyCodeLine{00021\ \textcolor{comment}{\ *\ callback\ is\ currently\ 2\string^31\ bytes\ (2\ gigabytes),\ if\ a\ derivation\ function}}
+\DoxyCodeLine{00022\ \textcolor{comment}{\ *\ is\ used.\ Since\ this\ is\ much\ too\ large\ to\ be\ allocated,\ the\ ossl\_rand\_pool\_new()}}
+\DoxyCodeLine{00023\ \textcolor{comment}{\ *\ function\ chooses\ more\ modest\ values\ as\ default\ pool\ length,\ bounded}}
+\DoxyCodeLine{00024\ \textcolor{comment}{\ *\ by\ RAND\_POOL\_MIN\_LENGTH\ and\ RAND\_POOL\_MAX\_LENGTH}}
+\DoxyCodeLine{00025\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00026\ \textcolor{comment}{\ *\ The\ choice\ of\ the\ RAND\_POOL\_FACTOR\ is\ large\ enough\ such\ that\ the}}
+\DoxyCodeLine{00027\ \textcolor{comment}{\ *\ RAND\_POOL\ can\ store\ a\ random\ input\ which\ has\ a\ lousy\ entropy\ rate\ of}}
+\DoxyCodeLine{00028\ \textcolor{comment}{\ *\ 8/256\ (=\ 0.03125)\ bits\ per\ byte.\ This\ input\ will\ be\ sent\ through\ the}}
+\DoxyCodeLine{00029\ \textcolor{comment}{\ *\ derivation\ function\ which\ 'compresses'\ the\ low\ quality\ input\ into\ a}}
+\DoxyCodeLine{00030\ \textcolor{comment}{\ *\ high\ quality\ output.}}
+\DoxyCodeLine{00031\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00032\ \textcolor{comment}{\ *\ The\ factor\ 1.5\ below\ is\ the\ pessimistic\ estimate\ for\ the\ extra\ amount}}
+\DoxyCodeLine{00033\ \textcolor{comment}{\ *\ of\ entropy\ required\ when\ no\ get\_nonce()\ callback\ is\ defined.}}
+\DoxyCodeLine{00034\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#\ define\ RAND\_POOL\_FACTOR\ \ \ \ \ \ \ \ 256}}
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#\ define\ RAND\_POOL\_MAX\_LENGTH\ \ \ \ (RAND\_POOL\_FACTOR\ *\ \(\backslash\)}}
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 3\ *\ (RAND\_DRBG\_STRENGTH\ /\ 16))}}
+\DoxyCodeLine{00038\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00039\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ (RAND\_POOL\_FACTOR\ *\ \(\backslash\)}}
+\DoxyCodeLine{00040\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 1.5\ *\ (RAND\_DRBG\_STRENGTH\ /\ 8))}}
+\DoxyCodeLine{00041\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00044\ \textcolor{comment}{\ *\ Initial\ allocation\ minimum.}}
+\DoxyCodeLine{00045\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00046\ \textcolor{comment}{\ *\ There\ is\ a\ distinction\ between\ the\ secure\ and\ normal\ allocation\ minimums.}}
+\DoxyCodeLine{00047\ \textcolor{comment}{\ *\ Ideally,\ the\ secure\ allocation\ size\ should\ be\ a\ power\ of\ two.\ \ The\ normal}}
+\DoxyCodeLine{00048\ \textcolor{comment}{\ *\ allocation\ size\ doesn't\ have\ any\ such\ restriction.}}
+\DoxyCodeLine{00049\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00050\ \textcolor{comment}{\ *\ The\ secure\ value\ is\ based\ on\ 128\ bits\ of\ secure\ material,\ which\ is\ 16\ bytes.}}
+\DoxyCodeLine{00051\ \textcolor{comment}{\ *\ Typically,\ the\ DRBGs\ will\ set\ a\ minimum\ larger\ than\ this\ so\ optimal}}
+\DoxyCodeLine{00052\ \textcolor{comment}{\ *\ allocation\ ought\ to\ take\ place\ (for\ full\ quality\ seed\ material).}}
+\DoxyCodeLine{00053\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00054\ \textcolor{comment}{\ *\ The\ normal\ value\ has\ been\ chosen\ by\ noticing\ that\ the\ rand\_drbg\_get\_nonce}}
+\DoxyCodeLine{00055\ \textcolor{comment}{\ *\ function\ is\ usually\ the\ largest\ of\ the\ built\ in\ allocation\ (twenty\ four}}
+\DoxyCodeLine{00056\ \textcolor{comment}{\ *\ bytes\ and\ then\ appending\ another\ sixteen\ bytes).\ \ This\ means\ the\ buffer\ ends}}
+\DoxyCodeLine{00057\ \textcolor{comment}{\ *\ with\ 40\ bytes.\ \ The\ value\ of\ forty\ eight\ is\ comfortably\ above\ this\ which}}
+\DoxyCodeLine{00058\ \textcolor{comment}{\ *\ allows\ some\ slack\ in\ the\ platform\ specific\ values\ used.}}
+\DoxyCodeLine{00059\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00060\ \textcolor{preprocessor}{\#\ define\ RAND\_POOL\_MIN\_ALLOCATION(secure)\ ((secure)\ ?\ 16\ :\ 48)}}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00063\ \textcolor{comment}{\ *\ The\ 'random\ pool'\ acts\ as\ a\ dumb\ container\ for\ collecting\ random}}
+\DoxyCodeLine{00064\ \textcolor{comment}{\ *\ input\ from\ various\ entropy\ sources.\ It\ is\ the\ callers\ duty\ to\ 1)\ initialize}}
+\DoxyCodeLine{00065\ \textcolor{comment}{\ *\ the\ random\ pool,\ 2)\ pass\ it\ to\ the\ polling\ callbacks,\ 3)\ seed\ the\ RNG,\ and}}
+\DoxyCodeLine{00066\ \textcolor{comment}{\ *\ 4)\ cleanup\ the\ random\ pool\ again.}}
+\DoxyCodeLine{00067\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00068\ \textcolor{comment}{\ *\ The\ random\ pool\ contains\ no\ locking\ mechanism\ because\ its\ scope\ and}}
+\DoxyCodeLine{00069\ \textcolor{comment}{\ *\ lifetime\ is\ intended\ to\ be\ restricted\ to\ a\ single\ stack\ frame.}}
+\DoxyCodeLine{00070\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00071\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structrand__pool__st}{rand\_pool\_st}}\ \{}
+\DoxyCodeLine{00072\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *buffer;\ \ \textcolor{comment}{/*\ points\ to\ the\ beginning\ of\ the\ random\ pool\ */}}
+\DoxyCodeLine{00073\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ len;\ \textcolor{comment}{/*\ current\ number\ of\ random\ bytes\ contained\ in\ the\ pool\ */}}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00075\ \ \ \ \ \textcolor{keywordtype}{int}\ attached;\ \ \textcolor{comment}{/*\ true\ pool\ was\ attached\ to\ existing\ buffer\ */}}
+\DoxyCodeLine{00076\ \ \ \ \ \textcolor{keywordtype}{int}\ secure;\ \ \ \ \textcolor{comment}{/*\ 1:\ allocated\ on\ the\ secure\ heap,\ 0:\ otherwise\ */}}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ min\_len;\ \textcolor{comment}{/*\ minimum\ number\ of\ random\ bytes\ requested\ */}}
+\DoxyCodeLine{00079\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ max\_len;\ \textcolor{comment}{/*\ maximum\ number\ of\ random\ bytes\ (allocated\ buffer\ size)\ */}}
+\DoxyCodeLine{00080\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ alloc\_len;\ \textcolor{comment}{/*\ current\ number\ of\ bytes\ allocated\ */}}
+\DoxyCodeLine{00081\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ entropy;\ \textcolor{comment}{/*\ current\ entropy\ count\ in\ bits\ */}}
+\DoxyCodeLine{00082\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ entropy\_requested;\ \textcolor{comment}{/*\ requested\ entropy\ count\ in\ bits\ */}}
+\DoxyCodeLine{00083\ \}\ \mbox{\hyperlink{structrand__pool__st}{RAND\_POOL}};}
+\DoxyCodeLine{00084\ }
+\DoxyCodeLine{00085\ \mbox{\hyperlink{structrand__pool__st}{RAND\_POOL}}\ *ossl\_rand\_pool\_new(\textcolor{keywordtype}{int}\ entropy\_requested,\ \textcolor{keywordtype}{int}\ secure,}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ min\_len,\ \textcolor{keywordtype}{size\_t}\ max\_len);}
+\DoxyCodeLine{00087\ \mbox{\hyperlink{structrand__pool__st}{RAND\_POOL}}\ *ossl\_rand\_pool\_attach(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *buffer,\ \textcolor{keywordtype}{size\_t}\ len,}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ entropy);}
+\DoxyCodeLine{00089\ \textcolor{keywordtype}{void}\ ossl\_rand\_pool\_free(\mbox{\hyperlink{structrand__pool__st}{RAND\_POOL}}\ *pool);}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *ossl\_rand\_pool\_buffer(\mbox{\hyperlink{structrand__pool__st}{RAND\_POOL}}\ *pool);}
+\DoxyCodeLine{00092\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *ossl\_rand\_pool\_detach(\mbox{\hyperlink{structrand__pool__st}{RAND\_POOL}}\ *pool);}
+\DoxyCodeLine{00093\ \textcolor{keywordtype}{void}\ ossl\_rand\_pool\_reattach(\mbox{\hyperlink{structrand__pool__st}{RAND\_POOL}}\ *pool,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *buffer);}
+\DoxyCodeLine{00094\ }
+\DoxyCodeLine{00095\ \textcolor{keywordtype}{size\_t}\ ossl\_rand\_pool\_entropy(\mbox{\hyperlink{structrand__pool__st}{RAND\_POOL}}\ *pool);}
+\DoxyCodeLine{00096\ \textcolor{keywordtype}{size\_t}\ ossl\_rand\_pool\_length(\mbox{\hyperlink{structrand__pool__st}{RAND\_POOL}}\ *pool);}
+\DoxyCodeLine{00097\ }
+\DoxyCodeLine{00098\ \textcolor{keywordtype}{size\_t}\ ossl\_rand\_pool\_entropy\_available(\mbox{\hyperlink{structrand__pool__st}{RAND\_POOL}}\ *pool);}
+\DoxyCodeLine{00099\ \textcolor{keywordtype}{size\_t}\ ossl\_rand\_pool\_entropy\_needed(\mbox{\hyperlink{structrand__pool__st}{RAND\_POOL}}\ *pool);}
+\DoxyCodeLine{00100\ \textcolor{comment}{/*\ |entropy\_factor|\ expresses\ how\ many\ bits\ of\ data\ contain\ 1\ bit\ of\ entropy\ */}}
+\DoxyCodeLine{00101\ \textcolor{keywordtype}{size\_t}\ ossl\_rand\_pool\_bytes\_needed(\mbox{\hyperlink{structrand__pool__st}{RAND\_POOL}}\ *pool,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ entropy\_factor);}
+\DoxyCodeLine{00102\ \textcolor{keywordtype}{size\_t}\ ossl\_rand\_pool\_bytes\_remaining(\mbox{\hyperlink{structrand__pool__st}{RAND\_POOL}}\ *pool);}
+\DoxyCodeLine{00103\ }
+\DoxyCodeLine{00104\ \textcolor{keywordtype}{int}\ ossl\_rand\_pool\_add(\mbox{\hyperlink{structrand__pool__st}{RAND\_POOL}}\ *pool,}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *buffer,\ \textcolor{keywordtype}{size\_t}\ len,\ \textcolor{keywordtype}{size\_t}\ entropy);}
+\DoxyCodeLine{00106\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *ossl\_rand\_pool\_add\_begin(\mbox{\hyperlink{structrand__pool__st}{RAND\_POOL}}\ *pool,\ \textcolor{keywordtype}{size\_t}\ len);}
+\DoxyCodeLine{00107\ \textcolor{keywordtype}{int}\ ossl\_rand\_pool\_add\_end(\mbox{\hyperlink{structrand__pool__st}{RAND\_POOL}}\ *pool,\ \textcolor{keywordtype}{size\_t}\ len,\ \textcolor{keywordtype}{size\_t}\ entropy);}
+\DoxyCodeLine{00108\ }
+\DoxyCodeLine{00109\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ OSSL\_PROVIDER\_RAND\_POOL\_H\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

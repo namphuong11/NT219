@@ -1,0 +1,575 @@
+\doxysection{quic\+\_\+record\+\_\+rx.\+h}
+\hypertarget{quic__record__rx_8h_source}{}\label{quic__record__rx_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/quic\_record\_rx.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/quic\_record\_rx.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2022-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_QUIC\_RECORD\_RX\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_QUIC\_RECORD\_RX\_H}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#\ include\ <openssl/ssl.h>}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ include\ "{}internal/quic\_wire\_pkt.h"{}}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#\ include\ "{}internal/quic\_types.h"{}}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#\ include\ "{}internal/quic\_record\_util.h"{}}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#\ include\ "{}internal/quic\_demux.h"{}}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#\ ifndef\ OPENSSL\_NO\_QUIC}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00022\ \textcolor{comment}{\ *\ QUIC\ Record\ Layer\ -\/\ RX}}
+\DoxyCodeLine{00023\ \textcolor{comment}{\ *\ ======================}}
+\DoxyCodeLine{00024\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00025\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__qrx__st}{ossl\_qrx\_st}}\ \mbox{\hyperlink{structossl__qrx__st}{OSSL\_QRX}};}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__qrx__args__st}{ossl\_qrx\_args\_st}}\ \{}
+\DoxyCodeLine{00028\ \ \ \ \ OSSL\_LIB\_CTX\ \ \ *libctx;}
+\DoxyCodeLine{00029\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ \ \ \ \ *propq;}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \ \ \ \ \textcolor{comment}{/*\ Demux\ to\ receive\ datagrams\ from.\ */}}
+\DoxyCodeLine{00032\ \ \ \ \ \mbox{\hyperlink{structquic__demux__st}{QUIC\_DEMUX}}\ \ \ \ \ *demux;}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{comment}{/*\ Length\ of\ connection\ IDs\ used\ in\ short-\/header\ packets\ in\ bytes.\ */}}
+\DoxyCodeLine{00035\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \ \ \ \ \ \ \ \ \ short\_conn\_id\_len;}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00038\ \textcolor{comment}{\ \ \ \ \ *\ Maximum\ number\ of\ deferred\ datagrams\ buffered\ at\ any\ one\ time.}}
+\DoxyCodeLine{00039\ \textcolor{comment}{\ \ \ \ \ *\ Suggested\ value:\ 32.}}
+\DoxyCodeLine{00040\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \ \ \ \ \ \ \ \ \ max\_deferred;}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{comment}{/*\ Initial\ reference\ PN\ used\ for\ RX.\ */}}
+\DoxyCodeLine{00044\ \ \ \ \ QUIC\_PN\ \ \ \ \ \ \ \ \ init\_largest\_pn[QUIC\_PN\_SPACE\_NUM];}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \ \ \ \ \textcolor{comment}{/*\ Initial\ key\ phase.\ For\ debugging\ use\ only;\ always\ 0\ in\ real\ use.\ */}}
+\DoxyCodeLine{00047\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \ \ init\_key\_phase\_bit;}
+\DoxyCodeLine{00048\ \}\ \mbox{\hyperlink{structossl__qrx__args__st}{OSSL\_QRX\_ARGS}};}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \textcolor{comment}{/*\ Instantiates\ a\ new\ QRX.\ */}}
+\DoxyCodeLine{00051\ \mbox{\hyperlink{structossl__qrx__st}{OSSL\_QRX}}\ *ossl\_qrx\_new(\textcolor{keyword}{const}\ \mbox{\hyperlink{structossl__qrx__args__st}{OSSL\_QRX\_ARGS}}\ *args);}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00054\ \textcolor{comment}{\ *\ Frees\ the\ QRX.\ All\ packets\ obtained\ using\ ossl\_qrx\_read\_pkt\ must\ already}}
+\DoxyCodeLine{00055\ \textcolor{comment}{\ *\ have\ been\ released\ by\ calling\ ossl\_qrx\_release\_pkt.}}
+\DoxyCodeLine{00056\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00057\ \textcolor{comment}{\ *\ You\ do\ not\ need\ to\ call\ ossl\_qrx\_remove\_dst\_conn\_id\ first;\ this\ function\ will}}
+\DoxyCodeLine{00058\ \textcolor{comment}{\ *\ unregister\ the\ QRX\ from\ the\ demuxer\ for\ all\ registered\ destination\ connection}}
+\DoxyCodeLine{00059\ \textcolor{comment}{\ *\ IDs\ (DCIDs)\ automatically.}}
+\DoxyCodeLine{00060\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00061\ \textcolor{keywordtype}{void}\ ossl\_qrx\_free(\mbox{\hyperlink{structossl__qrx__st}{OSSL\_QRX}}\ *qrx);}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00063\ \textcolor{comment}{/*\ Setters\ for\ the\ msg\_callback\ and\ msg\_callback\_arg\ */}}
+\DoxyCodeLine{00064\ \textcolor{keywordtype}{void}\ ossl\_qrx\_set\_msg\_callback(\mbox{\hyperlink{structossl__qrx__st}{OSSL\_QRX}}\ *qrx,\ ossl\_msg\_cb\ msg\_callback,}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ SSL\ *msg\_callback\_ssl);}
+\DoxyCodeLine{00066\ \textcolor{keywordtype}{void}\ ossl\_qrx\_set\_msg\_callback\_arg(\mbox{\hyperlink{structossl__qrx__st}{OSSL\_QRX}}\ *qrx,}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *msg\_callback\_arg);}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00070\ \textcolor{comment}{\ *\ DCID\ Management}}
+\DoxyCodeLine{00071\ \textcolor{comment}{\ *\ ===============}}
+\DoxyCodeLine{00072\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00074\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00075\ \textcolor{comment}{\ *\ Adds\ a\ given\ DCID\ to\ the\ QRX.\ The\ QRX\ will\ register\ the\ DCID\ with\ the\ demuxer}}
+\DoxyCodeLine{00076\ \textcolor{comment}{\ *\ so\ that\ incoming\ packets\ with\ that\ DCID\ are\ passed\ to\ the\ given\ QRX.\ Multiple}}
+\DoxyCodeLine{00077\ \textcolor{comment}{\ *\ DCIDs\ may\ be\ associated\ with\ a\ QRX\ at\ any\ one\ time.\ You\ will\ need\ to\ add\ at}}
+\DoxyCodeLine{00078\ \textcolor{comment}{\ *\ least\ one\ DCID\ after\ instantiating\ the\ QRX.\ A\ zero-\/length\ DCID\ is\ a\ valid}}
+\DoxyCodeLine{00079\ \textcolor{comment}{\ *\ input\ to\ this\ function.\ This\ function\ fails\ if\ the\ DCID\ is\ already}}
+\DoxyCodeLine{00080\ \textcolor{comment}{\ *\ registered.}}
+\DoxyCodeLine{00081\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00082\ \textcolor{comment}{\ *\ Returns\ 1\ on\ success\ or\ 0\ on\ error.}}
+\DoxyCodeLine{00083\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00084\ \textcolor{keywordtype}{int}\ ossl\_qrx\_add\_dst\_conn\_id(\mbox{\hyperlink{structossl__qrx__st}{OSSL\_QRX}}\ *qrx,}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__conn__id__st}{QUIC\_CONN\_ID}}\ *dst\_conn\_id);}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00087\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00088\ \textcolor{comment}{\ *\ Remove\ a\ DCID\ previously\ registered\ with\ ossl\_qrx\_add\_dst\_conn\_id.\ The\ DCID}}
+\DoxyCodeLine{00089\ \textcolor{comment}{\ *\ is\ unregistered\ from\ the\ demuxer.\ Fails\ if\ the\ DCID\ is\ not\ registered\ with}}
+\DoxyCodeLine{00090\ \textcolor{comment}{\ *\ the\ demuxer.}}
+\DoxyCodeLine{00091\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00092\ \textcolor{comment}{\ *\ Returns\ 1\ on\ success\ or\ 0\ on\ error.}}
+\DoxyCodeLine{00093\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00094\ \textcolor{keywordtype}{int}\ ossl\_qrx\_remove\_dst\_conn\_id(\mbox{\hyperlink{structossl__qrx__st}{OSSL\_QRX}}\ *qrx,}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__conn__id__st}{QUIC\_CONN\_ID}}\ *dst\_conn\_id);}
+\DoxyCodeLine{00096\ }
+\DoxyCodeLine{00097\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00098\ \textcolor{comment}{\ *\ Secret\ Management}}
+\DoxyCodeLine{00099\ \textcolor{comment}{\ *\ =================}}
+\DoxyCodeLine{00100\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00101\ \textcolor{comment}{\ *\ A\ QRX\ has\ several\ encryption\ levels\ (Initial,\ Handshake,\ 0-\/RTT,\ 1-\/RTT)\ and}}
+\DoxyCodeLine{00102\ \textcolor{comment}{\ *\ two\ directions\ (RX,\ TX).\ At\ any\ given\ time,\ key\ material\ is\ managed\ for\ each}}
+\DoxyCodeLine{00103\ \textcolor{comment}{\ *\ (EL,\ RX/TX)\ combination.}}
+\DoxyCodeLine{00104\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00105\ \textcolor{comment}{\ *\ Broadly,\ for\ a\ given\ (EL,\ RX/TX),\ the\ following\ state\ machine\ is\ applicable:}}
+\DoxyCodeLine{00106\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00107\ \textcolor{comment}{\ *\ \ \ WAITING\_FOR\_KEYS\ -\/-\/[Provide]-\/-\/>\ HAVE\_KEYS\ -\/-\/[Discard]-\/-\/>\ |\ DISCARDED\ |}}
+\DoxyCodeLine{00108\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \(\backslash\)-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/[Discard]-\/-\/>\ |\ \ \ \ \ \ \ \ \ \ \ |}}
+\DoxyCodeLine{00109\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00110\ \textcolor{comment}{\ *\ To\ transition\ the\ RX\ side\ of\ an\ EL\ from\ WAITING\_FOR\_KEYS\ to\ HAVE\_KEYS,\ call}}
+\DoxyCodeLine{00111\ \textcolor{comment}{\ *\ ossl\_qrx\_provide\_secret\ (for\ the\ INITIAL\ EL,\ use\ of}}
+\DoxyCodeLine{00112\ \textcolor{comment}{\ *\ ossl\_quic\_provide\_initial\_secret\ is\ recommended).}}
+\DoxyCodeLine{00113\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00114\ \textcolor{comment}{\ *\ Once\ keys\ have\ been\ provisioned\ for\ an\ EL,\ you\ call}}
+\DoxyCodeLine{00115\ \textcolor{comment}{\ *\ ossl\_qrx\_discard\_enc\_level\ to\ transition\ the\ EL\ to\ the\ DISCARDED\ state.\ You}}
+\DoxyCodeLine{00116\ \textcolor{comment}{\ *\ can\ also\ call\ this\ function\ to\ transition\ directly\ to\ the\ DISCARDED\ state}}
+\DoxyCodeLine{00117\ \textcolor{comment}{\ *\ even\ before\ any\ keys\ have\ been\ provisioned\ for\ that\ EL.}}
+\DoxyCodeLine{00118\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00119\ \textcolor{comment}{\ *\ The\ DISCARDED\ state\ is\ terminal\ for\ a\ given\ EL;\ you\ cannot\ provide\ a\ secret}}
+\DoxyCodeLine{00120\ \textcolor{comment}{\ *\ again\ for\ that\ EL\ after\ reaching\ it.}}
+\DoxyCodeLine{00121\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00122\ \textcolor{comment}{\ *\ Incoming\ packets\ cannot\ be\ processed\ and\ decrypted\ if\ they\ target\ an\ EL}}
+\DoxyCodeLine{00123\ \textcolor{comment}{\ *\ not\ in\ the\ HAVE\_KEYS\ state.\ However,\ there\ is\ a\ distinction\ between}}
+\DoxyCodeLine{00124\ \textcolor{comment}{\ *\ the\ WAITING\_FOR\_KEYS\ and\ DISCARDED\ states:}}
+\DoxyCodeLine{00125\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00126\ \textcolor{comment}{\ *\ \ \ -\/\ In\ the\ WAITING\_FOR\_KEYS\ state,\ the\ QRX\ assumes\ keys\ for\ the\ given}}
+\DoxyCodeLine{00127\ \textcolor{comment}{\ *\ \ \ \ \ EL\ will\ eventually\ arrive.\ Therefore,\ if\ it\ receives\ any\ packet}}
+\DoxyCodeLine{00128\ \textcolor{comment}{\ *\ \ \ \ \ for\ an\ EL\ in\ this\ state,\ it\ buffers\ it\ and\ tries\ to\ process\ it}}
+\DoxyCodeLine{00129\ \textcolor{comment}{\ *\ \ \ \ \ again\ once\ the\ EL\ reaches\ HAVE\_KEYS.}}
+\DoxyCodeLine{00130\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00131\ \textcolor{comment}{\ *\ \ \ -\/\ In\ the\ DISCARDED\ state,\ the\ QRX\ assumes\ no\ keys\ for\ the\ given}}
+\DoxyCodeLine{00132\ \textcolor{comment}{\ *\ \ \ \ \ EL\ will\ ever\ arrive\ again.\ If\ it\ receives\ any\ packet\ for\ an\ EL}}
+\DoxyCodeLine{00133\ \textcolor{comment}{\ *\ \ \ \ \ in\ this\ state,\ it\ is\ simply\ discarded.}}
+\DoxyCodeLine{00134\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00135\ \textcolor{comment}{\ *\ If\ the\ user\ wishes\ to\ instantiate\ a\ new\ QRX\ to\ replace\ an\ old\ one\ for}}
+\DoxyCodeLine{00136\ \textcolor{comment}{\ *\ whatever\ reason,\ for\ example\ to\ take\ over\ for\ an\ already\ established\ QUIC}}
+\DoxyCodeLine{00137\ \textcolor{comment}{\ *\ connection,\ it\ is\ important\ that\ all\ ELs\ no\ longer\ being\ used\ (i.e.,\ INITIAL,}}
+\DoxyCodeLine{00138\ \textcolor{comment}{\ *\ 0-\/RTT,\ 1-\/RTT)\ are\ transitioned\ to\ the\ DISCARDED\ state.\ Otherwise,\ the\ QRX}}
+\DoxyCodeLine{00139\ \textcolor{comment}{\ *\ will\ assume\ that\ keys\ for\ these\ ELs\ will\ arrive\ in\ future,\ and\ will\ buffer}}
+\DoxyCodeLine{00140\ \textcolor{comment}{\ *\ any\ received\ packets\ for\ those\ ELs\ perpetually.\ This\ can\ be\ done\ by\ calling}}
+\DoxyCodeLine{00141\ \textcolor{comment}{\ *\ ossl\_qrx\_discard\_enc\_level\ for\ all\ non-\/1-\/RTT\ ELs\ immediately\ after}}
+\DoxyCodeLine{00142\ \textcolor{comment}{\ *\ instantiating\ the\ QRX.}}
+\DoxyCodeLine{00143\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00144\ \textcolor{comment}{\ *\ The\ INITIAL\ EL\ is\ not\ setup\ automatically\ when\ the\ QRX\ is\ instantiated.\ This}}
+\DoxyCodeLine{00145\ \textcolor{comment}{\ *\ allows\ the\ caller\ to\ instead\ discard\ it\ immediately\ after\ instantiation\ of}}
+\DoxyCodeLine{00146\ \textcolor{comment}{\ *\ the\ QRX\ if\ it\ is\ not\ needed,\ for\ example\ if\ the\ QRX\ is\ being\ instantiated\ to}}
+\DoxyCodeLine{00147\ \textcolor{comment}{\ *\ take\ over\ handling\ of\ an\ existing\ connection\ which\ has\ already\ passed\ the}}
+\DoxyCodeLine{00148\ \textcolor{comment}{\ *\ INITIAL\ phase.\ This\ avoids\ the\ unnecessary\ derivation\ of\ INITIAL\ keys\ where}}
+\DoxyCodeLine{00149\ \textcolor{comment}{\ *\ they\ are\ not\ needed.\ In\ the\ ordinary\ case,\ ossl\_quic\_provide\_initial\_secret}}
+\DoxyCodeLine{00150\ \textcolor{comment}{\ *\ should\ be\ called\ immediately\ after\ instantiation.}}
+\DoxyCodeLine{00151\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00152\ }
+\DoxyCodeLine{00153\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00154\ \textcolor{comment}{\ *\ Provides\ a\ secret\ to\ the\ QRX,\ which\ arises\ due\ to\ an\ encryption\ level\ change.}}
+\DoxyCodeLine{00155\ \textcolor{comment}{\ *\ enc\_level\ is\ a\ QUIC\_ENC\_LEVEL\_*\ value.\ To\ initialise\ the\ INITIAL\ encryption}}
+\DoxyCodeLine{00156\ \textcolor{comment}{\ *\ level,\ it\ is\ recommended\ to\ use\ ossl\_quic\_provide\_initial\_secret\ instead.}}
+\DoxyCodeLine{00157\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00158\ \textcolor{comment}{\ *\ You\ should\ seek\ to\ call\ this\ function\ for\ a\ given\ EL\ before\ packets\ of\ that}}
+\DoxyCodeLine{00159\ \textcolor{comment}{\ *\ EL\ arrive\ and\ are\ processed\ by\ the\ QRX.\ However,\ if\ packets\ have\ already}}
+\DoxyCodeLine{00160\ \textcolor{comment}{\ *\ arrived\ for\ a\ given\ EL,\ the\ QRX\ will\ defer\ processing\ of\ them\ and\ perform}}
+\DoxyCodeLine{00161\ \textcolor{comment}{\ *\ processing\ of\ them\ when\ this\ function\ is\ eventually\ called\ for\ the\ EL\ in}}
+\DoxyCodeLine{00162\ \textcolor{comment}{\ *\ question.}}
+\DoxyCodeLine{00163\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00164\ \textcolor{comment}{\ *\ suite\_id\ is\ a\ QRL\_SUITE\_*\ value\ which\ determines\ the\ AEAD\ function\ used\ for}}
+\DoxyCodeLine{00165\ \textcolor{comment}{\ *\ the\ QRX.}}
+\DoxyCodeLine{00166\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00167\ \textcolor{comment}{\ *\ The\ secret\ passed\ is\ used\ directly\ to\ derive\ the\ "{}quic\ key"{},\ "{}quic\ iv"{}\ and}}
+\DoxyCodeLine{00168\ \textcolor{comment}{\ *\ "{}quic\ hp"{}\ values.}}
+\DoxyCodeLine{00169\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00170\ \textcolor{comment}{\ *\ secret\_len\ is\ the\ length\ of\ the\ secret\ buffer\ in\ bytes.\ The\ buffer\ must\ be}}
+\DoxyCodeLine{00171\ \textcolor{comment}{\ *\ sized\ correctly\ to\ the\ chosen\ suite,\ else\ the\ function\ fails.}}
+\DoxyCodeLine{00172\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00173\ \textcolor{comment}{\ *\ This\ function\ can\ only\ be\ called\ once\ for\ a\ given\ EL,\ except\ for\ the\ INITIAL}}
+\DoxyCodeLine{00174\ \textcolor{comment}{\ *\ EL,\ which\ can\ need\ rekeying\ when\ a\ connection\ retry\ occurs.\ Subsequent\ calls}}
+\DoxyCodeLine{00175\ \textcolor{comment}{\ *\ for\ non-\/INITIAL\ ELs\ fail,\ as\ do\ calls\ made\ after\ a\ corresponding\ call\ to}}
+\DoxyCodeLine{00176\ \textcolor{comment}{\ *\ ossl\_qrx\_discard\_enc\_level\ for\ that\ EL.\ The\ secret\ for\ a\ non-\/INITIAL\ EL}}
+\DoxyCodeLine{00177\ \textcolor{comment}{\ *\ cannot\ be\ changed\ after\ it\ is\ set\ because\ QUIC\ has\ no\ facility\ for}}
+\DoxyCodeLine{00178\ \textcolor{comment}{\ *\ introducing\ additional\ key\ material\ after\ an\ EL\ is\ setup.\ QUIC\ key\ updates}}
+\DoxyCodeLine{00179\ \textcolor{comment}{\ *\ are\ managed\ semi-\/automatically\ by\ the\ QRX\ but\ do\ require\ some\ caller\ handling}}
+\DoxyCodeLine{00180\ \textcolor{comment}{\ *\ (see\ below).}}
+\DoxyCodeLine{00181\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00182\ \textcolor{comment}{\ *\ md\ is\ for\ internal\ use\ and\ should\ be\ NULL.}}
+\DoxyCodeLine{00183\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00184\ \textcolor{comment}{\ *\ Returns\ 1\ on\ success\ or\ 0\ on\ failure.}}
+\DoxyCodeLine{00185\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00186\ \textcolor{keywordtype}{int}\ ossl\_qrx\_provide\_secret(\mbox{\hyperlink{structossl__qrx__st}{OSSL\_QRX}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ *qrx,}
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ enc\_level,}
+\DoxyCodeLine{00188\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ suite\_id,}
+\DoxyCodeLine{00189\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ EVP\_MD\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *md,}
+\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \ \ *secret,}
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ secret\_len);}
+\DoxyCodeLine{00192\ }
+\DoxyCodeLine{00193\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00194\ \textcolor{comment}{\ *\ Informs\ the\ QRX\ that\ it\ can\ now\ discard\ key\ material\ for\ a\ given\ EL.\ The\ QRX}}
+\DoxyCodeLine{00195\ \textcolor{comment}{\ *\ will\ no\ longer\ be\ able\ to\ process\ incoming\ packets\ received\ at\ that}}
+\DoxyCodeLine{00196\ \textcolor{comment}{\ *\ encryption\ level.\ This\ function\ is\ idempotent\ and\ succeeds\ if\ the\ EL\ has}}
+\DoxyCodeLine{00197\ \textcolor{comment}{\ *\ already\ been\ discarded.}}
+\DoxyCodeLine{00198\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00199\ \textcolor{comment}{\ *\ Returns\ 1\ on\ success\ and\ 0\ on\ failure.}}
+\DoxyCodeLine{00200\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00201\ \textcolor{keywordtype}{int}\ ossl\_qrx\_discard\_enc\_level(\mbox{\hyperlink{structossl__qrx__st}{OSSL\_QRX}}\ *qrx,\ uint32\_t\ enc\_level);}
+\DoxyCodeLine{00202\ }
+\DoxyCodeLine{00203\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00204\ \textcolor{comment}{\ *\ Packet\ Reception}}
+\DoxyCodeLine{00205\ \textcolor{comment}{\ *\ ================}}
+\DoxyCodeLine{00206\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00207\ }
+\DoxyCodeLine{00208\ \textcolor{comment}{/*\ Information\ about\ a\ received\ packet.\ */}}
+\DoxyCodeLine{00209\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__qrx__pkt__st}{ossl\_qrx\_pkt\_st}}\ \{}
+\DoxyCodeLine{00210\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00211\ \textcolor{comment}{\ \ \ \ \ *\ Points\ to\ a\ logical\ representation\ of\ the\ decoded\ QUIC\ packet\ header.\ The}}
+\DoxyCodeLine{00212\ \textcolor{comment}{\ \ \ \ \ *\ data\ and\ len\ fields\ point\ to\ the\ decrypted\ QUIC\ payload\ (i.e.,\ to\ a}}
+\DoxyCodeLine{00213\ \textcolor{comment}{\ \ \ \ \ *\ sequence\ of\ zero\ or\ more\ (potentially\ malformed)\ frames\ to\ be\ decoded).}}
+\DoxyCodeLine{00214\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00215\ \ \ \ \ \mbox{\hyperlink{structquic__pkt__hdr__st}{QUIC\_PKT\_HDR}}\ \ \ \ \ \ \ *hdr;}
+\DoxyCodeLine{00216\ }
+\DoxyCodeLine{00217\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00218\ \textcolor{comment}{\ \ \ \ \ *\ Address\ the\ packet\ was\ received\ from.\ If\ this\ is\ not\ available\ for\ this}}
+\DoxyCodeLine{00219\ \textcolor{comment}{\ \ \ \ \ *\ packet,\ this\ field\ is\ NULL\ (but\ this\ can\ only\ occur\ for\ manually\ injected}}
+\DoxyCodeLine{00220\ \textcolor{comment}{\ \ \ \ \ *\ packets).}}
+\DoxyCodeLine{00221\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00222\ \ \ \ \ \textcolor{keyword}{const}\ BIO\_ADDR\ \ \ \ \ *peer;}
+\DoxyCodeLine{00223\ }
+\DoxyCodeLine{00224\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00225\ \textcolor{comment}{\ \ \ \ \ *\ Local\ address\ the\ packet\ was\ sent\ to.\ If\ this\ is\ not\ available\ for\ this}}
+\DoxyCodeLine{00226\ \textcolor{comment}{\ \ \ \ \ *\ packet,\ this\ field\ is\ NULL.}}
+\DoxyCodeLine{00227\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00228\ \ \ \ \ \textcolor{keyword}{const}\ BIO\_ADDR\ \ \ \ \ *local;}
+\DoxyCodeLine{00229\ }
+\DoxyCodeLine{00230\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00231\ \textcolor{comment}{\ \ \ \ \ *\ This\ is\ the\ length\ of\ the\ datagram\ which\ contained\ this\ packet.\ Note\ that}}
+\DoxyCodeLine{00232\ \textcolor{comment}{\ \ \ \ \ *\ the\ datagram\ may\ have\ contained\ other\ packets\ than\ this.\ The\ intended\ use}}
+\DoxyCodeLine{00233\ \textcolor{comment}{\ \ \ \ \ *\ for\ this\ is\ so\ that\ the\ user\ can\ enforce\ minimum\ datagram\ sizes\ (e.g.\ for}}
+\DoxyCodeLine{00234\ \textcolor{comment}{\ \ \ \ \ *\ datagrams\ containing\ INITIAL\ packets),\ as\ required\ by\ RFC\ 9000.}}
+\DoxyCodeLine{00235\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00236\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \ \ \ \ \ \ \ \ \ \ \ \ \ datagram\_len;}
+\DoxyCodeLine{00237\ }
+\DoxyCodeLine{00238\ \ \ \ \ \textcolor{comment}{/*\ The\ PN\ which\ was\ decoded\ for\ the\ packet,\ if\ the\ packet\ has\ a\ PN\ field.\ */}}
+\DoxyCodeLine{00239\ \ \ \ \ QUIC\_PN\ \ \ \ \ \ \ \ \ \ \ \ \ pn;}
+\DoxyCodeLine{00240\ }
+\DoxyCodeLine{00241\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00242\ \textcolor{comment}{\ \ \ \ \ *\ Time\ the\ packet\ was\ received,\ or\ ossl\_time\_zero()\ if\ the\ demuxer\ is\ not}}
+\DoxyCodeLine{00243\ \textcolor{comment}{\ \ \ \ \ *\ using\ a\ now()\ function.}}
+\DoxyCodeLine{00244\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00245\ \ \ \ \ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ \ \ \ \ \ \ \ \ \ \ time;}
+\DoxyCodeLine{00246\ }
+\DoxyCodeLine{00247\ \ \ \ \ \textcolor{comment}{/*\ The\ QRX\ which\ was\ used\ to\ receive\ the\ packet.\ */}}
+\DoxyCodeLine{00248\ \ \ \ \ \mbox{\hyperlink{structossl__qrx__st}{OSSL\_QRX}}\ \ \ \ \ \ \ \ \ \ \ \ *qrx;}
+\DoxyCodeLine{00249\ }
+\DoxyCodeLine{00250\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00251\ \textcolor{comment}{\ \ \ \ \ *\ The\ key\ epoch\ the\ packet\ was\ received\ with.\ Always\ 0\ for\ non-\/1-\/RTT}}
+\DoxyCodeLine{00252\ \textcolor{comment}{\ \ \ \ \ *\ packets.}}
+\DoxyCodeLine{00253\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00254\ \ \ \ \ uint64\_t\ \ \ \ \ \ \ \ \ \ \ \ key\_epoch;}
+\DoxyCodeLine{00255\ \}\ \mbox{\hyperlink{structossl__qrx__pkt__st}{OSSL\_QRX\_PKT}};}
+\DoxyCodeLine{00256\ }
+\DoxyCodeLine{00257\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00258\ \textcolor{comment}{\ *\ Tries\ to\ read\ a\ new\ decrypted\ packet\ from\ the\ QRX.}}
+\DoxyCodeLine{00259\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00260\ \textcolor{comment}{\ *\ On\ success,\ *pkt\ points\ to\ a\ OSSL\_QRX\_PKT\ structure.\ The\ structure\ should\ be}}
+\DoxyCodeLine{00261\ \textcolor{comment}{\ *\ freed\ when\ no\ longer\ needed\ by\ calling\ ossl\_qrx\_pkt\_release().\ The\ structure}}
+\DoxyCodeLine{00262\ \textcolor{comment}{\ *\ is\ refcounted;\ to\ gain\ extra\ references,\ call\ ossl\_qrx\_pkt\_up\_ref().\ This}}
+\DoxyCodeLine{00263\ \textcolor{comment}{\ *\ will\ cause\ a\ corresponding\ number\ of\ calls\ to\ ossl\_qrx\_pkt\_release()\ to\ be}}
+\DoxyCodeLine{00264\ \textcolor{comment}{\ *\ ignored.}}
+\DoxyCodeLine{00265\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00266\ \textcolor{comment}{\ *\ The\ resources\ referenced\ by\ (*pkt)-\/>hdr,\ (*pkt)-\/>hdr-\/>data\ and\ (*pkt)-\/>peer}}
+\DoxyCodeLine{00267\ \textcolor{comment}{\ *\ have\ the\ same\ lifetime\ as\ *pkt.}}
+\DoxyCodeLine{00268\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00269\ \textcolor{comment}{\ *\ Returns\ 1\ on\ success\ and\ 0\ on\ failure.}}
+\DoxyCodeLine{00270\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00271\ \textcolor{keywordtype}{int}\ ossl\_qrx\_read\_pkt(\mbox{\hyperlink{structossl__qrx__st}{OSSL\_QRX}}\ *qrx,\ \mbox{\hyperlink{structossl__qrx__pkt__st}{OSSL\_QRX\_PKT}}\ **pkt);}
+\DoxyCodeLine{00272\ }
+\DoxyCodeLine{00273\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00274\ \textcolor{comment}{\ *\ Decrement\ the\ reference\ count\ for\ the\ given\ packet\ and\ frees\ it\ if\ the}}
+\DoxyCodeLine{00275\ \textcolor{comment}{\ *\ reference\ count\ drops\ to\ zero.\ No-\/op\ if\ pkt\ is\ NULL.}}
+\DoxyCodeLine{00276\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00277\ \textcolor{keywordtype}{void}\ ossl\_qrx\_pkt\_release(\mbox{\hyperlink{structossl__qrx__pkt__st}{OSSL\_QRX\_PKT}}\ *pkt);}
+\DoxyCodeLine{00278\ }
+\DoxyCodeLine{00279\ \textcolor{comment}{/*\ Increments\ the\ reference\ count\ for\ the\ given\ packet.\ */}}
+\DoxyCodeLine{00280\ \textcolor{keywordtype}{void}\ ossl\_qrx\_pkt\_up\_ref(\mbox{\hyperlink{structossl__qrx__pkt__st}{OSSL\_QRX\_PKT}}\ *pkt);}
+\DoxyCodeLine{00281\ }
+\DoxyCodeLine{00282\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00283\ \textcolor{comment}{\ *\ Returns\ 1\ if\ there\ are\ any\ already\ processed\ (i.e.\ decrypted)\ packets\ waiting}}
+\DoxyCodeLine{00284\ \textcolor{comment}{\ *\ to\ be\ read\ from\ the\ QRX.}}
+\DoxyCodeLine{00285\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00286\ \textcolor{keywordtype}{int}\ ossl\_qrx\_processed\_read\_pending(\mbox{\hyperlink{structossl__qrx__st}{OSSL\_QRX}}\ *qrx);}
+\DoxyCodeLine{00287\ }
+\DoxyCodeLine{00288\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00289\ \textcolor{comment}{\ *\ Returns\ 1\ if\ there\ are\ any\ unprocessed\ (i.e.\ not\ yet\ decrypted)\ packets}}
+\DoxyCodeLine{00290\ \textcolor{comment}{\ *\ waiting\ to\ be\ processed\ by\ the\ QRX.\ These\ may\ or\ may\ not\ result\ in}}
+\DoxyCodeLine{00291\ \textcolor{comment}{\ *\ successfully\ decrypted\ packets\ once\ processed.\ This\ indicates\ whether}}
+\DoxyCodeLine{00292\ \textcolor{comment}{\ *\ unprocessed\ data\ is\ buffered\ by\ the\ QRX,\ not\ whether\ any\ data\ is\ available\ in}}
+\DoxyCodeLine{00293\ \textcolor{comment}{\ *\ a\ kernel\ socket\ buffer.}}
+\DoxyCodeLine{00294\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00295\ \textcolor{keywordtype}{int}\ ossl\_qrx\_unprocessed\_read\_pending(\mbox{\hyperlink{structossl__qrx__st}{OSSL\_QRX}}\ *qrx);}
+\DoxyCodeLine{00296\ }
+\DoxyCodeLine{00297\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00298\ \textcolor{comment}{\ *\ Returns\ the\ number\ of\ UDP\ payload\ bytes\ received\ from\ the\ network\ so\ far}}
+\DoxyCodeLine{00299\ \textcolor{comment}{\ *\ since\ the\ last\ time\ this\ counter\ was\ cleared.\ If\ clear\ is\ 1,\ clears\ the}}
+\DoxyCodeLine{00300\ \textcolor{comment}{\ *\ counter\ and\ returns\ the\ old\ value.}}
+\DoxyCodeLine{00301\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00302\ \textcolor{comment}{\ *\ The\ intended\ use\ of\ this\ is\ to\ allow\ callers\ to\ determine\ how\ much\ credit\ to}}
+\DoxyCodeLine{00303\ \textcolor{comment}{\ *\ add\ to\ their\ anti-\/amplification\ budgets.\ This\ is\ reported\ separately\ instead}}
+\DoxyCodeLine{00304\ \textcolor{comment}{\ *\ of\ in\ the\ OSSL\_QRX\_PKT\ structure\ so\ that\ a\ caller\ can\ apply}}
+\DoxyCodeLine{00305\ \textcolor{comment}{\ *\ anti-\/amplification\ credit\ as\ soon\ as\ a\ datagram\ is\ received,\ before\ it\ has}}
+\DoxyCodeLine{00306\ \textcolor{comment}{\ *\ necessarily\ read\ all\ processed\ packets\ contained\ within\ that\ datagram\ from}}
+\DoxyCodeLine{00307\ \textcolor{comment}{\ *\ the\ QRX.}}
+\DoxyCodeLine{00308\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00309\ uint64\_t\ ossl\_qrx\_get\_bytes\_received(\mbox{\hyperlink{structossl__qrx__st}{OSSL\_QRX}}\ *qrx,\ \textcolor{keywordtype}{int}\ clear);}
+\DoxyCodeLine{00310\ }
+\DoxyCodeLine{00311\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00312\ \textcolor{comment}{\ *\ Sets\ a\ callback\ which\ is\ called\ when\ a\ packet\ is\ received\ and\ being\ validated}}
+\DoxyCodeLine{00313\ \textcolor{comment}{\ *\ before\ being\ queued\ in\ the\ read\ queue.\ This\ is\ called\ after\ packet\ body}}
+\DoxyCodeLine{00314\ \textcolor{comment}{\ *\ decryption\ and\ authentication\ to\ prevent\ exposing\ side\ channels.\ pn\_space\ is}}
+\DoxyCodeLine{00315\ \textcolor{comment}{\ *\ a\ QUIC\_PN\_SPACE\_*\ value\ denoting\ which\ PN\ space\ the\ PN\ belongs\ to.}}
+\DoxyCodeLine{00316\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00317\ \textcolor{comment}{\ *\ If\ this\ callback\ returns\ 1,\ processing\ continues\ normally.}}
+\DoxyCodeLine{00318\ \textcolor{comment}{\ *\ If\ this\ callback\ returns\ 0,\ the\ packet\ is\ discarded.}}
+\DoxyCodeLine{00319\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00320\ \textcolor{comment}{\ *\ Other\ packets\ in\ the\ same\ datagram\ will\ still\ be\ processed\ where\ possible.}}
+\DoxyCodeLine{00321\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00322\ \textcolor{comment}{\ *\ The\ callback\ is\ optional\ and\ can\ be\ unset\ by\ passing\ NULL\ for\ cb.}}
+\DoxyCodeLine{00323\ \textcolor{comment}{\ *\ cb\_arg\ is\ an\ opaque\ value\ passed\ to\ cb.}}
+\DoxyCodeLine{00324\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00325\ \textcolor{keyword}{typedef}\ int\ (ossl\_qrx\_late\_validation\_cb)(QUIC\_PN\ pn,\ \textcolor{keywordtype}{int}\ pn\_space,}
+\DoxyCodeLine{00326\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *arg);}
+\DoxyCodeLine{00327\ }
+\DoxyCodeLine{00328\ \textcolor{keywordtype}{int}\ ossl\_qrx\_set\_late\_validation\_cb(\mbox{\hyperlink{structossl__qrx__st}{OSSL\_QRX}}\ *qrx,}
+\DoxyCodeLine{00329\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ossl\_qrx\_late\_validation\_cb\ *cb,}
+\DoxyCodeLine{00330\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *cb\_arg);}
+\DoxyCodeLine{00331\ }
+\DoxyCodeLine{00332\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00333\ \textcolor{comment}{\ *\ Forcibly\ injects\ a\ URXE\ which\ has\ been\ issued\ by\ the\ DEMUX\ into\ the\ QRX\ for}}
+\DoxyCodeLine{00334\ \textcolor{comment}{\ *\ processing.\ This\ can\ be\ used\ to\ pass\ a\ received\ datagram\ to\ the\ QRX\ if\ it}}
+\DoxyCodeLine{00335\ \textcolor{comment}{\ *\ would\ not\ be\ correctly\ routed\ to\ the\ QRX\ via\ standard\ DCID-\/based\ routing;\ for}}
+\DoxyCodeLine{00336\ \textcolor{comment}{\ *\ example,\ when\ handling\ an\ incoming\ Initial\ packet\ which\ is\ attempting\ to}}
+\DoxyCodeLine{00337\ \textcolor{comment}{\ *\ establish\ a\ new\ connection.}}
+\DoxyCodeLine{00338\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00339\ \textcolor{keywordtype}{void}\ ossl\_qrx\_inject\_urxe(\mbox{\hyperlink{structossl__qrx__st}{OSSL\_QRX}}\ *qrx,\ \mbox{\hyperlink{structquic__urxe__st}{QUIC\_URXE}}\ *\mbox{\hyperlink{structe}{e}});}
+\DoxyCodeLine{00340\ }
+\DoxyCodeLine{00341\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00342\ \textcolor{comment}{\ *\ Decryption\ of\ 1-\/RTT\ packets\ must\ be\ explicitly\ enabled\ by\ calling\ this}}
+\DoxyCodeLine{00343\ \textcolor{comment}{\ *\ function.\ This\ is\ to\ comply\ with\ the\ requirement\ that\ we\ not\ process\ 1-\/RTT}}
+\DoxyCodeLine{00344\ \textcolor{comment}{\ *\ packets\ until\ the\ handshake\ is\ complete,\ even\ if\ we\ already\ have\ 1-\/RTT}}
+\DoxyCodeLine{00345\ \textcolor{comment}{\ *\ secrets.\ Even\ if\ a\ 1-\/RTT\ secret\ is\ provisioned\ for\ the\ QRX,\ incoming\ 1-\/RTT}}
+\DoxyCodeLine{00346\ \textcolor{comment}{\ *\ packets\ will\ be\ handled\ as\ though\ no\ key\ is\ available\ until\ this\ function\ is}}
+\DoxyCodeLine{00347\ \textcolor{comment}{\ *\ called.\ Calling\ this\ function\ will\ then\ requeue\ any\ such\ deferred\ packets\ for}}
+\DoxyCodeLine{00348\ \textcolor{comment}{\ *\ processing.}}
+\DoxyCodeLine{00349\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00350\ \textcolor{keywordtype}{void}\ ossl\_qrx\_allow\_1rtt\_processing(\mbox{\hyperlink{structossl__qrx__st}{OSSL\_QRX}}\ *qrx);}
+\DoxyCodeLine{00351\ }
+\DoxyCodeLine{00352\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00353\ \textcolor{comment}{\ *\ Key\ Update\ (RX)}}
+\DoxyCodeLine{00354\ \textcolor{comment}{\ *\ ===============}}
+\DoxyCodeLine{00355\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00356\ \textcolor{comment}{\ *\ Key\ update\ on\ the\ RX\ side\ is\ a\ largely\ but\ not\ entirely\ automatic\ process.}}
+\DoxyCodeLine{00357\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00358\ \textcolor{comment}{\ *\ Key\ update\ is\ initially\ triggered\ by\ receiving\ a\ 1-\/RTT\ packet\ with\ a}}
+\DoxyCodeLine{00359\ \textcolor{comment}{\ *\ different\ Key\ Phase\ value.\ This\ could\ be\ caused\ by\ an\ attacker\ in\ the\ network}}
+\DoxyCodeLine{00360\ \textcolor{comment}{\ *\ flipping\ random\ bits,\ therefore\ such\ a\ key\ update\ is\ tentative\ until\ the}}
+\DoxyCodeLine{00361\ \textcolor{comment}{\ *\ packet\ payload\ is\ successfully\ decrypted\ and\ authenticated\ by\ the\ AEAD\ with}}
+\DoxyCodeLine{00362\ \textcolor{comment}{\ *\ the\ 'next'\ keys.\ These\ 'next'\ keys\ then\ become\ the\ 'current'\ keys\ and\ the}}
+\DoxyCodeLine{00363\ \textcolor{comment}{\ *\ 'current'\ keys\ then\ become\ the\ 'previous'\ keys.\ The\ 'previous'\ keys\ must\ be}}
+\DoxyCodeLine{00364\ \textcolor{comment}{\ *\ kept\ around\ temporarily\ as\ some\ packets\ may\ still\ be\ in\ flight\ in\ the\ network}}
+\DoxyCodeLine{00365\ \textcolor{comment}{\ *\ encrypted\ with\ the\ old\ keys.\ If\ the\ old\ Key\ Phase\ value\ is\ X\ and\ the\ new\ Key}}
+\DoxyCodeLine{00366\ \textcolor{comment}{\ *\ Phase\ Value\ is\ Y\ (where\ obviously\ X\ !=\ Y),\ this\ creates\ an\ ambiguity\ as\ any}}
+\DoxyCodeLine{00367\ \textcolor{comment}{\ *\ new\ packet\ received\ with\ a\ KP\ of\ X\ could\ either\ be\ an\ attempt\ to\ initiate\ yet}}
+\DoxyCodeLine{00368\ \textcolor{comment}{\ *\ another\ key\ update\ right\ after\ the\ last\ one,\ or\ an\ old\ packet\ encrypted}}
+\DoxyCodeLine{00369\ \textcolor{comment}{\ *\ before\ the\ key\ update.}}
+\DoxyCodeLine{00370\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00371\ \textcolor{comment}{\ *\ RFC\ 9001\ provides\ some\ guidance\ on\ handling\ this\ issue:}}
+\DoxyCodeLine{00372\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00373\ \textcolor{comment}{\ *\ \ \ Strategy\ 1:}}
+\DoxyCodeLine{00374\ \textcolor{comment}{\ *\ \ \ \ \ \ Three\ keys,\ disambiguation\ using\ packet\ numbers}}
+\DoxyCodeLine{00375\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00376\ \textcolor{comment}{\ *\ \ \ \ \ \ "{}A\ recovered\ PN\ that\ is\ lower\ than\ any\ PN\ from\ the\ current\ KP\ uses\ the}}
+\DoxyCodeLine{00377\ \textcolor{comment}{\ *\ \ \ \ \ \ \ previous\ packet\ protection\ keys;\ a\ recovered\ PN\ that\ is\ higher\ than\ any}}
+\DoxyCodeLine{00378\ \textcolor{comment}{\ *\ \ \ \ \ \ \ PN\ from\ the\ current\ KP\ requires\ use\ of\ the\ next\ packet\ protection}}
+\DoxyCodeLine{00379\ \textcolor{comment}{\ *\ \ \ \ \ \ \ keys."{}}}
+\DoxyCodeLine{00380\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00381\ \textcolor{comment}{\ *\ \ \ Strategy\ 2:}}
+\DoxyCodeLine{00382\ \textcolor{comment}{\ *\ \ \ \ \ \ Two\ keys\ and\ a\ timer}}
+\DoxyCodeLine{00383\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00384\ \textcolor{comment}{\ *\ \ \ \ \ \ "{}Alternatively,\ endpoints\ can\ retain\ only\ two\ sets\ of\ packet\ protection}}
+\DoxyCodeLine{00385\ \textcolor{comment}{\ *\ \ \ \ \ \ \ keys,\ swapping\ previous\ keys\ for\ next\ after\ enough\ time\ has\ passed\ to}}
+\DoxyCodeLine{00386\ \textcolor{comment}{\ *\ \ \ \ \ \ \ allow\ for\ reordering\ in\ the\ network.\ In\ this\ case,\ the\ KP\ bit\ alone\ can}}
+\DoxyCodeLine{00387\ \textcolor{comment}{\ *\ \ \ \ \ \ \ be\ used\ to\ select\ keys."{}}}
+\DoxyCodeLine{00388\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00389\ \textcolor{comment}{\ *\ Strategy\ 2\ is\ more\ efficient\ (we\ can\ keep\ fewer\ cipher\ contexts\ around)\ and}}
+\DoxyCodeLine{00390\ \textcolor{comment}{\ *\ should\ cover\ all\ actually\ possible\ network\ conditions.\ It\ also\ allows\ a\ delay}}
+\DoxyCodeLine{00391\ \textcolor{comment}{\ *\ after\ we\ make\ the\ 'next'\ keys\ our\ 'current'\ keys\ before\ we\ generate\ new}}
+\DoxyCodeLine{00392\ \textcolor{comment}{\ *\ 'next'\ keys,\ which\ allows\ us\ to\ mitigate\ against\ malicious\ peers\ who\ try\ to}}
+\DoxyCodeLine{00393\ \textcolor{comment}{\ *\ initiate\ an\ excessive\ number\ of\ key\ updates.}}
+\DoxyCodeLine{00394\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00395\ \textcolor{comment}{\ *\ We\ therefore\ model\ the\ following\ state\ machine:}}
+\DoxyCodeLine{00396\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00397\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00398\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ PROVISIONED}}
+\DoxyCodeLine{00399\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_}}
+\DoxyCodeLine{00400\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ |\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ |}}
+\DoxyCodeLine{00401\ \textcolor{comment}{\ *\ \ \ UNPROVISIONED\ \ -\/-\/|-\/-\/-\/-\/>\ \ NORMAL\ \ <-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\(\backslash\)\ \ \ \ |-\/-\/-\/-\/-\/-\/>\ \ DISCARDED}}
+\DoxyCodeLine{00402\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ |\ \ \ \ \ \ \ \ \ \ |\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ |\ \ \ \ |}}
+\DoxyCodeLine{00403\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ |\ \ \ \ \ \ \ \ \ \ |\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ |\ \ \ \ |}}
+\DoxyCodeLine{00404\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ |\ \ \ \ \ \ \ \ \ \ v\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ |\ \ \ \ |}}
+\DoxyCodeLine{00405\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ |\ \ \ \ \ \ UPDATING\ \ \ \ \ \ \ \ \ \ \ \ |\ \ \ \ |}}
+\DoxyCodeLine{00406\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ |\ \ \ \ \ \ \ \ \ \ |\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ |\ \ \ \ |}}
+\DoxyCodeLine{00407\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ |\ \ \ \ \ \ \ \ \ \ |\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ |\ \ \ \ |}}
+\DoxyCodeLine{00408\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ |\ \ \ \ \ \ \ \ \ \ v\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ |\ \ \ \ |}}
+\DoxyCodeLine{00409\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ |\ \ \ \ \ \ \ COOLDOWN\ \ \ \ \ \ \ \ \ \ \ |\ \ \ \ |}}
+\DoxyCodeLine{00410\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ |\ \ \ \ \ \ \ \ \ \ |\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ |\ \ \ \ |}}
+\DoxyCodeLine{00411\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ |\ \ \ \ \ \ \ \ \ \ |\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ |\ \ \ \ |}}
+\DoxyCodeLine{00412\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ |\ \ \ \ \ \ \ \ \ \ \(\backslash\)-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/|\ \ \ \ |}}
+\DoxyCodeLine{00413\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|}}
+\DoxyCodeLine{00414\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00415\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00416\ \textcolor{comment}{\ *\ The\ RX\ starts\ (once\ a\ secret\ has\ been\ provisioned)\ in\ the\ NORMAL\ state.\ In}}
+\DoxyCodeLine{00417\ \textcolor{comment}{\ *\ the\ NORMAL\ state,\ the\ current\ expected\ value\ of\ the\ Key\ Phase\ bit\ is}}
+\DoxyCodeLine{00418\ \textcolor{comment}{\ *\ recorded.\ When\ a\ flipped\ Key\ Phase\ bit\ is\ detected,\ the\ RX\ attempts\ to}}
+\DoxyCodeLine{00419\ \textcolor{comment}{\ *\ decrypt\ and\ authenticate\ the\ received\ packet\ with\ the\ 'next'\ keys\ rather\ than}}
+\DoxyCodeLine{00420\ \textcolor{comment}{\ *\ the\ 'current'\ keys.\ If\ (and\ only\ if)\ this\ authentication\ is\ successful,\ we}}
+\DoxyCodeLine{00421\ \textcolor{comment}{\ *\ move\ to\ the\ UPDATING\ state.\ (An\ attacker\ in\ the\ network\ could\ flip}}
+\DoxyCodeLine{00422\ \textcolor{comment}{\ *\ the\ Key\ Phase\ bit\ randomly,\ so\ it\ is\ essential\ we\ do\ nothing\ until\ AEAD}}
+\DoxyCodeLine{00423\ \textcolor{comment}{\ *\ authentication\ is\ complete.)}}
+\DoxyCodeLine{00424\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00425\ \textcolor{comment}{\ *\ In\ the\ UPDATING\ state,\ we\ know\ a\ key\ update\ is\ occurring\ and\ record}}
+\DoxyCodeLine{00426\ \textcolor{comment}{\ *\ the\ new\ Key\ Phase\ bit\ value\ as\ the\ newly\ current\ value,\ but\ we\ still\ keep\ the}}
+\DoxyCodeLine{00427\ \textcolor{comment}{\ *\ old\ keys\ around\ so\ that\ we\ can\ still\ process\ any\ packets\ which\ were\ still\ in}}
+\DoxyCodeLine{00428\ \textcolor{comment}{\ *\ flight\ when\ the\ key\ update\ was\ initiated.\ In\ the\ UPDATING\ state,\ a}}
+\DoxyCodeLine{00429\ \textcolor{comment}{\ *\ Key\ Phase\ bit\ value\ different\ to\ the\ current\ expected\ value\ is\ treated\ not\ as}}
+\DoxyCodeLine{00430\ \textcolor{comment}{\ *\ the\ initiation\ of\ another\ key\ update,\ but\ a\ reference\ to\ our\ old\ keys.}}
+\DoxyCodeLine{00431\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00432\ \textcolor{comment}{\ *\ Eventually\ we\ will\ be\ reasonably\ sure\ we\ are\ not\ going\ to\ receive\ any\ more}}
+\DoxyCodeLine{00433\ \textcolor{comment}{\ *\ packets\ with\ the\ old\ keys.\ At\ this\ point,\ we\ can\ transition\ to\ the\ COOLDOWN}}
+\DoxyCodeLine{00434\ \textcolor{comment}{\ *\ state.\ This\ transition\ occurs\ automatically\ after\ a\ certain\ amount\ of\ time;}}
+\DoxyCodeLine{00435\ \textcolor{comment}{\ *\ RFC\ 9001\ recommends\ it\ be\ the\ PTO\ interval,\ which\ relates\ to\ our\ RTT\ to\ the}}
+\DoxyCodeLine{00436\ \textcolor{comment}{\ *\ peer.\ The\ duration\ also\ SHOULD\ NOT\ exceed\ three\ times\ the\ PTO\ to\ assist\ with}}
+\DoxyCodeLine{00437\ \textcolor{comment}{\ *\ maintaining\ PFS.}}
+\DoxyCodeLine{00438\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00439\ \textcolor{comment}{\ *\ In\ the\ COOLDOWN\ phase,\ the\ old\ keys\ have\ been\ securely\ erased\ and\ only\ one}}
+\DoxyCodeLine{00440\ \textcolor{comment}{\ *\ set\ of\ keys\ can\ be\ used:\ the\ current\ keys.\ If\ a\ packet\ is\ received\ with\ a\ Key}}
+\DoxyCodeLine{00441\ \textcolor{comment}{\ *\ Phase\ bit\ value\ different\ to\ the\ current\ Key\ Phase\ Bit\ value,\ this\ is\ treated}}
+\DoxyCodeLine{00442\ \textcolor{comment}{\ *\ as\ a\ request\ for\ a\ Key\ Update,\ but\ this\ request\ is\ ignored\ and\ the\ packet\ is}}
+\DoxyCodeLine{00443\ \textcolor{comment}{\ *\ treated\ as\ malformed.\ We\ do\ this\ to\ allow\ mitigation\ against\ malicious\ peers}}
+\DoxyCodeLine{00444\ \textcolor{comment}{\ *\ trying\ to\ initiate\ an\ excessive\ number\ of\ Key\ Updates.\ The\ timeout\ for\ the}}
+\DoxyCodeLine{00445\ \textcolor{comment}{\ *\ transition\ from\ UPDATING\ to\ COOLDOWN\ is\ recommended\ as\ adequate\ for}}
+\DoxyCodeLine{00446\ \textcolor{comment}{\ *\ this\ purpose\ in\ itself\ by\ the\ RFC,\ so\ the\ normal\ additional\ timeout\ value\ for}}
+\DoxyCodeLine{00447\ \textcolor{comment}{\ *\ the\ transition\ from\ COOLDOWN\ to\ normal\ is\ zero\ (immediate\ transition).}}
+\DoxyCodeLine{00448\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00449\ \textcolor{comment}{\ *\ A\ summary\ of\ each\ state:}}
+\DoxyCodeLine{00450\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00451\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Epoch\ \ Exp\ KP\ \ Uses\ Keys\ KS0\ \ \ \ KS1\ \ \ \ If\ Non-\/Expected\ KP\ Bit}}
+\DoxyCodeLine{00452\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ -\/-\/-\/-\/-\/\ \ -\/-\/-\/-\/-\/-\/\ \ -\/-\/-\/-\/-\/-\/-\/-\/-\/\ -\/-\/-\/-\/-\/-\/\ -\/-\/-\/-\/-\/\ \ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00453\ \textcolor{comment}{\ *\ \ \ \ \ \ NORMAL\ \ \ \ \ \ \ \ \ 0\ \ 0\ \ \ \ \ \ \ Keyset\ 0\ \ Gen\ 0\ \ Gen\ 1\ \ →\ UPDATING}}
+\DoxyCodeLine{00454\ \textcolor{comment}{\ *\ \ \ \ \ \ UPDATING\ \ \ \ \ \ \ 1\ \ 1\ \ \ \ \ \ \ Keyset\ 1\ \ Gen\ 0\ \ Gen\ 1\ \ Use\ Keyset\ 0}}
+\DoxyCodeLine{00455\ \textcolor{comment}{\ *\ \ \ \ \ \ COOLDOWN\ \ \ \ \ \ \ 1\ \ 1\ \ \ \ \ \ \ Keyset\ 1\ \ Erased\ Gen\ 1\ \ Ignore\ Packet\ (*)}}
+\DoxyCodeLine{00456\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00457\ \textcolor{comment}{\ *\ \ \ \ \ \ NORMAL\ \ \ \ \ \ \ \ \ 1\ \ 1\ \ \ \ \ \ \ Keyset\ 1\ \ Gen\ 2\ \ Gen\ 1\ \ →\ UPDATING}}
+\DoxyCodeLine{00458\ \textcolor{comment}{\ *\ \ \ \ \ \ UPDATING\ \ \ \ \ \ \ 2\ \ 0\ \ \ \ \ \ \ Keyset\ 0\ \ Gen\ 2\ \ Gen\ 1\ \ Use\ Keyset\ 1}}
+\DoxyCodeLine{00459\ \textcolor{comment}{\ *\ \ \ \ \ \ COOLDOWN\ \ \ \ \ \ \ 2\ \ 0\ \ \ \ \ \ \ Keyset\ 0\ \ Gen\ 2\ \ Erased\ Ignore\ Packet\ (*)}}
+\DoxyCodeLine{00460\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00461\ \textcolor{comment}{\ *\ (*)\ Actually\ implemented\ by\ attempting\ to\ decrypt\ the\ packet\ with\ the}}
+\DoxyCodeLine{00462\ \textcolor{comment}{\ *\ \ \ \ \ wrong\ keys\ (which\ ultimately\ has\ the\ same\ outcome),\ as\ recommended}}
+\DoxyCodeLine{00463\ \textcolor{comment}{\ *\ \ \ \ \ by\ RFC\ 9001\ to\ avoid\ creating\ timing\ channels.}}
+\DoxyCodeLine{00464\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00465\ \textcolor{comment}{\ *\ Note\ that\ the\ key\ material\ for\ the\ next\ key\ generation\ ("{}key\ epoch"{})\ is}}
+\DoxyCodeLine{00466\ \textcolor{comment}{\ *\ always\ kept\ in\ the\ NORMAL\ state\ (necessary\ to\ avoid\ side-\/channel\ attacks).}}
+\DoxyCodeLine{00467\ \textcolor{comment}{\ *\ This\ material\ is\ derived\ during\ the\ transition\ from\ COOLDOWN\ to\ NORMAL.}}
+\DoxyCodeLine{00468\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00469\ \textcolor{comment}{\ *\ Note\ that\ when\ a\ peer\ initiates\ a\ Key\ Update,\ we\ MUST\ also\ initiate\ a\ Key}}
+\DoxyCodeLine{00470\ \textcolor{comment}{\ *\ Update\ as\ per\ the\ RFC.\ The\ caller\ is\ responsible\ for\ detecting\ this\ condition}}
+\DoxyCodeLine{00471\ \textcolor{comment}{\ *\ and\ making\ the\ necessary\ calls\ to\ the\ TX\ side\ by\ detecting\ changes\ to\ the}}
+\DoxyCodeLine{00472\ \textcolor{comment}{\ *\ return\ value\ of\ ossl\_qrx\_get\_key\_epoch().}}
+\DoxyCodeLine{00473\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00474\ \textcolor{comment}{\ *\ The\ above\ states\ (NORMAL,\ UPDATING,\ COOLDOWN)\ can\ themselves\ be}}
+\DoxyCodeLine{00475\ \textcolor{comment}{\ *\ considered\ substates\ of\ the\ PROVISIONED\ state.\ Providing\ a\ secret\ to\ the\ QRX}}
+\DoxyCodeLine{00476\ \textcolor{comment}{\ *\ for\ an\ EL\ transitions\ from\ UNPROVISIONED,\ the\ initial\ state,\ to\ PROVISIONED}}
+\DoxyCodeLine{00477\ \textcolor{comment}{\ *\ (NORMAL).\ Dropping\ key\ material\ for\ an\ EL\ transitions\ from\ whatever\ the}}
+\DoxyCodeLine{00478\ \textcolor{comment}{\ *\ current\ substate\ of\ the\ PROVISIONED\ state\ is\ to\ the\ DISCARDED\ state,\ which\ is}}
+\DoxyCodeLine{00479\ \textcolor{comment}{\ *\ the\ terminal\ state.}}
+\DoxyCodeLine{00480\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00481\ \textcolor{comment}{\ *\ Note\ that\ non-\/1RTT\ ELs\ cannot\ undergo\ key\ update,\ therefore\ a\ non-\/1RTT\ EL\ is}}
+\DoxyCodeLine{00482\ \textcolor{comment}{\ *\ always\ in\ the\ NORMAL\ substate\ if\ it\ is\ in\ the\ PROVISIONED\ state.}}
+\DoxyCodeLine{00483\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00484\ }
+\DoxyCodeLine{00485\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00486\ \textcolor{comment}{\ *\ Return\ the\ current\ RX\ key\ epoch\ for\ the\ 1-\/RTT\ encryption\ level.\ This\ is}}
+\DoxyCodeLine{00487\ \textcolor{comment}{\ *\ initially\ zero\ and\ is\ incremented\ by\ one\ for\ every\ Key\ Update\ successfully}}
+\DoxyCodeLine{00488\ \textcolor{comment}{\ *\ signalled\ by\ the\ peer.\ If\ the\ 1-\/RTT\ EL\ has\ not\ yet\ been\ provisioned\ or\ has}}
+\DoxyCodeLine{00489\ \textcolor{comment}{\ *\ been\ discarded,\ returns\ UINT64\_MAX.}}
+\DoxyCodeLine{00490\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00491\ \textcolor{comment}{\ *\ A\ necessary\ implication\ of\ this\ API\ is\ that\ the\ least\ significant\ bit\ of\ the}}
+\DoxyCodeLine{00492\ \textcolor{comment}{\ *\ returned\ value\ corresponds\ to\ the\ currently\ expected\ Key\ Phase\ bit,\ though}}
+\DoxyCodeLine{00493\ \textcolor{comment}{\ *\ callers\ are\ not\ anticipated\ to\ have\ any\ need\ of\ this\ information.}}
+\DoxyCodeLine{00494\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00495\ \textcolor{comment}{\ *\ It\ is\ not\ possible\ for\ the\ returned\ value\ to\ overflow,\ as\ a\ QUIC\ connection}}
+\DoxyCodeLine{00496\ \textcolor{comment}{\ *\ cannot\ support\ more\ than\ 2**62\ packet\ numbers,\ and\ a\ connection\ must\ be}}
+\DoxyCodeLine{00497\ \textcolor{comment}{\ *\ terminated\ if\ this\ limit\ is\ reached.}}
+\DoxyCodeLine{00498\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00499\ \textcolor{comment}{\ *\ The\ caller\ should\ use\ this\ function\ to\ detect\ when\ the\ key\ epoch\ has\ changed}}
+\DoxyCodeLine{00500\ \textcolor{comment}{\ *\ and\ use\ it\ to\ initiate\ a\ key\ update\ on\ the\ TX\ side.}}
+\DoxyCodeLine{00501\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00502\ \textcolor{comment}{\ *\ The\ value\ returned\ by\ this\ function\ increments\ specifically\ at\ the\ transition}}
+\DoxyCodeLine{00503\ \textcolor{comment}{\ *\ from\ the\ NORMAL\ to\ the\ UPDATING\ state\ discussed\ above.}}
+\DoxyCodeLine{00504\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00505\ uint64\_t\ ossl\_qrx\_get\_key\_epoch(\mbox{\hyperlink{structossl__qrx__st}{OSSL\_QRX}}\ *qrx);}
+\DoxyCodeLine{00506\ }
+\DoxyCodeLine{00507\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00508\ \textcolor{comment}{\ *\ Sets\ an\ optional\ callback\ which\ will\ be\ called\ when\ the\ key\ epoch\ changes.}}
+\DoxyCodeLine{00509\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00510\ \textcolor{comment}{\ *\ The\ callback\ is\ optional\ and\ can\ be\ unset\ by\ passing\ NULL\ for\ cb.}}
+\DoxyCodeLine{00511\ \textcolor{comment}{\ *\ cb\_arg\ is\ an\ opaque\ value\ passed\ to\ cb.\ pn\ is\ the\ PN\ of\ the\ packet.}}
+\DoxyCodeLine{00512\ \textcolor{comment}{\ *\ Since\ key\ update\ is\ only\ supported\ for\ 1-\/RTT\ packets,\ the\ PN\ is\ always}}
+\DoxyCodeLine{00513\ \textcolor{comment}{\ *\ in\ the\ Application\ Data\ PN\ space.}}
+\DoxyCodeLine{00514\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00515\ \textcolor{keyword}{typedef}\ void\ (ossl\_qrx\_key\_update\_cb)(QUIC\_PN\ pn,\ \textcolor{keywordtype}{void}\ *arg);}
+\DoxyCodeLine{00516\ }
+\DoxyCodeLine{00517\ \textcolor{keywordtype}{int}\ ossl\_qrx\_set\_key\_update\_cb(\mbox{\hyperlink{structossl__qrx__st}{OSSL\_QRX}}\ *qrx,}
+\DoxyCodeLine{00518\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ossl\_qrx\_key\_update\_cb\ *cb,\ \textcolor{keywordtype}{void}\ *cb\_arg);}
+\DoxyCodeLine{00519\ }
+\DoxyCodeLine{00520\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00521\ \textcolor{comment}{\ *\ Relates\ to\ the\ 1-\/RTT\ encryption\ level.\ The\ caller\ should\ call\ this\ after\ the}}
+\DoxyCodeLine{00522\ \textcolor{comment}{\ *\ UPDATING\ state\ is\ reached,\ after\ a\ timeout\ to\ be\ determined\ by\ the\ caller.}}
+\DoxyCodeLine{00523\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00524\ \textcolor{comment}{\ *\ This\ transitions\ from\ the\ UPDATING\ state\ to\ the\ COOLDOWN\ state\ (if}}
+\DoxyCodeLine{00525\ \textcolor{comment}{\ *\ still\ in\ the\ UPDATING\ state).\ If\ normal\ is\ 1,\ then\ transitions\ from}}
+\DoxyCodeLine{00526\ \textcolor{comment}{\ *\ the\ COOLDOWN\ state\ to\ the\ NORMAL\ state.\ Both\ transitions\ can\ be\ performed\ at}}
+\DoxyCodeLine{00527\ \textcolor{comment}{\ *\ once\ if\ desired.}}
+\DoxyCodeLine{00528\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00529\ \textcolor{comment}{\ *\ If\ in\ the\ normal\ state,\ or\ if\ in\ the\ COOLDOWN\ state\ and\ normal\ is\ 0,\ this\ is}}
+\DoxyCodeLine{00530\ \textcolor{comment}{\ *\ a\ no-\/op\ and\ returns\ 1.\ Returns\ 0\ if\ the\ 1-\/RTT\ EL\ has\ not\ been\ provisioned\ or}}
+\DoxyCodeLine{00531\ \textcolor{comment}{\ *\ has\ been\ dropped.}}
+\DoxyCodeLine{00532\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00533\ \textcolor{comment}{\ *\ It\ is\ essential\ that\ the\ caller\ call\ this\ within\ a\ few\ PTO\ intervals\ of\ a\ key}}
+\DoxyCodeLine{00534\ \textcolor{comment}{\ *\ update\ occurring\ (as\ detected\ by\ the\ caller\ in\ a\ call\ to}}
+\DoxyCodeLine{00535\ \textcolor{comment}{\ *\ ossl\_qrx\_key\_get\_key\_epoch()),\ as\ otherwise\ the\ peer\ will\ not\ be\ able\ to}}
+\DoxyCodeLine{00536\ \textcolor{comment}{\ *\ perform\ a\ Key\ Update\ ever\ again.}}
+\DoxyCodeLine{00537\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00538\ \textcolor{keywordtype}{int}\ ossl\_qrx\_key\_update\_timeout(\mbox{\hyperlink{structossl__qrx__st}{OSSL\_QRX}}\ *qrx,\ \textcolor{keywordtype}{int}\ normal);}
+\DoxyCodeLine{00539\ }
+\DoxyCodeLine{00540\ }
+\DoxyCodeLine{00541\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00542\ \textcolor{comment}{\ *\ Key\ Expiration}}
+\DoxyCodeLine{00543\ \textcolor{comment}{\ *\ ==============}}
+\DoxyCodeLine{00544\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00545\ }
+\DoxyCodeLine{00546\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00547\ \textcolor{comment}{\ *\ Returns\ the\ number\ of\ seemingly\ forged\ packets\ which\ have\ been\ received\ by}}
+\DoxyCodeLine{00548\ \textcolor{comment}{\ *\ the\ QRX.\ If\ this\ value\ reaches\ the\ value\ returned\ by}}
+\DoxyCodeLine{00549\ \textcolor{comment}{\ *\ ossl\_qrx\_get\_max\_epoch\_forged\_pkt\_count()\ for\ a\ given\ EL,\ all\ further}}
+\DoxyCodeLine{00550\ \textcolor{comment}{\ *\ received\ encrypted\ packets\ for\ that\ EL\ will\ be\ discarded\ without\ processing.}}
+\DoxyCodeLine{00551\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00552\ \textcolor{comment}{\ *\ Note\ that\ the\ forged\ packet\ limit\ is\ for\ the\ connection\ lifetime,\ thus\ it\ is}}
+\DoxyCodeLine{00553\ \textcolor{comment}{\ *\ not\ reset\ by\ a\ key\ update.\ It\ is\ suggested\ that\ the\ caller\ terminate\ the}}
+\DoxyCodeLine{00554\ \textcolor{comment}{\ *\ connection\ a\ reasonable\ margin\ before\ the\ limit\ is\ reached.\ However,\ the}}
+\DoxyCodeLine{00555\ \textcolor{comment}{\ *\ exact\ limit\ imposed\ does\ vary\ by\ EL\ due\ to\ the\ possibility\ that\ different\ ELs}}
+\DoxyCodeLine{00556\ \textcolor{comment}{\ *\ use\ different\ AEADs.}}
+\DoxyCodeLine{00557\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00558\ uint64\_t\ ossl\_qrx\_get\_cur\_forged\_pkt\_count(\mbox{\hyperlink{structossl__qrx__st}{OSSL\_QRX}}\ *qrx);}
+\DoxyCodeLine{00559\ }
+\DoxyCodeLine{00560\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00561\ \textcolor{comment}{\ *\ Returns\ the\ maximum\ number\ of\ forged\ packets\ which\ the\ record\ layer\ will}}
+\DoxyCodeLine{00562\ \textcolor{comment}{\ *\ permit\ to\ be\ verified\ using\ this\ QRX\ instance.}}
+\DoxyCodeLine{00563\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00564\ uint64\_t\ ossl\_qrx\_get\_max\_forged\_pkt\_count(\mbox{\hyperlink{structossl__qrx__st}{OSSL\_QRX}}\ *qrx,}
+\DoxyCodeLine{00565\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ enc\_level);}
+\DoxyCodeLine{00566\ }
+\DoxyCodeLine{00567\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00568\ }
+\DoxyCodeLine{00569\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

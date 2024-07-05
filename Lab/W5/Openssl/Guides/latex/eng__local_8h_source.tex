@@ -1,0 +1,175 @@
+\doxysection{eng\+\_\+local.\+h}
+\hypertarget{eng__local_8h_source}{}\label{eng__local_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/engine/eng\_local.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/engine/eng\_local.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2001-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *\ Copyright\ (c)\ 2002,\ Oracle\ and/or\ its\ affiliates.\ All\ rights\ reserved}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#ifndef\ OSSL\_CRYPTO\_ENGINE\_ENG\_LOCAL\_H}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#\ define\ OSSL\_CRYPTO\_ENGINE\_ENG\_LOCAL\_H}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ include\ <openssl/trace.h>}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#\ include\ "{}internal/cryptlib.h"{}}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#\ include\ "{}crypto/engine.h"{}}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#\ include\ "{}internal/thread\_once.h"{}}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#\ include\ "{}internal/refcount.h"{}}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{keyword}{extern}\ CRYPTO\_RWLOCK\ *global\_engine\_lock;}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00023\ \textcolor{comment}{\ *\ This\ prints\ the\ engine's\ pointer\ address,\ "{}struct"{}\ or\ "{}funct"{}\ to}}
+\DoxyCodeLine{00024\ \textcolor{comment}{\ *\ indicate\ the\ reference\ type,\ the\ before\ and\ after\ reference\ count,\ and}}
+\DoxyCodeLine{00025\ \textcolor{comment}{\ *\ the\ file:line-\/number\ pair.\ The\ "{}ENGINE\_REF\_PRINT"{}\ statements\ must\ come}}
+\DoxyCodeLine{00026\ \textcolor{comment}{\ *\ *after*\ the\ change.}}
+\DoxyCodeLine{00027\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#\ define\ ENGINE\_REF\_PRINT(e,\ isfunct,\ diff)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\ \ \ \ OSSL\_TRACE6(ENGINE\_REF\_COUNT,\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ "{}engine:\ \%p\ \%s\ from\ \%d\ to\ \%d\ (\%s:\%d)\(\backslash\)n"{},\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (void\ *)(e),\ (isfunct\ ?\ "{}funct"{}\ :\ "{}struct"{}),\ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ((isfunct)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ?\ ((e)-\/>funct\_ref\ -\/\ (diff))\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ (eng\_struct\_ref(e)\ -\/\ (diff))),\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ((isfunct)\ ?\ (e)-\/>funct\_ref\ :\ eng\_struct\_ref(e)),\ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (OPENSSL\_FILE),\ (OPENSSL\_LINE))}}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00039\ \textcolor{comment}{\ *\ Any\ code\ that\ will\ need\ cleanup\ operations\ should\ use\ these\ functions\ to}}
+\DoxyCodeLine{00040\ \textcolor{comment}{\ *\ register\ callbacks.\ engine\_cleanup\_int()\ will\ call\ all\ registered}}
+\DoxyCodeLine{00041\ \textcolor{comment}{\ *\ callbacks\ in\ order.\ NB:\ both\ the\ "{}add"{}\ functions\ assume\ the\ engine\ lock\ to}}
+\DoxyCodeLine{00042\ \textcolor{comment}{\ *\ already\ be\ held\ (in\ "{}write"{}\ mode).}}
+\DoxyCodeLine{00043\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00044\ \textcolor{keyword}{typedef}\ void\ (ENGINE\_CLEANUP\_CB)\ (void);}
+\DoxyCodeLine{00045\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structst__engine__cleanup__item}{st\_engine\_cleanup\_item}}\ \{}
+\DoxyCodeLine{00046\ \ \ \ \ ENGINE\_CLEANUP\_CB\ *cb;}
+\DoxyCodeLine{00047\ \}\ \mbox{\hyperlink{structst__engine__cleanup__item}{ENGINE\_CLEANUP\_ITEM}};}
+\DoxyCodeLine{00048\ DEFINE\_STACK\_OF(\mbox{\hyperlink{structst__engine__cleanup__item}{ENGINE\_CLEANUP\_ITEM}})}
+\DoxyCodeLine{00049\ \textcolor{keywordtype}{int}\ engine\_cleanup\_add\_first(ENGINE\_CLEANUP\_CB\ *cb);}
+\DoxyCodeLine{00050\ \textcolor{keywordtype}{int}\ engine\_cleanup\_add\_last(ENGINE\_CLEANUP\_CB\ *cb);}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ \textcolor{comment}{/*\ We\ need\ stacks\ of\ ENGINEs\ for\ use\ in\ eng\_table.c\ */}}
+\DoxyCodeLine{00053\ DEFINE\_STACK\_OF(ENGINE)}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00056\ \textcolor{comment}{\ *\ This\ represents\ an\ implementation\ table.\ Dependent\ code\ should\ instantiate}}
+\DoxyCodeLine{00057\ \textcolor{comment}{\ *\ it\ as\ a\ (ENGINE\_TABLE\ *)\ pointer\ value\ set\ initially\ to\ NULL.}}
+\DoxyCodeLine{00058\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00059\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structst__engine__table}{st\_engine\_table}}\ \mbox{\hyperlink{structst__engine__table}{ENGINE\_TABLE}};}
+\DoxyCodeLine{00060\ \textcolor{keywordtype}{int}\ engine\_table\_register(\mbox{\hyperlink{structst__engine__table}{ENGINE\_TABLE}}\ **table,\ ENGINE\_CLEANUP\_CB\ *cleanup,}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ENGINE\ *\mbox{\hyperlink{structe}{e}},\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ *nids,\ \textcolor{keywordtype}{int}\ num\_nids,}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ setdefault);}
+\DoxyCodeLine{00063\ \textcolor{keywordtype}{void}\ engine\_table\_unregister(\mbox{\hyperlink{structst__engine__table}{ENGINE\_TABLE}}\ **table,\ ENGINE\ *\mbox{\hyperlink{structe}{e}});}
+\DoxyCodeLine{00064\ \textcolor{keywordtype}{void}\ engine\_table\_cleanup(\mbox{\hyperlink{structst__engine__table}{ENGINE\_TABLE}}\ **table);}
+\DoxyCodeLine{00065\ ENGINE\ *ossl\_engine\_table\_select(\mbox{\hyperlink{structst__engine__table}{ENGINE\_TABLE}}\ **table,\ \textcolor{keywordtype}{int}\ nid,}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *f,\ \textcolor{keywordtype}{int}\ l);}
+\DoxyCodeLine{00067\ \textcolor{keyword}{typedef}\ void\ (engine\_table\_doall\_cb)\ (\textcolor{keywordtype}{int}\ nid,\ STACK\_OF(ENGINE)\ *sk,}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ENGINE\ *def,\ \textcolor{keywordtype}{void}\ *arg);}
+\DoxyCodeLine{00069\ \textcolor{keywordtype}{void}\ engine\_table\_doall(\mbox{\hyperlink{structst__engine__table}{ENGINE\_TABLE}}\ *table,\ engine\_table\_doall\_cb\ *cb,}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *arg);}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00072\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00073\ \textcolor{comment}{\ *\ Internal\ versions\ of\ API\ functions\ that\ have\ control\ over\ locking.\ These}}
+\DoxyCodeLine{00074\ \textcolor{comment}{\ *\ are\ used\ between\ C\ files\ when\ functionality\ needs\ to\ be\ shared\ but\ the}}
+\DoxyCodeLine{00075\ \textcolor{comment}{\ *\ caller\ may\ already\ be\ controlling\ of\ the\ engine\ lock.}}
+\DoxyCodeLine{00076\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00077\ \textcolor{keywordtype}{int}\ engine\_unlocked\_init(ENGINE\ *\mbox{\hyperlink{structe}{e}});}
+\DoxyCodeLine{00078\ \textcolor{keywordtype}{int}\ engine\_unlocked\_finish(ENGINE\ *\mbox{\hyperlink{structe}{e}},\ \textcolor{keywordtype}{int}\ unlock\_for\_handlers);}
+\DoxyCodeLine{00079\ \textcolor{keywordtype}{int}\ engine\_free\_util(ENGINE\ *\mbox{\hyperlink{structe}{e}},\ \textcolor{keywordtype}{int}\ not\_locked);}
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00081\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00082\ \textcolor{comment}{\ *\ This\ function\ will\ reset\ all\ "{}set"{}able\ values\ in\ an\ ENGINE\ to\ NULL.\ This}}
+\DoxyCodeLine{00083\ \textcolor{comment}{\ *\ won't\ touch\ reference\ counts\ or\ ex\_data,\ but\ is\ equivalent\ to\ calling\ all}}
+\DoxyCodeLine{00084\ \textcolor{comment}{\ *\ the\ ENGINE\_set\_***()\ functions\ with\ a\ NULL\ value.}}
+\DoxyCodeLine{00085\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00086\ \textcolor{keywordtype}{void}\ engine\_set\_all\_null(ENGINE\ *\mbox{\hyperlink{structe}{e}});}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00088\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00089\ \textcolor{comment}{\ *\ NB:\ Bitwise\ OR-\/able\ values\ for\ the\ "{}flags"{}\ variable\ in\ ENGINE\ are\ now}}
+\DoxyCodeLine{00090\ \textcolor{comment}{\ *\ exposed\ in\ engine.h.}}
+\DoxyCodeLine{00091\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \textcolor{comment}{/*\ Free\ up\ dynamically\ allocated\ public\ key\ methods\ associated\ with\ ENGINE\ */}}
+\DoxyCodeLine{00094\ }
+\DoxyCodeLine{00095\ \textcolor{keywordtype}{void}\ engine\_pkey\_meths\_free(ENGINE\ *\mbox{\hyperlink{structe}{e}});}
+\DoxyCodeLine{00096\ \textcolor{keywordtype}{void}\ engine\_pkey\_asn1\_meths\_free(ENGINE\ *\mbox{\hyperlink{structe}{e}});}
+\DoxyCodeLine{00097\ }
+\DoxyCodeLine{00098\ \textcolor{comment}{/*\ Once\ initialisation\ function\ */}}
+\DoxyCodeLine{00099\ \textcolor{keyword}{extern}\ CRYPTO\_ONCE\ engine\_lock\_init;}
+\DoxyCodeLine{00100\ DECLARE\_RUN\_ONCE(do\_engine\_lock\_init)}
+\DoxyCodeLine{00101\ }
+\DoxyCodeLine{00102\ \textcolor{keyword}{typedef}\ void\ (*ENGINE\_DYNAMIC\_ID)(void);}
+\DoxyCodeLine{00103\ \textcolor{keywordtype}{int}\ engine\_add\_dynamic\_id(ENGINE\ *\mbox{\hyperlink{structe}{e}},\ ENGINE\_DYNAMIC\_ID\ dynamic\_id,}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ not\_locked);}
+\DoxyCodeLine{00105\ \textcolor{keywordtype}{void}\ engine\_remove\_dynamic\_id(ENGINE\ *\mbox{\hyperlink{structe}{e}},\ \textcolor{keywordtype}{int}\ not\_locked);}
+\DoxyCodeLine{00106\ }
+\DoxyCodeLine{00107\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00108\ \textcolor{comment}{\ *\ This\ is\ a\ structure\ for\ storing\ implementations\ of\ various\ crypto}}
+\DoxyCodeLine{00109\ \textcolor{comment}{\ *\ algorithms\ and\ functions.}}
+\DoxyCodeLine{00110\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00111\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structengine__st}{engine\_st}}\ \{}
+\DoxyCodeLine{00112\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *id;}
+\DoxyCodeLine{00113\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *name;}
+\DoxyCodeLine{00114\ \ \ \ \ \textcolor{keyword}{const}\ RSA\_METHOD\ *rsa\_meth;}
+\DoxyCodeLine{00115\ \ \ \ \ \textcolor{keyword}{const}\ DSA\_METHOD\ *dsa\_meth;}
+\DoxyCodeLine{00116\ \ \ \ \ \textcolor{keyword}{const}\ DH\_METHOD\ *dh\_meth;}
+\DoxyCodeLine{00117\ \ \ \ \ \textcolor{keyword}{const}\ EC\_KEY\_METHOD\ *ec\_meth;}
+\DoxyCodeLine{00118\ \ \ \ \ \textcolor{keyword}{const}\ RAND\_METHOD\ *rand\_meth;}
+\DoxyCodeLine{00119\ \ \ \ \ \textcolor{comment}{/*\ Cipher\ handling\ is\ via\ this\ callback\ */}}
+\DoxyCodeLine{00120\ \ \ \ \ ENGINE\_CIPHERS\_PTR\ ciphers;}
+\DoxyCodeLine{00121\ \ \ \ \ \textcolor{comment}{/*\ Digest\ handling\ is\ via\ this\ callback\ */}}
+\DoxyCodeLine{00122\ \ \ \ \ ENGINE\_DIGESTS\_PTR\ digests;}
+\DoxyCodeLine{00123\ \ \ \ \ \textcolor{comment}{/*\ Public\ key\ handling\ via\ this\ callback\ */}}
+\DoxyCodeLine{00124\ \ \ \ \ ENGINE\_PKEY\_METHS\_PTR\ pkey\_meths;}
+\DoxyCodeLine{00125\ \ \ \ \ \textcolor{comment}{/*\ ASN1\ public\ key\ handling\ via\ this\ callback\ */}}
+\DoxyCodeLine{00126\ \ \ \ \ ENGINE\_PKEY\_ASN1\_METHS\_PTR\ pkey\_asn1\_meths;}
+\DoxyCodeLine{00127\ \ \ \ \ ENGINE\_GEN\_INT\_FUNC\_PTR\ destroy;}
+\DoxyCodeLine{00128\ \ \ \ \ ENGINE\_GEN\_INT\_FUNC\_PTR\ init;}
+\DoxyCodeLine{00129\ \ \ \ \ ENGINE\_GEN\_INT\_FUNC\_PTR\ finish;}
+\DoxyCodeLine{00130\ \ \ \ \ ENGINE\_CTRL\_FUNC\_PTR\ ctrl;}
+\DoxyCodeLine{00131\ \ \ \ \ ENGINE\_LOAD\_KEY\_PTR\ load\_privkey;}
+\DoxyCodeLine{00132\ \ \ \ \ ENGINE\_LOAD\_KEY\_PTR\ load\_pubkey;}
+\DoxyCodeLine{00133\ \ \ \ \ ENGINE\_SSL\_CLIENT\_CERT\_PTR\ load\_ssl\_client\_cert;}
+\DoxyCodeLine{00134\ \ \ \ \ \textcolor{keyword}{const}\ ENGINE\_CMD\_DEFN\ *cmd\_defns;}
+\DoxyCodeLine{00135\ \ \ \ \ \textcolor{keywordtype}{int}\ flags;}
+\DoxyCodeLine{00136\ \ \ \ \ \textcolor{comment}{/*\ reference\ count\ on\ the\ structure\ itself\ */}}
+\DoxyCodeLine{00137\ \ \ \ \ \mbox{\hyperlink{struct_c_r_y_p_t_o___r_e_f___c_o_u_n_t}{CRYPTO\_REF\_COUNT}}\ struct\_ref;}
+\DoxyCodeLine{00138\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00139\ \textcolor{comment}{\ \ \ \ \ *\ reference\ count\ on\ usability\ of\ the\ engine\ type.\ NB:\ This\ controls\ the}}
+\DoxyCodeLine{00140\ \textcolor{comment}{\ \ \ \ \ *\ loading\ and\ initialisation\ of\ any\ functionality\ required\ by\ this}}
+\DoxyCodeLine{00141\ \textcolor{comment}{\ \ \ \ \ *\ engine,\ whereas\ the\ previous\ count\ is\ simply\ to\ cope\ with}}
+\DoxyCodeLine{00142\ \textcolor{comment}{\ \ \ \ \ *\ (de)allocation\ of\ this\ structure.\ Hence,\ running\_ref\ <=\ struct\_ref\ at}}
+\DoxyCodeLine{00143\ \textcolor{comment}{\ \ \ \ \ *\ all\ times.}}
+\DoxyCodeLine{00144\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00145\ \ \ \ \ \textcolor{keywordtype}{int}\ funct\_ref;}
+\DoxyCodeLine{00146\ \ \ \ \ \textcolor{comment}{/*\ A\ place\ to\ store\ per-\/ENGINE\ data\ */}}
+\DoxyCodeLine{00147\ \ \ \ \ CRYPTO\_EX\_DATA\ ex\_data;}
+\DoxyCodeLine{00148\ \ \ \ \ \textcolor{comment}{/*\ Used\ to\ maintain\ the\ linked-\/list\ of\ engines.\ */}}
+\DoxyCodeLine{00149\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structengine__st}{engine\_st}}\ *prev;}
+\DoxyCodeLine{00150\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structengine__st}{engine\_st}}\ *next;}
+\DoxyCodeLine{00151\ \ \ \ \ \textcolor{comment}{/*\ Used\ to\ maintain\ the\ linked-\/list\ of\ dynamic\ engines.\ */}}
+\DoxyCodeLine{00152\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structengine__st}{engine\_st}}\ *prev\_dyn;}
+\DoxyCodeLine{00153\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structengine__st}{engine\_st}}\ *next\_dyn;}
+\DoxyCodeLine{00154\ \ \ \ \ ENGINE\_DYNAMIC\_ID\ dynamic\_id;}
+\DoxyCodeLine{00155\ \};}
+\DoxyCodeLine{00156\ }
+\DoxyCodeLine{00157\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structst__engine__pile}{st\_engine\_pile}}\ \mbox{\hyperlink{structst__engine__pile}{ENGINE\_PILE}};}
+\DoxyCodeLine{00158\ }
+\DoxyCodeLine{00159\ DEFINE\_LHASH\_OF\_EX(\mbox{\hyperlink{structst__engine__pile}{ENGINE\_PILE}});}
+\DoxyCodeLine{00160\ }
+\DoxyCodeLine{00161\ \textcolor{keyword}{static}\ ossl\_unused\ ossl\_inline\ \textcolor{keywordtype}{int}\ eng\_struct\_ref(ENGINE\ *\mbox{\hyperlink{structe}{e}})}
+\DoxyCodeLine{00162\ \{}
+\DoxyCodeLine{00163\ \ \ \ \ \textcolor{keywordtype}{int}\ res;}
+\DoxyCodeLine{00164\ }
+\DoxyCodeLine{00165\ \ \ \ \ CRYPTO\_GET\_REF(\&\mbox{\hyperlink{structe}{e}}-\/>struct\_ref,\ \&res);}
+\DoxyCodeLine{00166\ \ \ \ \ \textcolor{keywordflow}{return}\ res;}
+\DoxyCodeLine{00167\ \}}
+\DoxyCodeLine{00168\ }
+\DoxyCodeLine{00169\ \textcolor{preprocessor}{\#endif\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{/*\ OSSL\_CRYPTO\_ENGINE\_ENG\_LOCAL\_H\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

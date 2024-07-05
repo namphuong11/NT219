@@ -1,0 +1,107 @@
+\doxysection{bio.\+h}
+\hypertarget{include_2internal_2bio_8h_source}{}\label{include_2internal_2bio_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/bio.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/bio.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2016-\/2022\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_INTERNAL\_BIO\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_INTERNAL\_BIO\_H}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#\ pragma\ once}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ include\ <openssl/core.h>}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#\ include\ <openssl/bio.h>}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbio__method__st}{bio\_method\_st}}\ \{}
+\DoxyCodeLine{00018\ \ \ \ \ \textcolor{keywordtype}{int}\ type;}
+\DoxyCodeLine{00019\ \ \ \ \ \textcolor{keywordtype}{char}\ *name;}
+\DoxyCodeLine{00020\ \ \ \ \ int\ (*bwrite)\ (BIO\ *,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *,\ size\_t,\ \textcolor{keywordtype}{size\_t}\ *);}
+\DoxyCodeLine{00021\ \ \ \ \ int\ (*bwrite\_old)\ (BIO\ *,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *,\ int);}
+\DoxyCodeLine{00022\ \ \ \ \ int\ (*bread)\ (BIO\ *,\ \textcolor{keywordtype}{char}\ *,\ size\_t,\ \textcolor{keywordtype}{size\_t}\ *);}
+\DoxyCodeLine{00023\ \ \ \ \ int\ (*bread\_old)\ (BIO\ *,\ \textcolor{keywordtype}{char}\ *,\ int);}
+\DoxyCodeLine{00024\ \ \ \ \ int\ (*bputs)\ (BIO\ *,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *);}
+\DoxyCodeLine{00025\ \ \ \ \ int\ (*bgets)\ (BIO\ *,\ \textcolor{keywordtype}{char}\ *,\ int);}
+\DoxyCodeLine{00026\ \ \ \ \ long\ (*ctrl)\ (BIO\ *,\ int,\ long,\ \textcolor{keywordtype}{void}\ *);}
+\DoxyCodeLine{00027\ \ \ \ \ int\ (*create)\ (BIO\ *);}
+\DoxyCodeLine{00028\ \ \ \ \ int\ (*destroy)\ (BIO\ *);}
+\DoxyCodeLine{00029\ \ \ \ \ long\ (*callback\_ctrl)\ (BIO\ *,\ int,\ BIO\_info\_cb\ *);}
+\DoxyCodeLine{00030\ \ \ \ \ int\ (*bsendmmsg)\ (BIO\ *,\ BIO\_MSG\ *,\ size\_t,\ size\_t,\ uint64\_t,\ \textcolor{keywordtype}{size\_t}\ *);}
+\DoxyCodeLine{00031\ \ \ \ \ int\ (*brecvmmsg)\ (BIO\ *,\ BIO\_MSG\ *,\ size\_t,\ size\_t,\ uint64\_t,\ \textcolor{keywordtype}{size\_t}\ *);}
+\DoxyCodeLine{00032\ \};}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \textcolor{keywordtype}{void}\ bio\_free\_ex\_data(BIO\ *bio);}
+\DoxyCodeLine{00035\ \textcolor{keywordtype}{void}\ bio\_cleanup(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \textcolor{comment}{/*\ Old\ style\ to\ new\ style\ BIO\_METHOD\ conversion\ functions\ */}}
+\DoxyCodeLine{00039\ \textcolor{keywordtype}{int}\ bwrite\_conv(BIO\ *bio,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *data,\ \textcolor{keywordtype}{size\_t}\ datal,\ \textcolor{keywordtype}{size\_t}\ *written);}
+\DoxyCodeLine{00040\ \textcolor{keywordtype}{int}\ bread\_conv(BIO\ *bio,\ \textcolor{keywordtype}{char}\ *data,\ \textcolor{keywordtype}{size\_t}\ datal,\ \textcolor{keywordtype}{size\_t}\ *read);}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \textcolor{comment}{/*\ Changes\ to\ these\ internal\ BIOs\ must\ also\ update\ include/openssl/bio.h\ */}}
+\DoxyCodeLine{00043\ \textcolor{preprocessor}{\#\ define\ BIO\_CTRL\_SET\_KTLS\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 72}}
+\DoxyCodeLine{00044\ \textcolor{preprocessor}{\#\ define\ BIO\_CTRL\_SET\_KTLS\_TX\_SEND\_CTRL\_MSG\ \ \ \ \ 74}}
+\DoxyCodeLine{00045\ \textcolor{preprocessor}{\#\ define\ BIO\_CTRL\_CLEAR\_KTLS\_TX\_CTRL\_MSG\ \ \ \ \ \ \ \ 75}}
+\DoxyCodeLine{00046\ \textcolor{preprocessor}{\#\ define\ BIO\_CTRL\_SET\_KTLS\_TX\_ZEROCOPY\_SENDFILE\ 90}}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00049\ \textcolor{comment}{\ *\ This\ is\ used\ with\ socket\ BIOs:}}
+\DoxyCodeLine{00050\ \textcolor{comment}{\ *\ BIO\_FLAGS\_KTLS\_TX\ means\ we\ are\ using\ ktls\ with\ this\ BIO\ for\ sending.}}
+\DoxyCodeLine{00051\ \textcolor{comment}{\ *\ BIO\_FLAGS\_KTLS\_TX\_CTRL\_MSG\ means\ we\ are\ about\ to\ send\ a\ ctrl\ message\ next.}}
+\DoxyCodeLine{00052\ \textcolor{comment}{\ *\ BIO\_FLAGS\_KTLS\_RX\ means\ we\ are\ using\ ktls\ with\ this\ BIO\ for\ receiving.}}
+\DoxyCodeLine{00053\ \textcolor{comment}{\ *\ BIO\_FLAGS\_KTLS\_TX\_ZEROCOPY\_SENDFILE\ means\ we\ are\ using\ the\ zerocopy\ mode\ with}}
+\DoxyCodeLine{00054\ \textcolor{comment}{\ *\ this\ BIO\ for\ sending\ using\ sendfile.}}
+\DoxyCodeLine{00055\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00056\ \textcolor{preprocessor}{\#\ define\ BIO\_FLAGS\_KTLS\_TX\_CTRL\_MSG\ 0x1000}}
+\DoxyCodeLine{00057\ \textcolor{preprocessor}{\#\ define\ BIO\_FLAGS\_KTLS\_RX\ \ \ \ \ \ \ \ \ \ 0x2000}}
+\DoxyCodeLine{00058\ \textcolor{preprocessor}{\#\ define\ BIO\_FLAGS\_KTLS\_TX\ \ \ \ \ \ \ \ \ \ 0x4000}}
+\DoxyCodeLine{00059\ \textcolor{preprocessor}{\#\ define\ BIO\_FLAGS\_KTLS\_TX\_ZEROCOPY\_SENDFILE\ 0x8000}}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ \textcolor{comment}{/*\ KTLS\ related\ controls\ and\ flags\ */}}
+\DoxyCodeLine{00062\ \textcolor{preprocessor}{\#\ define\ BIO\_set\_ktls\_flag(b,\ is\_tx)\ \(\backslash\)}}
+\DoxyCodeLine{00063\ \textcolor{preprocessor}{\ \ \ \ BIO\_set\_flags(b,\ (is\_tx)\ ?\ BIO\_FLAGS\_KTLS\_TX\ :\ BIO\_FLAGS\_KTLS\_RX)}}
+\DoxyCodeLine{00064\ \textcolor{preprocessor}{\#\ define\ BIO\_should\_ktls\_flag(b,\ is\_tx)\ \(\backslash\)}}
+\DoxyCodeLine{00065\ \textcolor{preprocessor}{\ \ \ \ BIO\_test\_flags(b,\ (is\_tx)\ ?\ BIO\_FLAGS\_KTLS\_TX\ :\ BIO\_FLAGS\_KTLS\_RX)}}
+\DoxyCodeLine{00066\ \textcolor{preprocessor}{\#\ define\ BIO\_set\_ktls\_ctrl\_msg\_flag(b)\ \(\backslash\)}}
+\DoxyCodeLine{00067\ \textcolor{preprocessor}{\ \ \ \ BIO\_set\_flags(b,\ BIO\_FLAGS\_KTLS\_TX\_CTRL\_MSG)}}
+\DoxyCodeLine{00068\ \textcolor{preprocessor}{\#\ define\ BIO\_should\_ktls\_ctrl\_msg\_flag(b)\ \(\backslash\)}}
+\DoxyCodeLine{00069\ \textcolor{preprocessor}{\ \ \ \ BIO\_test\_flags(b,\ BIO\_FLAGS\_KTLS\_TX\_CTRL\_MSG)}}
+\DoxyCodeLine{00070\ \textcolor{preprocessor}{\#\ define\ BIO\_clear\_ktls\_ctrl\_msg\_flag(b)\ \(\backslash\)}}
+\DoxyCodeLine{00071\ \textcolor{preprocessor}{\ \ \ \ BIO\_clear\_flags(b,\ BIO\_FLAGS\_KTLS\_TX\_CTRL\_MSG)}}
+\DoxyCodeLine{00072\ \textcolor{preprocessor}{\#\ define\ BIO\_set\_ktls\_zerocopy\_sendfile\_flag(b)\ \(\backslash\)}}
+\DoxyCodeLine{00073\ \textcolor{preprocessor}{\ \ \ \ BIO\_set\_flags(b,\ BIO\_FLAGS\_KTLS\_TX\_ZEROCOPY\_SENDFILE)}}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00075\ \textcolor{preprocessor}{\#\ define\ BIO\_set\_ktls(b,\ keyblob,\ is\_tx)\ \ \ \(\backslash\)}}
+\DoxyCodeLine{00076\ \textcolor{preprocessor}{\ \ \ \ \ BIO\_ctrl(b,\ BIO\_CTRL\_SET\_KTLS,\ is\_tx,\ keyblob)}}
+\DoxyCodeLine{00077\ \textcolor{preprocessor}{\#\ define\ BIO\_set\_ktls\_ctrl\_msg(b,\ record\_type)\ \ \ \(\backslash\)}}
+\DoxyCodeLine{00078\ \textcolor{preprocessor}{\ \ \ \ \ BIO\_ctrl(b,\ BIO\_CTRL\_SET\_KTLS\_TX\_SEND\_CTRL\_MSG,\ record\_type,\ NULL)}}
+\DoxyCodeLine{00079\ \textcolor{preprocessor}{\#\ define\ BIO\_clear\_ktls\_ctrl\_msg(b)\ \(\backslash\)}}
+\DoxyCodeLine{00080\ \textcolor{preprocessor}{\ \ \ \ \ BIO\_ctrl(b,\ BIO\_CTRL\_CLEAR\_KTLS\_TX\_CTRL\_MSG,\ 0,\ NULL)}}
+\DoxyCodeLine{00081\ \textcolor{preprocessor}{\#\ define\ BIO\_set\_ktls\_tx\_zerocopy\_sendfile(b)\ \(\backslash\)}}
+\DoxyCodeLine{00082\ \textcolor{preprocessor}{\ \ \ \ \ BIO\_ctrl(b,\ BIO\_CTRL\_SET\_KTLS\_TX\_ZEROCOPY\_SENDFILE,\ 0,\ NULL)}}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \textcolor{comment}{/*\ Functions\ to\ allow\ the\ core\ to\ offer\ the\ CORE\_BIO\ type\ to\ providers\ */}}
+\DoxyCodeLine{00085\ OSSL\_CORE\_BIO\ *ossl\_core\_bio\_new\_from\_bio(BIO\ *bio);}
+\DoxyCodeLine{00086\ OSSL\_CORE\_BIO\ *ossl\_core\_bio\_new\_file(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *filename,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *mode);}
+\DoxyCodeLine{00087\ OSSL\_CORE\_BIO\ *ossl\_core\_bio\_new\_mem\_buf(\textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *buf,\ \textcolor{keywordtype}{int}\ len);}
+\DoxyCodeLine{00088\ \textcolor{keywordtype}{int}\ ossl\_core\_bio\_read\_ex(OSSL\_CORE\_BIO\ *cb,\ \textcolor{keywordtype}{void}\ *data,\ \textcolor{keywordtype}{size\_t}\ dlen,}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ *readbytes);}
+\DoxyCodeLine{00090\ \textcolor{keywordtype}{int}\ ossl\_core\_bio\_write\_ex(OSSL\_CORE\_BIO\ *cb,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *data,\ \textcolor{keywordtype}{size\_t}\ dlen,}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ *written);}
+\DoxyCodeLine{00092\ \textcolor{keywordtype}{int}\ ossl\_core\_bio\_gets(OSSL\_CORE\_BIO\ *cb,\ \textcolor{keywordtype}{char}\ *buf,\ \textcolor{keywordtype}{int}\ size);}
+\DoxyCodeLine{00093\ \textcolor{keywordtype}{int}\ ossl\_core\_bio\_puts(OSSL\_CORE\_BIO\ *cb,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *buf);}
+\DoxyCodeLine{00094\ \textcolor{keywordtype}{long}\ ossl\_core\_bio\_ctrl(OSSL\_CORE\_BIO\ *cb,\ \textcolor{keywordtype}{int}\ cmd,\ \textcolor{keywordtype}{long}\ larg,\ \textcolor{keywordtype}{void}\ *parg);}
+\DoxyCodeLine{00095\ \textcolor{keywordtype}{int}\ ossl\_core\_bio\_up\_ref(OSSL\_CORE\_BIO\ *cb);}
+\DoxyCodeLine{00096\ \textcolor{keywordtype}{int}\ ossl\_core\_bio\_free(OSSL\_CORE\_BIO\ *cb);}
+\DoxyCodeLine{00097\ \textcolor{keywordtype}{int}\ ossl\_core\_bio\_vprintf(OSSL\_CORE\_BIO\ *cb,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *format,\ va\_list\ args);}
+\DoxyCodeLine{00098\ }
+\DoxyCodeLine{00099\ \textcolor{keywordtype}{int}\ ossl\_bio\_init\_core(OSSL\_LIB\_CTX\ *libctx,\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ *fns);}
+\DoxyCodeLine{00100\ }
+\DoxyCodeLine{00101\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

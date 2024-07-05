@@ -1,0 +1,1503 @@
+\chapter{QUIC API Overview}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api}{}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api}\index{QUIC API Overview@{QUIC API Overview}}
+This document sets out the objectives of the QUIC API design process, describes the new and changed APIs, and the design constraints motivating those API designs and the relevant design decisions.
+
+
+\begin{DoxyItemize}
+\item QUIC API Overview
+\begin{DoxyItemize}
+\item Overview and Implementation Status
+\item Objectives
+\item SSL Objects
+\begin{DoxyItemize}
+\item Structure of Documentation
+\item Existing APIs
+\begin{DoxyItemize}
+\item \`{}\+SSL\+\_\+set\+\_\+connect\+\_\+state\`{}
+\item \`{}\+SSL\+\_\+set\+\_\+accept\+\_\+state\`{}
+\item \`{}\+SSL\+\_\+is\+\_\+server\`{}
+\item \`{}\+SSL\+\_\+connect\`{}
+\item \`{}\+SSL\+\_\+accept\`{}
+\item \`{}\+SSL\+\_\+do\+\_\+handshake\`{}
+\item \`{}\+SSL\+\_\+read\`{}, \`{}\+SSL\+\_\+read\+\_\+ex\`{}, \`{}\+SSL\+\_\+peek\`{}, \`{}\+SSL\+\_\+peek\+\_\+ex\`{}
+\item \`{}\+SSL\+\_\+write\`{}, \`{}\+SSL\+\_\+write\+\_\+ex\`{}
+\item \`{}\+SSL\+\_\+pending\`{}
+\item \`{}\+SSL\+\_\+has\+\_\+pending\`{}
+\item \`{}\+SSL\+\_\+shutdown\`{}
+\item \`{}\+SSL\+\_\+clear\`{}
+\item \`{}\+SSL\+\_\+free\`{}
+\item \`{}\+SSL\+\_\+set0\+\_\+rbio\`{}, \`{}\+SSL\+\_\+set0\+\_\+wbio\`{}, \`{}\+SSL\+\_\+set\+\_\+bio\`{}
+\item \`{}\+SSL\+\_\+set\+\_\+\mbox{[}rw\mbox{]}fd\`{}
+\item \`{}\+SSL\+\_\+get\+\_\+\mbox{[}rw\mbox{]}fd\`{}
+\item \`{}\+SSL\+\_\+\+CTRL\+\_\+\+MODE\`{}, \`{}\+SSL\+\_\+\+CTRL\+\_\+\+CLEAR\+\_\+\+MODE\`{}
+\item SSL Modes
+\end{DoxyItemize}
+\item New APIs for Single-\/\+Stream Operation
+\begin{DoxyItemize}
+\item \`{}\+SSL\+\_\+handle\+\_\+events\`{}
+\item \`{}\+SSL\+\_\+get\+\_\+event\+\_\+timeout\`{}
+\item \`{}\+SSL\+\_\+set\+\_\+blocking\+\_\+mode\`{}, \`{}\+SSL\+\_\+get\+\_\+blocking\+\_\+mode\`{}
+\item \`{}\+SSL\+\_\+get\+\_\+rpoll\+\_\+descriptor\`{}, \`{}\+SSL\+\_\+get\+\_\+wpoll\+\_\+descriptor\`{}
+\item \`{}\+SSL\+\_\+net\+\_\+read\+\_\+desired\`{}, \`{}\+SSL\+\_\+net\+\_\+write\+\_\+desired\`{}
+\item \`{}\+SSL\+\_\+want\`{}, \`{}\+SSL\+\_\+want\+\_\+read\`{}, \`{}\+SSL\+\_\+want\+\_\+write\`{}
+\item \`{}\+SSL\+\_\+set1\+\_\+initial\+\_\+peer\+\_\+addr\`{}
+\item \`{}\+SSL\+\_\+shutdown\+\_\+ex\`{}
+\item \`{}\+SSL\+\_\+stream\+\_\+conclude\`{}
+\item \`{}\+SSL\+\_\+stream\+\_\+reset\`{}
+\item \`{}\+SSL\+\_\+get\+\_\+stream\+\_\+state\`{}
+\item \`{}\+SSL\+\_\+get\+\_\+stream\+\_\+read\+\_\+error\+\_\+code\`{}, \`{}\+SSL\+\_\+get\+\_\+stream\+\_\+write\+\_\+error\+\_\+code\`{}
+\item \`{}\+SSL\+\_\+get\+\_\+conn\+\_\+close\+\_\+info\`{}
+\end{DoxyItemize}
+\item New APIs for Multi-\/\+Stream Operation
+\begin{DoxyItemize}
+\item Notes on Multi-\/\+Threaded Operation
+\item Notes on Blocking
+\item Notes on Application-\/\+Level Polling
+\item \`{}\+SSL\+\_\+get0\+\_\+connection\`{}
+\item \`{}\+SSL\+\_\+is\+\_\+connection\`{}
+\item \`{}\+SSL\+\_\+get\+\_\+stream\+\_\+type\`{}
+\item \`{}\+SSL\+\_\+get\+\_\+stream\+\_\+id\`{}
+\item \`{}\+SSL\+\_\+is\+\_\+stream\+\_\+local\`{}
+\item \`{}\+SSL\+\_\+new\+\_\+stream\`{}
+\item \`{}\+SSL\+\_\+accept\+\_\+stream\`{}
+\item \`{}\+SSL\+\_\+get\+\_\+accept\+\_\+stream\+\_\+queue\+\_\+len\`{}
+\item \`{}\+SSL\+\_\+set\+\_\+incoming\+\_\+stream\+\_\+policy\`{}
+\item \`{}\+SSL\+\_\+set\+\_\+default\+\_\+stream\+\_\+mode\`{}
+\end{DoxyItemize}
+\item Future APIs
+\end{DoxyItemize}
+\item BIO Objects
+\begin{DoxyItemize}
+\item Existing APIs
+\begin{DoxyItemize}
+\item \`{}\+BIO\+\_\+s\+\_\+connect\`{}, \`{}\+BIO\+\_\+new\+\_\+ssl\+\_\+connect\`{}, \`{}\+BIO\+\_\+set\+\_\+conn\+\_\+hostname\`{}
+\item \`{}\+BIO\+\_\+new\+\_\+bio\+\_\+pair\`{}
+\item Interactions with \`{}\+BIO\+\_\+f\+\_\+buffer\`{}
+\item MTU Signalling
+\end{DoxyItemize}
+\item New APIs
+\begin{DoxyItemize}
+\item \`{}\+BIO\+\_\+sendmmsg\`{} and \`{}\+BIO\+\_\+recvmmsg\`{}
+\item Truncation Mode
+\item Capability Negotiation
+\item Local Address Support
+\item \`{}\+BIO\+\_\+s\+\_\+dgram\+\_\+pair\`{}
+\item \`{}\+BIO\+\_\+\+POLL\+\_\+\+DESCRIPTOR\`{}
+\item \`{}\+BIO\+\_\+s\+\_\+dgram\+\_\+mem\`{}
+\item \`{}\+BIO\+\_\+err\+\_\+is\+\_\+non\+\_\+fatal\`{}
+\end{DoxyItemize}
+\end{DoxyItemize}
+\item Q \& A
+\end{DoxyItemize}
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md310}{}\doxysection{\texorpdfstring{Overview and Implementation Status}{Overview and Implementation Status}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md310}
+A listing of all SSL object APIs and their implications for QUIC, including current implementation status, can be found in \doxysectlink{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api-ssl-funcs}{quic-\/api-\/ssl-\/funcs.md}{0}.
+
+Non-\/\+SSL object APIs which are new or changed, or otherwise discussed in this document are listed below, along with their implementation status. SSL object APIs are not listed here; see \doxysectlink{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api-ssl-funcs}{quic-\/api-\/ssl-\/funcs.md}{0} for details on SSL object APIs.
+
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{3}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ API   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Status    }\\\cline{1-3}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ API   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Status    }\\\cline{1-3}
+\endhead
+Changed   &{\ttfamily BIO\+\_\+s\+\_\+connect}   &Done    \\\cline{1-3}
+Unchanged   &{\ttfamily BIO\+\_\+set\+\_\+conn\+\_\+hostname}   &Done    \\\cline{1-3}
+N/A   &{\ttfamily BIO\+\_\+new\+\_\+bio\+\_\+pair}   &N/A (see {\ttfamily BIO\+\_\+new\+\_\+bio\+\_\+dgram\+\_\+pair})    \\\cline{1-3}
+New   &{\ttfamily BIO\+\_\+s\+\_\+dgram\+\_\+pair}   &Done    \\\cline{1-3}
+Unchanged   &{\ttfamily BIO\+\_\+dgram\+\_\+get\+\_\+mtu}   &Done    \\\cline{1-3}
+Unchanged   &{\ttfamily BIO\+\_\+dgram\+\_\+set\+\_\+mtu}   &Done    \\\cline{1-3}
+New   &{\ttfamily BIO\+\_\+sendmmsg}   &Done    \\\cline{1-3}
+New   &{\ttfamily BIO\+\_\+recvmmsg}   &Done    \\\cline{1-3}
+New   &{\ttfamily BIO\+\_\+dgram\+\_\+set\+\_\+no\+\_\+trunc}   &Done    \\\cline{1-3}
+New   &{\ttfamily BIO\+\_\+dgram\+\_\+get\+\_\+no\+\_\+trunc}   &Done    \\\cline{1-3}
+New   &{\ttfamily BIO\+\_\+dgram\+\_\+set\+\_\+caps}   &Done    \\\cline{1-3}
+New   &{\ttfamily BIO\+\_\+dgram\+\_\+get\+\_\+caps}   &Done    \\\cline{1-3}
+New   &{\ttfamily BIO\+\_\+dgram\+\_\+get\+\_\+effective\+\_\+caps}   &Done    \\\cline{1-3}
+New   &{\ttfamily BIO\+\_\+dgram\+\_\+get\+\_\+local\+\_\+addr\+\_\+cap}   &Done    \\\cline{1-3}
+New   &{\ttfamily BIO\+\_\+dgram\+\_\+set\+\_\+local\+\_\+addr\+\_\+enable}   &Done    \\\cline{1-3}
+New   &{\ttfamily BIO\+\_\+dgram\+\_\+get\+\_\+local\+\_\+addr\+\_\+enable}   &Done    \\\cline{1-3}
+New   &{\ttfamily BIO\+\_\+get\+\_\+rpoll\+\_\+descriptor}   &Done    \\\cline{1-3}
+New   &{\ttfamily BIO\+\_\+get\+\_\+wpoll\+\_\+descriptor}   &Done    \\\cline{1-3}
+New   &{\ttfamily BIO\+\_\+err\+\_\+is\+\_\+non\+\_\+fatal}   &Done   \\\cline{1-3}
+\end{longtabu}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md311}{}\doxysection{\texorpdfstring{Objectives}{Objectives}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md311}
+The objectives of the QUIC API design are\+:
+
+
+\begin{DoxyItemize}
+\item to provide an API suitable for use with QUIC, now and in the future;
+\item to reuse the existing libssl APIs to the extent feasible;
+\item to enable existing applications to adapt to using QUIC with only minimal API changes.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md312}{}\doxysection{\texorpdfstring{SSL Objects}{SSL Objects}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md312}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md313}{}\doxysubsection{\texorpdfstring{Structure of Documentation}{Structure of Documentation}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md313}
+Each API listed below has an information table with the following fields\+:
+
+
+\begin{DoxyItemize}
+\item {\bfseries{Semantics}}\+: This can be one of\+:
+\begin{DoxyItemize}
+\item {\bfseries{Unchanged}}\+: The semantics of this existing libssl API call are unchanged.
+\item {\bfseries{Changed}}\+: The semantics are changed for QUIC.
+\item {\bfseries{New}}\+: The API is new for QUIC.
+\end{DoxyItemize}
+\item {\ttfamily SSL\+\_\+get\+\_\+error}\+: Can this API, when used with QUIC, change the state returned by {\ttfamily SSL\+\_\+get\+\_\+error}? This can be any combination of\+:
+\begin{DoxyItemize}
+\item {\bfseries{Never}}\+: Does not interact with {\ttfamily SSL\+\_\+get\+\_\+error}.
+\item {\bfseries{Error}}\+: Non-\/{\ttfamily WANT\+\_\+\+READ}/{\ttfamily WANT\+\_\+\+WRITE} errors can be raised.
+\item {\bfseries{Want}}\+: {\ttfamily WANT\+\_\+\+READ}/{\ttfamily WANT\+\_\+\+WRITE} can be raised.
+\end{DoxyItemize}
+\item {\bfseries{Can Tick?}}\+: Whether this function is allowed to perform event processing for the QUIC state machine and potentially perform network I/O.
+\item {\bfseries{CSHL\+:}} Connection/\+Stream/\+Handshake Layer classification. This can be one of\+:
+\begin{DoxyItemize}
+\item {\bfseries{HL\+:}} This is a handshake layer related call. It should be supported on a QUIC connection SSL object, forwarding to the handshake layer SSL object. QUIC stream SSL objects do not allow these calls to be forwarded.
+\item {\bfseries{HL-\/\+Forbidden\+:}} This is a handshake layer related call, but it is inapplicable to QUIC, so it is not supported.
+\item {\bfseries{C\+:}} Not handshake-\/layer related. QUIC connection SSL object usage only. Fails on a QUIC stream SSL object.
+\item {\bfseries{CS\+:}} Not handshake-\/layer related. Can be used on any QUIC SSL object.
+\item {\bfseries{S}}\+: Requires a QUIC stream SSL object or a QUIC connection SSL object with a default stream attached.
+\end{DoxyItemize}
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md314}{}\doxysubsection{\texorpdfstring{Existing APIs}{Existing APIs}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md314}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md315}{}\doxysubsubsection{\texorpdfstring{{\ttfamily SSL\+\_\+set\+\_\+connect\+\_\+state}}{{\ttfamily SSL\+\_\+set\+\_\+connect\+\_\+state}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md315}
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{4}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endhead
+Unchanged   &Never   &No   &HL   \\\cline{1-4}
+\end{longtabu}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md316}{}\doxysubsubsection{\texorpdfstring{{\ttfamily SSL\+\_\+set\+\_\+accept\+\_\+state}}{{\ttfamily SSL\+\_\+set\+\_\+accept\+\_\+state}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md316}
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{4}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endhead
+Unchanged   &Never   &No   &HL   \\\cline{1-4}
+\end{longtabu}
+
+
+{\bfseries{Note\+:}} Attempting to proceed in this state will not function for now because we do not implement server support at this time. However, the semantics of this function as such are unchanged.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md317}{}\doxysubsubsection{\texorpdfstring{{\ttfamily SSL\+\_\+is\+\_\+server}}{{\ttfamily SSL\+\_\+is\+\_\+server}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md317}
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{4}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endhead
+Unchanged   &Never   &No   &HL   \\\cline{1-4}
+\end{longtabu}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md318}{}\doxysubsubsection{\texorpdfstring{{\ttfamily SSL\+\_\+connect}}{{\ttfamily SSL\+\_\+connect}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md318}
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{4}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endhead
+Unchanged   &Error/\+Want   &Yes   &HL   \\\cline{1-4}
+\end{longtabu}
+
+
+Simple composition of {\ttfamily SSL\+\_\+set\+\_\+connect\+\_\+state} and {\ttfamily SSL\+\_\+do\+\_\+handshake}.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md319}{}\doxysubsubsection{\texorpdfstring{{\ttfamily SSL\+\_\+accept}}{{\ttfamily SSL\+\_\+accept}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md319}
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{4}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endhead
+Unchanged   &Error/\+Want   &Yes   &HL   \\\cline{1-4}
+\end{longtabu}
+
+
+Simple composition of {\ttfamily SSL\+\_\+set\+\_\+accept\+\_\+state} and {\ttfamily SSL\+\_\+do\+\_\+handshake}.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md320}{}\doxysubsubsection{\texorpdfstring{{\ttfamily SSL\+\_\+do\+\_\+handshake}}{{\ttfamily SSL\+\_\+do\+\_\+handshake}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md320}
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{4}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endhead
+Unchanged   &Error/\+Want   &Yes   &HL   \\\cline{1-4}
+\end{longtabu}
+
+
+{\bfseries{Note\+:}} Idempotent if handshake already completed.
+
+{\bfseries{Blocking Considerations\+:}} Blocks until handshake completed if in blocking mode.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md321}{}\doxysubsubsection{\texorpdfstring{{\ttfamily SSL\+\_\+read}, {\ttfamily SSL\+\_\+read\+\_\+ex}, {\ttfamily SSL\+\_\+peek}, {\ttfamily SSL\+\_\+peek\+\_\+ex}}{{\ttfamily SSL\+\_\+read}, {\ttfamily SSL\+\_\+read\+\_\+ex}, {\ttfamily SSL\+\_\+peek}, {\ttfamily SSL\+\_\+peek\+\_\+ex}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md321}
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{4}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endhead
+Unchanged   &Error/\+Want   &Yes   &CS   \\\cline{1-4}
+\end{longtabu}
+
+
+{\bfseries{Blocking Considerations\+:}} Blocks until at least one byte is available or an error occurs if in blocking mode (including the peek functions).
+
+If the read part of the stream has been finished by the peer, calls to {\ttfamily SSL\+\_\+read} will fail with {\ttfamily SSL\+\_\+\+ERROR\+\_\+\+ZERO\+\_\+\+RETURN}.
+
+If a stream has terminated in a non-\/normal fashion (for example because the stream has been reset, or the connection has terminated), calls to {\ttfamily SSL\+\_\+read} will fail with {\ttfamily SSL\+\_\+\+ERROR\+\_\+\+SSL}.
+
+{\ttfamily SSL\+\_\+get\+\_\+stream\+\_\+read\+\_\+state} can be used to clarify the stream state when an error occurs.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md322}{}\doxysubsubsection{\texorpdfstring{{\ttfamily SSL\+\_\+write}, {\ttfamily SSL\+\_\+write\+\_\+ex}}{{\ttfamily SSL\+\_\+write}, {\ttfamily SSL\+\_\+write\+\_\+ex}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md322}
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{4}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endhead
+Unchanged   &Error/\+Want   &Yes   &CS   \\\cline{1-4}
+\end{longtabu}
+
+
+We have to implement all of the following modes\+:
+
+
+\begin{DoxyItemize}
+\item {\ttfamily SSL\+\_\+\+MODE\+\_\+\+ENABLE\+\_\+\+PARTIAL\+\_\+\+WRITE} on or off
+\item {\ttfamily SSL\+\_\+\+MODE\+\_\+\+ACCEPT\+\_\+\+MOVING\+\_\+\+WRITE\+\_\+\+BUFFER} on or off
+\item Blocking mode on or off
+\end{DoxyItemize}
+
+{\bfseries{Blocking Considerations\+:}} Blocks until libssl has accepted responsibility for (i.\+e., copied) all data provided, or an error occurs, if in blocking mode. In other words, it blocks until it can buffer the data. This does not necessarily mean that the data has actually been sent.
+
+{\ttfamily SSL\+\_\+get\+\_\+stream\+\_\+write\+\_\+state} can be used to clarify the stream state when an error occurs.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md323}{}\doxysubsubsection{\texorpdfstring{{\ttfamily SSL\+\_\+pending}}{{\ttfamily SSL\+\_\+pending}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md323}
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{4}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endhead
+Unchanged   &Never   &No   &CS   \\\cline{1-4}
+\end{longtabu}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md324}{}\doxysubsubsection{\texorpdfstring{{\ttfamily SSL\+\_\+has\+\_\+pending}}{{\ttfamily SSL\+\_\+has\+\_\+pending}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md324}
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{4}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endhead
+Unchanged   &Never   &No   &CS   \\\cline{1-4}
+\end{longtabu}
+
+
+{\bfseries{TBD.}} Options\+:
+
+
+\begin{DoxyItemize}
+\item Semantics unchanged or approximated (essentially, {\ttfamily SSL\+\_\+pending() \texorpdfstring{$\vert$}{|}\texorpdfstring{$\vert$}{|} any RXE queued \texorpdfstring{$\vert$}{|}\texorpdfstring{$\vert$}{|} any URXE queued}).
+\item Change semantics to only determine the return value based on if there is data in the stream receive buffer.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md325}{}\doxysubsubsection{\texorpdfstring{{\ttfamily SSL\+\_\+shutdown}}{{\ttfamily SSL\+\_\+shutdown}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md325}
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{4}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endhead
+Unchanged   &Error   &Yes   &CS   \\\cline{1-4}
+\end{longtabu}
+
+
+See {\ttfamily SSL\+\_\+shutdown\+\_\+ex} below for discussion of how this will work for QUIC.
+
+Calling {\ttfamily SSL\+\_\+shutdown} is always exactly identical in function to calling {\ttfamily SSL\+\_\+shutdown\+\_\+ex} with {\ttfamily flags} set to 0 and {\ttfamily args} set to {\ttfamily NULL}.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md326}{}\doxysubsubsection{\texorpdfstring{{\ttfamily SSL\+\_\+clear}}{{\ttfamily SSL\+\_\+clear}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md326}
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{4}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endhead
+TBD   &TBD   &No   &C   \\\cline{1-4}
+\end{longtabu}
+
+
+There are potential implementation hazards\+:
+
+\texorpdfstring{$>$}{>}SSL\+\_\+clear() resets the SSL object to allow for another connection. The reset \texorpdfstring{$>$}{>}operation however keeps several settings of the last sessions (some of these \texorpdfstring{$>$}{>}settings were made automatically during the last handshake). It only makes sense \texorpdfstring{$>$}{>}for a new connection with the exact same peer that shares these settings, and \texorpdfstring{$>$}{>}may fail if that peer changes its settings between connections.
+
+{\bfseries{TBD\+:}} How should {\ttfamily SSL\+\_\+clear} be implemented? Either\+:
+
+
+\begin{DoxyItemize}
+\item Modernised implementation which resets everything, handshake layer re-\/instantiated (safer);
+\item Preserve {\ttfamily SSL\+\_\+clear} semantics at the handshake layer, reset all QUIC state ({\ttfamily QUIC\+\_\+\+CHANNEL} torn down, CSM reset).
+\end{DoxyItemize}
+
+{\bfseries{TBD\+:}} Semantics of this on stream objects.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md327}{}\doxysubsubsection{\texorpdfstring{{\ttfamily SSL\+\_\+free}}{{\ttfamily SSL\+\_\+free}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md327}
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{4}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endhead
+Changed   &Never   &No   &CS   \\\cline{1-4}
+\end{longtabu}
+
+
+{\bfseries{QUIC stream SSL objects.}} When used on a QUIC stream SSL object, parts of the stream state may continue to exist internally, managed inside the QUIC connection SSL object, until they can be correctly torn down, or until the QUIC connection SSL object is freed.
+
+If a QUIC stream SSL object is freed for a stream which has not reached a terminal state for all of its parts (both send and receive, as applicable), the stream is automatically reset (non-\/normal termination) with an application error code of 0. To explicitly reset a stream with a different application error code, call {\ttfamily SSL\+\_\+stream\+\_\+reset} before calling this function.
+
+If the peer continues to send data on the stream before it processes the notification of the stream\textquotesingle{}s termination, that incoming data will be discarded. However, the peer will be reliably notified of the non-\/normal termination of the stream assuming that the connection remains healthy.
+
+When freeing a QUIC stream SSL object which was terminated in a non-\/normal fashion, or which was terminated automatically due to a call to this function, any data which was appended to the stream via {\ttfamily SSL\+\_\+write} may or may not have already been transmitted, and even if already transmitted, may or may not be retransmitted in the event of loss.
+
+When freeing a QUIC stream SSL object which was terminated normally (for example via {\ttfamily SSL\+\_\+stream\+\_\+conclude}), data appended to the stream via {\ttfamily SSL\+\_\+write} will still be transmitted or retransmitted as necessary, assuming that the QUIC connection SSL object is not freed and that the connection remains healthy.
+
+{\bfseries{QUIC connection SSL objects.}} {\ttfamily SSL\+\_\+free} is largely unchanged for QUIC connection SSL objects on the client side. When freeing a QUIC connection SSL object being used in client mode, there is immediate termination of any QUIC network I/O processing as the resources needed to handle the connection are immediately freed. This means that, if a QUIC connection SSL object which has not been shutdown properly is freed using this function\+:
+
+
+\begin{DoxyItemize}
+\item Any data which was pending transmission or retransmission will not be transmitted, including in streams which were terminated normally;
+\item The connection closure process will not function correctly or in an RFC-\/compliant manner. Connection closure will not be signalled to the peer and the connection will simply disappear from the perspective of the peer. The connection will appear to remain active until the connection\textquotesingle{}s idle timeout (if negotiated) takes effect.
+
+For further discussion of this issue, see {\ttfamily SSL\+\_\+shutdown\+\_\+ex} and the Q\&A.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md328}{}\doxysubsubsection{\texorpdfstring{{\ttfamily SSL\+\_\+set0\+\_\+rbio}, {\ttfamily SSL\+\_\+set0\+\_\+wbio}, {\ttfamily SSL\+\_\+set\+\_\+bio}}{{\ttfamily SSL\+\_\+set0\+\_\+rbio}, {\ttfamily SSL\+\_\+set0\+\_\+wbio}, {\ttfamily SSL\+\_\+set\+\_\+bio}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md328}
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{4}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endhead
+Changed   &Never   &No   &C   \\\cline{1-4}
+\end{longtabu}
+
+
+Sets network-\/side BIO.
+
+The changes to the semantics of these calls are as follows\+:
+
+
+\begin{DoxyItemize}
+\item The BIO MUST be a BIO with datagram semantics (this is a change relative to TLS, though not to DTLS).
+\item If the BIO is non-\/pollable (see below), application-\/level blocking mode will be forced off.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md329}{}\doxysubsubsection{\texorpdfstring{{\ttfamily SSL\+\_\+set\+\_\+\mbox{[}rw\mbox{]}fd}}{{\ttfamily SSL\+\_\+set\+\_\+\mbox{[}rw\mbox{]}fd}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md329}
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{4}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endhead
+Changed   &Never   &No   &C   \\\cline{1-4}
+\end{longtabu}
+
+
+Sets network-\/side socket FD.
+
+Existing behaviour\+: Instantiates a {\ttfamily BIO\+\_\+s\+\_\+socket}, sets an FD on it, and sets it as the BIO.
+
+New proposed behaviour\+:
+
+
+\begin{DoxyItemize}
+\item Instantiate a {\ttfamily BIO\+\_\+s\+\_\+dgram} instead for a QUIC connection SSL object.
+\item Fails (no-\/op) for a QUIC stream SSL object.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md330}{}\doxysubsubsection{\texorpdfstring{{\ttfamily SSL\+\_\+get\+\_\+\mbox{[}rw\mbox{]}fd}}{{\ttfamily SSL\+\_\+get\+\_\+\mbox{[}rw\mbox{]}fd}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md330}
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{4}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endhead
+Unchanged   &Never   &No   &C   \\\cline{1-4}
+\end{longtabu}
+
+
+Should not require any changes.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md331}{}\doxysubsubsection{\texorpdfstring{{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+MODE}, {\ttfamily SSL\+\_\+\+CTRL\+\_\+\+CLEAR\+\_\+\+MODE}}{{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+MODE}, {\ttfamily SSL\+\_\+\+CTRL\+\_\+\+CLEAR\+\_\+\+MODE}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md331}
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{4}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endhead
+Unchanged   &Never   &No   &CS   \\\cline{1-4}
+\end{longtabu}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md332}{}\doxysubsubsection{\texorpdfstring{SSL Modes}{SSL Modes}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md332}
+
+\begin{DoxyItemize}
+\item {\ttfamily SSL\+\_\+\+MODE\+\_\+\+ENABLE\+\_\+\+PARTIAL\+\_\+\+WRITE}\+: Implemented. If this mode is set during a non-\/partial-\/write {\ttfamily SSL\+\_\+write} operation spanning multiple {\ttfamily SSL\+\_\+write} calls, this mode does not take effect until the non-\/partial write operation is completed.
+\item {\ttfamily SSL\+\_\+\+MODE\+\_\+\+ACCEPT\+\_\+\+MOVING\+\_\+\+WRITE\+\_\+\+BUFFER}\+: Implemented.
+\item {\ttfamily SSL\+\_\+\+MODE\+\_\+\+AUTO\+\_\+\+RETRY}\+: TBD.
+\item {\ttfamily SSL\+\_\+\+MODE\+\_\+\+RELEASE\+\_\+\+BUFFERS}\+: Ignored. This is an optimization and if it has any sensible semantic correspondence to QUIC, this can be considered later.
+\item {\ttfamily SSL\+\_\+\+MODE\+\_\+\+SEND\+\_\+\+FALLBACK\+\_\+\+SCSV}\+: TBD\+: Either ignore or fail if the client attempts to set this prior to handshake. The latter is probably safer.
+
+Ignored if set after handshake (existing behaviour).
+\item {\ttfamily SSL\+\_\+\+MODE\+\_\+\+ASYNC}\+: TBD.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md333}{}\doxysubsection{\texorpdfstring{New APIs for Single-\/\+Stream Operation}{New APIs for Single-\/\+Stream Operation}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md333}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md334}{}\doxysubsubsection{\texorpdfstring{{\ttfamily SSL\+\_\+handle\+\_\+events}}{{\ttfamily SSL\+\_\+handle\+\_\+events}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md334}
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{4}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endhead
+New   &Never   &Yes   &CS   \\\cline{1-4}
+\end{longtabu}
+
+
+Advances the QUIC state machine to the extent feasible, potentially performing network I/O. Also compatible with DTLSv1 and supersedes {\ttfamily DTLSv1\+\_\+handle\+\_\+timeout} for all use cases.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md335}{}\doxysubsubsection{\texorpdfstring{{\ttfamily SSL\+\_\+get\+\_\+event\+\_\+timeout}}{{\ttfamily SSL\+\_\+get\+\_\+event\+\_\+timeout}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md335}
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{4}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endhead
+New   &Never   &No   &CS   \\\cline{1-4}
+\end{longtabu}
+
+
+Gets the time until the QUIC state machine next wants to receive a timeout event, if any.
+
+This is similar to the existing {\ttfamily DTLSv1\+\_\+get\+\_\+timeout} function, but it is not specific to DTLSv1. It is also usable for DTLSv1 and can become a protocol-\/agnostic API for this purpose, superseding {\ttfamily DTLSv1\+\_\+get\+\_\+timeout} for all use cases.
+
+The design is similar to that of {\ttfamily DTLSv1\+\_\+get\+\_\+timeout} and uses a {\ttfamily struct timeval}. However, this function can also output an infinite timeout using the {\ttfamily is\+\_\+infinite} argument, whereas whereas {\ttfamily DTLSv1\+\_\+get\+\_\+timeout} represents an infinite timeout using a 0 return value, which does not allow a failure condition to be distinguished.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md336}{}\doxysubsubsection{\texorpdfstring{{\ttfamily SSL\+\_\+set\+\_\+blocking\+\_\+mode}, {\ttfamily SSL\+\_\+get\+\_\+blocking\+\_\+mode}}{{\ttfamily SSL\+\_\+set\+\_\+blocking\+\_\+mode}, {\ttfamily SSL\+\_\+get\+\_\+blocking\+\_\+mode}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md336}
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{4}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endhead
+New   &Never   &No   &CS   \\\cline{1-4}
+\end{longtabu}
+
+
+Turns blocking mode on or off. This is necessary because up until now libssl has operated in blocking or non-\/blocking mode automatically as an emergent consequence of whether the underlying network socket is blocking. For QUIC, this is no longer viable, thus blocking semantics at the application level must be explicitly configured.
+
+Use on stream objects\+: It may be feasible to implement this such that different QUIC stream SSL objects can have different settings for this option.
+
+Not supported for non-\/\+QUIC SSL objects.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md337}{}\doxysubsubsection{\texorpdfstring{{\ttfamily SSL\+\_\+get\+\_\+rpoll\+\_\+descriptor}, {\ttfamily SSL\+\_\+get\+\_\+wpoll\+\_\+descriptor}}{{\ttfamily SSL\+\_\+get\+\_\+rpoll\+\_\+descriptor}, {\ttfamily SSL\+\_\+get\+\_\+wpoll\+\_\+descriptor}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md337}
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{4}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endhead
+New   &Never   &No   &CS   \\\cline{1-4}
+\end{longtabu}
+
+
+These functions output poll descriptors which can be used to determine when the QUIC state machine next needs to have events handled. {\ttfamily SSL\+\_\+get\+\_\+rpoll\+\_\+descriptor} is relevant if {\ttfamily SSL\+\_\+net\+\_\+read\+\_\+desired} returns 1, and {\ttfamily SSL\+\_\+get\+\_\+wpoll\+\_\+descriptor} is relevant if {\ttfamily SSL\+\_\+net\+\_\+write\+\_\+desired} returns 1.
+
+The implementation of these functions is a simple forward to {\ttfamily BIO\+\_\+get\+\_\+rpoll\+\_\+descriptor} and {\ttfamily BIO\+\_\+get\+\_\+wpoll\+\_\+descriptor} on the underlying network BIOs.
+
+TODO\+: Support these for non-\/\+QUIC SSL objects\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md338}{}\doxysubsubsection{\texorpdfstring{{\ttfamily SSL\+\_\+net\+\_\+read\+\_\+desired}, {\ttfamily SSL\+\_\+net\+\_\+write\+\_\+desired}}{{\ttfamily SSL\+\_\+net\+\_\+read\+\_\+desired}, {\ttfamily SSL\+\_\+net\+\_\+write\+\_\+desired}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md338}
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{4}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endhead
+New   &Never   &No   &CS   \\\cline{1-4}
+\end{longtabu}
+
+
+These calls return 1 if the QUIC state machine is interested in receiving further data from the network, or writing to the network, respectively. The return values of these calls should be used to determine which wakeup events should cause an application to call {\ttfamily SSL\+\_\+handle\+\_\+events}. These functions do not mutate any state, and their return values may change after a call to any SSL function other than {\ttfamily SSL\+\_\+net\+\_\+read\+\_\+desired}, {\ttfamily SSL\+\_\+net\+\_\+write\+\_\+desired}, {\ttfamily SSL\+\_\+get\+\_\+rpoll\+\_\+descriptor}, {\ttfamily SSL\+\_\+get\+\_\+wpoll\+\_\+descriptor} and {\ttfamily SSL\+\_\+get\+\_\+event\+\_\+timeout}.
+
+TODO\+: Support these for non-\/\+QUIC SSL objects, turning this into a unified replacement for {\ttfamily SSL\+\_\+want}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md339}{}\doxysubsubsection{\texorpdfstring{{\ttfamily SSL\+\_\+want}, {\ttfamily SSL\+\_\+want\+\_\+read}, {\ttfamily SSL\+\_\+want\+\_\+write}}{{\ttfamily SSL\+\_\+want}, {\ttfamily SSL\+\_\+want\+\_\+read}, {\ttfamily SSL\+\_\+want\+\_\+write}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md339}
+The existing API {\ttfamily SSL\+\_\+want}, and the macros defined in terms of it, are traditionally used to determine if the SSL state machine has exited in non-\/blocking mode due to a desire to read from or write to the underlying network BIO. However, this API is unsuitable for use with QUIC because the return value of {\ttfamily SSL\+\_\+want} can only express one I/O direction at a time (read or write), not both. This call will not be implemented for QUIC (e.\+g. always returns {\ttfamily SSL\+\_\+\+NOTHING}) and {\ttfamily SSL\+\_\+net\+\_\+read\+\_\+desired} and {\ttfamily SSL\+\_\+net\+\_\+write\+\_\+desired} will be used instead.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md340}{}\doxysubsubsection{\texorpdfstring{{\ttfamily SSL\+\_\+set1\+\_\+initial\+\_\+peer\+\_\+addr}}{{\ttfamily SSL\+\_\+set1\+\_\+initial\+\_\+peer\+\_\+addr}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md340}
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{4}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endhead
+New   &Never   &No   &CS   \\\cline{1-4}
+\end{longtabu}
+
+
+{\ttfamily SSL\+\_\+set1\+\_\+initial\+\_\+peer\+\_\+addr} sets the initial L4 UDP peer address for an outgoing QUIC connection.
+
+The initial peer address may be autodetected if no peer address has already been set explicitly and the QUIC connection SSL object is provided with a {\ttfamily BIO\+\_\+s\+\_\+dgram} with a peer set.
+
+{\ttfamily SSL\+\_\+set1\+\_\+initial\+\_\+peer\+\_\+addr} cannot be called after a connection is established.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md341}{}\doxysubsubsection{\texorpdfstring{{\ttfamily SSL\+\_\+shutdown\+\_\+ex}}{{\ttfamily SSL\+\_\+shutdown\+\_\+ex}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md341}
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{4}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endhead
+New   &Error   &Yes   &C   \\\cline{1-4}
+\end{longtabu}
+
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ \ }ssl\_shutdown\_ex\_args\_st\ \{}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{/*\ These\ arguments\ pertain\ only\ to\ QUIC\ connections.\ */}}
+\DoxyCodeLine{\ \ \ \ uint64\_t\ \ \ \ quic\_error\_code;\ \textcolor{comment}{/*\ [0,\ 2**62-\/1]\ */}}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *quic\_reason;}
+\DoxyCodeLine{\}\ SSL\_SHUTDOWN\_EX\_ARGS;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{preprocessor}{\#define\ SSL\_SHUTDOWN\_FLAG\_RAPID\ \ \ \ \ \ \ \ \ (1U\ <<\ 0)}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#define\ SSL\_SHUTDOWN\_FLAG\_IMMEDIATE\ \ \ \ \ (1U\ <<\ 1)}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{int}\ SSL\_shutdown\_ex(SSL\ *ssl,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ flags,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ SSL\_SHUTDOWN\_EX\_ARGS\ *args,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ args\_len);}
+
+\end{DoxyCode}
+
+
+{\ttfamily SSL\+\_\+shutdown\+\_\+ex} is an extended version of {\ttfamily SSL\+\_\+shutdown}.
+
+{\ttfamily args} specifies arguments which control how the SSL object is shut down. {\ttfamily args} are read only on the first call to {\ttfamily SSL\+\_\+shutdown\+\_\+ex} for a given SSL object and subsequent calls to {\ttfamily SSL\+\_\+shutdown\+\_\+ex} ignore the {\ttfamily args} argument. {\ttfamily args\+\_\+len} should be set to {\ttfamily sizeof(\texorpdfstring{$\ast$}{*}args)}. This function is idempotent; once the shutdown process for a SSL object is complete, further calls are a no-\/op and return 1.
+
+Calling {\ttfamily SSL\+\_\+shutdown\+\_\+ex} on a QUIC connection SSL object causes the immediate close of the QUIC connection. “\+Immediate close” is as defined by RFC 9000.
+
+If no QUIC connection attempt was ever initiated using the given SSL object, the QUIC connection transitions immediately to the Terminated state. Otherwise, the connection closure process is initiated if it has not already begun.
+
+Any application stream data on a non-\/terminated or normally terminated stream which has yet to be transmitted is flushed to the network before the termination process begins. This ensures that where an application which calls {\ttfamily SSL\+\_\+write} and performs a connection closure in a way which is considered normal to the application protocol being used, all of the data written is delivered to the peer. This behaviour may be skipped by setting the {\ttfamily SSL\+\_\+\+SHUTDOWN\+\_\+\+FLAG\+\_\+\+IMMEDIATE} flag, in which case any data appended to streams via {\ttfamily SSL\+\_\+write} (or any end-\/of-\/stream conditions) may not be transmitted to the peer. This flag may be useful where a non-\/normal application condition has occurred and the delivery of data written to streams via {\ttfamily SSL\+\_\+write} is no longer relevant. Application stream data on streams which were terminated non-\/normally (for example via {\ttfamily SSL\+\_\+stream\+\_\+reset}) is not transmitted by this function.
+
+A QUIC connection can be shut down using this function in two different ways\+:
+
+
+\begin{DoxyItemize}
+\item {\bfseries{RFC compliant mode.}} In this mode, which provides the most robust operation, the shutdown process may take a period of time up to three times the current estimated RTT to the peer. It is possible for the closure process to complete much faster in some circumstances but this cannot be relied upon.
+
+In blocking mode, the function will return once the closure process is complete. In non-\/blocking mode, {\ttfamily SSL\+\_\+shutdown\+\_\+ex} should be called until it returns 1, indicating the closure process is complete and the connection is now terminated.
+\item {\bfseries{Rapid mode.}} In this mode, a {\ttfamily CONNECTION\+\_\+\+CLOSE} frame is sent in a best-\/effort manner and the connection is terminated immediately. If the {\ttfamily CONNECTION\+\_\+\+CLOSE} frame sent is lost, the peer will not know that the connection has terminated until the negotiated idle timeout (if any) expires.
+
+This will generally return 0 on success, indicating that the connection has not yet reached the Terminating state (unless it has already done so, in which case it will return 1).
+
+In blocking mode, this blocks until at least one {\ttfamily CONNECTION\+\_\+\+CLOSE} frame is sent but does not otherwise block. In non-\/blocking mode, this should be called until it returns a non-\/negative value. A negative value indicates failure or an I/O would-\/block condition.
+\end{DoxyItemize}
+
+It is permissible for an application to implement a hybrid approach, for example by initiating a rapid or non-\/blocking shutdown and continuing to call {\ttfamily SSL\+\_\+handle\+\_\+events} for a duration it chooses.
+
+If {\ttfamily SSL\+\_\+\+SHUTDOWN\+\_\+\+FLAG\+\_\+\+RAPID} is specified in {\ttfamily flags}, a rapid shutdown is performed, otherwise an RFC-\/compliant shutdown is performed. The principal effect of this flag is to partially disable blocking behaviour in blocking mode, and the QUIC implementation will still attempt to implement the Terminating state semantics if the application happens to call {\ttfamily SSL\+\_\+handle\+\_\+events}, until it reaches the Terminated state or is freed. An application can change its mind about performing a rapid shutdown by making a subsequent call to {\ttfamily SSL\+\_\+shutdown\+\_\+ex} without the flag set.
+
+Calling {\ttfamily SSL\+\_\+shutdown\+\_\+ex} on a QUIC stream SSL object is not valid; such a call will fail and has no effect. The rationale for this is that an application may well want to pass around SSL objects for individual QUIC streams to existing parts of its own code which expect something which behaves like a typical SSL object (i.\+e., a single bytestream); those components may well already call {\ttfamily SSL\+\_\+shutdown} and it is not desired for such calls to affect the whole connection.
+
+The {\ttfamily args-\/\texorpdfstring{$>$}{>}quic\+\_\+error\+\_\+code} and {\ttfamily args-\/\texorpdfstring{$>$}{>}reason} fields allow the application error code and reason string for the closure of a QUIC connection to be specified. If {\ttfamily args} or {\ttfamily args-\/\texorpdfstring{$>$}{>}reason} is {\ttfamily NULL}, a zero-\/length string is used for the reason. If {\ttfamily args} is {\ttfamily NULL}, an error code of 0 is used. {\ttfamily args-\/\texorpdfstring{$>$}{>}quic\+\_\+error\+\_\+code} must be in the range {\ttfamily \mbox{[}0, 2\texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}62-\/1\mbox{]}}, else this function fails. These fields are ignored for SSL objects which do not represent QUIC connections.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md342}{}\doxysubsubsection{\texorpdfstring{{\ttfamily SSL\+\_\+stream\+\_\+conclude}}{{\ttfamily SSL\+\_\+stream\+\_\+conclude}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md342}
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{4}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endhead
+New   &Error   &Yes   &S   \\\cline{1-4}
+\end{longtabu}
+
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keywordtype}{int}\ SSL\_stream\_conclude(SSL\ *ssl,\ uint64\_t\ flags);}
+
+\end{DoxyCode}
+
+
+{\ttfamily SSL\+\_\+stream\+\_\+conclude} signals the normal end-\/of-\/stream condition to the send part of a QUIC stream. If called on a QUIC connection SSL object with a default stream, it signals the end of that stream to the peer. If called on a QUIC stream SSL object, it signals the end of that stream to the peer.
+
+This function may only be called for bidirectional streams and for outgoing unidirectional streams. It is a no-\/op if it has already been called for a given stream, or if either the stream or connection have entered an error state.
+
+Any data already queued for transmission via a call to {\ttfamily SSL\+\_\+write()} will still be written in a reliable manner before the end-\/of-\/stream is signalled, assuming the connection remains healthy. This function can be thought of as appending a logical end-\/of-\/stream marker after any data which has previously been written to the stream via calls to {\ttfamily SSL\+\_\+write}. Further attempts to call {\ttfamily SSL\+\_\+write} after calling this function will fail.
+
+When calling this on a bidirectional stream, the receive part of the stream remains unaffected, and the peer may continue to send data via it until the peer also signals the end of the stream. Thus, {\ttfamily SSL\+\_\+read()} can still be used.
+
+This function is used to conclude the send part of a stream in a normal manner. To perform non-\/normal termination of both the sending and receiving parts of a stream, see {\ttfamily SSL\+\_\+stream\+\_\+reset}.
+
+{\ttfamily flags} is reserved and should be set to 0.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md343}{}\doxysubsubsection{\texorpdfstring{{\ttfamily SSL\+\_\+stream\+\_\+reset}}{{\ttfamily SSL\+\_\+stream\+\_\+reset}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md343}
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{4}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endhead
+New   &Error   &Yes   &S   \\\cline{1-4}
+\end{longtabu}
+
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }ssl\_stream\_reset\_args\_st\ \{}
+\DoxyCodeLine{\ \ \ \ uint64\_t\ quic\_error\_code;\ \textcolor{comment}{/*\ [0,\ 2**62-\/1]\ */}}
+\DoxyCodeLine{\}\ SSL\_STREAM\_RESET\_ARGS;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{int}\ SSL\_stream\_reset(SSL\ *ssl,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ SSL\_STREAM\_RESET\_ARGS\ *args,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ args\_len);}
+
+\end{DoxyCode}
+
+
+Conducts a non-\/normal termination of a bidirectional or outgoing unidirectional stream. For QUIC, this corresponds to a stream reset using a {\ttfamily RESET\+\_\+\+STREAM} frame.
+
+It may be called on either a QUIC stream SSL object or a QUIC connection SSL object with a default stream; the given stream is reset. The QUIC connection is not affected.
+
+For bidirectional streams, this terminates both sending and receiving parts of the stream. It may not be called on an incoming unidirectional stream.
+
+If {\ttfamily args} is {\ttfamily NULL}, an application error code of 0 is used. Otherwise, the application error code to use is specified in {\ttfamily args-\/\texorpdfstring{$>$}{>}quic\+\_\+error\+\_\+code}, which must be in the range {\ttfamily \mbox{[}0, 2\texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}62-\/1\mbox{]}}. {\ttfamily args\+\_\+len} must be set to {\ttfamily sizeof(\texorpdfstring{$\ast$}{*}args)} if {\ttfamily args} is non-\/\+NULL.
+
+Only the first call to this function has any effect; subsequent calls are no-\/ops. This is considered a success case.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md344}{}\doxysubsubsection{\texorpdfstring{{\ttfamily SSL\+\_\+get\+\_\+stream\+\_\+state}}{{\ttfamily SSL\+\_\+get\+\_\+stream\+\_\+state}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md344}
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{4}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endhead
+New   &Never   &No   &S   \\\cline{1-4}
+\end{longtabu}
+
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{/*}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ e.g.\ Non-\/QUIC\ SSL\ object,\ or\ QUIC\ connection\ SSL\ object\ without\ a\ default}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ stream.}}
+\DoxyCodeLine{\textcolor{comment}{\ */}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#define\ SSL\_STREAM\_STATE\_NONE\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 0}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{/*}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ The\ read\ or\ write\ part\ of\ the\ stream\ is\ still\ available\ and\ has\ not\ been}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ terminated\ in\ a\ normal\ or\ non-\/normal\ manner.}}
+\DoxyCodeLine{\textcolor{comment}{\ */}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#define\ SSL\_STREAM\_STATE\_OK\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 1}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{/*}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ The\ stream\ is\ a\ unidirectional\ stream\ and\ this\ direction\ cannot\ be\ used;\ for}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ example,\ a\ remotely\ initiated\ unidirectional\ stream\ where}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ SSL\_get\_stream\_write\_state\ is\ called,\ or\ a\ locally\ initiated\ unidirectional}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ stream\ where\ SSL\_get\_stream\_read\_state\ is}}
+\DoxyCodeLine{\textcolor{comment}{\ called.}}
+\DoxyCodeLine{\textcolor{comment}{\ */}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#define\ SSL\_STREAM\_STATE\_WRONG\_DIR\ \ \ \ \ \ \ \ \ \ \ \ \ \ 2}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{/*}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ The\ read\ or\ write\ part\ of\ the\ stream\ has\ been\ finished\ in\ a\ normal\ manner.}}
+\DoxyCodeLine{\textcolor{comment}{\ *}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ For\ SSL\_get\_stream\_read\_state,\ this\ means\ that\ there\ is\ no\ more\ data\ to\ read,}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ and\ that\ any\ future\ SSL\_read\ calls\ will\ return\ any\ residual\ data\ waiting\ to}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ be\ read\ followed\ by\ a\ SSL\_ERROR\_ZERO\_RETURN\ condition.}}
+\DoxyCodeLine{\textcolor{comment}{\ *}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ For\ SSL\_get\_stream\_write\_state,\ this\ means\ that\ the\ local\ application\ has}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ already\ indicated\ the\ end\ of\ the\ stream\ by\ calling\ SSL\_stream\_conclude,}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ and\ that\ future\ calls\ to\ SSL\_write\ will\ fail.}}
+\DoxyCodeLine{\textcolor{comment}{\ */}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#define\ SSL\_STREAM\_STATE\_FINISHED\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 3}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{/*}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ The\ stream\ was\ reset\ by\ the\ local\ party.}}
+\DoxyCodeLine{\textcolor{comment}{\ *}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ For\ SSL\_get\_stream\_read\_state,\ this\ means\ that\ the\ stream\ was\ aborted\ using\ a}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ locally\ transmitted\ STOP\_SENDING\ frame.\ Attempts\ to\ read\ from\ the\ stream\ via}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ SSL\_read\ will\ fail,\ though\ SSL\_read\ may\ allow\ any\ \ residual\ data\ waiting\ to}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ be\ \ read\ to\ be\ \ read\ first.}}
+\DoxyCodeLine{\textcolor{comment}{\ *}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ For\ SSL\_get\_stream\_write\_state,\ this\ means\ that\ the\ stream\ was\ aborted}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ using\ a\ locally\ transmitted\ RESET\_STREAM\ frame.\ Attempts\ to\ write\ to}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ the\ stream\ will\ fail.}}
+\DoxyCodeLine{\textcolor{comment}{\ */}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#define\ SSL\_STREAM\_STATE\_RESET\_LOCAL\ \ \ \ \ \ \ \ \ \ \ \ 4}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{/*}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ The\ stream\ was\ reset\ by\ the\ remote\ party.}}
+\DoxyCodeLine{\textcolor{comment}{\ *}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ For\ SSL\_get\_stream\_read\_state,\ this\ means\ the\ peer\ sent\ a\ STREAM\_RESET}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ frame\ for\ the\ stream.}}
+\DoxyCodeLine{\textcolor{comment}{\ *}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ For\ SSL\_get\_stream\_write\_state,\ this\ means\ the\ peer\ sent\ a\ STOP\_SENDING}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ frame\ for\ the\ stream.}}
+\DoxyCodeLine{\textcolor{comment}{\ */}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#define\ SSL\_STREAM\_STATE\_RESET\_REMOTE\ \ \ \ \ \ \ \ \ \ \ 5}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{/*}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ The\ underlying\ connection\ supporting\ the\ stream\ has\ closed\ or\ otherwise}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ failed.}}
+\DoxyCodeLine{\textcolor{comment}{\ *}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ For\ SSL\_get\_stream\_read\_state,\ this\ means\ that\ attempts\ to\ read\ from\ the}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ stream\ via\ SSL\_read\ will\ fail,\ though\ SSL\_read\ may\ allow\ any\ residual}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ data\ waiting\ to\ be\ read\ to\ be\ read\ first.}}
+\DoxyCodeLine{\textcolor{comment}{\ *}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ For\ SSL\_get\_stream\_write\_state,\ this\ means\ that\ attempts\ to\ write\ to\ the}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ stream\ will\ fail.}}
+\DoxyCodeLine{\textcolor{comment}{\ */}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#define\ SSL\_STREAM\_STATE\_CONN\_CLOSED\ \ \ \ \ \ \ \ \ \ \ \ 6}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{int}\ SSL\_get\_stream\_read\_state(SSL\ *ssl);}
+\DoxyCodeLine{\textcolor{keywordtype}{int}\ SSL\_get\_stream\_write\_state(SSL\ *ssl);}
+
+\end{DoxyCode}
+
+
+This API allows the current state of a stream to be queried. This allows an application to determine whether a stream is still usable and why a stream has reached an error state.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md345}{}\doxysubsubsection{\texorpdfstring{{\ttfamily SSL\+\_\+get\+\_\+stream\+\_\+read\+\_\+error\+\_\+code}, {\ttfamily SSL\+\_\+get\+\_\+stream\+\_\+write\+\_\+error\+\_\+code}}{{\ttfamily SSL\+\_\+get\+\_\+stream\+\_\+read\+\_\+error\+\_\+code}, {\ttfamily SSL\+\_\+get\+\_\+stream\+\_\+write\+\_\+error\+\_\+code}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md345}
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{4}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endhead
+New   &Never   &No   &S   \\\cline{1-4}
+\end{longtabu}
+
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keywordtype}{int}\ SSL\_get\_stream\_read\_error\_code(SSL\ *ssl,\ uint64\_t\ *app\_error\_code);}
+\DoxyCodeLine{\textcolor{keywordtype}{int}\ SSL\_get\_stream\_write\_error\_code(SSL\ *ssl,\ uint64\_t\ *app\_error\_code);}
+
+\end{DoxyCode}
+
+
+{\ttfamily SSL\+\_\+get\+\_\+stream\+\_\+read\+\_\+error\+\_\+code} gets the error code for the read part of the stream.
+
+{\ttfamily SSL\+\_\+get\+\_\+stream\+\_\+write\+\_\+error\+\_\+code} gets the error code for the write part of the stream.
+
+If a stream has been terminated normally, returns 0.
+
+If a stream has been terminated non-\/normally, returns 1 and writes the applicable application error code to {\ttfamily \texorpdfstring{$\ast$}{*}app\+\_\+error\+\_\+code}.
+
+If a stream is still healthy, or was healthy at the time the connection was closed, or the respective part of the stream does not exist (e.\+g. for a unidirectional stream), returns -\/1.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md346}{}\doxysubsubsection{\texorpdfstring{{\ttfamily SSL\+\_\+get\+\_\+conn\+\_\+close\+\_\+info}}{{\ttfamily SSL\+\_\+get\+\_\+conn\+\_\+close\+\_\+info}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md346}
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{4}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endhead
+New   &Never   &No   &C   \\\cline{1-4}
+\end{longtabu}
+
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{preprocessor}{\#define\ SSL\_CONN\_CLOSE\_FLAG\_LOCAL}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#define\ SSL\_CONN\_CLOSE\_FLAG\_TRANSPORT}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }ssl\_conn\_close\_info\_st\ \{}
+\DoxyCodeLine{\ \ \ \ uint64\_t\ error\_code;}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordtype}{char}\ \ \ \ \ *reason;}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordtype}{size\_t}\ \ \ reason\_len;}
+\DoxyCodeLine{\ \ \ \ uint32\_t\ flags;}
+\DoxyCodeLine{\}\ SSL\_CONN\_CLOSE\_INFO;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{int}\ SSL\_get\_conn\_close\_info(SSL\ *ssl,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ SSL\_CONN\_CLOSE\_INFO\ *info,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ info\_len);}
+
+\end{DoxyCode}
+
+
+If a connection is still healthy, returns 0. Otherwise, fills {\ttfamily \texorpdfstring{$\ast$}{*}info} with information about the error causing connection termination and returns 1. {\ttfamily info\+\_\+len} must be set to {\ttfamily sizeof(\texorpdfstring{$\ast$}{*}info)}. Returns -\/1 if called on a non-\/\+QUIC SSL object or if the connection status cannot be determined.
+
+{\ttfamily info-\/\texorpdfstring{$>$}{>}reason} is set to point to a buffer containing a reason string. The buffer is valid for the lifetime of the SSL object. The reason string will always be zero terminated, but since it is received from a potentially untrusted peer, may also contain zero bytes. {\ttfamily info-\/\texorpdfstring{$>$}{>}reason\+\_\+len} is the true length of the reason string in bytes.
+
+{\ttfamily info-\/\texorpdfstring{$>$}{>}flags} has {\ttfamily SSL\+\_\+\+CONN\+\_\+\+CLOSE\+\_\+\+FLAG\+\_\+\+LOCAL} set if the connection closure was locally initiated.
+
+{\ttfamily info-\/\texorpdfstring{$>$}{>}flags} has {\ttfamily SSL\+\_\+\+CONN\+\_\+\+CLOSE\+\_\+\+FLAG\+\_\+\+TRANSPORT} if the connection closure was initiated by QUIC, and 0 if it was initiated by the application. The namespace of {\ttfamily info-\/\texorpdfstring{$>$}{>}error\+\_\+code} is determined by this parameter.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md347}{}\doxysubsection{\texorpdfstring{New APIs for Multi-\/\+Stream Operation}{New APIs for Multi-\/\+Stream Operation}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md347}
+The above new APIs are built on constructively to facilitate multi-\/stream operation.
+
+The concept of a QUIC stream SSL object is introduced. A QUIC SSL object is either a QUIC connection SSL object or a QUIC stream SSL object. A QUIC stream SSL object belongs to a QUIC connection SSL object. A QUIC connection SSL object may or may not have an associated default stream. There may only be at most one default stream for a QUIC connection SSL object. Reading or writing application data to a QUIC connection SSL object with a default stream is equivalent to reading or writing to that stream. It is an error to attempt to read or write application data, or perform other stream-\/specific operations, on a QUIC connection SSL object without a default stream associated.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md348}{}\doxysubsubsection{\texorpdfstring{Notes on Multi-\/\+Threaded Operation}{Notes on Multi-\/\+Threaded Operation}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md348}
+Initially these APIs will not be thread safe over the same connection, but in the longer term we intend to support multiple threads using different QUIC stream SSL objects on different threads over the same connection without the application having to do any locking. This is referred to as multi-\/stream multi-\/thread (MSMT) operation. Only APIs explicitly denoted below will eventually be MSMT-\/safe.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md349}{}\doxysubsubsection{\texorpdfstring{Notes on Blocking}{Notes on Blocking}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md349}
+The blocking mode can be configured on each SSL object individually. When a QUIC stream SSL object is created it inherits its blocking state from the currently configured blocking state of the QUIC connection SSL object at the time the stream is created. This can be changed independently. For example, a QUIC connection SSL object can be in blocking mode to allow for blocking {\ttfamily SSL\+\_\+accept\+\_\+stream} calls, yet have some or all QUIC stream SSL objects be in non-\/blocking mode concurrently.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md350}{}\doxysubsubsection{\texorpdfstring{Notes on Application-\/\+Level Polling}{Notes on Application-\/\+Level Polling}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md350}
+An API may be added in the future to allow applications to poll multiple QUIC connection SSL objects efficiently for new stream and stream readability events. This is not yet urgent but will be more relevant for concurrent server applications.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md351}{}\doxysubsubsection{\texorpdfstring{{\ttfamily SSL\+\_\+get0\+\_\+connection}}{{\ttfamily SSL\+\_\+get0\+\_\+connection}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md351}
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{4}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endhead
+New   &Never   &No   &CS   \\\cline{1-4}
+\end{longtabu}
+
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{/*}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ Get\ the\ SSL\ object\ representing\ the\ connection\ associated\ with\ this\ object.}}
+\DoxyCodeLine{\textcolor{comment}{\ *}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ If\ the\ SSL\ object\ represents\ a\ non-\/QUIC\ method\ or\ a\ QUIC\ connection,\ this}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ returns\ the\ same\ object\ passed.}}
+\DoxyCodeLine{\textcolor{comment}{\ *}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ If\ the\ SSL\ object\ represents\ a\ QUIC\ stream\ returns\ the\ QUIC\ connection}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ object.}}
+\DoxyCodeLine{\textcolor{comment}{\ */}}
+\DoxyCodeLine{SSL\ *SSL\_get0\_connection(SSL\ *ssl);}
+
+\end{DoxyCode}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md352}{}\doxysubsubsection{\texorpdfstring{{\ttfamily SSL\+\_\+is\+\_\+connection}}{{\ttfamily SSL\+\_\+is\+\_\+connection}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md352}
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{4}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endhead
+New   &Never   &No   &CS   \\\cline{1-4}
+\end{longtabu}
+
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{/*}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ Returns\ 1\ if\ the\ object\ represents\ a\ connection.\ This\ always\ returns\ 1\ for}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ non-\/QUIC\ methods,\ but\ returns\ 0\ for\ SSL\ objects\ for\ QUIC\ streams\ which\ are}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ not\ also\ the\ QUIC\ connection\ object.}}
+\DoxyCodeLine{\textcolor{comment}{\ *}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ This\ is\ exactly\ equivalent\ to\ (SSL\_get0\_connection(ssl)\ ==\ ssl).}}
+\DoxyCodeLine{\textcolor{comment}{\ */}}
+\DoxyCodeLine{\textcolor{keywordtype}{int}\ SSL\_is\_connection(SSL\ *ssl);}
+
+\end{DoxyCode}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md353}{}\doxysubsubsection{\texorpdfstring{{\ttfamily SSL\+\_\+get\+\_\+stream\+\_\+type}}{{\ttfamily SSL\+\_\+get\+\_\+stream\+\_\+type}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md353}
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{4}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endhead
+New   &Never   &No   &S   \\\cline{1-4}
+\end{longtabu}
+
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{/*}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ If\ the\ object\ represents\ a\ stream,\ returns\ a\ SSL\_STREAM\_TYPE\ value}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ designating\ whether\ the\ stream\ can\ be\ used\ for\ transmission,\ reception,}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ or\ both.}}
+\DoxyCodeLine{\textcolor{comment}{\ *}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ This\ always\ returns\ SSL\_STREAM\_TYPE\_BIDI\ for\ non-\/QUIC\ methods.}}
+\DoxyCodeLine{\textcolor{comment}{\ *}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ It\ returns\ SSL\_STREAM\_TYPE\_NONE\ for\ a\ QUIC\ connection\ object\ if\ it}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ does\ not\ have\ a\ default\ stream.}}
+\DoxyCodeLine{\textcolor{comment}{\ */}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#define\ SSL\_STREAM\_TYPE\_NONE\ \ \ \ 0}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#define\ SSL\_STREAM\_TYPE\_READ\ \ \ \ 1}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#define\ SSL\_STREAM\_TYPE\_WRITE\ \ \ 2}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#define\ SSL\_STREAM\_TYPE\_BIDI\ \ \ \ (SSL\_STREAM\_TYPE\_READ\ |\ SSL\_STREAM\_TYPE\_WRITE)}}
+\DoxyCodeLine{\_\_owur\ \textcolor{keywordtype}{int}\ SSL\_get\_stream\_type(SSL\ *ssl);}
+
+\end{DoxyCode}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md354}{}\doxysubsubsection{\texorpdfstring{{\ttfamily SSL\+\_\+get\+\_\+stream\+\_\+id}}{{\ttfamily SSL\+\_\+get\+\_\+stream\+\_\+id}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md354}
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{4}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endhead
+New   &Never   &No   &S   \\\cline{1-4}
+\end{longtabu}
+
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{/*}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ QUIC:\ Returns\ the\ unique\ stream\ ID\ for\ the\ stream,\ an\ integer\ in\ range\ [0,\ 2**62-\/1],}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ or\ UINT64\_MAX\ if\ the\ stream\ ID\ is\ not\ available.\ If\ called\ on\ a\ QUIC}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ connection,\ returns\ the\ unique\ stream\ ID\ for\ the\ default\ stream\ if\ there\ is}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ one,\ and\ otherwise\ returns\ UINT64\_MAX.}}
+\DoxyCodeLine{\textcolor{comment}{\ *}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ TLS,\ DTLS:\ Returns\ UINT64\_MAX.}}
+\DoxyCodeLine{\textcolor{comment}{\ */}}
+\DoxyCodeLine{\_\_owur\ uint64\_t\ SSL\_get\_stream\_id(SSL\ *ssl);}
+
+\end{DoxyCode}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md355}{}\doxysubsubsection{\texorpdfstring{{\ttfamily SSL\+\_\+is\+\_\+stream\+\_\+local}}{{\ttfamily SSL\+\_\+is\+\_\+stream\+\_\+local}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md355}
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{4}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endhead
+New   &Never   &No   &S   \\\cline{1-4}
+\end{longtabu}
+
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{/*}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ QUIC:\ Returns\ 1\ if\ the\ stream\ was\ locally\ initiated,\ or\ 0\ otherwise.}}
+\DoxyCodeLine{\textcolor{comment}{\ *}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ TLS,\ DTLS:\ Returns\ -\/1.}}
+\DoxyCodeLine{\textcolor{comment}{\ */}}
+\DoxyCodeLine{\_\_owur\ \textcolor{keywordtype}{int}\ SSL\_is\_stream\_local(SSL\ *ssl);}
+
+\end{DoxyCode}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md356}{}\doxysubsubsection{\texorpdfstring{{\ttfamily SSL\+\_\+new\+\_\+stream}}{{\ttfamily SSL\+\_\+new\+\_\+stream}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md356}
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{4}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endhead
+New   &Never   &No   &C   \\\cline{1-4}
+\end{longtabu}
+
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{/*}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ Create\ a\ new\ SSL\ object\ representing\ a\ single\ additional\ stream.}}
+\DoxyCodeLine{\textcolor{comment}{\ *}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ There\ is\ no\ need\ to\ call\ SSL\_connect\ on\ the\ resulting\ object,\ and}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ any\ such\ call\ is\ a\ no-\/op.}}
+\DoxyCodeLine{\textcolor{comment}{\ *}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ For\ QUIC:}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ Creates\ a\ new\ stream.\ Must\ be\ called\ only\ on\ a\ QUIC\ connection\ SSL\ object.}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ Can\ be\ used\ on\ client\ or\ server.\ If\ the\ SSL\_STREAM\_FLAG\_UNI\ flag\ is\ set,}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ the\ created\ stream\ is\ unidirectional,\ otherwise\ it\ is\ bidirectional.}}
+\DoxyCodeLine{\textcolor{comment}{\ *}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ To\ be\ MSMT-\/safe.}}
+\DoxyCodeLine{\textcolor{comment}{\ *}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ For\ TLS\ and\ DTLS\ SSL\ objects:}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ Always\ fails.}}
+\DoxyCodeLine{\textcolor{comment}{\ */}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#define\ SSL\_STREAM\_FLAG\_UNI\ \ \ \ 1}}
+\DoxyCodeLine{}
+\DoxyCodeLine{SSL\ *SSL\_new\_stream(SSL\ *ssl,\ uint64\_t\ flags);}
+
+\end{DoxyCode}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md357}{}\doxysubsubsection{\texorpdfstring{{\ttfamily SSL\+\_\+accept\+\_\+stream}}{{\ttfamily SSL\+\_\+accept\+\_\+stream}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md357}
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{4}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endhead
+New   &Never   &Yes   &C   \\\cline{1-4}
+\end{longtabu}
+
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{/*}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ Create\ a\ new\ SSL\ object\ representing\ an\ additional\ stream\ which\ was\ created}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ by\ the\ peer.}}
+\DoxyCodeLine{\textcolor{comment}{\ *}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ There\ is\ no\ need\ to\ call\ SSL\_accept\ on\ the\ resulting\ object,\ and}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ any\ such\ call\ is\ a\ no-\/op.}}
+\DoxyCodeLine{\textcolor{comment}{\ *}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ For\ QUIC:}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ Must\ be\ called\ only\ on\ a\ QUIC\ connection\ SSL\ object.\ Fails\ if\ called\ on\ a}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ stream\ object.\ Checks\ if\ a\ new\ stream\ has\ been\ created\ by\ the\ peer.\ If\ it}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ has,\ creates\ a\ new\ SSL\ object\ to\ represent\ it\ and\ returns\ it.\ Otherwise,}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ returns\ NULL.\ If\ multiple\ streams\ are\ available\ to\ be\ accepted,\ the\ oldest}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ stream\ (that\ is,\ the\ stream\ with\ the\ lowest\ stream\ ID)\ is\ accepted.}}
+\DoxyCodeLine{\textcolor{comment}{\ *}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ For\ all\ other\ methods:}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ Returns\ NULL.}}
+\DoxyCodeLine{\textcolor{comment}{\ *}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ The\ flags\ argument\ is\ unused\ and\ should\ be\ set\ to\ zero.}}
+\DoxyCodeLine{\textcolor{comment}{\ *}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ To\ be\ MSMT-\/safe\ (i.e.,\ can\ be\ called\ from\ multiple\ threads).}}
+\DoxyCodeLine{\textcolor{comment}{\ *}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ If\ the\ QUIC\ connection\ SSL\ object\ is\ configured\ in\ blocking\ mode,\ this}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ function\ will\ block\ unless\ the\ SSL\_ACCEPT\_STREAM\_NO\_BLOCK\ flag\ is\ passed.}}
+\DoxyCodeLine{\textcolor{comment}{\ *}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ This\ function\ returns\ NULL\ if\ the\ effective\ incoming\ stream\ reject\ policy\ is}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \`{}REJECT`.}}
+\DoxyCodeLine{\textcolor{comment}{\ */}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#define\ SSL\_ACCEPT\_STREAM\_NO\_BLOCK\ \ \ \ \ \ 1}}
+\DoxyCodeLine{}
+\DoxyCodeLine{SSL\ *SSL\_accept\_stream(SSL\ *ssl,\ uint64\_t\ flags);}
+
+\end{DoxyCode}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md358}{}\doxysubsubsection{\texorpdfstring{{\ttfamily SSL\+\_\+get\+\_\+accept\+\_\+stream\+\_\+queue\+\_\+len}}{{\ttfamily SSL\+\_\+get\+\_\+accept\+\_\+stream\+\_\+queue\+\_\+len}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md358}
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{4}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endhead
+New   &Never   &No   &C   \\\cline{1-4}
+\end{longtabu}
+
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{/*}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ Determine\ the\ number\ of\ streams\ waiting\ to\ be\ returned\ on\ a\ subsequent\ call}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ to\ SSL\_accept\_stream.\ If\ this\ returns\ a\ non-\/zero\ value,\ the\ next\ call\ to}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ SSL\_accept\_stream\ (on\ any\ thread)\ is\ guaranteed\ to\ work.\ Returns\ 0\ for}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ non-\/QUIC\ objects,\ or\ for\ QUIC\ stream\ objects.}}
+\DoxyCodeLine{\textcolor{comment}{\ *}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ To\ be\ MSMT-\/safe.}}
+\DoxyCodeLine{\textcolor{comment}{\ */}}
+\DoxyCodeLine{\textcolor{keywordtype}{size\_t}\ SSL\_get\_accept\_stream\_queue\_len(SSL\ *ssl);}
+
+\end{DoxyCode}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md359}{}\doxysubsubsection{\texorpdfstring{{\ttfamily SSL\+\_\+set\+\_\+incoming\+\_\+stream\+\_\+policy}}{{\ttfamily SSL\+\_\+set\+\_\+incoming\+\_\+stream\+\_\+policy}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md359}
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{4}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endhead
+New   &Never   &No   &C   \\\cline{1-4}
+\end{longtabu}
+
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{/*}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ Sets\ the\ policy\ for\ incoming\ streams.\ If\ \`{}policy`\ is\ \`{}AUTO`\ (the\ default):}}
+\DoxyCodeLine{\textcolor{comment}{\ *}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ -\/\ if\ the\ default\ stream\ mode\ is}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ \`{}SSL\_DEFAULT\_STREAM\_MODE\_AUTO\_BIDI`\ or}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ \`{}SSL\_DEFAULT\_STREAM\_MODE\_AUTO\_UNI`,\ this\ is\ equivalent\ to\ \`{}REJECT`;}}
+\DoxyCodeLine{\textcolor{comment}{\ *}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ -\/\ otherwise,\ this\ is\ equivalent\ to\ \`{}ACCEPT`.}}
+\DoxyCodeLine{\textcolor{comment}{\ *}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ If\ configured\ to\ \`{}ACCEPT`,\ incoming\ streams\ are\ placed\ on\ the\ accept\ queue}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ for\ application\ consumption.\ \`{}aec`\ is\ ignored\ in\ this\ case.}}
+\DoxyCodeLine{\textcolor{comment}{\ *}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ If\ configured\ to\ \`{}REJECT`,\ incoming\ streams\ automatically\ have\ both\ their}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ receiving\ and\ sending\ parts\ handled\ via\ non-\/normal\ termination.\ \`{}aec`\ is\ an}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ application\ error\ code\ used\ for\ the\ \`{}STOP\_SENDING`\ and\ \`{}RESET\_STREAM`\ frames}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ used\ for\ the\ purposes\ of\ this\ termination.\ The\ default\ AEC\ value\ used\ if\ this}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ function\ is\ never\ called\ is\ 0.}}
+\DoxyCodeLine{\textcolor{comment}{\ */}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#define\ SSL\_INCOMING\_STREAM\_POLICY\_AUTO\ \ \ \ \ \ 0}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#define\ SSL\_INCOMING\_STREAM\_POLICY\_ACCEPT\ \ \ \ 1}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#define\ SSL\_INCOMING\_STREAM\_POLICY\_REJECT\ \ \ \ 2}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{int}\ SSL\_set\_incoming\_stream\_policy(SSL\ *ssl,\ \textcolor{keywordtype}{int}\ policy,\ uint64\_t\ aec);}
+
+\end{DoxyCode}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md360}{}\doxysubsubsection{\texorpdfstring{{\ttfamily SSL\+\_\+set\+\_\+default\+\_\+stream\+\_\+mode}}{{\ttfamily SSL\+\_\+set\+\_\+default\+\_\+stream\+\_\+mode}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md360}
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{4}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Semantics   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily SSL\+\_\+get\+\_\+error}   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Can Tick?   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ CSHL    }\\\cline{1-4}
+\endhead
+New   &Never   &No   &C   \\\cline{1-4}
+\end{longtabu}
+
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{/*}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ Used\ to\ control\ single\ stream\ operation.\ Calling\ this\ function\ determines\ the}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ nature\ of\ the\ default\ stream\ which\ will\ automatically\ be\ created\ on\ the\ QUIC}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ connection\ SSL\ object.}}
+\DoxyCodeLine{\textcolor{comment}{\ *}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ The\ default\ mode\ is\ \`{}SSL\_DEFAULT\_STREAM\_MODE\_AUTO\_BIDI`.}}
+\DoxyCodeLine{\textcolor{comment}{\ *}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ The\ modes\ are\ as\ follows:}}
+\DoxyCodeLine{\textcolor{comment}{\ *}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ -\/\ \`{}SSL\_DEFAULT\_STREAM\_MODE\_NONE`:\ No\ default\ stream\ will\ ever\ be\ created.}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ The\ application\ is\ assumed\ to\ understand\ multi-\/stream\ operation.}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ Remotely-\/initiated\ streams\ are\ placed\ in\ the\ accept\ queue\ for\ application}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ consumption.\ \`{}SSL\_read`\ and\ \`{}SSL\_write`\ calls\ must\ be\ made\ on\ a\ QUIC}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ stream\ SSL\ object,\ not\ the\ QUIC\ connection\ SSL\ object,\ as\ no\ default}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ stream\ will\ be\ associated\ with\ it.}}
+\DoxyCodeLine{\textcolor{comment}{\ *}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ -\/\ \`{}SSL\_DEFAULT\_STREAM\_MODE\_AUTO\_BIDI`:\ "{}First\ stream\ wins"{}\ mode\ of}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ operation\ for\ single-\/stream\ usage.\ If\ \`{}SSL\_write`\ is\ called\ before\ the}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ peer\ opens\ a\ remotely-\/initiated\ stream,\ a\ locally-\/initiated\ bidirectional}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ stream\ is\ created\ and\ bound\ as\ the\ default\ stream.\ If\ the\ peer\ opens\ a}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ remotely-\/initiated\ stream\ before\ the\ local\ application\ calls\ \`{}SSL\_write`}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ (with\ \`{}len\ >\ 0`)\ for\ the\ first\ time,\ that\ stream\ is\ bound\ as\ the\ default}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ stream,\ which\ may\ be\ bidirectional\ or\ unidirectional;\ if\ it\ is}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ unidirectional,\ calls\ to\ \`{}SSL\_write`\ will\ fail.\ Attempts\ to\ create}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ additional\ streams\ by\ the\ peer\ are\ automatically\ rejected\ unless}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ the\ application\ opts\ in\ (API\ TBD).}}
+\DoxyCodeLine{\textcolor{comment}{\ *}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ -\/\ \`{}SSL\_DEFAULT\_STREAM\_MODE\_AUTO\_UNI`:\ "{}First\ stream\ wins"{}\ mode\ of}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ operation\ for\ single-\/stream\ usage,\ with\ a\ unidirectional\ stream.\ This}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ functions\ identically\ to\ \`{}SSL\_DEFAULT\_STREAM\_MODE\_AUTO\_BIDI`,\ but\ if\ the}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ local\ application\ calls\ \`{}SSL\_write`\ prior\ to\ the\ peer\ creating\ a}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ remotely-\/initiated\ stream,\ a\ unidirectional\ TX-\/only\ stream\ is\ created\ and}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ bound\ as\ the\ default\ stream.\ Thereafter,\ calls\ to\ \`{}SSL\_read`\ will\ fail.}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ If\ the\ peer\ creates\ a\ remotely-\/initiated\ stream\ prior\ to\ the\ first\ call}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ to\ \`{}SSL\_write`\ (with\ \`{}len\ >\ 0`),\ that\ stream\ will\ be\ bound\ as\ the\ default}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ stream;\ note\ that\ a\ bidirectional\ stream\ may\ be\ bound\ in\ this\ case.}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ Attempts\ to\ create\ additional\ streams\ by\ the\ peer\ are\ automatically}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ rejected\ unless\ the\ application\ opts\ in\ (API\ TBD).}}
+\DoxyCodeLine{\textcolor{comment}{\ *}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ This\ function\ must\ be\ called\ before\ a\ default\ stream\ object\ is\ created,\ for}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ example\ before\ initiating\ a\ connection.\ If\ the\ function\ is\ too\ late\ to\ have}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ an\ effect,\ this\ function\ fails\ and\ returns\ 0.}}
+\DoxyCodeLine{\textcolor{comment}{\ */}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#define\ SSL\_DEFAULT\_STREAM\_MODE\_NONE\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 0}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#define\ SSL\_DEFAULT\_STREAM\_MODE\_AUTO\_BIDI\ \ \ \ \ \ \ \ \ \ \ 1}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#define\ SSL\_DEFAULT\_STREAM\_MODE\_AUTO\_UNI\ \ \ \ \ \ \ \ \ \ \ \ 2}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\_\_owur\ \textcolor{keywordtype}{int}\ SSL\_set\_default\_stream\_mode(SSL\ *ssl,\ uint32\_t\ mode);}
+
+\end{DoxyCode}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md361}{}\doxysubsection{\texorpdfstring{Future APIs}{Future APIs}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md361}
+A custom poller interface may be provided in the future. For more information, see the QUIC I/O Architecture design document.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md362}{}\doxysection{\texorpdfstring{BIO Objects}{BIO Objects}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md362}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md363}{}\doxysubsection{\texorpdfstring{Existing APIs}{Existing APIs}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md363}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md364}{}\doxysubsubsection{\texorpdfstring{{\ttfamily BIO\+\_\+s\+\_\+connect}, {\ttfamily BIO\+\_\+new\+\_\+ssl\+\_\+connect}, {\ttfamily BIO\+\_\+set\+\_\+conn\+\_\+hostname}}{{\ttfamily BIO\+\_\+s\+\_\+connect}, {\ttfamily BIO\+\_\+new\+\_\+ssl\+\_\+connect}, {\ttfamily BIO\+\_\+set\+\_\+conn\+\_\+hostname}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md364}
+We are aiming to support use of the existing {\ttfamily BIO\+\_\+new\+\_\+ssl\+\_\+connect} API with only minimal changes. This will require internal changes to {\ttfamily BIO\+\_\+s\+\_\+connect}, which should automatically detect when it is being used with a QUIC {\ttfamily SSL\+\_\+\+CTX} and act accordingly.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md365}{}\doxysubsubsection{\texorpdfstring{{\ttfamily BIO\+\_\+new\+\_\+bio\+\_\+pair}}{{\ttfamily BIO\+\_\+new\+\_\+bio\+\_\+pair}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md365}
+Unsuitable for use with QUIC on the network side; instead, applications can make use of the new {\ttfamily BIO\+\_\+s\+\_\+dgram\+\_\+pair} which provides equivalent functionality with datagram semantics.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md366}{}\doxysubsubsection{\texorpdfstring{Interactions with {\ttfamily BIO\+\_\+f\+\_\+buffer}}{Interactions with {\ttfamily BIO\+\_\+f\+\_\+buffer}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md366}
+Existing applications sometimes combine a network socket BIO with a {\ttfamily BIO\+\_\+f\+\_\+buffer}. This is problematic because the datagram semantics of writes are not preserved, therefore the BIO provided to libssl is, as provided, unusable for the purposes of implementing QUIC. Moreover, output buffering is not a relevant or desirable performance optimisation for the transmission of UDP datagrams and will actually undermine QUIC performance by causing incorrect calculation of ACK delays and consequently inaccurate RTT calculation.
+
+Options\+:
+
+
+\begin{DoxyItemize}
+\item Require applications to be changed to not use QUIC with a {\ttfamily BIO\+\_\+f\+\_\+buffer}.
+\item Detect when a {\ttfamily BIO\+\_\+f\+\_\+buffer} is part of a BIO stack and bypass it (yucky and surprising).
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md367}{}\doxysubsubsection{\texorpdfstring{MTU Signalling}{MTU Signalling}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md367}
+{\bfseries{See also\+:}} \href{https://www.openssl.org/docs/manmaster/man3/BIO_s_dgram_pair.html}{\texttt{ BIO\+\_\+s\+\_\+dgram\+\_\+pair(3)}}
+
+{\ttfamily BIO\+\_\+dgram\+\_\+get\+\_\+mtu} ({\ttfamily BIO\+\_\+\+CTRL\+\_\+\+DGRAM\+\_\+\+GET\+\_\+\+MTU}) and {\ttfamily BIO\+\_\+dgram\+\_\+set\+\_\+mtu} ({\ttfamily BIO\+\_\+\+CTRL\+\_\+\+DGRAM\+\_\+\+SET\+\_\+\+MTU}) already exist for {\ttfamily BIO\+\_\+s\+\_\+dgram} and are implemented on a {\ttfamily BIO\+\_\+s\+\_\+dgram\+\_\+pair} to allow the MTU to be determined and configured. One side of a pair can configure the MTU to allow the other side to detect it.
+
+{\ttfamily BIO\+\_\+s\+\_\+dgram} also has pre-\/existing support for getting the correct MTU value from the OS using {\ttfamily BIO\+\_\+\+CTRL\+\_\+\+DGRAM\+\_\+\+QUERY\+\_\+\+MTU}.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md368}{}\doxysubsection{\texorpdfstring{New APIs}{New APIs}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md368}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md369}{}\doxysubsubsection{\texorpdfstring{{\ttfamily BIO\+\_\+sendmmsg} and {\ttfamily BIO\+\_\+recvmmsg}}{{\ttfamily BIO\+\_\+sendmmsg} and {\ttfamily BIO\+\_\+recvmmsg}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md369}
+{\bfseries{See also\+:}} \href{https://www.openssl.org/docs/manmaster/man3/BIO_sendmmsg.html}{\texttt{ BIO\+\_\+sendmmsg(3)}}
+
+The BIO interface features a new high-\/performance API for the execution of multiple read or write operations in a single system call, on supported OSes. On other OSes, a compatible fallback implementation is used.
+
+Unlike all other BIO APIs, this API is intended for concurrent threaded use and as such operates in a stateless fashion with regards to a BIO. This means, for example, that retry indications are made using explicit API inputs and outputs rather than setting an internal flag on the BIO.
+
+This new BIO API includes\+:
+
+
+\begin{DoxyItemize}
+\item Local address support (getting the destination address of an incoming packet; setting the source address of an outgoing packet), where support for this is available;
+\item Peer address support (setting the destination address of an outgoing packet; getting the source address of an incoming packet), where support for this is available.
+\end{DoxyItemize}
+
+The following functionality was intentionally left out of this design because not all OSes can provide support\+:
+
+
+\begin{DoxyItemize}
+\item Iovecs (which have also been determined not to be necessary for a performant QUIC implementation);
+\item Features such as {\ttfamily MSG\+\_\+\+DONTWAIT}, etc.
+\end{DoxyItemize}
+
+This BIO API is intended to be extensible. For more information on this API, see BIO\+\_\+sendmmsg(3) and BIO\+\_\+recvmmsg(3).
+
+Custom BIO implementers may set their own implementation of these APIs via corresponding {\ttfamily BIO\+\_\+meth} getter/setter functions.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md370}{}\doxysubsubsection{\texorpdfstring{Truncation Mode}{Truncation Mode}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md370}
+{\bfseries{See also\+:}} \href{https://www.openssl.org/docs/manmaster/man3/BIO_s_dgram_pair.html}{\texttt{ BIO\+\_\+s\+\_\+dgram\+\_\+pair(3)}}
+
+The controls {\ttfamily BIO\+\_\+dgram\+\_\+set\+\_\+no\+\_\+trunc} ({\ttfamily BIO\+\_\+\+CTRL\+\_\+\+DGRAM\+\_\+\+SET\+\_\+\+NO\+\_\+\+TRUNC}) and {\ttfamily BIO\+\_\+dgram\+\_\+get\+\_\+no\+\_\+trunc} ({\ttfamily BIO\+\_\+\+CTRL\+\_\+\+DGRAM\+\_\+\+GET\+\_\+\+NO\+\_\+\+TRUNC}) are introduced. This is a boolean value which may be implemented by BIOs with datagram semantics. When enabled, attempting to receive a datagram such that the datagram would ordinarily be truncated (as per the design of the Berkeley sockets API) instead results in a failure. This is intended for implementation by {\ttfamily BIO\+\_\+s\+\_\+dgram\+\_\+pair}. For compatibility, the default behaviour is off.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md371}{}\doxysubsubsection{\texorpdfstring{Capability Negotiation}{Capability Negotiation}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md371}
+{\bfseries{See also\+:}} \href{https://www.openssl.org/docs/manmaster/man3/BIO_s_dgram_pair.html}{\texttt{ BIO\+\_\+s\+\_\+dgram\+\_\+pair(3)}}
+
+Where a {\ttfamily BIO\+\_\+s\+\_\+dgram\+\_\+pair} is used, there is the potential for such a memory BIO to be used by existing application code which is being adapted for use with QUIC. A problem arises whereby one end of a {\ttfamily BIO\+\_\+s\+\_\+dgram\+\_\+pair} (for example, the side being used by Open\+SSL\textquotesingle{}s QUIC implementation) may assume that the other end supports certain capabilities (for example, specifying a peer address), when in actual fact the opposite end of the {\ttfamily BIO\+\_\+s\+\_\+dgram\+\_\+pair} does not.
+
+A capability signalling mechanism is introduced which allows one end of a {\ttfamily BIO\+\_\+s\+\_\+dgram\+\_\+pair} to indicate to the user of the opposite BIO the following capabilities and related information\+:
+
+
+\begin{DoxyItemize}
+\item Whether source addresses the peer specifies will be processed.
+\item Whether destination addresses the peer specifies will be processed.
+\item Whether source addresses will be provided to the opposite BIO when it receives datagrams.
+\item Whether destination addresses will be provided to the opposite BIO when it receives datagrams.
+\end{DoxyItemize}
+
+The usage is as follows\+:
+
+
+\begin{DoxyItemize}
+\item One side of a BIO pair calls {\ttfamily BIO\+\_\+dgram\+\_\+set\+\_\+caps} with zero or more of the following flags to advertise its capabilities\+:
+\begin{DoxyItemize}
+\item {\ttfamily BIO\+\_\+\+DGRAM\+\_\+\+CAP\+\_\+\+HANDLES\+\_\+\+SRC\+\_\+\+ADDR}
+\item {\ttfamily BIO\+\_\+\+DGRAM\+\_\+\+CAP\+\_\+\+HANDLES\+\_\+\+DST\+\_\+\+ADDR}
+\item {\ttfamily BIO\+\_\+\+DGRAM\+\_\+\+CAP\+\_\+\+PROVIDES\+\_\+\+SRC\+\_\+\+ADDR}
+\item {\ttfamily BIO\+\_\+\+DGRAM\+\_\+\+CAP\+\_\+\+PROVIDES\+\_\+\+DST\+\_\+\+ADDR}
+\end{DoxyItemize}
+\item The other side of the BIO pair calls {\ttfamily BIO\+\_\+dgram\+\_\+get\+\_\+effective\+\_\+caps} to learn the effective capabilities of the BIO. These are the capabilities set by the opposite BIO.
+\item The above process can also be repeated in the opposite direction.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md372}{}\doxysubsubsection{\texorpdfstring{Local Address Support}{Local Address Support}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md372}
+{\bfseries{See also\+:}} \href{https://www.openssl.org/docs/manmaster/man3/BIO_s_dgram_pair.html}{\texttt{ BIO\+\_\+s\+\_\+dgram\+\_\+pair(3)}}
+
+Support for local addressing (the reception of destination addresses for incoming packets, and the specification of source addresses for outgoing packets) varies by OS. Thus, it may not be available in all circumstances. A feature negotiation mechanism is introduced to facilitate this.
+
+{\ttfamily BIO\+\_\+dgram\+\_\+get\+\_\+local\+\_\+addr\+\_\+cap} ({\ttfamily BIO\+\_\+\+CTRL\+\_\+\+DGRAM\+\_\+\+GET\+\_\+\+LOCAL\+\_\+\+ADDR\+\_\+\+CAP}) determines if a BIO is potentially capable of supporting local addressing on the current platform. If it determines that support is available, local addressing support must then be explicitly enabled via {\ttfamily BIO\+\_\+dgram\+\_\+set\+\_\+local\+\_\+addr\+\_\+enable} ({\ttfamily BIO\+\_\+\+CTRL\+\_\+\+DGRAM\+\_\+\+SET\+\_\+\+LOCAL\+\_\+\+ADDR\+\_\+\+ENABLE}). If local addressing support has not been enabled, attempts to use local addressing (for example via {\ttfamily BIO\+\_\+sendmmsg} or {\ttfamily BIO\+\_\+recvmmsg} with a {\ttfamily BIO\+\_\+\+MSG} with a non-\/\+NULL {\ttfamily local} field) fails.
+
+An explicit enablement call is required because setting up local addressing support requires system calls on most operating systems prior to sending or receiving packets and we do not wish to do this automatically inside the {\ttfamily BIO\+\_\+sendmmsg}/{\ttfamily BIO\+\_\+recvmmsg} fastpaths, particularly since the process of enabling support could fail due to lack of OS support, etc.
+
+{\ttfamily BIO\+\_\+dgram\+\_\+get\+\_\+local\+\_\+addr\+\_\+enable} ({\ttfamily BIO\+\_\+\+CTRL\+\_\+\+DGRAM\+\_\+\+GET\+\_\+\+LOCAL\+\_\+\+ADDR\+\_\+\+ENABLE}) is also available.
+
+It is important to note that {\ttfamily BIO\+\_\+dgram\+\_\+get\+\_\+local\+\_\+addr\+\_\+cap} is entirely distinct from the application capability negotiation mechanism discussed above. Whereas the capability negotiation mechanism discussed above allows {\itshape applications} to signal what they are capable of handling in their usage of a given BIO, {\ttfamily BIO\+\_\+dgram\+\_\+local\+\_\+addr\+\_\+cap} allows a {\itshape BIO implementation} to indicate to the users of that BIO whether it is able to support local addressing (where enabled).\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md373}{}\doxysubsubsection{\texorpdfstring{{\ttfamily BIO\+\_\+s\+\_\+dgram\+\_\+pair}}{{\ttfamily BIO\+\_\+s\+\_\+dgram\+\_\+pair}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md373}
+{\bfseries{See also\+:}} \href{https://www.openssl.org/docs/manmaster/man3/BIO_s_dgram_pair.html}{\texttt{ BIO\+\_\+s\+\_\+dgram\+\_\+pair(3)}}
+
+A new BIO implementation, {\ttfamily BIO\+\_\+s\+\_\+dgram\+\_\+pair}, is provided. This is similar to the existing BIO pair but provides datagram semantics. It provides full support for the new APIs {\ttfamily BIO\+\_\+sendmmsg}, {\ttfamily BIO\+\_\+recvmmsg}, the capability negotiation mechanism described above, local address support and the MTU signalling mechanism described above.
+
+It can be instantiated using the new API {\ttfamily BIO\+\_\+new\+\_\+dgram\+\_\+pair}.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md374}{}\doxysubsubsection{\texorpdfstring{{\ttfamily BIO\+\_\+\+POLL\+\_\+\+DESCRIPTOR}}{{\ttfamily BIO\+\_\+\+POLL\+\_\+\+DESCRIPTOR}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md374}
+The concept of {\itshape poll descriptors} are introduced. A poll descriptor is a tagged union structure which represents an abstraction over some unspecified kind of OS descriptor which can be used for synchronization and waiting.
+
+The most commonly used kind of poll descriptor is one which describes a network socket (i.\+e., on POSIX-\/like platforms, a file descriptor), however other kinds of poll descriptor may be defined.
+
+A BIO may be queried for whether it has a poll descriptor for read or write operations respectively\+:
+
+
+\begin{DoxyItemize}
+\item Where {\ttfamily BIO\+\_\+get\+\_\+rpoll\+\_\+descriptor} ({\ttfamily BIO\+\_\+\+CTRL\+\_\+\+GET\+\_\+\+RPOLL\+\_\+\+DESCRIPTOR}) is called, the BIO should output a poll descriptor which describes a resource which can be used to determine when the BIO will next become readable via a call to {\ttfamily BIO\+\_\+read} or, if supported by the BIO, {\ttfamily BIO\+\_\+recvmmsg}.
+\item Where {\ttfamily BIO\+\_\+get\+\_\+wpoll\+\_\+descriptor} ({\ttfamily BIO\+\_\+\+CTRL\+\_\+\+GET\+\_\+\+WPOLL\+\_\+\+DESCRIPTOR}) is called, the BIO should output a poll descriptor which describes a resource which can be used to determine when the BIO will next become writeable via a call to {\ttfamily BIO\+\_\+write} or, if supported by the BIO, {\ttfamily BIO\+\_\+sendmmsg}.
+\end{DoxyItemize}
+
+A BIO may not necessarily be able to provide a poll descriptor. For example, memory-\/based BIOs such as {\ttfamily BIO\+\_\+s\+\_\+dgram\+\_\+pair} do not correspond to any OS synchronisation resource, and thus the {\ttfamily BIO\+\_\+get\+\_\+rpoll\+\_\+descriptor} and {\ttfamily BIO\+\_\+get\+\_\+wpoll\+\_\+descriptor} calls are not supported for such BIOs.
+
+A BIO which supports these functions is known as pollable, and a BIO which does not is known as non-\/pollable. {\ttfamily BIO\+\_\+s\+\_\+dgram} supports these functions.
+
+The implementation of these functions for a {\ttfamily BIO\+\_\+f\+\_\+ssl} forwards to {\ttfamily SSL\+\_\+get\+\_\+rpoll\+\_\+descriptor} and {\ttfamily SSL\+\_\+get\+\_\+wpoll\+\_\+descriptor} respectively. The\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md375}{}\doxysubsubsection{\texorpdfstring{{\ttfamily BIO\+\_\+s\+\_\+dgram\+\_\+mem}}{{\ttfamily BIO\+\_\+s\+\_\+dgram\+\_\+mem}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md375}
+This is a basic memory buffer BIO with datagram semantics. Unlike {\ttfamily BIO\+\_\+s\+\_\+dgram\+\_\+pair}, it is unidirectional and does not support peer addressing or local addressing.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md376}{}\doxysubsubsection{\texorpdfstring{{\ttfamily BIO\+\_\+err\+\_\+is\+\_\+non\+\_\+fatal}}{{\ttfamily BIO\+\_\+err\+\_\+is\+\_\+non\+\_\+fatal}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md376}
+A new predicate function {\ttfamily BIO\+\_\+err\+\_\+is\+\_\+non\+\_\+fatal} is defined which determines if an error code represents a non-\/fatal or transient error. For details, see \href{https://www.openssl.org/docs/manmaster/man3/BIO_sendmmsg.html}{\texttt{ BIO\+\_\+sendmmsg(3)}}.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md377}{}\doxysection{\texorpdfstring{Q \& A}{Q \& A}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api_autotoc_md377}
+To assist in understanding, when a “\+TBD” listed above is removed, or when a relevant question is raised, the resolution to the question will be placed here.
+
+{\bfseries{Q. Should {\ttfamily SSL\+\_\+do\+\_\+handshake} wait until the handshake is completed, or until it is confirmed?}}
+
+{\bfseries{Note\+:}} \mbox{[}The terms {\itshape handshake complete} and {\itshape handshake confirmed} are defined in RFC 9001 and have specific meanings.\mbox{]}(\href{https://www.rfc-editor.org/rfc/rfc9001.html\#name-handshake-complete}{\texttt{ https\+://www.\+rfc-\/editor.\+org/rfc/rfc9001.\+html\#name-\/handshake-\/complete}})
+
+A. {\ttfamily SSL\+\_\+do\+\_\+handshake} should wait until the handshake is completed, because handshake completion represents the completion of the cryptographic authentication of the connection. When a connection\textquotesingle{}s handshake is completed, TLS 1.\+3 Finished messages have been exchanged by both parties, even if the handshake has not yet been {\itshape confirmed}. Moreover, RFC 9001 s. 4.\+1.\+2 states\+:
+
+\texorpdfstring{$>$}{>}Additionally, a client MAY consider the handshake to be confirmed when it \texorpdfstring{$>$}{>}receives an acknowledgment for a 1-\/RTT packet.
+
+This logically implies that it is OK for a client to start transmitting 1-\/RTT packets prior to handshake confirmation, otherwise there would be no in-\/flight 1-\/RTT packets for the client to receive ACKs for.
+
+{\bfseries{Q. Does {\ttfamily ENABLE\+\_\+\+PARTIAL\+\_\+\+WRITE} interact with blocking mode?}}
+
+A. No; this mode is only relevant to non-\/blocking mode. In blocking mode, {\ttfamily SSL\+\_\+write} always waits until all data is written unless an error occurs. The semantics of {\ttfamily SSL\+\_\+write} are preserved unchanged.
+
+{\bfseries{Q. Does {\ttfamily SSL\+\_\+write} block until data is written to the network, or simply until it is buffered?}}
+
+A. {\ttfamily SSL\+\_\+write} blocks until it has accepted responsibility for the data passed to it, just like {\ttfamily write(2)} or {\ttfamily send(2)}. In other words, it blocks until it can buffer the data. This does not necessarily mean that the data has actually been sent.
+
+{\bfseries{Q. How should connection closure work?}}
+
+A. {\bfseries{RFC requirements.}} After we begin terminating the connection by sending a {\ttfamily CONNECTION\+\_\+\+CLOSE} frame, QUIC requires that we continue to process network I/O for a certain period of time so that any further traffic from the peer results in generation of a further {\ttfamily CONNECTION\+\_\+\+CLOSE} frame. This is necessary to handle the possibility that the {\ttfamily CONNECTION\+\_\+\+CLOSE} frame which was initially sent may be lost.
+
+{\bfseries{API issues.}} This creates a complication because it implies that the connection closure process may take a fair amount of time, whereas existing API users will generally expect to be able to call {\ttfamily SSL\+\_\+shutdown} and then immediately free the SSL object.
+
+However, if the caller immediately frees the SSL object, this precludes our implementing the applicable logic, at least on the client side. Moreover, existing API users are likely to tear down underlying network BIOs immediately after calling {\ttfamily SSL\+\_\+free} anyway. In other words, any implementation based on secretly keeping QUIC state around after a call to {\ttfamily SSL\+\_\+free} does not seem particularly workable on the client side.
+
+{\bfseries{Server side considerations.}} There is more of a prospect here on the server side, since multiple connections will share the same socket, which will presumably be associated with some kind of enduring listener object. Thus when server support is implemented in the future connection teardown could be handled internally by maintaining the state of connections undergoing termination inside the listener object. However, similar caveats to those discussed here arise when the listener object itself is to be town down. (It is also possible we could optionally allow use of the server-\/style API to make multiple outgoing client connections with a non-\/zero-\/length client-\/side CID on the same underlying network BIO.)
+
+There are only really two ways to handle this\+:
+
+
+\begin{DoxyItemize}
+\item {\bfseries{RFC conformant mode.}} {\ttfamily SSL\+\_\+shutdown} only indicates that shutdown is complete once the the entire connection closure process is complete.
+
+This process consists of the Closing and Draining states. In some cases the Closing state may last only briefly, namely if the peer chooses to respond to our {\ttfamily CONNECTION\+\_\+\+CLOSE} frame with a {\ttfamily CONNECTION\+\_\+\+CLOSE} frame of its own. This allows immediate progression to the Draining state. However, a peer is {\itshape not} required to respond with such a frame. Thus in the worst case, this state can be as long as {\ttfamily 3\texorpdfstring{$\ast$}{*}\+PTO}; for example a peer with a high estimated RTT of 300ms would have us wait for 900ms.
+
+In the Draining state we simply ignore all incoming traffic and do not generate outgoing traffic. The purpose of this state is to simply tie up the socket and ensure any data still in flight is discarded. However, RFC 9000 states\+:
+
+Disposing of connection state prior to exiting the closing or draining state could result in an endpoint generating a Stateless Reset unnecessarily when it receives a late-\/arriving packet. Endpoints that have some alternative means to ensure that late-\/arriving packets do not induce a response, such as those that are able to close the UDP socket, MAY end these states earlier to allow for faster resource recovery. Servers that retain an open socket for accepting new connections SHOULD NOT end the closing or draining state early
+
+Because our client mode implementation uses one socket per connection, it appears to be reasonable based on the above text to omit the implementation of the draining state (the same may not be the case for the server role when implemented in the future).
+
+Thus, in general, {\ttfamily SSL\+\_\+shutdown} can be expected to take about one round trip\textquotesingle{}s time to complete when dealing with a peer whose QUIC implementation happens to respond to a {\ttfamily CONNECTION\+\_\+\+CLOSE} frame with a {\ttfamily CONNECTION\+\_\+\+CLOSE} frame of its own, and about three round trips otherwise.
+\item {\bfseries{Rapid shutdown mode.}} {\ttfamily SSL\+\_\+shutdown} sends a {\ttfamily CONNECTION\+\_\+\+CLOSE} frame once and completes immediately. The Closing and Draining states are not used, and if the {\ttfamily CONNECTION\+\_\+\+CLOSE} frame was lost, the peer will have to wait for idle timeout to determine that the connection is gone (there is also the possibility that, if the socket is closed by the application after teardown, a peer will make something of ICMP Port Unreachable messages, but this is unlikely to be reliable and since this message is not authenticated, QUIC implementations probably shouldn\textquotesingle{}t pay much attention to it anyway.)
+\end{DoxyItemize}
+
+There is little problem with {\ttfamily SSL\+\_\+shutdown} taking as long as it needs to for some long-\/running applications, but for others it poses a real issue. For example, a command-\/line tool which makes one connection, performs one application-\/specific transaction, and then tears down the connection. In this case an RFC-\/conformant connection termination would essentially require the process to hang around for a substantial amount of time after the work of the process is done.
+
+For this reason, it is concluded that both of these shutdown modes need to be offered.
+
+Where connection closure is initiated remotely rather than locally, only the draining state is relevant. Since we conclude above that we do not need to implement the draining state on the client side, this means that connection closure can be completed immediately in the case of a remote closure.
+
+{\bfseries{Q. Should we just map {\ttfamily SSL\+\_\+handle\+\_\+events} to {\ttfamily DTLS\+\_\+\+CTRL\+\_\+\+HANDLE\+\_\+\+TIMEOUT} internally?}}
+
+A. No, since the infinite time representation is different between the two calls.
+
+{\bfseries{Q. How should {\ttfamily STOP\+\_\+\+SENDING} be supported?}}
+
+We trigger {\ttfamily STOP\+\_\+\+SENDING} automatically if an application frees the associated QUIC stream SSL object.
+
+{\bfseries{Q. Can data be received on a locally initiated bidirectional stream before any data is sent on that stream?}}
+
+This is an interesting question without a clear answer to be found in the QUIC RFCs. A close reading of RFC 9000 suggests that the answer is, in principle, yes; however the RFC also grants explicit permission to make design choices in implementations which would preclude this\+:
+
+\texorpdfstring{$>$}{>}An implementation might choose to defer allocating a stream ID to a stream until \texorpdfstring{$>$}{>}it sends the first STREAM frame and enters this state, which can allow for \texorpdfstring{$>$}{>}better stream prioritization.
+
+If an ID has not been allocated to a stream, obviously incoming data cannot be addressed to it. However, supposing that an implementation does not do this, RFC 9000 seems basically clear that it is valid for an application to create a stream locally, then receive data on it before sending anything\+:
+
+\texorpdfstring{$>$}{>}The sending part of a stream that the endpoint initiates (types 0 and 2 for \texorpdfstring{$>$}{>}clients, 1 and 3 for servers) is opened by the application. The "{}\+Ready"{} \texorpdfstring{$>$}{>}state represents a newly created stream that is able to accept data from the \texorpdfstring{$>$}{>}application. \begin{quote}
+ \end{quote}
+\texorpdfstring{$>$}{>}\mbox{[}...\mbox{]} \begin{quote}
+ \end{quote}
+\texorpdfstring{$>$}{>}For a bidirectional stream, the receiving part enters the "{}\+Recv"{} state when \texorpdfstring{$>$}{>}the sending part initiated by the endpoint (type 0 for a client, type 1 for \texorpdfstring{$>$}{>}a server) enters the "{}\+Ready"{} state.
+
+A peer is not generally notified of the creation of a stream which has not sent any data yet, since the creation of a stream is signalled only implicitly via the transmission of data in {\ttfamily STREAM} frames. However, a zero-\/length STREAM frame could presumably be used to effect such a notification. RFC 9000 contains no specific discussion of this possibility but does not preclude it. As such, in order to receive data on a locally-\/initiated bidirectional stream before sending any data on that stream, it would be necessary to either
+
+
+\begin{DoxyItemize}
+\item Use a QUIC implementation which signals a bidirectional stream which has not yet sent any data via a zero-\/length stream frame, or
+\item Use an application protocol which can inform the peer of the stream ID of the created stream in some application protocol-\/specific way. This is somewhat less plausible because it would require an API between the application and its QUIC library to inform the QUIC library that the peer has in fact created a stream with a given ID and to take its word for it. This is unlikely to be commonly available, especially as application errors in usage of such an API would lead to internal inconsistencies in QUIC connection state.
+\end{DoxyItemize}
+
+Of course this discussion is somewhat esoteric as it is unclear why an application would want to create a locally-\/initiated stream and then have the peer transmit on it first, rather than simply use a remotely-\/initiated stream. Thus this discussion of this edge case is more of a curiosity, however for completeness it needs to be thought about in the API design.
+
+{\bfseries{Q. How should single-\/stream operation support locally and remotely-\/initiated streams?}}
+
+Note that the ID of a stream depends on whether it is bidirectional and whether it is initiated by the client or server. Therefore, in single stream operation, it is necessary to know whether single-\/stream QUIC is being used with client-\/initiated or server-\/initiated stream initiation, and whether a bidirectional or unidirectional stream is being used; otherwise, we do not know which stream ID to bind to.
+
+The object of single stream operation is to support simple uses cases for simple applications. There seems no need to support esoteric usage of streams such as receiving first on a locally initiated stream here, thus we avoid supporting this to simplify the API.
+
+As such, an application which calls {\ttfamily SSL\+\_\+write} on a QUIC connection SSL object before it calls {\ttfamily SSL\+\_\+read} by definition is using a locally-\/initiated stream, and an application which does the opposite is using a remotely-\/initiated stream. We can use the ordering of initial calls to {\ttfamily SSL\+\_\+read} and {\ttfamily SSL\+\_\+write} to infer the desired stream type.
+
+Supporting locally-\/initiated streams ({\ttfamily SSL\+\_\+write} called first) is simple; we automatically create the stream and queue data for transmission.
+
+Supporting remotely-\/initiated streams ({\ttfamily SSL\+\_\+read} called first) is a little stranger. We could create the stream with the correct ID when cued to by the initial call to {\ttfamily SSL\+\_\+read} implying use of a remotely-\/initiated stream. However, this would mean we are creating state tracking a remotely-\/initiated stream before the peer has signalled it. This would work in the happy case where the client is connected to a compatible server but may result in strange inconsistencies of QUIC internal state if a client is accidentally connected to an incompatible peer. Since the peer ought to be the authority on the streams it creates, this seems like an undesirable approach.
+
+Ergo, creation of a default remotely-\/initiated stream needs to be deferred until the {\itshape peer} signals such a stream.
+
+This leads naturally to a "{}first stream wins"{} model of implementation\+:
+
+
+\begin{DoxyItemize}
+\item When a QUIC connection SSL object is created, default stream mode is enabled, meaning that a default stream will be bound to the QUIC connection SSL object at the earliest available opportunity. However, no default stream is bound yet.
+\item One of the following events happened — whichever happens first wins\+:
+\begin{DoxyItemize}
+\item The local application calls {\ttfamily SSL\+\_\+write()} ({\ttfamily len \texorpdfstring{$>$}{>} 0}). A locally-\/initiated stream with ordinal 0 is created. The stream is bidirectional by default but this can be changed. This stream is bound as the default stream.
+\item The peer creates a stream. This stream is bound as the default stream.
+\end{DoxyItemize}
+\end{DoxyItemize}
+
+If the local application calls {\ttfamily SSL\+\_\+read()} before either of the above occur, {\ttfamily SSL\+\_\+read()} fails as though no data is available until one of the above events occurs.
+
+Once one of the above events occurs, any additional stream created by the peer is automatically terminated using both {\ttfamily STOP\+\_\+\+SENDING} and {\ttfamily STREAM\+\_\+\+RESET} frames (to terminate both the receiving and sending parts respectively) and there is no API-\/visible effect to the local application (unless the application explicitly opts into supporting additional streams). 

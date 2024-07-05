@@ -1,0 +1,77 @@
+\doxysection{core.\+h}
+\hypertarget{internal_2core_8h_source}{}\label{internal_2core_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/core.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/core.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2019-\/2022\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_INTERNAL\_CORE\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_INTERNAL\_CORE\_H}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#\ pragma\ once}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ *\ namespaces:}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ *\ ossl\_method\_\ \ \ \ \ \ \ \ \ Core\ Method\ API}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00021\ \textcolor{comment}{\ *\ construct\ an\ arbitrary\ method\ from\ a\ dispatch\ table\ found\ by\ looking}}
+\DoxyCodeLine{00022\ \textcolor{comment}{\ *\ up\ a\ match\ for\ the\ <\ operation\_id,\ name,\ property\ >\ combination.}}
+\DoxyCodeLine{00023\ \textcolor{comment}{\ *\ constructor\ and\ destructor\ are\ the\ constructor\ and\ destructor\ for\ that}}
+\DoxyCodeLine{00024\ \textcolor{comment}{\ *\ arbitrary\ object.}}
+\DoxyCodeLine{00025\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00026\ \textcolor{comment}{\ *\ These\ objects\ are\ normally\ cached,\ unless\ the\ provider\ says\ not\ to\ cache.}}
+\DoxyCodeLine{00027\ \textcolor{comment}{\ *\ However,\ force\_cache\ can\ be\ used\ to\ force\ caching\ whatever\ the\ provider}}
+\DoxyCodeLine{00028\ \textcolor{comment}{\ *\ says\ (for\ example,\ because\ the\ application\ knows\ better).}}
+\DoxyCodeLine{00029\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00030\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__method__construct__method__st}{ossl\_method\_construct\_method\_st}}\ \{}
+\DoxyCodeLine{00031\ \ \ \ \ \textcolor{comment}{/*\ Get\ a\ temporary\ store\ */}}
+\DoxyCodeLine{00032\ \ \ \ \ \textcolor{keywordtype}{void}\ *(*get\_tmp\_store)(\textcolor{keywordtype}{void}\ *data);}
+\DoxyCodeLine{00033\ \ \ \ \ \textcolor{comment}{/*\ Reserve\ the\ appropriate\ method\ store\ */}}
+\DoxyCodeLine{00034\ \ \ \ \ int\ (*lock\_store)(\textcolor{keywordtype}{void}\ *store,\ \textcolor{keywordtype}{void}\ *data);}
+\DoxyCodeLine{00035\ \ \ \ \ \textcolor{comment}{/*\ Unreserve\ the\ appropriate\ method\ store\ */}}
+\DoxyCodeLine{00036\ \ \ \ \ int\ (*unlock\_store)(\textcolor{keywordtype}{void}\ *store,\ \textcolor{keywordtype}{void}\ *data);}
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{comment}{/*\ Get\ an\ already\ existing\ method\ from\ a\ store\ */}}
+\DoxyCodeLine{00038\ \ \ \ \ \textcolor{keywordtype}{void}\ *(*get)(\textcolor{keywordtype}{void}\ *store,\ \textcolor{keyword}{const}\ OSSL\_PROVIDER\ **prov,\ \textcolor{keywordtype}{void}\ *data);}
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{comment}{/*\ Store\ a\ method\ in\ a\ store\ */}}
+\DoxyCodeLine{00040\ \ \ \ \ int\ (*put)(\textcolor{keywordtype}{void}\ *store,\ \textcolor{keywordtype}{void}\ *method,\ \textcolor{keyword}{const}\ OSSL\_PROVIDER\ *prov,}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *name,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *propdef,\ \textcolor{keywordtype}{void}\ *data);}
+\DoxyCodeLine{00042\ \ \ \ \ \textcolor{comment}{/*\ Construct\ a\ new\ method\ */}}
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{keywordtype}{void}\ *(*construct)(\textcolor{keyword}{const}\ OSSL\_ALGORITHM\ *algodef,\ OSSL\_PROVIDER\ *prov,}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *data);}
+\DoxyCodeLine{00045\ \ \ \ \ \textcolor{comment}{/*\ Destruct\ a\ method\ */}}
+\DoxyCodeLine{00046\ \ \ \ \ void\ (*destruct)(\textcolor{keywordtype}{void}\ *method,\ \textcolor{keywordtype}{void}\ *data);}
+\DoxyCodeLine{00047\ \}\ \mbox{\hyperlink{structossl__method__construct__method__st}{OSSL\_METHOD\_CONSTRUCT\_METHOD}};}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \textcolor{keywordtype}{void}\ *ossl\_method\_construct(OSSL\_LIB\_CTX\ *ctx,\ \textcolor{keywordtype}{int}\ operation\_id,}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OSSL\_PROVIDER\ **provider\_rw,\ \textcolor{keywordtype}{int}\ force\_cache,}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structossl__method__construct__method__st}{OSSL\_METHOD\_CONSTRUCT\_METHOD}}\ *mcm,\ \textcolor{keywordtype}{void}\ *mcm\_data);}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \textcolor{keywordtype}{void}\ ossl\_algorithm\_do\_all(OSSL\_LIB\_CTX\ *libctx,\ \textcolor{keywordtype}{int}\ operation\_id,}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OSSL\_PROVIDER\ *provider,}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ (*pre)(OSSL\_PROVIDER\ *,\ \textcolor{keywordtype}{int}\ operation\_id,}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ no\_store,\ \textcolor{keywordtype}{void}\ *data,\ \textcolor{keywordtype}{int}\ *result),}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ (*reserve\_store)(\textcolor{keywordtype}{int}\ no\_store,\ \textcolor{keywordtype}{void}\ *data),}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ (*fn)(OSSL\_PROVIDER\ *provider,}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ OSSL\_ALGORITHM\ *algo,}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ no\_store,\ \textcolor{keywordtype}{void}\ *data),}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ (*unreserve\_store)(\textcolor{keywordtype}{void}\ *data),}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ (*post)(OSSL\_PROVIDER\ *,\ \textcolor{keywordtype}{int}\ operation\_id,}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ no\_store,\ \textcolor{keywordtype}{void}\ *data,\ \textcolor{keywordtype}{int}\ *result),}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *data);}
+\DoxyCodeLine{00065\ \textcolor{keywordtype}{char}\ *ossl\_algorithm\_get1\_first\_name(\textcolor{keyword}{const}\ OSSL\_ALGORITHM\ *algo);}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00067\ \_\_owur\ \textcolor{keywordtype}{int}\ ossl\_lib\_ctx\_write\_lock(OSSL\_LIB\_CTX\ *ctx);}
+\DoxyCodeLine{00068\ \_\_owur\ \textcolor{keywordtype}{int}\ ossl\_lib\_ctx\_read\_lock(OSSL\_LIB\_CTX\ *ctx);}
+\DoxyCodeLine{00069\ \textcolor{keywordtype}{int}\ ossl\_lib\_ctx\_unlock(OSSL\_LIB\_CTX\ *ctx);}
+\DoxyCodeLine{00070\ \textcolor{keywordtype}{int}\ ossl\_lib\_ctx\_is\_child(OSSL\_LIB\_CTX\ *ctx);}
+\DoxyCodeLine{00071\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

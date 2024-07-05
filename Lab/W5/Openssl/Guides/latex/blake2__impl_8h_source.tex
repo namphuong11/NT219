@@ -1,0 +1,124 @@
+\doxysection{blake2\+\_\+impl.\+h}
+\hypertarget{blake2__impl_8h_source}{}\label{blake2__impl_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/providers/implementations/digests/blake2\_impl.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/providers/implementations/digests/blake2\_impl.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2016-\/2020\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ *\ Derived\ from\ the\ BLAKE2\ reference\ implementation\ written\ by\ Samuel\ Neves.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ *\ Copyright\ 2012,\ Samuel\ Neves\ <sneves@dei.uc.pt>}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ *\ More\ information\ about\ the\ BLAKE2\ hash\ function\ and\ its\ implementations}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ *\ can\ be\ found\ at\ https://blake2.net.}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#include\ <string.h>}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#include\ "{}internal/endian.h"{}}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{keyword}{static}\ ossl\_inline\ uint32\_t\ load32(\textcolor{keyword}{const}\ uint8\_t\ *src)}
+\DoxyCodeLine{00021\ \{}
+\DoxyCodeLine{00022\ \ \ \ \ DECLARE\_IS\_ENDIAN;}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \ \ \ \ \textcolor{keywordflow}{if}\ (IS\_LITTLE\_ENDIAN)\ \{}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ uint32\_t\ w;}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ memcpy(\&w,\ src,\ \textcolor{keyword}{sizeof}(w));}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ w;}
+\DoxyCodeLine{00028\ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ uint32\_t\ w\ =\ ((uint32\_t)src[0])}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ |\ ((uint32\_t)src[1]\ <<\ \ 8)}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ |\ ((uint32\_t)src[2]\ <<\ 16)}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ |\ ((uint32\_t)src[3]\ <<\ 24);}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ w;}
+\DoxyCodeLine{00034\ \ \ \ \ \}}
+\DoxyCodeLine{00035\ \}}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \textcolor{keyword}{static}\ ossl\_inline\ uint64\_t\ load64(\textcolor{keyword}{const}\ uint8\_t\ *src)}
+\DoxyCodeLine{00038\ \{}
+\DoxyCodeLine{00039\ \ \ \ \ DECLARE\_IS\_ENDIAN;}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{keywordflow}{if}\ (IS\_LITTLE\_ENDIAN)\ \{}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ uint64\_t\ w;}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ memcpy(\&w,\ src,\ \textcolor{keyword}{sizeof}(w));}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ w;}
+\DoxyCodeLine{00045\ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ uint64\_t\ w\ =\ ((uint64\_t)src[0])}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ |\ ((uint64\_t)src[1]\ <<\ \ 8)}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ |\ ((uint64\_t)src[2]\ <<\ 16)}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ |\ ((uint64\_t)src[3]\ <<\ 24)}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ |\ ((uint64\_t)src[4]\ <<\ 32)}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ |\ ((uint64\_t)src[5]\ <<\ 40)}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ |\ ((uint64\_t)src[6]\ <<\ 48)}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ |\ ((uint64\_t)src[7]\ <<\ 56);}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ w;}
+\DoxyCodeLine{00055\ \ \ \ \ \}}
+\DoxyCodeLine{00056\ \}}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{void}\ store32(uint8\_t\ *dst,\ uint32\_t\ w)}
+\DoxyCodeLine{00059\ \{}
+\DoxyCodeLine{00060\ \ \ \ \ DECLARE\_IS\_ENDIAN;}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \ \ \ \ \textcolor{keywordflow}{if}\ (IS\_LITTLE\_ENDIAN)\ \{}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ memcpy(dst,\ \&w,\ \textcolor{keyword}{sizeof}(w));}
+\DoxyCodeLine{00064\ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ uint8\_t\ *p\ =\ (uint8\_t\ *)dst;}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ i;}
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ 4;\ i++)}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \ \ \ \ p[i]\ =\ (uint8\_t)(w\ >>\ (8\ *\ i));}
+\DoxyCodeLine{00070\ \ \ \ \ \}}
+\DoxyCodeLine{00071\ \}}
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00073\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{void}\ store64(uint8\_t\ *dst,\ uint64\_t\ w)}
+\DoxyCodeLine{00074\ \{}
+\DoxyCodeLine{00075\ \ \ \ \ DECLARE\_IS\_ENDIAN;}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00077\ \ \ \ \ \textcolor{keywordflow}{if}\ (IS\_LITTLE\_ENDIAN)\ \{}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ memcpy(dst,\ \&w,\ \textcolor{keyword}{sizeof}(w));}
+\DoxyCodeLine{00079\ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ uint8\_t\ *p\ =\ (uint8\_t\ *)dst;}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ i;}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ 8;\ i++)}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \ \ \ \ p[i]\ =\ (uint8\_t)(w\ >>\ (8\ *\ i));}
+\DoxyCodeLine{00085\ \ \ \ \ \}}
+\DoxyCodeLine{00086\ \}}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00088\ \textcolor{keyword}{static}\ ossl\_inline\ uint64\_t\ load48(\textcolor{keyword}{const}\ uint8\_t\ *src)}
+\DoxyCodeLine{00089\ \{}
+\DoxyCodeLine{00090\ \ \ \ \ uint64\_t\ w\ =\ ((uint64\_t)src[0])}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ |\ ((uint64\_t)src[1]\ <<\ \ 8)}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ |\ ((uint64\_t)src[2]\ <<\ 16)}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ |\ ((uint64\_t)src[3]\ <<\ 24)}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ |\ ((uint64\_t)src[4]\ <<\ 32)}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ |\ ((uint64\_t)src[5]\ <<\ 40);}
+\DoxyCodeLine{00096\ \ \ \ \ \textcolor{keywordflow}{return}\ w;}
+\DoxyCodeLine{00097\ \}}
+\DoxyCodeLine{00098\ }
+\DoxyCodeLine{00099\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{void}\ store48(uint8\_t\ *dst,\ uint64\_t\ w)}
+\DoxyCodeLine{00100\ \{}
+\DoxyCodeLine{00101\ \ \ \ \ uint8\_t\ *p\ =\ (uint8\_t\ *)dst;}
+\DoxyCodeLine{00102\ \ \ \ \ p[0]\ =\ (uint8\_t)w;}
+\DoxyCodeLine{00103\ \ \ \ \ p[1]\ =\ (uint8\_t)(w>>8);}
+\DoxyCodeLine{00104\ \ \ \ \ p[2]\ =\ (uint8\_t)(w>>16);}
+\DoxyCodeLine{00105\ \ \ \ \ p[3]\ =\ (uint8\_t)(w>>24);}
+\DoxyCodeLine{00106\ \ \ \ \ p[4]\ =\ (uint8\_t)(w>>32);}
+\DoxyCodeLine{00107\ \ \ \ \ p[5]\ =\ (uint8\_t)(w>>40);}
+\DoxyCodeLine{00108\ \}}
+\DoxyCodeLine{00109\ }
+\DoxyCodeLine{00110\ \textcolor{keyword}{static}\ ossl\_inline\ uint32\_t\ rotr32(\textcolor{keyword}{const}\ uint32\_t\ w,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ c)}
+\DoxyCodeLine{00111\ \{}
+\DoxyCodeLine{00112\ \ \ \ \ \textcolor{keywordflow}{return}\ (w\ >>\ c)\ |\ (w\ <<\ (32\ -\/\ c));}
+\DoxyCodeLine{00113\ \}}
+\DoxyCodeLine{00114\ }
+\DoxyCodeLine{00115\ \textcolor{keyword}{static}\ ossl\_inline\ uint64\_t\ rotr64(\textcolor{keyword}{const}\ uint64\_t\ w,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ c)}
+\DoxyCodeLine{00116\ \{}
+\DoxyCodeLine{00117\ \ \ \ \ \textcolor{keywordflow}{return}\ (w\ >>\ c)\ |\ (w\ <<\ (64\ -\/\ c));}
+\DoxyCodeLine{00118\ \}}
+
+\end{DoxyCode}

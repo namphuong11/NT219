@@ -1,0 +1,77 @@
+\chapter{Running external test suites with Open\+SSL}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2test_2_r_e_a_d_m_e-external}{}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2test_2_r_e_a_d_m_e-external}\index{Running external test suites with OpenSSL@{Running external test suites with OpenSSL}}
+It is possible to integrate external test suites into Open\+SSL\textquotesingle{}s {\ttfamily make test}. This capability is considered a developer option and does not work on all platforms.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2test_2_r_e_a_d_m_e-external_autotoc_md979}{}\doxysection{\texorpdfstring{Python PYCA/\+Cryptography test suite}{Python PYCA/\+Cryptography test suite}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2test_2_r_e_a_d_m_e-external_autotoc_md979}
+This python test suite runs cryptographic tests with a local Open\+SSL build as the implementation.
+
+First checkout the {\ttfamily PYCA/\+Cryptography} module into {\ttfamily ./pyca-\/cryptography} using\+: \begin{DoxyVerb}$ git submodule update --init
+\end{DoxyVerb}
+ Then configure/build Open\+SSL compatible with the python module\+: \begin{DoxyVerb}$ ./config shared enable-external-tests
+$ make
+\end{DoxyVerb}
+ The tests will run in a python virtual environment which requires virtualenv to be installed. \begin{DoxyVerb}$ make test VERBOSE=1 TESTS=test_external_pyca
+\end{DoxyVerb}
+ \hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2test_2_r_e_a_d_m_e-external_autotoc_md980}{}\doxysubsection{\texorpdfstring{Test failures and suppressions}{Test failures and suppressions}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2test_2_r_e_a_d_m_e-external_autotoc_md980}
+Some tests target older (\texorpdfstring{$<$}{<}=1.\+0.\+2) versions so will not run. Other tests target other crypto implementations so are not relevant. Currently no tests fail.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2test_2_r_e_a_d_m_e-external_autotoc_md981}{}\doxysection{\texorpdfstring{krb5 test suite}{krb5 test suite}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2test_2_r_e_a_d_m_e-external_autotoc_md981}
+Much like the PYCA/\+Cryptography test suite, this builds and runs the krb5 tests against the local Open\+SSL build.
+
+You will need a git checkout of krb5 at the top level\+: \begin{DoxyVerb}$ git clone https://github.com/krb5/krb5
+\end{DoxyVerb}
+ krb5\textquotesingle{}s master has to pass this same CI, but a known-\/good version is krb5-\/1.\+15.\+1-\/final if you want to be sure. \begin{DoxyVerb}$ cd krb5
+$ git checkout krb5-1.15.1-final
+$ cd ..
+\end{DoxyVerb}
+ Open\+SSL must be built with external tests enabled\+: \begin{DoxyVerb}$ ./config enable-external-tests
+$ make
+\end{DoxyVerb}
+ krb5\textquotesingle{}s tests will then be run as part of the rest of the suite, or can be explicitly run (with more debugging)\+: \begin{DoxyVerb}$ VERBOSE=1 make TESTS=test_external_krb5 test
+\end{DoxyVerb}
+ \hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2test_2_r_e_a_d_m_e-external_autotoc_md982}{}\doxysubsection{\texorpdfstring{Test-\/failures suppressions}{Test-\/failures suppressions}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2test_2_r_e_a_d_m_e-external_autotoc_md982}
+krb5 will automatically adapt its test suite to account for the configuration of your system. Certain tests may require more installed packages to run. No tests are expected to fail.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2test_2_r_e_a_d_m_e-external_autotoc_md983}{}\doxysection{\texorpdfstring{GOST engine test suite}{GOST engine test suite}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2test_2_r_e_a_d_m_e-external_autotoc_md983}
+Much like the PYCA/\+Cryptography test suite, this builds and runs the GOST engine tests against the local Open\+SSL build.
+
+You will need a git checkout of gost-\/engine at the top level\+: \begin{DoxyVerb}$ git submodule update --init
+\end{DoxyVerb}
+ Then configure/build Open\+SSL enabling external tests\+: \begin{DoxyVerb}$ ./config shared enable-external-tests
+$ make
+\end{DoxyVerb}
+ GOST engine requires CMake for the build process.
+
+GOST engine tests will then be run as part of the rest of the suite, or can be explicitly run (with more debugging)\+: \begin{DoxyVerb}$ make test VERBOSE=1 TESTS=test_external_gost_engine
+\end{DoxyVerb}
+ \hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2test_2_r_e_a_d_m_e-external_autotoc_md984}{}\doxysection{\texorpdfstring{OQSprovider test suite}{OQSprovider test suite}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2test_2_r_e_a_d_m_e-external_autotoc_md984}
+Much like the PYCA/\+Cryptography test suite, this builds and runs the OQS (Open\+Quantum\+Safe -- www.\+openquantumsafe.\+org) provider tests against the local Open\+SSL build.
+
+You will need a git checkout of oqsprovider at the top level\+: \begin{DoxyVerb}$ git submodule update --init
+\end{DoxyVerb}
+ Then configure/build Open\+SSL enabling external tests\+: \begin{DoxyVerb}$ ./config shared enable-external-tests
+$ make
+\end{DoxyVerb}
+ oqsprovider requires CMake for the build process.
+
+OQSprovider tests will then be run as part of the rest of the suite, or can be explicitly run (with more debugging)\+: \begin{DoxyVerb}$ make test VERBOSE=1 TESTS=test_external_oqsprovider
+\end{DoxyVerb}
+ The environment variable {\ttfamily OQS\+\_\+\+SKIP\+\_\+\+TESTS} can be set to select tests and algorithms to be skipped, e.\+g. as follows\+: \begin{DoxyVerb}OQS_SKIP_TESTS=kyber make test TESTS=test_external_oqsprovider
+\end{DoxyVerb}
+ The names of all supported quantum-\/safe algorithms are available at \href{https://github.com/open-quantum-safe/oqs-provider\#algorithms}{\texttt{ https\+://github.\+com/open-\/quantum-\/safe/oqs-\/provider\#algorithms}}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2test_2_r_e_a_d_m_e-external_autotoc_md985}{}\doxysection{\texorpdfstring{Updating test suites}{Updating test suites}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2test_2_r_e_a_d_m_e-external_autotoc_md985}
+To update the commit for any of the above test suites\+:
+
+
+\begin{DoxyItemize}
+\item Make sure the submodules are cloned locally\+:
+
+\$ git submodule update --init --recursive
+\item Enter subdirectory and pull from the repository (use a specific branch/tag if required)\+:
+
+\$ cd {\ttfamily \texorpdfstring{$<$}{<}submodule-\/dir\texorpdfstring{$>$}{>}} \$ git pull origin master
+\item Go to root directory, there should be a new git status\+:
+
+\$ cd ../ \$ git status ... 
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2test_2_r_e_a_d_m_e-external_autotoc_md986}{}\doxysection{\texorpdfstring{modified\+: {\ttfamily \texorpdfstring{$<$}{<}submodule-\/dir\texorpdfstring{$>$}{>}} (new commits)}{modified\+: {\ttfamily \texorpdfstring{$<$}{<}submodule-\/dir\texorpdfstring{$>$}{>}} (new commits)}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2test_2_r_e_a_d_m_e-external_autotoc_md986}
+...
+
+
+\begin{DoxyItemize}
+\item Add/commit/push the update
+
+\$ git add {\ttfamily \texorpdfstring{$<$}{<}submodule-\/dir\texorpdfstring{$>$}{>}} \$ git commit -\/m {\ttfamily "{}\+Updated $<$submodule$>$ to latest commit"{}} \$ git push 
+\end{DoxyItemize}

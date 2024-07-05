@@ -1,0 +1,68 @@
+\doxysection{dh.\+h}
+\hypertarget{crypto_2dh_8h_source}{}\label{crypto_2dh_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/crypto/dh.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/crypto/dh.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2020-\/2022\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_CRYPTO\_DH\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_CRYPTO\_DH\_H}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#\ pragma\ once}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ include\ <openssl/core.h>}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#\ include\ <openssl/params.h>}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#\ include\ <openssl/dh.h>}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#\ include\ "{}internal/ffc.h"{}}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ DH\ *ossl\_dh\_new\_by\_nid\_ex(OSSL\_LIB\_CTX\ *libctx,\ \textcolor{keywordtype}{int}\ nid);}
+\DoxyCodeLine{00020\ DH\ *ossl\_dh\_new\_ex(OSSL\_LIB\_CTX\ *libctx);}
+\DoxyCodeLine{00021\ \textcolor{keywordtype}{void}\ ossl\_dh\_set0\_libctx(DH\ *d,\ OSSL\_LIB\_CTX\ *libctx);}
+\DoxyCodeLine{00022\ \textcolor{keywordtype}{int}\ ossl\_dh\_generate\_ffc\_parameters(DH\ *dh,\ \textcolor{keywordtype}{int}\ type,\ \textcolor{keywordtype}{int}\ pbits,\ \textcolor{keywordtype}{int}\ qbits,}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BN\_GENCB\ *cb);}
+\DoxyCodeLine{00024\ \textcolor{keywordtype}{int}\ ossl\_dh\_generate\_public\_key(BN\_CTX\ *ctx,\ \textcolor{keyword}{const}\ DH\ *dh,}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *priv\_key,\ BIGNUM\ *pub\_key);}
+\DoxyCodeLine{00026\ \textcolor{keywordtype}{int}\ ossl\_dh\_get\_named\_group\_uid\_from\_size(\textcolor{keywordtype}{int}\ pbits);}
+\DoxyCodeLine{00027\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *ossl\_dh\_gen\_type\_id2name(\textcolor{keywordtype}{int}\ \textcolor{keywordtype}{id});}
+\DoxyCodeLine{00028\ \textcolor{keywordtype}{int}\ ossl\_dh\_gen\_type\_name2id(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *name,\ \textcolor{keywordtype}{int}\ type);}
+\DoxyCodeLine{00029\ \textcolor{keywordtype}{void}\ ossl\_dh\_cache\_named\_group(DH\ *dh);}
+\DoxyCodeLine{00030\ \textcolor{keywordtype}{int}\ ossl\_dh\_is\_named\_safe\_prime\_group(\textcolor{keyword}{const}\ DH\ *dh);}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \mbox{\hyperlink{structffc__params__st}{FFC\_PARAMS}}\ *ossl\_dh\_get0\_params(DH\ *dh);}
+\DoxyCodeLine{00033\ \textcolor{keywordtype}{int}\ ossl\_dh\_get0\_nid(\textcolor{keyword}{const}\ DH\ *dh);}
+\DoxyCodeLine{00034\ \textcolor{keywordtype}{int}\ ossl\_dh\_params\_fromdata(DH\ *dh,\ \textcolor{keyword}{const}\ OSSL\_PARAM\ params[]);}
+\DoxyCodeLine{00035\ \textcolor{keywordtype}{int}\ ossl\_dh\_key\_fromdata(DH\ *dh,\ \textcolor{keyword}{const}\ OSSL\_PARAM\ params[],\ \textcolor{keywordtype}{int}\ include\_private);}
+\DoxyCodeLine{00036\ \textcolor{keywordtype}{int}\ ossl\_dh\_params\_todata(DH\ *dh,\ OSSL\_PARAM\_BLD\ *bld,\ OSSL\_PARAM\ params[]);}
+\DoxyCodeLine{00037\ \textcolor{keywordtype}{int}\ ossl\_dh\_key\_todata(DH\ *dh,\ OSSL\_PARAM\_BLD\ *bld,\ OSSL\_PARAM\ params[],}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ include\_private);}
+\DoxyCodeLine{00039\ DH\ *ossl\_dh\_key\_from\_pkcs8(\textcolor{keyword}{const}\ PKCS8\_PRIV\_KEY\_INFO\ *p8inf,}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OSSL\_LIB\_CTX\ *libctx,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *propq);}
+\DoxyCodeLine{00041\ \textcolor{keywordtype}{int}\ ossl\_dh\_compute\_key(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *key,\ \textcolor{keyword}{const}\ BIGNUM\ *pub\_key,\ DH\ *dh);}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \textcolor{keywordtype}{int}\ ossl\_dh\_check\_pub\_key\_partial(\textcolor{keyword}{const}\ DH\ *dh,\ \textcolor{keyword}{const}\ BIGNUM\ *pub\_key,\ \textcolor{keywordtype}{int}\ *ret);}
+\DoxyCodeLine{00044\ \textcolor{keywordtype}{int}\ ossl\_dh\_check\_priv\_key(\textcolor{keyword}{const}\ DH\ *dh,\ \textcolor{keyword}{const}\ BIGNUM\ *priv\_key,\ \textcolor{keywordtype}{int}\ *ret);}
+\DoxyCodeLine{00045\ \textcolor{keywordtype}{int}\ ossl\_dh\_check\_pairwise(\textcolor{keyword}{const}\ DH\ *dh);}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \textcolor{keyword}{const}\ DH\_METHOD\ *ossl\_dh\_get\_method(\textcolor{keyword}{const}\ DH\ *dh);}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \textcolor{keywordtype}{int}\ ossl\_dh\_buf2key(DH\ *key,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *buf,\ \textcolor{keywordtype}{size\_t}\ len);}
+\DoxyCodeLine{00050\ \textcolor{keywordtype}{size\_t}\ ossl\_dh\_key2buf(\textcolor{keyword}{const}\ DH\ *dh,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **pbuf,\ \textcolor{keywordtype}{size\_t}\ size,}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ alloc);}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \textcolor{keywordtype}{int}\ ossl\_dh\_kdf\_X9\_42\_asn1(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,\ \textcolor{keywordtype}{size\_t}\ outlen,}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *Z,\ \textcolor{keywordtype}{size\_t}\ Zlen,}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *cek\_alg,}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *ukm,\ \textcolor{keywordtype}{size\_t}\ ukmlen,}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ EVP\_MD\ *md,}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OSSL\_LIB\_CTX\ *libctx,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *propq);}
+\DoxyCodeLine{00059\ \textcolor{keywordtype}{int}\ ossl\_dh\_is\_foreign(\textcolor{keyword}{const}\ DH\ *dh);}
+\DoxyCodeLine{00060\ DH\ *ossl\_dh\_dup(\textcolor{keyword}{const}\ DH\ *dh,\ \textcolor{keywordtype}{int}\ selection);}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{/*\ OSSL\_CRYPTO\_DH\_H\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

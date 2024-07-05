@@ -1,0 +1,64 @@
+\doxysection{dtls1\+\_\+state\+\_\+st Struct Reference}
+\hypertarget{structdtls1__state__st}{}\label{structdtls1__state__st}\index{dtls1\_state\_st@{dtls1\_state\_st}}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{structdtls1__state__st_a3600731c890da666b152e0bea4b17644}\label{structdtls1__state__st_a3600731c890da666b152e0bea4b17644} 
+unsigned char {\bfseries cookie} \mbox{[}DTLS1\+\_\+\+COOKIE\+\_\+\+LENGTH\mbox{]}
+\item 
+\Hypertarget{structdtls1__state__st_a168ea157c4e9658303c0984acfd761c4}\label{structdtls1__state__st_a168ea157c4e9658303c0984acfd761c4} 
+size\+\_\+t {\bfseries cookie\+\_\+len}
+\item 
+\Hypertarget{structdtls1__state__st_a3f851559a86b792ef3124448a650b6c2}\label{structdtls1__state__st_a3f851559a86b792ef3124448a650b6c2} 
+unsigned int {\bfseries cookie\+\_\+verified}
+\item 
+\Hypertarget{structdtls1__state__st_ac14d838ba2fa596ab378ac07bee6e0c8}\label{structdtls1__state__st_ac14d838ba2fa596ab378ac07bee6e0c8} 
+unsigned short {\bfseries handshake\+\_\+write\+\_\+seq}
+\item 
+\Hypertarget{structdtls1__state__st_ae5ce4e4dc2d5625594b6c7a339198a23}\label{structdtls1__state__st_ae5ce4e4dc2d5625594b6c7a339198a23} 
+unsigned short {\bfseries next\+\_\+handshake\+\_\+write\+\_\+seq}
+\item 
+\Hypertarget{structdtls1__state__st_a928b4ab02c52ca660cb46762133b21bb}\label{structdtls1__state__st_a928b4ab02c52ca660cb46762133b21bb} 
+unsigned short {\bfseries handshake\+\_\+read\+\_\+seq}
+\item 
+\Hypertarget{structdtls1__state__st_a02744b27c75f77bbf8cec87455dc1df0}\label{structdtls1__state__st_a02744b27c75f77bbf8cec87455dc1df0} 
+\mbox{\hyperlink{structpqueue__st}{pqueue}} \texorpdfstring{$\ast$}{*} {\bfseries buffered\+\_\+messages}
+\item 
+\Hypertarget{structdtls1__state__st_af884c8723751338a5a25bc48ab77802b}\label{structdtls1__state__st_af884c8723751338a5a25bc48ab77802b} 
+\mbox{\hyperlink{structpqueue__st}{pqueue}} \texorpdfstring{$\ast$}{*} {\bfseries sent\+\_\+messages}
+\item 
+\Hypertarget{structdtls1__state__st_ad1b7c477b49ba76c1d2624ff991a0368}\label{structdtls1__state__st_ad1b7c477b49ba76c1d2624ff991a0368} 
+size\+\_\+t {\bfseries link\+\_\+mtu}
+\item 
+\Hypertarget{structdtls1__state__st_a0e3ad01bda8dc454deb38d8b31b61f03}\label{structdtls1__state__st_a0e3ad01bda8dc454deb38d8b31b61f03} 
+size\+\_\+t {\bfseries mtu}
+\item 
+\Hypertarget{structdtls1__state__st_aa16e59d7f125177caa2b5939fcb13890}\label{structdtls1__state__st_aa16e59d7f125177caa2b5939fcb13890} 
+struct \mbox{\hyperlink{structhm__header__st}{hm\+\_\+header\+\_\+st}} {\bfseries w\+\_\+msg\+\_\+hdr}
+\item 
+\Hypertarget{structdtls1__state__st_a1c6a7daa242306285d142a607d0a63b1}\label{structdtls1__state__st_a1c6a7daa242306285d142a607d0a63b1} 
+struct \mbox{\hyperlink{structhm__header__st}{hm\+\_\+header\+\_\+st}} {\bfseries r\+\_\+msg\+\_\+hdr}
+\item 
+\Hypertarget{structdtls1__state__st_afc90bbdfd1bce0f45d36b2d775a08492}\label{structdtls1__state__st_afc90bbdfd1bce0f45d36b2d775a08492} 
+unsigned int {\bfseries timeout\+\_\+num\+\_\+alerts}
+\item 
+\Hypertarget{structdtls1__state__st_a3e6874666891d9bc794982ddf1e58298}\label{structdtls1__state__st_a3e6874666891d9bc794982ddf1e58298} 
+\mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\+\_\+\+TIME}} {\bfseries next\+\_\+timeout}
+\item 
+\Hypertarget{structdtls1__state__st_ab07d895cea45d378782cc6a55c330ba0}\label{structdtls1__state__st_ab07d895cea45d378782cc6a55c330ba0} 
+unsigned int {\bfseries timeout\+\_\+duration\+\_\+us}
+\item 
+\Hypertarget{structdtls1__state__st_a55559920472b96c76fbe4b1bf83c62e5}\label{structdtls1__state__st_a55559920472b96c76fbe4b1bf83c62e5} 
+unsigned int {\bfseries retransmitting}
+\item 
+\Hypertarget{structdtls1__state__st_adb9566c47686031f7236b44b25ff6356}\label{structdtls1__state__st_adb9566c47686031f7236b44b25ff6356} 
+int {\bfseries shutdown\+\_\+received}
+\item 
+\Hypertarget{structdtls1__state__st_ac44e5ad6772f52ddcd767a47f30a1956}\label{structdtls1__state__st_ac44e5ad6772f52ddcd767a47f30a1956} 
+DTLS\+\_\+timer\+\_\+cb {\bfseries timer\+\_\+cb}
+\end{DoxyCompactItemize}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/namph/\+Downloads/openssl/openssl-\/3.\+2.\+1/ssl/ssl\+\_\+local.\+h\end{DoxyCompactItemize}

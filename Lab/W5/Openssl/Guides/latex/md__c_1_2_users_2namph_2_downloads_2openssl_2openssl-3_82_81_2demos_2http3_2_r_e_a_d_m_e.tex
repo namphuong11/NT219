@@ -1,0 +1,30 @@
+\chapter{HTTP/3 Demo using Open\+SSL QUIC and nghttp3}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2demos_2http3_2_r_e_a_d_m_e}{}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2demos_2http3_2_r_e_a_d_m_e}\index{HTTP/3 Demo using OpenSSL QUIC and nghttp3@{HTTP/3 Demo using OpenSSL QUIC and nghttp3}}
+This is a simple demo of how to use HTTP/3 with Open\+SSL QUIC using the HTTP/3 library “\href{https://github.com/ngtcp2/nghttp3}{\texttt{ nghttp3}}”.
+
+The demo is structured into two parts\+:
+
+
+\begin{DoxyItemize}
+\item an adaptation layer which binds nghttp3 to Open\+SSL\textquotesingle{}s QUIC implementation ({\ttfamily ossl-\/nghttp3.\+c});
+\item a simple application which makes an HTTP/3 request using this adaptation layer ({\ttfamily ossl-\/nghttp3-\/demo.\+c}).
+\end{DoxyItemize}
+
+The Makefile in this directory can be used to build the demo on \texorpdfstring{$\ast$}{*}nix-\/style systems. You will need the {\ttfamily nghttp3} library and header file. On Ubuntu, these can be obtained by installing the package {\ttfamily libnghttp3-\/dev}.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2demos_2http3_2_r_e_a_d_m_e_autotoc_md186}{}\doxysection{\texorpdfstring{Running the Demo}{Running the Demo}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2demos_2http3_2_r_e_a_d_m_e_autotoc_md186}
+Depending on your system configuration it may be necessary to set the {\ttfamily SSL\+\_\+\+CERT\+\_\+\+FILE} or {\ttfamily SSL\+\_\+\+CERT\+\_\+\+DIR} environment variables to a location where trusted root CA certificates can be found.
+
+After building by running {\ttfamily make}, run {\ttfamily ./ossl-\/nghttp3-\/demo} with a hostname and port as the sole argument\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\$\ make}
+\DoxyCodeLine{\$\ LD\_LIBRARY\_PATH=../..\ ./ossl-\/nghttp3-\/demo\ www.google.com:443}
+
+\end{DoxyCode}
+
+
+The demo produces the HTTP response headers in textual form as output followed by the response body.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2demos_2http3_2_r_e_a_d_m_e_autotoc_md187}{}\doxysection{\texorpdfstring{See Also}{See Also}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2demos_2http3_2_r_e_a_d_m_e_autotoc_md187}
+
+\begin{DoxyItemize}
+\item \href{https://github.com/ngtcp2/nghttp3}{\texttt{ nghttp3}} 
+\end{DoxyItemize}

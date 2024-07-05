@@ -1,0 +1,170 @@
+\doxysection{dso.\+h}
+\hypertarget{dso_8h_source}{}\label{dso_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/dso.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/dso.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2000-\/2021\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_INTERNAL\_DSO\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_INTERNAL\_DSO\_H}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#\ pragma\ once}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ include\ <openssl/crypto.h>}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#\ include\ "{}internal/dsoerr.h"{}}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{comment}{/*\ These\ values\ are\ used\ as\ commands\ to\ DSO\_ctrl()\ */}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#\ define\ DSO\_CTRL\_GET\_FLAGS\ \ \ \ \ \ 1}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#\ define\ DSO\_CTRL\_SET\_FLAGS\ \ \ \ \ \ 2}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#\ define\ DSO\_CTRL\_OR\_FLAGS\ \ \ \ \ \ \ 3}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00023\ \textcolor{comment}{\ *\ By\ default,\ DSO\_load()\ will\ translate\ the\ provided\ filename\ into\ a\ form}}
+\DoxyCodeLine{00024\ \textcolor{comment}{\ *\ typical\ for\ the\ platform\ using\ the\ dso\_name\_converter\ function\ of\ the}}
+\DoxyCodeLine{00025\ \textcolor{comment}{\ *\ method.\ Eg.\ win32\ will\ transform\ "{}blah"{}\ into\ "{}blah.dll"{},\ and\ dlfcn\ will}}
+\DoxyCodeLine{00026\ \textcolor{comment}{\ *\ transform\ it\ into\ "{}libblah.so"{}.\ This\ callback\ could\ even\ utilise\ the}}
+\DoxyCodeLine{00027\ \textcolor{comment}{\ *\ DSO\_METHOD's\ converter\ too\ if\ it\ only\ wants\ to\ override\ behaviour\ for}}
+\DoxyCodeLine{00028\ \textcolor{comment}{\ *\ one\ or\ two\ possible\ DSO\ methods.\ However,\ the\ following\ flag\ can\ be}}
+\DoxyCodeLine{00029\ \textcolor{comment}{\ *\ set\ in\ a\ DSO\ to\ prevent\ *any*\ native\ name-\/translation\ at\ all\ -\/\ eg.\ if}}
+\DoxyCodeLine{00030\ \textcolor{comment}{\ *\ the\ caller\ has\ prompted\ the\ user\ for\ a\ path\ to\ a\ driver\ library\ so\ the}}
+\DoxyCodeLine{00031\ \textcolor{comment}{\ *\ filename\ should\ be\ interpreted\ as-\/is.}}
+\DoxyCodeLine{00032\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#\ define\ DSO\_FLAG\_NO\_NAME\_TRANSLATION\ \ \ \ \ \ \ \ \ \ \ \ 0x01}}
+\DoxyCodeLine{00034\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00035\ \textcolor{comment}{\ *\ An\ extra\ flag\ to\ give\ if\ only\ the\ extension\ should\ be\ added\ as}}
+\DoxyCodeLine{00036\ \textcolor{comment}{\ *\ translation.\ \ This\ is\ obviously\ only\ of\ importance\ on\ Unix\ and\ other}}
+\DoxyCodeLine{00037\ \textcolor{comment}{\ *\ operating\ systems\ where\ the\ translation\ also\ may\ prefix\ the\ name\ with}}
+\DoxyCodeLine{00038\ \textcolor{comment}{\ *\ something,\ like\ 'lib',\ and\ ignored\ everywhere\ else.\ This\ flag\ is\ also}}
+\DoxyCodeLine{00039\ \textcolor{comment}{\ *\ ignored\ if\ DSO\_FLAG\_NO\_NAME\_TRANSLATION\ is\ used\ at\ the\ same\ time.}}
+\DoxyCodeLine{00040\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00041\ \textcolor{preprocessor}{\#\ define\ DSO\_FLAG\_NAME\_TRANSLATION\_EXT\_ONLY\ \ \ \ \ \ 0x02}}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00044\ \textcolor{comment}{\ *\ Don't\ unload\ the\ DSO\ when\ we\ call\ DSO\_free()}}
+\DoxyCodeLine{00045\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00046\ \textcolor{preprocessor}{\#\ define\ DSO\_FLAG\_NO\_UNLOAD\_ON\_FREE\ \ \ \ \ \ \ \ \ \ \ \ \ \ 0x04}}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00049\ \textcolor{comment}{\ *\ This\ flag\ loads\ the\ library\ with\ public\ symbols.\ Meaning:\ The\ exported}}
+\DoxyCodeLine{00050\ \textcolor{comment}{\ *\ symbols\ of\ this\ library\ are\ public\ to\ all\ libraries\ loaded\ after\ this}}
+\DoxyCodeLine{00051\ \textcolor{comment}{\ *\ library.\ At\ the\ moment\ only\ implemented\ in\ unix.}}
+\DoxyCodeLine{00052\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00053\ \textcolor{preprocessor}{\#\ define\ DSO\_FLAG\_GLOBAL\_SYMBOLS\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 0x20}}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ \textcolor{keyword}{typedef}\ void\ (*DSO\_FUNC\_TYPE)\ (void);}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structdso__st}{dso\_st}}\ \mbox{\hyperlink{structdso__st}{DSO}};}
+\DoxyCodeLine{00058\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structdso__meth__st}{dso\_meth\_st}}\ \mbox{\hyperlink{structdso__meth__st}{DSO\_METHOD}};}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00061\ \textcolor{comment}{\ *\ The\ function\ prototype\ used\ for\ method\ functions\ (or\ caller-\/provided}}
+\DoxyCodeLine{00062\ \textcolor{comment}{\ *\ callbacks)\ that\ transform\ filenames.\ They\ are\ passed\ a\ DSO\ structure}}
+\DoxyCodeLine{00063\ \textcolor{comment}{\ *\ pointer\ (or\ NULL\ if\ they\ are\ to\ be\ used\ independently\ of\ a\ DSO\ object)\ and}}
+\DoxyCodeLine{00064\ \textcolor{comment}{\ *\ a\ filename\ to\ transform.\ They\ should\ either\ return\ NULL\ (if\ there\ is\ an}}
+\DoxyCodeLine{00065\ \textcolor{comment}{\ *\ error\ condition)\ or\ a\ newly\ allocated\ string\ containing\ the\ transformed}}
+\DoxyCodeLine{00066\ \textcolor{comment}{\ *\ form\ that\ the\ caller\ will\ need\ to\ free\ with\ OPENSSL\_free()\ when\ done.}}
+\DoxyCodeLine{00067\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00068\ \textcolor{keyword}{typedef}\ \textcolor{keywordtype}{char}\ *(*DSO\_NAME\_CONVERTER\_FUNC)(\mbox{\hyperlink{structdso__st}{DSO}}\ *,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *);}
+\DoxyCodeLine{00069\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00070\ \textcolor{comment}{\ *\ The\ function\ prototype\ used\ for\ method\ functions\ (or\ caller-\/provided}}
+\DoxyCodeLine{00071\ \textcolor{comment}{\ *\ callbacks)\ that\ merge\ two\ file\ specifications.\ They\ are\ passed\ a\ DSO}}
+\DoxyCodeLine{00072\ \textcolor{comment}{\ *\ structure\ pointer\ (or\ NULL\ if\ they\ are\ to\ be\ used\ independently\ of\ a\ DSO}}
+\DoxyCodeLine{00073\ \textcolor{comment}{\ *\ object)\ and\ two\ file\ specifications\ to\ merge.\ They\ should\ either\ return}}
+\DoxyCodeLine{00074\ \textcolor{comment}{\ *\ NULL\ (if\ there\ is\ an\ error\ condition)\ or\ a\ newly\ allocated\ string}}
+\DoxyCodeLine{00075\ \textcolor{comment}{\ *\ containing\ the\ result\ of\ merging\ that\ the\ caller\ will\ need\ to\ free\ with}}
+\DoxyCodeLine{00076\ \textcolor{comment}{\ *\ OPENSSL\_free()\ when\ done.\ Here,\ merging\ means\ that\ bits\ and\ pieces\ are}}
+\DoxyCodeLine{00077\ \textcolor{comment}{\ *\ taken\ from\ each\ of\ the\ file\ specifications\ and\ added\ together\ in\ whatever}}
+\DoxyCodeLine{00078\ \textcolor{comment}{\ *\ fashion\ that\ is\ sensible\ for\ the\ DSO\ method\ in\ question.\ \ The\ only\ rule}}
+\DoxyCodeLine{00079\ \textcolor{comment}{\ *\ that\ really\ applies\ is\ that\ if\ the\ two\ specification\ contain\ pieces\ of\ the}}
+\DoxyCodeLine{00080\ \textcolor{comment}{\ *\ same\ type,\ the\ copy\ from\ the\ first\ string\ takes\ priority.\ \ One\ could\ see}}
+\DoxyCodeLine{00081\ \textcolor{comment}{\ *\ it\ as\ the\ first\ specification\ is\ the\ one\ given\ by\ the\ user\ and\ the\ second}}
+\DoxyCodeLine{00082\ \textcolor{comment}{\ *\ being\ a\ bunch\ of\ defaults\ to\ add\ on\ if\ they're\ missing\ in\ the\ first.}}
+\DoxyCodeLine{00083\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00084\ \textcolor{keyword}{typedef}\ \textcolor{keywordtype}{char}\ *(*DSO\_MERGER\_FUNC)(\mbox{\hyperlink{structdso__st}{DSO}}\ *,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *);}
+\DoxyCodeLine{00085\ }
+\DoxyCodeLine{00086\ \mbox{\hyperlink{structdso__st}{DSO}}\ *DSO\_new(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00087\ \textcolor{keywordtype}{int}\ DSO\_free(\mbox{\hyperlink{structdso__st}{DSO}}\ *dso);}
+\DoxyCodeLine{00088\ \textcolor{keywordtype}{int}\ DSO\_flags(\mbox{\hyperlink{structdso__st}{DSO}}\ *dso);}
+\DoxyCodeLine{00089\ \textcolor{keywordtype}{int}\ DSO\_up\_ref(\mbox{\hyperlink{structdso__st}{DSO}}\ *dso);}
+\DoxyCodeLine{00090\ \textcolor{keywordtype}{long}\ DSO\_ctrl(\mbox{\hyperlink{structdso__st}{DSO}}\ *dso,\ \textcolor{keywordtype}{int}\ cmd,\ \textcolor{keywordtype}{long}\ larg,\ \textcolor{keywordtype}{void}\ *parg);}
+\DoxyCodeLine{00091\ }
+\DoxyCodeLine{00092\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00093\ \textcolor{comment}{\ *\ These\ functions\ can\ be\ used\ to\ get/set\ the\ platform-\/independent\ filename}}
+\DoxyCodeLine{00094\ \textcolor{comment}{\ *\ used\ for\ a\ DSO.\ NB:\ set\ will\ fail\ if\ the\ DSO\ is\ already\ loaded.}}
+\DoxyCodeLine{00095\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00096\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *DSO\_get\_filename(\mbox{\hyperlink{structdso__st}{DSO}}\ *dso);}
+\DoxyCodeLine{00097\ \textcolor{keywordtype}{int}\ DSO\_set\_filename(\mbox{\hyperlink{structdso__st}{DSO}}\ *dso,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *filename);}
+\DoxyCodeLine{00098\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00099\ \textcolor{comment}{\ *\ This\ function\ will\ invoke\ the\ DSO's\ name\_converter\ callback\ to\ translate\ a}}
+\DoxyCodeLine{00100\ \textcolor{comment}{\ *\ filename,\ or\ if\ the\ callback\ isn't\ set\ it\ will\ instead\ use\ the\ DSO\_METHOD's}}
+\DoxyCodeLine{00101\ \textcolor{comment}{\ *\ converter.\ If\ "{}filename"{}\ is\ NULL,\ the\ "{}filename"{}\ in\ the\ DSO\ itself\ will\ be}}
+\DoxyCodeLine{00102\ \textcolor{comment}{\ *\ used.\ If\ the\ DSO\_FLAG\_NO\_NAME\_TRANSLATION\ flag\ is\ set,\ then\ the\ filename\ is}}
+\DoxyCodeLine{00103\ \textcolor{comment}{\ *\ simply\ duplicated.\ NB:\ This\ function\ is\ usually\ called\ from\ within\ a}}
+\DoxyCodeLine{00104\ \textcolor{comment}{\ *\ DSO\_METHOD\ during\ the\ processing\ of\ a\ DSO\_load()\ call,\ and\ is\ exposed\ so}}
+\DoxyCodeLine{00105\ \textcolor{comment}{\ *\ that\ caller-\/created\ DSO\_METHODs\ can\ do\ the\ same\ thing.\ A\ non-\/NULL\ return}}
+\DoxyCodeLine{00106\ \textcolor{comment}{\ *\ value\ will\ need\ to\ be\ OPENSSL\_free()'d.}}
+\DoxyCodeLine{00107\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00108\ \textcolor{keywordtype}{char}\ *DSO\_convert\_filename(\mbox{\hyperlink{structdso__st}{DSO}}\ *dso,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *filename);}
+\DoxyCodeLine{00109\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00110\ \textcolor{comment}{\ *\ This\ function\ will\ invoke\ the\ DSO's\ merger\ callback\ to\ merge\ two\ file}}
+\DoxyCodeLine{00111\ \textcolor{comment}{\ *\ specifications,\ or\ if\ the\ callback\ isn't\ set\ it\ will\ instead\ use\ the}}
+\DoxyCodeLine{00112\ \textcolor{comment}{\ *\ DSO\_METHOD's\ merger.\ \ A\ non-\/NULL\ return\ value\ will\ need\ to\ be}}
+\DoxyCodeLine{00113\ \textcolor{comment}{\ *\ OPENSSL\_free()'d.}}
+\DoxyCodeLine{00114\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00115\ \textcolor{keywordtype}{char}\ *DSO\_merge(\mbox{\hyperlink{structdso__st}{DSO}}\ *dso,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *filespec1,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *filespec2);}
+\DoxyCodeLine{00116\ }
+\DoxyCodeLine{00117\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00118\ \textcolor{comment}{\ *\ The\ all-\/singing\ all-\/dancing\ load\ function,\ you\ normally\ pass\ NULL\ for\ the}}
+\DoxyCodeLine{00119\ \textcolor{comment}{\ *\ first\ and\ third\ parameters.\ Use\ DSO\_up\_ref\ and\ DSO\_free\ for\ subsequent}}
+\DoxyCodeLine{00120\ \textcolor{comment}{\ *\ reference\ count\ handling.\ Any\ flags\ passed\ in\ will\ be\ set\ in\ the}}
+\DoxyCodeLine{00121\ \textcolor{comment}{\ *\ constructed\ DSO\ after\ its\ init()\ function\ but\ before\ the\ load\ operation.}}
+\DoxyCodeLine{00122\ \textcolor{comment}{\ *\ If\ 'dso'\ is\ non-\/NULL,\ 'flags'\ is\ ignored.}}
+\DoxyCodeLine{00123\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00124\ \mbox{\hyperlink{structdso__st}{DSO}}\ *DSO\_load(\mbox{\hyperlink{structdso__st}{DSO}}\ *dso,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *filename,\ \mbox{\hyperlink{structdso__meth__st}{DSO\_METHOD}}\ *meth,\ \textcolor{keywordtype}{int}\ flags);}
+\DoxyCodeLine{00125\ }
+\DoxyCodeLine{00126\ \textcolor{comment}{/*\ This\ function\ binds\ to\ a\ function\ inside\ a\ shared\ library.\ */}}
+\DoxyCodeLine{00127\ DSO\_FUNC\_TYPE\ DSO\_bind\_func(\mbox{\hyperlink{structdso__st}{DSO}}\ *dso,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *symname);}
+\DoxyCodeLine{00128\ }
+\DoxyCodeLine{00129\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00130\ \textcolor{comment}{\ *\ This\ method\ is\ the\ default,\ but\ will\ beg,\ borrow,\ or\ steal\ whatever\ method}}
+\DoxyCodeLine{00131\ \textcolor{comment}{\ *\ should\ be\ the\ default\ on\ any\ particular\ platform\ (including}}
+\DoxyCodeLine{00132\ \textcolor{comment}{\ *\ DSO\_METH\_null()\ if\ necessary).}}
+\DoxyCodeLine{00133\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00134\ \mbox{\hyperlink{structdso__meth__st}{DSO\_METHOD}}\ *DSO\_METHOD\_openssl(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00135\ }
+\DoxyCodeLine{00136\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00137\ \textcolor{comment}{\ *\ This\ function\ writes\ null-\/terminated\ pathname\ of\ DSO\ module\ containing}}
+\DoxyCodeLine{00138\ \textcolor{comment}{\ *\ 'addr'\ into\ 'sz'\ large\ caller-\/provided\ 'path'\ and\ returns\ the\ number\ of}}
+\DoxyCodeLine{00139\ \textcolor{comment}{\ *\ characters\ [including\ trailing\ zero]\ written\ to\ it.\ If\ 'sz'\ is\ 0\ or}}
+\DoxyCodeLine{00140\ \textcolor{comment}{\ *\ negative,\ 'path'\ is\ ignored\ and\ required\ amount\ of\ characters\ [including}}
+\DoxyCodeLine{00141\ \textcolor{comment}{\ *\ trailing\ zero]\ to\ accommodate\ pathname\ is\ returned.\ If\ 'addr'\ is\ NULL,\ then}}
+\DoxyCodeLine{00142\ \textcolor{comment}{\ *\ pathname\ of\ cryptolib\ itself\ is\ returned.\ Negative\ or\ zero\ return\ value}}
+\DoxyCodeLine{00143\ \textcolor{comment}{\ *\ denotes\ error.}}
+\DoxyCodeLine{00144\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00145\ \textcolor{keywordtype}{int}\ DSO\_pathbyaddr(\textcolor{keywordtype}{void}\ *addr,\ \textcolor{keywordtype}{char}\ *path,\ \textcolor{keywordtype}{int}\ sz);}
+\DoxyCodeLine{00146\ }
+\DoxyCodeLine{00147\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00148\ \textcolor{comment}{\ *\ Like\ DSO\_pathbyaddr()\ but\ instead\ returns\ a\ handle\ to\ the\ DSO\ for\ the\ symbol}}
+\DoxyCodeLine{00149\ \textcolor{comment}{\ *\ or\ NULL\ on\ error.}}
+\DoxyCodeLine{00150\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00151\ \mbox{\hyperlink{structdso__st}{DSO}}\ *DSO\_dsobyaddr(\textcolor{keywordtype}{void}\ *addr,\ \textcolor{keywordtype}{int}\ flags);}
+\DoxyCodeLine{00152\ }
+\DoxyCodeLine{00153\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00154\ \textcolor{comment}{\ *\ This\ function\ should\ be\ used\ with\ caution!\ It\ looks\ up\ symbols\ in\ *all*}}
+\DoxyCodeLine{00155\ \textcolor{comment}{\ *\ loaded\ modules\ and\ if\ module\ gets\ unloaded\ by\ somebody\ else\ attempt\ to}}
+\DoxyCodeLine{00156\ \textcolor{comment}{\ *\ dereference\ the\ pointer\ is\ doomed\ to\ have\ fatal\ consequences.\ Primary}}
+\DoxyCodeLine{00157\ \textcolor{comment}{\ *\ usage\ for\ this\ function\ is\ to\ probe\ *core*\ system\ functionality,\ e.g.}}
+\DoxyCodeLine{00158\ \textcolor{comment}{\ *\ check\ if\ getnameinfo(3)\ is\ available\ at\ run-\/time\ without\ bothering\ about}}
+\DoxyCodeLine{00159\ \textcolor{comment}{\ *\ OS-\/specific\ details\ such\ as\ libc.so.versioning\ or\ where\ does\ it\ actually}}
+\DoxyCodeLine{00160\ \textcolor{comment}{\ *\ reside:\ in\ libc\ itself\ or\ libsocket.}}
+\DoxyCodeLine{00161\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00162\ \textcolor{keywordtype}{void}\ *DSO\_global\_lookup(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *name);}
+\DoxyCodeLine{00163\ }
+\DoxyCodeLine{00164\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

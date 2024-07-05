@@ -1,0 +1,223 @@
+\doxysection{common.\+h}
+\hypertarget{common_8h_source}{}\label{common_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/common.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/common.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 1995-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_INTERNAL\_COMMON\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_INTERNAL\_COMMON\_H}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#\ pragma\ once}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ include\ <stdlib.h>}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#\ include\ <string.h>}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#\ include\ "{}openssl/configuration.h"{}}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#\ include\ "{}internal/e\_os.h"{}}\ \textcolor{comment}{/*\ ossl\_inline\ in\ many\ files\ */}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#\ include\ "{}internal/nelem.h"{}}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#\ if\ defined(\_\_GNUC\_\_)\ ||\ defined(\_\_clang\_\_)}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#\ \ define\ likely(x)\ \ \ \ \ \_\_builtin\_expect(!!(x),\ 1)}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#\ \ define\ unlikely(x)\ \ \ \_\_builtin\_expect(!!(x),\ 0)}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#\ else}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#\ \ define\ likely(x)\ \ \ \ \ x}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#\ \ define\ unlikely(x)\ \ \ x}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#\ if\ defined(\_\_GNUC\_\_)\ ||\ defined(\_\_clang\_\_)}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#\ \ define\ ALIGN32\ \ \ \ \ \ \ \_\_attribute((aligned(32)))}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#\ \ define\ ALIGN64\ \ \ \ \ \ \ \_\_attribute((aligned(64)))}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#\ elif\ defined(\_MSC\_VER)}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#\ \ define\ ALIGN32\ \ \ \ \ \ \ \_\_declspec(align(32))}}
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#\ \ define\ ALIGN64\ \ \ \ \ \ \ \_\_declspec(align(64))}}
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#\ else}}
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#\ \ define\ ALIGN32}}
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#\ \ define\ ALIGN64}}
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \textcolor{preprocessor}{\#\ ifdef\ NDEBUG}}
+\DoxyCodeLine{00041\ \textcolor{preprocessor}{\#\ \ define\ ossl\_assert(x)\ ((x)\ !=\ 0)}}
+\DoxyCodeLine{00042\ \textcolor{preprocessor}{\#\ else}}
+\DoxyCodeLine{00043\ \_\_owur\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{int}\ ossl\_assert\_int(\textcolor{keywordtype}{int}\ expr,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *exprstr,}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *file,\ \textcolor{keywordtype}{int}\ line)}
+\DoxyCodeLine{00045\ \{}
+\DoxyCodeLine{00046\ \ \ \ \ \textcolor{keywordflow}{if}\ (!expr)}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ OPENSSL\_die(exprstr,\ file,\ line);}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{keywordflow}{return}\ expr;}
+\DoxyCodeLine{00050\ \}}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ \textcolor{preprocessor}{\#\ \ define\ ossl\_assert(x)\ ossl\_assert\_int((x)\ !=\ 0,\ "{}Assertion\ failed:\ "{}\#x,\ \(\backslash\)}}
+\DoxyCodeLine{00053\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_\_FILE\_\_,\ \_\_LINE\_\_)}}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \textcolor{comment}{/*\ Check\ if\ |pre|,\ which\ must\ be\ a\ string\ literal,\ is\ a\ prefix\ of\ |str|\ */}}
+\DoxyCodeLine{00058\ \textcolor{preprocessor}{\#define\ HAS\_PREFIX(str,\ pre)\ (strncmp(str,\ pre\ "{}"{},\ sizeof(pre)\ -\/\ 1)\ ==\ 0)}}
+\DoxyCodeLine{00059\ \textcolor{comment}{/*\ As\ before,\ and\ if\ check\ succeeds,\ advance\ |str|\ past\ the\ prefix\ |pre|\ */}}
+\DoxyCodeLine{00060\ \textcolor{preprocessor}{\#define\ CHECK\_AND\_SKIP\_PREFIX(str,\ pre)\ \(\backslash\)}}
+\DoxyCodeLine{00061\ \textcolor{preprocessor}{\ \ \ \ (HAS\_PREFIX(str,\ pre)\ ?\ ((str)\ +=\ sizeof(pre)\ -\/\ 1,\ 1)\ :\ 0)}}
+\DoxyCodeLine{00062\ \textcolor{comment}{/*\ Check\ if\ the\ string\ literal\ |p|\ is\ a\ case-\/insensitive\ prefix\ of\ |s|\ */}}
+\DoxyCodeLine{00063\ \textcolor{preprocessor}{\#define\ HAS\_CASE\_PREFIX(s,\ p)\ (OPENSSL\_strncasecmp(s,\ p\ "{}"{},\ sizeof(p)\ -\/\ 1)\ ==\ 0)}}
+\DoxyCodeLine{00064\ \textcolor{comment}{/*\ As\ before,\ and\ if\ check\ succeeds,\ advance\ |str|\ past\ the\ prefix\ |pre|\ */}}
+\DoxyCodeLine{00065\ \textcolor{preprocessor}{\#define\ CHECK\_AND\_SKIP\_CASE\_PREFIX(str,\ pre)\ \(\backslash\)}}
+\DoxyCodeLine{00066\ \textcolor{preprocessor}{\ \ \ \ (HAS\_CASE\_PREFIX(str,\ pre)\ ?\ ((str)\ +=\ sizeof(pre)\ -\/\ 1,\ 1)\ :\ 0)}}
+\DoxyCodeLine{00067\ \textcolor{comment}{/*\ Check\ if\ the\ string\ literal\ |suffix|\ is\ a\ case-\/insensitive\ suffix\ of\ |str|\ */}}
+\DoxyCodeLine{00068\ \textcolor{preprocessor}{\#define\ HAS\_CASE\_SUFFIX(str,\ suffix)\ (strlen(str)\ <\ sizeof(suffix)\ -\/\ 1\ ?\ 0\ :\ \(\backslash\)}}
+\DoxyCodeLine{00069\ \textcolor{preprocessor}{\ \ \ \ OPENSSL\_strcasecmp(str\ +\ strlen(str)\ -\/\ sizeof(suffix)\ +\ 1,\ suffix\ "{}"{})\ ==\ 0)}}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00071\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00072\ \textcolor{comment}{\ *\ Use\ this\ inside\ a\ union\ with\ the\ field\ that\ needs\ to\ be\ aligned\ to\ a}}
+\DoxyCodeLine{00073\ \textcolor{comment}{\ *\ reasonable\ boundary\ for\ the\ platform.\ \ The\ most\ pessimistic\ alignment}}
+\DoxyCodeLine{00074\ \textcolor{comment}{\ *\ of\ the\ listed\ types\ will\ be\ used\ by\ the\ compiler.}}
+\DoxyCodeLine{00075\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00076\ \textcolor{preprocessor}{\#\ define\ OSSL\_UNION\_ALIGN\ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00077\ \textcolor{preprocessor}{\ \ \ \ double\ align;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00078\ \textcolor{preprocessor}{\ \ \ \ ossl\_uintmax\_t\ align\_int;\ \ \ \(\backslash\)}}
+\DoxyCodeLine{00079\ \textcolor{preprocessor}{\ \ \ \ void\ *align\_ptr}}
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00081\ \textcolor{preprocessor}{\#\ define\ OPENSSL\_CONF\ \ \ \ \ \ \ \ \ \ \ \ \ "{}openssl.cnf"{}}}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00083\ \textcolor{preprocessor}{\#\ ifndef\ OPENSSL\_SYS\_VMS}}
+\DoxyCodeLine{00084\ \textcolor{preprocessor}{\#\ \ define\ X509\_CERT\_AREA\ \ \ \ \ \ \ \ \ \ OPENSSLDIR}}
+\DoxyCodeLine{00085\ \textcolor{preprocessor}{\#\ \ define\ X509\_CERT\_DIR\ \ \ \ \ \ \ \ \ \ \ OPENSSLDIR\ "{}/certs"{}}}
+\DoxyCodeLine{00086\ \textcolor{preprocessor}{\#\ \ define\ X509\_CERT\_FILE\ \ \ \ \ \ \ \ \ \ OPENSSLDIR\ "{}/cert.pem"{}}}
+\DoxyCodeLine{00087\ \textcolor{preprocessor}{\#\ \ define\ X509\_PRIVATE\_DIR\ \ \ \ \ \ \ \ OPENSSLDIR\ "{}/private"{}}}
+\DoxyCodeLine{00088\ \textcolor{preprocessor}{\#\ \ define\ CTLOG\_FILE\ \ \ \ \ \ \ \ \ \ \ \ \ \ OPENSSLDIR\ "{}/ct\_log\_list.cnf"{}}}
+\DoxyCodeLine{00089\ \textcolor{preprocessor}{\#\ else}}
+\DoxyCodeLine{00090\ \textcolor{preprocessor}{\#\ \ define\ X509\_CERT\_AREA\ \ \ \ \ \ \ \ \ \ "{}OSSL\$DATAROOT:[000000]"{}}}
+\DoxyCodeLine{00091\ \textcolor{preprocessor}{\#\ \ define\ X509\_CERT\_DIR\ \ \ \ \ \ \ \ \ \ \ "{}OSSL\$DATAROOT:[CERTS]"{}}}
+\DoxyCodeLine{00092\ \textcolor{preprocessor}{\#\ \ define\ X509\_CERT\_FILE\ \ \ \ \ \ \ \ \ \ "{}OSSL\$DATAROOT:[000000]cert.pem"{}}}
+\DoxyCodeLine{00093\ \textcolor{preprocessor}{\#\ \ define\ X509\_PRIVATE\_DIR\ \ \ \ \ \ \ \ "{}OSSL\$DATAROOT:[PRIVATE]"{}}}
+\DoxyCodeLine{00094\ \textcolor{preprocessor}{\#\ \ define\ CTLOG\_FILE\ \ \ \ \ \ \ \ \ \ \ \ \ \ "{}OSSL\$DATAROOT:[000000]ct\_log\_list.cnf"{}}}
+\DoxyCodeLine{00095\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00096\ }
+\DoxyCodeLine{00097\ \textcolor{preprocessor}{\#\ define\ X509\_CERT\_DIR\_EVP\ \ \ \ \ \ \ \ "{}SSL\_CERT\_DIR"{}}}
+\DoxyCodeLine{00098\ \textcolor{preprocessor}{\#\ define\ X509\_CERT\_FILE\_EVP\ \ \ \ \ \ \ "{}SSL\_CERT\_FILE"{}}}
+\DoxyCodeLine{00099\ \textcolor{preprocessor}{\#\ define\ CTLOG\_FILE\_EVP\ \ \ \ \ \ \ \ \ \ \ "{}CTLOG\_FILE"{}}}
+\DoxyCodeLine{00100\ }
+\DoxyCodeLine{00101\ \textcolor{comment}{/*\ size\ of\ string\ representations\ */}}
+\DoxyCodeLine{00102\ \textcolor{preprocessor}{\#\ define\ DECIMAL\_SIZE(type)\ \ \ \ \ \ ((sizeof(type)*8+2)/3+1)}}
+\DoxyCodeLine{00103\ \textcolor{preprocessor}{\#\ define\ HEX\_SIZE(type)\ \ \ \ \ \ \ \ \ \ (sizeof(type)*2)}}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00105\ \textcolor{preprocessor}{\#\ define\ c2l(c,l)\ \ \ \ \ \ \ \ (l\ =\ ((unsigned\ long)(*((c)++)))\ \ \ \ \ ,\ \(\backslash\)}}
+\DoxyCodeLine{00106\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ l|=(((unsigned\ long)(*((c)++)))<<\ 8),\ \(\backslash\)}}
+\DoxyCodeLine{00107\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ l|=(((unsigned\ long)(*((c)++)))<<16),\ \(\backslash\)}}
+\DoxyCodeLine{00108\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ l|=(((unsigned\ long)(*((c)++)))<<24))}}
+\DoxyCodeLine{00109\ }
+\DoxyCodeLine{00110\ \textcolor{comment}{/*\ NOTE\ -\/\ c\ is\ not\ incremented\ as\ per\ c2l\ */}}
+\DoxyCodeLine{00111\ \textcolor{preprocessor}{\#\ define\ c2ln(c,l1,l2,n)\ \{\ \(\backslash\)}}
+\DoxyCodeLine{00112\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c+=n;\ \(\backslash\)}}
+\DoxyCodeLine{00113\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ l1=l2=0;\ \(\backslash\)}}
+\DoxyCodeLine{00114\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ switch\ (n)\ \{\ \(\backslash\)}}
+\DoxyCodeLine{00115\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ case\ 8:\ l2\ =((unsigned\ long)(*(-\/-\/(c))))<<24;\ \(\backslash\)}}
+\DoxyCodeLine{00116\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ case\ 7:\ l2|=((unsigned\ long)(*(-\/-\/(c))))<<16;\ \(\backslash\)}}
+\DoxyCodeLine{00117\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ case\ 6:\ l2|=((unsigned\ long)(*(-\/-\/(c))))<<\ 8;\ \(\backslash\)}}
+\DoxyCodeLine{00118\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ case\ 5:\ l2|=((unsigned\ long)(*(-\/-\/(c))));\ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00119\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ case\ 4:\ l1\ =((unsigned\ long)(*(-\/-\/(c))))<<24;\ \(\backslash\)}}
+\DoxyCodeLine{00120\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ case\ 3:\ l1|=((unsigned\ long)(*(-\/-\/(c))))<<16;\ \(\backslash\)}}
+\DoxyCodeLine{00121\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ case\ 2:\ l1|=((unsigned\ long)(*(-\/-\/(c))))<<\ 8;\ \(\backslash\)}}
+\DoxyCodeLine{00122\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ case\ 1:\ l1|=((unsigned\ long)(*(-\/-\/(c))));\ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00123\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \(\backslash\)}}
+\DoxyCodeLine{00124\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}}
+\DoxyCodeLine{00125\ }
+\DoxyCodeLine{00126\ \textcolor{preprocessor}{\#\ define\ l2c(l,c)\ \ \ \ \ \ \ \ (*((c)++)=(unsigned\ char)(((l)\ \ \ \ )\&0xff),\ \(\backslash\)}}
+\DoxyCodeLine{00127\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *((c)++)=(unsigned\ char)(((l)>>\ 8)\&0xff),\ \(\backslash\)}}
+\DoxyCodeLine{00128\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *((c)++)=(unsigned\ char)(((l)>>16)\&0xff),\ \(\backslash\)}}
+\DoxyCodeLine{00129\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *((c)++)=(unsigned\ char)(((l)>>24)\&0xff))}}
+\DoxyCodeLine{00130\ }
+\DoxyCodeLine{00131\ \textcolor{preprocessor}{\#\ define\ n2l(c,l)\ \ \ \ \ \ \ \ (l\ =((unsigned\ long)(*((c)++)))<<24,\ \(\backslash\)}}
+\DoxyCodeLine{00132\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ l|=((unsigned\ long)(*((c)++)))<<16,\ \(\backslash\)}}
+\DoxyCodeLine{00133\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ l|=((unsigned\ long)(*((c)++)))<<\ 8,\ \(\backslash\)}}
+\DoxyCodeLine{00134\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ l|=((unsigned\ long)(*((c)++))))}}
+\DoxyCodeLine{00135\ }
+\DoxyCodeLine{00136\ \textcolor{preprocessor}{\#\ define\ n2l8(c,l)\ \ \ \ \ \ \ (l\ =((uint64\_t)(*((c)++)))<<56,\ \(\backslash\)}}
+\DoxyCodeLine{00137\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ l|=((uint64\_t)(*((c)++)))<<48,\ \(\backslash\)}}
+\DoxyCodeLine{00138\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ l|=((uint64\_t)(*((c)++)))<<40,\ \(\backslash\)}}
+\DoxyCodeLine{00139\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ l|=((uint64\_t)(*((c)++)))<<32,\ \(\backslash\)}}
+\DoxyCodeLine{00140\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ l|=((uint64\_t)(*((c)++)))<<24,\ \(\backslash\)}}
+\DoxyCodeLine{00141\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ l|=((uint64\_t)(*((c)++)))<<16,\ \(\backslash\)}}
+\DoxyCodeLine{00142\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ l|=((uint64\_t)(*((c)++)))<<\ 8,\ \(\backslash\)}}
+\DoxyCodeLine{00143\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ l|=((uint64\_t)(*((c)++))))}}
+\DoxyCodeLine{00144\ }
+\DoxyCodeLine{00145\ \textcolor{preprocessor}{\#\ define\ l2n(l,c)\ \ \ \ \ \ \ \ (*((c)++)=(unsigned\ char)(((l)>>24)\&0xff),\ \(\backslash\)}}
+\DoxyCodeLine{00146\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *((c)++)=(unsigned\ char)(((l)>>16)\&0xff),\ \(\backslash\)}}
+\DoxyCodeLine{00147\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *((c)++)=(unsigned\ char)(((l)>>\ 8)\&0xff),\ \(\backslash\)}}
+\DoxyCodeLine{00148\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *((c)++)=(unsigned\ char)(((l)\ \ \ \ )\&0xff))}}
+\DoxyCodeLine{00149\ }
+\DoxyCodeLine{00150\ \textcolor{preprocessor}{\#\ define\ l2n8(l,c)\ \ \ \ \ \ \ (*((c)++)=(unsigned\ char)(((l)>>56)\&0xff),\ \(\backslash\)}}
+\DoxyCodeLine{00151\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *((c)++)=(unsigned\ char)(((l)>>48)\&0xff),\ \(\backslash\)}}
+\DoxyCodeLine{00152\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *((c)++)=(unsigned\ char)(((l)>>40)\&0xff),\ \(\backslash\)}}
+\DoxyCodeLine{00153\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *((c)++)=(unsigned\ char)(((l)>>32)\&0xff),\ \(\backslash\)}}
+\DoxyCodeLine{00154\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *((c)++)=(unsigned\ char)(((l)>>24)\&0xff),\ \(\backslash\)}}
+\DoxyCodeLine{00155\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *((c)++)=(unsigned\ char)(((l)>>16)\&0xff),\ \(\backslash\)}}
+\DoxyCodeLine{00156\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *((c)++)=(unsigned\ char)(((l)>>\ 8)\&0xff),\ \(\backslash\)}}
+\DoxyCodeLine{00157\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *((c)++)=(unsigned\ char)(((l)\ \ \ \ )\&0xff))}}
+\DoxyCodeLine{00158\ }
+\DoxyCodeLine{00159\ \textcolor{comment}{/*\ NOTE\ -\/\ c\ is\ not\ incremented\ as\ per\ l2c\ */}}
+\DoxyCodeLine{00160\ \textcolor{preprocessor}{\#\ define\ l2cn(l1,l2,c,n)\ \{\ \(\backslash\)}}
+\DoxyCodeLine{00161\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ c+=n;\ \(\backslash\)}}
+\DoxyCodeLine{00162\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ switch\ (n)\ \{\ \(\backslash\)}}
+\DoxyCodeLine{00163\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ case\ 8:\ *(-\/-\/(c))=(unsigned\ char)(((l2)>>24)\&0xff);\ \(\backslash\)}}
+\DoxyCodeLine{00164\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ case\ 7:\ *(-\/-\/(c))=(unsigned\ char)(((l2)>>16)\&0xff);\ \(\backslash\)}}
+\DoxyCodeLine{00165\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ case\ 6:\ *(-\/-\/(c))=(unsigned\ char)(((l2)>>\ 8)\&0xff);\ \(\backslash\)}}
+\DoxyCodeLine{00166\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ case\ 5:\ *(-\/-\/(c))=(unsigned\ char)(((l2)\ \ \ \ )\&0xff);\ \(\backslash\)}}
+\DoxyCodeLine{00167\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ case\ 4:\ *(-\/-\/(c))=(unsigned\ char)(((l1)>>24)\&0xff);\ \(\backslash\)}}
+\DoxyCodeLine{00168\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ case\ 3:\ *(-\/-\/(c))=(unsigned\ char)(((l1)>>16)\&0xff);\ \(\backslash\)}}
+\DoxyCodeLine{00169\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ case\ 2:\ *(-\/-\/(c))=(unsigned\ char)(((l1)>>\ 8)\&0xff);\ \(\backslash\)}}
+\DoxyCodeLine{00170\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ case\ 1:\ *(-\/-\/(c))=(unsigned\ char)(((l1)\ \ \ \ )\&0xff);\ \(\backslash\)}}
+\DoxyCodeLine{00171\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \(\backslash\)}}
+\DoxyCodeLine{00172\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}}
+\DoxyCodeLine{00173\ }
+\DoxyCodeLine{00174\ \textcolor{preprocessor}{\#\ define\ n2s(c,s)\ \ \ \ \ \ \ \ ((s=(((unsigned\ int)((c)[0]))<<\ 8)|\ \(\backslash\)}}
+\DoxyCodeLine{00175\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (((unsigned\ int)((c)[1]))\ \ \ \ )),(c)+=2)}}
+\DoxyCodeLine{00176\ \textcolor{preprocessor}{\#\ define\ s2n(s,c)\ \ \ \ \ \ \ \ (((c)[0]=(unsigned\ char)(((s)>>\ 8)\&0xff),\ \(\backslash\)}}
+\DoxyCodeLine{00177\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (c)[1]=(unsigned\ char)(((s)\ \ \ \ )\&0xff)),(c)+=2)}}
+\DoxyCodeLine{00178\ }
+\DoxyCodeLine{00179\ \textcolor{preprocessor}{\#\ define\ n2l3(c,l)\ \ \ \ \ \ \ ((l\ =(((unsigned\ long)((c)[0]))<<16)|\ \(\backslash\)}}
+\DoxyCodeLine{00180\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (((unsigned\ long)((c)[1]))<<\ 8)|\ \(\backslash\)}}
+\DoxyCodeLine{00181\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (((unsigned\ long)((c)[2]))\ \ \ \ )),(c)+=3)}}
+\DoxyCodeLine{00182\ }
+\DoxyCodeLine{00183\ \textcolor{preprocessor}{\#\ define\ l2n3(l,c)\ \ \ \ \ \ \ (((c)[0]=(unsigned\ char)(((l)>>16)\&0xff),\ \(\backslash\)}}
+\DoxyCodeLine{00184\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (c)[1]=(unsigned\ char)(((l)>>\ 8)\&0xff),\ \(\backslash\)}}
+\DoxyCodeLine{00185\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (c)[2]=(unsigned\ char)(((l)\ \ \ \ )\&0xff)),(c)+=3)}}
+\DoxyCodeLine{00186\ }
+\DoxyCodeLine{00187\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{int}\ ossl\_ends\_with\_dirsep(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *path)}
+\DoxyCodeLine{00188\ \{}
+\DoxyCodeLine{00189\ \ \ \ \ \textcolor{keywordflow}{if}\ (*path\ !=\ \textcolor{charliteral}{'\(\backslash\)0'})}
+\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ path\ +=\ strlen(path)\ -\/\ 1;}
+\DoxyCodeLine{00191\ \textcolor{preprocessor}{\#\ if\ defined\ \_\_VMS}}
+\DoxyCodeLine{00192\ \ \ \ \ \textcolor{keywordflow}{if}\ (*path\ ==\ \textcolor{charliteral}{']'}\ ||\ *path\ ==\ \textcolor{charliteral}{'>'}\ ||\ *path\ ==\ \textcolor{charliteral}{':'})}
+\DoxyCodeLine{00193\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00194\ \textcolor{preprocessor}{\#\ elif\ defined\ \_WIN32}}
+\DoxyCodeLine{00195\ \ \ \ \ \textcolor{keywordflow}{if}\ (*path\ ==\ \textcolor{charliteral}{'\(\backslash\)\(\backslash\)'})}
+\DoxyCodeLine{00196\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00197\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00198\ \ \ \ \ \textcolor{keywordflow}{return}\ *path\ ==\ \textcolor{charliteral}{'/'};}
+\DoxyCodeLine{00199\ \}}
+\DoxyCodeLine{00200\ }
+\DoxyCodeLine{00201\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{int}\ ossl\_is\_absolute\_path(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *path)}
+\DoxyCodeLine{00202\ \{}
+\DoxyCodeLine{00203\ \textcolor{preprocessor}{\#\ if\ defined\ \_\_VMS}}
+\DoxyCodeLine{00204\ \ \ \ \ \textcolor{keywordflow}{if}\ (strchr(path,\ \textcolor{charliteral}{':'})\ !=\ NULL}
+\DoxyCodeLine{00205\ \ \ \ \ \ \ \ \ ||\ ((path[0]\ ==\ \textcolor{charliteral}{'['}\ ||\ path[0]\ ==\ \textcolor{charliteral}{'<'})}
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ \ \ \ \ \&\&\ path[1]\ !=\ \textcolor{charliteral}{'.'}\ \&\&\ path[1]\ !=\ \textcolor{charliteral}{'-\/'}}
+\DoxyCodeLine{00207\ \ \ \ \ \ \ \ \ \ \ \ \ \&\&\ path[1]\ !=\ \textcolor{charliteral}{']'}\ \&\&\ path[1]\ !=\ \textcolor{charliteral}{'>'}))}
+\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00209\ \textcolor{preprocessor}{\#\ elif\ defined\ \_WIN32}}
+\DoxyCodeLine{00210\ \ \ \ \ \textcolor{keywordflow}{if}\ (path[0]\ ==\ \textcolor{charliteral}{'\(\backslash\)\(\backslash\)'}}
+\DoxyCodeLine{00211\ \ \ \ \ \ \ \ \ ||\ (path[0]\ !=\ \textcolor{charliteral}{'\(\backslash\)0'}\ \&\&\ path[1]\ ==\ \textcolor{charliteral}{':'}))}
+\DoxyCodeLine{00212\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00213\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00214\ \ \ \ \ \textcolor{keywordflow}{return}\ path[0]\ ==\ \textcolor{charliteral}{'/'};}
+\DoxyCodeLine{00215\ \}}
+\DoxyCodeLine{00216\ }
+\DoxyCodeLine{00217\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

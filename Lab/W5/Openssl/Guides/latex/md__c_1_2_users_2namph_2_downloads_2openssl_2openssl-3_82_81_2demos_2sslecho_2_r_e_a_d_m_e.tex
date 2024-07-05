@@ -1,0 +1,21 @@
+\chapter{Open\+SSL Simple Echo Client/\+Server}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2demos_2sslecho_2_r_e_a_d_m_e}{}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2demos_2sslecho_2_r_e_a_d_m_e}\index{OpenSSL Simple Echo Client/Server@{OpenSSL Simple Echo Client/Server}}
+This project implements a simple echo client/server.
+
+It is a console application, with command line parameters determining the mode of operation (client or server). Start it with no parameters to see usage.
+
+The server code was adapted from the Simple TLS Server on the Open\+SSL Wiki. The server code was modified to perform the echo function, and client code was added to open a connection with the server and to send keyboard input to the server.
+
+The new client code illustrates that\+:
+
+
+\begin{DoxyItemize}
+\item Connection to the SSL server starts as a standard TCP \textquotesingle{}connect\textquotesingle{}.
+\item Once connected with TCP, the client \textquotesingle{}upgrades\textquotesingle{} to SSL using SSL\+\_\+connect().
+\item When the SSL connection completes, data is sent and received using SSL\+\_\+write() and SSL\+\_\+read().
+\item Pretty simple.
+\end{DoxyItemize}
+
+The cert.\+pem and key.\+pem files included are self signed certificates with the "{}\+Common Name"{} of \textquotesingle{}localhost\textquotesingle{}.
+
+Best to create the \textquotesingle{}pem\textquotesingle{} files using an actual hostname. 

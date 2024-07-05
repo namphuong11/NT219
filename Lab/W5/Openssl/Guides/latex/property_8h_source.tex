@@ -1,0 +1,105 @@
+\doxysection{property.\+h}
+\hypertarget{property_8h_source}{}\label{property_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/property.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/property.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2019-\/2021\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *\ Copyright\ (c)\ 2019,\ Oracle\ and/or\ its\ affiliates.\ \ All\ rights\ reserved.}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#ifndef\ OSSL\_INTERNAL\_PROPERTY\_H}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#\ define\ OSSL\_INTERNAL\_PROPERTY\_H}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#\ pragma\ once}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#\ include\ "{}internal/cryptlib.h"{}}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__method__store__st}{ossl\_method\_store\_st}}\ \mbox{\hyperlink{structossl__method__store__st}{OSSL\_METHOD\_STORE}};}
+\DoxyCodeLine{00018\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__property__list__st}{ossl\_property\_list\_st}}\ \mbox{\hyperlink{structossl__property__list__st}{OSSL\_PROPERTY\_LIST}};}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}\ \{}
+\DoxyCodeLine{00021\ \ \ \ \ OSSL\_PROPERTY\_TYPE\_STRING,\ OSSL\_PROPERTY\_TYPE\_NUMBER,}
+\DoxyCodeLine{00022\ \ \ \ \ OSSL\_PROPERTY\_TYPE\_VALUE\_UNDEFINED}
+\DoxyCodeLine{00023\ \}\ OSSL\_PROPERTY\_TYPE;}
+\DoxyCodeLine{00024\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__property__definition__st}{ossl\_property\_definition\_st}}\ \mbox{\hyperlink{structossl__property__definition__st}{OSSL\_PROPERTY\_DEFINITION}};}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \textcolor{comment}{/*\ Initialisation\ */}}
+\DoxyCodeLine{00027\ \textcolor{keywordtype}{int}\ ossl\_property\_parse\_init(OSSL\_LIB\_CTX\ *ctx);}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \textcolor{comment}{/*\ Property\ definition\ parser\ */}}
+\DoxyCodeLine{00030\ \mbox{\hyperlink{structossl__property__list__st}{OSSL\_PROPERTY\_LIST}}\ *ossl\_parse\_property(OSSL\_LIB\_CTX\ *ctx,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *defn);}
+\DoxyCodeLine{00031\ \textcolor{comment}{/*\ Property\ query\ parser\ */}}
+\DoxyCodeLine{00032\ \mbox{\hyperlink{structossl__property__list__st}{OSSL\_PROPERTY\_LIST}}\ *ossl\_parse\_query(OSSL\_LIB\_CTX\ *ctx,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *s,}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ create\_values);}
+\DoxyCodeLine{00034\ \textcolor{comment}{/*\ Property\ checker\ of\ query\ vs\ definition\ */}}
+\DoxyCodeLine{00035\ \textcolor{keywordtype}{int}\ ossl\_property\_match\_count(\textcolor{keyword}{const}\ \mbox{\hyperlink{structossl__property__list__st}{OSSL\_PROPERTY\_LIST}}\ *query,}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structossl__property__list__st}{OSSL\_PROPERTY\_LIST}}\ *defn);}
+\DoxyCodeLine{00037\ \textcolor{keywordtype}{int}\ ossl\_property\_is\_enabled(OSSL\_LIB\_CTX\ *ctx,\ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *property\_name,}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structossl__property__list__st}{OSSL\_PROPERTY\_LIST}}\ *prop\_list);}
+\DoxyCodeLine{00039\ \textcolor{comment}{/*\ Free\ a\ parsed\ property\ list\ */}}
+\DoxyCodeLine{00040\ \textcolor{keywordtype}{void}\ ossl\_property\_free(\mbox{\hyperlink{structossl__property__list__st}{OSSL\_PROPERTY\_LIST}}\ *p);}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \textcolor{comment}{/*\ Get\ a\ property\ from\ a\ property\ list\ */}}
+\DoxyCodeLine{00043\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structossl__property__definition__st}{OSSL\_PROPERTY\_DEFINITION}}\ *}
+\DoxyCodeLine{00044\ ossl\_property\_find\_property(\textcolor{keyword}{const}\ \mbox{\hyperlink{structossl__property__list__st}{OSSL\_PROPERTY\_LIST}}\ *list,}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OSSL\_LIB\_CTX\ *libctx,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *name);}
+\DoxyCodeLine{00046\ OSSL\_PROPERTY\_TYPE\ ossl\_property\_get\_type(\textcolor{keyword}{const}\ \mbox{\hyperlink{structossl__property__definition__st}{OSSL\_PROPERTY\_DEFINITION}}\ *prop);}
+\DoxyCodeLine{00047\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *ossl\_property\_get\_string\_value(OSSL\_LIB\_CTX\ *libctx,}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structossl__property__definition__st}{OSSL\_PROPERTY\_DEFINITION}}\ *prop);}
+\DoxyCodeLine{00049\ int64\_t\ ossl\_property\_get\_number\_value(\textcolor{keyword}{const}\ \mbox{\hyperlink{structossl__property__definition__st}{OSSL\_PROPERTY\_DEFINITION}}\ *prop);}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ \textcolor{comment}{/*\ Implementation\ store\ functions\ */}}
+\DoxyCodeLine{00053\ \mbox{\hyperlink{structossl__method__store__st}{OSSL\_METHOD\_STORE}}\ *ossl\_method\_store\_new(OSSL\_LIB\_CTX\ *ctx);}
+\DoxyCodeLine{00054\ \textcolor{keywordtype}{void}\ ossl\_method\_store\_free(\mbox{\hyperlink{structossl__method__store__st}{OSSL\_METHOD\_STORE}}\ *store);}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \textcolor{keywordtype}{int}\ ossl\_method\_lock\_store(\mbox{\hyperlink{structossl__method__store__st}{OSSL\_METHOD\_STORE}}\ *store);}
+\DoxyCodeLine{00057\ \textcolor{keywordtype}{int}\ ossl\_method\_unlock\_store(\mbox{\hyperlink{structossl__method__store__st}{OSSL\_METHOD\_STORE}}\ *store);}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ \textcolor{keywordtype}{int}\ ossl\_method\_store\_add(\mbox{\hyperlink{structossl__method__store__st}{OSSL\_METHOD\_STORE}}\ *store,\ \textcolor{keyword}{const}\ OSSL\_PROVIDER\ *prov,}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ nid,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *properties,\ \textcolor{keywordtype}{void}\ *method,}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ (*method\_up\_ref)(\textcolor{keywordtype}{void}\ *),}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ (*method\_destruct)(\textcolor{keywordtype}{void}\ *));}
+\DoxyCodeLine{00063\ \textcolor{keywordtype}{int}\ ossl\_method\_store\_remove(\mbox{\hyperlink{structossl__method__store__st}{OSSL\_METHOD\_STORE}}\ *store,\ \textcolor{keywordtype}{int}\ nid,}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *method);}
+\DoxyCodeLine{00065\ \textcolor{keywordtype}{void}\ ossl\_method\_store\_do\_all(\mbox{\hyperlink{structossl__method__store__st}{OSSL\_METHOD\_STORE}}\ *store,}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ (*fn)(\textcolor{keywordtype}{int}\ \textcolor{keywordtype}{id},\ \textcolor{keywordtype}{void}\ *method,\ \textcolor{keywordtype}{void}\ *fnarg),}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *fnarg);}
+\DoxyCodeLine{00068\ \textcolor{keywordtype}{int}\ ossl\_method\_store\_fetch(\mbox{\hyperlink{structossl__method__store__st}{OSSL\_METHOD\_STORE}}\ *store,}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ nid,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *prop\_query,}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ OSSL\_PROVIDER\ **prov,\ \textcolor{keywordtype}{void}\ **method);}
+\DoxyCodeLine{00071\ \textcolor{keywordtype}{int}\ ossl\_method\_store\_remove\_all\_provided(\mbox{\hyperlink{structossl__method__store__st}{OSSL\_METHOD\_STORE}}\ *store,}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ OSSL\_PROVIDER\ *prov);}
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00074\ \textcolor{comment}{/*\ Get\ the\ global\ properties\ associate\ with\ the\ specified\ library\ context\ */}}
+\DoxyCodeLine{00075\ \mbox{\hyperlink{structossl__property__list__st}{OSSL\_PROPERTY\_LIST}}\ **ossl\_ctx\_global\_properties(OSSL\_LIB\_CTX\ *ctx,}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ loadconfig);}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ \textcolor{comment}{/*\ property\ query\ cache\ functions\ */}}
+\DoxyCodeLine{00079\ \textcolor{keywordtype}{int}\ ossl\_method\_store\_cache\_get(\mbox{\hyperlink{structossl__method__store__st}{OSSL\_METHOD\_STORE}}\ *store,\ OSSL\_PROVIDER\ *prov,}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ nid,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *prop\_query,\ \textcolor{keywordtype}{void}\ **result);}
+\DoxyCodeLine{00081\ \textcolor{keywordtype}{int}\ ossl\_method\_store\_cache\_set(\mbox{\hyperlink{structossl__method__store__st}{OSSL\_METHOD\_STORE}}\ *store,\ OSSL\_PROVIDER\ *prov,}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ nid,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *prop\_query,\ \textcolor{keywordtype}{void}\ *result,}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ (*method\_up\_ref)(\textcolor{keywordtype}{void}\ *),}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ (*method\_destruct)(\textcolor{keywordtype}{void}\ *));}
+\DoxyCodeLine{00085\ }
+\DoxyCodeLine{00086\ \_\_owur\ \textcolor{keywordtype}{int}\ ossl\_method\_store\_cache\_flush\_all(\mbox{\hyperlink{structossl__method__store__st}{OSSL\_METHOD\_STORE}}\ *store);}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00088\ \textcolor{comment}{/*\ Merge\ two\ property\ queries\ together\ */}}
+\DoxyCodeLine{00089\ \mbox{\hyperlink{structossl__property__list__st}{OSSL\_PROPERTY\_LIST}}\ *ossl\_property\_merge(\textcolor{keyword}{const}\ \mbox{\hyperlink{structossl__property__list__st}{OSSL\_PROPERTY\_LIST}}\ *a,}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structossl__property__list__st}{OSSL\_PROPERTY\_LIST}}\ *\mbox{\hyperlink{structb}{b}});}
+\DoxyCodeLine{00091\ }
+\DoxyCodeLine{00092\ \textcolor{keywordtype}{size\_t}\ ossl\_property\_list\_to\_string(OSSL\_LIB\_CTX\ *ctx,}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structossl__property__list__st}{OSSL\_PROPERTY\_LIST}}\ *list,\ \textcolor{keywordtype}{char}\ *buf,}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ bufsize);}
+\DoxyCodeLine{00095\ }
+\DoxyCodeLine{00096\ \textcolor{keywordtype}{int}\ ossl\_global\_properties\_no\_mirrored(OSSL\_LIB\_CTX\ *libctx);}
+\DoxyCodeLine{00097\ \textcolor{keywordtype}{void}\ ossl\_global\_properties\_stop\_mirroring(OSSL\_LIB\_CTX\ *libctx);}
+\DoxyCodeLine{00098\ }
+\DoxyCodeLine{00099\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

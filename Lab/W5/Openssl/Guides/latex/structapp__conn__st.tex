@@ -1,0 +1,77 @@
+\doxysection{app\+\_\+conn\+\_\+st Struct Reference}
+\hypertarget{structapp__conn__st}{}\label{structapp__conn__st}\index{app\_conn\_st@{app\_conn\_st}}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{structapp__conn__st_a24b75a8b3c103faf6b069dc240529a8c}\label{structapp__conn__st_a24b75a8b3c103faf6b069dc240529a8c} 
+SSL \texorpdfstring{$\ast$}{*} {\bfseries ssl}
+\item 
+\Hypertarget{structapp__conn__st_a1f53f9fa5341f7d9cb5f5c31d85d35a2}\label{structapp__conn__st_a1f53f9fa5341f7d9cb5f5c31d85d35a2} 
+BIO \texorpdfstring{$\ast$}{*} {\bfseries ssl\+\_\+bio}
+\item 
+\Hypertarget{structapp__conn__st_a06256ccbfcd57767b6b67e3ec3f33cce}\label{structapp__conn__st_a06256ccbfcd57767b6b67e3ec3f33cce} 
+int {\bfseries rx\+\_\+need\+\_\+tx}
+\item 
+\Hypertarget{structapp__conn__st_a4076dd5b43d62daac24f833af5f66ffc}\label{structapp__conn__st_a4076dd5b43d62daac24f833af5f66ffc} 
+int {\bfseries tx\+\_\+need\+\_\+rx}
+\item 
+\Hypertarget{structapp__conn__st_a622d863cae18ba83f8886267f1e564c7}\label{structapp__conn__st_a622d863cae18ba83f8886267f1e564c7} 
+int {\bfseries fd}
+\item 
+\Hypertarget{structapp__conn__st_ace576a4d63d87733ae724a446c98249d}\label{structapp__conn__st_ace576a4d63d87733ae724a446c98249d} 
+BIO \texorpdfstring{$\ast$}{*} {\bfseries net\+\_\+bio}
+\item 
+\Hypertarget{structapp__conn__st_a1cbd9feeb21d6e95a82d77080898f78f}\label{structapp__conn__st_a1cbd9feeb21d6e95a82d77080898f78f} 
+SSL\+\_\+\+CTX \texorpdfstring{$\ast$}{*} {\bfseries ctx}
+\item 
+\Hypertarget{structapp__conn__st_a66fe7d389d36304bac95a99c07d6832d}\label{structapp__conn__st_a66fe7d389d36304bac95a99c07d6832d} 
+uv\+\_\+stream\+\_\+t \texorpdfstring{$\ast$}{*} {\bfseries stream}
+\item 
+\Hypertarget{structapp__conn__st_a5f64bdc6580048b4a006dc4b84811963}\label{structapp__conn__st_a5f64bdc6580048b4a006dc4b84811963} 
+uv\+\_\+tcp\+\_\+t {\bfseries tcp}
+\item 
+\Hypertarget{structapp__conn__st_a01465e2b0d69acdc4380dc89422499d1}\label{structapp__conn__st_a01465e2b0d69acdc4380dc89422499d1} 
+uv\+\_\+connect\+\_\+t {\bfseries tcp\+\_\+connect}
+\item 
+\Hypertarget{structapp__conn__st_afdbaf0847e183253655bdc0207ba7e67}\label{structapp__conn__st_afdbaf0847e183253655bdc0207ba7e67} 
+app\+\_\+connect\+\_\+cb \texorpdfstring{$\ast$}{*} {\bfseries app\+\_\+connect\+\_\+cb}
+\item 
+\Hypertarget{structapp__conn__st_a04fcc5338464a53c54a496a50caba730}\label{structapp__conn__st_a04fcc5338464a53c54a496a50caba730} 
+void \texorpdfstring{$\ast$}{*} {\bfseries app\+\_\+connect\+\_\+arg}
+\item 
+\Hypertarget{structapp__conn__st_a831c0ca56aa03ccd74421b4b94c9bbe2}\label{structapp__conn__st_a831c0ca56aa03ccd74421b4b94c9bbe2} 
+app\+\_\+read\+\_\+cb \texorpdfstring{$\ast$}{*} {\bfseries app\+\_\+read\+\_\+cb}
+\item 
+\Hypertarget{structapp__conn__st_a6e5f482389dbcca2879c4e6937752e31}\label{structapp__conn__st_a6e5f482389dbcca2879c4e6937752e31} 
+void \texorpdfstring{$\ast$}{*} {\bfseries app\+\_\+read\+\_\+arg}
+\item 
+\Hypertarget{structapp__conn__st_a69e681f2f209d1b765bdcb3eb28943b6}\label{structapp__conn__st_a69e681f2f209d1b765bdcb3eb28943b6} 
+const char \texorpdfstring{$\ast$}{*} {\bfseries hostname}
+\item 
+\Hypertarget{structapp__conn__st_adbe91ede5005f9fbba6cb2799da0aec0}\label{structapp__conn__st_adbe91ede5005f9fbba6cb2799da0aec0} 
+char {\bfseries init\+\_\+handshake}
+\item 
+\Hypertarget{structapp__conn__st_a72ed7d3b222bddaae927e1510a9a9c58}\label{structapp__conn__st_a72ed7d3b222bddaae927e1510a9a9c58} 
+char {\bfseries done\+\_\+handshake}
+\item 
+\Hypertarget{structapp__conn__st_a35b17ccdb95ff6251bf63df4c0547460}\label{structapp__conn__st_a35b17ccdb95ff6251bf63df4c0547460} 
+char {\bfseries closed}
+\item 
+\Hypertarget{structapp__conn__st_ab43c6ce8c65c5e6c98639e24daecfc31}\label{structapp__conn__st_ab43c6ce8c65c5e6c98639e24daecfc31} 
+char \texorpdfstring{$\ast$}{*} {\bfseries teardown\+\_\+done}
+\item 
+\Hypertarget{structapp__conn__st_aa5ccfbb584a5dc071364951ea0e02aab}\label{structapp__conn__st_aa5ccfbb584a5dc071364951ea0e02aab} 
+\mbox{\hyperlink{structupper__write__op__st}{UPPER\+\_\+\+WRITE\+\_\+\+OP}} \texorpdfstring{$\ast$}{*} {\bfseries pending\+\_\+upper\+\_\+write\+\_\+head}
+\item 
+\Hypertarget{structapp__conn__st_a40e60c2d1a6e3fea8ed6db9b6c481dca}\label{structapp__conn__st_a40e60c2d1a6e3fea8ed6db9b6c481dca} 
+\mbox{\hyperlink{structupper__write__op__st}{UPPER\+\_\+\+WRITE\+\_\+\+OP}} \texorpdfstring{$\ast$}{*} {\bfseries pending\+\_\+upper\+\_\+write\+\_\+tail}
+\end{DoxyCompactItemize}
+
+
+The documentation for this struct was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/namph/\+Downloads/openssl/openssl-\/3.\+2.\+1/doc/designs/ddd/ddd-\/02-\/conn-\/nonblocking-\/threads.\+c\item 
+C\+:/\+Users/namph/\+Downloads/openssl/openssl-\/3.\+2.\+1/doc/designs/ddd/ddd-\/02-\/conn-\/nonblocking.\+c\item 
+C\+:/\+Users/namph/\+Downloads/openssl/openssl-\/3.\+2.\+1/doc/designs/ddd/ddd-\/04-\/fd-\/nonblocking.\+c\item 
+C\+:/\+Users/namph/\+Downloads/openssl/openssl-\/3.\+2.\+1/doc/designs/ddd/ddd-\/05-\/mem-\/nonblocking.\+c\item 
+C\+:/\+Users/namph/\+Downloads/openssl/openssl-\/3.\+2.\+1/doc/designs/ddd/ddd-\/06-\/mem-\/uv.\+c\end{DoxyCompactItemize}

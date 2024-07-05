@@ -1,0 +1,157 @@
+\doxysection{quic\+\_\+sf\+\_\+list.\+h}
+\hypertarget{quic__sf__list_8h_source}{}\label{quic__sf__list_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/quic\_sf\_list.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/quic\_sf\_list.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2022-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_QUIC\_SF\_LIST\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_QUIC\_SF\_LIST\_H}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ "{}internal/common.h"{}}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ "{}internal/uint\_set.h"{}}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#include\ "{}internal/quic\_record\_rx.h"{}}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ *\ Stream\ frame\ list}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ *\ =================}}
+\DoxyCodeLine{00020\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00021\ \textcolor{comment}{\ *\ This\ data\ structure\ supports\ similar\ operations\ as\ uint64\ set\ but}}
+\DoxyCodeLine{00022\ \textcolor{comment}{\ *\ it\ has\ slightly\ different\ invariants\ and\ also\ carries\ data\ associated\ with}}
+\DoxyCodeLine{00023\ \textcolor{comment}{\ *\ the\ ranges\ in\ the\ list.}}
+\DoxyCodeLine{00024\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00025\ \textcolor{comment}{\ *\ Operations:}}
+\DoxyCodeLine{00026\ \textcolor{comment}{\ *\ \ \ Insert\ frame\ (optimized\ insertion\ at\ the\ beginning\ and\ at\ the\ end).}}
+\DoxyCodeLine{00027\ \textcolor{comment}{\ *\ \ \ Iterated\ peek\ into\ the\ frame(s)\ from\ the\ beginning.}}
+\DoxyCodeLine{00028\ \textcolor{comment}{\ *\ \ \ Dropping\ frames\ from\ the\ beginning\ up\ to\ an\ offset\ (exclusive).}}
+\DoxyCodeLine{00029\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00030\ \textcolor{comment}{\ *\ Invariant:\ The\ frames\ in\ the\ list\ are\ sorted\ by\ the\ start\ and\ end\ bounds.}}
+\DoxyCodeLine{00031\ \textcolor{comment}{\ *\ Invariant:\ There\ are\ no\ fully\ overlapping\ frames\ or\ frames\ that\ would}}
+\DoxyCodeLine{00032\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ be\ fully\ encompassed\ by\ another\ frame\ in\ the\ list.}}
+\DoxyCodeLine{00033\ \textcolor{comment}{\ *\ Invariant:\ No\ frame\ has\ start\ >\ end.}}
+\DoxyCodeLine{00034\ \textcolor{comment}{\ *\ Invariant:\ The\ range\ start\ is\ inclusive\ the\ end\ is\ exclusive\ to\ be}}
+\DoxyCodeLine{00035\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ able\ to\ mark\ an\ empty\ frame.}}
+\DoxyCodeLine{00036\ \textcolor{comment}{\ *\ Invariant:\ The\ offset\ never\ points\ further\ than\ into\ the\ first\ frame.}}
+\DoxyCodeLine{00037\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#\ ifndef\ OPENSSL\_NO\_QUIC}}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structstream__frame__st}{stream\_frame\_st}}\ \mbox{\hyperlink{structstream__frame__st}{STREAM\_FRAME}};}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structsframe__list__st}{sframe\_list\_st}}\ \{}
+\DoxyCodeLine{00043\ \ \ \ \ \mbox{\hyperlink{structstream__frame__st}{STREAM\_FRAME}}\ \ *head,\ *tail;}
+\DoxyCodeLine{00044\ \ \ \ \ \textcolor{comment}{/*\ Is\ the\ tail\ frame\ final.\ */}}
+\DoxyCodeLine{00045\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ fin;}
+\DoxyCodeLine{00046\ \ \ \ \ \textcolor{comment}{/*\ Number\ of\ stream\ frames\ in\ the\ list.\ */}}
+\DoxyCodeLine{00047\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ num\_frames;}
+\DoxyCodeLine{00048\ \ \ \ \ \textcolor{comment}{/*\ Offset\ of\ data\ not\ yet\ dropped\ */}}
+\DoxyCodeLine{00049\ \ \ \ \ uint64\_t\ offset;}
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{comment}{/*\ Is\ head\ locked\ ?\ */}}
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{keywordtype}{int}\ head\_locked;}
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{comment}{/*\ Cleanse\ data\ on\ release?\ */}}
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{keywordtype}{int}\ cleanse;}
+\DoxyCodeLine{00054\ \}\ \mbox{\hyperlink{structsframe__list__st}{SFRAME\_LIST}};}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00057\ \textcolor{comment}{\ *\ Initializes\ the\ stream\ frame\ list\ fl.}}
+\DoxyCodeLine{00058\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00059\ \textcolor{keywordtype}{void}\ ossl\_sframe\_list\_init(\mbox{\hyperlink{structsframe__list__st}{SFRAME\_LIST}}\ *fl);}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00062\ \textcolor{comment}{\ *\ Destroys\ the\ stream\ frame\ list\ fl\ releasing\ any\ data}}
+\DoxyCodeLine{00063\ \textcolor{comment}{\ *\ still\ present\ inside\ it.}}
+\DoxyCodeLine{00064\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00065\ \textcolor{keywordtype}{void}\ ossl\_sframe\_list\_destroy(\mbox{\hyperlink{structsframe__list__st}{SFRAME\_LIST}}\ *fl);}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00067\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00068\ \textcolor{comment}{\ *\ Insert\ a\ stream\ frame\ data\ into\ the\ list.}}
+\DoxyCodeLine{00069\ \textcolor{comment}{\ *\ The\ data\ covers\ an\ offset\ range\ (range.start\ is\ inclusive,}}
+\DoxyCodeLine{00070\ \textcolor{comment}{\ *\ range.end\ is\ exclusive).}}
+\DoxyCodeLine{00071\ \textcolor{comment}{\ *\ fin\ should\ be\ set\ if\ this\ is\ the\ final\ frame\ of\ the\ stream.}}
+\DoxyCodeLine{00072\ \textcolor{comment}{\ *\ Returns\ an\ error\ if\ a\ frame\ cannot\ be\ inserted\ -\/\ due\ to}}
+\DoxyCodeLine{00073\ \textcolor{comment}{\ *\ STREAM\_FRAME\ allocation\ error,\ or\ in\ case\ of\ erroneous}}
+\DoxyCodeLine{00074\ \textcolor{comment}{\ *\ fin\ flag\ (this\ is\ an\ ossl\_assert()\ check\ so\ a\ caller\ must}}
+\DoxyCodeLine{00075\ \textcolor{comment}{\ *\ check\ it\ on\ its\ own\ too).}}
+\DoxyCodeLine{00076\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00077\ \textcolor{keywordtype}{int}\ ossl\_sframe\_list\_insert(\mbox{\hyperlink{structsframe__list__st}{SFRAME\_LIST}}\ *fl,\ \mbox{\hyperlink{structuint__range__st}{UINT\_RANGE}}\ *range,}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structossl__qrx__pkt__st}{OSSL\_QRX\_PKT}}\ *pkt,}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *data,\ \textcolor{keywordtype}{int}\ fin);}
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00081\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00082\ \textcolor{comment}{\ *\ Iterator\ to\ peek\ at\ the\ contiguous\ frames\ at\ the\ beginning}}
+\DoxyCodeLine{00083\ \textcolor{comment}{\ *\ of\ the\ frame\ list\ fl.}}
+\DoxyCodeLine{00084\ \textcolor{comment}{\ *\ The\ *data\ covers\ an\ offset\ range\ (range.start\ is\ inclusive,}}
+\DoxyCodeLine{00085\ \textcolor{comment}{\ *\ range.end\ is\ exclusive).}}
+\DoxyCodeLine{00086\ \textcolor{comment}{\ *\ *fin\ is\ set\ if\ this\ is\ the\ final\ frame\ of\ the\ stream.}}
+\DoxyCodeLine{00087\ \textcolor{comment}{\ *\ Opaque\ iterator\ *iter\ can\ be\ used\ to\ peek\ at\ the\ subsequent}}
+\DoxyCodeLine{00088\ \textcolor{comment}{\ *\ frame\ if\ there\ is\ any\ without\ any\ gap\ before\ it.}}
+\DoxyCodeLine{00089\ \textcolor{comment}{\ *\ Returns\ 1\ on\ success.}}
+\DoxyCodeLine{00090\ \textcolor{comment}{\ *\ Returns\ 0\ if\ there\ is\ no\ further\ contiguous\ frame.\ In\ that}}
+\DoxyCodeLine{00091\ \textcolor{comment}{\ *\ case\ *fin\ is\ set,\ if\ the\ end\ of\ the\ stream\ is\ reached.}}
+\DoxyCodeLine{00092\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00093\ \textcolor{keywordtype}{int}\ ossl\_sframe\_list\_peek(\textcolor{keyword}{const}\ \mbox{\hyperlink{structsframe__list__st}{SFRAME\_LIST}}\ *fl,\ \textcolor{keywordtype}{void}\ **iter,}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structuint__range__st}{UINT\_RANGE}}\ *range,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **data,}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ *fin);}
+\DoxyCodeLine{00096\ }
+\DoxyCodeLine{00097\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00098\ \textcolor{comment}{\ *\ Drop\ all\ frames\ up\ to\ the\ offset\ limit.}}
+\DoxyCodeLine{00099\ \textcolor{comment}{\ *\ Also\ unlocks\ the\ head\ frame\ if\ locked.}}
+\DoxyCodeLine{00100\ \textcolor{comment}{\ *\ Returns\ 1\ on\ success.}}
+\DoxyCodeLine{00101\ \textcolor{comment}{\ *\ Returns\ 0\ when\ trying\ to\ drop\ frames\ at\ offsets\ that\ were\ not}}
+\DoxyCodeLine{00102\ \textcolor{comment}{\ *\ received\ yet.\ (ossl\_assert()\ is\ used\ to\ check,\ so\ this\ is\ an\ invalid\ call.)}}
+\DoxyCodeLine{00103\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00104\ \textcolor{keywordtype}{int}\ ossl\_sframe\_list\_drop\_frames(\mbox{\hyperlink{structsframe__list__st}{SFRAME\_LIST}}\ *fl,\ uint64\_t\ limit);}
+\DoxyCodeLine{00105\ }
+\DoxyCodeLine{00106\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00107\ \textcolor{comment}{\ *\ Locks\ and\ returns\ the\ head\ frame\ of\ fl\ if\ it\ is\ readable\ -\/\ read\ offset\ is}}
+\DoxyCodeLine{00108\ \textcolor{comment}{\ *\ at\ the\ beginning\ or\ middle\ of\ the\ frame.}}
+\DoxyCodeLine{00109\ \textcolor{comment}{\ *\ range\ is\ set\ to\ encompass\ the\ not\ yet\ read\ part\ of\ the\ head\ frame,}}
+\DoxyCodeLine{00110\ \textcolor{comment}{\ *\ data\ pointer\ is\ set\ to\ appropriate\ offset\ within\ the\ frame\ if\ the\ read}}
+\DoxyCodeLine{00111\ \textcolor{comment}{\ *\ offset\ points\ in\ the\ middle\ of\ the\ frame,}}
+\DoxyCodeLine{00112\ \textcolor{comment}{\ *\ fin\ is\ set\ to\ 1\ if\ the\ head\ frame\ is\ also\ the\ tail\ frame.}}
+\DoxyCodeLine{00113\ \textcolor{comment}{\ *\ Returns\ 1\ on\ success,\ 0\ if\ there\ is\ no\ readable\ data\ or\ the\ head}}
+\DoxyCodeLine{00114\ \textcolor{comment}{\ *\ frame\ is\ already\ locked.}}
+\DoxyCodeLine{00115\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00116\ \textcolor{keywordtype}{int}\ ossl\_sframe\_list\_lock\_head(\mbox{\hyperlink{structsframe__list__st}{SFRAME\_LIST}}\ *fl,\ \mbox{\hyperlink{structuint__range__st}{UINT\_RANGE}}\ *range,}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **data,}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ *fin);}
+\DoxyCodeLine{00119\ }
+\DoxyCodeLine{00120\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00121\ \textcolor{comment}{\ *\ Just\ returns\ whether\ the\ head\ frame\ is\ locked\ by\ previous}}
+\DoxyCodeLine{00122\ \textcolor{comment}{\ *\ ossl\_sframe\_list\_lock\_head()\ call.}}
+\DoxyCodeLine{00123\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00124\ \textcolor{keywordtype}{int}\ ossl\_sframe\_list\_is\_head\_locked(\mbox{\hyperlink{structsframe__list__st}{SFRAME\_LIST}}\ *fl);}
+\DoxyCodeLine{00125\ }
+\DoxyCodeLine{00126\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00127\ \textcolor{comment}{\ *\ Callback\ function\ type\ to\ write\ stream\ frame\ data\ to\ some}}
+\DoxyCodeLine{00128\ \textcolor{comment}{\ *\ side\ storage\ before\ the\ packet\ containing\ the\ frame\ data}}
+\DoxyCodeLine{00129\ \textcolor{comment}{\ *\ is\ released.}}
+\DoxyCodeLine{00130\ \textcolor{comment}{\ *\ It\ should\ return\ 1\ on\ success\ or\ 0\ if\ there\ is\ not\ enough}}
+\DoxyCodeLine{00131\ \textcolor{comment}{\ *\ space\ available\ in\ the\ side\ storage.}}
+\DoxyCodeLine{00132\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00133\ \textcolor{keyword}{typedef}\ int\ (sframe\_list\_write\_at\_cb)(uint64\_t\ logical\_offset,}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *buf,}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ buf\_len,}
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *cb\_arg);}
+\DoxyCodeLine{00137\ }
+\DoxyCodeLine{00138\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00139\ \textcolor{comment}{\ *\ Move\ the\ frame\ data\ in\ all\ the\ stream\ frames\ in\ the\ list\ fl}}
+\DoxyCodeLine{00140\ \textcolor{comment}{\ *\ from\ the\ packets\ to\ the\ side\ storage\ using\ the\ write\_at\_cb}}
+\DoxyCodeLine{00141\ \textcolor{comment}{\ *\ callback.}}
+\DoxyCodeLine{00142\ \textcolor{comment}{\ *\ Returns\ 1\ if\ all\ the\ calls\ to\ the\ callback\ return\ 1.}}
+\DoxyCodeLine{00143\ \textcolor{comment}{\ *\ If\ the\ callback\ returns\ 0,\ the\ function\ stops\ processing\ further}}
+\DoxyCodeLine{00144\ \textcolor{comment}{\ *\ frames\ and\ returns\ 0.}}
+\DoxyCodeLine{00145\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00146\ \textcolor{keywordtype}{int}\ ossl\_sframe\_list\_move\_data(\mbox{\hyperlink{structsframe__list__st}{SFRAME\_LIST}}\ *fl,}
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sframe\_list\_write\_at\_cb\ *write\_at\_cb,}
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *cb\_arg);}
+\DoxyCodeLine{00149\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00150\ }
+\DoxyCodeLine{00151\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

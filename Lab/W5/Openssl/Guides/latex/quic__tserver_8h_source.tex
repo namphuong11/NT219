@@ -1,0 +1,226 @@
+\doxysection{quic\+\_\+tserver.\+h}
+\hypertarget{quic__tserver_8h_source}{}\label{quic__tserver_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/quic\_tserver.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/quic\_tserver.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2022-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_QUIC\_TSERVER\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_QUIC\_TSERVER\_H}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#\ include\ <openssl/ssl.h>}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ include\ <openssl/bio.h>}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#\ include\ "{}internal/quic\_stream.h"{}}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#\ include\ "{}internal/quic\_channel.h"{}}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#\ include\ "{}internal/statem.h"{}}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#\ include\ "{}internal/time.h"{}}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#\ ifndef\ OPENSSL\_NO\_QUIC}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00023\ \textcolor{comment}{\ *\ QUIC\ Test\ Server\ Module}}
+\DoxyCodeLine{00024\ \textcolor{comment}{\ *\ =======================}}
+\DoxyCodeLine{00025\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00026\ \textcolor{comment}{\ *\ This\ implements\ a\ QUIC\ test\ server.\ Since\ full\ QUIC\ server\ support\ is\ not\ yet}}
+\DoxyCodeLine{00027\ \textcolor{comment}{\ *\ implemented\ this\ server\ is\ limited\ in\ features\ and\ scope.\ It\ exists\ to}}
+\DoxyCodeLine{00028\ \textcolor{comment}{\ *\ provide\ a\ target\ for\ our\ QUIC\ client\ to\ talk\ to\ for\ testing\ purposes.}}
+\DoxyCodeLine{00029\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00030\ \textcolor{comment}{\ *\ A\ given\ QUIC\ test\ server\ instance\ supports\ only\ one\ client\ at\ a\ time.}}
+\DoxyCodeLine{00031\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00032\ \textcolor{comment}{\ *\ Note\ that\ this\ test\ server\ is\ not\ suitable\ for\ production\ use\ because\ it\ does}}
+\DoxyCodeLine{00033\ \textcolor{comment}{\ *\ not\ implement\ address\ verification,\ anti-\/amplification\ or\ retry\ logic.}}
+\DoxyCodeLine{00034\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00035\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structquic__tserver__st}{quic\_tserver\_st}}\ \mbox{\hyperlink{structquic__tserver__st}{QUIC\_TSERVER}};}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structquic__tserver__args__st}{quic\_tserver\_args\_st}}\ \{}
+\DoxyCodeLine{00038\ \ \ \ \ OSSL\_LIB\_CTX\ *libctx;}
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *propq;}
+\DoxyCodeLine{00040\ \ \ \ \ SSL\_CTX\ *ctx;}
+\DoxyCodeLine{00041\ \ \ \ \ BIO\ *net\_rbio,\ *net\_wbio;}
+\DoxyCodeLine{00042\ \ \ \ \ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ (*now\_cb)(\textcolor{keywordtype}{void}\ *arg);}
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{keywordtype}{void}\ *now\_cb\_arg;}
+\DoxyCodeLine{00044\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *alpn;}
+\DoxyCodeLine{00045\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ alpnlen;}
+\DoxyCodeLine{00046\ \}\ \mbox{\hyperlink{structquic__tserver__args__st}{QUIC\_TSERVER\_ARGS}};}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \mbox{\hyperlink{structquic__tserver__st}{QUIC\_TSERVER}}\ *ossl\_quic\_tserver\_new(\textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__tserver__args__st}{QUIC\_TSERVER\_ARGS}}\ *args,}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *certfile,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *keyfile);}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \textcolor{keywordtype}{void}\ ossl\_quic\_tserver\_free(\mbox{\hyperlink{structquic__tserver__st}{QUIC\_TSERVER}}\ *srv);}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \textcolor{comment}{/*\ Set\ mutator\ callbacks\ for\ test\ framework\ support\ */}}
+\DoxyCodeLine{00054\ \textcolor{keywordtype}{int}\ ossl\_quic\_tserver\_set\_plain\_packet\_mutator(\mbox{\hyperlink{structquic__tserver__st}{QUIC\_TSERVER}}\ *srv,}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ossl\_mutate\_packet\_cb\ mutatecb,}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ossl\_finish\_mutate\_cb\ finishmutatecb,}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *mutatearg);}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ \textcolor{keywordtype}{int}\ ossl\_quic\_tserver\_set\_handshake\_mutator(\mbox{\hyperlink{structquic__tserver__st}{QUIC\_TSERVER}}\ *srv,}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ossl\_statem\_mutate\_handshake\_cb\ mutate\_handshake\_cb,}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ossl\_statem\_finish\_mutate\_handshake\_cb\ finish\_mutate\_handshake\_cb,}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *mutatearg);}
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00064\ \textcolor{comment}{/*\ Advances\ the\ state\ machine.\ */}}
+\DoxyCodeLine{00065\ \textcolor{keywordtype}{int}\ ossl\_quic\_tserver\_tick(\mbox{\hyperlink{structquic__tserver__st}{QUIC\_TSERVER}}\ *srv);}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00067\ \textcolor{comment}{/*\ Returns\ 1\ if\ we\ have\ a\ (non-\/terminated)\ client.\ */}}
+\DoxyCodeLine{00068\ \textcolor{keywordtype}{int}\ ossl\_quic\_tserver\_is\_connected(\mbox{\hyperlink{structquic__tserver__st}{QUIC\_TSERVER}}\ *srv);}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00071\ \textcolor{comment}{\ *\ Returns\ 1\ if\ we\ have\ finished\ the\ TLS\ handshake}}
+\DoxyCodeLine{00072\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00073\ \textcolor{keywordtype}{int}\ ossl\_quic\_tserver\_is\_handshake\_confirmed(\textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__tserver__st}{QUIC\_TSERVER}}\ *srv);}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00075\ \textcolor{comment}{/*\ Returns\ 1\ if\ the\ server\ is\ in\ any\ terminating\ or\ terminated\ state\ */}}
+\DoxyCodeLine{00076\ \textcolor{keywordtype}{int}\ ossl\_quic\_tserver\_is\_term\_any(\textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__tserver__st}{QUIC\_TSERVER}}\ *srv);}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__terminate__cause__st}{QUIC\_TERMINATE\_CAUSE}}\ *}
+\DoxyCodeLine{00079\ ossl\_quic\_tserver\_get\_terminate\_cause(\textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__tserver__st}{QUIC\_TSERVER}}\ *srv);}
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00081\ \textcolor{comment}{/*\ Returns\ 1\ if\ the\ server\ is\ in\ a\ terminated\ state\ */}}
+\DoxyCodeLine{00082\ \textcolor{keywordtype}{int}\ ossl\_quic\_tserver\_is\_terminated(\textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__tserver__st}{QUIC\_TSERVER}}\ *srv);}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00085\ \textcolor{comment}{\ *\ Attempts\ to\ read\ from\ stream\ 0.\ Writes\ the\ number\ of\ bytes\ read\ to}}
+\DoxyCodeLine{00086\ \textcolor{comment}{\ *\ *bytes\_read\ and\ returns\ 1\ on\ success.\ If\ no\ bytes\ are\ available,\ 0\ is\ written}}
+\DoxyCodeLine{00087\ \textcolor{comment}{\ *\ to\ *bytes\_read\ and\ 1\ is\ returned\ (this\ is\ considered\ a\ success\ case).}}
+\DoxyCodeLine{00088\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00089\ \textcolor{comment}{\ *\ Returns\ 0\ if\ connection\ is\ not\ currently\ active.\ If\ the\ receive\ part\ of}}
+\DoxyCodeLine{00090\ \textcolor{comment}{\ *\ the\ stream\ has\ reached\ the\ end\ of\ stream\ condition,\ returns\ 0;\ call}}
+\DoxyCodeLine{00091\ \textcolor{comment}{\ *\ ossl\_quic\_tserver\_has\_read\_ended()\ to\ identify\ this\ condition.}}
+\DoxyCodeLine{00092\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00093\ \textcolor{keywordtype}{int}\ ossl\_quic\_tserver\_read(\mbox{\hyperlink{structquic__tserver__st}{QUIC\_TSERVER}}\ *srv,}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ stream\_id,}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *buf,}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ buf\_len,}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ *bytes\_read);}
+\DoxyCodeLine{00098\ }
+\DoxyCodeLine{00099\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00100\ \textcolor{comment}{\ *\ Returns\ 1\ if\ the\ read\ part\ of\ the\ stream\ has\ ended\ normally.}}
+\DoxyCodeLine{00101\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00102\ \textcolor{keywordtype}{int}\ ossl\_quic\_tserver\_has\_read\_ended(\mbox{\hyperlink{structquic__tserver__st}{QUIC\_TSERVER}}\ *srv,\ uint64\_t\ stream\_id);}
+\DoxyCodeLine{00103\ }
+\DoxyCodeLine{00104\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00105\ \textcolor{comment}{\ *\ Attempts\ to\ write\ to\ the\ given\ stream.\ Writes\ the\ number\ of\ bytes\ consumed\ to}}
+\DoxyCodeLine{00106\ \textcolor{comment}{\ *\ *bytes\_written\ and\ returns\ 1\ on\ success.\ If\ there\ is\ no\ space\ currently}}
+\DoxyCodeLine{00107\ \textcolor{comment}{\ *\ available\ to\ write\ any\ bytes,\ 0\ is\ written\ to\ *consumed\ and\ 1\ is\ returned}}
+\DoxyCodeLine{00108\ \textcolor{comment}{\ *\ (this\ is\ considered\ a\ success\ case).}}
+\DoxyCodeLine{00109\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00110\ \textcolor{comment}{\ *\ Note\ that\ unlike\ libssl\ public\ APIs,\ this\ API\ always\ works\ in\ a\ 'partial}}
+\DoxyCodeLine{00111\ \textcolor{comment}{\ *\ write'\ mode.}}
+\DoxyCodeLine{00112\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00113\ \textcolor{comment}{\ *\ Returns\ 0\ if\ connection\ is\ not\ currently\ active.}}
+\DoxyCodeLine{00114\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00115\ \textcolor{keywordtype}{int}\ ossl\_quic\_tserver\_write(\mbox{\hyperlink{structquic__tserver__st}{QUIC\_TSERVER}}\ *srv,}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ stream\_id,}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *buf,}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ buf\_len,}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ *bytes\_written);}
+\DoxyCodeLine{00120\ }
+\DoxyCodeLine{00121\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00122\ \textcolor{comment}{\ *\ Signals\ normal\ end\ of\ the\ stream.}}
+\DoxyCodeLine{00123\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00124\ \textcolor{keywordtype}{int}\ ossl\_quic\_tserver\_conclude(\mbox{\hyperlink{structquic__tserver__st}{QUIC\_TSERVER}}\ *srv,\ uint64\_t\ stream\_id);}
+\DoxyCodeLine{00125\ }
+\DoxyCodeLine{00126\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00127\ \textcolor{comment}{\ *\ Create\ a\ server-\/initiated\ stream.\ The\ stream\ ID\ of\ the\ newly}}
+\DoxyCodeLine{00128\ \textcolor{comment}{\ *\ created\ stream\ is\ written\ to\ *stream\_id.}}
+\DoxyCodeLine{00129\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00130\ \textcolor{keywordtype}{int}\ ossl\_quic\_tserver\_stream\_new(\mbox{\hyperlink{structquic__tserver__st}{QUIC\_TSERVER}}\ *srv,}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ is\_uni,}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ *stream\_id);}
+\DoxyCodeLine{00133\ }
+\DoxyCodeLine{00134\ BIO\ *ossl\_quic\_tserver\_get0\_rbio(\mbox{\hyperlink{structquic__tserver__st}{QUIC\_TSERVER}}\ *srv);}
+\DoxyCodeLine{00135\ }
+\DoxyCodeLine{00136\ SSL\_CTX\ *ossl\_quic\_tserver\_get0\_ssl\_ctx(\mbox{\hyperlink{structquic__tserver__st}{QUIC\_TSERVER}}\ *srv);}
+\DoxyCodeLine{00137\ }
+\DoxyCodeLine{00138\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00139\ \textcolor{comment}{\ *\ Returns\ 1\ if\ the\ peer\ has\ sent\ a\ STOP\_SENDING\ frame\ for\ a\ stream.}}
+\DoxyCodeLine{00140\ \textcolor{comment}{\ *\ app\_error\_code\ is\ written\ if\ this\ returns\ 1.}}
+\DoxyCodeLine{00141\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00142\ \textcolor{keywordtype}{int}\ ossl\_quic\_tserver\_stream\_has\_peer\_stop\_sending(\mbox{\hyperlink{structquic__tserver__st}{QUIC\_TSERVER}}\ *srv,}
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ stream\_id,}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ *app\_error\_code);}
+\DoxyCodeLine{00145\ }
+\DoxyCodeLine{00146\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00147\ \textcolor{comment}{\ *\ Returns\ 1\ if\ the\ peer\ has\ sent\ a\ RESET\_STREAM\ frame\ for\ a\ stream.}}
+\DoxyCodeLine{00148\ \textcolor{comment}{\ *\ app\_error\_code\ is\ written\ if\ this\ returns\ 1.}}
+\DoxyCodeLine{00149\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00150\ \textcolor{keywordtype}{int}\ ossl\_quic\_tserver\_stream\_has\_peer\_reset\_stream(\mbox{\hyperlink{structquic__tserver__st}{QUIC\_TSERVER}}\ *srv,}
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ stream\_id,}
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ *app\_error\_code);}
+\DoxyCodeLine{00153\ }
+\DoxyCodeLine{00154\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00155\ \textcolor{comment}{\ *\ Replaces\ existing\ local\ connection\ ID\ in\ the\ underlying\ QUIC\_CHANNEL.}}
+\DoxyCodeLine{00156\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00157\ \textcolor{keywordtype}{int}\ ossl\_quic\_tserver\_set\_new\_local\_cid(\mbox{\hyperlink{structquic__tserver__st}{QUIC\_TSERVER}}\ *srv,}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__conn__id__st}{QUIC\_CONN\_ID}}\ *conn\_id);}
+\DoxyCodeLine{00159\ }
+\DoxyCodeLine{00160\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00161\ \textcolor{comment}{\ *\ Returns\ the\ stream\ ID\ of\ the\ next\ incoming\ stream,\ or\ UINT64\_MAX\ if\ there}}
+\DoxyCodeLine{00162\ \textcolor{comment}{\ *\ currently\ is\ none.}}
+\DoxyCodeLine{00163\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00164\ uint64\_t\ ossl\_quic\_tserver\_pop\_incoming\_stream(\mbox{\hyperlink{structquic__tserver__st}{QUIC\_TSERVER}}\ *srv);}
+\DoxyCodeLine{00165\ }
+\DoxyCodeLine{00166\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00167\ \textcolor{comment}{\ *\ Returns\ 1\ if\ all\ data\ sent\ on\ the\ given\ stream\_id\ has\ been\ acked\ by\ the\ peer.}}
+\DoxyCodeLine{00168\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00169\ \textcolor{keywordtype}{int}\ ossl\_quic\_tserver\_is\_stream\_totally\_acked(\mbox{\hyperlink{structquic__tserver__st}{QUIC\_TSERVER}}\ *srv,}
+\DoxyCodeLine{00170\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ stream\_id);}
+\DoxyCodeLine{00171\ }
+\DoxyCodeLine{00172\ \textcolor{comment}{/*\ Returns\ 1\ if\ we\ are\ currently\ interested\ in\ reading\ data\ from\ the\ network\ */}}
+\DoxyCodeLine{00173\ \textcolor{keywordtype}{int}\ ossl\_quic\_tserver\_get\_net\_read\_desired(\mbox{\hyperlink{structquic__tserver__st}{QUIC\_TSERVER}}\ *srv);}
+\DoxyCodeLine{00174\ }
+\DoxyCodeLine{00175\ \textcolor{comment}{/*\ Returns\ 1\ if\ we\ are\ currently\ interested\ in\ writing\ data\ to\ the\ network\ */}}
+\DoxyCodeLine{00176\ \textcolor{keywordtype}{int}\ ossl\_quic\_tserver\_get\_net\_write\_desired(\mbox{\hyperlink{structquic__tserver__st}{QUIC\_TSERVER}}\ *srv);}
+\DoxyCodeLine{00177\ }
+\DoxyCodeLine{00178\ \textcolor{comment}{/*\ Returns\ the\ next\ event\ deadline\ */}}
+\DoxyCodeLine{00179\ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ ossl\_quic\_tserver\_get\_deadline(\mbox{\hyperlink{structquic__tserver__st}{QUIC\_TSERVER}}\ *srv);}
+\DoxyCodeLine{00180\ }
+\DoxyCodeLine{00181\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00182\ \textcolor{comment}{\ *\ Shutdown\ the\ QUIC\ connection.\ Returns\ 1\ if\ the\ connection\ is\ terminated\ and}}
+\DoxyCodeLine{00183\ \textcolor{comment}{\ *\ 0\ otherwise.}}
+\DoxyCodeLine{00184\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00185\ \textcolor{keywordtype}{int}\ ossl\_quic\_tserver\_shutdown(\mbox{\hyperlink{structquic__tserver__st}{QUIC\_TSERVER}}\ *srv,\ uint64\_t\ app\_error\_code);}
+\DoxyCodeLine{00186\ }
+\DoxyCodeLine{00187\ \textcolor{comment}{/*\ Force\ generation\ of\ an\ ACK-\/eliciting\ packet.\ */}}
+\DoxyCodeLine{00188\ \textcolor{keywordtype}{int}\ ossl\_quic\_tserver\_ping(\mbox{\hyperlink{structquic__tserver__st}{QUIC\_TSERVER}}\ *srv);}
+\DoxyCodeLine{00189\ }
+\DoxyCodeLine{00190\ \textcolor{comment}{/*\ Set\ tracing\ callback\ on\ channel.\ */}}
+\DoxyCodeLine{00191\ \textcolor{keywordtype}{void}\ ossl\_quic\_tserver\_set\_msg\_callback(\mbox{\hyperlink{structquic__tserver__st}{QUIC\_TSERVER}}\ *srv,}
+\DoxyCodeLine{00192\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ (*f)(\textcolor{keywordtype}{int}\ write\_p,\ \textcolor{keywordtype}{int}\ version,}
+\DoxyCodeLine{00193\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ content\_type,}
+\DoxyCodeLine{00194\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *buf,\ \textcolor{keywordtype}{size\_t}\ len,}
+\DoxyCodeLine{00195\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ SSL\ *ssl,\ \textcolor{keywordtype}{void}\ *arg),}
+\DoxyCodeLine{00196\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *arg);}
+\DoxyCodeLine{00197\ }
+\DoxyCodeLine{00198\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00199\ \textcolor{comment}{\ *\ This\ is\ similar\ to\ ossl\_quic\_conn\_get\_channel;\ it\ should\ be\ used\ for\ test}}
+\DoxyCodeLine{00200\ \textcolor{comment}{\ *\ instrumentation\ only\ and\ not\ to\ bypass\ QUIC\_TSERVER\ for\ 'normal'\ operations.}}
+\DoxyCodeLine{00201\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00202\ \mbox{\hyperlink{structquic__channel__st}{QUIC\_CHANNEL}}\ *ossl\_quic\_tserver\_get\_channel(\mbox{\hyperlink{structquic__tserver__st}{QUIC\_TSERVER}}\ *srv);}
+\DoxyCodeLine{00203\ }
+\DoxyCodeLine{00204\ \textcolor{comment}{/*\ Send\ a\ TLS\ new\ session\ ticket\ */}}
+\DoxyCodeLine{00205\ \textcolor{keywordtype}{int}\ ossl\_quic\_tserver\_new\_ticket(\mbox{\hyperlink{structquic__tserver__st}{QUIC\_TSERVER}}\ *srv);}
+\DoxyCodeLine{00206\ }
+\DoxyCodeLine{00207\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00208\ \textcolor{comment}{\ *\ Set\ the\ max\_early\_data\ value\ to\ be\ sent\ in\ NewSessionTickets.\ Only\ the}}
+\DoxyCodeLine{00209\ \textcolor{comment}{\ *\ values\ 0\ and\ 0xffffffff\ are\ valid\ for\ use\ in\ QUIC.}}
+\DoxyCodeLine{00210\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00211\ \textcolor{keywordtype}{int}\ ossl\_quic\_tserver\_set\_max\_early\_data(\mbox{\hyperlink{structquic__tserver__st}{QUIC\_TSERVER}}\ *srv,}
+\DoxyCodeLine{00212\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ max\_early\_data);}
+\DoxyCodeLine{00213\ }
+\DoxyCodeLine{00214\ \textcolor{comment}{/*\ Set\ the\ find\ session\ callback\ for\ getting\ a\ server\ PSK\ */}}
+\DoxyCodeLine{00215\ \textcolor{keywordtype}{void}\ ossl\_quic\_tserver\_set\_psk\_find\_session\_cb(\mbox{\hyperlink{structquic__tserver__st}{QUIC\_TSERVER}}\ *srv,}
+\DoxyCodeLine{00216\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ SSL\_psk\_find\_session\_cb\_func\ cb);}
+\DoxyCodeLine{00217\ }
+\DoxyCodeLine{00218\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00219\ }
+\DoxyCodeLine{00220\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

@@ -1,0 +1,104 @@
+\doxysection{ec\+\_\+group\+\_\+st Struct Reference}
+\hypertarget{structec__group__st}{}\label{structec__group__st}\index{ec\_group\_st@{ec\_group\_st}}
+\doxysubsubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{structec__group__st_a0efddab81f87d5ab946c62d44081e515}\label{structec__group__st_a0efddab81f87d5ab946c62d44081e515} 
+enum \{ \newline
+{\bfseries PCT\+\_\+none}
+, {\bfseries PCT\+\_\+nistp224}
+, {\bfseries PCT\+\_\+nistp256}
+, {\bfseries PCT\+\_\+nistp384}
+, \newline
+{\bfseries PCT\+\_\+nistp521}
+, {\bfseries PCT\+\_\+nistz256}
+, {\bfseries PCT\+\_\+ec}
+ \}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{structec__group__st_ab6b2cb20ac19a21b35d9156d2e6cd981}\label{structec__group__st_ab6b2cb20ac19a21b35d9156d2e6cd981} 
+const EC\+\_\+\+METHOD \texorpdfstring{$\ast$}{*} {\bfseries meth}
+\item 
+\Hypertarget{structec__group__st_a2c5dd9c6f52c2b708c50a93e6aeedd66}\label{structec__group__st_a2c5dd9c6f52c2b708c50a93e6aeedd66} 
+EC\+\_\+\+POINT \texorpdfstring{$\ast$}{*} {\bfseries generator}
+\item 
+\Hypertarget{structec__group__st_abb94548b24064b4cbab656b40543b7c6}\label{structec__group__st_abb94548b24064b4cbab656b40543b7c6} 
+BIGNUM \texorpdfstring{$\ast$}{*} {\bfseries order}
+\item 
+\Hypertarget{structec__group__st_a877460e85dd874540ce3b8bb5d29709f}\label{structec__group__st_a877460e85dd874540ce3b8bb5d29709f} 
+BIGNUM \texorpdfstring{$\ast$}{*} {\bfseries cofactor}
+\item 
+\Hypertarget{structec__group__st_a58ac22f396f90adbc9fef8933b41fd81}\label{structec__group__st_a58ac22f396f90adbc9fef8933b41fd81} 
+int {\bfseries curve\+\_\+name}
+\item 
+\Hypertarget{structec__group__st_ab3d44acc05fbf7fc634a962aa508066c}\label{structec__group__st_ab3d44acc05fbf7fc634a962aa508066c} 
+int {\bfseries asn1\+\_\+flag}
+\item 
+\Hypertarget{structec__group__st_a058d2fbc7fa5bd8c69517ae7aa93e2be}\label{structec__group__st_a058d2fbc7fa5bd8c69517ae7aa93e2be} 
+int {\bfseries decoded\+\_\+from\+\_\+explicit\+\_\+params}
+\item 
+\Hypertarget{structec__group__st_abfb9be98aecd22181ff1f34919637d05}\label{structec__group__st_abfb9be98aecd22181ff1f34919637d05} 
+point\+\_\+conversion\+\_\+form\+\_\+t {\bfseries asn1\+\_\+form}
+\item 
+\Hypertarget{structec__group__st_a82498f2d97ef998ce3db45742c0c91c9}\label{structec__group__st_a82498f2d97ef998ce3db45742c0c91c9} 
+unsigned char \texorpdfstring{$\ast$}{*} {\bfseries seed}
+\item 
+\Hypertarget{structec__group__st_a58166c7794bebfdd77edc5ca62f9d642}\label{structec__group__st_a58166c7794bebfdd77edc5ca62f9d642} 
+size\+\_\+t {\bfseries seed\+\_\+len}
+\item 
+\Hypertarget{structec__group__st_af90649db4a82ecb3119d1aa6dec98061}\label{structec__group__st_af90649db4a82ecb3119d1aa6dec98061} 
+BIGNUM \texorpdfstring{$\ast$}{*} {\bfseries field}
+\item 
+\Hypertarget{structec__group__st_a50a4cf0c7b8030d74a64a6b751e48349}\label{structec__group__st_a50a4cf0c7b8030d74a64a6b751e48349} 
+int {\bfseries poly} \mbox{[}6\mbox{]}
+\item 
+\Hypertarget{structec__group__st_a696a2d8bdb9d2bd1632f308613981da4}\label{structec__group__st_a696a2d8bdb9d2bd1632f308613981da4} 
+BIGNUM \texorpdfstring{$\ast$}{*} {\bfseries a}
+\item 
+\Hypertarget{structec__group__st_afeb0308b96050268fea6aa8d04e2483b}\label{structec__group__st_afeb0308b96050268fea6aa8d04e2483b} 
+BIGNUM \texorpdfstring{$\ast$}{*} {\bfseries b}
+\item 
+\Hypertarget{structec__group__st_ab3bee768c0caea533bcb2b441a4f03aa}\label{structec__group__st_ab3bee768c0caea533bcb2b441a4f03aa} 
+int {\bfseries a\+\_\+is\+\_\+minus3}
+\item 
+\Hypertarget{structec__group__st_a26db276786314938379cf0e65586eb2e}\label{structec__group__st_a26db276786314938379cf0e65586eb2e} 
+void \texorpdfstring{$\ast$}{*} {\bfseries field\+\_\+data1}
+\item 
+\Hypertarget{structec__group__st_a0a3ebc1b56f367cc9470445e471b4d97}\label{structec__group__st_a0a3ebc1b56f367cc9470445e471b4d97} 
+void \texorpdfstring{$\ast$}{*} {\bfseries field\+\_\+data2}
+\item 
+\Hypertarget{structec__group__st_adfd28b5970a0bfce7cd18244cc7a1e40}\label{structec__group__st_adfd28b5970a0bfce7cd18244cc7a1e40} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries field\+\_\+mod\+\_\+func} )(BIGNUM \texorpdfstring{$\ast$}{*}, const BIGNUM \texorpdfstring{$\ast$}{*}, const BIGNUM \texorpdfstring{$\ast$}{*}, BN\+\_\+\+CTX \texorpdfstring{$\ast$}{*})
+\item 
+\Hypertarget{structec__group__st_aca7ebf793997eecf35cf09a4d816096e}\label{structec__group__st_aca7ebf793997eecf35cf09a4d816096e} 
+BN\+\_\+\+MONT\+\_\+\+CTX \texorpdfstring{$\ast$}{*} {\bfseries mont\+\_\+data}
+\item 
+\Hypertarget{structec__group__st_a0cbffb8b9bfb2db2aa5089550cce0aa7}\label{structec__group__st_a0cbffb8b9bfb2db2aa5089550cce0aa7} 
+enum ec\+\_\+group\+\_\+st\+:: \{ ... \}  {\bfseries pre\+\_\+comp\+\_\+type}
+\item 
+\Hypertarget{structec__group__st_ad6f1004d38e70dfaeab4d797417f9912}\label{structec__group__st_ad6f1004d38e70dfaeab4d797417f9912} 
+\begin{tabbing}
+xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=\kill
+union \{\\
+\>\mbox{\hyperlink{structnistp224__pre__comp__st}{NISTP224\_PRE\_COMP}} \texorpdfstring{$\ast$}{*} {\bfseries nistp224}\\
+\>\mbox{\hyperlink{structnistp256__pre__comp__st}{NISTP256\_PRE\_COMP}} \texorpdfstring{$\ast$}{*} {\bfseries nistp256}\\
+\>\mbox{\hyperlink{structnistp384__pre__comp__st}{NISTP384\_PRE\_COMP}} \texorpdfstring{$\ast$}{*} {\bfseries nistp384}\\
+\>\mbox{\hyperlink{structnistp521__pre__comp__st}{NISTP521\_PRE\_COMP}} \texorpdfstring{$\ast$}{*} {\bfseries nistp521}\\
+\>\mbox{\hyperlink{structnistz256__pre__comp__st}{NISTZ256\_PRE\_COMP}} \texorpdfstring{$\ast$}{*} {\bfseries nistz256}\\
+\>\mbox{\hyperlink{structec__pre__comp__st}{EC\_PRE\_COMP}} \texorpdfstring{$\ast$}{*} {\bfseries ec}\\
+\} {\bfseries pre\_comp}\\
+
+\end{tabbing}\item 
+\Hypertarget{structec__group__st_ad11211a1a1fb0099176125cbc44045d2}\label{structec__group__st_ad11211a1a1fb0099176125cbc44045d2} 
+OSSL\+\_\+\+LIB\+\_\+\+CTX \texorpdfstring{$\ast$}{*} {\bfseries libctx}
+\item 
+\Hypertarget{structec__group__st_af2388b101be153f3ef47f811ca71f89a}\label{structec__group__st_af2388b101be153f3ef47f811ca71f89a} 
+char \texorpdfstring{$\ast$}{*} {\bfseries propq}
+\end{DoxyCompactItemize}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/namph/\+Downloads/openssl/openssl-\/3.\+2.\+1/crypto/ec/ec\+\_\+local.\+h\end{DoxyCompactItemize}

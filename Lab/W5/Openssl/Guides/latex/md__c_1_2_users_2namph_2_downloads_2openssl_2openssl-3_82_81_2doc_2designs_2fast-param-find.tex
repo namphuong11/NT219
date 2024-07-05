@@ -1,0 +1,350 @@
+\chapter{Proposal for OSSL\+\_\+\+PARAM futures}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2fast-param-find}{}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2fast-param-find}\index{Proposal for OSSL\_PARAM futures@{Proposal for OSSL\_PARAM futures}}
+Format\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\{-\/}
+\DoxyCodeLine{use\ OpenSSL::paramnames\ qw(produce\_param\_handlers);}
+\DoxyCodeLine{-\/\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{/*}
+\DoxyCodeLine{\ *\ Machine\ generated\ parameter\ handling}
+\DoxyCodeLine{\ *\ generated\ by\ util/perl/OpenSSL/paramnames.pm}
+\DoxyCodeLine{\ */}
+\DoxyCodeLine{\{-\/}
+\DoxyCodeLine{produce\_param\_handlers(}
+\DoxyCodeLine{\ \ \ \ 'name'\ =>\ 'kdf\_scrypt',}
+\DoxyCodeLine{\ \ \ \ 'functions'\ =>\ 'both',\ \ \ \#\ getter\ or\ setter\ being\ the\ other\ options}
+\DoxyCodeLine{\ \ \ \ 'prologue'\ =>\ "{}KDF\_SCRYPT\ *ctx\ =\ vctx;"{},}
+\DoxyCodeLine{\ \ \ \ "{}static"{}\ =>\ "{}yes"{},\ \ \ \ \ \ \#\ "{}yes"{}\ to\ generate\ static\ functions\ (default)\ or}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \#\ "{}no"{}\ to\ not}
+\DoxyCodeLine{\ \ \ \ 'params'\ =>\ (}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ 'KDF\_PARAM\_PASSWORD'\ =>\ (}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ 'type'\ =>\ 'octet\ string',}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ 'access'\ =>\ 'writeonly',}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ 'setaction'\ =>\ qq(}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ if\ (!scrypt\_set\_membuf(\&ctx-\/>pass,\ \&ctx-\/>pass\_len,\ p))}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ return\ 0;}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ ),}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ ),}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ 'KDF\_PARAM\_SALT'\ =>\ (}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ 'type'\ =>\ 'octet\ string',}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ 'access'\ =>\ 'readwrite',}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ 'setaction'\ =>\ qq(}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ if\ (!scrypt\_set\_membuf(\&ctx-\/>salt,\ \&ctx-\/>salt\_len,\ p))}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ return\ 0;}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ ),}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ 'getaction'\ =>\ qq(}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ p-\/>return\_size\ =\ ctx-\/>salt\_len;}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ if\ (p-\/>data\_size\ >=\ ctx-\/>salt\_len)}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ memcpy(p-\/>data,\ ctx-\/>salt,\ p-\/>data\_size\ >=\ ctx-\/>salt\_len);}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ ),}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ ),}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ 'KDF\_PARAM\_SCRYPT\_N'\ =>\ (}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ 'type'\ =>\ 'integer',}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ 'ctype'\ =>\ 'uint64\_t',}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ 'access'\ =>\ 'readwrite',}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ 'field'\ =>\ "{}ctx-\/>N"{},}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ 'sanitycheck'\ =>\ "{}value\ >\ 1\ \&\&\ is\_power\_of\_two(value)"{}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ ),}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ 'KDF\_PARAM\_SCRYPT\_R'\ =>\ (}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ 'type'\ =>\ 'integer',}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ 'ctype'\ =>\ 'uint64\_t',}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ 'access'\ =>\ 'readwrite',}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ 'field'\ =>\ "{}ctx-\/>r"{},}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ 'sanitycheck'\ =>\ "{}value\ >=\ 1"{},}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ ),}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ 'KDF\_PARAM\_SCRYPT\_P'\ =>\ (}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ 'type'\ =>\ 'integer',}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ 'ctype'\ =>\ 'uint64\_t',}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ 'access'\ =>\ 'readwrite',}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ 'field'\ =>\ "{}ctx-\/>p"{},}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ 'sanitycheck'\ =>\ "{}value\ >=\ 1"{},}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ ),}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ 'KDF\_PARAM\_SCRYPT\_MAXMEM'\ =>\ (}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ 'type'\ =>\ 'integer',}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ 'ctype'\ =>\ 'uint64\_t',}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ 'access'\ =>\ 'readwrite',}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ 'field'\ =>\ "{}ctx-\/>maxmem\_bytes"{},}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ 'sanitycheck'\ =>\ "{}value\ >=\ 1"{},}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ ),}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ 'KDF\_PARAM\_PROPERTIES'\ =>\ (}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ 'type'\ =>\ 'utf8\_string',}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ 'access'\ =>\ 'readwrite',}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ 'setaction'\ =>\ qq(}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ if\ (!set\_property\_query(ctx,\ p-\/>data)\ ||\ !set\_digest(ctx))}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ return\ 0;}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ ),}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ ),}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ 'KDF\_PARAM\_SIZE'\ =>\ (}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ 'type'\ =>\ 'integer',}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ 'ctype'\ =>\ 'size\_t',}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ 'access'\ =>\ 'readonly',}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ 'field'\ =>\ "{}SIZE\_MAX"{},}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ ),}
+\DoxyCodeLine{\ \ \ \ );}
+\DoxyCodeLine{);}
+\DoxyCodeLine{-\/\}}
+\DoxyCodeLine{/*\ End\ of\ generated\ code\ */}
+
+\end{DoxyCode}
+
+
+THe top level attributes are\+:
+
+
+\begin{DoxyItemize}
+\item "{}name"{} is the name the functions will derive from e.\+g. "{}kdf\+\_\+scrypt"{} to this will be appended \+\_\+\mbox{[}gs\mbox{]}et\mbox{[}\+\_\+ctx\mbox{]}\+\_\+params
+\item "{}functions"{} is the functions to generate. By default both setters and getters but either can be omitted.
+\item "{}prologue"{} defines some introductory code emitted in the generated functions. Function arguments are\+: {\ttfamily void \texorpdfstring{$\ast$}{*}vctx, OSSL\+\_\+\+PARAM params\mbox{[}\mbox{]}} and this can be used to specialise the void pointer or declare locals.
+\item "{}epilogue"{} defines some post decode code emitted in the generated function
+\item "{}params"{} defines the parameters both gettable and settable
+\end{DoxyItemize}
+
+Within the "{}params"{} the fields specify each parameter by label.
+
+Each parameter is then specialised with attributes\+:
+
+
+\begin{DoxyItemize}
+\item "{}type"{} is the OSSL\+\_\+\+PARAM type
+\item "{}ctype"{} is the underlying C type (e.\+g. for an integer parameter size\+\_\+t could be the C type)
+\item "{}access"{} is readwrite, readonly or writeonly. This determines if the parameter is a settable, gettable or both
+\item "{}field"{} is an accessor to the field itself
+\item "{}sanitycheck"{} is a validation check for the parameter. If present, code will be generated {\ttfamily if (!(sanitycheck)) return 0;} The local variable {\ttfamily var} will contain the C value if specified.
+\item "{}setaction"{} is C code to execute when the parameter is being set. It will define an OSSL\+\_\+\+PARAM pointer p to set.
+\item "{}code"{} set to "{}no"{} skips code generation for this parameter, it defaults to "{}yes"{} which generates handlers. This is useful when a parameter is duplicated with differenting types (e.\+g. utf8 string and integer).
+\item "{}published"{} set to "{}yes"{} includes the parameter in the gettable/settable lists. Set to "{}no"{} and it isn\textquotesingle{}t included (but will still be processed). It defaults to "{}yes"{}.
+\item Flags include\+:
+\begin{DoxyItemize}
+\item nostatic\+: do not make the function static
+\item nocode\+: do not generate code for this parameter
+\begin{DoxyItemize}
+\item This allows, e.\+g., two different types for a parameter (int \& string)
+\end{DoxyItemize}
+\item unpublished\+: do not generate this parameter in the gettable/settable list
+\begin{DoxyItemize}
+\item "{}engine"{} is the only one like this
+\end{DoxyItemize}
+\item readonly\+: create a getter but not a setter
+\item writeonly\+: create a setting but not a getter
+\end{DoxyItemize}
+\end{DoxyItemize}
+
+The idea is that the gettable and get functions will be simultaneously generated along with fast decoder to look up parameter names quickly.
+
+The getter and setter functions will be pre-\/populated with some local variable\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{OSSL\_PARAM\ *p;\ \textcolor{comment}{/*\ The\ matching\ parameter\ */}}
+\DoxyCodeLine{type\ val;\ \ \ \ \ \ \textcolor{comment}{/*\ The\ value\ of\ the\ parameter\ after\ a\ get/set\ call\ */}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ (for\ C\ types)\ */}}
+
+\end{DoxyCode}
+
+
+A worked example for scrypt\+:
+
+Would generate something along the lines of\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{enum}\ kdf\_scrypt\_ctx\_param\_e\ \{}
+\DoxyCodeLine{\ \ \ \ kdf\_scrypt\_ctx\_param\_INVALID,}
+\DoxyCodeLine{\ \ \ \ kdf\_scrypt\_ctx\_param\_OSSL\_KDF\_PARAM\_PASSWORD,}
+\DoxyCodeLine{\ \ \ \ kdf\_scrypt\_ctx\_param\_OSSL\_KDF\_PARAM\_PROPERTIES,}
+\DoxyCodeLine{\ \ \ \ kdf\_scrypt\_ctx\_param\_OSSL\_KDF\_PARAM\_SALT,}
+\DoxyCodeLine{\ \ \ \ kdf\_scrypt\_ctx\_param\_OSSL\_KDF\_PARAM\_SCRYPT\_MAXMEM,}
+\DoxyCodeLine{\ \ \ \ kdf\_scrypt\_ctx\_param\_OSSL\_KDF\_PARAM\_SCRYPT\_N,}
+\DoxyCodeLine{\ \ \ \ kdf\_scrypt\_ctx\_param\_OSSL\_KDF\_PARAM\_SCRYPT\_P,}
+\DoxyCodeLine{\ \ \ \ kdf\_scrypt\_ctx\_param\_OSSL\_KDF\_PARAM\_SCRYPT\_R,}
+\DoxyCodeLine{\ \ \ \ kdf\_scrypt\_ctx\_param\_OSSL\_KDF\_PARAM\_SIZE}
+\DoxyCodeLine{\};}
+\DoxyCodeLine{}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{static}\ \textcolor{keyword}{enum}\ kdf\_scrypt\_ctx\_param\_e\ kdf\_scrypt\_ctx\_lookup(\textcolor{keyword}{const}\ OSSL\_PARAM\ *p)\ \{}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{/*\ magic\ decoder\ */}}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordflow}{return}\ kdf\_scrypt\_ctx\_param\_INVALID;}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ kdf\_scrypt\_set\_ctx\_params(\textcolor{keywordtype}{void}\ *vctx,\ \textcolor{keyword}{const}\ OSSL\_PARAM\ params[])}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{const}\ OSSL\_PARAM\ *p;}
+\DoxyCodeLine{\ \ \ \ \mbox{\hyperlink{struct_k_d_f___s_c_r_y_p_t}{KDF\_SCRYPT}}\ *ctx\ =\ vctx;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordflow}{if}\ (params\ ==\ NULL)}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordflow}{for}\ (p\ =\ params;\ p-\/>key\ !=\ NULL;\ p++)\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{switch}\ (kdf\_scrypt\_ctx\_lookup(p))\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ kdf\_scrypt\_ctx\_param\_OSSL\_KDF\_PARAM\_PASSWORD:}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!scrypt\_set\_membuf(\&ctx-\/>pass,\ \&ctx-\/>pass\_len,\ p))}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ kdf\_scrypt\_ctx\_param\_OSSL\_KDF\_PARAM\_SALT:}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!scrypt\_set\_membuf(\&ctx-\/>salt,\ \&ctx-\/>salt\_len,\ p))}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ kdf\_scrypt\_ctx\_param\_OSSL\_KDF\_PARAM\_SCRYPT\_N:\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ value;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!OSSL\_PARAM\_get\_uint64(p,\ \&value)\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!(value\ >\ 1\ \&\&\ is\_power\_of\_two(u64\_value)))}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ctx-\/>N\ =\ value;}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ kdf\_scrypt\_ctx\_param\_OSSL\_KDF\_PARAM\_SCRYPT\_R:\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ value;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!OSSL\_PARAM\_get\_uint64(p,\ \&value)\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!(value\ >=\ 1))}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ctx-\/>r\ =\ value;}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ kdf\_scrypt\_ctx\_param\_OSSL\_KDF\_PARAM\_SCRYPT\_P:\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ value;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!OSSL\_PARAM\_get\_uint64(p,\ \&value)\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!(value\ >=\ 1))}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ctx-\/>p\ =\ value;}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ kdf\_scrypt\_ctx\_param\_OSSL\_KDF\_PARAM\_SCRYPT\_MAXMEM:\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ value;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!OSSL\_PARAM\_get\_uint64(p,\ \&value)\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!(value\ >=\ 1))}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ctx-\/>p\ =\ value;}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ kdf\_scrypt\_ctx\_param\_OSSL\_KDF\_PARAM\_PROPERTIES:}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (p\ !=\ NULL)\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (p-\/>data\_type\ !=\ OSSL\_PARAM\_UTF8\_STRING)\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ if\ (!set\_property\_query(ctx,\ p-\/>data)\ ||\ !set\_digest(ctx))}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ return\ 0;}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\ \ \ \ \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{static}\ \textcolor{keyword}{const}\ OSSL\_PARAM\ *kdf\_scrypt\_settable\_ctx\_params(ossl\_unused\ \textcolor{keywordtype}{void}\ *ctx,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ossl\_unused\ \textcolor{keywordtype}{void}\ *p\_ctx)}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ OSSL\_PARAM\ known\_settable\_ctx\_params[]\ =\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ OSSL\_PARAM\_octet\_string(OSSL\_KDF\_PARAM\_PASSWORD,\ NULL,\ 0),}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ OSSL\_PARAM\_octet\_string(OSSL\_KDF\_PARAM\_SALT,\ NULL,\ 0),}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ OSSL\_PARAM\_uint64(OSSL\_KDF\_PARAM\_SCRYPT\_N,\ NULL),}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ OSSL\_PARAM\_uint32(OSSL\_KDF\_PARAM\_SCRYPT\_R,\ NULL),}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ OSSL\_PARAM\_uint32(OSSL\_KDF\_PARAM\_SCRYPT\_P,\ NULL),}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ OSSL\_PARAM\_uint64(OSSL\_KDF\_PARAM\_SCRYPT\_MAXMEM,\ NULL),}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ OSSL\_PARAM\_utf8\_string(OSSL\_KDF\_PARAM\_PROPERTIES,\ NULL,\ 0),}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ OSSL\_PARAM\_END}
+\DoxyCodeLine{\ \ \ \ \};}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordflow}{return}\ known\_settable\_ctx\_params;}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ kdf\_scrypt\_get\_ctx\_params(\textcolor{keywordtype}{void}\ *vctx,\ OSSL\_PARAM\ params[])}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{const}\ OSSL\_PARAM\ *p;}
+\DoxyCodeLine{\ \ \ \ \mbox{\hyperlink{struct_k_d_f___s_c_r_y_p_t}{KDF\_SCRYPT}}\ *ctx\ =\ vctx;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordflow}{if}\ (params\ ==\ NULL)}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordflow}{for}\ (p\ =\ params;\ p-\/>key\ !=\ NULL;\ p++)\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{switch}\ (kdf\_scrypt\_ctx\_lookup(p))\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ kdf\_scrypt\_ctx\_param\_OSSL\_KDF\_PARAM\_PASSWORD:}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!scrypt\_set\_membuf(\&ctx-\/>pass,\ \&ctx-\/>pass\_len,\ p))}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ kdf\_scrypt\_ctx\_param\_OSSL\_KDF\_PARAM\_SALT:}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ p-\/>return\_size\ =\ ctx-\/>salt\_len;}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (p-\/>data\_size\ >=\ ctx-\/>salt\_len)}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ memcpy(p-\/>data,\ ctx-\/>salt,\ ctx-\/>salt\_len);}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ kdf\_scrypt\_ctx\_param\_OSSL\_KDF\_PARAM\_SCRYPT\_N:\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!OSSL\_PARAM\_set\_uint64(p,\ \&ctx-\/>N)}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ kdf\_scrypt\_ctx\_param\_OSSL\_KDF\_PARAM\_SCRYPT\_R:\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!OSSL\_PARAM\_set\_uint64(p,\ \&ctx-\/>r)}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ kdf\_scrypt\_ctx\_param\_OSSL\_KDF\_PARAM\_SCRYPT\_P:\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!OSSL\_PARAM\_set\_uint64(p,\ \&ctx-\/>p)}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ kdf\_scrypt\_ctx\_param\_OSSL\_KDF\_PARAM\_SCRYPT\_MAXMEM:\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!OSSL\_PARAM\_set\_uint64(p,\ \&ctx-\/>maxmem)}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ kdf\_scrypt\_ctx\_param\_OSSL\_KDF\_PARAM\_PROPERTIES:}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (p-\/>data\_type\ !=\ OSSL\_PARAM\_UTF8\_STRING)\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!set\_property\_query(ctx,\ p-\/>data)\ ||\ !set\_digest(ctx))}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ kdf\_scrypt\_ctx\_param\_KDF\_PARAM\_SIZE:}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!OSSL\_PARAM\_set\_size\_t(p,\ SIZE\_MAX))}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\ \ \ \ \}}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{static}\ \textcolor{keyword}{const}\ OSSL\_PARAM\ *kdf\_scrypt\_gettable\_ctx\_params(ossl\_unused\ \textcolor{keywordtype}{void}\ *ctx,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ossl\_unused\ \textcolor{keywordtype}{void}\ *p\_ctx)}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ OSSL\_PARAM\ known\_gettable\_ctx\_params[]\ =\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ OSSL\_PARAM\_size\_t(OSSL\_KDF\_PARAM\_SIZE,\ NULL),}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ OSSL\_PARAM\_END}
+\DoxyCodeLine{\ \ \ \ \};}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordflow}{return}\ known\_gettable\_ctx\_params;}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+ 

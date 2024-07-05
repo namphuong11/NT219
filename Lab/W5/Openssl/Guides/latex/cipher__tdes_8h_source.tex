@@ -1,0 +1,109 @@
+\doxysection{cipher\+\_\+tdes.\+h}
+\hypertarget{cipher__tdes_8h_source}{}\label{cipher__tdes_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/providers/implementations/ciphers/cipher\_tdes.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/providers/implementations/ciphers/cipher\_tdes.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2019-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <openssl/des.h>}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ <openssl/core\_dispatch.h>}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ "{}crypto/des\_platform.h"{}}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#define\ DES\_BLOCK\_SIZE\ 8}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#define\ TDES\_IVLEN\ 8}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#define\ TDES\_FLAGS\ PROV\_CIPHER\_FLAG\_RAND\_KEY}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structprov__tdes__ctx__st}{prov\_tdes\_ctx\_st}}\ \{}
+\DoxyCodeLine{00019\ \ \ \ \ \mbox{\hyperlink{structprov__cipher__ctx__st}{PROV\_CIPHER\_CTX}}\ base;\ \ \ \ \ \ \textcolor{comment}{/*\ Must\ be\ first\ */}}
+\DoxyCodeLine{00020\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00021\ \ \ \ \ \ \ \ \ OSSL\_UNION\_ALIGN;}
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ DES\_key\_schedule\ ks[3];}
+\DoxyCodeLine{00023\ \ \ \ \ \}\ tks;}
+\DoxyCodeLine{00024\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ void\ (*cbc)\ (\textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *,\ \textcolor{keywordtype}{void}\ *,\ size\_t,}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ DES\_key\_schedule\ *,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *);}
+\DoxyCodeLine{00027\ \ \ \ \ \}\ tstream;}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \}\ \mbox{\hyperlink{structprov__tdes__ctx__st}{PROV\_TDES\_CTX}};}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#define\ IMPLEMENT\_tdes\_cipher(type,\ UCTYPE,\ lcmode,\ UCMODE,\ flags,\ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ kbits,\ blkbits,\ ivbits,\ block)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{static\ OSSL\_FUNC\_cipher\_newctx\_fn\ tdes\_\#\#type\#\#\_\#\#lcmode\#\#\_newctx;\ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{static\ void\ *tdes\_\#\#type\#\#\_\#\#lcmode\#\#\_newctx(void\ *provctx)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\ \ \ \ return\ ossl\_tdes\_newctx(provctx,\ EVP\_CIPH\_\#\#UCMODE\#\#\_MODE,\ kbits,\ blkbits,\ \(\backslash\)}}
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ivbits,\ flags,\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ossl\_prov\_cipher\_hw\_tdes\_\#\#type\#\#\_\#\#lcmode());\ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00039\ \textcolor{preprocessor}{\}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00040\ \textcolor{preprocessor}{static\ OSSL\_FUNC\_cipher\_get\_params\_fn\ tdes\_\#\#type\#\#\_\#\#lcmode\#\#\_get\_params;\ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00041\ \textcolor{preprocessor}{static\ int\ tdes\_\#\#type\#\#\_\#\#lcmode\#\#\_get\_params(OSSL\_PARAM\ params[])\ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00042\ \textcolor{preprocessor}{\{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00043\ \textcolor{preprocessor}{\ \ \ \ return\ ossl\_cipher\_generic\_get\_params(params,\ EVP\_CIPH\_\#\#UCMODE\#\#\_MODE,\ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00044\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ flags,\ kbits,\ blkbits,\ ivbits);\ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00045\ \textcolor{preprocessor}{\}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00046\ \textcolor{preprocessor}{const\ OSSL\_DISPATCH\ ossl\_tdes\_\#\#type\#\#\_\#\#lcmode\#\#\_functions[]\ =\ \{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00047\ \textcolor{preprocessor}{\ \ \ \ \{\ OSSL\_FUNC\_CIPHER\_ENCRYPT\_INIT,\ (void\ (*)(void))ossl\_tdes\_einit\ \},\ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00048\ \textcolor{preprocessor}{\ \ \ \ \{\ OSSL\_FUNC\_CIPHER\_DECRYPT\_INIT,\ (void\ (*)(void))ossl\_tdes\_dinit\ \},\ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00049\ \textcolor{preprocessor}{\ \ \ \ \{\ OSSL\_FUNC\_CIPHER\_UPDATE,\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00050\ \textcolor{preprocessor}{\ \ \ \ \ \ (void\ (*)(void))ossl\_cipher\_generic\_\#\#block\#\#\_update\ \},\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00051\ \textcolor{preprocessor}{\ \ \ \ \{\ OSSL\_FUNC\_CIPHER\_FINAL,\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00052\ \textcolor{preprocessor}{\ \ \ \ \ \ (void\ (*)(void))ossl\_cipher\_generic\_\#\#block\#\#\_final\ \},\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00053\ \textcolor{preprocessor}{\ \ \ \ \{\ OSSL\_FUNC\_CIPHER\_CIPHER,\ (void\ (*)(void))ossl\_cipher\_generic\_cipher\ \},\ \ \ \(\backslash\)}}
+\DoxyCodeLine{00054\ \textcolor{preprocessor}{\ \ \ \ \{\ OSSL\_FUNC\_CIPHER\_NEWCTX,\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00055\ \textcolor{preprocessor}{\ \ \ \ \ \ (void\ (*)(void))tdes\_\#\#type\#\#\_\#\#lcmode\#\#\_newctx\ \},\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00056\ \textcolor{preprocessor}{\ \ \ \ \{\ OSSL\_FUNC\_CIPHER\_DUPCTX,\ (void\ (*)(void))ossl\_tdes\_dupctx\ \},\ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00057\ \textcolor{preprocessor}{\ \ \ \ \{\ OSSL\_FUNC\_CIPHER\_FREECTX,\ (void\ (*)(void))ossl\_tdes\_freectx\ \},\ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00058\ \textcolor{preprocessor}{\ \ \ \ \{\ OSSL\_FUNC\_CIPHER\_GET\_PARAMS,\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00059\ \textcolor{preprocessor}{\ \ \ \ \ \ (void\ (*)(void))tdes\_\#\#type\#\#\_\#\#lcmode\#\#\_get\_params\ \},\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00060\ \textcolor{preprocessor}{\ \ \ \ \{\ OSSL\_FUNC\_CIPHER\_GETTABLE\_PARAMS,\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00061\ \textcolor{preprocessor}{\ \ \ \ \ \ (void\ (*)(void))ossl\_cipher\_generic\_gettable\_params\ \},\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00062\ \textcolor{preprocessor}{\ \ \ \ \{\ OSSL\_FUNC\_CIPHER\_GET\_CTX\_PARAMS,\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00063\ \textcolor{preprocessor}{\ \ \ \ \ \ (void\ (*)(void))ossl\_tdes\_get\_ctx\_params\ \},\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00064\ \textcolor{preprocessor}{\ \ \ \ \{\ OSSL\_FUNC\_CIPHER\_GETTABLE\_CTX\_PARAMS,\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00065\ \textcolor{preprocessor}{\ \ \ \ \ \ (void\ (*)(void))ossl\_tdes\_gettable\_ctx\_params\ \},\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00066\ \textcolor{preprocessor}{\ \ \ \ \{\ OSSL\_FUNC\_CIPHER\_SET\_CTX\_PARAMS,\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00067\ \textcolor{preprocessor}{\ \ \ \ \ (void\ (*)(void))ossl\_cipher\_generic\_set\_ctx\_params\ \},\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00068\ \textcolor{preprocessor}{\ \ \ \ \{\ OSSL\_FUNC\_CIPHER\_SETTABLE\_CTX\_PARAMS,\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00069\ \textcolor{preprocessor}{\ \ \ \ \ (void\ (*)(void))ossl\_cipher\_generic\_settable\_ctx\_params\ \},\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00070\ \textcolor{preprocessor}{\ \ \ \ OSSL\_DISPATCH\_END\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00071\ \textcolor{preprocessor}{\}}}
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00073\ \textcolor{keywordtype}{void}\ *ossl\_tdes\_newctx(\textcolor{keywordtype}{void}\ *provctx,\ \textcolor{keywordtype}{int}\ mode,\ \textcolor{keywordtype}{size\_t}\ kbits,\ \textcolor{keywordtype}{size\_t}\ blkbits,}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ ivbits,\ uint64\_t\ flags,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structprov__cipher__hw__st}{PROV\_CIPHER\_HW}}\ *hw);}
+\DoxyCodeLine{00075\ OSSL\_FUNC\_cipher\_dupctx\_fn\ ossl\_tdes\_dupctx;}
+\DoxyCodeLine{00076\ OSSL\_FUNC\_cipher\_freectx\_fn\ ossl\_tdes\_freectx;}
+\DoxyCodeLine{00077\ OSSL\_FUNC\_cipher\_encrypt\_init\_fn\ ossl\_tdes\_einit;}
+\DoxyCodeLine{00078\ OSSL\_FUNC\_cipher\_decrypt\_init\_fn\ ossl\_tdes\_dinit;}
+\DoxyCodeLine{00079\ OSSL\_FUNC\_cipher\_get\_ctx\_params\_fn\ ossl\_tdes\_get\_ctx\_params;}
+\DoxyCodeLine{00080\ OSSL\_FUNC\_cipher\_gettable\_ctx\_params\_fn\ ossl\_tdes\_gettable\_ctx\_params;}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00082\ \textcolor{preprocessor}{\#define\ PROV\_CIPHER\_HW\_tdes\_mode(type,\ mode)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00083\ \textcolor{preprocessor}{static\ const\ PROV\_CIPHER\_HW\ type\#\#\_\#\#mode\ =\ \{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00084\ \textcolor{preprocessor}{\ \ \ \ ossl\_cipher\_hw\_tdes\_\#\#type\#\#\_initkey,\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00085\ \textcolor{preprocessor}{\ \ \ \ ossl\_cipher\_hw\_tdes\_\#\#mode,\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00086\ \textcolor{preprocessor}{\ \ \ \ ossl\_cipher\_hw\_tdes\_copyctx\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00087\ \textcolor{preprocessor}{\};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00088\ \textcolor{preprocessor}{const\ PROV\_CIPHER\_HW\ *ossl\_prov\_cipher\_hw\_tdes\_\#\#type\#\#\_\#\#mode(void)\ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00089\ \textcolor{preprocessor}{\{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00090\ \textcolor{preprocessor}{\ \ \ \ return\ \&type\#\#\_\#\#mode;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00091\ \textcolor{preprocessor}{\}}}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \textcolor{keywordtype}{int}\ ossl\_cipher\_hw\_tdes\_ede3\_initkey(\mbox{\hyperlink{structprov__cipher__ctx__st}{PROV\_CIPHER\_CTX}}\ *ctx,}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *key,\ \textcolor{keywordtype}{size\_t}\ keylen);}
+\DoxyCodeLine{00095\ \textcolor{keywordtype}{void}\ ossl\_cipher\_hw\_tdes\_copyctx(\mbox{\hyperlink{structprov__cipher__ctx__st}{PROV\_CIPHER\_CTX}}\ *dst,}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structprov__cipher__ctx__st}{PROV\_CIPHER\_CTX}}\ *src);}
+\DoxyCodeLine{00097\ \textcolor{keywordtype}{int}\ ossl\_cipher\_hw\_tdes\_cbc(\mbox{\hyperlink{structprov__cipher__ctx__st}{PROV\_CIPHER\_CTX}}\ *ctx,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,\ \textcolor{keywordtype}{size\_t}\ inl);}
+\DoxyCodeLine{00099\ \textcolor{keywordtype}{int}\ ossl\_cipher\_hw\_tdes\_ecb(\mbox{\hyperlink{structprov__cipher__ctx__st}{PROV\_CIPHER\_CTX}}\ *ctx,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,\ \textcolor{keywordtype}{size\_t}\ len);}
+\DoxyCodeLine{00101\ }
+\DoxyCodeLine{00102\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structprov__cipher__hw__st}{PROV\_CIPHER\_HW}}\ *ossl\_prov\_cipher\_hw\_tdes\_ede3\_cbc(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00103\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structprov__cipher__hw__st}{PROV\_CIPHER\_HW}}\ *ossl\_prov\_cipher\_hw\_tdes\_ede3\_ecb(\textcolor{keywordtype}{void});}
+
+\end{DoxyCode}

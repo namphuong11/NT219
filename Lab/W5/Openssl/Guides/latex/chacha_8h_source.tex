@@ -1,0 +1,49 @@
+\doxysection{chacha.\+h}
+\hypertarget{chacha_8h_source}{}\label{chacha_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/crypto/chacha.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/crypto/chacha.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2015-\/2021\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_CRYPTO\_CHACHA\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#define\ OSSL\_CRYPTO\_CHACHA\_H}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#\ pragma\ once}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ <stddef.h>}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ *\ ChaCha20\_ctr32\ encrypts\ |len|\ bytes\ from\ |inp|\ with\ the\ given\ key\ and}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ *\ nonce\ and\ writes\ the\ result\ to\ |out|,\ which\ may\ be\ equal\ to\ |inp|.}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ *\ The\ |key|\ is\ not\ 32\ bytes\ of\ verbatim\ key\ material\ though,\ but\ the}}
+\DoxyCodeLine{00020\ \textcolor{comment}{\ *\ said\ material\ collected\ into\ 8\ 32-\/bit\ elements\ array\ in\ host\ byte}}
+\DoxyCodeLine{00021\ \textcolor{comment}{\ *\ order.\ Same\ approach\ applies\ to\ nonce:\ the\ |counter|\ argument\ is}}
+\DoxyCodeLine{00022\ \textcolor{comment}{\ *\ pointer\ to\ concatenated\ nonce\ and\ counter\ values\ collected\ into\ 4}}
+\DoxyCodeLine{00023\ \textcolor{comment}{\ *\ 32-\/bit\ elements.\ This,\ passing\ crypto\ material\ collected\ into\ 32-\/bit}}
+\DoxyCodeLine{00024\ \textcolor{comment}{\ *\ elements\ as\ opposite\ to\ passing\ verbatim\ byte\ vectors,\ is\ chosen\ for}}
+\DoxyCodeLine{00025\ \textcolor{comment}{\ *\ efficiency\ in\ multi-\/call\ scenarios.}}
+\DoxyCodeLine{00026\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00027\ \textcolor{keywordtype}{void}\ ChaCha20\_ctr32(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *inp,}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ len,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ key[8],}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ counter[4]);}
+\DoxyCodeLine{00030\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00031\ \textcolor{comment}{\ *\ You\ can\ notice\ that\ there\ is\ no\ key\ setup\ procedure.\ Because\ it's}}
+\DoxyCodeLine{00032\ \textcolor{comment}{\ *\ as\ trivial\ as\ collecting\ bytes\ into\ 32-\/bit\ elements,\ it's\ reckoned}}
+\DoxyCodeLine{00033\ \textcolor{comment}{\ *\ that\ below\ macro\ is\ sufficient.}}
+\DoxyCodeLine{00034\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#define\ CHACHA\_U8TOU32(p)\ \ (\ \(\backslash\)}}
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ((unsigned\ int)(p)[0])\ \ \ \ \ |\ ((unsigned\ int)(p)[1]<<8)\ |\ \(\backslash\)}}
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ((unsigned\ int)(p)[2]<<16)\ |\ ((unsigned\ int)(p)[3]<<24)\ \ )}}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \textcolor{preprocessor}{\#define\ CHACHA\_KEY\_SIZE\ \ \ \ \ \ \ \ \ 32}}
+\DoxyCodeLine{00040\ \textcolor{preprocessor}{\#define\ CHACHA\_CTR\_SIZE\ \ \ \ \ \ \ \ \ 16}}
+\DoxyCodeLine{00041\ \textcolor{preprocessor}{\#define\ CHACHA\_BLK\_SIZE\ \ \ \ \ \ \ \ \ 64}}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

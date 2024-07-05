@@ -1,0 +1,51 @@
+\doxysection{cipher\+\_\+aes\+\_\+gcm.\+h}
+\hypertarget{cipher__aes__gcm_8h_source}{}\label{cipher__aes__gcm_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/providers/implementations/ciphers/cipher\_aes\_gcm.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/providers/implementations/ciphers/cipher\_aes\_gcm.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2019-\/2021\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <openssl/aes.h>}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ "{}prov/ciphercommon.h"{}}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ "{}prov/ciphercommon\_gcm.h"{}}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ "{}crypto/aes\_platform.h"{}}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structprov__aes__gcm__ctx__st}{prov\_aes\_gcm\_ctx\_st}}\ \{}
+\DoxyCodeLine{00016\ \ \ \ \ \mbox{\hyperlink{structprov__gcm__ctx__st}{PROV\_GCM\_CTX}}\ base;\ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ must\ be\ first\ entry\ in\ struct\ */}}
+\DoxyCodeLine{00017\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00018\ \ \ \ \ \ \ \ \ OSSL\_UNION\_ALIGN;}
+\DoxyCodeLine{00019\ \ \ \ \ \ \ \ \ AES\_KEY\ ks;}
+\DoxyCodeLine{00020\ \ \ \ \ \}\ ks;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ AES\ key\ schedule\ to\ use\ */}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{comment}{/*\ Platform\ specific\ data\ */}}
+\DoxyCodeLine{00023\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ dummy;}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#if\ defined(OPENSSL\_CPUID\_OBJ)\ \&\&\ defined(\_\_s390\_\_)}}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OSSL\_UNION\_ALIGN;}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ S390X\_KMA\_PARAMS\ kma;}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \ \ \ \ \}\ param;}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ fc;}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ hsflag;\ \ \ \ \textcolor{comment}{/*\ hash\ subkey\ set\ flag\ */}}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ares[16];}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ mres[16];}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ kres[16];}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ areslen;}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ mreslen;}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ kreslen;}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ res;}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \}\ s390x;}
+\DoxyCodeLine{00041\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ defined(OPENSSL\_CPUID\_OBJ)\ \&\&\ defined(\_\_s390\_\_)\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00042\ \ \ \ \ \}\ plat;}
+\DoxyCodeLine{00043\ \}\ \mbox{\hyperlink{structprov__aes__gcm__ctx__st}{PROV\_AES\_GCM\_CTX}};}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structprov__gcm__hw__st}{PROV\_GCM\_HW}}\ *ossl\_prov\_aes\_hw\_gcm(\textcolor{keywordtype}{size\_t}\ keybits);}
+
+\end{DoxyCode}

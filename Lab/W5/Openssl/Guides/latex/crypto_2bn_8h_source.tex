@@ -1,0 +1,134 @@
+\doxysection{bn.\+h}
+\hypertarget{crypto_2bn_8h_source}{}\label{crypto_2bn_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/crypto/bn.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/crypto/bn.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2014-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_CRYPTO\_BN\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_CRYPTO\_BN\_H}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#\ pragma\ once}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ include\ <openssl/bn.h>}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#\ include\ <limits.h>}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ BIGNUM\ *bn\_wexpand(BIGNUM\ *a,\ \textcolor{keywordtype}{int}\ words);}
+\DoxyCodeLine{00018\ BIGNUM\ *bn\_expand2(BIGNUM\ *a,\ \textcolor{keywordtype}{int}\ words);}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{keywordtype}{void}\ bn\_correct\_top(BIGNUM\ *a);}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00023\ \textcolor{comment}{\ *\ Determine\ the\ modified\ width-\/(w+1)\ Non-\/Adjacent\ Form\ (wNAF)\ of\ 'scalar'.}}
+\DoxyCodeLine{00024\ \textcolor{comment}{\ *\ This\ is\ an\ array\ r[]\ of\ values\ that\ are\ either\ zero\ or\ odd\ with\ an}}
+\DoxyCodeLine{00025\ \textcolor{comment}{\ *\ absolute\ value\ less\ than\ 2\string^w\ satisfying\ scalar\ =\ \(\backslash\)sum\_j\ r[j]*2\string^j\ where\ at}}
+\DoxyCodeLine{00026\ \textcolor{comment}{\ *\ most\ one\ of\ any\ w+1\ consecutive\ digits\ is\ non-\/zero\ with\ the\ exception\ that}}
+\DoxyCodeLine{00027\ \textcolor{comment}{\ *\ the\ most\ significant\ digit\ may\ be\ only\ w-\/1\ zeros\ away\ from\ that\ next}}
+\DoxyCodeLine{00028\ \textcolor{comment}{\ *\ non-\/zero\ digit.}}
+\DoxyCodeLine{00029\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00030\ \textcolor{keywordtype}{signed}\ \textcolor{keywordtype}{char}\ *bn\_compute\_wNAF(\textcolor{keyword}{const}\ BIGNUM\ *scalar,\ \textcolor{keywordtype}{int}\ w,\ \textcolor{keywordtype}{size\_t}\ *ret\_len);}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \textcolor{keywordtype}{int}\ bn\_get\_top(\textcolor{keyword}{const}\ BIGNUM\ *a);}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \textcolor{keywordtype}{int}\ bn\_get\_dmax(\textcolor{keyword}{const}\ BIGNUM\ *a);}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \textcolor{comment}{/*\ Set\ all\ words\ to\ zero\ */}}
+\DoxyCodeLine{00037\ \textcolor{keywordtype}{void}\ bn\_set\_all\_zero(BIGNUM\ *a);}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00040\ \textcolor{comment}{\ *\ Copy\ the\ internal\ BIGNUM\ words\ into\ out\ which\ holds\ size\ elements\ (and\ size}}
+\DoxyCodeLine{00041\ \textcolor{comment}{\ *\ must\ be\ bigger\ than\ top)}}
+\DoxyCodeLine{00042\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00043\ \textcolor{keywordtype}{int}\ bn\_copy\_words(BN\_ULONG\ *out,\ \textcolor{keyword}{const}\ BIGNUM\ *in,\ \textcolor{keywordtype}{int}\ size);}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ BN\_ULONG\ *bn\_get\_words(\textcolor{keyword}{const}\ BIGNUM\ *a);}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00048\ \textcolor{comment}{\ *\ Set\ the\ internal\ data\ words\ in\ a\ to\ point\ to\ words\ which\ contains\ size}}
+\DoxyCodeLine{00049\ \textcolor{comment}{\ *\ elements.\ The\ BN\_FLG\_STATIC\_DATA\ flag\ is\ set}}
+\DoxyCodeLine{00050\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00051\ \textcolor{keywordtype}{void}\ bn\_set\_static\_words(BIGNUM\ *a,\ \textcolor{keyword}{const}\ BN\_ULONG\ *words,\ \textcolor{keywordtype}{int}\ size);}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00054\ \textcolor{comment}{\ *\ Copy\ words\ into\ the\ BIGNUM\ |a|,\ reallocating\ space\ as\ necessary.}}
+\DoxyCodeLine{00055\ \textcolor{comment}{\ *\ The\ negative\ flag\ of\ |a|\ is\ not\ modified.}}
+\DoxyCodeLine{00056\ \textcolor{comment}{\ *\ Returns\ 1\ on\ success\ and\ 0\ on\ failure.}}
+\DoxyCodeLine{00057\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00058\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00059\ \textcolor{comment}{\ *\ |num\_words|\ is\ int\ because\ bn\_expand2\ takes\ an\ int.\ This\ is\ an\ internal}}
+\DoxyCodeLine{00060\ \textcolor{comment}{\ *\ function\ so\ we\ simply\ trust\ callers\ not\ to\ pass\ negative\ values.}}
+\DoxyCodeLine{00061\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00062\ \textcolor{keywordtype}{int}\ bn\_set\_words(BIGNUM\ *a,\ \textcolor{keyword}{const}\ BN\_ULONG\ *words,\ \textcolor{keywordtype}{int}\ num\_words);}
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00064\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00065\ \textcolor{comment}{\ *\ Some\ BIGNUM\ functions\ assume\ most\ significant\ limb\ to\ be\ non-\/zero,\ which}}
+\DoxyCodeLine{00066\ \textcolor{comment}{\ *\ is\ customarily\ arranged\ by\ bn\_correct\_top.\ Output\ from\ below\ functions}}
+\DoxyCodeLine{00067\ \textcolor{comment}{\ *\ is\ not\ processed\ with\ bn\_correct\_top,\ and\ for\ this\ reason\ it\ may\ not\ be}}
+\DoxyCodeLine{00068\ \textcolor{comment}{\ *\ returned\ out\ of\ public\ API.\ It\ may\ only\ be\ passed\ internally\ into\ other}}
+\DoxyCodeLine{00069\ \textcolor{comment}{\ *\ functions\ known\ to\ support\ non-\/minimal\ or\ zero-\/padded\ BIGNUMs.\ Even}}
+\DoxyCodeLine{00070\ \textcolor{comment}{\ *\ though\ the\ goal\ is\ to\ facilitate\ constant-\/time-\/ness,\ not\ each\ subroutine}}
+\DoxyCodeLine{00071\ \textcolor{comment}{\ *\ is\ constant-\/time\ by\ itself.\ They\ all\ have\ pre-\/conditions,\ consult\ source}}
+\DoxyCodeLine{00072\ \textcolor{comment}{\ *\ code...}}
+\DoxyCodeLine{00073\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00074\ \textcolor{keywordtype}{int}\ bn\_mul\_mont\_fixed\_top(BIGNUM\ *r,\ \textcolor{keyword}{const}\ BIGNUM\ *a,\ \textcolor{keyword}{const}\ BIGNUM\ *\mbox{\hyperlink{structb}{b}},}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BN\_MONT\_CTX\ *mont,\ BN\_CTX\ *ctx);}
+\DoxyCodeLine{00076\ \textcolor{keywordtype}{int}\ bn\_to\_mont\_fixed\_top(BIGNUM\ *r,\ \textcolor{keyword}{const}\ BIGNUM\ *a,\ BN\_MONT\_CTX\ *mont,}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BN\_CTX\ *ctx);}
+\DoxyCodeLine{00078\ \textcolor{keywordtype}{int}\ bn\_from\_mont\_fixed\_top(BIGNUM\ *r,\ \textcolor{keyword}{const}\ BIGNUM\ *a,\ BN\_MONT\_CTX\ *mont,}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BN\_CTX\ *ctx);}
+\DoxyCodeLine{00080\ \textcolor{keywordtype}{int}\ bn\_mod\_add\_fixed\_top(BIGNUM\ *r,\ \textcolor{keyword}{const}\ BIGNUM\ *a,\ \textcolor{keyword}{const}\ BIGNUM\ *\mbox{\hyperlink{structb}{b}},}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *m);}
+\DoxyCodeLine{00082\ \textcolor{keywordtype}{int}\ bn\_mod\_sub\_fixed\_top(BIGNUM\ *r,\ \textcolor{keyword}{const}\ BIGNUM\ *a,\ \textcolor{keyword}{const}\ BIGNUM\ *\mbox{\hyperlink{structb}{b}},}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *m);}
+\DoxyCodeLine{00084\ \textcolor{keywordtype}{int}\ bn\_mul\_fixed\_top(BIGNUM\ *r,\ \textcolor{keyword}{const}\ BIGNUM\ *a,\ \textcolor{keyword}{const}\ BIGNUM\ *\mbox{\hyperlink{structb}{b}},\ BN\_CTX\ *ctx);}
+\DoxyCodeLine{00085\ \textcolor{keywordtype}{int}\ bn\_sqr\_fixed\_top(BIGNUM\ *r,\ \textcolor{keyword}{const}\ BIGNUM\ *a,\ BN\_CTX\ *ctx);}
+\DoxyCodeLine{00086\ \textcolor{keywordtype}{int}\ bn\_lshift\_fixed\_top(BIGNUM\ *r,\ \textcolor{keyword}{const}\ BIGNUM\ *a,\ \textcolor{keywordtype}{int}\ n);}
+\DoxyCodeLine{00087\ \textcolor{keywordtype}{int}\ bn\_rshift\_fixed\_top(BIGNUM\ *r,\ \textcolor{keyword}{const}\ BIGNUM\ *a,\ \textcolor{keywordtype}{int}\ n);}
+\DoxyCodeLine{00088\ \textcolor{keywordtype}{int}\ bn\_div\_fixed\_top(BIGNUM\ *dv,\ BIGNUM\ *rem,\ \textcolor{keyword}{const}\ BIGNUM\ *m,}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *d,\ BN\_CTX\ *ctx);}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ \textcolor{preprocessor}{\#define\ BN\_PRIMETEST\_COMPOSITE\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 0}}
+\DoxyCodeLine{00092\ \textcolor{preprocessor}{\#define\ BN\_PRIMETEST\_COMPOSITE\_WITH\_FACTOR\ \ \ \ \ \ \ \ 1}}
+\DoxyCodeLine{00093\ \textcolor{preprocessor}{\#define\ BN\_PRIMETEST\_COMPOSITE\_NOT\_POWER\_OF\_PRIME\ 2}}
+\DoxyCodeLine{00094\ \textcolor{preprocessor}{\#define\ BN\_PRIMETEST\_PROBABLY\_PRIME\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 3}}
+\DoxyCodeLine{00095\ }
+\DoxyCodeLine{00096\ \textcolor{keywordtype}{int}\ ossl\_bn\_miller\_rabin\_is\_prime(\textcolor{keyword}{const}\ BIGNUM\ *w,\ \textcolor{keywordtype}{int}\ iterations,\ BN\_CTX\ *ctx,}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BN\_GENCB\ *cb,\ \textcolor{keywordtype}{int}\ enhanced,\ \textcolor{keywordtype}{int}\ *status);}
+\DoxyCodeLine{00098\ \textcolor{keywordtype}{int}\ ossl\_bn\_check\_generated\_prime(\textcolor{keyword}{const}\ BIGNUM\ *w,\ \textcolor{keywordtype}{int}\ checks,\ BN\_CTX\ *ctx,}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BN\_GENCB\ *cb);}
+\DoxyCodeLine{00100\ }
+\DoxyCodeLine{00101\ \textcolor{keyword}{const}\ BIGNUM\ *ossl\_bn\_get0\_small\_factors(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00102\ }
+\DoxyCodeLine{00103\ \textcolor{keywordtype}{int}\ ossl\_bn\_rsa\_fips186\_4\_gen\_prob\_primes(BIGNUM\ *p,\ BIGNUM\ *Xpout,}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BIGNUM\ *p1,\ BIGNUM\ *p2,}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *Xp,\ \textcolor{keyword}{const}\ BIGNUM\ *Xp1,}
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *Xp2,\ \textcolor{keywordtype}{int}\ nlen,}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *\mbox{\hyperlink{structe}{e}},\ BN\_CTX\ *ctx,}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BN\_GENCB\ *cb);}
+\DoxyCodeLine{00109\ }
+\DoxyCodeLine{00110\ \textcolor{keywordtype}{int}\ ossl\_bn\_rsa\_fips186\_4\_derive\_prime(BIGNUM\ *Y,\ BIGNUM\ *X,\ \textcolor{keyword}{const}\ BIGNUM\ *Xin,}
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *r1,\ \textcolor{keyword}{const}\ BIGNUM\ *r2,}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ nlen,\ \textcolor{keyword}{const}\ BIGNUM\ *\mbox{\hyperlink{structe}{e}},\ BN\_CTX\ *ctx,}
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BN\_GENCB\ *cb);}
+\DoxyCodeLine{00114\ }
+\DoxyCodeLine{00115\ OSSL\_LIB\_CTX\ *ossl\_bn\_get\_libctx(BN\_CTX\ *ctx);}
+\DoxyCodeLine{00116\ }
+\DoxyCodeLine{00117\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ BIGNUM\ ossl\_bn\_inv\_sqrt\_2;}
+\DoxyCodeLine{00118\ }
+\DoxyCodeLine{00119\ \textcolor{preprocessor}{\#if\ defined(OPENSSL\_SYS\_LINUX)\ \&\&\ !defined(FIPS\_MODULE)\ \&\&\ defined\ (\_\_s390x\_\_)}}
+\DoxyCodeLine{00120\ \textcolor{preprocessor}{\#\ define\ S390X\_MOD\_EXP}}
+\DoxyCodeLine{00121\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00122\ }
+\DoxyCodeLine{00123\ \textcolor{keywordtype}{int}\ s390x\_mod\_exp(BIGNUM\ *r,\ \textcolor{keyword}{const}\ BIGNUM\ *a,\ \textcolor{keyword}{const}\ BIGNUM\ *p,}
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *m,\ BN\_CTX\ *ctx,\ BN\_MONT\_CTX\ *m\_ctx);}
+\DoxyCodeLine{00125\ \textcolor{keywordtype}{int}\ s390x\_crt(BIGNUM\ *r,\ \textcolor{keyword}{const}\ BIGNUM\ *i,\ \textcolor{keyword}{const}\ BIGNUM\ *p,\ \textcolor{keyword}{const}\ BIGNUM\ *q,}
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *dmp,\ \textcolor{keyword}{const}\ BIGNUM\ *dmq,\ \textcolor{keyword}{const}\ BIGNUM\ *iqmp);}
+\DoxyCodeLine{00127\ }
+\DoxyCodeLine{00128\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

@@ -1,0 +1,157 @@
+\doxysection{thread\+\_\+once.\+h}
+\hypertarget{thread__once_8h_source}{}\label{thread__once_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/thread\_once.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/thread\_once.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 1995-\/2021\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_INTERNAL\_THREAD\_ONCE\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_INTERNAL\_THREAD\_ONCE\_H}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#\ pragma\ once}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ include\ <openssl/crypto.h>}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ *\ Initialisation\ of\ global\ data\ should\ never\ happen\ via\ "{}RUN\_ONCE"{}\ inside\ the}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ *\ FIPS\ module.\ Global\ data\ should\ instead\ always\ be\ associated\ with\ a\ specific}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ *\ OSSL\_LIB\_CTX\ object.\ In\ this\ way\ data\ will\ get\ cleaned\ up\ correctly\ when\ the}}
+\DoxyCodeLine{00020\ \textcolor{comment}{\ *\ module\ gets\ unloaded.}}
+\DoxyCodeLine{00021\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#\ if\ !defined(FIPS\_MODULE)\ ||\ defined(ALLOW\_RUN\_ONCE\_IN\_FIPS)}}
+\DoxyCodeLine{00023\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00024\ \textcolor{comment}{\ *\ DEFINE\_RUN\_ONCE:\ Define\ an\ initialiser\ function\ that\ should\ be\ run\ exactly}}
+\DoxyCodeLine{00025\ \textcolor{comment}{\ *\ once.\ It\ takes\ no\ arguments\ and\ returns\ an\ int\ result\ (1\ for\ success\ or}}
+\DoxyCodeLine{00026\ \textcolor{comment}{\ *\ 0\ for\ failure).\ Typical\ usage\ might\ be:}}
+\DoxyCodeLine{00027\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00028\ \textcolor{comment}{\ *\ DEFINE\_RUN\_ONCE(myinitfunc)}}
+\DoxyCodeLine{00029\ \textcolor{comment}{\ *\ \{}}
+\DoxyCodeLine{00030\ \textcolor{comment}{\ *\ \ \ \ \ do\_some\_initialisation();}}
+\DoxyCodeLine{00031\ \textcolor{comment}{\ *\ \ \ \ \ if\ (init\_is\_successful())}}
+\DoxyCodeLine{00032\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ return\ 1;}}
+\DoxyCodeLine{00033\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00034\ \textcolor{comment}{\ *\ \ \ \ \ return\ 0;}}
+\DoxyCodeLine{00035\ \textcolor{comment}{\ *\ \}}}
+\DoxyCodeLine{00036\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#\ \ define\ DEFINE\_RUN\_ONCE(init)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\ \ \ \ static\ int\ init(void);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00039\ \textcolor{preprocessor}{\ \ \ \ int\ init\#\#\_ossl\_ret\_\ =\ 0;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00040\ \textcolor{preprocessor}{\ \ \ \ void\ init\#\#\_ossl\_(void)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00041\ \textcolor{preprocessor}{\ \ \ \ \{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00042\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ init\#\#\_ossl\_ret\_\ =\ init();\ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00043\ \textcolor{preprocessor}{\ \ \ \ \}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00044\ \textcolor{preprocessor}{\ \ \ \ static\ int\ init(void)}}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00047\ \textcolor{comment}{\ *\ DECLARE\_RUN\_ONCE:\ Declare\ an\ initialiser\ function\ that\ should\ be\ run\ exactly}}
+\DoxyCodeLine{00048\ \textcolor{comment}{\ *\ once\ that\ has\ been\ defined\ in\ another\ file\ via\ DEFINE\_RUN\_ONCE().}}
+\DoxyCodeLine{00049\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00050\ \textcolor{preprocessor}{\#\ \ define\ DECLARE\_RUN\_ONCE(init)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00051\ \textcolor{preprocessor}{\ \ \ \ extern\ int\ init\#\#\_ossl\_ret\_;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00052\ \textcolor{preprocessor}{\ \ \ \ void\ init\#\#\_ossl\_(void);}}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00055\ \textcolor{comment}{\ *\ DEFINE\_RUN\_ONCE\_STATIC:\ Define\ an\ initialiser\ function\ that\ should\ be\ run}}
+\DoxyCodeLine{00056\ \textcolor{comment}{\ *\ exactly\ once.\ This\ function\ will\ be\ declared\ as\ static\ within\ the\ file.\ It}}
+\DoxyCodeLine{00057\ \textcolor{comment}{\ *\ takes\ no\ arguments\ and\ returns\ an\ int\ result\ (1\ for\ success\ or\ 0\ for}}
+\DoxyCodeLine{00058\ \textcolor{comment}{\ *\ failure).\ Typical\ usage\ might\ be:}}
+\DoxyCodeLine{00059\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00060\ \textcolor{comment}{\ *\ DEFINE\_RUN\_ONCE\_STATIC(myinitfunc)}}
+\DoxyCodeLine{00061\ \textcolor{comment}{\ *\ \{}}
+\DoxyCodeLine{00062\ \textcolor{comment}{\ *\ \ \ \ \ do\_some\_initialisation();}}
+\DoxyCodeLine{00063\ \textcolor{comment}{\ *\ \ \ \ \ if\ (init\_is\_successful())}}
+\DoxyCodeLine{00064\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ return\ 1;}}
+\DoxyCodeLine{00065\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00066\ \textcolor{comment}{\ *\ \ \ \ \ return\ 0;}}
+\DoxyCodeLine{00067\ \textcolor{comment}{\ *\ \}}}
+\DoxyCodeLine{00068\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00069\ \textcolor{preprocessor}{\#\ \ define\ DEFINE\_RUN\_ONCE\_STATIC(init)\ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00070\ \textcolor{preprocessor}{\ \ \ \ static\ int\ init(void);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00071\ \textcolor{preprocessor}{\ \ \ \ static\ int\ init\#\#\_ossl\_ret\_\ =\ 0;\ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00072\ \textcolor{preprocessor}{\ \ \ \ static\ void\ init\#\#\_ossl\_(void)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00073\ \textcolor{preprocessor}{\ \ \ \ \{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00074\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ init\#\#\_ossl\_ret\_\ =\ init();\ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00075\ \textcolor{preprocessor}{\ \ \ \ \}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00076\ \textcolor{preprocessor}{\ \ \ \ static\ int\ init(void)}}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00079\ \textcolor{comment}{\ *\ DEFINE\_RUN\_ONCE\_STATIC\_ALT:\ Define\ an\ alternative\ initialiser\ function.\ This}}
+\DoxyCodeLine{00080\ \textcolor{comment}{\ *\ function\ will\ be\ declared\ as\ static\ within\ the\ file.\ It\ takes\ no\ arguments}}
+\DoxyCodeLine{00081\ \textcolor{comment}{\ *\ and\ returns\ an\ int\ result\ (1\ for\ success\ or\ 0\ for\ failure).\ An\ alternative}}
+\DoxyCodeLine{00082\ \textcolor{comment}{\ *\ initialiser\ function\ is\ expected\ to\ be\ associated\ with\ a\ primary\ initialiser}}
+\DoxyCodeLine{00083\ \textcolor{comment}{\ *\ function\ defined\ via\ DEFINE\_ONCE\_STATIC\ where\ both\ functions\ use\ the\ same}}
+\DoxyCodeLine{00084\ \textcolor{comment}{\ *\ CRYPTO\_ONCE\ object\ to\ synchronise.\ Where\ an\ alternative\ initialiser\ function}}
+\DoxyCodeLine{00085\ \textcolor{comment}{\ *\ is\ used\ only\ one\ of\ the\ primary\ or\ the\ alternative\ initialiser\ function\ will}}
+\DoxyCodeLine{00086\ \textcolor{comment}{\ *\ ever\ be\ called\ -\/\ and\ that\ function\ will\ be\ called\ exactly\ once.\ Definition}}
+\DoxyCodeLine{00087\ \textcolor{comment}{\ *\ of\ an\ alternative\ initialiser\ function\ MUST\ occur\ AFTER\ the\ definition\ of\ the}}
+\DoxyCodeLine{00088\ \textcolor{comment}{\ *\ primary\ initialiser\ function.}}
+\DoxyCodeLine{00089\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00090\ \textcolor{comment}{\ *\ Typical\ usage\ might\ be:}}
+\DoxyCodeLine{00091\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00092\ \textcolor{comment}{\ *\ DEFINE\_RUN\_ONCE\_STATIC(myinitfunc)}}
+\DoxyCodeLine{00093\ \textcolor{comment}{\ *\ \{}}
+\DoxyCodeLine{00094\ \textcolor{comment}{\ *\ \ \ \ \ do\_some\_initialisation();}}
+\DoxyCodeLine{00095\ \textcolor{comment}{\ *\ \ \ \ \ if\ (init\_is\_successful())}}
+\DoxyCodeLine{00096\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ return\ 1;}}
+\DoxyCodeLine{00097\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00098\ \textcolor{comment}{\ *\ \ \ \ \ return\ 0;}}
+\DoxyCodeLine{00099\ \textcolor{comment}{\ *\ \}}}
+\DoxyCodeLine{00100\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00101\ \textcolor{comment}{\ *\ DEFINE\_RUN\_ONCE\_STATIC\_ALT(myaltinitfunc,\ myinitfunc)}}
+\DoxyCodeLine{00102\ \textcolor{comment}{\ *\ \{}}
+\DoxyCodeLine{00103\ \textcolor{comment}{\ *\ \ \ \ \ do\_some\_alternative\_initialisation();}}
+\DoxyCodeLine{00104\ \textcolor{comment}{\ *\ \ \ \ \ if\ (init\_is\_successful())}}
+\DoxyCodeLine{00105\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ return\ 1;}}
+\DoxyCodeLine{00106\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00107\ \textcolor{comment}{\ *\ \ \ \ \ return\ 0;}}
+\DoxyCodeLine{00108\ \textcolor{comment}{\ *\ \}}}
+\DoxyCodeLine{00109\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00110\ \textcolor{preprocessor}{\#\ \ define\ DEFINE\_RUN\_ONCE\_STATIC\_ALT(initalt,\ init)\ \(\backslash\)}}
+\DoxyCodeLine{00111\ \textcolor{preprocessor}{\ \ \ \ static\ int\ initalt(void);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00112\ \textcolor{preprocessor}{\ \ \ \ static\ void\ initalt\#\#\_ossl\_(void)\ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00113\ \textcolor{preprocessor}{\ \ \ \ \{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00114\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ init\#\#\_ossl\_ret\_\ =\ initalt();\ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00115\ \textcolor{preprocessor}{\ \ \ \ \}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00116\ \textcolor{preprocessor}{\ \ \ \ static\ int\ initalt(void)}}
+\DoxyCodeLine{00117\ }
+\DoxyCodeLine{00118\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00119\ \textcolor{comment}{\ *\ RUN\_ONCE\ -\/\ use\ CRYPTO\_THREAD\_run\_once,\ and\ check\ if\ the\ init\ succeeded}}
+\DoxyCodeLine{00120\ \textcolor{comment}{\ *\ @once:\ pointer\ to\ static\ object\ of\ type\ CRYPTO\_ONCE}}
+\DoxyCodeLine{00121\ \textcolor{comment}{\ *\ @init:\ function\ name\ that\ was\ previously\ given\ to\ DEFINE\_RUN\_ONCE,}}
+\DoxyCodeLine{00122\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ DEFINE\_RUN\_ONCE\_STATIC\ or\ DECLARE\_RUN\_ONCE.\ \ This\ function}}
+\DoxyCodeLine{00123\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ must\ return\ 1\ for\ success\ or\ 0\ for\ failure.}}
+\DoxyCodeLine{00124\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00125\ \textcolor{comment}{\ *\ The\ return\ value\ is\ 1\ on\ success\ (*)\ or\ 0\ in\ case\ of\ error.}}
+\DoxyCodeLine{00126\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00127\ \textcolor{comment}{\ *\ (*)\ by\ convention,\ since\ the\ init\ function\ must\ return\ 1\ on\ success.}}
+\DoxyCodeLine{00128\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00129\ \textcolor{preprocessor}{\#\ \ define\ RUN\_ONCE(once,\ init)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00130\ \textcolor{preprocessor}{\ \ \ \ (CRYPTO\_THREAD\_run\_once(once,\ init\#\#\_ossl\_)\ ?\ init\#\#\_ossl\_ret\_\ :\ 0)}}
+\DoxyCodeLine{00131\ }
+\DoxyCodeLine{00132\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00133\ \textcolor{comment}{\ *\ RUN\_ONCE\_ALT\ -\/\ use\ CRYPTO\_THREAD\_run\_once,\ to\ run\ an\ alternative\ initialiser}}
+\DoxyCodeLine{00134\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ function\ and\ check\ if\ that\ initialisation\ succeeded}}
+\DoxyCodeLine{00135\ \textcolor{comment}{\ *\ @once:\ \ \ \ pointer\ to\ static\ object\ of\ type\ CRYPTO\_ONCE}}
+\DoxyCodeLine{00136\ \textcolor{comment}{\ *\ @initalt:\ alternative\ initialiser\ function\ name\ that\ was\ previously\ given\ to}}
+\DoxyCodeLine{00137\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ DEFINE\_RUN\_ONCE\_STATIC\_ALT.\ \ This\ function\ must\ return\ 1\ for}}
+\DoxyCodeLine{00138\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ success\ or\ 0\ for\ failure.}}
+\DoxyCodeLine{00139\ \textcolor{comment}{\ *\ @init:\ \ \ \ primary\ initialiser\ function\ name\ that\ was\ previously\ given\ to}}
+\DoxyCodeLine{00140\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ DEFINE\_RUN\_ONCE\_STATIC.\ \ This\ function\ must\ return\ 1\ for\ success\ or}}
+\DoxyCodeLine{00141\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ 0\ for\ failure.}}
+\DoxyCodeLine{00142\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00143\ \textcolor{comment}{\ *\ The\ return\ value\ is\ 1\ on\ success\ (*)\ or\ 0\ in\ case\ of\ error.}}
+\DoxyCodeLine{00144\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00145\ \textcolor{comment}{\ *\ (*)\ by\ convention,\ since\ the\ init\ function\ must\ return\ 1\ on\ success.}}
+\DoxyCodeLine{00146\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00147\ \textcolor{preprocessor}{\#\ \ define\ RUN\_ONCE\_ALT(once,\ initalt,\ init)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00148\ \textcolor{preprocessor}{\ \ \ \ (CRYPTO\_THREAD\_run\_once(once,\ initalt\#\#\_ossl\_)\ ?\ init\#\#\_ossl\_ret\_\ :\ 0)}}
+\DoxyCodeLine{00149\ }
+\DoxyCodeLine{00150\ \textcolor{preprocessor}{\#\ endif\ }\textcolor{comment}{/*\ FIPS\_MODULE\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00151\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ OSSL\_INTERNAL\_THREAD\_ONCE\_H\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

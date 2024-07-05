@@ -1,0 +1,970 @@
+\doxysection{cmp\+\_\+local.\+h}
+\hypertarget{cmp__local_8h_source}{}\label{cmp__local_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/cmp/cmp\_local.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/cmp/cmp\_local.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2007-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *\ Copyright\ Nokia\ 2007-\/2019}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Copyright\ Siemens\ AG\ 2015-\/2019}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#ifndef\ OSSL\_CRYPTO\_CMP\_LOCAL\_H}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#\ define\ OSSL\_CRYPTO\_CMP\_LOCAL\_H}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#\ include\ "{}internal/cryptlib.h"{}}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#\ include\ <openssl/cmp.h>}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#\ include\ <openssl/err.h>}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{comment}{/*\ explicit\ \#includes\ not\ strictly\ needed\ since\ implied\ by\ the\ above:\ */}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#\ include\ <openssl/crmf.h>}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#\ include\ <openssl/types.h>}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#\ include\ <openssl/safestack.h>}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#\ include\ <openssl/x509.h>}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#\ include\ <openssl/x509v3.h>}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#\ include\ "{}crypto/x509.h"{}}}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#\ define\ IS\_NULL\_DN(name)\ (X509\_NAME\_get\_entry(name,\ 0)\ ==\ NULL)}}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00031\ \textcolor{comment}{\ *\ this\ structure\ is\ used\ to\ store\ the\ context\ for\ CMP\ sessions}}
+\DoxyCodeLine{00032\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00033\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__cmp__ctx__st}{ossl\_cmp\_ctx\_st}}\ \{}
+\DoxyCodeLine{00034\ \ \ \ \ OSSL\_LIB\_CTX\ *libctx;}
+\DoxyCodeLine{00035\ \ \ \ \ \textcolor{keywordtype}{char}\ *propq;}
+\DoxyCodeLine{00036\ \ \ \ \ OSSL\_CMP\_log\_cb\_t\ log\_cb;\ \textcolor{comment}{/*\ log\ callback\ for\ error/debug/etc.\ output\ */}}
+\DoxyCodeLine{00037\ \ \ \ \ OSSL\_CMP\_severity\ log\_verbosity;\ \textcolor{comment}{/*\ level\ of\ verbosity\ of\ log\ output\ */}}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{comment}{/*\ message\ transfer\ */}}
+\DoxyCodeLine{00040\ \ \ \ \ OSSL\_CMP\_transfer\_cb\_t\ transfer\_cb;\ \textcolor{comment}{/*\ default:\ OSSL\_CMP\_MSG\_http\_perform\ */}}
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{keywordtype}{void}\ *transfer\_cb\_arg;\ \textcolor{comment}{/*\ allows\ to\ store\ optional\ argument\ to\ cb\ */}}
+\DoxyCodeLine{00042\ \ \ \ \ \textcolor{comment}{/*\ HTTP-\/based\ transfer\ */}}
+\DoxyCodeLine{00043\ \ \ \ \ OSSL\_HTTP\_REQ\_CTX\ *http\_ctx;}
+\DoxyCodeLine{00044\ \ \ \ \ \textcolor{keywordtype}{char}\ *serverPath;}
+\DoxyCodeLine{00045\ \ \ \ \ \textcolor{keywordtype}{char}\ *server;}
+\DoxyCodeLine{00046\ \ \ \ \ \textcolor{keywordtype}{int}\ serverPort;}
+\DoxyCodeLine{00047\ \ \ \ \ \textcolor{keywordtype}{char}\ *proxy;}
+\DoxyCodeLine{00048\ \ \ \ \ \textcolor{keywordtype}{char}\ *no\_proxy;}
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{keywordtype}{int}\ keep\_alive;\ \textcolor{comment}{/*\ persistent\ connection:\ 0=no,\ 1=prefer,\ 2=require\ */}}
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{keywordtype}{int}\ msg\_timeout;\ \textcolor{comment}{/*\ max\ seconds\ to\ wait\ for\ each\ CMP\ message\ round\ trip\ */}}
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{keywordtype}{int}\ total\_timeout;\ \textcolor{comment}{/*\ max\ number\ of\ seconds\ an\ enrollment\ may\ take,\ incl.\ */}}
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{keywordtype}{int}\ tls\_used;\ \textcolor{comment}{/*\ whether\ to\ use\ TLS\ for\ client-\/side\ HTTP\ connections\ */}}
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{comment}{/*\ attempts\ polling\ for\ a\ response\ if\ a\ 'waiting'\ PKIStatus\ is\ received\ */}}
+\DoxyCodeLine{00054\ \ \ \ \ time\_t\ end\_time;\ \textcolor{comment}{/*\ session\ start\ time\ +\ totaltimeout\ */}}
+\DoxyCodeLine{00055\ \textcolor{preprocessor}{\#\ ifndef\ OPENSSL\_NO\_HTTP}}
+\DoxyCodeLine{00056\ \ \ \ \ OSSL\_HTTP\_bio\_cb\_t\ http\_cb;}
+\DoxyCodeLine{00057\ \ \ \ \ \textcolor{keywordtype}{void}\ *http\_cb\_arg;\ \textcolor{comment}{/*\ allows\ to\ store\ optional\ argument\ to\ cb\ */}}
+\DoxyCodeLine{00058\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ \ \ \ \ \textcolor{comment}{/*\ server\ authentication\ */}}
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00062\ \textcolor{comment}{\ \ \ \ \ *\ unprotectedErrors\ may\ be\ set\ as\ workaround\ for\ broken\ server\ responses:}}
+\DoxyCodeLine{00063\ \textcolor{comment}{\ \ \ \ \ *\ accept\ missing\ or\ invalid\ protection\ of\ regular\ error\ messages,\ negative}}
+\DoxyCodeLine{00064\ \textcolor{comment}{\ \ \ \ \ *\ certificate\ responses\ (ip/cp/kup),\ revocation\ responses\ (rp),\ and\ PKIConf}}
+\DoxyCodeLine{00065\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{keywordtype}{int}\ unprotectedErrors;}
+\DoxyCodeLine{00067\ \ \ \ \ X509\ *srvCert;\ \textcolor{comment}{/*\ certificate\ used\ to\ identify\ the\ server\ */}}
+\DoxyCodeLine{00068\ \ \ \ \ X509\ *validatedSrvCert;\ \textcolor{comment}{/*\ caches\ any\ already\ validated\ server\ cert\ */}}
+\DoxyCodeLine{00069\ \ \ \ \ X509\_NAME\ *expected\_sender;\ \textcolor{comment}{/*\ expected\ sender\ in\ header\ of\ response\ */}}
+\DoxyCodeLine{00070\ \ \ \ \ X509\_STORE\ *trusted;\ \textcolor{comment}{/*\ trust\ store\ maybe\ w\ CRLs\ and\ cert\ verify\ callback\ */}}
+\DoxyCodeLine{00071\ \ \ \ \ STACK\_OF(X509)\ *untrusted;\ \textcolor{comment}{/*\ untrusted\ (intermediate\ CA)\ certs\ */}}
+\DoxyCodeLine{00072\ \ \ \ \ \textcolor{keywordtype}{int}\ ignore\_keyusage;\ \textcolor{comment}{/*\ ignore\ key\ usage\ entry\ when\ validating\ certs\ */}}
+\DoxyCodeLine{00073\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00074\ \textcolor{comment}{\ \ \ \ \ *\ permitTAInExtraCertsForIR\ allows\ use\ of\ root\ certs\ in\ extracerts}}
+\DoxyCodeLine{00075\ \textcolor{comment}{\ \ \ \ \ *\ when\ validating\ message\ protection;\ this\ is\ used\ for\ 3GPP-\/style\ E.7}}
+\DoxyCodeLine{00076\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00077\ \ \ \ \ \textcolor{keywordtype}{int}\ permitTAInExtraCertsForIR;}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \ \ \ \ \textcolor{comment}{/*\ client\ authentication\ */}}
+\DoxyCodeLine{00080\ \ \ \ \ \textcolor{keywordtype}{int}\ unprotectedSend;\ \textcolor{comment}{/*\ send\ unprotected\ PKI\ messages\ */}}
+\DoxyCodeLine{00081\ \ \ \ \ X509\ *cert;\ \textcolor{comment}{/*\ protection\ cert\ used\ to\ identify\ and\ sign\ for\ MSG\_SIG\_ALG\ */}}
+\DoxyCodeLine{00082\ \ \ \ \ STACK\_OF(X509)\ *chain;\ \textcolor{comment}{/*\ (cached)\ chain\ of\ protection\ cert\ including\ it\ */}}
+\DoxyCodeLine{00083\ \ \ \ \ EVP\_PKEY\ *pkey;\ \textcolor{comment}{/*\ the\ key\ pair\ corresponding\ to\ cert\ */}}
+\DoxyCodeLine{00084\ \ \ \ \ ASN1\_OCTET\_STRING\ *referenceValue;\ \textcolor{comment}{/*\ optional\ username\ for\ MSG\_MAC\_ALG\ */}}
+\DoxyCodeLine{00085\ \ \ \ \ ASN1\_OCTET\_STRING\ *secretValue;\ \textcolor{comment}{/*\ password/shared\ secret\ for\ MSG\_MAC\_ALG\ */}}
+\DoxyCodeLine{00086\ \ \ \ \ \textcolor{comment}{/*\ PBMParameters\ for\ MSG\_MAC\_ALG\ */}}
+\DoxyCodeLine{00087\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ pbm\_slen;\ \textcolor{comment}{/*\ salt\ length,\ currently\ fixed\ to\ 16\ */}}
+\DoxyCodeLine{00088\ \ \ \ \ EVP\_MD\ *pbm\_owf;\ \textcolor{comment}{/*\ one-\/way\ function\ (OWF),\ default:\ SHA256\ */}}
+\DoxyCodeLine{00089\ \ \ \ \ \textcolor{keywordtype}{int}\ pbm\_itercnt;\ \textcolor{comment}{/*\ OWF\ iteration\ count,\ currently\ fixed\ to\ 500\ */}}
+\DoxyCodeLine{00090\ \ \ \ \ \textcolor{keywordtype}{int}\ pbm\_mac;\ \textcolor{comment}{/*\ NID\ of\ MAC\ algorithm,\ default:\ HMAC-\/SHA1\ as\ per\ RFC\ 4210\ */}}
+\DoxyCodeLine{00091\ }
+\DoxyCodeLine{00092\ \ \ \ \ \textcolor{comment}{/*\ CMP\ message\ header\ and\ extra\ certificates\ */}}
+\DoxyCodeLine{00093\ \ \ \ \ X509\_NAME\ *recipient;\ \textcolor{comment}{/*\ to\ set\ in\ recipient\ in\ pkiheader\ */}}
+\DoxyCodeLine{00094\ \ \ \ \ EVP\_MD\ *digest;\ \textcolor{comment}{/*\ digest\ used\ in\ MSG\_SIG\_ALG\ and\ POPO,\ default\ SHA256\ */}}
+\DoxyCodeLine{00095\ \ \ \ \ ASN1\_OCTET\_STRING\ *transactionID;\ \textcolor{comment}{/*\ the\ current\ transaction\ ID\ */}}
+\DoxyCodeLine{00096\ \ \ \ \ ASN1\_OCTET\_STRING\ *senderNonce;\ \textcolor{comment}{/*\ last\ nonce\ sent\ */}}
+\DoxyCodeLine{00097\ \ \ \ \ ASN1\_OCTET\_STRING\ *recipNonce;\ \textcolor{comment}{/*\ last\ nonce\ received\ */}}
+\DoxyCodeLine{00098\ \ \ \ \ ASN1\_UTF8STRING\ *freeText;\ \textcolor{comment}{/*\ optional\ string\ to\ include\ each\ msg\ */}}
+\DoxyCodeLine{00099\ \ \ \ \ STACK\_OF(OSSL\_CMP\_ITAV)\ *geninfo\_ITAVs;}
+\DoxyCodeLine{00100\ \ \ \ \ \textcolor{keywordtype}{int}\ implicitConfirm;\ \textcolor{comment}{/*\ set\ implicitConfirm\ in\ IR/KUR/CR\ messages\ */}}
+\DoxyCodeLine{00101\ \ \ \ \ \textcolor{keywordtype}{int}\ disableConfirm;\ \textcolor{comment}{/*\ disable\ certConf\ in\ IR/KUR/CR\ for\ broken\ servers\ */}}
+\DoxyCodeLine{00102\ \ \ \ \ STACK\_OF(X509)\ *extraCertsOut;\ \textcolor{comment}{/*\ to\ be\ included\ in\ request\ messages\ */}}
+\DoxyCodeLine{00103\ }
+\DoxyCodeLine{00104\ \ \ \ \ \textcolor{comment}{/*\ certificate\ template\ */}}
+\DoxyCodeLine{00105\ \ \ \ \ EVP\_PKEY\ *newPkey;\ \textcolor{comment}{/*\ explicit\ new\ private/public\ key\ for\ cert\ enrollment\ */}}
+\DoxyCodeLine{00106\ \ \ \ \ \textcolor{keywordtype}{int}\ newPkey\_priv;\ \textcolor{comment}{/*\ flag\ indicating\ if\ newPkey\ contains\ private\ key\ */}}
+\DoxyCodeLine{00107\ \ \ \ \ X509\_NAME\ *issuer;\ \textcolor{comment}{/*\ issuer\ name\ to\ used\ in\ cert\ template,\ also\ in\ rr\ */}}
+\DoxyCodeLine{00108\ \ \ \ \ ASN1\_INTEGER\ *serialNumber;\ \textcolor{comment}{/*\ certificate\ serial\ number\ to\ use\ in\ rr\ */}}
+\DoxyCodeLine{00109\ \ \ \ \ \textcolor{keywordtype}{int}\ days;\ \textcolor{comment}{/*\ Number\ of\ days\ new\ certificates\ are\ asked\ to\ be\ valid\ for\ */}}
+\DoxyCodeLine{00110\ \ \ \ \ X509\_NAME\ *subjectName;\ \textcolor{comment}{/*\ subject\ name\ to\ be\ used\ in\ cert\ template\ */}}
+\DoxyCodeLine{00111\ \ \ \ \ STACK\_OF(GENERAL\_NAME)\ *subjectAltNames;\ \textcolor{comment}{/*\ to\ add\ to\ the\ cert\ template\ */}}
+\DoxyCodeLine{00112\ \ \ \ \ \textcolor{keywordtype}{int}\ SubjectAltName\_nodefault;}
+\DoxyCodeLine{00113\ \ \ \ \ \textcolor{keywordtype}{int}\ setSubjectAltNameCritical;}
+\DoxyCodeLine{00114\ \ \ \ \ X509\_EXTENSIONS\ *reqExtensions;\ \textcolor{comment}{/*\ exts\ to\ be\ added\ to\ cert\ template\ */}}
+\DoxyCodeLine{00115\ \ \ \ \ CERTIFICATEPOLICIES\ *policies;\ \textcolor{comment}{/*\ policies\ to\ be\ included\ in\ extensions\ */}}
+\DoxyCodeLine{00116\ \ \ \ \ \textcolor{keywordtype}{int}\ setPoliciesCritical;}
+\DoxyCodeLine{00117\ \ \ \ \ \textcolor{keywordtype}{int}\ popoMethod;\ \textcolor{comment}{/*\ Proof-\/of-\/possession\ mechanism;\ default:\ signature\ */}}
+\DoxyCodeLine{00118\ \ \ \ \ X509\ *oldCert;\ \textcolor{comment}{/*\ cert\ to\ be\ updated\ (via\ KUR)\ or\ to\ be\ revoked\ (via\ RR)\ */}}
+\DoxyCodeLine{00119\ \ \ \ \ X509\_REQ\ *p10CSR;\ \textcolor{comment}{/*\ for\ P10CR:\ PKCS\#10\ CSR\ to\ be\ sent\ */}}
+\DoxyCodeLine{00120\ }
+\DoxyCodeLine{00121\ \ \ \ \ \textcolor{comment}{/*\ misc\ body\ contents\ */}}
+\DoxyCodeLine{00122\ \ \ \ \ \textcolor{keywordtype}{int}\ revocationReason;\ \textcolor{comment}{/*\ revocation\ reason\ code\ to\ be\ included\ in\ RR\ */}}
+\DoxyCodeLine{00123\ \ \ \ \ STACK\_OF(OSSL\_CMP\_ITAV)\ *genm\_ITAVs;\ \textcolor{comment}{/*\ content\ of\ general\ message\ */}}
+\DoxyCodeLine{00124\ }
+\DoxyCodeLine{00125\ \ \ \ \ \textcolor{comment}{/*\ result\ returned\ in\ responses,\ so\ far\ supporting\ only\ one\ certResponse\ */}}
+\DoxyCodeLine{00126\ \ \ \ \ \textcolor{keywordtype}{int}\ status;\ \textcolor{comment}{/*\ PKIStatus\ of\ last\ received\ IP/CP/KUP/RP/error\ or\ -\/1\ */}}
+\DoxyCodeLine{00127\ \ \ \ \ OSSL\_CMP\_PKIFREETEXT\ *statusString;\ \textcolor{comment}{/*\ of\ last\ IP/CP/KUP/RP/error\ */}}
+\DoxyCodeLine{00128\ \ \ \ \ \textcolor{keywordtype}{int}\ failInfoCode;\ \textcolor{comment}{/*\ failInfoCode\ of\ last\ received\ IP/CP/KUP/error,\ or\ -\/1\ */}}
+\DoxyCodeLine{00129\ \ \ \ \ X509\ *newCert;\ \textcolor{comment}{/*\ newly\ enrolled\ cert\ received\ from\ the\ CA\ */}}
+\DoxyCodeLine{00130\ \ \ \ \ STACK\_OF(X509)\ *newChain;\ \textcolor{comment}{/*\ chain\ of\ newly\ enrolled\ cert\ received\ */}}
+\DoxyCodeLine{00131\ \ \ \ \ STACK\_OF(X509)\ *caPubs;\ \textcolor{comment}{/*\ CA\ certs\ received\ from\ server\ (in\ IP\ message)\ */}}
+\DoxyCodeLine{00132\ \ \ \ \ STACK\_OF(X509)\ *extraCertsIn;\ \textcolor{comment}{/*\ extraCerts\ received\ from\ server\ */}}
+\DoxyCodeLine{00133\ }
+\DoxyCodeLine{00134\ \ \ \ \ \textcolor{comment}{/*\ certificate\ confirmation\ */}}
+\DoxyCodeLine{00135\ \ \ \ \ OSSL\_CMP\_certConf\_cb\_t\ certConf\_cb;\ \textcolor{comment}{/*\ callback\ for\ app\ checking\ new\ cert\ */}}
+\DoxyCodeLine{00136\ \ \ \ \ \textcolor{keywordtype}{void}\ *certConf\_cb\_arg;\ \textcolor{comment}{/*\ allows\ to\ store\ an\ argument\ individual\ to\ cb\ */}}
+\DoxyCodeLine{00137\ \}\ \textcolor{comment}{/*\ OSSL\_CMP\_CTX\ */};}
+\DoxyCodeLine{00138\ }
+\DoxyCodeLine{00139\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00140\ \textcolor{comment}{\ *\ \#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#}}
+\DoxyCodeLine{00141\ \textcolor{comment}{\ *\ ASN.1\ DECLARATIONS}}
+\DoxyCodeLine{00142\ \textcolor{comment}{\ *\ \#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#}}
+\DoxyCodeLine{00143\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00144\ }
+\DoxyCodeLine{00145\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00146\ \textcolor{comment}{\ *\ \ \ RevAnnContent\ ::=\ SEQUENCE\ \{}}
+\DoxyCodeLine{00147\ \textcolor{comment}{\ *\ \ \ \ \ \ \ status\ \ \ \ \ \ \ \ \ \ \ \ \ \ PKIStatus,}}
+\DoxyCodeLine{00148\ \textcolor{comment}{\ *\ \ \ \ \ \ \ certId\ \ \ \ \ \ \ \ \ \ \ \ \ \ CertId,}}
+\DoxyCodeLine{00149\ \textcolor{comment}{\ *\ \ \ \ \ \ \ willBeRevokedAt\ \ \ \ \ GeneralizedTime,}}
+\DoxyCodeLine{00150\ \textcolor{comment}{\ *\ \ \ \ \ \ \ badSinceDate\ \ \ \ \ \ \ \ GeneralizedTime,}}
+\DoxyCodeLine{00151\ \textcolor{comment}{\ *\ \ \ \ \ \ \ crlDetails\ \ \ \ \ \ \ \ \ \ Extensions\ \ OPTIONAL}}
+\DoxyCodeLine{00152\ \textcolor{comment}{\ *\ \ \ \ \ \ \ -\/-\/\ extra\ CRL\ details\ (e.g.,\ crl\ number,\ reason,\ location,\ etc.)}}
+\DoxyCodeLine{00153\ \textcolor{comment}{\ *\ \ \ \}}}
+\DoxyCodeLine{00154\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00155\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__cmp__revanncontent__st}{ossl\_cmp\_revanncontent\_st}}\ \{}
+\DoxyCodeLine{00156\ \ \ \ \ ASN1\_INTEGER\ *status;}
+\DoxyCodeLine{00157\ \ \ \ \ OSSL\_CRMF\_CERTID\ *certId;}
+\DoxyCodeLine{00158\ \ \ \ \ ASN1\_GENERALIZEDTIME\ *willBeRevokedAt;}
+\DoxyCodeLine{00159\ \ \ \ \ ASN1\_GENERALIZEDTIME\ *badSinceDate;}
+\DoxyCodeLine{00160\ \ \ \ \ X509\_EXTENSIONS\ *crlDetails;}
+\DoxyCodeLine{00161\ \}\ \mbox{\hyperlink{structossl__cmp__revanncontent__st}{OSSL\_CMP\_REVANNCONTENT}};}
+\DoxyCodeLine{00162\ DECLARE\_ASN1\_FUNCTIONS(\mbox{\hyperlink{structossl__cmp__revanncontent__st}{OSSL\_CMP\_REVANNCONTENT}})}
+\DoxyCodeLine{00163\ }
+\DoxyCodeLine{00164\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00165\ \textcolor{comment}{\ *\ \ \ Challenge\ ::=\ SEQUENCE\ \{}}
+\DoxyCodeLine{00166\ \textcolor{comment}{\ *\ \ \ \ \ \ \ owf\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ AlgorithmIdentifier\ \ OPTIONAL,}}
+\DoxyCodeLine{00167\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00168\ \textcolor{comment}{\ *\ \ \ \ \ \ \ -\/-\/\ MUST\ be\ present\ in\ the\ first\ Challenge;\ MAY\ be\ omitted\ in}}
+\DoxyCodeLine{00169\ \textcolor{comment}{\ *\ \ \ \ \ \ \ -\/-\/\ any\ subsequent\ Challenge\ in\ POPODecKeyChallContent\ (if}}
+\DoxyCodeLine{00170\ \textcolor{comment}{\ *\ \ \ \ \ \ \ -\/-\/\ omitted,\ then\ the\ owf\ used\ in\ the\ immediately\ preceding}}
+\DoxyCodeLine{00171\ \textcolor{comment}{\ *\ \ \ \ \ \ \ -\/-\/\ Challenge\ is\ to\ be\ used).}}
+\DoxyCodeLine{00172\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00173\ \textcolor{comment}{\ *\ \ \ \ \ \ \ witness\ \ \ \ \ \ \ \ \ \ \ \ \ OCTET\ STRING,}}
+\DoxyCodeLine{00174\ \textcolor{comment}{\ *\ \ \ \ \ \ \ -\/-\/\ the\ result\ of\ applying\ the\ one-\/way\ function\ (owf)\ to\ a}}
+\DoxyCodeLine{00175\ \textcolor{comment}{\ *\ \ \ \ \ \ \ -\/-\/\ randomly-\/generated\ INTEGER,\ A.\ \ [Note\ that\ a\ different}}
+\DoxyCodeLine{00176\ \textcolor{comment}{\ *\ \ \ \ \ \ \ -\/-\/\ INTEGER\ MUST\ be\ used\ for\ each\ Challenge.]}}
+\DoxyCodeLine{00177\ \textcolor{comment}{\ *\ \ \ \ \ \ \ challenge\ \ \ \ \ \ \ \ \ \ \ OCTET\ STRING}}
+\DoxyCodeLine{00178\ \textcolor{comment}{\ *\ \ \ \ \ \ \ -\/-\/\ the\ encryption\ (under\ the\ public\ key\ for\ which\ the\ cert.}}
+\DoxyCodeLine{00179\ \textcolor{comment}{\ *\ \ \ \ \ \ \ -\/-\/\ request\ is\ being\ made)\ of\ Rand,\ where\ Rand\ is\ specified\ as}}
+\DoxyCodeLine{00180\ \textcolor{comment}{\ *\ \ \ \ \ \ \ -\/-\/\ \ \ Rand\ ::=\ SEQUENCE\ \{}}
+\DoxyCodeLine{00181\ \textcolor{comment}{\ *\ \ \ \ \ \ \ -\/-\/\ \ \ \ \ \ int\ \ \ \ \ \ INTEGER,}}
+\DoxyCodeLine{00182\ \textcolor{comment}{\ *\ \ \ \ \ \ \ -\/-\/\ \ \ \ \ \ \ -\/\ the\ randomly-\/generated\ INTEGER\ A\ (above)}}
+\DoxyCodeLine{00183\ \textcolor{comment}{\ *\ \ \ \ \ \ \ -\/-\/\ \ \ \ \ \ sender\ \ \ GeneralName}}
+\DoxyCodeLine{00184\ \textcolor{comment}{\ *\ \ \ \ \ \ \ -\/-\/\ \ \ \ \ \ \ -\/\ the\ sender's\ name\ (as\ included\ in\ PKIHeader)}}
+\DoxyCodeLine{00185\ \textcolor{comment}{\ *\ \ \ \ \ \ \ -\/-\/\ \ \ \}}}
+\DoxyCodeLine{00186\ \textcolor{comment}{\ *\ \ \ \}}}
+\DoxyCodeLine{00187\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00188\ typedef\ struct\ \mbox{\hyperlink{structossl__cmp__challenge__st}{ossl\_cmp\_challenge\_st}}\ \{}
+\DoxyCodeLine{00189\ \ \ \ \ X509\_ALGOR\ *owf;}
+\DoxyCodeLine{00190\ \ \ \ \ ASN1\_OCTET\_STRING\ *witness;}
+\DoxyCodeLine{00191\ \ \ \ \ ASN1\_OCTET\_STRING\ *challenge;}
+\DoxyCodeLine{00192\ \}\ \mbox{\hyperlink{structossl__cmp__challenge__st}{OSSL\_CMP\_CHALLENGE}};}
+\DoxyCodeLine{00193\ DECLARE\_ASN1\_FUNCTIONS(\mbox{\hyperlink{structossl__cmp__challenge__st}{OSSL\_CMP\_CHALLENGE}})}
+\DoxyCodeLine{00194\ }
+\DoxyCodeLine{00195\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00196\ \textcolor{comment}{\ *\ \ CAKeyUpdAnnContent\ ::=\ SEQUENCE\ \{}}
+\DoxyCodeLine{00197\ \textcolor{comment}{\ *\ \ \ \ \ oldWithNew\ \ \ \ \ \ \ \ \ Certificate,}}
+\DoxyCodeLine{00198\ \textcolor{comment}{\ *\ \ \ \ \ newWithOld\ \ \ \ \ \ \ \ \ Certificate,}}
+\DoxyCodeLine{00199\ \textcolor{comment}{\ *\ \ \ \ \ newWithNew\ \ \ \ \ \ \ \ \ Certificate}}
+\DoxyCodeLine{00200\ \textcolor{comment}{\ *\ \ \}}}
+\DoxyCodeLine{00201\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00202\ typedef\ struct\ \mbox{\hyperlink{structossl__cmp__cakeyupdanncontent__st}{ossl\_cmp\_cakeyupdanncontent\_st}}\ \{}
+\DoxyCodeLine{00203\ \ \ \ \ X509\ *oldWithNew;}
+\DoxyCodeLine{00204\ \ \ \ \ X509\ *newWithOld;}
+\DoxyCodeLine{00205\ \ \ \ \ X509\ *newWithNew;}
+\DoxyCodeLine{00206\ \}\ \mbox{\hyperlink{structossl__cmp__cakeyupdanncontent__st}{OSSL\_CMP\_CAKEYUPDANNCONTENT}};}
+\DoxyCodeLine{00207\ DECLARE\_ASN1\_FUNCTIONS(\mbox{\hyperlink{structossl__cmp__cakeyupdanncontent__st}{OSSL\_CMP\_CAKEYUPDANNCONTENT}})}
+\DoxyCodeLine{00208\ }
+\DoxyCodeLine{00209\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__cmp__rootcakeyupdate__st}{ossl\_cmp\_rootcakeyupdate\_st}}\ \mbox{\hyperlink{structossl__cmp__rootcakeyupdate__st}{OSSL\_CMP\_ROOTCAKEYUPDATE}};}
+\DoxyCodeLine{00210\ DECLARE\_ASN1\_FUNCTIONS(\mbox{\hyperlink{structossl__cmp__rootcakeyupdate__st}{OSSL\_CMP\_ROOTCAKEYUPDATE}})}
+\DoxyCodeLine{00211\ }
+\DoxyCodeLine{00212\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00213\ \textcolor{comment}{\ *\ declared\ already\ here\ as\ it\ will\ be\ used\ in\ OSSL\_CMP\_MSG\ (nested)\ and}}
+\DoxyCodeLine{00214\ \textcolor{comment}{\ *\ infoType\ and\ infoValue}}
+\DoxyCodeLine{00215\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00216\ \textcolor{keyword}{typedef}\ STACK\_OF(OSSL\_CMP\_MSG)\ OSSL\_CMP\_MSGS;}
+\DoxyCodeLine{00217\ DECLARE\_ASN1\_FUNCTIONS(OSSL\_CMP\_MSGS)}
+\DoxyCodeLine{00218\ }
+\DoxyCodeLine{00219\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00220\ \textcolor{comment}{\ *\ \ \ InfoTypeAndValue\ ::=\ SEQUENCE\ \{}}
+\DoxyCodeLine{00221\ \textcolor{comment}{\ *\ \ \ \ \ \ \ infoType\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OBJECT\ IDENTIFIER,}}
+\DoxyCodeLine{00222\ \textcolor{comment}{\ *\ \ \ \ \ \ \ infoValue\ \ \ \ \ \ \ \ \ \ \ \ \ \ ANY\ DEFINED\ BY\ infoType\ \ OPTIONAL}}
+\DoxyCodeLine{00223\ \textcolor{comment}{\ *\ \ \ \}}}
+\DoxyCodeLine{00224\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00225\ struct\ \mbox{\hyperlink{structossl__cmp__itav__st}{ossl\_cmp\_itav\_st}}\ \{}
+\DoxyCodeLine{00226\ \ \ \ \ ASN1\_OBJECT\ *infoType;}
+\DoxyCodeLine{00227\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00228\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{char}\ *ptr;}
+\DoxyCodeLine{00229\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ NID\_id\_it\_caProtEncCert\ -\/\ CA\ Protocol\ Encryption\ Certificate\ */}}
+\DoxyCodeLine{00230\ \ \ \ \ \ \ \ \ X509\ *caProtEncCert;}
+\DoxyCodeLine{00231\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ NID\_id\_it\_signKeyPairTypes\ -\/\ Signing\ Key\ Pair\ Types\ */}}
+\DoxyCodeLine{00232\ \ \ \ \ \ \ \ \ STACK\_OF(X509\_ALGOR)\ *signKeyPairTypes;}
+\DoxyCodeLine{00233\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ NID\_id\_it\_encKeyPairTypes\ -\/\ Encryption/Key\ Agreement\ Key\ Pair\ Types\ */}}
+\DoxyCodeLine{00234\ \ \ \ \ \ \ \ \ STACK\_OF(X509\_ALGOR)\ *encKeyPairTypes;}
+\DoxyCodeLine{00235\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ NID\_id\_it\_preferredSymmAlg\ -\/\ Preferred\ Symmetric\ Algorithm\ */}}
+\DoxyCodeLine{00236\ \ \ \ \ \ \ \ \ X509\_ALGOR\ *preferredSymmAlg;}
+\DoxyCodeLine{00237\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ NID\_id\_it\_caKeyUpdateInfo\ -\/\ Updated\ CA\ Key\ Pair\ */}}
+\DoxyCodeLine{00238\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structossl__cmp__cakeyupdanncontent__st}{OSSL\_CMP\_CAKEYUPDANNCONTENT}}\ *caKeyUpdateInfo;}
+\DoxyCodeLine{00239\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ NID\_id\_it\_currentCRL\ -\/\ CRL\ */}}
+\DoxyCodeLine{00240\ \ \ \ \ \ \ \ \ X509\_CRL\ *currentCRL;}
+\DoxyCodeLine{00241\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ NID\_id\_it\_unsupportedOIDs\ -\/\ Unsupported\ Object\ Identifiers\ */}}
+\DoxyCodeLine{00242\ \ \ \ \ \ \ \ \ STACK\_OF(ASN1\_OBJECT)\ *unsupportedOIDs;}
+\DoxyCodeLine{00243\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ NID\_id\_it\_keyPairParamReq\ -\/\ Key\ Pair\ Parameters\ Request\ */}}
+\DoxyCodeLine{00244\ \ \ \ \ \ \ \ \ ASN1\_OBJECT\ *keyPairParamReq;}
+\DoxyCodeLine{00245\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ NID\_id\_it\_keyPairParamRep\ -\/\ Key\ Pair\ Parameters\ Response\ */}}
+\DoxyCodeLine{00246\ \ \ \ \ \ \ \ \ X509\_ALGOR\ *keyPairParamRep;}
+\DoxyCodeLine{00247\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ NID\_id\_it\_revPassphrase\ -\/\ Revocation\ Passphrase\ */}}
+\DoxyCodeLine{00248\ \ \ \ \ \ \ \ \ OSSL\_CRMF\_ENCRYPTEDVALUE\ *revPassphrase;}
+\DoxyCodeLine{00249\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ NID\_id\_it\_implicitConfirm\ -\/\ ImplicitConfirm\ */}}
+\DoxyCodeLine{00250\ \ \ \ \ \ \ \ \ ASN1\_NULL\ *implicitConfirm;}
+\DoxyCodeLine{00251\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ NID\_id\_it\_confirmWaitTime\ -\/\ ConfirmWaitTime\ */}}
+\DoxyCodeLine{00252\ \ \ \ \ \ \ \ \ ASN1\_GENERALIZEDTIME\ *confirmWaitTime;}
+\DoxyCodeLine{00253\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ NID\_id\_it\_origPKIMessage\ -\/\ origPKIMessage\ */}}
+\DoxyCodeLine{00254\ \ \ \ \ \ \ \ \ OSSL\_CMP\_MSGS\ *origPKIMessage;}
+\DoxyCodeLine{00255\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ NID\_id\_it\_suppLangTags\ -\/\ Supported\ Language\ Tags\ */}}
+\DoxyCodeLine{00256\ \ \ \ \ \ \ \ \ STACK\_OF(ASN1\_UTF8STRING)\ *suppLangTagsValue;}
+\DoxyCodeLine{00257\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ NID\_id\_it\_caCerts\ -\/\ CA\ Certificates\ */}}
+\DoxyCodeLine{00258\ \ \ \ \ \ \ \ \ STACK\_OF(X509)\ *caCerts;}
+\DoxyCodeLine{00259\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ NID\_id\_it\_rootCaCert\ -\/\ Root\ CA\ Certificate\ */}}
+\DoxyCodeLine{00260\ \ \ \ \ \ \ \ \ X509\ *rootCaCert;}
+\DoxyCodeLine{00261\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ NID\_id\_it\_rootCaKeyUpdate\ -\/\ Root\ CA\ Certificate\ Update\ */}}
+\DoxyCodeLine{00262\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structossl__cmp__rootcakeyupdate__st}{OSSL\_CMP\_ROOTCAKEYUPDATE}}\ *rootCaKeyUpdate;}
+\DoxyCodeLine{00263\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ this\ is\ to\ be\ used\ for\ so\ far\ undeclared\ objects\ */}}
+\DoxyCodeLine{00264\ \ \ \ \ \ \ \ \ ASN1\_TYPE\ *other;}
+\DoxyCodeLine{00265\ \ \ \ \ \}\ infoValue;}
+\DoxyCodeLine{00266\ \}\ \textcolor{comment}{/*\ OSSL\_CMP\_ITAV\ */};}
+\DoxyCodeLine{00267\ DECLARE\_ASN1\_FUNCTIONS(OSSL\_CMP\_ITAV)}
+\DoxyCodeLine{00268\ }
+\DoxyCodeLine{00269\ typedef\ struct\ \mbox{\hyperlink{structossl__cmp__certorenccert__st}{ossl\_cmp\_certorenccert\_st}}\ \{}
+\DoxyCodeLine{00270\ \ \ \ \ \textcolor{keywordtype}{int}\ type;}
+\DoxyCodeLine{00271\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00272\ \ \ \ \ \ \ \ \ X509\ *certificate;}
+\DoxyCodeLine{00273\ \ \ \ \ \ \ \ \ OSSL\_CRMF\_ENCRYPTEDVALUE\ *encryptedCert;}
+\DoxyCodeLine{00274\ \ \ \ \ \}\ value;}
+\DoxyCodeLine{00275\ \}\ \mbox{\hyperlink{structossl__cmp__certorenccert__st}{OSSL\_CMP\_CERTORENCCERT}};}
+\DoxyCodeLine{00276\ DECLARE\_ASN1\_FUNCTIONS(\mbox{\hyperlink{structossl__cmp__certorenccert__st}{OSSL\_CMP\_CERTORENCCERT}})}
+\DoxyCodeLine{00277\ }
+\DoxyCodeLine{00278\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00279\ \textcolor{comment}{\ *\ \ \ CertifiedKeyPair\ ::=\ SEQUENCE\ \{}}
+\DoxyCodeLine{00280\ \textcolor{comment}{\ *\ \ \ \ \ \ \ certOrEncCert\ \ \ \ \ \ \ CertOrEncCert,}}
+\DoxyCodeLine{00281\ \textcolor{comment}{\ *\ \ \ \ \ \ \ privateKey\ \ \ \ \ \ [0]\ EncryptedValue\ \ \ \ \ \ OPTIONAL,}}
+\DoxyCodeLine{00282\ \textcolor{comment}{\ *\ \ \ \ \ \ \ -\/-\/\ see\ [CRMF]\ for\ comment\ on\ encoding}}
+\DoxyCodeLine{00283\ \textcolor{comment}{\ *\ \ \ \ \ \ \ publicationInfo\ [1]\ PKIPublicationInfo\ \ OPTIONAL}}
+\DoxyCodeLine{00284\ \textcolor{comment}{\ *\ \ \ \}}}
+\DoxyCodeLine{00285\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00286\ typedef\ struct\ \mbox{\hyperlink{structossl__cmp__certifiedkeypair__st}{ossl\_cmp\_certifiedkeypair\_st}}\ \{}
+\DoxyCodeLine{00287\ \ \ \ \ \mbox{\hyperlink{structossl__cmp__certorenccert__st}{OSSL\_CMP\_CERTORENCCERT}}\ *certOrEncCert;}
+\DoxyCodeLine{00288\ \ \ \ \ OSSL\_CRMF\_ENCRYPTEDVALUE\ *privateKey;}
+\DoxyCodeLine{00289\ \ \ \ \ OSSL\_CRMF\_PKIPUBLICATIONINFO\ *publicationInfo;}
+\DoxyCodeLine{00290\ \}\ \mbox{\hyperlink{structossl__cmp__certifiedkeypair__st}{OSSL\_CMP\_CERTIFIEDKEYPAIR}};}
+\DoxyCodeLine{00291\ DECLARE\_ASN1\_FUNCTIONS(\mbox{\hyperlink{structossl__cmp__certifiedkeypair__st}{OSSL\_CMP\_CERTIFIEDKEYPAIR}})}
+\DoxyCodeLine{00292\ }
+\DoxyCodeLine{00293\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00294\ \textcolor{comment}{\ *\ \ \ PKIStatusInfo\ ::=\ SEQUENCE\ \{}}
+\DoxyCodeLine{00295\ \textcolor{comment}{\ *\ \ \ \ \ \ \ status\ \ \ \ \ \ \ \ PKIStatus,}}
+\DoxyCodeLine{00296\ \textcolor{comment}{\ *\ \ \ \ \ \ \ statusString\ \ PKIFreeText\ \ \ \ \ OPTIONAL,}}
+\DoxyCodeLine{00297\ \textcolor{comment}{\ *\ \ \ \ \ \ \ failInfo\ \ \ \ \ \ PKIFailureInfo\ \ OPTIONAL}}
+\DoxyCodeLine{00298\ \textcolor{comment}{\ *\ \ \ \}}}
+\DoxyCodeLine{00299\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00300\ struct\ \mbox{\hyperlink{structossl__cmp__pkisi__st}{ossl\_cmp\_pkisi\_st}}\ \{}
+\DoxyCodeLine{00301\ \ \ \ \ OSSL\_CMP\_PKISTATUS\ *status;}
+\DoxyCodeLine{00302\ \ \ \ \ OSSL\_CMP\_PKIFREETEXT\ *statusString;}
+\DoxyCodeLine{00303\ \ \ \ \ OSSL\_CMP\_PKIFAILUREINFO\ *failInfo;}
+\DoxyCodeLine{00304\ \}\ \textcolor{comment}{/*\ OSSL\_CMP\_PKISI\ */};}
+\DoxyCodeLine{00305\ }
+\DoxyCodeLine{00306\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00307\ \textcolor{comment}{\ *\ \ RevReqContent\ ::=\ SEQUENCE\ OF\ RevDetails}}
+\DoxyCodeLine{00308\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00309\ \textcolor{comment}{\ *\ \ RevDetails\ ::=\ SEQUENCE\ \{}}
+\DoxyCodeLine{00310\ \textcolor{comment}{\ *\ \ \ \ \ \ certDetails\ \ \ \ \ \ \ \ \ CertTemplate,}}
+\DoxyCodeLine{00311\ \textcolor{comment}{\ *\ \ \ \ \ \ crlEntryDetails\ \ \ \ \ Extensions\ \ \ \ \ \ \ OPTIONAL}}
+\DoxyCodeLine{00312\ \textcolor{comment}{\ *\ \ \}}}
+\DoxyCodeLine{00313\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00314\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__cmp__revdetails__st}{ossl\_cmp\_revdetails\_st}}\ \{}
+\DoxyCodeLine{00315\ \ \ \ \ OSSL\_CRMF\_CERTTEMPLATE\ *certDetails;}
+\DoxyCodeLine{00316\ \ \ \ \ X509\_EXTENSIONS\ *crlEntryDetails;}
+\DoxyCodeLine{00317\ \}\ \textcolor{comment}{/*\ OSSL\_CMP\_REVDETAILS\ */};}
+\DoxyCodeLine{00318\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__cmp__revdetails__st}{ossl\_cmp\_revdetails\_st}}\ \mbox{\hyperlink{structossl__cmp__revdetails__st}{OSSL\_CMP\_REVDETAILS}};}
+\DoxyCodeLine{00319\ DECLARE\_ASN1\_FUNCTIONS(\mbox{\hyperlink{structossl__cmp__revdetails__st}{OSSL\_CMP\_REVDETAILS}})}
+\DoxyCodeLine{00320\ DEFINE\_STACK\_OF(\mbox{\hyperlink{structossl__cmp__revdetails__st}{OSSL\_CMP\_REVDETAILS}})}
+\DoxyCodeLine{00321\ }
+\DoxyCodeLine{00322\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00323\ \textcolor{comment}{\ *\ \ \ RevRepContent\ ::=\ SEQUENCE\ \{}}
+\DoxyCodeLine{00324\ \textcolor{comment}{\ *\ \ \ \ \ \ \ status\ \ \ \ \ \ \ SEQUENCE\ SIZE\ (1..MAX)\ OF\ PKIStatusInfo,}}
+\DoxyCodeLine{00325\ \textcolor{comment}{\ *\ \ \ \ \ \ \ -\/-\/\ in\ same\ order\ as\ was\ sent\ in\ RevReqContent}}
+\DoxyCodeLine{00326\ \textcolor{comment}{\ *\ \ \ \ \ \ \ revCerts\ [0]\ SEQUENCE\ SIZE\ (1..MAX)\ OF\ CertId}}
+\DoxyCodeLine{00327\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OPTIONAL,}}
+\DoxyCodeLine{00328\ \textcolor{comment}{\ *\ \ \ \ \ \ \ -\/-\/\ IDs\ for\ which\ revocation\ was\ requested}}
+\DoxyCodeLine{00329\ \textcolor{comment}{\ *\ \ \ \ \ \ \ -\/-\/\ (same\ order\ as\ status)}}
+\DoxyCodeLine{00330\ \textcolor{comment}{\ *\ \ \ \ \ \ \ crls\ \ \ \ \ [1]\ SEQUENCE\ SIZE\ (1..MAX)\ OF\ CertificateList}}
+\DoxyCodeLine{00331\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OPTIONAL}}
+\DoxyCodeLine{00332\ \textcolor{comment}{\ *\ \ \ \ \ \ \ -\/-\/\ the\ resulting\ CRLs\ (there\ may\ be\ more\ than\ one)}}
+\DoxyCodeLine{00333\ \textcolor{comment}{\ *\ \ \ \}}}
+\DoxyCodeLine{00334\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00335\ struct\ \mbox{\hyperlink{structossl__cmp__revrepcontent__st}{ossl\_cmp\_revrepcontent\_st}}\ \{}
+\DoxyCodeLine{00336\ \ \ \ \ STACK\_OF(OSSL\_CMP\_PKISI)\ *status;}
+\DoxyCodeLine{00337\ \ \ \ \ STACK\_OF(OSSL\_CRMF\_CERTID)\ *revCerts;}
+\DoxyCodeLine{00338\ \ \ \ \ STACK\_OF(X509\_CRL)\ *crls;}
+\DoxyCodeLine{00339\ \}\ \textcolor{comment}{/*\ OSSL\_CMP\_REVREPCONTENT\ */};}
+\DoxyCodeLine{00340\ DECLARE\_ASN1\_FUNCTIONS(OSSL\_CMP\_REVREPCONTENT)}
+\DoxyCodeLine{00341\ }
+\DoxyCodeLine{00342\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00343\ \textcolor{comment}{\ *\ \ KeyRecRepContent\ ::=\ SEQUENCE\ \{}}
+\DoxyCodeLine{00344\ \textcolor{comment}{\ *\ \ \ \ \ \ status\ \ \ \ \ \ \ \ \ \ PKIStatusInfo,}}
+\DoxyCodeLine{00345\ \textcolor{comment}{\ *\ \ \ \ \ \ newSigCert\ \ [0]\ Certificate\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OPTIONAL,}}
+\DoxyCodeLine{00346\ \textcolor{comment}{\ *\ \ \ \ \ \ caCerts\ \ \ \ \ [1]\ SEQUENCE\ SIZE\ (1..MAX)\ OF}}
+\DoxyCodeLine{00347\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Certificate\ \ \ \ \ \ OPTIONAL,}}
+\DoxyCodeLine{00348\ \textcolor{comment}{\ *\ \ \ \ \ \ keyPairHist\ [2]\ SEQUENCE\ SIZE\ (1..MAX)\ OF}}
+\DoxyCodeLine{00349\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ CertifiedKeyPair\ OPTIONAL}}
+\DoxyCodeLine{00350\ \textcolor{comment}{\ *\ \ \ \}}}
+\DoxyCodeLine{00351\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00352\ typedef\ struct\ \mbox{\hyperlink{structossl__cmp__keyrecrepcontent__st}{ossl\_cmp\_keyrecrepcontent\_st}}\ \{}
+\DoxyCodeLine{00353\ \ \ \ \ OSSL\_CMP\_PKISI\ *status;}
+\DoxyCodeLine{00354\ \ \ \ \ X509\ *newSigCert;}
+\DoxyCodeLine{00355\ \ \ \ \ STACK\_OF(X509)\ *caCerts;}
+\DoxyCodeLine{00356\ \ \ \ \ STACK\_OF(\mbox{\hyperlink{structossl__cmp__certifiedkeypair__st}{OSSL\_CMP\_CERTIFIEDKEYPAIR}})\ *keyPairHist;}
+\DoxyCodeLine{00357\ \}\ \mbox{\hyperlink{structossl__cmp__keyrecrepcontent__st}{OSSL\_CMP\_KEYRECREPCONTENT}};}
+\DoxyCodeLine{00358\ DECLARE\_ASN1\_FUNCTIONS(\mbox{\hyperlink{structossl__cmp__keyrecrepcontent__st}{OSSL\_CMP\_KEYRECREPCONTENT}})}
+\DoxyCodeLine{00359\ }
+\DoxyCodeLine{00360\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00361\ \textcolor{comment}{\ *\ \ \ ErrorMsgContent\ ::=\ SEQUENCE\ \{}}
+\DoxyCodeLine{00362\ \textcolor{comment}{\ *\ \ \ \ \ \ \ pKIStatusInfo\ \ \ \ \ \ \ \ \ \ PKIStatusInfo,}}
+\DoxyCodeLine{00363\ \textcolor{comment}{\ *\ \ \ \ \ \ \ errorCode\ \ \ \ \ \ \ \ \ \ \ \ \ \ INTEGER\ \ \ \ \ \ \ \ \ \ \ OPTIONAL,}}
+\DoxyCodeLine{00364\ \textcolor{comment}{\ *\ \ \ \ \ \ \ -\/-\/\ implementation-\/specific\ error\ codes}}
+\DoxyCodeLine{00365\ \textcolor{comment}{\ *\ \ \ \ \ \ \ errorDetails\ \ \ \ \ \ \ \ \ \ \ PKIFreeText\ \ \ \ \ \ \ OPTIONAL}}
+\DoxyCodeLine{00366\ \textcolor{comment}{\ *\ \ \ \ \ \ \ -\/-\/\ implementation-\/specific\ error\ details}}
+\DoxyCodeLine{00367\ \textcolor{comment}{\ *\ \ \ \}}}
+\DoxyCodeLine{00368\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00369\ typedef\ struct\ \mbox{\hyperlink{structossl__cmp__errormsgcontent__st}{ossl\_cmp\_errormsgcontent\_st}}\ \{}
+\DoxyCodeLine{00370\ \ \ \ \ OSSL\_CMP\_PKISI\ *pKIStatusInfo;}
+\DoxyCodeLine{00371\ \ \ \ \ ASN1\_INTEGER\ *errorCode;}
+\DoxyCodeLine{00372\ \ \ \ \ OSSL\_CMP\_PKIFREETEXT\ *errorDetails;}
+\DoxyCodeLine{00373\ \}\ \mbox{\hyperlink{structossl__cmp__errormsgcontent__st}{OSSL\_CMP\_ERRORMSGCONTENT}};}
+\DoxyCodeLine{00374\ DECLARE\_ASN1\_FUNCTIONS(\mbox{\hyperlink{structossl__cmp__errormsgcontent__st}{OSSL\_CMP\_ERRORMSGCONTENT}})}
+\DoxyCodeLine{00375\ }
+\DoxyCodeLine{00376\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00377\ \textcolor{comment}{\ *\ \ \ CertConfirmContent\ ::=\ SEQUENCE\ OF\ CertStatus}}
+\DoxyCodeLine{00378\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00379\ \textcolor{comment}{\ *\ \ \ CertStatus\ ::=\ SEQUENCE\ \{}}
+\DoxyCodeLine{00380\ \textcolor{comment}{\ *\ \ \ \ \ \ certHash\ \ \ \ OCTET\ STRING,}}
+\DoxyCodeLine{00381\ \textcolor{comment}{\ *\ \ \ \ \ \ -\/-\/\ the\ hash\ of\ the\ certificate,\ using\ the\ same\ hash\ algorithm}}
+\DoxyCodeLine{00382\ \textcolor{comment}{\ *\ \ \ \ \ \ -\/-\/\ as\ is\ used\ to\ create\ and\ verify\ the\ certificate\ signature}}
+\DoxyCodeLine{00383\ \textcolor{comment}{\ *\ \ \ \ \ \ certReqId\ \ \ INTEGER,}}
+\DoxyCodeLine{00384\ \textcolor{comment}{\ *\ \ \ \ \ \ -\/-\/\ to\ match\ this\ confirmation\ with\ the\ corresponding\ req/rep}}
+\DoxyCodeLine{00385\ \textcolor{comment}{\ *\ \ \ \ \ \ statusInfo\ \ PKIStatusInfo\ OPTIONAL,}}
+\DoxyCodeLine{00386\ \textcolor{comment}{\ *\ \ \ \ \ \ hashAlg\ [0]\ AlgorithmIdentifier\ OPTIONAL}}
+\DoxyCodeLine{00387\ \textcolor{comment}{\ *\ \ \ \}}}
+\DoxyCodeLine{00388\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00389\ struct\ \mbox{\hyperlink{structossl__cmp__certstatus__st}{ossl\_cmp\_certstatus\_st}}\ \{}
+\DoxyCodeLine{00390\ \ \ \ \ ASN1\_OCTET\_STRING\ *certHash;}
+\DoxyCodeLine{00391\ \ \ \ \ ASN1\_INTEGER\ *certReqId;}
+\DoxyCodeLine{00392\ \ \ \ \ OSSL\_CMP\_PKISI\ *statusInfo;}
+\DoxyCodeLine{00393\ \ \ \ \ X509\_ALGOR\ *hashAlg;\ \textcolor{comment}{/*\ 0\ */}}
+\DoxyCodeLine{00394\ \}\ \textcolor{comment}{/*\ OSSL\_CMP\_CERTSTATUS\ */};}
+\DoxyCodeLine{00395\ DECLARE\_ASN1\_FUNCTIONS(OSSL\_CMP\_CERTSTATUS)}
+\DoxyCodeLine{00396\ \textcolor{keyword}{typedef}\ STACK\_OF(OSSL\_CMP\_CERTSTATUS)\ OSSL\_CMP\_CERTCONFIRMCONTENT;}
+\DoxyCodeLine{00397\ DECLARE\_ASN1\_FUNCTIONS(OSSL\_CMP\_CERTCONFIRMCONTENT)}
+\DoxyCodeLine{00398\ }
+\DoxyCodeLine{00399\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00400\ \textcolor{comment}{\ *\ \ \ CertResponse\ ::=\ SEQUENCE\ \{}}
+\DoxyCodeLine{00401\ \textcolor{comment}{\ *\ \ \ \ \ \ \ certReqId\ \ \ \ \ \ \ \ \ \ \ INTEGER,}}
+\DoxyCodeLine{00402\ \textcolor{comment}{\ *\ \ \ \ \ \ \ -\/-\/\ to\ match\ this\ response\ with\ corresponding\ request\ (a\ value}}
+\DoxyCodeLine{00403\ \textcolor{comment}{\ *\ \ \ \ \ \ \ -\/-\/\ of\ -\/1\ is\ to\ be\ used\ if\ certReqId\ is\ not\ specified\ in\ the}}
+\DoxyCodeLine{00404\ \textcolor{comment}{\ *\ \ \ \ \ \ \ -\/-\/\ corresponding\ request)}}
+\DoxyCodeLine{00405\ \textcolor{comment}{\ *\ \ \ \ \ \ \ status\ \ \ \ \ \ \ \ \ \ \ \ \ \ PKIStatusInfo,}}
+\DoxyCodeLine{00406\ \textcolor{comment}{\ *\ \ \ \ \ \ \ certifiedKeyPair\ \ \ \ CertifiedKeyPair\ \ \ \ OPTIONAL,}}
+\DoxyCodeLine{00407\ \textcolor{comment}{\ *\ \ \ \ \ \ \ rspInfo\ \ \ \ \ \ \ \ \ \ \ \ \ OCTET\ STRING\ \ \ \ \ \ \ \ OPTIONAL}}
+\DoxyCodeLine{00408\ \textcolor{comment}{\ *\ \ \ \ \ \ \ -\/-\/\ analogous\ to\ the\ id-\/regInfo-\/utf8Pairs\ string\ defined}}
+\DoxyCodeLine{00409\ \textcolor{comment}{\ *\ \ \ \ \ \ \ -\/-\/\ for\ regInfo\ in\ CertReqMsg\ [CRMF]}}
+\DoxyCodeLine{00410\ \textcolor{comment}{\ *\ \ \ \}}}
+\DoxyCodeLine{00411\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00412\ struct\ \mbox{\hyperlink{structossl__cmp__certresponse__st}{ossl\_cmp\_certresponse\_st}}\ \{}
+\DoxyCodeLine{00413\ \ \ \ \ ASN1\_INTEGER\ *certReqId;}
+\DoxyCodeLine{00414\ \ \ \ \ OSSL\_CMP\_PKISI\ *status;}
+\DoxyCodeLine{00415\ \ \ \ \ \mbox{\hyperlink{structossl__cmp__certifiedkeypair__st}{OSSL\_CMP\_CERTIFIEDKEYPAIR}}\ *certifiedKeyPair;}
+\DoxyCodeLine{00416\ \ \ \ \ ASN1\_OCTET\_STRING\ *rspInfo;}
+\DoxyCodeLine{00417\ \}\ \textcolor{comment}{/*\ OSSL\_CMP\_CERTRESPONSE\ */};}
+\DoxyCodeLine{00418\ DECLARE\_ASN1\_FUNCTIONS(OSSL\_CMP\_CERTRESPONSE)}
+\DoxyCodeLine{00419\ }
+\DoxyCodeLine{00420\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00421\ \textcolor{comment}{\ *\ \ \ CertRepMessage\ ::=\ SEQUENCE\ \{}}
+\DoxyCodeLine{00422\ \textcolor{comment}{\ *\ \ \ \ \ \ \ caPubs\ \ \ \ \ \ \ [1]\ SEQUENCE\ SIZE\ (1..MAX)\ OF\ CMPCertificate}}
+\DoxyCodeLine{00423\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OPTIONAL,}}
+\DoxyCodeLine{00424\ \textcolor{comment}{\ *\ \ \ \ \ \ \ response\ \ \ \ \ \ \ \ \ SEQUENCE\ OF\ CertResponse}}
+\DoxyCodeLine{00425\ \textcolor{comment}{\ *\ \ \ \}}}
+\DoxyCodeLine{00426\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00427\ struct\ \mbox{\hyperlink{structossl__cmp__certrepmessage__st}{ossl\_cmp\_certrepmessage\_st}}\ \{}
+\DoxyCodeLine{00428\ \ \ \ \ STACK\_OF(X509)\ *caPubs;}
+\DoxyCodeLine{00429\ \ \ \ \ STACK\_OF(OSSL\_CMP\_CERTRESPONSE)\ *response;}
+\DoxyCodeLine{00430\ \}\ \textcolor{comment}{/*\ OSSL\_CMP\_CERTREPMESSAGE\ */};}
+\DoxyCodeLine{00431\ DECLARE\_ASN1\_FUNCTIONS(OSSL\_CMP\_CERTREPMESSAGE)}
+\DoxyCodeLine{00432\ }
+\DoxyCodeLine{00433\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00434\ \textcolor{comment}{\ *\ \ \ PollReqContent\ ::=\ SEQUENCE\ OF\ SEQUENCE\ \{}}
+\DoxyCodeLine{00435\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ certReqId\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ INTEGER}}
+\DoxyCodeLine{00436\ \textcolor{comment}{\ *\ \ \ \}}}
+\DoxyCodeLine{00437\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00438\ typedef\ struct\ \mbox{\hyperlink{structossl__cmp__pollreq__st}{ossl\_cmp\_pollreq\_st}}\ \{}
+\DoxyCodeLine{00439\ \ \ \ \ ASN1\_INTEGER\ *certReqId;}
+\DoxyCodeLine{00440\ \}\ \mbox{\hyperlink{structossl__cmp__pollreq__st}{OSSL\_CMP\_POLLREQ}};}
+\DoxyCodeLine{00441\ DECLARE\_ASN1\_FUNCTIONS(\mbox{\hyperlink{structossl__cmp__pollreq__st}{OSSL\_CMP\_POLLREQ}})}
+\DoxyCodeLine{00442\ DEFINE\_STACK\_OF(\mbox{\hyperlink{structossl__cmp__pollreq__st}{OSSL\_CMP\_POLLREQ}})}
+\DoxyCodeLine{00443\ \textcolor{keyword}{typedef}\ STACK\_OF(\mbox{\hyperlink{structossl__cmp__pollreq__st}{OSSL\_CMP\_POLLREQ}})\ OSSL\_CMP\_POLLREQCONTENT;}
+\DoxyCodeLine{00444\ DECLARE\_ASN1\_FUNCTIONS(OSSL\_CMP\_POLLREQCONTENT)}
+\DoxyCodeLine{00445\ }
+\DoxyCodeLine{00446\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00447\ \textcolor{comment}{\ *\ PollRepContent\ ::=\ SEQUENCE\ OF\ SEQUENCE\ \{}}
+\DoxyCodeLine{00448\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ certReqId\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ INTEGER,}}
+\DoxyCodeLine{00449\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ checkAfter\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ INTEGER,\ \ -\/-\/\ time\ in\ seconds}}
+\DoxyCodeLine{00450\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ reason\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ PKIFreeText\ OPTIONAL}}
+\DoxyCodeLine{00451\ \textcolor{comment}{\ *\ \}}}
+\DoxyCodeLine{00452\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00453\ struct\ \mbox{\hyperlink{structossl__cmp__pollrep__st}{ossl\_cmp\_pollrep\_st}}\ \{}
+\DoxyCodeLine{00454\ \ \ \ \ ASN1\_INTEGER\ *certReqId;}
+\DoxyCodeLine{00455\ \ \ \ \ ASN1\_INTEGER\ *checkAfter;}
+\DoxyCodeLine{00456\ \ \ \ \ OSSL\_CMP\_PKIFREETEXT\ *reason;}
+\DoxyCodeLine{00457\ \}\ \textcolor{comment}{/*\ OSSL\_CMP\_POLLREP\ */};}
+\DoxyCodeLine{00458\ DECLARE\_ASN1\_FUNCTIONS(OSSL\_CMP\_POLLREP)}
+\DoxyCodeLine{00459\ DEFINE\_STACK\_OF(OSSL\_CMP\_POLLREP)}
+\DoxyCodeLine{00460\ DECLARE\_ASN1\_FUNCTIONS(OSSL\_CMP\_POLLREPCONTENT)}
+\DoxyCodeLine{00461\ }
+\DoxyCodeLine{00462\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00463\ \textcolor{comment}{\ *\ PKIHeader\ ::=\ SEQUENCE\ \{}}
+\DoxyCodeLine{00464\ \textcolor{comment}{\ *\ \ \ \ \ pvno\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ INTEGER\ \ \ \ \ \{\ cmp1999(1),\ cmp2000(2),\ cmp2021(3)\ \},}}
+\DoxyCodeLine{00465\ \textcolor{comment}{\ *\ \ \ \ \ sender\ \ \ \ \ \ \ \ \ \ \ \ \ \ GeneralName,}}
+\DoxyCodeLine{00466\ \textcolor{comment}{\ *\ \ \ \ \ -\/-\/\ identifies\ the\ sender}}
+\DoxyCodeLine{00467\ \textcolor{comment}{\ *\ \ \ \ \ recipient\ \ \ \ \ \ \ \ \ \ \ GeneralName,}}
+\DoxyCodeLine{00468\ \textcolor{comment}{\ *\ \ \ \ \ -\/-\/\ identifies\ the\ intended\ recipient}}
+\DoxyCodeLine{00469\ \textcolor{comment}{\ *\ \ \ \ \ messageTime\ \ \ \ \ [0]\ GeneralizedTime\ \ \ \ \ \ \ \ \ OPTIONAL,}}
+\DoxyCodeLine{00470\ \textcolor{comment}{\ *\ \ \ \ \ -\/-\/\ time\ of\ production\ of\ this\ message\ (used\ when\ sender}}
+\DoxyCodeLine{00471\ \textcolor{comment}{\ *\ \ \ \ \ -\/-\/\ believes\ that\ the\ transport\ will\ be\ "{}suitable"{};\ i.e.,}}
+\DoxyCodeLine{00472\ \textcolor{comment}{\ *\ \ \ \ \ -\/-\/\ that\ the\ time\ will\ still\ be\ meaningful\ upon\ receipt)}}
+\DoxyCodeLine{00473\ \textcolor{comment}{\ *\ \ \ \ \ protectionAlg\ \ \ [1]\ AlgorithmIdentifier\ \ \ \ \ OPTIONAL,}}
+\DoxyCodeLine{00474\ \textcolor{comment}{\ *\ \ \ \ \ -\/-\/\ algorithm\ used\ for\ calculation\ of\ protection\ bits}}
+\DoxyCodeLine{00475\ \textcolor{comment}{\ *\ \ \ \ \ senderKID\ \ \ \ \ \ \ [2]\ KeyIdentifier\ \ \ \ \ \ \ \ \ \ \ OPTIONAL,}}
+\DoxyCodeLine{00476\ \textcolor{comment}{\ *\ \ \ \ \ recipKID\ \ \ \ \ \ \ \ [3]\ KeyIdentifier\ \ \ \ \ \ \ \ \ \ \ OPTIONAL,}}
+\DoxyCodeLine{00477\ \textcolor{comment}{\ *\ \ \ \ \ -\/-\/\ to\ identify\ specific\ keys\ used\ for\ protection}}
+\DoxyCodeLine{00478\ \textcolor{comment}{\ *\ \ \ \ \ transactionID\ \ \ [4]\ OCTET\ STRING\ \ \ \ \ \ \ \ \ \ \ \ OPTIONAL,}}
+\DoxyCodeLine{00479\ \textcolor{comment}{\ *\ \ \ \ \ -\/-\/\ identifies\ the\ transaction;\ i.e.,\ this\ will\ be\ the\ same\ in}}
+\DoxyCodeLine{00480\ \textcolor{comment}{\ *\ \ \ \ \ -\/-\/\ corresponding\ request,\ response,\ certConf,\ and\ PKIConf}}
+\DoxyCodeLine{00481\ \textcolor{comment}{\ *\ \ \ \ \ -\/-\/\ messages}}
+\DoxyCodeLine{00482\ \textcolor{comment}{\ *\ \ \ \ \ senderNonce\ \ \ \ \ [5]\ OCTET\ STRING\ \ \ \ \ \ \ \ \ \ \ \ OPTIONAL,}}
+\DoxyCodeLine{00483\ \textcolor{comment}{\ *\ \ \ \ \ recipNonce\ \ \ \ \ \ [6]\ OCTET\ STRING\ \ \ \ \ \ \ \ \ \ \ \ OPTIONAL,}}
+\DoxyCodeLine{00484\ \textcolor{comment}{\ *\ \ \ \ \ -\/-\/\ nonces\ used\ to\ provide\ replay\ protection,\ senderNonce}}
+\DoxyCodeLine{00485\ \textcolor{comment}{\ *\ \ \ \ \ -\/-\/\ is\ inserted\ by\ the\ creator\ of\ this\ message;\ recipNonce}}
+\DoxyCodeLine{00486\ \textcolor{comment}{\ *\ \ \ \ \ -\/-\/\ is\ a\ nonce\ previously\ inserted\ in\ a\ related\ message\ by}}
+\DoxyCodeLine{00487\ \textcolor{comment}{\ *\ \ \ \ \ -\/-\/\ the\ intended\ recipient\ of\ this\ message}}
+\DoxyCodeLine{00488\ \textcolor{comment}{\ *\ \ \ \ \ freeText\ \ \ \ \ \ \ \ [7]\ PKIFreeText\ \ \ \ \ \ \ \ \ \ \ \ \ OPTIONAL,}}
+\DoxyCodeLine{00489\ \textcolor{comment}{\ *\ \ \ \ \ -\/-\/\ this\ may\ be\ used\ to\ indicate\ context-\/specific\ instructions}}
+\DoxyCodeLine{00490\ \textcolor{comment}{\ *\ \ \ \ \ -\/-\/\ (this\ field\ is\ intended\ for\ human\ consumption)}}
+\DoxyCodeLine{00491\ \textcolor{comment}{\ *\ \ \ \ \ generalInfo\ \ \ \ \ [8]\ SEQUENCE\ SIZE\ (1..MAX)\ OF}}
+\DoxyCodeLine{00492\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ InfoTypeAndValue\ \ \ \ \ OPTIONAL}}
+\DoxyCodeLine{00493\ \textcolor{comment}{\ *\ \ \ \ \ -\/-\/\ this\ may\ be\ used\ to\ convey\ context-\/specific\ information}}
+\DoxyCodeLine{00494\ \textcolor{comment}{\ *\ \ \ \ \ -\/-\/\ (this\ field\ not\ primarily\ intended\ for\ human\ consumption)}}
+\DoxyCodeLine{00495\ \textcolor{comment}{\ *\ \ \ \}}}
+\DoxyCodeLine{00496\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00497\ struct\ \mbox{\hyperlink{structossl__cmp__pkiheader__st}{ossl\_cmp\_pkiheader\_st}}\ \{}
+\DoxyCodeLine{00498\ \ \ \ \ ASN1\_INTEGER\ *pvno;}
+\DoxyCodeLine{00499\ \ \ \ \ GENERAL\_NAME\ *sender;}
+\DoxyCodeLine{00500\ \ \ \ \ GENERAL\_NAME\ *recipient;}
+\DoxyCodeLine{00501\ \ \ \ \ ASN1\_GENERALIZEDTIME\ *messageTime;\ \textcolor{comment}{/*\ 0\ */}}
+\DoxyCodeLine{00502\ \ \ \ \ X509\_ALGOR\ *protectionAlg;\ \textcolor{comment}{/*\ 1\ */}}
+\DoxyCodeLine{00503\ \ \ \ \ ASN1\_OCTET\_STRING\ *senderKID;\ \textcolor{comment}{/*\ 2\ */}}
+\DoxyCodeLine{00504\ \ \ \ \ ASN1\_OCTET\_STRING\ *recipKID;\ \textcolor{comment}{/*\ 3\ */}}
+\DoxyCodeLine{00505\ \ \ \ \ ASN1\_OCTET\_STRING\ *transactionID;\ \textcolor{comment}{/*\ 4\ */}}
+\DoxyCodeLine{00506\ \ \ \ \ ASN1\_OCTET\_STRING\ *senderNonce;\ \textcolor{comment}{/*\ 5\ */}}
+\DoxyCodeLine{00507\ \ \ \ \ ASN1\_OCTET\_STRING\ *recipNonce;\ \textcolor{comment}{/*\ 6\ */}}
+\DoxyCodeLine{00508\ \ \ \ \ OSSL\_CMP\_PKIFREETEXT\ *freeText;\ \textcolor{comment}{/*\ 7\ */}}
+\DoxyCodeLine{00509\ \ \ \ \ STACK\_OF(OSSL\_CMP\_ITAV)\ *generalInfo;\ \textcolor{comment}{/*\ 8\ */}}
+\DoxyCodeLine{00510\ \}\ \textcolor{comment}{/*\ OSSL\_CMP\_PKIHEADER\ */};}
+\DoxyCodeLine{00511\ }
+\DoxyCodeLine{00512\ \textcolor{keyword}{typedef}\ STACK\_OF(\mbox{\hyperlink{structossl__cmp__challenge__st}{OSSL\_CMP\_CHALLENGE}})\ OSSL\_CMP\_POPODECKEYCHALLCONTENT;}
+\DoxyCodeLine{00513\ DECLARE\_ASN1\_FUNCTIONS(OSSL\_CMP\_POPODECKEYCHALLCONTENT)}
+\DoxyCodeLine{00514\ \textcolor{keyword}{typedef}\ STACK\_OF(ASN1\_INTEGER)\ OSSL\_CMP\_POPODECKEYRESPCONTENT;}
+\DoxyCodeLine{00515\ DECLARE\_ASN1\_FUNCTIONS(OSSL\_CMP\_POPODECKEYRESPCONTENT)}
+\DoxyCodeLine{00516\ \textcolor{keyword}{typedef}\ STACK\_OF(\mbox{\hyperlink{structossl__cmp__revdetails__st}{OSSL\_CMP\_REVDETAILS}})\ OSSL\_CMP\_REVREQCONTENT;}
+\DoxyCodeLine{00517\ DECLARE\_ASN1\_FUNCTIONS(OSSL\_CMP\_REVREQCONTENT)}
+\DoxyCodeLine{00518\ \textcolor{keyword}{typedef}\ STACK\_OF(X509\_CRL)\ OSSL\_CMP\_CRLANNCONTENT;}
+\DoxyCodeLine{00519\ DECLARE\_ASN1\_FUNCTIONS(OSSL\_CMP\_CRLANNCONTENT)}
+\DoxyCodeLine{00520\ \textcolor{keyword}{typedef}\ STACK\_OF(OSSL\_CMP\_ITAV)\ OSSL\_CMP\_GENMSGCONTENT;}
+\DoxyCodeLine{00521\ DECLARE\_ASN1\_FUNCTIONS(OSSL\_CMP\_GENMSGCONTENT)}
+\DoxyCodeLine{00522\ \textcolor{keyword}{typedef}\ STACK\_OF(OSSL\_CMP\_ITAV)\ OSSL\_CMP\_GENREPCONTENT;}
+\DoxyCodeLine{00523\ DECLARE\_ASN1\_FUNCTIONS(OSSL\_CMP\_GENREPCONTENT)}
+\DoxyCodeLine{00524\ }
+\DoxyCodeLine{00525\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00526\ \textcolor{comment}{\ *\ \ \ PKIBody\ ::=\ CHOICE\ \{\ \ \ \ \ \ \ \ \ \ \ -\/-\/\ message-\/specific\ body\ elements}}
+\DoxyCodeLine{00527\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ ir\ \ \ \ \ \ \ [0]\ \ CertReqMessages,\ \ \ \ \ \ \ \ \ \ \ \ -\/-\/Initialization\ Request}}
+\DoxyCodeLine{00528\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ ip\ \ \ \ \ \ \ [1]\ \ CertRepMessage,\ \ \ \ \ \ \ \ \ \ \ \ \ -\/-\/Initialization\ Response}}
+\DoxyCodeLine{00529\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ cr\ \ \ \ \ \ \ [2]\ \ CertReqMessages,\ \ \ \ \ \ \ \ \ \ \ \ -\/-\/Certification\ Request}}
+\DoxyCodeLine{00530\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ cp\ \ \ \ \ \ \ [3]\ \ CertRepMessage,\ \ \ \ \ \ \ \ \ \ \ \ \ -\/-\/Certification\ Response}}
+\DoxyCodeLine{00531\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ p10cr\ \ \ \ [4]\ \ CertificationRequest,\ \ \ \ \ \ \ -\/-\/imported\ from\ [PKCS10]}}
+\DoxyCodeLine{00532\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ popdecc\ \ [5]\ \ POPODecKeyChallContent,\ \ \ \ \ -\/-\/pop\ Challenge}}
+\DoxyCodeLine{00533\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ popdecr\ \ [6]\ \ POPODecKeyRespContent,\ \ \ \ \ \ -\/-\/pop\ Response}}
+\DoxyCodeLine{00534\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ kur\ \ \ \ \ \ [7]\ \ CertReqMessages,\ \ \ \ \ \ \ \ \ \ \ \ -\/-\/Key\ Update\ Request}}
+\DoxyCodeLine{00535\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ kup\ \ \ \ \ \ [8]\ \ CertRepMessage,\ \ \ \ \ \ \ \ \ \ \ \ \ -\/-\/Key\ Update\ Response}}
+\DoxyCodeLine{00536\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ krr\ \ \ \ \ \ [9]\ \ CertReqMessages,\ \ \ \ \ \ \ \ \ \ \ \ -\/-\/Key\ Recovery\ Request}}
+\DoxyCodeLine{00537\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ krp\ \ \ \ \ \ [10]\ KeyRecRepContent,\ \ \ \ \ \ \ \ \ \ \ -\/-\/Key\ Recovery\ Response}}
+\DoxyCodeLine{00538\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ rr\ \ \ \ \ \ \ [11]\ RevReqContent,\ \ \ \ \ \ \ \ \ \ \ \ \ \ -\/-\/Revocation\ Request}}
+\DoxyCodeLine{00539\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ rp\ \ \ \ \ \ \ [12]\ RevRepContent,\ \ \ \ \ \ \ \ \ \ \ \ \ \ -\/-\/Revocation\ Response}}
+\DoxyCodeLine{00540\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ ccr\ \ \ \ \ \ [13]\ CertReqMessages,\ \ \ \ \ \ \ \ \ \ \ \ -\/-\/Cross-\/Cert.\ Request}}
+\DoxyCodeLine{00541\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ ccp\ \ \ \ \ \ [14]\ CertRepMessage,\ \ \ \ \ \ \ \ \ \ \ \ \ -\/-\/Cross-\/Cert.\ Response}}
+\DoxyCodeLine{00542\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ ckuann\ \ \ [15]\ CAKeyUpdAnnContent,\ \ \ \ \ \ \ \ \ -\/-\/CA\ Key\ Update\ Ann.}}
+\DoxyCodeLine{00543\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ cann\ \ \ \ \ [16]\ CertAnnContent,\ \ \ \ \ \ \ \ \ \ \ \ \ -\/-\/Certificate\ Ann.}}
+\DoxyCodeLine{00544\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ rann\ \ \ \ \ [17]\ RevAnnContent,\ \ \ \ \ \ \ \ \ \ \ \ \ \ -\/-\/Revocation\ Ann.}}
+\DoxyCodeLine{00545\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ crlann\ \ \ [18]\ CRLAnnContent,\ \ \ \ \ \ \ \ \ \ \ \ \ \ -\/-\/CRL\ Announcement}}
+\DoxyCodeLine{00546\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ pkiconf\ \ [19]\ PKIConfirmContent,\ \ \ \ \ \ \ \ \ \ -\/-\/Confirmation}}
+\DoxyCodeLine{00547\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ nested\ \ \ [20]\ NestedMessageContent,\ \ \ \ \ \ \ -\/-\/Nested\ Message}}
+\DoxyCodeLine{00548\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ genm\ \ \ \ \ [21]\ GenMsgContent,\ \ \ \ \ \ \ \ \ \ \ \ \ \ -\/-\/General\ Message}}
+\DoxyCodeLine{00549\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ genp\ \ \ \ \ [22]\ GenRepContent,\ \ \ \ \ \ \ \ \ \ \ \ \ \ -\/-\/General\ Response}}
+\DoxyCodeLine{00550\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ error\ \ \ \ [23]\ ErrorMsgContent,\ \ \ \ \ \ \ \ \ \ \ \ -\/-\/Error\ Message}}
+\DoxyCodeLine{00551\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ certConf\ [24]\ CertConfirmContent,\ \ \ \ \ \ \ \ \ -\/-\/Certificate\ confirm}}
+\DoxyCodeLine{00552\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ pollReq\ \ [25]\ PollReqContent,\ \ \ \ \ \ \ \ \ \ \ \ \ -\/-\/Polling\ request}}
+\DoxyCodeLine{00553\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ pollRep\ \ [26]\ PollRepContent\ \ \ \ \ \ \ \ \ \ \ \ \ \ -\/-\/Polling\ response}}
+\DoxyCodeLine{00554\ \textcolor{comment}{\ *\ \ \ \}}}
+\DoxyCodeLine{00555\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00556\ typedef\ struct\ \mbox{\hyperlink{structossl__cmp__pkibody__st}{ossl\_cmp\_pkibody\_st}}\ \{}
+\DoxyCodeLine{00557\ \ \ \ \ \textcolor{keywordtype}{int}\ type;}
+\DoxyCodeLine{00558\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00559\ \ \ \ \ \ \ \ \ OSSL\_CRMF\_MSGS\ *ir;\ \textcolor{comment}{/*\ 0\ */}}
+\DoxyCodeLine{00560\ \ \ \ \ \ \ \ \ OSSL\_CMP\_CERTREPMESSAGE\ *ip;\ \textcolor{comment}{/*\ 1\ */}}
+\DoxyCodeLine{00561\ \ \ \ \ \ \ \ \ OSSL\_CRMF\_MSGS\ *cr;\ \textcolor{comment}{/*\ 2\ */}}
+\DoxyCodeLine{00562\ \ \ \ \ \ \ \ \ OSSL\_CMP\_CERTREPMESSAGE\ *cp;\ \textcolor{comment}{/*\ 3\ */}}
+\DoxyCodeLine{00563\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00564\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ *\ p10cr\ \ \ \ \ \ [4]\ \ CertificationRequest,\ \ \ \ \ -\/-\/imported\ from\ [PKCS10]}}
+\DoxyCodeLine{00565\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ *}}
+\DoxyCodeLine{00566\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ *\ PKCS10\_CERTIFICATIONREQUEST\ is\ effectively\ X509\_REQ}}
+\DoxyCodeLine{00567\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ *\ so\ it\ is\ used\ directly}}
+\DoxyCodeLine{00568\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00569\ \ \ \ \ \ \ \ \ X509\_REQ\ *p10cr;\ \textcolor{comment}{/*\ 4\ */}}
+\DoxyCodeLine{00570\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00571\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ *\ popdecc\ \ \ \ [5]\ \ POPODecKeyChallContent,\ -\/-\/pop\ Challenge}}
+\DoxyCodeLine{00572\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ *}}
+\DoxyCodeLine{00573\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ *\ POPODecKeyChallContent\ ::=\ SEQUENCE\ OF\ Challenge}}
+\DoxyCodeLine{00574\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00575\ \ \ \ \ \ \ \ \ OSSL\_CMP\_POPODECKEYCHALLCONTENT\ *popdecc;\ \textcolor{comment}{/*\ 5\ */}}
+\DoxyCodeLine{00576\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00577\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ *\ popdecr\ \ \ \ [6]\ \ POPODecKeyRespContent,\ \ -\/-\/pop\ Response}}
+\DoxyCodeLine{00578\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ *}}
+\DoxyCodeLine{00579\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ *\ POPODecKeyRespContent\ ::=\ SEQUENCE\ OF\ INTEGER}}
+\DoxyCodeLine{00580\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00581\ \ \ \ \ \ \ \ \ OSSL\_CMP\_POPODECKEYRESPCONTENT\ *popdecr;\ \textcolor{comment}{/*\ 6\ */}}
+\DoxyCodeLine{00582\ \ \ \ \ \ \ \ \ OSSL\_CRMF\_MSGS\ *kur;\ \textcolor{comment}{/*\ 7\ */}}
+\DoxyCodeLine{00583\ \ \ \ \ \ \ \ \ OSSL\_CMP\_CERTREPMESSAGE\ *kup;\ \textcolor{comment}{/*\ 8\ */}}
+\DoxyCodeLine{00584\ \ \ \ \ \ \ \ \ OSSL\_CRMF\_MSGS\ *krr;\ \textcolor{comment}{/*\ 9\ */}}
+\DoxyCodeLine{00585\ }
+\DoxyCodeLine{00586\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00587\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ *\ krp\ \ \ \ \ \ \ \ [10]\ KeyRecRepContent,\ \ \ \ \ \ \ \ \ -\/-\/Key\ Recovery\ Response}}
+\DoxyCodeLine{00588\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00589\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structossl__cmp__keyrecrepcontent__st}{OSSL\_CMP\_KEYRECREPCONTENT}}\ *krp;\ \textcolor{comment}{/*\ 10\ */}}
+\DoxyCodeLine{00590\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00591\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ *\ rr\ \ \ \ \ \ \ \ \ [11]\ RevReqContent,\ \ \ \ \ \ \ \ \ \ \ \ -\/-\/Revocation\ Request}}
+\DoxyCodeLine{00592\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00593\ \ \ \ \ \ \ \ \ OSSL\_CMP\_REVREQCONTENT\ *rr;\ \textcolor{comment}{/*\ 11\ */}}
+\DoxyCodeLine{00594\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00595\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ *\ rp\ \ \ \ \ \ \ \ \ [12]\ RevRepContent,\ \ \ \ \ \ \ \ \ \ \ \ -\/-\/Revocation\ Response}}
+\DoxyCodeLine{00596\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00597\ \ \ \ \ \ \ \ \ OSSL\_CMP\_REVREPCONTENT\ *rp;\ \textcolor{comment}{/*\ 12\ */}}
+\DoxyCodeLine{00598\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00599\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ *\ ccr\ \ \ \ \ \ \ \ [13]\ CertReqMessages,\ \ \ \ \ \ \ \ \ \ -\/-\/Cross-\/Cert.\ Request}}
+\DoxyCodeLine{00600\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00601\ \ \ \ \ \ \ \ \ OSSL\_CRMF\_MSGS\ *ccr;\ \textcolor{comment}{/*\ 13\ */}}
+\DoxyCodeLine{00602\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00603\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ *\ ccp\ \ \ \ \ \ \ \ [14]\ CertRepMessage,\ \ \ \ \ \ \ \ \ \ \ -\/-\/Cross-\/Cert.\ Response}}
+\DoxyCodeLine{00604\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00605\ \ \ \ \ \ \ \ \ OSSL\_CMP\_CERTREPMESSAGE\ *ccp;\ \textcolor{comment}{/*\ 14\ */}}
+\DoxyCodeLine{00606\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00607\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ *\ ckuann\ \ \ \ \ [15]\ CAKeyUpdAnnContent,\ \ \ \ \ \ \ -\/-\/CA\ Key\ Update\ Ann.}}
+\DoxyCodeLine{00608\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00609\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structossl__cmp__cakeyupdanncontent__st}{OSSL\_CMP\_CAKEYUPDANNCONTENT}}\ *ckuann;\ \textcolor{comment}{/*\ 15\ */}}
+\DoxyCodeLine{00610\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00611\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ *\ cann\ \ \ \ \ \ \ [16]\ CertAnnContent,\ \ \ \ \ \ \ \ \ \ \ -\/-\/Certificate\ Ann.}}
+\DoxyCodeLine{00612\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ *\ OSSL\_CMP\_CMPCERTIFICATE\ is\ effectively\ X509\ so\ it\ is\ used\ directly}}
+\DoxyCodeLine{00613\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00614\ \ \ \ \ \ \ \ \ X509\ *cann;\ \textcolor{comment}{/*\ 16\ */}}
+\DoxyCodeLine{00615\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00616\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ *\ rann\ \ \ \ \ \ \ [17]\ RevAnnContent,\ \ \ \ \ \ \ \ \ \ \ \ -\/-\/Revocation\ Ann.}}
+\DoxyCodeLine{00617\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00618\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structossl__cmp__revanncontent__st}{OSSL\_CMP\_REVANNCONTENT}}\ *rann;\ \textcolor{comment}{/*\ 17\ */}}
+\DoxyCodeLine{00619\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00620\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ *\ crlann\ \ \ \ \ [18]\ CRLAnnContent,\ \ \ \ \ \ \ \ \ \ \ \ -\/-\/CRL\ Announcement}}
+\DoxyCodeLine{00621\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ *\ CRLAnnContent\ ::=\ SEQUENCE\ OF\ CertificateList}}
+\DoxyCodeLine{00622\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00623\ \ \ \ \ \ \ \ \ OSSL\_CMP\_CRLANNCONTENT\ *crlann;\ \textcolor{comment}{/*\ 18\ */}}
+\DoxyCodeLine{00624\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00625\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ *\ PKIConfirmContent\ ::=\ NULL}}
+\DoxyCodeLine{00626\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ *\ pkiconf\ \ \ \ [19]\ PKIConfirmContent,\ \ \ \ \ \ \ \ -\/-\/Confirmation}}
+\DoxyCodeLine{00627\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ *\ OSSL\_CMP\_PKICONFIRMCONTENT\ would\ be\ only\ a\ typedef\ of\ ASN1\_NULL}}
+\DoxyCodeLine{00628\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ *\ OSSL\_CMP\_CONFIRMCONTENT\ *pkiconf;}}
+\DoxyCodeLine{00629\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ *}}
+\DoxyCodeLine{00630\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ *\ NOTE:\ this\ should\ ASN1\_NULL\ according\ to\ the\ RFC}}
+\DoxyCodeLine{00631\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ *\ but\ there\ might\ be\ a\ struct\ in\ it\ when\ sent\ from\ faulty\ servers...}}
+\DoxyCodeLine{00632\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00633\ \ \ \ \ \ \ \ \ ASN1\_TYPE\ *pkiconf;\ \textcolor{comment}{/*\ 19\ */}}
+\DoxyCodeLine{00634\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00635\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ *\ nested\ \ \ \ \ [20]\ NestedMessageContent,\ \ \ \ \ -\/-\/Nested\ Message}}
+\DoxyCodeLine{00636\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ *\ NestedMessageContent\ ::=\ PKIMessages}}
+\DoxyCodeLine{00637\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00638\ \ \ \ \ \ \ \ \ OSSL\_CMP\_MSGS\ *nested;\ \textcolor{comment}{/*\ 20\ */}}
+\DoxyCodeLine{00639\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00640\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ *\ genm\ \ \ \ \ \ \ [21]\ GenMsgContent,\ \ \ \ \ \ \ \ \ \ \ \ -\/-\/General\ Message}}
+\DoxyCodeLine{00641\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ *\ GenMsgContent\ ::=\ SEQUENCE\ OF\ InfoTypeAndValue}}
+\DoxyCodeLine{00642\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00643\ \ \ \ \ \ \ \ \ OSSL\_CMP\_GENMSGCONTENT\ *genm;\ \textcolor{comment}{/*\ 21\ */}}
+\DoxyCodeLine{00644\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00645\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ *\ genp\ \ \ \ \ \ \ [22]\ GenRepContent,\ \ \ \ \ \ \ \ \ \ \ \ -\/-\/General\ Response}}
+\DoxyCodeLine{00646\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ *\ GenRepContent\ ::=\ SEQUENCE\ OF\ InfoTypeAndValue}}
+\DoxyCodeLine{00647\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00648\ \ \ \ \ \ \ \ \ OSSL\_CMP\_GENREPCONTENT\ *genp;\ \textcolor{comment}{/*\ 22\ */}}
+\DoxyCodeLine{00649\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00650\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ *\ error\ \ \ \ \ \ [23]\ ErrorMsgContent,\ \ \ \ \ \ \ \ \ \ -\/-\/Error\ Message}}
+\DoxyCodeLine{00651\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00652\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structossl__cmp__errormsgcontent__st}{OSSL\_CMP\_ERRORMSGCONTENT}}\ *error;\ \textcolor{comment}{/*\ 23\ */}}
+\DoxyCodeLine{00653\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00654\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ *\ certConf\ [24]\ CertConfirmContent,\ \ \ \ \ -\/-\/Certificate\ confirm}}
+\DoxyCodeLine{00655\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00656\ \ \ \ \ \ \ \ \ OSSL\_CMP\_CERTCONFIRMCONTENT\ *certConf;\ \textcolor{comment}{/*\ 24\ */}}
+\DoxyCodeLine{00657\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00658\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ *\ pollReq\ \ \ \ [25]\ PollReqContent,\ \ \ \ \ \ \ \ \ \ \ -\/-\/Polling\ request}}
+\DoxyCodeLine{00659\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00660\ \ \ \ \ \ \ \ \ OSSL\_CMP\_POLLREQCONTENT\ *pollReq;\ \textcolor{comment}{/*\ 25\ */}}
+\DoxyCodeLine{00661\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00662\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ *\ pollRep\ \ \ \ [26]\ PollRepContent\ \ \ \ \ \ \ \ \ \ \ \ -\/-\/Polling\ response}}
+\DoxyCodeLine{00663\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00664\ \ \ \ \ \ \ \ \ OSSL\_CMP\_POLLREPCONTENT\ *pollRep;\ \textcolor{comment}{/*\ 26\ */}}
+\DoxyCodeLine{00665\ \ \ \ \ \}\ value;}
+\DoxyCodeLine{00666\ \}\ \mbox{\hyperlink{structossl__cmp__pkibody__st}{OSSL\_CMP\_PKIBODY}};}
+\DoxyCodeLine{00667\ DECLARE\_ASN1\_FUNCTIONS(\mbox{\hyperlink{structossl__cmp__pkibody__st}{OSSL\_CMP\_PKIBODY}})}
+\DoxyCodeLine{00668\ }
+\DoxyCodeLine{00669\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00670\ \textcolor{comment}{\ *\ \ \ PKIProtection\ ::=\ BIT\ STRING}}
+\DoxyCodeLine{00671\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00672\ \textcolor{comment}{\ *\ \ \ PKIMessages\ ::=\ SEQUENCE\ SIZE\ (1..MAX)\ OF\ PKIMessage}}
+\DoxyCodeLine{00673\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00674\ \textcolor{comment}{\ *\ \ \ \ PKIMessage\ ::=\ SEQUENCE\ \{}}
+\DoxyCodeLine{00675\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ header\ \ \ \ \ \ \ \ \ \ \ PKIHeader,}}
+\DoxyCodeLine{00676\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ body\ \ \ \ \ \ \ \ \ \ \ \ \ PKIBody,}}
+\DoxyCodeLine{00677\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ protection\ \ \ [0]\ PKIProtection\ OPTIONAL,}}
+\DoxyCodeLine{00678\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ extraCerts\ \ \ [1]\ SEQUENCE\ SIZE\ (1..MAX)\ OF\ CMPCertificate}}
+\DoxyCodeLine{00679\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OPTIONAL}}
+\DoxyCodeLine{00680\ \textcolor{comment}{\ *\ \ \ \}}}
+\DoxyCodeLine{00681\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00682\ struct\ \mbox{\hyperlink{structossl__cmp__msg__st}{ossl\_cmp\_msg\_st}}\ \{}
+\DoxyCodeLine{00683\ \ \ \ \ OSSL\_CMP\_PKIHEADER\ *header;}
+\DoxyCodeLine{00684\ \ \ \ \ \mbox{\hyperlink{structossl__cmp__pkibody__st}{OSSL\_CMP\_PKIBODY}}\ *body;}
+\DoxyCodeLine{00685\ \ \ \ \ ASN1\_BIT\_STRING\ *protection;\ \textcolor{comment}{/*\ 0\ */}}
+\DoxyCodeLine{00686\ \ \ \ \ \textcolor{comment}{/*\ OSSL\_CMP\_CMPCERTIFICATE\ is\ effectively\ X509\ so\ it\ is\ used\ directly\ */}}
+\DoxyCodeLine{00687\ \ \ \ \ STACK\_OF(X509)\ *extraCerts;\ \textcolor{comment}{/*\ 1\ */}}
+\DoxyCodeLine{00688\ \ \ \ \ OSSL\_LIB\_CTX\ *libctx;}
+\DoxyCodeLine{00689\ \ \ \ \ \textcolor{keywordtype}{char}\ *propq;}
+\DoxyCodeLine{00690\ \}\ \textcolor{comment}{/*\ OSSL\_CMP\_MSG\ */};}
+\DoxyCodeLine{00691\ OSSL\_CMP\_MSG\ *OSSL\_CMP\_MSG\_new(OSSL\_LIB\_CTX\ *libctx,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *propq);}
+\DoxyCodeLine{00692\ \textcolor{keywordtype}{void}\ OSSL\_CMP\_MSG\_free(OSSL\_CMP\_MSG\ *msg);}
+\DoxyCodeLine{00693\ }
+\DoxyCodeLine{00694\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00695\ \textcolor{comment}{\ *\ ProtectedPart\ ::=\ SEQUENCE\ \{}}
+\DoxyCodeLine{00696\ \textcolor{comment}{\ *\ header\ \ \ \ PKIHeader,}}
+\DoxyCodeLine{00697\ \textcolor{comment}{\ *\ body\ \ \ \ \ \ PKIBody}}
+\DoxyCodeLine{00698\ \textcolor{comment}{\ *\ \}}}
+\DoxyCodeLine{00699\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00700\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__cmp__protectedpart__st}{ossl\_cmp\_protectedpart\_st}}\ \{}
+\DoxyCodeLine{00701\ \ \ \ \ OSSL\_CMP\_PKIHEADER\ *header;}
+\DoxyCodeLine{00702\ \ \ \ \ \mbox{\hyperlink{structossl__cmp__pkibody__st}{OSSL\_CMP\_PKIBODY}}\ *body;}
+\DoxyCodeLine{00703\ \}\ \mbox{\hyperlink{structossl__cmp__protectedpart__st}{OSSL\_CMP\_PROTECTEDPART}};}
+\DoxyCodeLine{00704\ DECLARE\_ASN1\_FUNCTIONS(\mbox{\hyperlink{structossl__cmp__protectedpart__st}{OSSL\_CMP\_PROTECTEDPART}})}
+\DoxyCodeLine{00705\ }
+\DoxyCodeLine{00706\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00707\ \textcolor{comment}{\ *\ \ this\ is\ not\ defined\ here\ as\ it\ is\ already\ in\ CRMF:}}
+\DoxyCodeLine{00708\ \textcolor{comment}{\ *\ \ \ id-\/PasswordBasedMac\ OBJECT\ IDENTIFIER\ ::=\ \{1\ 2\ 840\ 113533\ 7\ 66\ 13\}}}
+\DoxyCodeLine{00709\ \textcolor{comment}{\ *\ \ \ PBMParameter\ ::=\ SEQUENCE\ \{}}
+\DoxyCodeLine{00710\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ salt\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OCTET\ STRING,}}
+\DoxyCodeLine{00711\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ -\/-\/\ note:\ \ implementations\ MAY\ wish\ to\ limit\ acceptable\ sizes}}
+\DoxyCodeLine{00712\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ -\/-\/\ of\ this\ string\ to\ values\ appropriate\ for\ their\ environment}}
+\DoxyCodeLine{00713\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ -\/-\/\ in\ order\ to\ reduce\ the\ risk\ of\ denial-\/of-\/service\ attacks}}
+\DoxyCodeLine{00714\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ owf\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ AlgorithmIdentifier,}}
+\DoxyCodeLine{00715\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ -\/-\/\ AlgId\ for\ a\ One-\/Way\ Function\ (SHA-\/1\ recommended)}}
+\DoxyCodeLine{00716\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ iterationCount\ \ \ \ \ \ INTEGER,}}
+\DoxyCodeLine{00717\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ -\/-\/\ number\ of\ times\ the\ OWF\ is\ applied}}
+\DoxyCodeLine{00718\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ -\/-\/\ note:\ \ implementations\ MAY\ wish\ to\ limit\ acceptable\ sizes}}
+\DoxyCodeLine{00719\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ -\/-\/\ of\ this\ integer\ to\ values\ appropriate\ for\ their\ environment}}
+\DoxyCodeLine{00720\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ -\/-\/\ in\ order\ to\ reduce\ the\ risk\ of\ denial-\/of-\/service\ attacks}}
+\DoxyCodeLine{00721\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ mac\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ AlgorithmIdentifier}}
+\DoxyCodeLine{00722\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ -\/-\/\ the\ MAC\ AlgId\ (e.g.,\ DES-\/MAC,\ Triple-\/DES-\/MAC\ [PKCS11],}}
+\DoxyCodeLine{00723\ \textcolor{comment}{\ *\ \ \ \}\ \ \ \ \ \ \ -\/-\/\ or\ HMAC\ [RFC2104,\ RFC2202])}}
+\DoxyCodeLine{00724\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00725\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00726\ \textcolor{comment}{\ *\ \ \ Not\ supported:}}
+\DoxyCodeLine{00727\ \textcolor{comment}{\ *\ \ \ id-\/DHBasedMac\ OBJECT\ IDENTIFIER\ ::=\ \{1\ 2\ 840\ 113533\ 7\ 66\ 30\}}}
+\DoxyCodeLine{00728\ \textcolor{comment}{\ *\ \ \ DHBMParameter\ ::=\ SEQUENCE\ \{}}
+\DoxyCodeLine{00729\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ owf\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ AlgorithmIdentifier,}}
+\DoxyCodeLine{00730\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ -\/-\/\ AlgId\ for\ a\ One-\/Way\ Function\ (SHA-\/1\ recommended)}}
+\DoxyCodeLine{00731\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ mac\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ AlgorithmIdentifier}}
+\DoxyCodeLine{00732\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ -\/-\/\ the\ MAC\ AlgId\ (e.g.,\ DES-\/MAC,\ Triple-\/DES-\/MAC\ [PKCS11],}}
+\DoxyCodeLine{00733\ \textcolor{comment}{\ *\ \ \ \}\ \ \ \ \ \ \ -\/-\/\ or\ HMAC\ [RFC2104,\ RFC2202])}}
+\DoxyCodeLine{00734\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00735\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00736\ \textcolor{comment}{\ *\ The\ following\ is\ not\ cared\ for,\ because\ it\ is\ described\ in\ section\ 5.2.5}}
+\DoxyCodeLine{00737\ \textcolor{comment}{\ *\ that\ this\ is\ beyond\ the\ scope\ of\ CMP}}
+\DoxyCodeLine{00738\ \textcolor{comment}{\ *\ \ \ OOBCert\ ::=\ CMPCertificate}}
+\DoxyCodeLine{00739\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00740\ \textcolor{comment}{\ *\ \ \ OOBCertHash\ ::=\ SEQUENCE\ \{}}
+\DoxyCodeLine{00741\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ hashAlg\ \ \ \ \ \ \ \ \ [0]\ AlgorithmIdentifier\ \ \ \ \ \ \ \ \ OPTIONAL,}}
+\DoxyCodeLine{00742\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ certId\ \ \ \ \ \ \ \ \ \ [1]\ CertId\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OPTIONAL,}}
+\DoxyCodeLine{00743\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ hashVal\ \ \ \ \ \ \ \ \ \ \ \ \ BIT\ STRING}}
+\DoxyCodeLine{00744\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ -\/-\/\ hashVal\ is\ calculated\ over\ the\ DER\ encoding\ of\ the}}
+\DoxyCodeLine{00745\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ -\/-\/\ self-\/signed\ certificate\ with\ the\ identifier\ certID.}}
+\DoxyCodeLine{00746\ \textcolor{comment}{\ *\ \ \ \}}}
+\DoxyCodeLine{00747\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00748\ }
+\DoxyCodeLine{00749\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00750\ \textcolor{comment}{\ *\ RootCaKeyUpdateContent\ ::=\ SEQUENCE\ \{}}
+\DoxyCodeLine{00751\ \textcolor{comment}{\ *\ \ \ \ \ \ newWithNew\ \ \ \ \ \ \ CMPCertificate,}}
+\DoxyCodeLine{00752\ \textcolor{comment}{\ *\ \ \ \ \ \ newWithOld\ \ \ [0]\ CMPCertificate\ OPTIONAL,}}
+\DoxyCodeLine{00753\ \textcolor{comment}{\ *\ \ \ \ \ \ oldWithNew\ \ \ [1]\ CMPCertificate\ OPTIONAL}}
+\DoxyCodeLine{00754\ \textcolor{comment}{\ *\ \}}}
+\DoxyCodeLine{00755\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00756\ }
+\DoxyCodeLine{00757\ struct\ \mbox{\hyperlink{structossl__cmp__rootcakeyupdate__st}{ossl\_cmp\_rootcakeyupdate\_st}}\ \{}
+\DoxyCodeLine{00758\ \ \ \ \ X509\ *newWithNew;}
+\DoxyCodeLine{00759\ \ \ \ \ X509\ *newWithOld;}
+\DoxyCodeLine{00760\ \ \ \ \ X509\ *oldWithNew;}
+\DoxyCodeLine{00761\ \}\ \textcolor{comment}{/*\ OSSL\_CMP\_ROOTCAKEYUPDATE\ */};}
+\DoxyCodeLine{00762\ DECLARE\_ASN1\_FUNCTIONS(\mbox{\hyperlink{structossl__cmp__rootcakeyupdate__st}{OSSL\_CMP\_ROOTCAKEYUPDATE}})}
+\DoxyCodeLine{00763\ }
+\DoxyCodeLine{00764\ \textcolor{comment}{/*\ from\ cmp\_asn.c\ */}}
+\DoxyCodeLine{00765\ \textcolor{keywordtype}{int}\ ossl\_cmp\_asn1\_get\_int(\textcolor{keyword}{const}\ ASN1\_INTEGER\ *a);}
+\DoxyCodeLine{00766\ }
+\DoxyCodeLine{00767\ \textcolor{comment}{/*\ from\ cmp\_util.c\ */}}
+\DoxyCodeLine{00768\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *ossl\_cmp\_log\_parse\_metadata(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *buf,}
+\DoxyCodeLine{00769\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OSSL\_CMP\_severity\ *level,\ \textcolor{keywordtype}{char}\ **func,}
+\DoxyCodeLine{00770\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{char}\ **file,\ \textcolor{keywordtype}{int}\ *line);}
+\DoxyCodeLine{00771\ \textcolor{preprocessor}{\#\ define\ ossl\_cmp\_add\_error\_data(txt)\ ERR\_add\_error\_txt("{}\ :\ "{},\ txt)}}
+\DoxyCodeLine{00772\ \textcolor{preprocessor}{\#\ define\ ossl\_cmp\_add\_error\_line(txt)\ ERR\_add\_error\_txt("{}\(\backslash\)n"{},\ txt)}}
+\DoxyCodeLine{00773\ \textcolor{comment}{/*\ The\ two\ functions\ manipulating\ X509\_STORE\ could\ be\ generally\ useful\ */}}
+\DoxyCodeLine{00774\ \textcolor{keywordtype}{int}\ ossl\_cmp\_X509\_STORE\_add1\_certs(X509\_STORE\ *store,\ STACK\_OF(X509)\ *certs,}
+\DoxyCodeLine{00775\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ only\_self\_issued);}
+\DoxyCodeLine{00776\ STACK\_OF(X509)\ *ossl\_cmp\_X509\_STORE\_get1\_certs(X509\_STORE\ *store);}
+\DoxyCodeLine{00777\ \textcolor{keywordtype}{int}\ ossl\_cmp\_sk\_ASN1\_UTF8STRING\_push\_str(STACK\_OF(ASN1\_UTF8STRING)\ *sk,}
+\DoxyCodeLine{00778\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *text,\ \textcolor{keywordtype}{int}\ len);}
+\DoxyCodeLine{00779\ \textcolor{keywordtype}{int}\ ossl\_cmp\_asn1\_octet\_string\_set1(ASN1\_OCTET\_STRING\ **tgt,}
+\DoxyCodeLine{00780\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ ASN1\_OCTET\_STRING\ *src);}
+\DoxyCodeLine{00781\ \textcolor{keywordtype}{int}\ ossl\_cmp\_asn1\_octet\_string\_set1\_bytes(ASN1\_OCTET\_STRING\ **tgt,}
+\DoxyCodeLine{00782\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *bytes,\ \textcolor{keywordtype}{int}\ len);}
+\DoxyCodeLine{00783\ }
+\DoxyCodeLine{00784\ \textcolor{comment}{/*\ from\ cmp\_ctx.c\ */}}
+\DoxyCodeLine{00785\ \textcolor{keywordtype}{int}\ ossl\_cmp\_print\_log(OSSL\_CMP\_severity\ level,\ \textcolor{keyword}{const}\ OSSL\_CMP\_CTX\ *ctx,}
+\DoxyCodeLine{00786\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *func,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *file,\ \textcolor{keywordtype}{int}\ line,}
+\DoxyCodeLine{00787\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *level\_str,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *format,\ ...);}
+\DoxyCodeLine{00788\ \textcolor{preprocessor}{\#\ define\ ossl\_cmp\_log(level,\ ctx,\ msg)\ \(\backslash\)}}
+\DoxyCodeLine{00789\ \textcolor{preprocessor}{\ \ \ \ ossl\_cmp\_print\_log(OSSL\_CMP\_LOG\_\#\#level,\ ctx,\ OPENSSL\_FUNC,\ OPENSSL\_FILE,\ \(\backslash\)}}
+\DoxyCodeLine{00790\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OPENSSL\_LINE,\ \#level,\ "{}\%s"{},\ msg)}}
+\DoxyCodeLine{00791\ \textcolor{preprocessor}{\#\ define\ ossl\_cmp\_log1(level,\ ctx,\ fmt,\ arg1)\ \(\backslash\)}}
+\DoxyCodeLine{00792\ \textcolor{preprocessor}{\ \ \ \ ossl\_cmp\_print\_log(OSSL\_CMP\_LOG\_\#\#level,\ ctx,\ OPENSSL\_FUNC,\ OPENSSL\_FILE,\ \(\backslash\)}}
+\DoxyCodeLine{00793\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OPENSSL\_LINE,\ \#level,\ fmt,\ arg1)}}
+\DoxyCodeLine{00794\ \textcolor{preprocessor}{\#\ define\ ossl\_cmp\_log2(level,\ ctx,\ fmt,\ arg1,\ arg2)\ \(\backslash\)}}
+\DoxyCodeLine{00795\ \textcolor{preprocessor}{\ \ \ \ ossl\_cmp\_print\_log(OSSL\_CMP\_LOG\_\#\#level,\ ctx,\ OPENSSL\_FUNC,\ OPENSSL\_FILE,\ \(\backslash\)}}
+\DoxyCodeLine{00796\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OPENSSL\_LINE,\ \#level,\ fmt,\ arg1,\ arg2)}}
+\DoxyCodeLine{00797\ \textcolor{preprocessor}{\#\ define\ ossl\_cmp\_log3(level,\ ctx,\ fmt,\ arg1,\ arg2,\ arg3)\ \(\backslash\)}}
+\DoxyCodeLine{00798\ \textcolor{preprocessor}{\ \ \ \ ossl\_cmp\_print\_log(OSSL\_CMP\_LOG\_\#\#level,\ ctx,\ OPENSSL\_FUNC,\ OPENSSL\_FILE,\ \(\backslash\)}}
+\DoxyCodeLine{00799\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OPENSSL\_LINE,\ \#level,\ fmt,\ arg1,\ arg2,\ arg3)}}
+\DoxyCodeLine{00800\ \textcolor{preprocessor}{\#\ define\ ossl\_cmp\_log4(level,\ ctx,\ fmt,\ arg1,\ arg2,\ arg3,\ arg4)\ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00801\ \textcolor{preprocessor}{\ \ \ \ ossl\_cmp\_print\_log(OSSL\_CMP\_LOG\_\#\#level,\ ctx,\ OPENSSL\_FUNC,\ OPENSSL\_FILE,\ \(\backslash\)}}
+\DoxyCodeLine{00802\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OPENSSL\_LINE,\ \#level,\ fmt,\ arg1,\ arg2,\ arg3,\ arg4)}}
+\DoxyCodeLine{00803\ \textcolor{preprocessor}{\#\ define\ OSSL\_CMP\_LOG\_ERROR\ OSSL\_CMP\_LOG\_ERR}}
+\DoxyCodeLine{00804\ \textcolor{preprocessor}{\#\ define\ OSSL\_CMP\_LOG\_WARN\ OSSL\_CMP\_LOG\_WARNING}}
+\DoxyCodeLine{00805\ \textcolor{preprocessor}{\#\ define\ ossl\_cmp\_alert(ctx,\ msg)\ ossl\_cmp\_log(ALERT,\ ctx,\ msg)}}
+\DoxyCodeLine{00806\ \textcolor{preprocessor}{\#\ define\ ossl\_cmp\_err(ctx,\ msg)\ \ \ ossl\_cmp\_log(ERROR,\ ctx,\ msg)}}
+\DoxyCodeLine{00807\ \textcolor{preprocessor}{\#\ define\ ossl\_cmp\_warn(ctx,\ msg)\ \ ossl\_cmp\_log(WARN,\ \ ctx,\ msg)}}
+\DoxyCodeLine{00808\ \textcolor{preprocessor}{\#\ define\ ossl\_cmp\_info(ctx,\ msg)\ \ ossl\_cmp\_log(INFO,\ \ ctx,\ msg)}}
+\DoxyCodeLine{00809\ \textcolor{preprocessor}{\#\ define\ ossl\_cmp\_debug(ctx,\ msg)\ ossl\_cmp\_log(DEBUG,\ ctx,\ msg)}}
+\DoxyCodeLine{00810\ \textcolor{preprocessor}{\#\ define\ ossl\_cmp\_trace(ctx,\ msg)\ ossl\_cmp\_log(TRACE,\ ctx,\ msg)}}
+\DoxyCodeLine{00811\ \textcolor{keywordtype}{int}\ ossl\_cmp\_ctx\_set1\_validatedSrvCert(OSSL\_CMP\_CTX\ *ctx,\ X509\ *cert);}
+\DoxyCodeLine{00812\ \textcolor{keywordtype}{int}\ ossl\_cmp\_ctx\_set\_status(OSSL\_CMP\_CTX\ *ctx,\ \textcolor{keywordtype}{int}\ status);}
+\DoxyCodeLine{00813\ \textcolor{keywordtype}{int}\ ossl\_cmp\_ctx\_set0\_statusString(OSSL\_CMP\_CTX\ *ctx,}
+\DoxyCodeLine{00814\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OSSL\_CMP\_PKIFREETEXT\ *text);}
+\DoxyCodeLine{00815\ \textcolor{keywordtype}{int}\ ossl\_cmp\_ctx\_set\_failInfoCode(OSSL\_CMP\_CTX\ *ctx,\ \textcolor{keywordtype}{int}\ fail\_info);}
+\DoxyCodeLine{00816\ \textcolor{keywordtype}{int}\ ossl\_cmp\_ctx\_set0\_newCert(OSSL\_CMP\_CTX\ *ctx,\ X509\ *cert);}
+\DoxyCodeLine{00817\ \textcolor{keywordtype}{int}\ ossl\_cmp\_ctx\_set1\_newChain(OSSL\_CMP\_CTX\ *ctx,\ STACK\_OF(X509)\ *newChain);}
+\DoxyCodeLine{00818\ \textcolor{keywordtype}{int}\ ossl\_cmp\_ctx\_set1\_caPubs(OSSL\_CMP\_CTX\ *ctx,\ STACK\_OF(X509)\ *caPubs);}
+\DoxyCodeLine{00819\ \textcolor{keywordtype}{int}\ ossl\_cmp\_ctx\_set1\_extraCertsIn(OSSL\_CMP\_CTX\ *ctx,}
+\DoxyCodeLine{00820\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ STACK\_OF(X509)\ *extraCertsIn);}
+\DoxyCodeLine{00821\ \textcolor{keywordtype}{int}\ ossl\_cmp\_ctx\_set1\_recipNonce(OSSL\_CMP\_CTX\ *ctx,}
+\DoxyCodeLine{00822\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ ASN1\_OCTET\_STRING\ *nonce);}
+\DoxyCodeLine{00823\ EVP\_PKEY\ *ossl\_cmp\_ctx\_get0\_newPubkey(\textcolor{keyword}{const}\ OSSL\_CMP\_CTX\ *ctx);}
+\DoxyCodeLine{00824\ }
+\DoxyCodeLine{00825\ \textcolor{comment}{/*\ from\ cmp\_status.c\ */}}
+\DoxyCodeLine{00826\ \textcolor{keywordtype}{int}\ ossl\_cmp\_pkisi\_get\_status(\textcolor{keyword}{const}\ OSSL\_CMP\_PKISI\ *si);}
+\DoxyCodeLine{00827\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *ossl\_cmp\_PKIStatus\_to\_string(\textcolor{keywordtype}{int}\ status);}
+\DoxyCodeLine{00828\ OSSL\_CMP\_PKIFREETEXT\ *ossl\_cmp\_pkisi\_get0\_statusString(\textcolor{keyword}{const}\ OSSL\_CMP\_PKISI\ *s);}
+\DoxyCodeLine{00829\ \textcolor{keywordtype}{int}\ ossl\_cmp\_pkisi\_get\_pkifailureinfo(\textcolor{keyword}{const}\ OSSL\_CMP\_PKISI\ *si);}
+\DoxyCodeLine{00830\ \textcolor{keywordtype}{int}\ ossl\_cmp\_pkisi\_check\_pkifailureinfo(\textcolor{keyword}{const}\ OSSL\_CMP\_PKISI\ *si,\ \textcolor{keywordtype}{int}\ index);}
+\DoxyCodeLine{00831\ }
+\DoxyCodeLine{00832\ \textcolor{comment}{/*\ from\ cmp\_hdr.c\ */}}
+\DoxyCodeLine{00833\ \textcolor{keywordtype}{int}\ ossl\_cmp\_hdr\_set\_pvno(OSSL\_CMP\_PKIHEADER\ *hdr,\ \textcolor{keywordtype}{int}\ pvno);}
+\DoxyCodeLine{00834\ \textcolor{keywordtype}{int}\ ossl\_cmp\_hdr\_get\_pvno(\textcolor{keyword}{const}\ OSSL\_CMP\_PKIHEADER\ *hdr);}
+\DoxyCodeLine{00835\ \textcolor{keywordtype}{int}\ ossl\_cmp\_hdr\_get\_protection\_nid(\textcolor{keyword}{const}\ OSSL\_CMP\_PKIHEADER\ *hdr);}
+\DoxyCodeLine{00836\ ASN1\_OCTET\_STRING\ *ossl\_cmp\_hdr\_get0\_senderNonce(\textcolor{keyword}{const}\ OSSL\_CMP\_PKIHEADER\ *hdr);}
+\DoxyCodeLine{00837\ \textcolor{keywordtype}{int}\ ossl\_cmp\_general\_name\_is\_NULL\_DN(GENERAL\_NAME\ *name);}
+\DoxyCodeLine{00838\ \textcolor{keywordtype}{int}\ ossl\_cmp\_hdr\_set1\_sender(OSSL\_CMP\_PKIHEADER\ *hdr,\ \textcolor{keyword}{const}\ X509\_NAME\ *nm);}
+\DoxyCodeLine{00839\ \textcolor{keywordtype}{int}\ ossl\_cmp\_hdr\_set1\_recipient(OSSL\_CMP\_PKIHEADER\ *hdr,\ \textcolor{keyword}{const}\ X509\_NAME\ *nm);}
+\DoxyCodeLine{00840\ \textcolor{keywordtype}{int}\ ossl\_cmp\_hdr\_update\_messageTime(OSSL\_CMP\_PKIHEADER\ *hdr);}
+\DoxyCodeLine{00841\ \textcolor{keywordtype}{int}\ ossl\_cmp\_hdr\_set1\_senderKID(OSSL\_CMP\_PKIHEADER\ *hdr,}
+\DoxyCodeLine{00842\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ ASN1\_OCTET\_STRING\ *senderKID);}
+\DoxyCodeLine{00843\ \textcolor{keywordtype}{int}\ ossl\_cmp\_hdr\_push0\_freeText(OSSL\_CMP\_PKIHEADER\ *hdr,\ ASN1\_UTF8STRING\ *text);}
+\DoxyCodeLine{00844\ \textcolor{keywordtype}{int}\ ossl\_cmp\_hdr\_push1\_freeText(OSSL\_CMP\_PKIHEADER\ *hdr,\ ASN1\_UTF8STRING\ *text);}
+\DoxyCodeLine{00845\ \textcolor{keywordtype}{int}\ ossl\_cmp\_hdr\_generalInfo\_push0\_item(OSSL\_CMP\_PKIHEADER\ *hdr,}
+\DoxyCodeLine{00846\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OSSL\_CMP\_ITAV\ *itav);}
+\DoxyCodeLine{00847\ \textcolor{keywordtype}{int}\ ossl\_cmp\_hdr\_generalInfo\_push1\_items(OSSL\_CMP\_PKIHEADER\ *hdr,}
+\DoxyCodeLine{00848\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ STACK\_OF(OSSL\_CMP\_ITAV)\ *itavs);}
+\DoxyCodeLine{00849\ \textcolor{keywordtype}{int}\ ossl\_cmp\_hdr\_set\_implicitConfirm(OSSL\_CMP\_PKIHEADER\ *hdr);}
+\DoxyCodeLine{00850\ \textcolor{keywordtype}{int}\ ossl\_cmp\_hdr\_has\_implicitConfirm(\textcolor{keyword}{const}\ OSSL\_CMP\_PKIHEADER\ *hdr);}
+\DoxyCodeLine{00851\ \textcolor{preprocessor}{\#\ define\ OSSL\_CMP\_TRANSACTIONID\_LENGTH\ 16}}
+\DoxyCodeLine{00852\ \textcolor{preprocessor}{\#\ define\ OSSL\_CMP\_SENDERNONCE\_LENGTH\ 16}}
+\DoxyCodeLine{00853\ \textcolor{keywordtype}{int}\ ossl\_cmp\_hdr\_set\_transactionID(OSSL\_CMP\_CTX\ *ctx,\ OSSL\_CMP\_PKIHEADER\ *hdr);}
+\DoxyCodeLine{00854\ \textcolor{keywordtype}{int}\ ossl\_cmp\_hdr\_init(OSSL\_CMP\_CTX\ *ctx,\ OSSL\_CMP\_PKIHEADER\ *hdr);}
+\DoxyCodeLine{00855\ }
+\DoxyCodeLine{00856\ \textcolor{comment}{/*\ from\ cmp\_msg.c\ */}}
+\DoxyCodeLine{00857\ \textcolor{comment}{/*\ OSSL\_CMP\_MSG\ bodytype\ ASN.1\ choice\ IDs\ */}}
+\DoxyCodeLine{00858\ \textcolor{preprocessor}{\#\ define\ OSSL\_CMP\_PKIBODY\_IR\ \ \ \ \ \ \ \ 0}}
+\DoxyCodeLine{00859\ \textcolor{preprocessor}{\#\ define\ OSSL\_CMP\_PKIBODY\_IP\ \ \ \ \ \ \ \ 1}}
+\DoxyCodeLine{00860\ \textcolor{preprocessor}{\#\ define\ OSSL\_CMP\_PKIBODY\_CR\ \ \ \ \ \ \ \ 2}}
+\DoxyCodeLine{00861\ \textcolor{preprocessor}{\#\ define\ OSSL\_CMP\_PKIBODY\_CP\ \ \ \ \ \ \ \ 3}}
+\DoxyCodeLine{00862\ \textcolor{preprocessor}{\#\ define\ OSSL\_CMP\_PKIBODY\_P10CR\ \ \ \ \ 4}}
+\DoxyCodeLine{00863\ \textcolor{preprocessor}{\#\ define\ OSSL\_CMP\_PKIBODY\_POPDECC\ \ \ 5}}
+\DoxyCodeLine{00864\ \textcolor{preprocessor}{\#\ define\ OSSL\_CMP\_PKIBODY\_POPDECR\ \ \ 6}}
+\DoxyCodeLine{00865\ \textcolor{preprocessor}{\#\ define\ OSSL\_CMP\_PKIBODY\_KUR\ \ \ \ \ \ \ 7}}
+\DoxyCodeLine{00866\ \textcolor{preprocessor}{\#\ define\ OSSL\_CMP\_PKIBODY\_KUP\ \ \ \ \ \ \ 8}}
+\DoxyCodeLine{00867\ \textcolor{preprocessor}{\#\ define\ OSSL\_CMP\_PKIBODY\_KRR\ \ \ \ \ \ \ 9}}
+\DoxyCodeLine{00868\ \textcolor{preprocessor}{\#\ define\ OSSL\_CMP\_PKIBODY\_KRP\ \ \ \ \ \ 10}}
+\DoxyCodeLine{00869\ \textcolor{preprocessor}{\#\ define\ OSSL\_CMP\_PKIBODY\_RR\ \ \ \ \ \ \ 11}}
+\DoxyCodeLine{00870\ \textcolor{preprocessor}{\#\ define\ OSSL\_CMP\_PKIBODY\_RP\ \ \ \ \ \ \ 12}}
+\DoxyCodeLine{00871\ \textcolor{preprocessor}{\#\ define\ OSSL\_CMP\_PKIBODY\_CCR\ \ \ \ \ \ 13}}
+\DoxyCodeLine{00872\ \textcolor{preprocessor}{\#\ define\ OSSL\_CMP\_PKIBODY\_CCP\ \ \ \ \ \ 14}}
+\DoxyCodeLine{00873\ \textcolor{preprocessor}{\#\ define\ OSSL\_CMP\_PKIBODY\_CKUANN\ \ \ 15}}
+\DoxyCodeLine{00874\ \textcolor{preprocessor}{\#\ define\ OSSL\_CMP\_PKIBODY\_CANN\ \ \ \ \ 16}}
+\DoxyCodeLine{00875\ \textcolor{preprocessor}{\#\ define\ OSSL\_CMP\_PKIBODY\_RANN\ \ \ \ \ 17}}
+\DoxyCodeLine{00876\ \textcolor{preprocessor}{\#\ define\ OSSL\_CMP\_PKIBODY\_CRLANN\ \ \ 18}}
+\DoxyCodeLine{00877\ \textcolor{preprocessor}{\#\ define\ OSSL\_CMP\_PKIBODY\_PKICONF\ \ 19}}
+\DoxyCodeLine{00878\ \textcolor{preprocessor}{\#\ define\ OSSL\_CMP\_PKIBODY\_NESTED\ \ \ 20}}
+\DoxyCodeLine{00879\ \textcolor{preprocessor}{\#\ define\ OSSL\_CMP\_PKIBODY\_GENM\ \ \ \ \ 21}}
+\DoxyCodeLine{00880\ \textcolor{preprocessor}{\#\ define\ OSSL\_CMP\_PKIBODY\_GENP\ \ \ \ \ 22}}
+\DoxyCodeLine{00881\ \textcolor{preprocessor}{\#\ define\ OSSL\_CMP\_PKIBODY\_ERROR\ \ \ \ 23}}
+\DoxyCodeLine{00882\ \textcolor{preprocessor}{\#\ define\ OSSL\_CMP\_PKIBODY\_CERTCONF\ 24}}
+\DoxyCodeLine{00883\ \textcolor{preprocessor}{\#\ define\ OSSL\_CMP\_PKIBODY\_POLLREQ\ \ 25}}
+\DoxyCodeLine{00884\ \textcolor{preprocessor}{\#\ define\ OSSL\_CMP\_PKIBODY\_POLLREP\ \ 26}}
+\DoxyCodeLine{00885\ \textcolor{preprocessor}{\#\ define\ OSSL\_CMP\_PKIBODY\_TYPE\_MAX\ OSSL\_CMP\_PKIBODY\_POLLREP}}
+\DoxyCodeLine{00886\ \textcolor{comment}{/*\ certReqId\ for\ the\ first\ -\/\ and\ so\ far\ only\ -\/\ certificate\ request\ */}}
+\DoxyCodeLine{00887\ \textcolor{preprocessor}{\#\ define\ OSSL\_CMP\_CERTREQID\ \ \ \ \ \ \ \ \ 0}}
+\DoxyCodeLine{00888\ \textcolor{preprocessor}{\#\ define\ OSSL\_CMP\_CERTREQID\_NONE\ \ \ \ -\/1}}
+\DoxyCodeLine{00889\ \textcolor{preprocessor}{\#\ define\ OSSL\_CMP\_CERTREQID\_INVALID\ -\/2}}
+\DoxyCodeLine{00890\ \textcolor{comment}{/*\ sequence\ id\ for\ the\ first\ -\/\ and\ so\ far\ only\ -\/\ revocation\ request\ */}}
+\DoxyCodeLine{00891\ \textcolor{preprocessor}{\#\ define\ OSSL\_CMP\_REVREQSID\ 0}}
+\DoxyCodeLine{00892\ \textcolor{keywordtype}{int}\ ossl\_cmp\_msg\_set0\_libctx(OSSL\_CMP\_MSG\ *msg,\ OSSL\_LIB\_CTX\ *libctx,}
+\DoxyCodeLine{00893\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *propq);}
+\DoxyCodeLine{00894\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *ossl\_cmp\_bodytype\_to\_string(\textcolor{keywordtype}{int}\ type);}
+\DoxyCodeLine{00895\ \textcolor{keywordtype}{int}\ ossl\_cmp\_msg\_set\_bodytype(OSSL\_CMP\_MSG\ *msg,\ \textcolor{keywordtype}{int}\ type);}
+\DoxyCodeLine{00896\ OSSL\_CMP\_MSG\ *ossl\_cmp\_msg\_create(OSSL\_CMP\_CTX\ *ctx,\ \textcolor{keywordtype}{int}\ bodytype);}
+\DoxyCodeLine{00897\ OSSL\_CMP\_MSG\ *ossl\_cmp\_certreq\_new(OSSL\_CMP\_CTX\ *ctx,\ \textcolor{keywordtype}{int}\ bodytype,}
+\DoxyCodeLine{00898\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ OSSL\_CRMF\_MSG\ *crm);}
+\DoxyCodeLine{00899\ OSSL\_CMP\_MSG\ *ossl\_cmp\_certrep\_new(OSSL\_CMP\_CTX\ *ctx,\ \textcolor{keywordtype}{int}\ bodytype,}
+\DoxyCodeLine{00900\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ certReqId,\ \textcolor{keyword}{const}\ OSSL\_CMP\_PKISI\ *si,}
+\DoxyCodeLine{00901\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\ *cert,\ \textcolor{keyword}{const}\ X509\ *encryption\_recip,}
+\DoxyCodeLine{00902\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ STACK\_OF(X509)\ *chain,\ STACK\_OF(X509)\ *caPubs,}
+\DoxyCodeLine{00903\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ unprotectedErrors);}
+\DoxyCodeLine{00904\ OSSL\_CMP\_MSG\ *ossl\_cmp\_rr\_new(OSSL\_CMP\_CTX\ *ctx);}
+\DoxyCodeLine{00905\ OSSL\_CMP\_MSG\ *ossl\_cmp\_rp\_new(OSSL\_CMP\_CTX\ *ctx,\ \textcolor{keyword}{const}\ OSSL\_CMP\_PKISI\ *si,}
+\DoxyCodeLine{00906\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ OSSL\_CRMF\_CERTID\ *cid,}
+\DoxyCodeLine{00907\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ unprotectedErrors);}
+\DoxyCodeLine{00908\ OSSL\_CMP\_MSG\ *ossl\_cmp\_pkiconf\_new(OSSL\_CMP\_CTX\ *ctx);}
+\DoxyCodeLine{00909\ OSSL\_CMP\_MSG\ *ossl\_cmp\_pollRep\_new(OSSL\_CMP\_CTX\ *ctx,\ \textcolor{keywordtype}{int}\ crid,}
+\DoxyCodeLine{00910\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ int64\_t\ poll\_after);}
+\DoxyCodeLine{00911\ \textcolor{keywordtype}{int}\ ossl\_cmp\_msg\_gen\_push0\_ITAV(OSSL\_CMP\_MSG\ *msg,\ OSSL\_CMP\_ITAV\ *itav);}
+\DoxyCodeLine{00912\ \textcolor{keywordtype}{int}\ ossl\_cmp\_msg\_gen\_push1\_ITAVs(OSSL\_CMP\_MSG\ *msg,}
+\DoxyCodeLine{00913\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ STACK\_OF(OSSL\_CMP\_ITAV)\ *itavs);}
+\DoxyCodeLine{00914\ OSSL\_CMP\_MSG\ *ossl\_cmp\_genm\_new(OSSL\_CMP\_CTX\ *ctx);}
+\DoxyCodeLine{00915\ OSSL\_CMP\_MSG\ *ossl\_cmp\_genp\_new(OSSL\_CMP\_CTX\ *ctx,}
+\DoxyCodeLine{00916\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ STACK\_OF(OSSL\_CMP\_ITAV)\ *itavs);}
+\DoxyCodeLine{00917\ OSSL\_CMP\_MSG\ *ossl\_cmp\_error\_new(OSSL\_CMP\_CTX\ *ctx,\ \textcolor{keyword}{const}\ OSSL\_CMP\_PKISI\ *si,}
+\DoxyCodeLine{00918\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ int64\_t\ errorCode,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *details,}
+\DoxyCodeLine{00919\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ unprotected);}
+\DoxyCodeLine{00920\ \textcolor{keywordtype}{int}\ ossl\_cmp\_certstatus\_set0\_certHash(OSSL\_CMP\_CERTSTATUS\ *certStatus,}
+\DoxyCodeLine{00921\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ASN1\_OCTET\_STRING\ *hash);}
+\DoxyCodeLine{00922\ OSSL\_CMP\_MSG\ *ossl\_cmp\_certConf\_new(OSSL\_CMP\_CTX\ *ctx,\ \textcolor{keywordtype}{int}\ certReqId,}
+\DoxyCodeLine{00923\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ fail\_info,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *text);}
+\DoxyCodeLine{00924\ OSSL\_CMP\_MSG\ *ossl\_cmp\_pollReq\_new(OSSL\_CMP\_CTX\ *ctx,\ \textcolor{keywordtype}{int}\ crid);}
+\DoxyCodeLine{00925\ OSSL\_CMP\_MSG\ *ossl\_cmp\_pollRep\_new(OSSL\_CMP\_CTX\ *ctx,\ \textcolor{keywordtype}{int}\ crid,}
+\DoxyCodeLine{00926\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ int64\_t\ poll\_after);}
+\DoxyCodeLine{00927\ OSSL\_CMP\_PKISI\ *}
+\DoxyCodeLine{00928\ ossl\_cmp\_revrepcontent\_get\_pkisi(OSSL\_CMP\_REVREPCONTENT\ *rrep,\ \textcolor{keywordtype}{int}\ rsid);}
+\DoxyCodeLine{00929\ OSSL\_CRMF\_CERTID\ *ossl\_cmp\_revrepcontent\_get\_CertId(OSSL\_CMP\_REVREPCONTENT\ *rc,}
+\DoxyCodeLine{00930\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ rsid);}
+\DoxyCodeLine{00931\ OSSL\_CMP\_POLLREP\ *}
+\DoxyCodeLine{00932\ ossl\_cmp\_pollrepcontent\_get0\_pollrep(\textcolor{keyword}{const}\ OSSL\_CMP\_POLLREPCONTENT\ *prc,}
+\DoxyCodeLine{00933\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ rid);}
+\DoxyCodeLine{00934\ OSSL\_CMP\_CERTRESPONSE\ *}
+\DoxyCodeLine{00935\ ossl\_cmp\_certrepmessage\_get0\_certresponse(\textcolor{keyword}{const}\ OSSL\_CMP\_CERTREPMESSAGE\ *crm,}
+\DoxyCodeLine{00936\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ rid);}
+\DoxyCodeLine{00937\ X509\ *ossl\_cmp\_certresponse\_get1\_cert(\textcolor{keyword}{const}\ OSSL\_CMP\_CTX\ *ctx,}
+\DoxyCodeLine{00938\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ OSSL\_CMP\_CERTRESPONSE\ *crep);}
+\DoxyCodeLine{00939\ OSSL\_CMP\_MSG\ *ossl\_cmp\_msg\_load(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *file);}
+\DoxyCodeLine{00940\ }
+\DoxyCodeLine{00941\ \textcolor{comment}{/*\ from\ cmp\_protect.c\ */}}
+\DoxyCodeLine{00942\ \textcolor{keywordtype}{int}\ ossl\_cmp\_msg\_add\_extraCerts(OSSL\_CMP\_CTX\ *ctx,\ OSSL\_CMP\_MSG\ *msg);}
+\DoxyCodeLine{00943\ ASN1\_BIT\_STRING\ *ossl\_cmp\_calc\_protection(\textcolor{keyword}{const}\ OSSL\_CMP\_CTX\ *ctx,}
+\DoxyCodeLine{00944\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ OSSL\_CMP\_MSG\ *msg);}
+\DoxyCodeLine{00945\ \textcolor{keywordtype}{int}\ ossl\_cmp\_msg\_protect(OSSL\_CMP\_CTX\ *ctx,\ OSSL\_CMP\_MSG\ *msg);}
+\DoxyCodeLine{00946\ }
+\DoxyCodeLine{00947\ \textcolor{comment}{/*\ from\ cmp\_vfy.c\ */}}
+\DoxyCodeLine{00948\ \textcolor{keyword}{typedef}\ int\ (*ossl\_cmp\_allow\_unprotected\_cb\_t)(\textcolor{keyword}{const}\ OSSL\_CMP\_CTX\ *ctx,}
+\DoxyCodeLine{00949\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ OSSL\_CMP\_MSG\ *msg,}
+\DoxyCodeLine{00950\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ invalid\_protection,\ \textcolor{keywordtype}{int}\ arg);}
+\DoxyCodeLine{00951\ \textcolor{keywordtype}{int}\ ossl\_cmp\_msg\_check\_update(OSSL\_CMP\_CTX\ *ctx,\ \textcolor{keyword}{const}\ OSSL\_CMP\_MSG\ *msg,}
+\DoxyCodeLine{00952\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ossl\_cmp\_allow\_unprotected\_cb\_t\ cb,\ \textcolor{keywordtype}{int}\ cb\_arg);}
+\DoxyCodeLine{00953\ \textcolor{keywordtype}{int}\ ossl\_cmp\_msg\_check\_received(OSSL\_CMP\_CTX\ *ctx,\ \textcolor{keyword}{const}\ OSSL\_CMP\_MSG\ *msg,}
+\DoxyCodeLine{00954\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ossl\_cmp\_allow\_unprotected\_cb\_t\ cb,\ \textcolor{keywordtype}{int}\ cb\_arg);}
+\DoxyCodeLine{00955\ \textcolor{keywordtype}{int}\ ossl\_cmp\_verify\_popo(\textcolor{keyword}{const}\ OSSL\_CMP\_CTX\ *ctx,}
+\DoxyCodeLine{00956\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ OSSL\_CMP\_MSG\ *msg,\ \textcolor{keywordtype}{int}\ accept\_RAVerified);}
+\DoxyCodeLine{00957\ }
+\DoxyCodeLine{00958\ \textcolor{comment}{/*\ from\ cmp\_client.c\ */}}
+\DoxyCodeLine{00959\ \textcolor{keywordtype}{int}\ ossl\_cmp\_exchange\_certConf(OSSL\_CMP\_CTX\ *ctx,\ \textcolor{keywordtype}{int}\ certReqId,}
+\DoxyCodeLine{00960\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ fail\_info,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *txt);}
+\DoxyCodeLine{00961\ \textcolor{keywordtype}{int}\ ossl\_cmp\_exchange\_error(OSSL\_CMP\_CTX\ *ctx,\ \textcolor{keywordtype}{int}\ status,\ \textcolor{keywordtype}{int}\ fail\_info,}
+\DoxyCodeLine{00962\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *txt,\ \textcolor{keywordtype}{int}\ errorCode,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *detail);}
+\DoxyCodeLine{00963\ }
+\DoxyCodeLine{00964\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ !defined(OSSL\_CRYPTO\_CMP\_LOCAL\_H)\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

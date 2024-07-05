@@ -1,0 +1,44 @@
+\doxysection{v3\+\_\+admis.\+h}
+\hypertarget{v3__admis_8h_source}{}\label{v3__admis_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/x509/v3\_admis.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/x509/v3\_admis.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2017-\/2018\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_CRYPTO\_X509\_V3\_ADMIS\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_CRYPTO\_X509\_V3\_ADMIS\_H}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_naming_authority__st}{NamingAuthority\_st}}\ \{}
+\DoxyCodeLine{00014\ \ \ \ \ ASN1\_OBJECT*\ namingAuthorityId;}
+\DoxyCodeLine{00015\ \ \ \ \ ASN1\_IA5STRING*\ namingAuthorityUrl;}
+\DoxyCodeLine{00016\ \ \ \ \ ASN1\_STRING*\ namingAuthorityText;\ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ i.e.\ DIRECTORYSTRING\ */}}
+\DoxyCodeLine{00017\ \};}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_profession_info__st}{ProfessionInfo\_st}}\ \{}
+\DoxyCodeLine{00020\ \ \ \ \ NAMING\_AUTHORITY*\ namingAuthority;}
+\DoxyCodeLine{00021\ \ \ \ \ STACK\_OF(ASN1\_STRING)*\ professionItems;\ \ \ \ \textcolor{comment}{/*\ i.e.\ DIRECTORYSTRING\ */}}
+\DoxyCodeLine{00022\ \ \ \ \ STACK\_OF(ASN1\_OBJECT)*\ professionOIDs;}
+\DoxyCodeLine{00023\ \ \ \ \ ASN1\_PRINTABLESTRING*\ registrationNumber;}
+\DoxyCodeLine{00024\ \ \ \ \ ASN1\_OCTET\_STRING*\ addProfessionInfo;}
+\DoxyCodeLine{00025\ \};}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_admissions__st}{Admissions\_st}}\ \{}
+\DoxyCodeLine{00028\ \ \ \ \ GENERAL\_NAME*\ admissionAuthority;}
+\DoxyCodeLine{00029\ \ \ \ \ NAMING\_AUTHORITY*\ namingAuthority;}
+\DoxyCodeLine{00030\ \ \ \ \ STACK\_OF(PROFESSION\_INFO)*\ professionInfos;}
+\DoxyCodeLine{00031\ \};}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_admission_syntax__st}{AdmissionSyntax\_st}}\ \{}
+\DoxyCodeLine{00034\ \ \ \ \ GENERAL\_NAME*\ admissionAuthority;}
+\DoxyCodeLine{00035\ \ \ \ \ STACK\_OF(ADMISSIONS)*\ contentsOfAdmissions;}
+\DoxyCodeLine{00036\ \};}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

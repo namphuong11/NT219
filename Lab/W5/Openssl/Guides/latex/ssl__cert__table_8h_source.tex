@@ -1,0 +1,29 @@
+\doxysection{ssl\+\_\+cert\+\_\+table.\+h}
+\hypertarget{ssl__cert__table_8h_source}{}\label{ssl__cert__table_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/ssl/ssl\_cert\_table.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/ssl/ssl\_cert\_table.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2017-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ *\ Certificate\ table\ information.\ NB:\ table\ entries\ must\ match\ SSL\_PKEY\ indices}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00013\ \textcolor{keyword}{static}\ \mbox{\hyperlink{struct_s_s_l___c_e_r_t___l_o_o_k_u_p}{SSL\_CERT\_LOOKUP}}\ ssl\_cert\_info\ []\ =\ \{}
+\DoxyCodeLine{00014\ \ \ \ \ \{EVP\_PKEY\_RSA,\ SSL\_aRSA\},\ \textcolor{comment}{/*\ SSL\_PKEY\_RSA\ */}}
+\DoxyCodeLine{00015\ \ \ \ \ \{EVP\_PKEY\_RSA\_PSS,\ SSL\_aRSA\},\ \textcolor{comment}{/*\ SSL\_PKEY\_RSA\_PSS\_SIGN\ */}}
+\DoxyCodeLine{00016\ \ \ \ \ \{EVP\_PKEY\_DSA,\ SSL\_aDSS\},\ \textcolor{comment}{/*\ SSL\_PKEY\_DSA\_SIGN\ */}}
+\DoxyCodeLine{00017\ \ \ \ \ \{EVP\_PKEY\_EC,\ SSL\_aECDSA\},\ \textcolor{comment}{/*\ SSL\_PKEY\_ECC\ */}}
+\DoxyCodeLine{00018\ \ \ \ \ \{NID\_id\_GostR3410\_2001,\ SSL\_aGOST01\},\ \textcolor{comment}{/*\ SSL\_PKEY\_GOST01\ */}}
+\DoxyCodeLine{00019\ \ \ \ \ \{NID\_id\_GostR3410\_2012\_256,\ SSL\_aGOST12\},\ \textcolor{comment}{/*\ SSL\_PKEY\_GOST12\_256\ */}}
+\DoxyCodeLine{00020\ \ \ \ \ \{NID\_id\_GostR3410\_2012\_512,\ SSL\_aGOST12\},\ \textcolor{comment}{/*\ SSL\_PKEY\_GOST12\_512\ */}}
+\DoxyCodeLine{00021\ \ \ \ \ \{EVP\_PKEY\_ED25519,\ SSL\_aECDSA\},\ \textcolor{comment}{/*\ SSL\_PKEY\_ED25519\ */}}
+\DoxyCodeLine{00022\ \ \ \ \ \{EVP\_PKEY\_ED448,\ SSL\_aECDSA\}\ \textcolor{comment}{/*\ SSL\_PKEY\_ED448\ */}}
+\DoxyCodeLine{00023\ \};}
+
+\end{DoxyCode}

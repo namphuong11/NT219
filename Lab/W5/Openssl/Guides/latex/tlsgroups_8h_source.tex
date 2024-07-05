@@ -1,0 +1,66 @@
+\doxysection{tlsgroups.\+h}
+\hypertarget{tlsgroups_8h_source}{}\label{tlsgroups_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/tlsgroups.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/tlsgroups.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2017-\/2021\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_INTERNAL\_TLSGROUPS\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_INTERNAL\_TLSGROUPS\_H}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#\ pragma\ once}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ define\ OSSL\_TLS\_GROUP\_ID\_sect163k1\ \ \ \ \ \ \ \ 0x0001}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#\ define\ OSSL\_TLS\_GROUP\_ID\_sect163r1\ \ \ \ \ \ \ \ 0x0002}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#\ define\ OSSL\_TLS\_GROUP\_ID\_sect163r2\ \ \ \ \ \ \ \ 0x0003}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#\ define\ OSSL\_TLS\_GROUP\_ID\_sect193r1\ \ \ \ \ \ \ \ 0x0004}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#\ define\ OSSL\_TLS\_GROUP\_ID\_sect193r2\ \ \ \ \ \ \ \ 0x0005}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#\ define\ OSSL\_TLS\_GROUP\_ID\_sect233k1\ \ \ \ \ \ \ \ 0x0006}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#\ define\ OSSL\_TLS\_GROUP\_ID\_sect233r1\ \ \ \ \ \ \ \ 0x0007}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#\ define\ OSSL\_TLS\_GROUP\_ID\_sect239k1\ \ \ \ \ \ \ \ 0x0008}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#\ define\ OSSL\_TLS\_GROUP\_ID\_sect283k1\ \ \ \ \ \ \ \ 0x0009}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#\ define\ OSSL\_TLS\_GROUP\_ID\_sect283r1\ \ \ \ \ \ \ \ 0x000A}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#\ define\ OSSL\_TLS\_GROUP\_ID\_sect409k1\ \ \ \ \ \ \ \ 0x000B}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#\ define\ OSSL\_TLS\_GROUP\_ID\_sect409r1\ \ \ \ \ \ \ \ 0x000C}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#\ define\ OSSL\_TLS\_GROUP\_ID\_sect571k1\ \ \ \ \ \ \ \ 0x000D}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#\ define\ OSSL\_TLS\_GROUP\_ID\_sect571r1\ \ \ \ \ \ \ \ 0x000E}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#\ define\ OSSL\_TLS\_GROUP\_ID\_secp160k1\ \ \ \ \ \ \ \ 0x000F}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#\ define\ OSSL\_TLS\_GROUP\_ID\_secp160r1\ \ \ \ \ \ \ \ 0x0010}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#\ define\ OSSL\_TLS\_GROUP\_ID\_secp160r2\ \ \ \ \ \ \ \ 0x0011}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#\ define\ OSSL\_TLS\_GROUP\_ID\_secp192k1\ \ \ \ \ \ \ \ 0x0012}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#\ define\ OSSL\_TLS\_GROUP\_ID\_secp192r1\ \ \ \ \ \ \ \ 0x0013}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#\ define\ OSSL\_TLS\_GROUP\_ID\_secp224k1\ \ \ \ \ \ \ \ 0x0014}}
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#\ define\ OSSL\_TLS\_GROUP\_ID\_secp224r1\ \ \ \ \ \ \ \ 0x0015}}
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#\ define\ OSSL\_TLS\_GROUP\_ID\_secp256k1\ \ \ \ \ \ \ \ 0x0016}}
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#\ define\ OSSL\_TLS\_GROUP\_ID\_secp256r1\ \ \ \ \ \ \ \ 0x0017}}
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#\ define\ OSSL\_TLS\_GROUP\_ID\_secp384r1\ \ \ \ \ \ \ \ 0x0018}}
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#\ define\ OSSL\_TLS\_GROUP\_ID\_secp521r1\ \ \ \ \ \ \ \ 0x0019}}
+\DoxyCodeLine{00039\ \textcolor{preprocessor}{\#\ define\ OSSL\_TLS\_GROUP\_ID\_brainpoolP256r1\ \ 0x001A}}
+\DoxyCodeLine{00040\ \textcolor{preprocessor}{\#\ define\ OSSL\_TLS\_GROUP\_ID\_brainpoolP384r1\ \ 0x001B}}
+\DoxyCodeLine{00041\ \textcolor{preprocessor}{\#\ define\ OSSL\_TLS\_GROUP\_ID\_brainpoolP512r1\ \ 0x001C}}
+\DoxyCodeLine{00042\ \textcolor{preprocessor}{\#\ define\ OSSL\_TLS\_GROUP\_ID\_x25519\ \ \ \ \ \ \ \ \ \ \ 0x001D}}
+\DoxyCodeLine{00043\ \textcolor{preprocessor}{\#\ define\ OSSL\_TLS\_GROUP\_ID\_x448\ \ \ \ \ \ \ \ \ \ \ \ \ 0x001E}}
+\DoxyCodeLine{00044\ \textcolor{preprocessor}{\#\ define\ OSSL\_TLS\_GROUP\_ID\_brainpoolP256r1\_tls13\ 0x001F}}
+\DoxyCodeLine{00045\ \textcolor{preprocessor}{\#\ define\ OSSL\_TLS\_GROUP\_ID\_brainpoolP384r1\_tls13\ 0x0020}}
+\DoxyCodeLine{00046\ \textcolor{preprocessor}{\#\ define\ OSSL\_TLS\_GROUP\_ID\_brainpoolP512r1\_tls13\ 0x0021}}
+\DoxyCodeLine{00047\ \textcolor{preprocessor}{\#\ define\ OSSL\_TLS\_GROUP\_ID\_gc256A\ \ \ \ \ \ \ \ \ \ \ 0x0022}}
+\DoxyCodeLine{00048\ \textcolor{preprocessor}{\#\ define\ OSSL\_TLS\_GROUP\_ID\_gc256B\ \ \ \ \ \ \ \ \ \ \ 0x0023}}
+\DoxyCodeLine{00049\ \textcolor{preprocessor}{\#\ define\ OSSL\_TLS\_GROUP\_ID\_gc256C\ \ \ \ \ \ \ \ \ \ \ 0x0024}}
+\DoxyCodeLine{00050\ \textcolor{preprocessor}{\#\ define\ OSSL\_TLS\_GROUP\_ID\_gc256D\ \ \ \ \ \ \ \ \ \ \ 0x0025}}
+\DoxyCodeLine{00051\ \textcolor{preprocessor}{\#\ define\ OSSL\_TLS\_GROUP\_ID\_gc512A\ \ \ \ \ \ \ \ \ \ \ 0x0026}}
+\DoxyCodeLine{00052\ \textcolor{preprocessor}{\#\ define\ OSSL\_TLS\_GROUP\_ID\_gc512B\ \ \ \ \ \ \ \ \ \ \ 0x0027}}
+\DoxyCodeLine{00053\ \textcolor{preprocessor}{\#\ define\ OSSL\_TLS\_GROUP\_ID\_gc512C\ \ \ \ \ \ \ \ \ \ \ 0x0028}}
+\DoxyCodeLine{00054\ \textcolor{preprocessor}{\#\ define\ OSSL\_TLS\_GROUP\_ID\_ffdhe2048\ \ \ \ \ \ \ \ 0x0100}}
+\DoxyCodeLine{00055\ \textcolor{preprocessor}{\#\ define\ OSSL\_TLS\_GROUP\_ID\_ffdhe3072\ \ \ \ \ \ \ \ 0x0101}}
+\DoxyCodeLine{00056\ \textcolor{preprocessor}{\#\ define\ OSSL\_TLS\_GROUP\_ID\_ffdhe4096\ \ \ \ \ \ \ \ 0x0102}}
+\DoxyCodeLine{00057\ \textcolor{preprocessor}{\#\ define\ OSSL\_TLS\_GROUP\_ID\_ffdhe6144\ \ \ \ \ \ \ \ 0x0103}}
+\DoxyCodeLine{00058\ \textcolor{preprocessor}{\#\ define\ OSSL\_TLS\_GROUP\_ID\_ffdhe8192\ \ \ \ \ \ \ \ 0x0104}}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

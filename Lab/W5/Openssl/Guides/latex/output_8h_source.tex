@@ -1,0 +1,74 @@
+\doxysection{output.\+h}
+\hypertarget{output_8h_source}{}\label{output_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/test/testutil/output.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/test/testutil/output.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2014-\/2020\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_TESTUTIL\_OUTPUT\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_TESTUTIL\_OUTPUT\_H}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#\ include\ <stdarg.h>}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#\ define\ ossl\_test\_\_attr\_\_(x)}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#\ if\ defined(\_\_GNUC\_\_)\ \&\&\ defined(\_\_STDC\_VERSION\_\_)\ \(\backslash\)}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\ \ \ \ \&\&\ !defined(\_\_MINGW32\_\_)\ \&\&\ !defined(\_\_MINGW64\_\_)\ \(\backslash\)}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\ \ \ \ \&\&\ !defined(\_\_APPLE\_\_)}}
+\DoxyCodeLine{00019\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00020\ \textcolor{comment}{\ \ \ \ \ *\ Because\ we\ support\ the\ 'z'\ modifier,\ which\ made\ its\ appearance\ in\ C99,}}
+\DoxyCodeLine{00021\ \textcolor{comment}{\ \ \ \ \ *\ we\ can't\ use\ \_\_attribute\_\_\ with\ pre\ C99\ dialects.}}
+\DoxyCodeLine{00022\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#\ \ if\ \_\_STDC\_VERSION\_\_\ >=\ 199901L}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#\ \ \ undef\ ossl\_test\_\_attr\_\_}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#\ \ \ define\ ossl\_test\_\_attr\_\_\ \_\_attribute\_\_}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#\ \ \ if\ \_\_GNUC\_\_*10\ +\ \_\_GNUC\_MINOR\_\_\ >=\ 44}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#\ \ \ \ define\ ossl\_test\_\_printf\_\_\ \_\_gnu\_printf\_\_}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#\ \ \ else}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#\ \ \ \ define\ ossl\_test\_\_printf\_\_\ \_\_printf\_\_}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#\ \ \ endif}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#\ \ endif}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00033\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00034\ \textcolor{comment}{\ *\ The\ basic\ I/O\ functions\ used\ internally\ by\ the\ test\ framework.\ \ These}}
+\DoxyCodeLine{00035\ \textcolor{comment}{\ *\ can\ be\ overridden\ when\ needed.\ Note\ that\ if\ one\ is,\ then\ all\ must\ be.}}
+\DoxyCodeLine{00036\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00037\ \textcolor{keywordtype}{void}\ test\_open\_streams(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00038\ \textcolor{keywordtype}{void}\ test\_close\_streams(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00039\ \textcolor{keywordtype}{void}\ test\_adjust\_streams\_tap\_level(\textcolor{keywordtype}{int}\ level);}
+\DoxyCodeLine{00040\ \textcolor{comment}{/*\ The\ following\ ALL\ return\ the\ number\ of\ characters\ written\ */}}
+\DoxyCodeLine{00041\ \textcolor{keywordtype}{int}\ test\_vprintf\_stdout(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *fmt,\ va\_list\ ap)}
+\DoxyCodeLine{00042\ \ \ \ \ ossl\_test\_\_attr\_\_((\_\_format\_\_(ossl\_test\_\_printf\_\_,\ 1,\ 0)));}
+\DoxyCodeLine{00043\ \textcolor{keywordtype}{int}\ test\_vprintf\_tapout(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *fmt,\ va\_list\ ap)}
+\DoxyCodeLine{00044\ \ \ \ \ ossl\_test\_\_attr\_\_((\_\_format\_\_(ossl\_test\_\_printf\_\_,\ 1,\ 0)));}
+\DoxyCodeLine{00045\ \textcolor{keywordtype}{int}\ test\_vprintf\_stderr(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *fmt,\ va\_list\ ap)}
+\DoxyCodeLine{00046\ \ \ \ \ ossl\_test\_\_attr\_\_((\_\_format\_\_(ossl\_test\_\_printf\_\_,\ 1,\ 0)));}
+\DoxyCodeLine{00047\ \textcolor{keywordtype}{int}\ test\_vprintf\_taperr(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *fmt,\ va\_list\ ap)}
+\DoxyCodeLine{00048\ \ \ \ \ ossl\_test\_\_attr\_\_((\_\_format\_\_(ossl\_test\_\_printf\_\_,\ 1,\ 0)));}
+\DoxyCodeLine{00049\ \textcolor{comment}{/*\ These\ return\ failure\ or\ success\ */}}
+\DoxyCodeLine{00050\ \textcolor{keywordtype}{int}\ test\_flush\_stdout(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00051\ \textcolor{keywordtype}{int}\ test\_flush\_tapout(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00052\ \textcolor{keywordtype}{int}\ test\_flush\_stderr(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00053\ \textcolor{keywordtype}{int}\ test\_flush\_taperr(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ \textcolor{comment}{/*\ Commodity\ functions.\ \ There's\ no\ need\ to\ override\ these\ */}}
+\DoxyCodeLine{00056\ \textcolor{keywordtype}{int}\ test\_printf\_stdout(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *fmt,\ ...)}
+\DoxyCodeLine{00057\ \ \ \ \ ossl\_test\_\_attr\_\_((\_\_format\_\_(ossl\_test\_\_printf\_\_,\ 1,\ 2)));}
+\DoxyCodeLine{00058\ \textcolor{keywordtype}{int}\ test\_printf\_tapout(const\ \textcolor{keywordtype}{char}\ *fmt,\ ...)}
+\DoxyCodeLine{00059\ \ \ \ \ ossl\_test\_\_attr\_\_((\_\_format\_\_(ossl\_test\_\_printf\_\_,\ 1,\ 2)));}
+\DoxyCodeLine{00060\ \textcolor{keywordtype}{int}\ test\_printf\_stderr(const\ \textcolor{keywordtype}{char}\ *fmt,\ ...)}
+\DoxyCodeLine{00061\ \ \ \ \ ossl\_test\_\_attr\_\_((\_\_format\_\_(ossl\_test\_\_printf\_\_,\ 1,\ 2)));}
+\DoxyCodeLine{00062\ \textcolor{keywordtype}{int}\ test\_printf\_taperr(const\ \textcolor{keywordtype}{char}\ *fmt,\ ...)}
+\DoxyCodeLine{00063\ \ \ \ \ ossl\_test\_\_attr\_\_((\_\_format\_\_(ossl\_test\_\_printf\_\_,\ 1,\ 2)));}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ \textcolor{preprocessor}{\#\ undef\ ossl\_test\_\_printf\_\_}}
+\DoxyCodeLine{00066\ \textcolor{preprocessor}{\#\ undef\ ossl\_test\_\_attr\_\_}}
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00068\ \textcolor{preprocessor}{\#endif\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{/*\ OSSL\_TESTUTIL\_OUTPUT\_H\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

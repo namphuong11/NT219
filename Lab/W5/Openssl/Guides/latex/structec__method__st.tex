@@ -1,0 +1,178 @@
+\doxysection{ec\+\_\+method\+\_\+st Struct Reference}
+\hypertarget{structec__method__st}{}\label{structec__method__st}\index{ec\_method\_st@{ec\_method\_st}}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{structec__method__st_a6f6809b96fcf5e288abfba33b3623edd}\label{structec__method__st_a6f6809b96fcf5e288abfba33b3623edd} 
+int {\bfseries flags}
+\item 
+\Hypertarget{structec__method__st_a161f08cfbc4f1b20ea813f50c4ca723c}\label{structec__method__st_a161f08cfbc4f1b20ea813f50c4ca723c} 
+int {\bfseries field\+\_\+type}
+\item 
+\Hypertarget{structec__method__st_aedac128c43a71a35ea613cb11f17f186}\label{structec__method__st_aedac128c43a71a35ea613cb11f17f186} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries group\+\_\+init} )(EC\+\_\+\+GROUP \texorpdfstring{$\ast$}{*})
+\item 
+\Hypertarget{structec__method__st_afbf104b62e760bad99e3d1205d116d3f}\label{structec__method__st_afbf104b62e760bad99e3d1205d116d3f} 
+void(\texorpdfstring{$\ast$}{*} {\bfseries group\+\_\+finish} )(EC\+\_\+\+GROUP \texorpdfstring{$\ast$}{*})
+\item 
+\Hypertarget{structec__method__st_ad31c68abd54fd6e8847776d96f6ea6a4}\label{structec__method__st_ad31c68abd54fd6e8847776d96f6ea6a4} 
+void(\texorpdfstring{$\ast$}{*} {\bfseries group\+\_\+clear\+\_\+finish} )(EC\+\_\+\+GROUP \texorpdfstring{$\ast$}{*})
+\item 
+\Hypertarget{structec__method__st_ae9ea5255f1b4603a6b369e735a1a9fdd}\label{structec__method__st_ae9ea5255f1b4603a6b369e735a1a9fdd} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries group\+\_\+copy} )(EC\+\_\+\+GROUP \texorpdfstring{$\ast$}{*}, const EC\+\_\+\+GROUP \texorpdfstring{$\ast$}{*})
+\item 
+\Hypertarget{structec__method__st_a1d5b7aeda841e695aa8646cd5c0f85b6}\label{structec__method__st_a1d5b7aeda841e695aa8646cd5c0f85b6} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries group\+\_\+set\+\_\+curve} )(EC\+\_\+\+GROUP \texorpdfstring{$\ast$}{*}, const BIGNUM \texorpdfstring{$\ast$}{*}p, const BIGNUM \texorpdfstring{$\ast$}{*}a, const BIGNUM \texorpdfstring{$\ast$}{*}\mbox{\hyperlink{structb}{b}}, BN\+\_\+\+CTX \texorpdfstring{$\ast$}{*})
+\item 
+\Hypertarget{structec__method__st_a6876366887d535db888be1ca8198b4bc}\label{structec__method__st_a6876366887d535db888be1ca8198b4bc} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries group\+\_\+get\+\_\+curve} )(const EC\+\_\+\+GROUP \texorpdfstring{$\ast$}{*}, BIGNUM \texorpdfstring{$\ast$}{*}p, BIGNUM \texorpdfstring{$\ast$}{*}a, BIGNUM \texorpdfstring{$\ast$}{*}\mbox{\hyperlink{structb}{b}}, BN\+\_\+\+CTX \texorpdfstring{$\ast$}{*})
+\item 
+\Hypertarget{structec__method__st_afd396bc140f3c0d954219955cf987548}\label{structec__method__st_afd396bc140f3c0d954219955cf987548} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries group\+\_\+get\+\_\+degree} )(const EC\+\_\+\+GROUP \texorpdfstring{$\ast$}{*})
+\item 
+\Hypertarget{structec__method__st_af8358d53500c57b716550b06049934da}\label{structec__method__st_af8358d53500c57b716550b06049934da} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries group\+\_\+order\+\_\+bits} )(const EC\+\_\+\+GROUP \texorpdfstring{$\ast$}{*})
+\item 
+\Hypertarget{structec__method__st_ae516247b8383ac20db56ddfa53f3f569}\label{structec__method__st_ae516247b8383ac20db56ddfa53f3f569} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries group\+\_\+check\+\_\+discriminant} )(const EC\+\_\+\+GROUP \texorpdfstring{$\ast$}{*}, BN\+\_\+\+CTX \texorpdfstring{$\ast$}{*})
+\item 
+\Hypertarget{structec__method__st_a378241523962c9e345dbd6f402de43fe}\label{structec__method__st_a378241523962c9e345dbd6f402de43fe} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries point\+\_\+init} )(EC\+\_\+\+POINT \texorpdfstring{$\ast$}{*})
+\item 
+\Hypertarget{structec__method__st_a1d1fe9eb7a3ba6c0ae18565b44bf8c98}\label{structec__method__st_a1d1fe9eb7a3ba6c0ae18565b44bf8c98} 
+void(\texorpdfstring{$\ast$}{*} {\bfseries point\+\_\+finish} )(EC\+\_\+\+POINT \texorpdfstring{$\ast$}{*})
+\item 
+\Hypertarget{structec__method__st_a45c43bd34697a17bff681da0cabca0d4}\label{structec__method__st_a45c43bd34697a17bff681da0cabca0d4} 
+void(\texorpdfstring{$\ast$}{*} {\bfseries point\+\_\+clear\+\_\+finish} )(EC\+\_\+\+POINT \texorpdfstring{$\ast$}{*})
+\item 
+\Hypertarget{structec__method__st_a957ab66b2534157dd179d241b208be7c}\label{structec__method__st_a957ab66b2534157dd179d241b208be7c} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries point\+\_\+copy} )(EC\+\_\+\+POINT \texorpdfstring{$\ast$}{*}, const EC\+\_\+\+POINT \texorpdfstring{$\ast$}{*})
+\item 
+\Hypertarget{structec__method__st_a2775589ec402070f0ec1b4ecbb88e948}\label{structec__method__st_a2775589ec402070f0ec1b4ecbb88e948} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries point\+\_\+set\+\_\+to\+\_\+infinity} )(const EC\+\_\+\+GROUP \texorpdfstring{$\ast$}{*}, EC\+\_\+\+POINT \texorpdfstring{$\ast$}{*})
+\item 
+\Hypertarget{structec__method__st_aeecef96344a5261e642056789866021f}\label{structec__method__st_aeecef96344a5261e642056789866021f} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries point\+\_\+set\+\_\+affine\+\_\+coordinates} )(const EC\+\_\+\+GROUP \texorpdfstring{$\ast$}{*}, EC\+\_\+\+POINT \texorpdfstring{$\ast$}{*}, const BIGNUM \texorpdfstring{$\ast$}{*}x, const BIGNUM \texorpdfstring{$\ast$}{*}y, BN\+\_\+\+CTX \texorpdfstring{$\ast$}{*})
+\item 
+\Hypertarget{structec__method__st_aa4bda5c909e3050840e53b3a019cb221}\label{structec__method__st_aa4bda5c909e3050840e53b3a019cb221} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries point\+\_\+get\+\_\+affine\+\_\+coordinates} )(const EC\+\_\+\+GROUP \texorpdfstring{$\ast$}{*}, const EC\+\_\+\+POINT \texorpdfstring{$\ast$}{*}, BIGNUM \texorpdfstring{$\ast$}{*}x, BIGNUM \texorpdfstring{$\ast$}{*}y, BN\+\_\+\+CTX \texorpdfstring{$\ast$}{*})
+\item 
+\Hypertarget{structec__method__st_a3b2ac87188923a9f215a579ef24e4155}\label{structec__method__st_a3b2ac87188923a9f215a579ef24e4155} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries point\+\_\+set\+\_\+compressed\+\_\+coordinates} )(const EC\+\_\+\+GROUP \texorpdfstring{$\ast$}{*}, EC\+\_\+\+POINT \texorpdfstring{$\ast$}{*}, const BIGNUM \texorpdfstring{$\ast$}{*}x, int y\+\_\+bit, BN\+\_\+\+CTX \texorpdfstring{$\ast$}{*})
+\item 
+\Hypertarget{structec__method__st_a7a739dadc39697a673e6113684abc907}\label{structec__method__st_a7a739dadc39697a673e6113684abc907} 
+size\+\_\+t(\texorpdfstring{$\ast$}{*} {\bfseries point2oct} )(const EC\+\_\+\+GROUP \texorpdfstring{$\ast$}{*}, const EC\+\_\+\+POINT \texorpdfstring{$\ast$}{*}, point\+\_\+conversion\+\_\+form\+\_\+t form, unsigned char \texorpdfstring{$\ast$}{*}buf, size\+\_\+t len, BN\+\_\+\+CTX \texorpdfstring{$\ast$}{*})
+\item 
+\Hypertarget{structec__method__st_abe0f473750c03d43dfa21325a97ad6e3}\label{structec__method__st_abe0f473750c03d43dfa21325a97ad6e3} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries oct2point} )(const EC\+\_\+\+GROUP \texorpdfstring{$\ast$}{*}, EC\+\_\+\+POINT \texorpdfstring{$\ast$}{*}, const unsigned char \texorpdfstring{$\ast$}{*}buf, size\+\_\+t len, BN\+\_\+\+CTX \texorpdfstring{$\ast$}{*})
+\item 
+\Hypertarget{structec__method__st_aee4b647c67f98cea83025c9c422f8c15}\label{structec__method__st_aee4b647c67f98cea83025c9c422f8c15} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries add} )(const EC\+\_\+\+GROUP \texorpdfstring{$\ast$}{*}, EC\+\_\+\+POINT \texorpdfstring{$\ast$}{*}r, const EC\+\_\+\+POINT \texorpdfstring{$\ast$}{*}a, const EC\+\_\+\+POINT \texorpdfstring{$\ast$}{*}\mbox{\hyperlink{structb}{b}}, BN\+\_\+\+CTX \texorpdfstring{$\ast$}{*})
+\item 
+\Hypertarget{structec__method__st_a5c33c36de4cf8ad37d7b6b57951a463c}\label{structec__method__st_a5c33c36de4cf8ad37d7b6b57951a463c} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries dbl} )(const EC\+\_\+\+GROUP \texorpdfstring{$\ast$}{*}, EC\+\_\+\+POINT \texorpdfstring{$\ast$}{*}r, const EC\+\_\+\+POINT \texorpdfstring{$\ast$}{*}a, BN\+\_\+\+CTX \texorpdfstring{$\ast$}{*})
+\item 
+\Hypertarget{structec__method__st_a5fc77ea72a936880abecacf929dc74fa}\label{structec__method__st_a5fc77ea72a936880abecacf929dc74fa} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries invert} )(const EC\+\_\+\+GROUP \texorpdfstring{$\ast$}{*}, EC\+\_\+\+POINT \texorpdfstring{$\ast$}{*}, BN\+\_\+\+CTX \texorpdfstring{$\ast$}{*})
+\item 
+\Hypertarget{structec__method__st_af11e3c2a573e48e78bfd8a2da4eb5fad}\label{structec__method__st_af11e3c2a573e48e78bfd8a2da4eb5fad} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries is\+\_\+at\+\_\+infinity} )(const EC\+\_\+\+GROUP \texorpdfstring{$\ast$}{*}, const EC\+\_\+\+POINT \texorpdfstring{$\ast$}{*})
+\item 
+\Hypertarget{structec__method__st_a7d635d2df79ae2fbf19d2a76967300ac}\label{structec__method__st_a7d635d2df79ae2fbf19d2a76967300ac} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries is\+\_\+on\+\_\+curve} )(const EC\+\_\+\+GROUP \texorpdfstring{$\ast$}{*}, const EC\+\_\+\+POINT \texorpdfstring{$\ast$}{*}, BN\+\_\+\+CTX \texorpdfstring{$\ast$}{*})
+\item 
+\Hypertarget{structec__method__st_a18e28c54c4981231e936c125eab13c62}\label{structec__method__st_a18e28c54c4981231e936c125eab13c62} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries point\+\_\+cmp} )(const EC\+\_\+\+GROUP \texorpdfstring{$\ast$}{*}, const EC\+\_\+\+POINT \texorpdfstring{$\ast$}{*}a, const EC\+\_\+\+POINT \texorpdfstring{$\ast$}{*}\mbox{\hyperlink{structb}{b}}, BN\+\_\+\+CTX \texorpdfstring{$\ast$}{*})
+\item 
+\Hypertarget{structec__method__st_a76dda6126b4f3e4f1d180d3847e27d4f}\label{structec__method__st_a76dda6126b4f3e4f1d180d3847e27d4f} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries make\+\_\+affine} )(const EC\+\_\+\+GROUP \texorpdfstring{$\ast$}{*}, EC\+\_\+\+POINT \texorpdfstring{$\ast$}{*}, BN\+\_\+\+CTX \texorpdfstring{$\ast$}{*})
+\item 
+\Hypertarget{structec__method__st_afe320746fdd6a1ff5fad19fab39adb01}\label{structec__method__st_afe320746fdd6a1ff5fad19fab39adb01} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries points\+\_\+make\+\_\+affine} )(const EC\+\_\+\+GROUP \texorpdfstring{$\ast$}{*}, size\+\_\+t num, EC\+\_\+\+POINT \texorpdfstring{$\ast$}{*}\mbox{[}$\,$\mbox{]}, BN\+\_\+\+CTX \texorpdfstring{$\ast$}{*})
+\item 
+\Hypertarget{structec__method__st_af5b23f6f30cfc796c8bed2df79fd287d}\label{structec__method__st_af5b23f6f30cfc796c8bed2df79fd287d} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries mul} )(const EC\+\_\+\+GROUP \texorpdfstring{$\ast$}{*}group, EC\+\_\+\+POINT \texorpdfstring{$\ast$}{*}r, const BIGNUM \texorpdfstring{$\ast$}{*}scalar, size\+\_\+t num, const EC\+\_\+\+POINT \texorpdfstring{$\ast$}{*}points\mbox{[}$\,$\mbox{]}, const BIGNUM \texorpdfstring{$\ast$}{*}scalars\mbox{[}$\,$\mbox{]}, BN\+\_\+\+CTX \texorpdfstring{$\ast$}{*})
+\item 
+\Hypertarget{structec__method__st_ab0221b78753d9841717825c58c44c1c5}\label{structec__method__st_ab0221b78753d9841717825c58c44c1c5} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries precompute\+\_\+mult} )(EC\+\_\+\+GROUP \texorpdfstring{$\ast$}{*}group, BN\+\_\+\+CTX \texorpdfstring{$\ast$}{*})
+\item 
+\Hypertarget{structec__method__st_a56b37d0d3bd175c571ad21884332aca6}\label{structec__method__st_a56b37d0d3bd175c571ad21884332aca6} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries have\+\_\+precompute\+\_\+mult} )(const EC\+\_\+\+GROUP \texorpdfstring{$\ast$}{*}group)
+\item 
+\Hypertarget{structec__method__st_a5db2a973f20c25c45d914ff8a3839e17}\label{structec__method__st_a5db2a973f20c25c45d914ff8a3839e17} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries field\+\_\+mul} )(const EC\+\_\+\+GROUP \texorpdfstring{$\ast$}{*}, BIGNUM \texorpdfstring{$\ast$}{*}r, const BIGNUM \texorpdfstring{$\ast$}{*}a, const BIGNUM \texorpdfstring{$\ast$}{*}\mbox{\hyperlink{structb}{b}}, BN\+\_\+\+CTX \texorpdfstring{$\ast$}{*})
+\item 
+\Hypertarget{structec__method__st_ab0d3b02c80aafa8b6d1295eec39eeae7}\label{structec__method__st_ab0d3b02c80aafa8b6d1295eec39eeae7} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries field\+\_\+sqr} )(const EC\+\_\+\+GROUP \texorpdfstring{$\ast$}{*}, BIGNUM \texorpdfstring{$\ast$}{*}r, const BIGNUM \texorpdfstring{$\ast$}{*}a, BN\+\_\+\+CTX \texorpdfstring{$\ast$}{*})
+\item 
+\Hypertarget{structec__method__st_afc0dbf99c4f557c973d4513ed193099d}\label{structec__method__st_afc0dbf99c4f557c973d4513ed193099d} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries field\+\_\+div} )(const EC\+\_\+\+GROUP \texorpdfstring{$\ast$}{*}, BIGNUM \texorpdfstring{$\ast$}{*}r, const BIGNUM \texorpdfstring{$\ast$}{*}a, const BIGNUM \texorpdfstring{$\ast$}{*}\mbox{\hyperlink{structb}{b}}, BN\+\_\+\+CTX \texorpdfstring{$\ast$}{*})
+\item 
+\Hypertarget{structec__method__st_aa1b9d9f3dccfc78ceb0e12cac7dd6628}\label{structec__method__st_aa1b9d9f3dccfc78ceb0e12cac7dd6628} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries field\+\_\+inv} )(const EC\+\_\+\+GROUP \texorpdfstring{$\ast$}{*}, BIGNUM \texorpdfstring{$\ast$}{*}r, const BIGNUM \texorpdfstring{$\ast$}{*}a, BN\+\_\+\+CTX \texorpdfstring{$\ast$}{*})
+\item 
+\Hypertarget{structec__method__st_a9d40eef90c6fed8a1c510b16df6d9536}\label{structec__method__st_a9d40eef90c6fed8a1c510b16df6d9536} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries field\+\_\+encode} )(const EC\+\_\+\+GROUP \texorpdfstring{$\ast$}{*}, BIGNUM \texorpdfstring{$\ast$}{*}r, const BIGNUM \texorpdfstring{$\ast$}{*}a, BN\+\_\+\+CTX \texorpdfstring{$\ast$}{*})
+\item 
+\Hypertarget{structec__method__st_a58c0099f5e1adbc77bf8b788871c33e2}\label{structec__method__st_a58c0099f5e1adbc77bf8b788871c33e2} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries field\+\_\+decode} )(const EC\+\_\+\+GROUP \texorpdfstring{$\ast$}{*}, BIGNUM \texorpdfstring{$\ast$}{*}r, const BIGNUM \texorpdfstring{$\ast$}{*}a, BN\+\_\+\+CTX \texorpdfstring{$\ast$}{*})
+\item 
+\Hypertarget{structec__method__st_a402e32b42edbd4a73bcfd061c269a489}\label{structec__method__st_a402e32b42edbd4a73bcfd061c269a489} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries field\+\_\+set\+\_\+to\+\_\+one} )(const EC\+\_\+\+GROUP \texorpdfstring{$\ast$}{*}, BIGNUM \texorpdfstring{$\ast$}{*}r, BN\+\_\+\+CTX \texorpdfstring{$\ast$}{*})
+\item 
+\Hypertarget{structec__method__st_ab1d07e412103375f21359ef8757ea800}\label{structec__method__st_ab1d07e412103375f21359ef8757ea800} 
+size\+\_\+t(\texorpdfstring{$\ast$}{*} {\bfseries priv2oct} )(const EC\+\_\+\+KEY \texorpdfstring{$\ast$}{*}eckey, unsigned char \texorpdfstring{$\ast$}{*}buf, size\+\_\+t len)
+\item 
+\Hypertarget{structec__method__st_a9c8d830e7be17745d5cee0350d486567}\label{structec__method__st_a9c8d830e7be17745d5cee0350d486567} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries oct2priv} )(EC\+\_\+\+KEY \texorpdfstring{$\ast$}{*}eckey, const unsigned char \texorpdfstring{$\ast$}{*}buf, size\+\_\+t len)
+\item 
+\Hypertarget{structec__method__st_a539efaf7587a2c34c4fb4adb7bc93cbd}\label{structec__method__st_a539efaf7587a2c34c4fb4adb7bc93cbd} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries set\+\_\+private} )(EC\+\_\+\+KEY \texorpdfstring{$\ast$}{*}eckey, const BIGNUM \texorpdfstring{$\ast$}{*}priv\+\_\+key)
+\item 
+\Hypertarget{structec__method__st_a9cd76d17127ea3868750b8df9433978d}\label{structec__method__st_a9cd76d17127ea3868750b8df9433978d} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries keygen} )(EC\+\_\+\+KEY \texorpdfstring{$\ast$}{*}eckey)
+\item 
+\Hypertarget{structec__method__st_a86f9448b8287831948a9ba9bd06442b2}\label{structec__method__st_a86f9448b8287831948a9ba9bd06442b2} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries keycheck} )(const EC\+\_\+\+KEY \texorpdfstring{$\ast$}{*}eckey)
+\item 
+\Hypertarget{structec__method__st_ab6060611852a6d4a12c0f588e81ce94d}\label{structec__method__st_ab6060611852a6d4a12c0f588e81ce94d} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries keygenpub} )(EC\+\_\+\+KEY \texorpdfstring{$\ast$}{*}eckey)
+\item 
+\Hypertarget{structec__method__st_afb4151b39116e91b0c1841809fafa072}\label{structec__method__st_afb4151b39116e91b0c1841809fafa072} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries keycopy} )(EC\+\_\+\+KEY \texorpdfstring{$\ast$}{*}dst, const EC\+\_\+\+KEY \texorpdfstring{$\ast$}{*}src)
+\item 
+\Hypertarget{structec__method__st_a324c98d5a03537d4e4c9e9e65b8108d9}\label{structec__method__st_a324c98d5a03537d4e4c9e9e65b8108d9} 
+void(\texorpdfstring{$\ast$}{*} {\bfseries keyfinish} )(EC\+\_\+\+KEY \texorpdfstring{$\ast$}{*}eckey)
+\item 
+\Hypertarget{structec__method__st_ac096722c56bc97df2053ebe872d9385d}\label{structec__method__st_ac096722c56bc97df2053ebe872d9385d} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries ecdh\+\_\+compute\+\_\+key} )(unsigned char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}pout, size\+\_\+t \texorpdfstring{$\ast$}{*}poutlen, const EC\+\_\+\+POINT \texorpdfstring{$\ast$}{*}pub\+\_\+key, const EC\+\_\+\+KEY \texorpdfstring{$\ast$}{*}ecdh)
+\item 
+\Hypertarget{structec__method__st_a84b20e953dd296e9095d70c76d35c374}\label{structec__method__st_a84b20e953dd296e9095d70c76d35c374} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries ecdsa\+\_\+sign\+\_\+setup} )(EC\+\_\+\+KEY \texorpdfstring{$\ast$}{*}eckey, BN\+\_\+\+CTX \texorpdfstring{$\ast$}{*}ctx, BIGNUM \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}kinvp, BIGNUM \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}rp)
+\item 
+\Hypertarget{structec__method__st_ad534e861c4c4cb913451bf993e1c89d5}\label{structec__method__st_ad534e861c4c4cb913451bf993e1c89d5} 
+ECDSA\+\_\+\+SIG \texorpdfstring{$\ast$}{*}(\texorpdfstring{$\ast$}{*} {\bfseries ecdsa\+\_\+sign\+\_\+sig} )(const unsigned char \texorpdfstring{$\ast$}{*}dgst, int dgstlen, const BIGNUM \texorpdfstring{$\ast$}{*}kinv, const BIGNUM \texorpdfstring{$\ast$}{*}r, EC\+\_\+\+KEY \texorpdfstring{$\ast$}{*}eckey)
+\item 
+\Hypertarget{structec__method__st_a0a023eeb2ff54b2e7fb5cc1949c29625}\label{structec__method__st_a0a023eeb2ff54b2e7fb5cc1949c29625} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries ecdsa\+\_\+verify\+\_\+sig} )(const unsigned char \texorpdfstring{$\ast$}{*}dgst, int dgstlen, const ECDSA\+\_\+\+SIG \texorpdfstring{$\ast$}{*}sig, EC\+\_\+\+KEY \texorpdfstring{$\ast$}{*}eckey)
+\item 
+\Hypertarget{structec__method__st_ad3a65f51ab237e71d67e5cdc5ffa4d95}\label{structec__method__st_ad3a65f51ab237e71d67e5cdc5ffa4d95} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries field\+\_\+inverse\+\_\+mod\+\_\+ord} )(const EC\+\_\+\+GROUP \texorpdfstring{$\ast$}{*}, BIGNUM \texorpdfstring{$\ast$}{*}r, const BIGNUM \texorpdfstring{$\ast$}{*}x, BN\+\_\+\+CTX \texorpdfstring{$\ast$}{*})
+\item 
+\Hypertarget{structec__method__st_a6e24dc22f87993c75eada1f3b674d416}\label{structec__method__st_a6e24dc22f87993c75eada1f3b674d416} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries blind\+\_\+coordinates} )(const EC\+\_\+\+GROUP \texorpdfstring{$\ast$}{*}group, EC\+\_\+\+POINT \texorpdfstring{$\ast$}{*}p, BN\+\_\+\+CTX \texorpdfstring{$\ast$}{*}ctx)
+\item 
+\Hypertarget{structec__method__st_a0f16f7a6ba101aa77eeb3fbe6a29ab12}\label{structec__method__st_a0f16f7a6ba101aa77eeb3fbe6a29ab12} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries ladder\+\_\+pre} )(const EC\+\_\+\+GROUP \texorpdfstring{$\ast$}{*}group, EC\+\_\+\+POINT \texorpdfstring{$\ast$}{*}r, EC\+\_\+\+POINT \texorpdfstring{$\ast$}{*}s, EC\+\_\+\+POINT \texorpdfstring{$\ast$}{*}p, BN\+\_\+\+CTX \texorpdfstring{$\ast$}{*}ctx)
+\item 
+\Hypertarget{structec__method__st_ac73dad0a7d327b33e770638dd893b236}\label{structec__method__st_ac73dad0a7d327b33e770638dd893b236} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries ladder\+\_\+step} )(const EC\+\_\+\+GROUP \texorpdfstring{$\ast$}{*}group, EC\+\_\+\+POINT \texorpdfstring{$\ast$}{*}r, EC\+\_\+\+POINT \texorpdfstring{$\ast$}{*}s, EC\+\_\+\+POINT \texorpdfstring{$\ast$}{*}p, BN\+\_\+\+CTX \texorpdfstring{$\ast$}{*}ctx)
+\item 
+\Hypertarget{structec__method__st_a4700b51019e78c7488ff19cde136b35c}\label{structec__method__st_a4700b51019e78c7488ff19cde136b35c} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries ladder\+\_\+post} )(const EC\+\_\+\+GROUP \texorpdfstring{$\ast$}{*}group, EC\+\_\+\+POINT \texorpdfstring{$\ast$}{*}r, EC\+\_\+\+POINT \texorpdfstring{$\ast$}{*}s, EC\+\_\+\+POINT \texorpdfstring{$\ast$}{*}p, BN\+\_\+\+CTX \texorpdfstring{$\ast$}{*}ctx)
+\end{DoxyCompactItemize}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/namph/\+Downloads/openssl/openssl-\/3.\+2.\+1/crypto/ec/ec\+\_\+local.\+h\end{DoxyCompactItemize}

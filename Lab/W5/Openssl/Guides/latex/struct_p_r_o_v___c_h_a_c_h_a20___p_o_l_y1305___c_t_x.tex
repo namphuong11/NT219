@@ -1,0 +1,52 @@
+\doxysection{PROV\+\_\+\+CHACHA20\+\_\+\+POLY1305\+\_\+\+CTX Struct Reference}
+\hypertarget{struct_p_r_o_v___c_h_a_c_h_a20___p_o_l_y1305___c_t_x}{}\label{struct_p_r_o_v___c_h_a_c_h_a20___p_o_l_y1305___c_t_x}\index{PROV\_CHACHA20\_POLY1305\_CTX@{PROV\_CHACHA20\_POLY1305\_CTX}}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{struct_p_r_o_v___c_h_a_c_h_a20___p_o_l_y1305___c_t_x_a65997ca9782bc7a61fd02dfcf7b56a66}\label{struct_p_r_o_v___c_h_a_c_h_a20___p_o_l_y1305___c_t_x_a65997ca9782bc7a61fd02dfcf7b56a66} 
+\mbox{\hyperlink{structprov__cipher__ctx__st}{PROV\+\_\+\+CIPHER\+\_\+\+CTX}} {\bfseries base}
+\item 
+\Hypertarget{struct_p_r_o_v___c_h_a_c_h_a20___p_o_l_y1305___c_t_x_a8a51895817db69a89e0b78d51464d50b}\label{struct_p_r_o_v___c_h_a_c_h_a20___p_o_l_y1305___c_t_x_a8a51895817db69a89e0b78d51464d50b} 
+\mbox{\hyperlink{struct_p_r_o_v___c_h_a_c_h_a20___c_t_x}{PROV\+\_\+\+CHACHA20\+\_\+\+CTX}} {\bfseries chacha}
+\item 
+\Hypertarget{struct_p_r_o_v___c_h_a_c_h_a20___p_o_l_y1305___c_t_x_a950de5ad7db6f151ddc59e835161f80f}\label{struct_p_r_o_v___c_h_a_c_h_a20___p_o_l_y1305___c_t_x_a950de5ad7db6f151ddc59e835161f80f} 
+\mbox{\hyperlink{structpoly1305__context}{POLY1305}} {\bfseries poly1305}
+\item 
+\Hypertarget{struct_p_r_o_v___c_h_a_c_h_a20___p_o_l_y1305___c_t_x_a607004775e65bb15ce1cbfce5786fac4}\label{struct_p_r_o_v___c_h_a_c_h_a20___p_o_l_y1305___c_t_x_a607004775e65bb15ce1cbfce5786fac4} 
+unsigned int {\bfseries nonce} \mbox{[}12/4\mbox{]}
+\item 
+\Hypertarget{struct_p_r_o_v___c_h_a_c_h_a20___p_o_l_y1305___c_t_x_adba1e8aeabfe1aef157ad05a2a55f113}\label{struct_p_r_o_v___c_h_a_c_h_a20___p_o_l_y1305___c_t_x_adba1e8aeabfe1aef157ad05a2a55f113} 
+unsigned char {\bfseries tag} \mbox{[}POLY1305\+\_\+\+BLOCK\+\_\+\+SIZE\mbox{]}
+\item 
+\Hypertarget{struct_p_r_o_v___c_h_a_c_h_a20___p_o_l_y1305___c_t_x_a577a6a4627cbd03a9e4f0dc14b2b9b23}\label{struct_p_r_o_v___c_h_a_c_h_a20___p_o_l_y1305___c_t_x_a577a6a4627cbd03a9e4f0dc14b2b9b23} 
+unsigned char {\bfseries tls\+\_\+aad} \mbox{[}POLY1305\+\_\+\+BLOCK\+\_\+\+SIZE\mbox{]}
+\item 
+\Hypertarget{struct_p_r_o_v___c_h_a_c_h_a20___p_o_l_y1305___c_t_x_a5d2b874be4de20575a4691678883b2f4}\label{struct_p_r_o_v___c_h_a_c_h_a20___p_o_l_y1305___c_t_x_a5d2b874be4de20575a4691678883b2f4} 
+\begin{tabbing}
+xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=\kill
+struct \{\\
+\>uint64\_t {\bfseries aad}\\
+\>uint64\_t {\bfseries text}\\
+\} {\bfseries len}\\
+
+\end{tabbing}\item 
+\Hypertarget{struct_p_r_o_v___c_h_a_c_h_a20___p_o_l_y1305___c_t_x_a4a7e651259e3b6a75e7695dafbbc45d5}\label{struct_p_r_o_v___c_h_a_c_h_a20___p_o_l_y1305___c_t_x_a4a7e651259e3b6a75e7695dafbbc45d5} 
+unsigned int {\bfseries aad}\+: 1
+\item 
+\Hypertarget{struct_p_r_o_v___c_h_a_c_h_a20___p_o_l_y1305___c_t_x_afc77c692cd8cf7cf8c7df9d60edaf976}\label{struct_p_r_o_v___c_h_a_c_h_a20___p_o_l_y1305___c_t_x_afc77c692cd8cf7cf8c7df9d60edaf976} 
+unsigned int {\bfseries mac\+\_\+inited}\+: 1
+\item 
+\Hypertarget{struct_p_r_o_v___c_h_a_c_h_a20___p_o_l_y1305___c_t_x_af2a3c30254ce00d81321f2f2ab2b57b2}\label{struct_p_r_o_v___c_h_a_c_h_a20___p_o_l_y1305___c_t_x_af2a3c30254ce00d81321f2f2ab2b57b2} 
+size\+\_\+t {\bfseries tag\+\_\+len}
+\item 
+\Hypertarget{struct_p_r_o_v___c_h_a_c_h_a20___p_o_l_y1305___c_t_x_a528f99001ce2f75c3a932020d71745ca}\label{struct_p_r_o_v___c_h_a_c_h_a20___p_o_l_y1305___c_t_x_a528f99001ce2f75c3a932020d71745ca} 
+size\+\_\+t {\bfseries tls\+\_\+payload\+\_\+length}
+\item 
+\Hypertarget{struct_p_r_o_v___c_h_a_c_h_a20___p_o_l_y1305___c_t_x_aa9a9c7e49f371fd6290b89451f4bbf11}\label{struct_p_r_o_v___c_h_a_c_h_a20___p_o_l_y1305___c_t_x_aa9a9c7e49f371fd6290b89451f4bbf11} 
+size\+\_\+t {\bfseries tls\+\_\+aad\+\_\+pad\+\_\+sz}
+\end{DoxyCompactItemize}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/namph/\+Downloads/openssl/openssl-\/3.\+2.\+1/providers/implementations/ciphers/cipher\+\_\+chacha20\+\_\+poly1305.\+h\end{DoxyCompactItemize}

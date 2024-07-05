@@ -1,0 +1,219 @@
+\doxysection{ed448.\+h}
+\hypertarget{ed448_8h_source}{}\label{ed448_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/ec/curve448/ed448.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/ec/curve448/ed448.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2017-\/2021\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *\ Copyright\ 2015-\/2016\ Cryptography\ Research,\ Inc.}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ *\ Originally\ written\ by\ Mike\ Hamburg}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#ifndef\ OSSL\_CRYPTO\_EC\_CURVE448\_ED448\_H}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ define\ OSSL\_CRYPTO\_EC\_CURVE448\_ED448\_H}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#\ include\ "{}point\_448.h"{}}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{comment}{/*\ Number\ of\ bytes\ in\ an\ EdDSA\ public\ key.\ */}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#\ define\ EDDSA\_448\_PUBLIC\_BYTES\ 57}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{comment}{/*\ Number\ of\ bytes\ in\ an\ EdDSA\ private\ key.\ */}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#\ define\ EDDSA\_448\_PRIVATE\_BYTES\ EDDSA\_448\_PUBLIC\_BYTES}}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{comment}{/*\ Number\ of\ bytes\ in\ an\ EdDSA\ private\ key.\ */}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#\ define\ EDDSA\_448\_SIGNATURE\_BYTES\ (EDDSA\_448\_PUBLIC\_BYTES\ +\ \(\backslash\)}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ EDDSA\_448\_PRIVATE\_BYTES)}}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \textcolor{comment}{/*\ EdDSA\ encoding\ ratio.\ */}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#\ define\ C448\_EDDSA\_ENCODE\_RATIO\ 4}}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \textcolor{comment}{/*\ EdDSA\ decoding\ ratio.\ */}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#\ define\ C448\_EDDSA\_DECODE\_RATIO\ (4\ /\ 4)}}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00035\ \textcolor{comment}{\ *\ EdDSA\ key\ generation.\ \ This\ function\ uses\ a\ different\ (non-\/Decaf)\ encoding.}}
+\DoxyCodeLine{00036\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00037\ \textcolor{comment}{\ *\ pubkey\ (out):\ The\ public\ key.}}
+\DoxyCodeLine{00038\ \textcolor{comment}{\ *\ privkey\ (in):\ The\ private\ key.}}
+\DoxyCodeLine{00039\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00040\ c448\_error\_t}
+\DoxyCodeLine{00041\ ossl\_c448\_ed448\_derive\_public\_key(}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OSSL\_LIB\_CTX\ *ctx,}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint8\_t\ \mbox{\hyperlink{structpubkey}{pubkey}}\ [EDDSA\_448\_PUBLIC\_BYTES],}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ uint8\_t\ privkey\ [EDDSA\_448\_PRIVATE\_BYTES],}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *propq);}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00048\ \textcolor{comment}{\ *\ EdDSA\ signing.}}
+\DoxyCodeLine{00049\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00050\ \textcolor{comment}{\ *\ signature\ (out):\ The\ signature.}}
+\DoxyCodeLine{00051\ \textcolor{comment}{\ *\ privkey\ (in):\ The\ private\ key.}}
+\DoxyCodeLine{00052\ \textcolor{comment}{\ *\ pubkey\ (in):\ \ The\ public\ key.}}
+\DoxyCodeLine{00053\ \textcolor{comment}{\ *\ message\ (in):\ \ The\ message\ to\ sign.}}
+\DoxyCodeLine{00054\ \textcolor{comment}{\ *\ message\_len\ (in):\ \ The\ length\ of\ the\ message.}}
+\DoxyCodeLine{00055\ \textcolor{comment}{\ *\ prehashed\ (in):\ \ Nonzero\ if\ the\ message\ is\ actually\ the\ hash\ of\ something}}
+\DoxyCodeLine{00056\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ you\ want\ to\ sign.}}
+\DoxyCodeLine{00057\ \textcolor{comment}{\ *\ context\ (in):\ \ A\ "{}context"{}\ for\ this\ signature\ of\ up\ to\ 255\ bytes.}}
+\DoxyCodeLine{00058\ \textcolor{comment}{\ *\ context\_len\ (in):\ \ Length\ of\ the\ context.}}
+\DoxyCodeLine{00059\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00060\ \textcolor{comment}{\ *\ For\ Ed25519,\ it\ is\ unsafe\ to\ use\ the\ same\ key\ for\ both\ prehashed\ and}}
+\DoxyCodeLine{00061\ \textcolor{comment}{\ *\ non-\/prehashed\ messages,\ at\ least\ without\ some\ very\ careful\ protocol-\/level}}
+\DoxyCodeLine{00062\ \textcolor{comment}{\ *\ disambiguation.\ \ For\ Ed448\ it\ is\ safe.}}
+\DoxyCodeLine{00063\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00064\ c448\_error\_t}
+\DoxyCodeLine{00065\ ossl\_c448\_ed448\_sign(OSSL\_LIB\_CTX\ *ctx,}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint8\_t\ signature[EDDSA\_448\_SIGNATURE\_BYTES],}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ uint8\_t\ privkey[EDDSA\_448\_PRIVATE\_BYTES],}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ uint8\_t\ \mbox{\hyperlink{structpubkey}{pubkey}}[EDDSA\_448\_PUBLIC\_BYTES],}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ uint8\_t\ *message,\ \textcolor{keywordtype}{size\_t}\ message\_len,}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint8\_t\ prehashed,\ \textcolor{keyword}{const}\ uint8\_t\ *context,}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ context\_len,}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *propq);}
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00074\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00075\ \textcolor{comment}{\ *\ EdDSA\ signing\ with\ prehash.}}
+\DoxyCodeLine{00076\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00077\ \textcolor{comment}{\ *\ signature\ (out):\ The\ signature.}}
+\DoxyCodeLine{00078\ \textcolor{comment}{\ *\ privkey\ (in):\ The\ private\ key.}}
+\DoxyCodeLine{00079\ \textcolor{comment}{\ *\ pubkey\ (in):\ The\ public\ key.}}
+\DoxyCodeLine{00080\ \textcolor{comment}{\ *\ hash\ (in):\ The\ hash\ of\ the\ message.\ \ This\ object\ will\ not\ be\ modified\ by\ the}}
+\DoxyCodeLine{00081\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ call.}}
+\DoxyCodeLine{00082\ \textcolor{comment}{\ *\ context\ (in):\ A\ "{}context"{}\ for\ this\ signature\ of\ up\ to\ 255\ bytes.\ \ Must\ be\ the}}
+\DoxyCodeLine{00083\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ same\ as\ what\ was\ used\ for\ the\ prehash.}}
+\DoxyCodeLine{00084\ \textcolor{comment}{\ *\ context\_len\ (in):\ Length\ of\ the\ context.}}
+\DoxyCodeLine{00085\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00086\ \textcolor{comment}{\ *\ For\ Ed25519,\ it\ is\ unsafe\ to\ use\ the\ same\ key\ for\ both\ prehashed\ and}}
+\DoxyCodeLine{00087\ \textcolor{comment}{\ *\ non-\/prehashed\ messages,\ at\ least\ without\ some\ very\ careful\ protocol-\/level}}
+\DoxyCodeLine{00088\ \textcolor{comment}{\ *\ disambiguation.\ \ For\ Ed448\ it\ is\ safe.}}
+\DoxyCodeLine{00089\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00090\ c448\_error\_t}
+\DoxyCodeLine{00091\ ossl\_c448\_ed448\_sign\_prehash(OSSL\_LIB\_CTX\ *ctx,}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint8\_t\ signature[EDDSA\_448\_SIGNATURE\_BYTES],}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ uint8\_t\ privkey[EDDSA\_448\_PRIVATE\_BYTES],}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ uint8\_t\ \mbox{\hyperlink{structpubkey}{pubkey}}[EDDSA\_448\_PUBLIC\_BYTES],}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ uint8\_t\ hash[64],}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ uint8\_t\ *context,}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ context\_len,}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *propq);}
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00100\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00101\ \textcolor{comment}{\ *\ EdDSA\ signature\ verification.}}
+\DoxyCodeLine{00102\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00103\ \textcolor{comment}{\ *\ Uses\ the\ standard\ (i.e.\ less-\/strict)\ verification\ formula.}}
+\DoxyCodeLine{00104\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00105\ \textcolor{comment}{\ *\ signature\ (in):\ The\ signature.}}
+\DoxyCodeLine{00106\ \textcolor{comment}{\ *\ pubkey\ (in):\ The\ public\ key.}}
+\DoxyCodeLine{00107\ \textcolor{comment}{\ *\ message\ (in):\ The\ message\ to\ verify.}}
+\DoxyCodeLine{00108\ \textcolor{comment}{\ *\ message\_len\ (in):\ The\ length\ of\ the\ message.}}
+\DoxyCodeLine{00109\ \textcolor{comment}{\ *\ prehashed\ (in):\ Nonzero\ if\ the\ message\ is\ actually\ the\ hash\ of\ something\ you}}
+\DoxyCodeLine{00110\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ want\ to\ verify.}}
+\DoxyCodeLine{00111\ \textcolor{comment}{\ *\ context\ (in):\ A\ "{}context"{}\ for\ this\ signature\ of\ up\ to\ 255\ bytes.}}
+\DoxyCodeLine{00112\ \textcolor{comment}{\ *\ context\_len\ (in):\ Length\ of\ the\ context.}}
+\DoxyCodeLine{00113\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00114\ \textcolor{comment}{\ *\ For\ Ed25519,\ it\ is\ unsafe\ to\ use\ the\ same\ key\ for\ both\ prehashed\ and}}
+\DoxyCodeLine{00115\ \textcolor{comment}{\ *\ non-\/prehashed\ messages,\ at\ least\ without\ some\ very\ careful\ protocol-\/level}}
+\DoxyCodeLine{00116\ \textcolor{comment}{\ *\ disambiguation.\ \ For\ Ed448\ it\ is\ safe.}}
+\DoxyCodeLine{00117\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00118\ c448\_error\_t}
+\DoxyCodeLine{00119\ ossl\_c448\_ed448\_verify(OSSL\_LIB\_CTX\ *ctx,}
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ uint8\_t}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ signature[EDDSA\_448\_SIGNATURE\_BYTES],}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ uint8\_t}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structpubkey}{pubkey}}[EDDSA\_448\_PUBLIC\_BYTES],}
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ uint8\_t\ *message,\ \textcolor{keywordtype}{size\_t}\ message\_len,}
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint8\_t\ prehashed,\ \textcolor{keyword}{const}\ uint8\_t\ *context,}
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint8\_t\ context\_len,}
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *propq);}
+\DoxyCodeLine{00128\ }
+\DoxyCodeLine{00129\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00130\ \textcolor{comment}{\ *\ EdDSA\ signature\ verification.}}
+\DoxyCodeLine{00131\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00132\ \textcolor{comment}{\ *\ Uses\ the\ standard\ (i.e.\ less-\/strict)\ verification\ formula.}}
+\DoxyCodeLine{00133\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00134\ \textcolor{comment}{\ *\ signature\ (in):\ The\ signature.}}
+\DoxyCodeLine{00135\ \textcolor{comment}{\ *\ pubkey\ (in):\ The\ public\ key.}}
+\DoxyCodeLine{00136\ \textcolor{comment}{\ *\ hash\ (in):\ The\ hash\ of\ the\ message.\ \ This\ object\ will\ not\ be\ modified\ by\ the}}
+\DoxyCodeLine{00137\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ call.}}
+\DoxyCodeLine{00138\ \textcolor{comment}{\ *\ context\ (in):\ A\ "{}context"{}\ for\ this\ signature\ of\ up\ to\ 255\ bytes.\ \ Must\ be\ the}}
+\DoxyCodeLine{00139\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ same\ as\ what\ was\ used\ for\ the\ prehash.}}
+\DoxyCodeLine{00140\ \textcolor{comment}{\ *\ context\_len\ (in):\ Length\ of\ the\ context.}}
+\DoxyCodeLine{00141\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00142\ \textcolor{comment}{\ *\ For\ Ed25519,\ it\ is\ unsafe\ to\ use\ the\ same\ key\ for\ both\ prehashed\ and}}
+\DoxyCodeLine{00143\ \textcolor{comment}{\ *\ non-\/prehashed\ messages,\ at\ least\ without\ some\ very\ careful\ protocol-\/level}}
+\DoxyCodeLine{00144\ \textcolor{comment}{\ *\ disambiguation.\ \ For\ Ed448\ it\ is\ safe.}}
+\DoxyCodeLine{00145\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00146\ c448\_error\_t}
+\DoxyCodeLine{00147\ ossl\_c448\_ed448\_verify\_prehash(}
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OSSL\_LIB\_CTX\ *ctx,}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ uint8\_t\ signature[EDDSA\_448\_SIGNATURE\_BYTES],}
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ uint8\_t\ \mbox{\hyperlink{structpubkey}{pubkey}}[EDDSA\_448\_PUBLIC\_BYTES],}
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ uint8\_t\ hash[64],}
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ uint8\_t\ *context,}
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint8\_t\ context\_len,}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *propq);}
+\DoxyCodeLine{00155\ }
+\DoxyCodeLine{00156\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00157\ \textcolor{comment}{\ *\ EdDSA\ point\ encoding.\ \ Used\ internally,\ exposed\ externally.}}
+\DoxyCodeLine{00158\ \textcolor{comment}{\ *\ Multiplies\ by\ C448\_EDDSA\_ENCODE\_RATIO\ first.}}
+\DoxyCodeLine{00159\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00160\ \textcolor{comment}{\ *\ The\ multiplication\ is\ required\ because\ the\ EdDSA\ encoding\ represents}}
+\DoxyCodeLine{00161\ \textcolor{comment}{\ *\ the\ cofactor\ information,\ but\ the\ Decaf\ encoding\ ignores\ it\ (which}}
+\DoxyCodeLine{00162\ \textcolor{comment}{\ *\ is\ the\ whole\ point).\ \ So\ if\ you\ decode\ from\ EdDSA\ and\ re-\/encode\ to}}
+\DoxyCodeLine{00163\ \textcolor{comment}{\ *\ EdDSA,\ the\ cofactor\ info\ must\ get\ cleared,\ because\ the\ intermediate}}
+\DoxyCodeLine{00164\ \textcolor{comment}{\ *\ representation\ doesn't\ track\ it.}}
+\DoxyCodeLine{00165\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00166\ \textcolor{comment}{\ *\ The\ way\ we\ handle\ this\ is\ to\ multiply\ by\ C448\_EDDSA\_DECODE\_RATIO\ when}}
+\DoxyCodeLine{00167\ \textcolor{comment}{\ *\ decoding,\ and\ by\ C448\_EDDSA\_ENCODE\_RATIO\ when\ encoding.\ \ The\ product\ of}}
+\DoxyCodeLine{00168\ \textcolor{comment}{\ *\ these\ ratios\ is\ always\ exactly\ the\ cofactor\ 4,\ so\ the\ cofactor\ ends\ up}}
+\DoxyCodeLine{00169\ \textcolor{comment}{\ *\ cleared\ one\ way\ or\ another.\ \ But\ exactly\ how\ that\ shakes\ out\ depends\ on\ the}}
+\DoxyCodeLine{00170\ \textcolor{comment}{\ *\ base\ points\ specified\ in\ RFC\ 8032.}}
+\DoxyCodeLine{00171\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00172\ \textcolor{comment}{\ *\ The\ upshot\ is\ that\ if\ you\ pass\ the\ Decaf/Ristretto\ base\ point\ to}}
+\DoxyCodeLine{00173\ \textcolor{comment}{\ *\ this\ function,\ you\ will\ get\ C448\_EDDSA\_ENCODE\_RATIO\ times\ the}}
+\DoxyCodeLine{00174\ \textcolor{comment}{\ *\ EdDSA\ base\ point.}}
+\DoxyCodeLine{00175\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00176\ \textcolor{comment}{\ *\ enc\ (out):\ The\ encoded\ point.}}
+\DoxyCodeLine{00177\ \textcolor{comment}{\ *\ p\ (in):\ The\ point.}}
+\DoxyCodeLine{00178\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00179\ \textcolor{keywordtype}{void}}
+\DoxyCodeLine{00180\ ossl\_curve448\_point\_mul\_by\_ratio\_and\_encode\_like\_eddsa(}
+\DoxyCodeLine{00181\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint8\_t\ enc\ [EDDSA\_448\_PUBLIC\_BYTES],}
+\DoxyCodeLine{00182\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ curve448\_point\_t\ p);}
+\DoxyCodeLine{00183\ }
+\DoxyCodeLine{00184\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00185\ \textcolor{comment}{\ *\ EdDSA\ point\ decoding.\ \ Multiplies\ by\ C448\_EDDSA\_DECODE\_RATIO,\ and}}
+\DoxyCodeLine{00186\ \textcolor{comment}{\ *\ ignores\ cofactor\ information.}}
+\DoxyCodeLine{00187\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00188\ \textcolor{comment}{\ *\ See\ notes\ on\ curve448\_point\_mul\_by\_ratio\_and\_encode\_like\_eddsa}}
+\DoxyCodeLine{00189\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00190\ \textcolor{comment}{\ *\ enc\ (out):\ The\ encoded\ point.}}
+\DoxyCodeLine{00191\ \textcolor{comment}{\ *\ p\ (in):\ The\ point.}}
+\DoxyCodeLine{00192\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00193\ c448\_error\_t}
+\DoxyCodeLine{00194\ ossl\_curve448\_point\_decode\_like\_eddsa\_and\_mul\_by\_ratio(}
+\DoxyCodeLine{00195\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ curve448\_point\_t\ p,}
+\DoxyCodeLine{00196\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ uint8\_t\ enc[EDDSA\_448\_PUBLIC\_BYTES]);}
+\DoxyCodeLine{00197\ }
+\DoxyCodeLine{00198\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00199\ \textcolor{comment}{\ *\ EdDSA\ to\ ECDH\ private\ key\ conversion}}
+\DoxyCodeLine{00200\ \textcolor{comment}{\ *\ Using\ the\ appropriate\ hash\ function,\ hash\ the\ EdDSA\ private\ key}}
+\DoxyCodeLine{00201\ \textcolor{comment}{\ *\ and\ keep\ only\ the\ lower\ bytes\ to\ get\ the\ ECDH\ private\ key}}
+\DoxyCodeLine{00202\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00203\ \textcolor{comment}{\ *\ x\ (out):\ The\ ECDH\ private\ key\ as\ in\ RFC7748}}
+\DoxyCodeLine{00204\ \textcolor{comment}{\ *\ ed\ (in):\ The\ EdDSA\ private\ key}}
+\DoxyCodeLine{00205\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00206\ c448\_error\_t}
+\DoxyCodeLine{00207\ ossl\_c448\_ed448\_convert\_private\_key\_to\_x448(}
+\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OSSL\_LIB\_CTX\ *ctx,}
+\DoxyCodeLine{00209\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint8\_t\ x[X448\_PRIVATE\_BYTES],}
+\DoxyCodeLine{00210\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ uint8\_t\ ed[EDDSA\_448\_PRIVATE\_BYTES],}
+\DoxyCodeLine{00211\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *propq);}
+\DoxyCodeLine{00212\ }
+\DoxyCodeLine{00213\ \textcolor{preprocessor}{\#endif\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{/*\ OSSL\_CRYPTO\_EC\_CURVE448\_ED448\_H\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

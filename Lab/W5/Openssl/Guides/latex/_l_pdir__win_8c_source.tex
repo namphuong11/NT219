@@ -1,0 +1,220 @@
+\doxysection{LPdir\+\_\+win.\+c}
+\hypertarget{_l_pdir__win_8c_source}{}\label{_l_pdir__win_8c_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/LPdir\_win.c@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/LPdir\_win.c}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2004-\/2016\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ *\ This\ file\ is\ dual-\/licensed\ and\ is\ also\ available\ under\ the\ following}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ *\ terms:}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ *\ Copyright\ (c)\ 2004,\ Richard\ Levitte\ <richard@levitte.org>}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ *\ All\ rights\ reserved.}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ *\ Redistribution\ and\ use\ in\ source\ and\ binary\ forms,\ with\ or\ without}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ *\ modification,\ are\ permitted\ provided\ that\ the\ following\ conditions}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ *\ are\ met:}}
+\DoxyCodeLine{00020\ \textcolor{comment}{\ *\ 1.\ Redistributions\ of\ source\ code\ must\ retain\ the\ above\ copyright}}
+\DoxyCodeLine{00021\ \textcolor{comment}{\ *\ \ \ \ notice,\ this\ list\ of\ conditions\ and\ the\ following\ disclaimer.}}
+\DoxyCodeLine{00022\ \textcolor{comment}{\ *\ 2.\ Redistributions\ in\ binary\ form\ must\ reproduce\ the\ above\ copyright}}
+\DoxyCodeLine{00023\ \textcolor{comment}{\ *\ \ \ \ notice,\ this\ list\ of\ conditions\ and\ the\ following\ disclaimer\ in\ the}}
+\DoxyCodeLine{00024\ \textcolor{comment}{\ *\ \ \ \ documentation\ and/or\ other\ materials\ provided\ with\ the\ distribution.}}
+\DoxyCodeLine{00025\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00026\ \textcolor{comment}{\ *\ THIS\ SOFTWARE\ IS\ PROVIDED\ BY\ THE\ COPYRIGHT\ HOLDERS\ AND\ CONTRIBUTORS}}
+\DoxyCodeLine{00027\ \textcolor{comment}{\ *\ \`{}\`{}AS\ IS''\ AND\ ANY\ EXPRESS\ OR\ IMPLIED\ WARRANTIES,\ INCLUDING,\ BUT\ NOT}}
+\DoxyCodeLine{00028\ \textcolor{comment}{\ *\ LIMITED\ TO,\ THE\ IMPLIED\ WARRANTIES\ OF\ MERCHANTABILITY\ AND\ FITNESS\ FOR}}
+\DoxyCodeLine{00029\ \textcolor{comment}{\ *\ A\ PARTICULAR\ PURPOSE\ ARE\ DISCLAIMED.\ IN\ NO\ EVENT\ SHALL\ THE\ COPYRIGHT}}
+\DoxyCodeLine{00030\ \textcolor{comment}{\ *\ OWNER\ OR\ CONTRIBUTORS\ BE\ LIABLE\ FOR\ ANY\ DIRECT,\ INDIRECT,\ INCIDENTAL,}}
+\DoxyCodeLine{00031\ \textcolor{comment}{\ *\ SPECIAL,\ EXEMPLARY,\ OR\ CONSEQUENTIAL\ DAMAGES\ (INCLUDING,\ BUT\ NOT}}
+\DoxyCodeLine{00032\ \textcolor{comment}{\ *\ LIMITED\ TO,\ PROCUREMENT\ OF\ SUBSTITUTE\ GOODS\ OR\ SERVICES;\ LOSS\ OF\ USE,}}
+\DoxyCodeLine{00033\ \textcolor{comment}{\ *\ DATA,\ OR\ PROFITS;\ OR\ BUSINESS\ INTERRUPTION)\ HOWEVER\ CAUSED\ AND\ ON\ ANY}}
+\DoxyCodeLine{00034\ \textcolor{comment}{\ *\ THEORY\ OF\ LIABILITY,\ WHETHER\ IN\ CONTRACT,\ STRICT\ LIABILITY,\ OR\ TORT}}
+\DoxyCodeLine{00035\ \textcolor{comment}{\ *\ (INCLUDING\ NEGLIGENCE\ OR\ OTHERWISE)\ ARISING\ IN\ ANY\ WAY\ OUT\ OF\ THE\ USE}}
+\DoxyCodeLine{00036\ \textcolor{comment}{\ *\ OF\ THIS\ SOFTWARE,\ EVEN\ IF\ ADVISED\ OF\ THE\ POSSIBILITY\ OF\ SUCH\ DAMAGE.}}
+\DoxyCodeLine{00037\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \textcolor{preprocessor}{\#include\ <windows.h>}}
+\DoxyCodeLine{00040\ \textcolor{preprocessor}{\#include\ <tchar.h>}}
+\DoxyCodeLine{00041\ \textcolor{preprocessor}{\#include\ "{}internal/numbers.h"{}}}
+\DoxyCodeLine{00042\ \textcolor{preprocessor}{\#ifndef\ LPDIR\_H}}
+\DoxyCodeLine{00043\ \textcolor{preprocessor}{\#\ include\ "{}LPdir.h"{}}}
+\DoxyCodeLine{00044\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00047\ \textcolor{comment}{\ *\ We're\ most\ likely\ overcautious\ here,\ but\ let's\ reserve\ for\ broken\ WinCE}}
+\DoxyCodeLine{00048\ \textcolor{comment}{\ *\ headers\ and\ explicitly\ opt\ for\ UNICODE\ call.\ Keep\ in\ mind\ that\ our\ WinCE}}
+\DoxyCodeLine{00049\ \textcolor{comment}{\ *\ builds\ are\ compiled\ with\ -\/DUNICODE\ [as\ well\ as\ -\/D\_UNICODE].}}
+\DoxyCodeLine{00050\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00051\ \textcolor{preprocessor}{\#if\ defined(LP\_SYS\_WINCE)\ \&\&\ !defined(FindFirstFile)}}
+\DoxyCodeLine{00052\ \textcolor{preprocessor}{\#\ define\ FindFirstFile\ FindFirstFileW}}
+\DoxyCodeLine{00053\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00054\ \textcolor{preprocessor}{\#if\ defined(LP\_SYS\_WINCE)\ \&\&\ !defined(FindNextFile)}}
+\DoxyCodeLine{00055\ \textcolor{preprocessor}{\#\ define\ FindNextFile\ FindNextFileW}}
+\DoxyCodeLine{00056\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \textcolor{preprocessor}{\#ifndef\ NAME\_MAX}}
+\DoxyCodeLine{00059\ \textcolor{preprocessor}{\#\ define\ NAME\_MAX\ 255}}
+\DoxyCodeLine{00060\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \textcolor{preprocessor}{\#ifdef\ CP\_UTF8}}
+\DoxyCodeLine{00063\ \textcolor{preprocessor}{\#\ define\ CP\_DEFAULT\ CP\_UTF8}}
+\DoxyCodeLine{00064\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00065\ \textcolor{preprocessor}{\#\ define\ CP\_DEFAULT\ CP\_ACP}}
+\DoxyCodeLine{00066\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00068\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_l_p__dir__context__st}{LP\_dir\_context\_st}}\ \{}
+\DoxyCodeLine{00069\ \ \ \ \ WIN32\_FIND\_DATA\ ctx;}
+\DoxyCodeLine{00070\ \ \ \ \ HANDLE\ handle;}
+\DoxyCodeLine{00071\ \ \ \ \ \textcolor{keywordtype}{char}\ entry\_name[NAME\_MAX\ +\ 1];}
+\DoxyCodeLine{00072\ \};}
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00074\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *LP\_find\_file(LP\_DIR\_CTX\ **ctx,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *directory)}
+\DoxyCodeLine{00075\ \{}
+\DoxyCodeLine{00076\ \ \ \ \ \textcolor{keywordflow}{if}\ (ctx\ ==\ NULL\ ||\ directory\ ==\ NULL)\ \{}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ errno\ =\ EINVAL;}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00079\ \ \ \ \ \}}
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00081\ \ \ \ \ errno\ =\ 0;}
+\DoxyCodeLine{00082\ \ \ \ \ \textcolor{keywordflow}{if}\ (*ctx\ ==\ NULL)\ \{}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ dirlen\ =\ strlen(directory);}
+\DoxyCodeLine{00084\ }
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (dirlen\ ==\ 0\ ||\ dirlen\ >\ INT\_MAX\ -\/\ 3)\ \{}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \ \ \ \ errno\ =\ ENOENT;}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00089\ }
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ *ctx\ =\ malloc(\textcolor{keyword}{sizeof}(**ctx));}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (*ctx\ ==\ NULL)\ \{}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \ \ \ \ errno\ =\ ENOMEM;}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ memset(*ctx,\ 0,\ \textcolor{keyword}{sizeof}(**ctx));}
+\DoxyCodeLine{00096\ }
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\textcolor{keyword}{sizeof}(TCHAR)\ !=\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{char}))\ \{}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \ \ \ \ TCHAR\ *wdir\ =\ NULL;}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ len\_0\ denotes\ string\ length\ *with*\ trailing\ 0\ */}}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ index\ =\ 0,\ len\_0\ =\ dirlen\ +\ 1;}
+\DoxyCodeLine{00101\ \textcolor{preprocessor}{\#ifdef\ LP\_MULTIBYTE\_AVAILABLE}}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ sz\ =\ 0;}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \ \ \ \ UINT\ cp;}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{do}\ \{}
+\DoxyCodeLine{00106\ \textcolor{preprocessor}{\#\ ifdef\ CP\_UTF8}}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((sz\ =\ MultiByteToWideChar((cp\ =\ CP\_UTF8),\ 0,}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ directory,\ len\_0,}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ NULL,\ 0))\ >\ 0\ ||}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ GetLastError()\ !=\ ERROR\_NO\_UNICODE\_TRANSLATION)}
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00112\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sz\ =\ MultiByteToWideChar((cp\ =\ CP\_ACP),\ 0,}
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ directory,\ len\_0,}
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ NULL,\ 0);}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{while}\ (0);}
+\DoxyCodeLine{00117\ }
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (sz\ >\ 0)\ \{}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00120\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *\ allocate\ two\ additional\ characters\ in\ case\ we\ need\ to}}
+\DoxyCodeLine{00121\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *\ concatenate\ asterisk,\ |sz|\ covers\ trailing\ '\(\backslash\)0'!}}
+\DoxyCodeLine{00122\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ wdir\ =\ \_alloca((sz\ +\ 2)\ *\ \textcolor{keyword}{sizeof}(TCHAR));}
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!MultiByteToWideChar(cp,\ 0,\ directory,\ len\_0,}
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (WCHAR\ *)wdir,\ sz))\ \{}
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ free(*ctx);}
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *ctx\ =\ NULL;}
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ errno\ =\ EINVAL;}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00132\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sz\ =\ len\_0;}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00136\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *\ allocate\ two\ additional\ characters\ in\ case\ we\ need\ to}}
+\DoxyCodeLine{00137\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *\ concatenate\ asterisk,\ |sz|\ covers\ trailing\ '\(\backslash\)0'!}}
+\DoxyCodeLine{00138\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ wdir\ =\ \_alloca((sz\ +\ 2)\ *\ \textcolor{keyword}{sizeof}(TCHAR));}
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (index\ =\ 0;\ index\ <\ len\_0;\ index++)}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ wdir[index]\ =\ (TCHAR)directory[index];}
+\DoxyCodeLine{00142\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00143\ }
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ \ \ \ \ sz-\/-\/;\ \textcolor{comment}{/*\ wdir[sz]\ is\ trailing\ '\(\backslash\)0'\ now\ */}}
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (wdir[sz\ -\/\ 1]\ !=\ TEXT(\textcolor{charliteral}{'*'}))\ \{}
+\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (wdir[sz\ -\/\ 1]\ !=\ TEXT(\textcolor{charliteral}{'/'})\ \&\&\ wdir[sz\ -\/\ 1]\ !=\ TEXT(\textcolor{charliteral}{'\(\backslash\)\(\backslash\)'}))}
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_tcscpy(wdir\ +\ sz,\ TEXT(\textcolor{stringliteral}{"{}/*"{}}));}
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_tcscpy(wdir\ +\ sz,\ TEXT(\textcolor{stringliteral}{"{}*"{}}));}
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00151\ }
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ \ \ \ \ (*ctx)-\/>handle\ =\ FindFirstFile(wdir,\ \&(*ctx)-\/>ctx);}
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (directory[dirlen\ -\/\ 1]\ !=\ \textcolor{charliteral}{'*'})\ \{}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{char}\ *buf\ =\ \_alloca(dirlen\ +\ 3);}
+\DoxyCodeLine{00156\ }
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ strcpy(buf,\ directory);}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (buf[dirlen\ -\/\ 1]\ !=\ \textcolor{charliteral}{'/'}\ \&\&\ buf[dirlen\ -\/\ 1]\ !=\ \textcolor{charliteral}{'\(\backslash\)\(\backslash\)'})}
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ strcpy(buf\ +\ dirlen,\ \textcolor{stringliteral}{"{}/*"{}});}
+\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ strcpy(buf\ +\ dirlen,\ \textcolor{stringliteral}{"{}*"{}});}
+\DoxyCodeLine{00162\ }
+\DoxyCodeLine{00163\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ directory\ =\ buf;}
+\DoxyCodeLine{00164\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00165\ }
+\DoxyCodeLine{00166\ \ \ \ \ \ \ \ \ \ \ \ \ (*ctx)-\/>handle\ =\ FindFirstFile((TCHAR\ *)directory,\ \&(*ctx)-\/>ctx);}
+\DoxyCodeLine{00167\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00168\ }
+\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((*ctx)-\/>handle\ ==\ INVALID\_HANDLE\_VALUE)\ \{}
+\DoxyCodeLine{00170\ \ \ \ \ \ \ \ \ \ \ \ \ free(*ctx);}
+\DoxyCodeLine{00171\ \ \ \ \ \ \ \ \ \ \ \ \ *ctx\ =\ NULL;}
+\DoxyCodeLine{00172\ \ \ \ \ \ \ \ \ \ \ \ \ errno\ =\ EINVAL;}
+\DoxyCodeLine{00173\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00174\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00175\ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00176\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (FindNextFile((*ctx)-\/>handle,\ \&(*ctx)-\/>ctx)\ ==\ FALSE)\ \{}
+\DoxyCodeLine{00177\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00178\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00179\ \ \ \ \ \}}
+\DoxyCodeLine{00180\ \ \ \ \ \textcolor{keywordflow}{if}\ (\textcolor{keyword}{sizeof}(TCHAR)\ !=\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{char}))\ \{}
+\DoxyCodeLine{00181\ \ \ \ \ \ \ \ \ TCHAR\ *wdir\ =\ (*ctx)-\/>ctx.cFileName;}
+\DoxyCodeLine{00182\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ index,\ len\_0\ =\ 0;}
+\DoxyCodeLine{00183\ }
+\DoxyCodeLine{00184\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (wdir[len\_0]\ \&\&\ len\_0\ <\ (\textcolor{keyword}{sizeof}((*ctx)-\/>entry\_name)\ -\/\ 1))}
+\DoxyCodeLine{00185\ \ \ \ \ \ \ \ \ \ \ \ \ len\_0++;}
+\DoxyCodeLine{00186\ \ \ \ \ \ \ \ \ len\_0++;}
+\DoxyCodeLine{00187\ }
+\DoxyCodeLine{00188\ \textcolor{preprocessor}{\#ifdef\ LP\_MULTIBYTE\_AVAILABLE}}
+\DoxyCodeLine{00189\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!WideCharToMultiByte(CP\_DEFAULT,\ 0,\ (WCHAR\ *)wdir,\ len\_0,}
+\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (*ctx)-\/>entry\_name,}
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{sizeof}((*ctx)-\/>entry\_name),\ NULL,\ 0))}
+\DoxyCodeLine{00192\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00193\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (index\ =\ 0;\ index\ <\ len\_0;\ index++)}
+\DoxyCodeLine{00194\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (*ctx)-\/>entry\_name[index]\ =\ (\textcolor{keywordtype}{char})wdir[index];}
+\DoxyCodeLine{00195\ \ \ \ \ \}\ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00196\ \ \ \ \ \ \ \ \ strncpy((*ctx)-\/>entry\_name,\ (\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *)(*ctx)-\/>ctx.cFileName,}
+\DoxyCodeLine{00197\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{sizeof}((*ctx)-\/>entry\_name)\ -\/\ 1);}
+\DoxyCodeLine{00198\ }
+\DoxyCodeLine{00199\ \ \ \ \ (*ctx)-\/>entry\_name[\textcolor{keyword}{sizeof}((*ctx)-\/>entry\_name)\ -\/\ 1]\ =\ \textcolor{charliteral}{'\(\backslash\)0'};}
+\DoxyCodeLine{00200\ }
+\DoxyCodeLine{00201\ \ \ \ \ \textcolor{keywordflow}{return}\ (*ctx)-\/>entry\_name;}
+\DoxyCodeLine{00202\ \}}
+\DoxyCodeLine{00203\ }
+\DoxyCodeLine{00204\ \textcolor{keywordtype}{int}\ LP\_find\_file\_end(LP\_DIR\_CTX\ **ctx)}
+\DoxyCodeLine{00205\ \{}
+\DoxyCodeLine{00206\ \ \ \ \ \textcolor{keywordflow}{if}\ (ctx\ !=\ NULL\ \&\&\ *ctx\ !=\ NULL)\ \{}
+\DoxyCodeLine{00207\ \ \ \ \ \ \ \ \ FindClose((*ctx)-\/>handle);}
+\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ free(*ctx);}
+\DoxyCodeLine{00209\ \ \ \ \ \ \ \ \ *ctx\ =\ NULL;}
+\DoxyCodeLine{00210\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00211\ \ \ \ \ \}}
+\DoxyCodeLine{00212\ \ \ \ \ errno\ =\ EINVAL;}
+\DoxyCodeLine{00213\ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00214\ \}}
+
+\end{DoxyCode}

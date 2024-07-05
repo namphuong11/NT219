@@ -1,0 +1,86 @@
+\doxysection{conf\+\_\+def.\+h}
+\hypertarget{conf__def_8h_source}{}\label{conf__def_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/conf/conf\_def.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/conf/conf\_def.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ WARNING:\ do\ not\ edit!}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *\ Generated\ by\ crypto/conf/keysets.pl}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ Copyright\ 1995-\/2021\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#define\ CONF\_NUMBER\ \ \ \ \ \ \ 1}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#define\ CONF\_UPPER\ \ \ \ \ \ \ \ 2}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#define\ CONF\_LOWER\ \ \ \ \ \ \ \ 4}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#define\ CONF\_UNDER\ \ \ \ \ \ \ \ 256}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#define\ CONF\_PUNCT\ \ \ \ \ \ \ \ 512}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ CONF\_WS\ \ \ \ \ \ \ \ \ \ \ 16}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#define\ CONF\_ESC\ \ \ \ \ \ \ \ \ \ 32}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#define\ CONF\_QUOTE\ \ \ \ \ \ \ \ 64}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#define\ CONF\_DQUOTE\ \ \ \ \ \ \ 1024}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#define\ CONF\_COMMENT\ \ \ \ \ \ 128}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#define\ CONF\_FCOMMENT\ \ \ \ \ 2048}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#define\ CONF\_DOLLAR\ \ \ \ \ \ \ 4096}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#define\ CONF\_EOF\ \ \ \ \ \ \ \ \ \ 8}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#define\ CONF\_ALPHA\ \ \ \ \ \ \ \ (CONF\_UPPER|CONF\_LOWER)}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#define\ CONF\_ALNUM\ \ \ \ \ \ \ \ (CONF\_ALPHA|CONF\_NUMBER|CONF\_UNDER)}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#define\ CONF\_ALNUM\_PUNCT\ \ (CONF\_ALPHA|CONF\_NUMBER|CONF\_UNDER|CONF\_PUNCT)}}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#define\ IS\_COMMENT(conf,c)\ \ \ \ \ is\_keytype(conf,\ c,\ CONF\_COMMENT)}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#define\ IS\_FCOMMENT(conf,c)\ \ \ \ is\_keytype(conf,\ c,\ CONF\_FCOMMENT)}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#define\ IS\_EOF(conf,c)\ \ \ \ \ \ \ \ \ is\_keytype(conf,\ c,\ CONF\_EOF)}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#define\ IS\_ESC(conf,c)\ \ \ \ \ \ \ \ \ is\_keytype(conf,\ c,\ CONF\_ESC)}}
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#define\ IS\_NUMBER(conf,c)\ \ \ \ \ \ is\_keytype(conf,\ c,\ CONF\_NUMBER)}}
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#define\ IS\_WS(conf,c)\ \ \ \ \ \ \ \ \ \ is\_keytype(conf,\ c,\ CONF\_WS)}}
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#define\ IS\_ALNUM(conf,c)\ \ \ \ \ \ \ is\_keytype(conf,\ c,\ CONF\_ALNUM)}}
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#define\ IS\_ALNUM\_PUNCT(conf,c)\ is\_keytype(conf,\ c,\ CONF\_ALNUM\_PUNCT)}}
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#define\ IS\_QUOTE(conf,c)\ \ \ \ \ \ \ is\_keytype(conf,\ c,\ CONF\_QUOTE)}}
+\DoxyCodeLine{00039\ \textcolor{preprocessor}{\#define\ IS\_DQUOTE(conf,c)\ \ \ \ \ \ is\_keytype(conf,\ c,\ CONF\_DQUOTE)}}
+\DoxyCodeLine{00040\ \textcolor{preprocessor}{\#define\ IS\_DOLLAR(conf,c)\ \ \ \ \ \ is\_keytype(conf,\ c,\ CONF\_DOLLAR)}}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{short}\ CONF\_type\_default[128]\ =\ \{}
+\DoxyCodeLine{00043\ \ \ \ \ 0x0008,\ 0x0000,\ 0x0000,\ 0x0000,\ 0x0000,\ 0x0000,\ 0x0000,\ 0x0000,}
+\DoxyCodeLine{00044\ \ \ \ \ 0x0000,\ 0x0010,\ 0x0010,\ 0x0000,\ 0x0000,\ 0x0010,\ 0x0000,\ 0x0000,}
+\DoxyCodeLine{00045\ \ \ \ \ 0x0000,\ 0x0000,\ 0x0000,\ 0x0000,\ 0x0000,\ 0x0000,\ 0x0000,\ 0x0000,}
+\DoxyCodeLine{00046\ \ \ \ \ 0x0000,\ 0x0000,\ 0x0000,\ 0x0000,\ 0x0000,\ 0x0000,\ 0x0000,\ 0x0000,}
+\DoxyCodeLine{00047\ \ \ \ \ 0x0010,\ 0x0200,\ 0x0040,\ 0x0080,\ 0x1000,\ 0x0200,\ 0x0200,\ 0x0040,}
+\DoxyCodeLine{00048\ \ \ \ \ 0x0000,\ 0x0000,\ 0x0200,\ 0x0200,\ 0x0200,\ 0x0200,\ 0x0200,\ 0x0200,}
+\DoxyCodeLine{00049\ \ \ \ \ 0x0001,\ 0x0001,\ 0x0001,\ 0x0001,\ 0x0001,\ 0x0001,\ 0x0001,\ 0x0001,}
+\DoxyCodeLine{00050\ \ \ \ \ 0x0001,\ 0x0001,\ 0x0000,\ 0x0200,\ 0x0000,\ 0x0000,\ 0x0000,\ 0x0200,}
+\DoxyCodeLine{00051\ \ \ \ \ 0x0200,\ 0x0002,\ 0x0002,\ 0x0002,\ 0x0002,\ 0x0002,\ 0x0002,\ 0x0002,}
+\DoxyCodeLine{00052\ \ \ \ \ 0x0002,\ 0x0002,\ 0x0002,\ 0x0002,\ 0x0002,\ 0x0002,\ 0x0002,\ 0x0002,}
+\DoxyCodeLine{00053\ \ \ \ \ 0x0002,\ 0x0002,\ 0x0002,\ 0x0002,\ 0x0002,\ 0x0002,\ 0x0002,\ 0x0002,}
+\DoxyCodeLine{00054\ \ \ \ \ 0x0002,\ 0x0002,\ 0x0002,\ 0x0000,\ 0x0020,\ 0x0000,\ 0x0200,\ 0x0100,}
+\DoxyCodeLine{00055\ \ \ \ \ 0x0040,\ 0x0004,\ 0x0004,\ 0x0004,\ 0x0004,\ 0x0004,\ 0x0004,\ 0x0004,}
+\DoxyCodeLine{00056\ \ \ \ \ 0x0004,\ 0x0004,\ 0x0004,\ 0x0004,\ 0x0004,\ 0x0004,\ 0x0004,\ 0x0004,}
+\DoxyCodeLine{00057\ \ \ \ \ 0x0004,\ 0x0004,\ 0x0004,\ 0x0004,\ 0x0004,\ 0x0004,\ 0x0004,\ 0x0004,}
+\DoxyCodeLine{00058\ \ \ \ \ 0x0004,\ 0x0004,\ 0x0004,\ 0x0000,\ 0x0200,\ 0x0000,\ 0x0200,\ 0x0000,}
+\DoxyCodeLine{00059\ \};}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_DEPRECATED\_3\_0}}
+\DoxyCodeLine{00062\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{short}\ CONF\_type\_win32[128]\ =\ \{}
+\DoxyCodeLine{00063\ \ \ \ \ 0x0008,\ 0x0000,\ 0x0000,\ 0x0000,\ 0x0000,\ 0x0000,\ 0x0000,\ 0x0000,}
+\DoxyCodeLine{00064\ \ \ \ \ 0x0000,\ 0x0010,\ 0x0010,\ 0x0000,\ 0x0000,\ 0x0010,\ 0x0000,\ 0x0000,}
+\DoxyCodeLine{00065\ \ \ \ \ 0x0000,\ 0x0000,\ 0x0000,\ 0x0000,\ 0x0000,\ 0x0000,\ 0x0000,\ 0x0000,}
+\DoxyCodeLine{00066\ \ \ \ \ 0x0000,\ 0x0000,\ 0x0000,\ 0x0000,\ 0x0000,\ 0x0000,\ 0x0000,\ 0x0000,}
+\DoxyCodeLine{00067\ \ \ \ \ 0x0010,\ 0x0200,\ 0x0400,\ 0x0000,\ 0x1000,\ 0x0200,\ 0x0200,\ 0x0000,}
+\DoxyCodeLine{00068\ \ \ \ \ 0x0000,\ 0x0000,\ 0x0200,\ 0x0200,\ 0x0200,\ 0x0200,\ 0x0200,\ 0x0200,}
+\DoxyCodeLine{00069\ \ \ \ \ 0x0001,\ 0x0001,\ 0x0001,\ 0x0001,\ 0x0001,\ 0x0001,\ 0x0001,\ 0x0001,}
+\DoxyCodeLine{00070\ \ \ \ \ 0x0001,\ 0x0001,\ 0x0000,\ 0x0A00,\ 0x0000,\ 0x0000,\ 0x0000,\ 0x0200,}
+\DoxyCodeLine{00071\ \ \ \ \ 0x0200,\ 0x0002,\ 0x0002,\ 0x0002,\ 0x0002,\ 0x0002,\ 0x0002,\ 0x0002,}
+\DoxyCodeLine{00072\ \ \ \ \ 0x0002,\ 0x0002,\ 0x0002,\ 0x0002,\ 0x0002,\ 0x0002,\ 0x0002,\ 0x0002,}
+\DoxyCodeLine{00073\ \ \ \ \ 0x0002,\ 0x0002,\ 0x0002,\ 0x0002,\ 0x0002,\ 0x0002,\ 0x0002,\ 0x0002,}
+\DoxyCodeLine{00074\ \ \ \ \ 0x0002,\ 0x0002,\ 0x0002,\ 0x0000,\ 0x0000,\ 0x0000,\ 0x0200,\ 0x0100,}
+\DoxyCodeLine{00075\ \ \ \ \ 0x0000,\ 0x0004,\ 0x0004,\ 0x0004,\ 0x0004,\ 0x0004,\ 0x0004,\ 0x0004,}
+\DoxyCodeLine{00076\ \ \ \ \ 0x0004,\ 0x0004,\ 0x0004,\ 0x0004,\ 0x0004,\ 0x0004,\ 0x0004,\ 0x0004,}
+\DoxyCodeLine{00077\ \ \ \ \ 0x0004,\ 0x0004,\ 0x0004,\ 0x0004,\ 0x0004,\ 0x0004,\ 0x0004,\ 0x0004,}
+\DoxyCodeLine{00078\ \ \ \ \ 0x0004,\ 0x0004,\ 0x0004,\ 0x0000,\ 0x0200,\ 0x0000,\ 0x0200,\ 0x0000,}
+\DoxyCodeLine{00079\ \};}
+\DoxyCodeLine{00080\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

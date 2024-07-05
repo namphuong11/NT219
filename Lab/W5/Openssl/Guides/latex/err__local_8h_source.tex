@@ -1,0 +1,105 @@
+\doxysection{err\+\_\+local.\+h}
+\hypertarget{err__local_8h_source}{}\label{err__local_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/err/err\_local.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/err/err\_local.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 1995-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <string.h>}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ <openssl/err.h>}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ <openssl/e\_os2.h>}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{void}\ err\_get\_slot(ERR\_STATE\ *es)}
+\DoxyCodeLine{00015\ \{}
+\DoxyCodeLine{00016\ \ \ \ \ es-\/>top\ =\ (es-\/>top\ +\ 1)\ \%\ ERR\_NUM\_ERRORS;}
+\DoxyCodeLine{00017\ \ \ \ \ \textcolor{keywordflow}{if}\ (es-\/>top\ ==\ es-\/>bottom)}
+\DoxyCodeLine{00018\ \ \ \ \ \ \ \ \ es-\/>bottom\ =\ (es-\/>bottom\ +\ 1)\ \%\ ERR\_NUM\_ERRORS;}
+\DoxyCodeLine{00019\ \}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{void}\ err\_clear\_data(ERR\_STATE\ *es,\ \textcolor{keywordtype}{size\_t}\ i,\ \textcolor{keywordtype}{int}\ deall)}
+\DoxyCodeLine{00022\ \{}
+\DoxyCodeLine{00023\ \ \ \ \ \textcolor{keywordflow}{if}\ (es-\/>err\_data\_flags[i]\ \&\ ERR\_TXT\_MALLOCED)\ \{}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (deall)\ \{}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \ \ \ \ OPENSSL\_free(es-\/>err\_data[i]);}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \ \ \ \ es-\/>err\_data[i]\ =\ NULL;}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \ \ \ \ es-\/>err\_data\_size[i]\ =\ 0;}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \ \ \ \ es-\/>err\_data\_flags[i]\ =\ 0;}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (es-\/>err\_data[i]\ !=\ NULL)\ \{}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \ \ \ \ es-\/>err\_data[i][0]\ =\ \textcolor{charliteral}{'\(\backslash\)0'};}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \ \ \ \ es-\/>err\_data\_flags[i]\ =\ ERR\_TXT\_MALLOCED;}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00033\ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ es-\/>err\_data[i]\ =\ NULL;}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ es-\/>err\_data\_size[i]\ =\ 0;}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ es-\/>err\_data\_flags[i]\ =\ 0;}
+\DoxyCodeLine{00037\ \ \ \ \ \}}
+\DoxyCodeLine{00038\ \}}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{void}\ err\_set\_error(ERR\_STATE\ *es,\ \textcolor{keywordtype}{size\_t}\ i,}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ lib,\ \textcolor{keywordtype}{int}\ reason)}
+\DoxyCodeLine{00042\ \{}
+\DoxyCodeLine{00043\ \ \ \ \ es-\/>err\_buffer[i]\ =}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ lib\ ==\ ERR\_LIB\_SYS}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ ?\ (\textcolor{keywordtype}{unsigned}\ int)(ERR\_SYSTEM\_FLAG\ |\ \ reason)}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ :\ ERR\_PACK(lib,\ 0,\ reason);}
+\DoxyCodeLine{00047\ \}}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{void}\ err\_set\_debug(ERR\_STATE\ *es,\ \textcolor{keywordtype}{size\_t}\ i,}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *file,\ \textcolor{keywordtype}{int}\ line,}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *fn)}
+\DoxyCodeLine{00052\ \{}
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00054\ \textcolor{comment}{\ \ \ \ \ *\ We\ dup\ the\ file\ and\ fn\ strings\ because\ they\ may\ be\ provider\ owned.\ If\ the}}
+\DoxyCodeLine{00055\ \textcolor{comment}{\ \ \ \ \ *\ provider\ gets\ unloaded,\ they\ may\ not\ be\ valid\ anymore.}}
+\DoxyCodeLine{00056\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00057\ \ \ \ \ OPENSSL\_free(es-\/>err\_file[i]);}
+\DoxyCodeLine{00058\ \ \ \ \ \textcolor{keywordflow}{if}\ (file\ ==\ NULL\ ||\ file[0]\ ==\ \textcolor{charliteral}{'\(\backslash\)0'})}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ es-\/>err\_file[i]\ =\ NULL;}
+\DoxyCodeLine{00060\ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ ((es-\/>err\_file[i]\ =\ CRYPTO\_malloc(strlen(file)\ +\ 1,}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ NULL,\ 0))\ !=\ NULL)}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ We\ cannot\ use\ OPENSSL\_strdup\ due\ to\ possible\ recursion\ */}}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ strcpy(es-\/>err\_file[i],\ file);}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ \ \ \ \ es-\/>err\_line[i]\ =\ line;}
+\DoxyCodeLine{00066\ \ \ \ \ OPENSSL\_free(es-\/>err\_func[i]);}
+\DoxyCodeLine{00067\ \ \ \ \ \textcolor{keywordflow}{if}\ (fn\ ==\ NULL\ ||\ fn[0]\ ==\ \textcolor{charliteral}{'\(\backslash\)0'})}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ es-\/>err\_func[i]\ =\ NULL;}
+\DoxyCodeLine{00069\ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ ((es-\/>err\_func[i]\ =\ CRYPTO\_malloc(strlen(fn)\ +\ 1,}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ NULL,\ 0))\ !=\ NULL)}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ strcpy(es-\/>err\_func[i],\ fn);}
+\DoxyCodeLine{00072\ \}}
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00074\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{void}\ err\_set\_data(ERR\_STATE\ *es,\ \textcolor{keywordtype}{size\_t}\ i,}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *data,\ \textcolor{keywordtype}{size\_t}\ datasz,\ \textcolor{keywordtype}{int}\ flags)}
+\DoxyCodeLine{00076\ \{}
+\DoxyCodeLine{00077\ \ \ \ \ \textcolor{keywordflow}{if}\ ((es-\/>err\_data\_flags[i]\ \&\ ERR\_TXT\_MALLOCED)\ !=\ 0)}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ OPENSSL\_free(es-\/>err\_data[i]);}
+\DoxyCodeLine{00079\ \ \ \ \ es-\/>err\_data[i]\ =\ data;}
+\DoxyCodeLine{00080\ \ \ \ \ es-\/>err\_data\_size[i]\ =\ datasz;}
+\DoxyCodeLine{00081\ \ \ \ \ es-\/>err\_data\_flags[i]\ =\ flags;}
+\DoxyCodeLine{00082\ \}}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{void}\ err\_clear(ERR\_STATE\ *es,\ \textcolor{keywordtype}{size\_t}\ i,\ \textcolor{keywordtype}{int}\ deall)}
+\DoxyCodeLine{00085\ \{}
+\DoxyCodeLine{00086\ \ \ \ \ err\_clear\_data(es,\ i,\ (deall));}
+\DoxyCodeLine{00087\ \ \ \ \ es-\/>err\_marks[i]\ =\ 0;}
+\DoxyCodeLine{00088\ \ \ \ \ es-\/>err\_flags[i]\ =\ 0;}
+\DoxyCodeLine{00089\ \ \ \ \ es-\/>err\_buffer[i]\ =\ 0;}
+\DoxyCodeLine{00090\ \ \ \ \ es-\/>err\_line[i]\ =\ -\/1;}
+\DoxyCodeLine{00091\ \ \ \ \ OPENSSL\_free(es-\/>err\_file[i]);}
+\DoxyCodeLine{00092\ \ \ \ \ es-\/>err\_file[i]\ =\ NULL;}
+\DoxyCodeLine{00093\ \ \ \ \ OPENSSL\_free(es-\/>err\_func[i]);}
+\DoxyCodeLine{00094\ \ \ \ \ es-\/>err\_func[i]\ =\ NULL;}
+\DoxyCodeLine{00095\ \}}
+\DoxyCodeLine{00096\ }
+\DoxyCodeLine{00097\ ERR\_STATE\ *ossl\_err\_get\_state\_int(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00098\ \textcolor{keywordtype}{void}\ ossl\_err\_string\_int(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ \mbox{\hyperlink{structe}{e}},\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *func,}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{char}\ *buf,\ \textcolor{keywordtype}{size\_t}\ len);}
+
+\end{DoxyCode}

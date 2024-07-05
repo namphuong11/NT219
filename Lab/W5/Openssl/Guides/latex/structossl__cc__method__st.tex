@@ -1,0 +1,52 @@
+\doxysection{ossl\+\_\+cc\+\_\+method\+\_\+st Struct Reference}
+\hypertarget{structossl__cc__method__st}{}\label{structossl__cc__method__st}\index{ossl\_cc\_method\_st@{ossl\_cc\_method\_st}}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{structossl__cc__method__st_ac7dcee179111af1e24eddbd919c6eb7a}\label{structossl__cc__method__st_ac7dcee179111af1e24eddbd919c6eb7a} 
+OSSL\+\_\+\+CC\+\_\+\+DATA \texorpdfstring{$\ast$}{*}(\texorpdfstring{$\ast$}{*} {\bfseries new} )(\mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\+\_\+\+TIME}}(\texorpdfstring{$\ast$}{*}now\+\_\+cb)(void \texorpdfstring{$\ast$}{*}arg), void \texorpdfstring{$\ast$}{*}now\+\_\+cb\+\_\+arg)
+\item 
+\Hypertarget{structossl__cc__method__st_a4d702a215c6d4c2b62170567dddecc35}\label{structossl__cc__method__st_a4d702a215c6d4c2b62170567dddecc35} 
+void(\texorpdfstring{$\ast$}{*} {\bfseries free} )(OSSL\+\_\+\+CC\+\_\+\+DATA \texorpdfstring{$\ast$}{*}ccdata)
+\item 
+\Hypertarget{structossl__cc__method__st_a5c42d13a19422e7d2e51d59a56ce63bd}\label{structossl__cc__method__st_a5c42d13a19422e7d2e51d59a56ce63bd} 
+void(\texorpdfstring{$\ast$}{*} {\bfseries reset} )(OSSL\+\_\+\+CC\+\_\+\+DATA \texorpdfstring{$\ast$}{*}ccdata)
+\item 
+\Hypertarget{structossl__cc__method__st_a92c7310928d527d31c141814f0a5441a}\label{structossl__cc__method__st_a92c7310928d527d31c141814f0a5441a} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries set\+\_\+input\+\_\+params} )(OSSL\+\_\+\+CC\+\_\+\+DATA \texorpdfstring{$\ast$}{*}ccdata, const OSSL\+\_\+\+PARAM \texorpdfstring{$\ast$}{*}params)
+\item 
+\Hypertarget{structossl__cc__method__st_a7ca71323ec53d335cae86639f10d4d40}\label{structossl__cc__method__st_a7ca71323ec53d335cae86639f10d4d40} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries bind\+\_\+diagnostics} )(OSSL\+\_\+\+CC\+\_\+\+DATA \texorpdfstring{$\ast$}{*}ccdata, OSSL\+\_\+\+PARAM \texorpdfstring{$\ast$}{*}params)
+\item 
+\Hypertarget{structossl__cc__method__st_acb14795dd8347f7d0b7158cf7174a5e2}\label{structossl__cc__method__st_acb14795dd8347f7d0b7158cf7174a5e2} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries unbind\+\_\+diagnostics} )(OSSL\+\_\+\+CC\+\_\+\+DATA \texorpdfstring{$\ast$}{*}ccdata, OSSL\+\_\+\+PARAM \texorpdfstring{$\ast$}{*}params)
+\item 
+\Hypertarget{structossl__cc__method__st_a077846bb2ed6bd06651984ae6b0fa2c0}\label{structossl__cc__method__st_a077846bb2ed6bd06651984ae6b0fa2c0} 
+uint64\+\_\+t(\texorpdfstring{$\ast$}{*} {\bfseries get\+\_\+tx\+\_\+allowance} )(OSSL\+\_\+\+CC\+\_\+\+DATA \texorpdfstring{$\ast$}{*}ccdata)
+\item 
+\Hypertarget{structossl__cc__method__st_ae19083b5468e378249a2cc61230525ec}\label{structossl__cc__method__st_ae19083b5468e378249a2cc61230525ec} 
+\mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\+\_\+\+TIME}}(\texorpdfstring{$\ast$}{*} {\bfseries get\+\_\+wakeup\+\_\+deadline} )(OSSL\+\_\+\+CC\+\_\+\+DATA \texorpdfstring{$\ast$}{*}ccdata)
+\item 
+\Hypertarget{structossl__cc__method__st_a4f399fd0cb7842b3c6790fbf2aeab523}\label{structossl__cc__method__st_a4f399fd0cb7842b3c6790fbf2aeab523} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries on\+\_\+data\+\_\+sent} )(OSSL\+\_\+\+CC\+\_\+\+DATA \texorpdfstring{$\ast$}{*}ccdata, uint64\+\_\+t num\+\_\+bytes)
+\item 
+\Hypertarget{structossl__cc__method__st_aebd74b49d883e26e53baa7c25a39aa50}\label{structossl__cc__method__st_aebd74b49d883e26e53baa7c25a39aa50} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries on\+\_\+data\+\_\+acked} )(OSSL\+\_\+\+CC\+\_\+\+DATA \texorpdfstring{$\ast$}{*}ccdata, const \mbox{\hyperlink{structossl__cc__ack__info__st}{OSSL\+\_\+\+CC\+\_\+\+ACK\+\_\+\+INFO}} \texorpdfstring{$\ast$}{*}info)
+\item 
+\Hypertarget{structossl__cc__method__st_aa9a09d27984a670bd8176586bb6724d6}\label{structossl__cc__method__st_aa9a09d27984a670bd8176586bb6724d6} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries on\+\_\+data\+\_\+lost} )(OSSL\+\_\+\+CC\+\_\+\+DATA \texorpdfstring{$\ast$}{*}ccdata, const \mbox{\hyperlink{structossl__cc__loss__info__st}{OSSL\+\_\+\+CC\+\_\+\+LOSS\+\_\+\+INFO}} \texorpdfstring{$\ast$}{*}info)
+\item 
+\Hypertarget{structossl__cc__method__st_a83a14cd69d2fff8a2366f7f5c8eca38f}\label{structossl__cc__method__st_a83a14cd69d2fff8a2366f7f5c8eca38f} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries on\+\_\+data\+\_\+lost\+\_\+finished} )(OSSL\+\_\+\+CC\+\_\+\+DATA \texorpdfstring{$\ast$}{*}ccdata, uint32\+\_\+t flags)
+\item 
+\Hypertarget{structossl__cc__method__st_a6fdfc5b816ed166eeba3c8a93dfbd087}\label{structossl__cc__method__st_a6fdfc5b816ed166eeba3c8a93dfbd087} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries on\+\_\+data\+\_\+invalidated} )(OSSL\+\_\+\+CC\+\_\+\+DATA \texorpdfstring{$\ast$}{*}ccdata, uint64\+\_\+t num\+\_\+bytes)
+\item 
+\Hypertarget{structossl__cc__method__st_a05ca019abe31190f19ebbed41e7f6f9d}\label{structossl__cc__method__st_a05ca019abe31190f19ebbed41e7f6f9d} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries on\+\_\+ecn} )(OSSL\+\_\+\+CC\+\_\+\+DATA \texorpdfstring{$\ast$}{*}ccdata, const \mbox{\hyperlink{structossl__cc__ecn__info__st}{OSSL\+\_\+\+CC\+\_\+\+ECN\+\_\+\+INFO}} \texorpdfstring{$\ast$}{*}info)
+\end{DoxyCompactItemize}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/namph/\+Downloads/openssl/openssl-\/3.\+2.\+1/include/internal/quic\+\_\+cc.\+h\end{DoxyCompactItemize}

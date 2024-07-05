@@ -1,0 +1,139 @@
+\doxysection{quic\+\_\+txpim.\+h}
+\hypertarget{quic__txpim_8h_source}{}\label{quic__txpim_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/quic\_txpim.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/quic\_txpim.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2022-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_QUIC\_TXPIM\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_QUIC\_TXPIM\_H}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#\ include\ <openssl/ssl.h>}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ include\ "{}internal/quic\_types.h"{}}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#\ include\ "{}internal/quic\_cfq.h"{}}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#\ include\ "{}internal/quic\_ackm.h"{}}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#\ ifndef\ OPENSSL\_NO\_QUIC}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00021\ \textcolor{comment}{\ *\ QUIC\ Transmitted\ Packet\ Information\ Manager}}
+\DoxyCodeLine{00022\ \textcolor{comment}{\ *\ ===========================================}}
+\DoxyCodeLine{00023\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00024\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structquic__txpim__st}{quic\_txpim\_st}}\ \mbox{\hyperlink{structquic__txpim__st}{QUIC\_TXPIM}};}
+\DoxyCodeLine{00025\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structquic__fifd__st}{quic\_fifd\_st}}\ \mbox{\hyperlink{structquic__fifd__st}{QUIC\_FIFD}};}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structquic__txpim__pkt__st}{quic\_txpim\_pkt\_st}}\ \{}
+\DoxyCodeLine{00028\ \ \ \ \ \textcolor{comment}{/*\ ACKM-\/specific\ data.\ Caller\ should\ fill\ this.\ */}}
+\DoxyCodeLine{00029\ \ \ \ \ \mbox{\hyperlink{structossl__ackm__tx__pkt__st}{OSSL\_ACKM\_TX\_PKT}}\ \ \ \ ackm\_pkt;}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \ \ \ \ \textcolor{comment}{/*\ Linked\ list\ of\ CFQ\ items\ in\ this\ packet.\ */}}
+\DoxyCodeLine{00032\ \ \ \ \ \mbox{\hyperlink{structquic__cfq__item__st}{QUIC\_CFQ\_ITEM}}\ \ \ \ \ \ *retx\_head;}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{comment}{/*\ Reserved\ for\ FIFD\ use.\ */}}
+\DoxyCodeLine{00035\ \ \ \ \ \mbox{\hyperlink{structquic__fifd__st}{QUIC\_FIFD}}\ \ \ \ \ \ \ \ \ \ *fifd;}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{comment}{/*\ Regenerate-\/strategy\ frames.\ */}}
+\DoxyCodeLine{00038\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ had\_handshake\_done\_frame\ \ \ \ :\ 1;}
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ had\_max\_data\_frame\ \ \ \ \ \ \ \ \ \ :\ 1;}
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ had\_max\_streams\_bidi\_frame\ \ :\ 1;}
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ had\_max\_streams\_uni\_frame\ \ \ :\ 1;}
+\DoxyCodeLine{00042\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ had\_ack\_frame\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ 1;}
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ had\_conn\_close\ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ 1;}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \ \ \ \ \textcolor{comment}{/*\ Private\ data\ follows.\ */}}
+\DoxyCodeLine{00046\ \}\ \mbox{\hyperlink{structquic__txpim__pkt__st}{QUIC\_TXPIM\_PKT}};}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \textcolor{comment}{/*\ Represents\ a\ range\ of\ bytes\ in\ an\ application\ or\ CRYPTO\ stream.\ */}}
+\DoxyCodeLine{00049\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structquic__txpim__chunk__st}{quic\_txpim\_chunk\_st}}\ \{}
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{comment}{/*\ The\ stream\ ID,\ or\ UINT64\_MAX\ for\ the\ CRYPTO\ stream.\ */}}
+\DoxyCodeLine{00051\ \ \ \ \ uint64\_t\ \ \ \ \ \ \ \ stream\_id;}
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00053\ \textcolor{comment}{\ \ \ \ \ *\ The\ inclusive\ range\ of\ bytes\ in\ the\ stream.\ Exceptionally,\ if\ end\ <}}
+\DoxyCodeLine{00054\ \textcolor{comment}{\ \ \ \ \ *\ start,\ designates\ a\ frame\ of\ zero\ length\ (used\ for\ FIN-\/only\ frames).\ In}}
+\DoxyCodeLine{00055\ \textcolor{comment}{\ \ \ \ \ *\ this\ case\ end\ is\ the\ number\ of\ the\ final\ byte\ (i.e.,\ one\ less\ than\ the}}
+\DoxyCodeLine{00056\ \textcolor{comment}{\ \ \ \ \ *\ final\ size\ of\ the\ stream).}}
+\DoxyCodeLine{00057\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00058\ \ \ \ \ uint64\_t\ \ \ \ \ \ \ \ start,\ end;}
+\DoxyCodeLine{00059\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00060\ \textcolor{comment}{\ \ \ \ \ *\ Whether\ a\ FIN\ was\ sent\ for\ this\ stream\ in\ the\ packet.\ Not\ valid\ for}}
+\DoxyCodeLine{00061\ \textcolor{comment}{\ \ \ \ \ *\ CRYPTO\ stream.}}
+\DoxyCodeLine{00062\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ has\_fin\ :\ 1;}
+\DoxyCodeLine{00064\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00065\ \textcolor{comment}{\ \ \ \ \ *\ If\ set,\ a\ STOP\_SENDING\ frame\ was\ sent\ for\ this\ stream\ ID.\ (If\ no\ data\ was}}
+\DoxyCodeLine{00066\ \textcolor{comment}{\ \ \ \ \ *\ sent\ for\ the\ stream,\ set\ end\ <\ start.)}}
+\DoxyCodeLine{00067\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ has\_stop\_sending\ :\ 1;}
+\DoxyCodeLine{00069\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00070\ \textcolor{comment}{\ \ \ \ \ *\ If\ set,\ a\ RESET\_STREAM\ frame\ was\ sent\ for\ this\ stream\ ID.\ (If\ no\ data\ was}}
+\DoxyCodeLine{00071\ \textcolor{comment}{\ \ \ \ \ *\ sent\ for\ the\ stream,\ set\ end\ <\ start.)}}
+\DoxyCodeLine{00072\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00073\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ has\_reset\_stream\ :\ 1;}
+\DoxyCodeLine{00074\ \}\ \mbox{\hyperlink{structquic__txpim__chunk__st}{QUIC\_TXPIM\_CHUNK}};}
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00076\ \mbox{\hyperlink{structquic__txpim__st}{QUIC\_TXPIM}}\ *ossl\_quic\_txpim\_new(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00079\ \textcolor{comment}{\ *\ Frees\ the\ TXPIM.\ All\ QUIC\_TXPIM\_PKTs\ which\ have\ been\ handed\ out\ by\ the\ TXPIM}}
+\DoxyCodeLine{00080\ \textcolor{comment}{\ *\ must\ be\ released\ via\ a\ call\ to\ ossl\_quic\_txpim\_pkt\_release()\ before\ calling}}
+\DoxyCodeLine{00081\ \textcolor{comment}{\ *\ this\ function.}}
+\DoxyCodeLine{00082\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00083\ \textcolor{keywordtype}{void}\ ossl\_quic\_txpim\_free(\mbox{\hyperlink{structquic__txpim__st}{QUIC\_TXPIM}}\ *txpim);}
+\DoxyCodeLine{00084\ }
+\DoxyCodeLine{00085\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00086\ \textcolor{comment}{\ *\ Allocates\ a\ new\ QUIC\_TXPIM\_PKT\ structure\ from\ the\ pool.\ Returns\ NULL\ on}}
+\DoxyCodeLine{00087\ \textcolor{comment}{\ *\ failure.\ The\ returned\ structure\ is\ cleared\ of\ all\ data\ and\ is\ in\ a\ fresh}}
+\DoxyCodeLine{00088\ \textcolor{comment}{\ *\ initial\ state.}}
+\DoxyCodeLine{00089\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00090\ \mbox{\hyperlink{structquic__txpim__pkt__st}{QUIC\_TXPIM\_PKT}}\ *ossl\_quic\_txpim\_pkt\_alloc(\mbox{\hyperlink{structquic__txpim__st}{QUIC\_TXPIM}}\ *txpim);}
+\DoxyCodeLine{00091\ }
+\DoxyCodeLine{00092\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00093\ \textcolor{comment}{\ *\ Releases\ the\ TXPIM\ packet,\ returning\ it\ to\ the\ pool.}}
+\DoxyCodeLine{00094\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00095\ \textcolor{keywordtype}{void}\ ossl\_quic\_txpim\_pkt\_release(\mbox{\hyperlink{structquic__txpim__st}{QUIC\_TXPIM}}\ *txpim,\ \mbox{\hyperlink{structquic__txpim__pkt__st}{QUIC\_TXPIM\_PKT}}\ *fpkt);}
+\DoxyCodeLine{00096\ }
+\DoxyCodeLine{00097\ \textcolor{comment}{/*\ Clears\ the\ chunk\ list\ of\ the\ packet,\ removing\ all\ entries.\ */}}
+\DoxyCodeLine{00098\ \textcolor{keywordtype}{void}\ ossl\_quic\_txpim\_pkt\_clear\_chunks(\mbox{\hyperlink{structquic__txpim__pkt__st}{QUIC\_TXPIM\_PKT}}\ *fpkt);}
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00100\ \textcolor{comment}{/*\ Appends\ a\ chunk\ to\ the\ packet.\ The\ structure\ is\ copied.\ */}}
+\DoxyCodeLine{00101\ \textcolor{keywordtype}{int}\ ossl\_quic\_txpim\_pkt\_append\_chunk(\mbox{\hyperlink{structquic__txpim__pkt__st}{QUIC\_TXPIM\_PKT}}\ *fpkt,}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__txpim__chunk__st}{QUIC\_TXPIM\_CHUNK}}\ *chunk);}
+\DoxyCodeLine{00103\ }
+\DoxyCodeLine{00104\ \textcolor{comment}{/*\ Adds\ a\ CFQ\ item\ to\ the\ packet\ by\ prepending\ it\ to\ the\ retx\_head\ list.\ */}}
+\DoxyCodeLine{00105\ \textcolor{keywordtype}{void}\ ossl\_quic\_txpim\_pkt\_add\_cfq\_item(\mbox{\hyperlink{structquic__txpim__pkt__st}{QUIC\_TXPIM\_PKT}}\ *fpkt,}
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structquic__cfq__item__st}{QUIC\_CFQ\_ITEM}}\ *item);}
+\DoxyCodeLine{00107\ }
+\DoxyCodeLine{00108\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00109\ \textcolor{comment}{\ *\ Returns\ a\ pointer\ to\ an\ array\ of\ stream\ chunk\ information\ structures\ for\ the}}
+\DoxyCodeLine{00110\ \textcolor{comment}{\ *\ given\ packet.\ The\ caller\ must\ call\ ossl\_quic\_txpim\_pkt\_get\_num\_chunks()\ to}}
+\DoxyCodeLine{00111\ \textcolor{comment}{\ *\ determine\ the\ length\ of\ this\ array.\ The\ returned\ pointer\ is\ invalidated}}
+\DoxyCodeLine{00112\ \textcolor{comment}{\ *\ if\ the\ chunk\ list\ is\ mutated,\ for\ example\ via\ a\ call\ to}}
+\DoxyCodeLine{00113\ \textcolor{comment}{\ *\ ossl\_quic\_txpim\_pkt\_append\_chunk()\ or\ ossl\_quic\_txpim\_pkt\_clear\_chunks().}}
+\DoxyCodeLine{00114\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00115\ \textcolor{comment}{\ *\ The\ chunks\ are\ sorted\ by\ (stream\_id,\ start)\ in\ ascending\ order.}}
+\DoxyCodeLine{00116\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00117\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__txpim__chunk__st}{QUIC\_TXPIM\_CHUNK}}\ *ossl\_quic\_txpim\_pkt\_get\_chunks(\textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__txpim__pkt__st}{QUIC\_TXPIM\_PKT}}\ *fpkt);}
+\DoxyCodeLine{00118\ }
+\DoxyCodeLine{00119\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00120\ \textcolor{comment}{\ *\ Returns\ the\ number\ of\ entries\ in\ the\ array\ returned\ by}}
+\DoxyCodeLine{00121\ \textcolor{comment}{\ *\ ossl\_quic\_txpim\_pkt\_get\_chunks().}}
+\DoxyCodeLine{00122\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00123\ \textcolor{keywordtype}{size\_t}\ ossl\_quic\_txpim\_pkt\_get\_num\_chunks(\textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__txpim__pkt__st}{QUIC\_TXPIM\_PKT}}\ *fpkt);}
+\DoxyCodeLine{00124\ }
+\DoxyCodeLine{00125\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00126\ \textcolor{comment}{\ *\ Returns\ the\ number\ of\ QUIC\_TXPIM\_PKTs\ allocated\ by\ the\ given\ TXPIM\ that\ have}}
+\DoxyCodeLine{00127\ \textcolor{comment}{\ *\ yet\ to\ be\ returned\ to\ the\ TXPIM.}}
+\DoxyCodeLine{00128\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00129\ \textcolor{keywordtype}{size\_t}\ ossl\_quic\_txpim\_get\_in\_use(\textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__txpim__st}{QUIC\_TXPIM}}\ *txpim);}
+\DoxyCodeLine{00130\ }
+\DoxyCodeLine{00131\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00132\ }
+\DoxyCodeLine{00133\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

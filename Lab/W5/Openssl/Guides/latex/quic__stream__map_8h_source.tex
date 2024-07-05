@@ -1,0 +1,884 @@
+\doxysection{quic\+\_\+stream\+\_\+map.\+h}
+\hypertarget{quic__stream__map_8h_source}{}\label{quic__stream__map_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/quic\_stream\_map.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/quic\_stream\_map.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{*\ Copyright\ 2022-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{*}}
+\DoxyCodeLine{00004\ \textcolor{comment}{*\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{*\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{*\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{*\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_INTERNAL\_QUIC\_STREAM\_MAP\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_INTERNAL\_QUIC\_STREAM\_MAP\_H}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#\ pragma\ once}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ include\ "{}internal/e\_os.h"{}}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#\ include\ "{}internal/time.h"{}}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#\ include\ "{}internal/common.h"{}}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#\ include\ "{}internal/quic\_types.h"{}}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#\ include\ "{}internal/quic\_stream.h"{}}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#\ include\ "{}internal/quic\_fc.h"{}}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#\ include\ <openssl/lhash.h>}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#\ ifndef\ OPENSSL\_NO\_QUIC}}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00025\ \textcolor{comment}{\ *\ QUIC\ Stream}}
+\DoxyCodeLine{00026\ \textcolor{comment}{\ *\ ===========}}
+\DoxyCodeLine{00027\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00028\ \textcolor{comment}{\ *\ Logical\ QUIC\ stream\ composing\ all\ relevant\ send\ and\ receive\ components.}}
+\DoxyCodeLine{00029\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00030\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structquic__stream__st}{quic\_stream\_st}}\ \mbox{\hyperlink{structquic__stream__st}{QUIC\_STREAM}};}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structquic__stream__list__node__st}{quic\_stream\_list\_node\_st}}\ \mbox{\hyperlink{structquic__stream__list__node__st}{QUIC\_STREAM\_LIST\_NODE}};}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structquic__stream__list__node__st}{quic\_stream\_list\_node\_st}}\ \{}
+\DoxyCodeLine{00035\ \ \ \ \ \mbox{\hyperlink{structquic__stream__list__node__st}{QUIC\_STREAM\_LIST\_NODE}}\ *prev,\ *next;}
+\DoxyCodeLine{00036\ \};}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00039\ \textcolor{comment}{\ *\ QUIC\ Send\ Stream\ States}}
+\DoxyCodeLine{00040\ \textcolor{comment}{\ *\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00041\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00042\ \textcolor{comment}{\ *\ These\ correspond\ to\ the\ states\ defined\ in\ RFC\ 9000\ s.\ 3.1,\ with\ the}}
+\DoxyCodeLine{00043\ \textcolor{comment}{\ *\ exception\ of\ the\ NONE\ state\ which\ represents\ the\ absence\ of\ a\ send\ stream}}
+\DoxyCodeLine{00044\ \textcolor{comment}{\ *\ part.}}
+\DoxyCodeLine{00045\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00046\ \textcolor{comment}{\ *\ Invariants\ in\ each\ state\ are\ noted\ in\ comments\ below.\ In\ particular,\ once\ all}}
+\DoxyCodeLine{00047\ \textcolor{comment}{\ *\ data\ has\ been\ acknowledged\ received,\ or\ we\ have\ reset\ the\ stream,\ we\ don't}}
+\DoxyCodeLine{00048\ \textcolor{comment}{\ *\ need\ to\ keep\ the\ QUIC\_SSTREAM\ and\ data\ buffers\ around.\ Of\ course,\ we\ also}}
+\DoxyCodeLine{00049\ \textcolor{comment}{\ *\ don't\ have\ a\ QUIC\_SSTREAM\ on\ a\ receive-\/only\ stream.}}
+\DoxyCodeLine{00050\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00051\ \textcolor{preprocessor}{\#define\ QUIC\_SSTREAM\_STATE\_NONE\ \ \ \ \ \ \ \ \ 0\ \ \ }\textcolor{comment}{/*\ -\/-\/-\/\ sstream\ ==\ NULL\ \ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00052\ \textcolor{preprocessor}{\#define\ QUIC\_SSTREAM\_STATE\_READY\ \ \ \ \ \ \ \ 1\ \ \ }\textcolor{comment}{/*\ \(\backslash\)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00053\ \textcolor{preprocessor}{\#define\ QUIC\_SSTREAM\_STATE\_SEND\ \ \ \ \ \ \ \ \ 2\ \ \ }\textcolor{comment}{/*\ |-\/-\/\ sstream\ !=\ NULL\ \ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00054\ \textcolor{preprocessor}{\#define\ QUIC\_SSTREAM\_STATE\_DATA\_SENT\ \ \ \ 3\ \ \ }\textcolor{comment}{/*\ /\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00055\ \textcolor{preprocessor}{\#define\ QUIC\_SSTREAM\_STATE\_DATA\_RECVD\ \ \ 4\ \ \ }\textcolor{comment}{/*\ \(\backslash\)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00056\ \textcolor{preprocessor}{\#define\ QUIC\_SSTREAM\_STATE\_RESET\_SENT\ \ \ 5\ \ \ }\textcolor{comment}{/*\ |-\/-\/\ sstream\ ==\ NULL\ \ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00057\ \textcolor{preprocessor}{\#define\ QUIC\_SSTREAM\_STATE\_RESET\_RECVD\ \ 6\ \ \ }\textcolor{comment}{/*\ /\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00060\ \textcolor{comment}{\ *\ QUIC\ Receive\ Stream\ States}}
+\DoxyCodeLine{00061\ \textcolor{comment}{\ *\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00062\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00063\ \textcolor{comment}{\ *\ These\ correspond\ to\ the\ states\ defined\ in\ RFC\ 9000\ s.\ 3.2,\ with\ the\ exception}}
+\DoxyCodeLine{00064\ \textcolor{comment}{\ *\ of\ the\ NONE\ state\ which\ represents\ the\ absence\ of\ a\ receive\ stream\ part.}}
+\DoxyCodeLine{00065\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00066\ \textcolor{comment}{\ *\ Invariants\ in\ each\ state\ are\ noted\ in\ comments\ below.\ In\ particular,\ once\ all}}
+\DoxyCodeLine{00067\ \textcolor{comment}{\ *\ data\ has\ been\ read\ by\ the\ application,\ we\ don't\ need\ to\ keep\ the\ QUIC\_RSTREAM}}
+\DoxyCodeLine{00068\ \textcolor{comment}{\ *\ and\ data\ buffers\ around.\ If\ the\ receive\ part\ is\ instead\ reset\ before\ it\ is}}
+\DoxyCodeLine{00069\ \textcolor{comment}{\ *\ finished,\ we\ also\ don't\ need\ to\ keep\ the\ QUIC\_RSTREAM\ around.\ Finally,\ we}}
+\DoxyCodeLine{00070\ \textcolor{comment}{\ *\ don't\ need\ a\ QUIC\_RSTREAM\ on\ a\ send-\/only\ stream.}}
+\DoxyCodeLine{00071\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00072\ \textcolor{preprocessor}{\#define\ QUIC\_RSTREAM\_STATE\_NONE\ \ \ \ \ \ \ \ \ 0\ \ \ }\textcolor{comment}{/*\ -\/-\/-\/\ rstream\ ==\ NULL\ \ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00073\ \textcolor{preprocessor}{\#define\ QUIC\_RSTREAM\_STATE\_RECV\ \ \ \ \ \ \ \ \ 1\ \ \ }\textcolor{comment}{/*\ \(\backslash\)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00074\ \textcolor{preprocessor}{\#define\ QUIC\_RSTREAM\_STATE\_SIZE\_KNOWN\ \ \ 2\ \ \ }\textcolor{comment}{/*\ |-\/-\/\ rstream\ !=\ NULL\ \ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00075\ \textcolor{preprocessor}{\#define\ QUIC\_RSTREAM\_STATE\_DATA\_RECVD\ \ \ 3\ \ \ }\textcolor{comment}{/*\ /\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00076\ \textcolor{preprocessor}{\#define\ QUIC\_RSTREAM\_STATE\_DATA\_READ\ \ \ \ 4\ \ \ }\textcolor{comment}{/*\ \(\backslash\)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00077\ \textcolor{preprocessor}{\#define\ QUIC\_RSTREAM\_STATE\_RESET\_RECVD\ \ 5\ \ \ }\textcolor{comment}{/*\ |-\/-\/\ rstream\ ==\ NULL\ \ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00078\ \textcolor{preprocessor}{\#define\ QUIC\_RSTREAM\_STATE\_RESET\_READ\ \ \ 6\ \ \ }\textcolor{comment}{/*\ /\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00079\ }
+\DoxyCodeLine{00080\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structquic__stream__st}{quic\_stream\_st}}\ \{}
+\DoxyCodeLine{00081\ \ \ \ \ \mbox{\hyperlink{structquic__stream__list__node__st}{QUIC\_STREAM\_LIST\_NODE}}\ active\_node;\ \textcolor{comment}{/*\ for\ use\ by\ QUIC\_STREAM\_MAP\ */}}
+\DoxyCodeLine{00082\ \ \ \ \ \mbox{\hyperlink{structquic__stream__list__node__st}{QUIC\_STREAM\_LIST\_NODE}}\ accept\_node;\ \textcolor{comment}{/*\ accept\ queue\ of\ remotely-\/created\ streams\ */}}
+\DoxyCodeLine{00083\ \ \ \ \ \mbox{\hyperlink{structquic__stream__list__node__st}{QUIC\_STREAM\_LIST\_NODE}}\ ready\_for\_gc\_node;\ \textcolor{comment}{/*\ queue\ of\ streams\ now\ ready\ for\ GC\ */}}
+\DoxyCodeLine{00084\ }
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{comment}{/*\ Temporary\ link\ used\ by\ TXP.\ */}}
+\DoxyCodeLine{00086\ \ \ \ \ \mbox{\hyperlink{structquic__stream__st}{QUIC\_STREAM}}\ \ \ \ *txp\_next;}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00088\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00089\ \textcolor{comment}{\ \ \ \ \ *\ QUIC\ Stream\ ID.\ Do\ not\ assume\ that\ this\ encodes\ a\ type\ as\ this\ is\ a}}
+\DoxyCodeLine{00090\ \textcolor{comment}{\ \ \ \ \ *\ version-\/specific\ property\ and\ may\ change\ between\ QUIC\ versions;\ instead,}}
+\DoxyCodeLine{00091\ \textcolor{comment}{\ \ \ \ \ *\ use\ the\ type\ field.}}
+\DoxyCodeLine{00092\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00093\ \ \ \ \ uint64\_t\ \ \ \ \ \ \ \ id;}
+\DoxyCodeLine{00094\ }
+\DoxyCodeLine{00095\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00096\ \textcolor{comment}{\ \ \ \ \ *\ Application\ Error\ Code\ (AEC)\ used\ for\ STOP\_SENDING\ frame.}}
+\DoxyCodeLine{00097\ \textcolor{comment}{\ \ \ \ \ *\ This\ is\ only\ valid\ if\ stop\_sending\ is\ 1.}}
+\DoxyCodeLine{00098\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00099\ \ \ \ \ uint64\_t\ \ \ \ \ \ \ \ stop\_sending\_aec;}
+\DoxyCodeLine{00100\ }
+\DoxyCodeLine{00101\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00102\ \textcolor{comment}{\ \ \ \ \ *\ Application\ Error\ Code\ (AEC)\ used\ for\ RESET\_STREAM\ frame.}}
+\DoxyCodeLine{00103\ \textcolor{comment}{\ \ \ \ \ *\ This\ is\ only\ valid\ if\ reset\_stream\ is\ 1.}}
+\DoxyCodeLine{00104\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00105\ \ \ \ \ uint64\_t\ \ \ \ \ \ \ \ reset\_stream\_aec;}
+\DoxyCodeLine{00106\ }
+\DoxyCodeLine{00107\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00108\ \textcolor{comment}{\ \ \ \ \ *\ Application\ Error\ Code\ (AEC)\ for\ incoming\ STOP\_SENDING\ frame.}}
+\DoxyCodeLine{00109\ \textcolor{comment}{\ \ \ \ \ *\ This\ is\ only\ valid\ if\ peer\_stop\_sending\ is\ 1.}}
+\DoxyCodeLine{00110\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00111\ \ \ \ \ uint64\_t\ \ \ \ \ \ \ \ peer\_stop\_sending\_aec;}
+\DoxyCodeLine{00112\ }
+\DoxyCodeLine{00113\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00114\ \textcolor{comment}{\ \ \ \ \ *\ Application\ Error\ Code\ (AEC)\ for\ incoming\ RESET\_STREAM\ frame.}}
+\DoxyCodeLine{00115\ \textcolor{comment}{\ \ \ \ \ *\ This\ is\ only\ valid\ if\ peer\_reset\_stream\ is\ 1.}}
+\DoxyCodeLine{00116\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00117\ \ \ \ \ uint64\_t\ \ \ \ \ \ \ \ peer\_reset\_stream\_aec;}
+\DoxyCodeLine{00118\ }
+\DoxyCodeLine{00119\ \ \ \ \ \textcolor{comment}{/*\ Temporary\ value\ used\ by\ TXP.\ */}}
+\DoxyCodeLine{00120\ \ \ \ \ uint64\_t\ \ \ \ \ \ \ \ txp\_txfc\_new\_credit\_consumed;}
+\DoxyCodeLine{00121\ }
+\DoxyCodeLine{00122\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00123\ \textcolor{comment}{\ \ \ \ \ *\ The\ final\ size\ of\ the\ send\ stream.\ Although\ this\ information\ can\ be}}
+\DoxyCodeLine{00124\ \textcolor{comment}{\ \ \ \ \ *\ discerned\ from\ a\ QUIC\_SSTREAM,\ it\ is\ stored\ separately\ as\ we\ need\ to\ keep}}
+\DoxyCodeLine{00125\ \textcolor{comment}{\ \ \ \ \ *\ track\ of\ this\ even\ if\ we\ have\ thrown\ away\ the\ QUIC\_SSTREAM.\ Use}}
+\DoxyCodeLine{00126\ \textcolor{comment}{\ \ \ \ \ *\ ossl\_quic\_stream\_send\_get\_final\_size\ to\ determine\ if\ this\ contain\ a}}
+\DoxyCodeLine{00127\ \textcolor{comment}{\ \ \ \ \ *\ valid\ value\ or\ if\ there\ is\ no\ final\ size\ yet\ for\ a\ sending\ part.}}
+\DoxyCodeLine{00128\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00129\ \textcolor{comment}{\ \ \ \ \ *\ For\ the\ receive\ part,\ the\ final\ size\ is\ tracked\ by\ the\ stream-\/level\ RXFC;}}
+\DoxyCodeLine{00130\ \textcolor{comment}{\ \ \ \ \ *\ use\ ossl\_quic\_stream\_recv\_get\_final\_size\ or}}
+\DoxyCodeLine{00131\ \textcolor{comment}{\ \ \ \ \ *\ ossl\_quic\_rxfc\_get\_final\_size.}}
+\DoxyCodeLine{00132\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00133\ \ \ \ \ uint64\_t\ \ \ \ \ \ \ \ send\_final\_size;}
+\DoxyCodeLine{00134\ }
+\DoxyCodeLine{00135\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00136\ \textcolor{comment}{\ \ \ \ \ *\ Send\ stream\ part\ and\ receive\ stream\ part\ buffer\ management\ objects.}}
+\DoxyCodeLine{00137\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00138\ \textcolor{comment}{\ \ \ \ \ *\ DO\ NOT\ test\ these\ pointers\ (sstream,\ rstream)\ for\ NULL.\ Determine\ the}}
+\DoxyCodeLine{00139\ \textcolor{comment}{\ \ \ \ \ *\ state\ of\ the\ send\ or\ receive\ stream\ part\ first\ using\ the\ appropriate}}
+\DoxyCodeLine{00140\ \textcolor{comment}{\ \ \ \ \ *\ function;\ then\ the\ invariant\ of\ that\ state\ guarantees\ that\ sstream\ or}}
+\DoxyCodeLine{00141\ \textcolor{comment}{\ \ \ \ \ *\ rstream\ either\ is\ or\ is\ not\ NULL\ respectively,\ therefore\ there\ is\ no}}
+\DoxyCodeLine{00142\ \textcolor{comment}{\ \ \ \ \ *\ valid\ use\ case\ for\ testing\ these\ pointers\ for\ NULL.\ In\ particular,\ a}}
+\DoxyCodeLine{00143\ \textcolor{comment}{\ \ \ \ \ *\ stream\ with\ a\ send\ part\ can\ still\ have\ sstream\ as\ NULL,\ and\ a\ stream\ with}}
+\DoxyCodeLine{00144\ \textcolor{comment}{\ \ \ \ \ *\ a\ receive\ part\ can\ still\ have\ rstream\ as\ NULL.\ QUIC\_SSTREAM\ and}}
+\DoxyCodeLine{00145\ \textcolor{comment}{\ \ \ \ \ *\ QUIC\_RSTREAM\ are\ stream\ buffer\ resource\ management\ objects\ which\ exist}}
+\DoxyCodeLine{00146\ \textcolor{comment}{\ \ \ \ \ *\ only\ when\ they\ need\ to\ for\ buffer\ management\ purposes.\ The\ existence\ or}}
+\DoxyCodeLine{00147\ \textcolor{comment}{\ \ \ \ \ *\ non-\/existence\ of\ a\ QUIC\_SSTREAM\ or\ QUIC\_RSTREAM\ object\ does\ not}}
+\DoxyCodeLine{00148\ \textcolor{comment}{\ \ \ \ \ *\ correspond\ with\ whether\ a\ stream's\ respective\ send\ or\ receive\ part}}
+\DoxyCodeLine{00149\ \textcolor{comment}{\ \ \ \ \ *\ logically\ exists\ or\ not.}}
+\DoxyCodeLine{00150\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00151\ \ \ \ \ \mbox{\hyperlink{structquic__sstream__st}{QUIC\_SSTREAM}}\ \ \ \ *sstream;\ \ \ \textcolor{comment}{/*\ NULL\ if\ RX-\/only\ */}}
+\DoxyCodeLine{00152\ \ \ \ \ \mbox{\hyperlink{structquic__rstream__st}{QUIC\_RSTREAM}}\ \ \ \ *rstream;\ \ \ \textcolor{comment}{/*\ NULL\ if\ TX\ only\ */}}
+\DoxyCodeLine{00153\ }
+\DoxyCodeLine{00154\ \ \ \ \ \textcolor{comment}{/*\ Stream-\/level\ flow\ control\ managers.\ */}}
+\DoxyCodeLine{00155\ \ \ \ \ \mbox{\hyperlink{structquic__txfc__st}{QUIC\_TXFC}}\ \ \ \ \ \ \ txfc;\ \ \ \ \ \ \ \textcolor{comment}{/*\ NULL\ if\ RX-\/only\ */}}
+\DoxyCodeLine{00156\ \ \ \ \ \mbox{\hyperlink{structquic__rxfc__st}{QUIC\_RXFC}}\ \ \ \ \ \ \ rxfc;\ \ \ \ \ \ \ \textcolor{comment}{/*\ NULL\ if\ TX-\/only\ */}}
+\DoxyCodeLine{00157\ }
+\DoxyCodeLine{00158\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ type\ :\ 8;\ \textcolor{comment}{/*\ QUIC\_STREAM\_INITIATOR\_*,\ QUIC\_STREAM\_DIR\_*\ */}}
+\DoxyCodeLine{00159\ }
+\DoxyCodeLine{00160\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ send\_state\ :\ 8;\ \textcolor{comment}{/*\ QUIC\_SSTREAM\_STATE\_*\ */}}
+\DoxyCodeLine{00161\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ recv\_state\ :\ 8;\ \textcolor{comment}{/*\ QUIC\_RSTREAM\_STATE\_*\ */}}
+\DoxyCodeLine{00162\ }
+\DoxyCodeLine{00163\ \ \ \ \ \textcolor{comment}{/*\ 1\ iff\ this\ QUIC\_STREAM\ is\ on\ the\ active\ queue\ (invariant).\ */}}
+\DoxyCodeLine{00164\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ active\ :\ 1;}
+\DoxyCodeLine{00165\ }
+\DoxyCodeLine{00166\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00167\ \textcolor{comment}{\ \ \ \ \ *\ This\ is\ a\ copy\ of\ the\ QUIC\ connection\ as\_server\ value,\ indicating}}
+\DoxyCodeLine{00168\ \textcolor{comment}{\ \ \ \ \ *\ whether\ we\ are\ locally\ operating\ as\ a\ server\ or\ not.\ Having\ this}}
+\DoxyCodeLine{00169\ \textcolor{comment}{\ \ \ \ \ *\ significantly\ simplifies\ stream\ type\ determination\ relative\ to\ our}}
+\DoxyCodeLine{00170\ \textcolor{comment}{\ \ \ \ \ *\ perspective.\ It\ never\ changes\ after\ a\ QUIC\_STREAM\ is\ created\ and\ is\ the}}
+\DoxyCodeLine{00171\ \textcolor{comment}{\ \ \ \ \ *\ same\ for\ all\ QUIC\_STREAMS\ under\ a\ QUIC\_STREAM\_MAP.}}
+\DoxyCodeLine{00172\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00173\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ as\_server\ :\ 1;}
+\DoxyCodeLine{00174\ }
+\DoxyCodeLine{00175\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00176\ \textcolor{comment}{\ \ \ \ \ *\ Has\ STOP\_SENDING\ been\ requested\ (by\ us)?\ Note\ that\ this\ is\ not\ the\ same}}
+\DoxyCodeLine{00177\ \textcolor{comment}{\ \ \ \ \ *\ as\ want\_stop\_sending\ below,\ as\ a\ STOP\_SENDING\ frame\ may\ already\ have\ been}}
+\DoxyCodeLine{00178\ \textcolor{comment}{\ \ \ \ \ *\ sent\ and\ fully\ acknowledged.}}
+\DoxyCodeLine{00179\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00180\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ stop\_sending\ \ \ \ \ \ \ \ \ \ \ \ :\ 1;}
+\DoxyCodeLine{00181\ }
+\DoxyCodeLine{00182\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00183\ \textcolor{comment}{\ \ \ \ \ *\ Has\ RESET\_STREAM\ been\ requested\ (by\ us)?\ Works\ identically\ to}}
+\DoxyCodeLine{00184\ \textcolor{comment}{\ \ \ \ \ *\ STOP\_SENDING\ for\ transmission\ purposes.}}
+\DoxyCodeLine{00185\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00186\ \ \ \ \ \textcolor{comment}{/*\ Has\ our\ peer\ sent\ a\ STOP\_SENDING\ frame?\ */}}
+\DoxyCodeLine{00187\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ peer\_stop\_sending\ \ \ \ \ \ \ :\ 1;}
+\DoxyCodeLine{00188\ }
+\DoxyCodeLine{00189\ \ \ \ \ \textcolor{comment}{/*\ Temporary\ flags\ used\ by\ TXP.\ */}}
+\DoxyCodeLine{00190\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ txp\_sent\_fc\ \ \ \ \ \ \ \ \ \ \ \ \ :\ 1;}
+\DoxyCodeLine{00191\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ txp\_sent\_stop\_sending\ \ \ :\ 1;}
+\DoxyCodeLine{00192\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ txp\_sent\_reset\_stream\ \ \ :\ 1;}
+\DoxyCodeLine{00193\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ txp\_drained\ \ \ \ \ \ \ \ \ \ \ \ \ :\ 1;}
+\DoxyCodeLine{00194\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ txp\_blocked\ \ \ \ \ \ \ \ \ \ \ \ \ :\ 1;}
+\DoxyCodeLine{00195\ }
+\DoxyCodeLine{00196\ \ \ \ \ \textcolor{comment}{/*\ Frame\ regeneration\ flags.\ */}}
+\DoxyCodeLine{00197\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ want\_max\_stream\_data\ \ \ \ :\ 1;\ \textcolor{comment}{/*\ used\ for\ regen\ only\ */}}
+\DoxyCodeLine{00198\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ want\_stop\_sending\ \ \ \ \ \ \ :\ 1;\ \textcolor{comment}{/*\ used\ for\ gen\ or\ regen\ */}}
+\DoxyCodeLine{00199\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ want\_reset\_stream\ \ \ \ \ \ \ :\ 1;\ \textcolor{comment}{/*\ used\ for\ gen\ or\ regen\ */}}
+\DoxyCodeLine{00200\ }
+\DoxyCodeLine{00201\ \ \ \ \ \textcolor{comment}{/*\ Flags\ set\ when\ frames\ *we*\ sent\ were\ acknowledged.\ */}}
+\DoxyCodeLine{00202\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ acked\_stop\_sending\ \ \ \ \ \ :\ 1;}
+\DoxyCodeLine{00203\ }
+\DoxyCodeLine{00204\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00205\ \textcolor{comment}{\ \ \ \ \ *\ The\ stream's\ XSO\ has\ been\ deleted.\ Pending\ GC.}}
+\DoxyCodeLine{00206\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00207\ \textcolor{comment}{\ \ \ \ \ *\ Here\ is\ how\ stream\ deletion\ works:}}
+\DoxyCodeLine{00208\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00209\ \textcolor{comment}{\ \ \ \ \ *\ \ \ -\/\ A\ QUIC\_STREAM\ cannot\ be\ deleted\ until\ it\ is\ neither\ in\ the\ accept}}
+\DoxyCodeLine{00210\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ queue\ nor\ has\ an\ associated\ XSO.\ This\ condition\ occurs\ when\ and\ only}}
+\DoxyCodeLine{00211\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ when\ deleted\ is\ true.}}
+\DoxyCodeLine{00212\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00213\ \textcolor{comment}{\ \ \ \ \ *\ \ \ -\/\ Once\ this\ is\ the\ case\ (i.e.,\ no\ user-\/facing\ API\ object\ exposing\ the}}
+\DoxyCodeLine{00214\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ stream),\ we\ can\ delete\ the\ stream\ once\ we\ determine\ that\ all\ of\ our}}
+\DoxyCodeLine{00215\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ protocol\ obligations\ requiring\ us\ to\ keep\ the\ QUIC\_STREAM\ around\ have}}
+\DoxyCodeLine{00216\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ been\ met.}}
+\DoxyCodeLine{00217\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00218\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ The\ following\ frames\ relate\ to\ the\ streams\ layer\ for\ a\ specific}}
+\DoxyCodeLine{00219\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ stream:}}
+\DoxyCodeLine{00220\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00221\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ \ STREAM}}
+\DoxyCodeLine{00222\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00223\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ RX\ Obligations:}}
+\DoxyCodeLine{00224\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Ignore\ for\ a\ deleted\ stream.}}
+\DoxyCodeLine{00225\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00226\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (This\ is\ different\ from\ our\ obligation\ for\ a}}
+\DoxyCodeLine{00227\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ locally-\/initiated\ stream\ ID\ we\ have\ not\ created\ yet,}}
+\DoxyCodeLine{00228\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ which\ we\ must\ treat\ as\ a\ protocol\ error.\ This\ can\ be}}
+\DoxyCodeLine{00229\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ distinguished\ via\ a\ simple\ monotonic\ counter.)}}
+\DoxyCodeLine{00230\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00231\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ TX\ Obligations:}}
+\DoxyCodeLine{00232\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ None,\ once\ we've\ decided\ to\ (someday)\ delete\ the\ stream.}}
+\DoxyCodeLine{00233\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00234\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ \ STOP\_SENDING}}
+\DoxyCodeLine{00235\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00236\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ We\ cannot\ delete\ the\ stream\ until\ we\ have\ finished\ informing}}
+\DoxyCodeLine{00237\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ the\ peer\ that\ we\ are\ not\ going\ to\ be\ listening\ to\ it}}
+\DoxyCodeLine{00238\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ anymore.}}
+\DoxyCodeLine{00239\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00240\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ RX\ Obligations:}}
+\DoxyCodeLine{00241\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ When\ we\ delete\ a\ stream\ we\ must\ have\ already\ had\ a\ FIN}}
+\DoxyCodeLine{00242\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ or\ RESET\_STREAM\ we\ transmitted\ acknowledged\ by\ the\ peer.}}
+\DoxyCodeLine{00243\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Thus\ we\ can\ ignore\ STOP\_SENDING\ frames\ for\ deleted}}
+\DoxyCodeLine{00244\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ streams\ (if\ they\ occur,\ they\ are\ probably\ just}}
+\DoxyCodeLine{00245\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ retransmissions).}}
+\DoxyCodeLine{00246\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00247\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ TX\ Obligations:}}
+\DoxyCodeLine{00248\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_Acknowledged\_\ receipt\ of\ a\ STOP\_SENDING\ frame\ by\ the}}
+\DoxyCodeLine{00249\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ peer\ (unless\ the\ peer's\ send\ part\ has\ already\ FIN'd).}}
+\DoxyCodeLine{00250\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00251\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ \ RESET\_STREAM}}
+\DoxyCodeLine{00252\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00253\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ We\ cannot\ delete\ the\ stream\ until\ we\ have\ finished\ informing}}
+\DoxyCodeLine{00254\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ the\ peer\ that\ we\ are\ not\ going\ to\ be\ transmitting\ on\ it}}
+\DoxyCodeLine{00255\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ anymore.}}
+\DoxyCodeLine{00256\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00257\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ RX\ Obligations:}}
+\DoxyCodeLine{00258\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ This\ indicates\ the\ peer\ is\ not\ going\ to\ send\ any\ more}}
+\DoxyCodeLine{00259\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ data\ on\ the\ stream.\ We\ don't\ need\ to\ care\ about\ this}}
+\DoxyCodeLine{00260\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ since\ once\ a\ stream\ is\ marked\ for\ deletion\ we\ don't\ care}}
+\DoxyCodeLine{00261\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ about\ any\ data\ it\ does\ send.\ We\ can\ ignore\ this\ for}}
+\DoxyCodeLine{00262\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ deleted\ streams.\ The\ important\ criterion\ is\ that\ the}}
+\DoxyCodeLine{00263\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ peer\ has\ been\ successfully\ delivered\ our\ STOP\_SENDING}}
+\DoxyCodeLine{00264\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ frame.}}
+\DoxyCodeLine{00265\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00266\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ TX\ Obligations:}}
+\DoxyCodeLine{00267\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_Acknowledged\_\ receipt\ of\ a\ RESET\_STREAM\ frame\ or\ FIN\ by}}
+\DoxyCodeLine{00268\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ the\ peer.}}
+\DoxyCodeLine{00269\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00270\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ \ MAX\_STREAM\_DATA}}
+\DoxyCodeLine{00271\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00272\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ RX\ Obligations:}}
+\DoxyCodeLine{00273\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Ignore.\ Since\ we\ are\ not\ going\ to\ be\ sending\ any\ more}}
+\DoxyCodeLine{00274\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ data\ on\ a\ stream\ once\ it\ has\ been\ marked\ for\ deletion,}}
+\DoxyCodeLine{00275\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ we\ don't\ need\ to\ care\ about\ flow\ control\ information.}}
+\DoxyCodeLine{00276\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00277\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ TX\ Obligations:}}
+\DoxyCodeLine{00278\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ None.}}
+\DoxyCodeLine{00279\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00280\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ In\ other\ words,\ our\ protocol\ obligation\ is\ simply:}}
+\DoxyCodeLine{00281\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00282\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ -\/\ either:}}
+\DoxyCodeLine{00283\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ -\/\ the\ peer\ has\ acknowledged\ receipt\ of\ a\ STOP\_SENDING\ frame\ sent}}
+\DoxyCodeLine{00284\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ \ \ \ by\ us;\ -\/or-\/}}
+\DoxyCodeLine{00285\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ -\/\ we\ have\ received\ a\ FIN\ and\ all\ preceding\ segments\ from\ the\ peer}}
+\DoxyCodeLine{00286\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00287\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ \ \ \ [NOTE:\ The\ actual\ criterion\ required\ here\ is\ simply\ 'we\ have}}
+\DoxyCodeLine{00288\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ \ \ \ received\ a\ FIN\ from\ the\ peer'.\ However,\ due\ to\ reordering\ and}}
+\DoxyCodeLine{00289\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ \ \ \ retransmissions\ we\ might\ subsequently\ receive\ non-\/FIN\ segments}}
+\DoxyCodeLine{00290\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ \ \ \ out\ of\ order.\ The\ FIN\ means\ we\ know\ the\ peer\ will\ stop}}
+\DoxyCodeLine{00291\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ \ \ \ transmitting\ on\ the\ stream\ at\ *some*\ point,\ but\ by\ sending}}
+\DoxyCodeLine{00292\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ \ \ \ STOP\_SENDING\ we\ can\ avoid\ these\ needless\ retransmissions\ we}}
+\DoxyCodeLine{00293\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ \ \ \ will\ just\ ignore\ anyway.\ In\ actuality\ we\ could\ just\ handle\ all}}
+\DoxyCodeLine{00294\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ \ \ \ cases\ by\ sending\ a\ STOP\_SENDING.\ The\ strategy\ we\ choose\ is\ to}}
+\DoxyCodeLine{00295\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ \ \ \ only\ avoid\ sending\ a\ STOP\_SENDING\ and\ rely\ on\ a\ received\ FIN}}
+\DoxyCodeLine{00296\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ \ \ \ when\ we\ have\ received\ all\ preceding\ data,\ as\ this\ makes\ it}}
+\DoxyCodeLine{00297\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ \ \ \ reasonably\ certain\ no\ benefit\ would\ be\ gained\ by\ sending}}
+\DoxyCodeLine{00298\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ \ \ \ STOP\_SENDING.]}}
+\DoxyCodeLine{00299\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00300\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ \ \ \ TODO(QUIC\ FUTURE):\ Implement\ the\ latter\ case\ (currently\ we}}
+\DoxyCodeLine{00301\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ just\ always\ do\ STOP\_SENDING).}}
+\DoxyCodeLine{00302\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00303\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ and;}}
+\DoxyCodeLine{00304\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00305\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ -\/\ we\ have\ drained\ our\ send\ stream\ (for\ a\ finished\ send\ stream)}}
+\DoxyCodeLine{00306\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ and\ got\ acknowledgement\ all\ parts\ of\ it\ including\ the\ FIN,\ or}}
+\DoxyCodeLine{00307\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ sent\ a\ RESET\_STREAM\ frame\ and\ got\ acknowledgement\ of\ that\ frame.}}
+\DoxyCodeLine{00308\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00309\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ Once\ these\ conditions\ are\ met,\ we\ can\ GC\ the\ QUIC\_STREAM.}}
+\DoxyCodeLine{00310\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00311\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00312\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ deleted\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ 1;}
+\DoxyCodeLine{00313\ \ \ \ \ \textcolor{comment}{/*\ Set\ to\ 1\ once\ the\ above\ conditions\ are\ actually\ met.\ */}}
+\DoxyCodeLine{00314\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ ready\_for\_gc\ \ \ \ \ \ \ \ \ \ \ \ :\ 1;}
+\DoxyCodeLine{00315\ \ \ \ \ \textcolor{comment}{/*\ Set\ to\ 1\ if\ this\ is\ currently\ counted\ in\ the\ shutdown\ flush\ stream\ count.\ */}}
+\DoxyCodeLine{00316\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ shutdown\_flush\ \ \ \ \ \ \ \ \ \ :\ 1;}
+\DoxyCodeLine{00317\ \};}
+\DoxyCodeLine{00318\ }
+\DoxyCodeLine{00319\ \textcolor{preprocessor}{\#define\ QUIC\_STREAM\_INITIATOR\_CLIENT\ \ \ \ \ \ \ \ 0}}
+\DoxyCodeLine{00320\ \textcolor{preprocessor}{\#define\ QUIC\_STREAM\_INITIATOR\_SERVER\ \ \ \ \ \ \ \ 1}}
+\DoxyCodeLine{00321\ \textcolor{preprocessor}{\#define\ QUIC\_STREAM\_INITIATOR\_MASK\ \ \ \ \ \ \ \ \ \ 1}}
+\DoxyCodeLine{00322\ }
+\DoxyCodeLine{00323\ \textcolor{preprocessor}{\#define\ QUIC\_STREAM\_DIR\_BIDI\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 0}}
+\DoxyCodeLine{00324\ \textcolor{preprocessor}{\#define\ QUIC\_STREAM\_DIR\_UNI\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 2}}
+\DoxyCodeLine{00325\ \textcolor{preprocessor}{\#define\ QUIC\_STREAM\_DIR\_MASK\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 2}}
+\DoxyCodeLine{00326\ }
+\DoxyCodeLine{00327\ \textcolor{keywordtype}{void}\ ossl\_quic\_stream\_check(\textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__stream__st}{QUIC\_STREAM}}\ *s);}
+\DoxyCodeLine{00328\ }
+\DoxyCodeLine{00329\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00330\ \textcolor{comment}{\ *\ Returns\ 1\ if\ the\ QUIC\_STREAM\ was\ initiated\ by\ the\ endpoint\ with\ the\ server}}
+\DoxyCodeLine{00331\ \textcolor{comment}{\ *\ role.}}
+\DoxyCodeLine{00332\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00333\ \textcolor{keyword}{static}\ ossl\_inline\ ossl\_unused\ \textcolor{keywordtype}{int}\ ossl\_quic\_stream\_is\_server\_init(\textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__stream__st}{QUIC\_STREAM}}\ *s)}
+\DoxyCodeLine{00334\ \{}
+\DoxyCodeLine{00335\ \ \ \ \ \textcolor{keywordflow}{return}\ (s-\/>type\ \&\ QUIC\_STREAM\_INITIATOR\_MASK)\ ==\ QUIC\_STREAM\_INITIATOR\_SERVER;}
+\DoxyCodeLine{00336\ \}}
+\DoxyCodeLine{00337\ }
+\DoxyCodeLine{00338\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00339\ \textcolor{comment}{\ *\ Returns\ 1\ if\ the\ QUIC\_STREAM\ is\ bidirectional\ and\ 0\ if\ it\ is\ unidirectional.}}
+\DoxyCodeLine{00340\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00341\ \textcolor{keyword}{static}\ ossl\_inline\ ossl\_unused\ \textcolor{keywordtype}{int}\ ossl\_quic\_stream\_is\_bidi(\textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__stream__st}{QUIC\_STREAM}}\ *s)}
+\DoxyCodeLine{00342\ \{}
+\DoxyCodeLine{00343\ \ \ \ \ \textcolor{keywordflow}{return}\ (s-\/>type\ \&\ QUIC\_STREAM\_DIR\_MASK)\ ==\ QUIC\_STREAM\_DIR\_BIDI;}
+\DoxyCodeLine{00344\ \}}
+\DoxyCodeLine{00345\ }
+\DoxyCodeLine{00346\ \textcolor{comment}{/*\ Returns\ 1\ if\ the\ QUIC\_STREAM\ was\ locally\ initiated.\ */}}
+\DoxyCodeLine{00347\ \textcolor{keyword}{static}\ ossl\_inline\ ossl\_unused\ \textcolor{keywordtype}{int}\ ossl\_quic\_stream\_is\_local\_init(\textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__stream__st}{QUIC\_STREAM}}\ *s)}
+\DoxyCodeLine{00348\ \{}
+\DoxyCodeLine{00349\ \ \ \ \ \textcolor{keywordflow}{return}\ ossl\_quic\_stream\_is\_server\_init(s)\ ==\ s-\/>as\_server;}
+\DoxyCodeLine{00350\ \}}
+\DoxyCodeLine{00351\ }
+\DoxyCodeLine{00352\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00353\ \textcolor{comment}{\ *\ Returns\ 1\ if\ the\ QUIC\_STREAM\ has\ a\ sending\ part,\ based\ on\ its\ stream\ type.}}
+\DoxyCodeLine{00354\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00355\ \textcolor{comment}{\ *\ Do\ NOT\ use\ (s-\/>sstream\ !=\ NULL)\ to\ test\ this;\ use\ this\ function.\ Note\ that}}
+\DoxyCodeLine{00356\ \textcolor{comment}{\ *\ even\ if\ this\ function\ returns\ 1,\ s-\/>sstream\ might\ be\ NULL\ if\ the\ QUIC\_SSTREAM}}
+\DoxyCodeLine{00357\ \textcolor{comment}{\ *\ has\ been\ deemed\ no\ longer\ needed,\ for\ example\ due\ to\ a\ RESET\_STREAM.}}
+\DoxyCodeLine{00358\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00359\ \textcolor{keyword}{static}\ ossl\_inline\ ossl\_unused\ \textcolor{keywordtype}{int}\ ossl\_quic\_stream\_has\_send(\textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__stream__st}{QUIC\_STREAM}}\ *s)}
+\DoxyCodeLine{00360\ \{}
+\DoxyCodeLine{00361\ \ \ \ \ \textcolor{keywordflow}{return}\ s-\/>send\_state\ !=\ QUIC\_SSTREAM\_STATE\_NONE;}
+\DoxyCodeLine{00362\ \}}
+\DoxyCodeLine{00363\ }
+\DoxyCodeLine{00364\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00365\ \textcolor{comment}{\ *\ Returns\ 1\ if\ the\ QUIC\_STREAM\ has\ a\ receiving\ part,\ based\ on\ its\ stream\ type.}}
+\DoxyCodeLine{00366\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00367\ \textcolor{comment}{\ *\ Do\ NOT\ use\ (s-\/>rstream\ !=\ NULL)\ to\ test\ this;\ use\ this\ function.\ Note\ that}}
+\DoxyCodeLine{00368\ \textcolor{comment}{\ *\ even\ if\ this\ function\ returns\ 1,\ s-\/>rstream\ might\ be\ NULL\ if\ the\ QUIC\_RSTREAM}}
+\DoxyCodeLine{00369\ \textcolor{comment}{\ *\ has\ been\ deemed\ no\ longer\ needed,\ for\ example\ if\ the\ receive\ stream\ is}}
+\DoxyCodeLine{00370\ \textcolor{comment}{\ *\ completely\ finished\ with.}}
+\DoxyCodeLine{00371\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00372\ \textcolor{keyword}{static}\ ossl\_inline\ ossl\_unused\ \textcolor{keywordtype}{int}\ ossl\_quic\_stream\_has\_recv(\textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__stream__st}{QUIC\_STREAM}}\ *s)}
+\DoxyCodeLine{00373\ \{}
+\DoxyCodeLine{00374\ \ \ \ \ \textcolor{keywordflow}{return}\ s-\/>recv\_state\ !=\ QUIC\_RSTREAM\_STATE\_NONE;}
+\DoxyCodeLine{00375\ \}}
+\DoxyCodeLine{00376\ }
+\DoxyCodeLine{00377\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00378\ \textcolor{comment}{\ *\ Returns\ 1\ if\ the\ QUIC\_STREAM\ has\ a\ QUIC\_SSTREAM\ send\ buffer\ associated\ with}}
+\DoxyCodeLine{00379\ \textcolor{comment}{\ *\ it.\ If\ this\ returns\ 1,\ s-\/>sstream\ is\ guaranteed\ to\ be\ non-\/NULL.\ The\ converse}}
+\DoxyCodeLine{00380\ \textcolor{comment}{\ *\ is\ not\ necessarily\ true;\ erasure\ of\ a\ send\ stream\ buffer\ which\ is\ no\ longer}}
+\DoxyCodeLine{00381\ \textcolor{comment}{\ *\ required\ is\ an\ optimisation\ which\ the\ QSM\ may,\ but\ is\ not\ obliged,\ to}}
+\DoxyCodeLine{00382\ \textcolor{comment}{\ *\ perform.}}
+\DoxyCodeLine{00383\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00384\ \textcolor{comment}{\ *\ This\ call\ should\ be\ used\ where\ it\ is\ desired\ to\ do\ something\ with\ the\ send}}
+\DoxyCodeLine{00385\ \textcolor{comment}{\ *\ stream\ buffer\ but\ there\ is\ no\ more\ specific\ send\ state\ restriction\ which\ is}}
+\DoxyCodeLine{00386\ \textcolor{comment}{\ *\ applicable.}}
+\DoxyCodeLine{00387\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00388\ \textcolor{comment}{\ *\ Note:\ This\ does\ NOT\ indicate\ whether\ it\ is\ suitable\ to\ allow\ an\ application}}
+\DoxyCodeLine{00389\ \textcolor{comment}{\ *\ to\ append\ to\ the\ buffer.\ DATA\_SENT\ indicates\ all\ data\ (including\ FIN)\ has}}
+\DoxyCodeLine{00390\ \textcolor{comment}{\ *\ been\ *sent*;\ the\ absence\ of\ DATA\_SENT\ does\ not\ mean\ a\ FIN\ has\ not\ been\ queued}}
+\DoxyCodeLine{00391\ \textcolor{comment}{\ *\ (meaning\ no\ more\ application\ data\ can\ be\ appended).\ This\ is\ enforced\ by}}
+\DoxyCodeLine{00392\ \textcolor{comment}{\ *\ QUIC\_SSTREAM.}}
+\DoxyCodeLine{00393\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00394\ \textcolor{keyword}{static}\ ossl\_inline\ ossl\_unused\ \textcolor{keywordtype}{int}\ ossl\_quic\_stream\_has\_send\_buffer(\textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__stream__st}{QUIC\_STREAM}}\ *s)}
+\DoxyCodeLine{00395\ \{}
+\DoxyCodeLine{00396\ \ \ \ \ \textcolor{keywordflow}{switch}\ (s-\/>send\_state)\ \{}
+\DoxyCodeLine{00397\ \ \ \ \ \textcolor{keywordflow}{case}\ QUIC\_SSTREAM\_STATE\_READY:}
+\DoxyCodeLine{00398\ \ \ \ \ \textcolor{keywordflow}{case}\ QUIC\_SSTREAM\_STATE\_SEND:}
+\DoxyCodeLine{00399\ \ \ \ \ \textcolor{keywordflow}{case}\ QUIC\_SSTREAM\_STATE\_DATA\_SENT:}
+\DoxyCodeLine{00400\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00401\ \ \ \ \ \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{00402\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00403\ \ \ \ \ \}}
+\DoxyCodeLine{00404\ \}}
+\DoxyCodeLine{00405\ }
+\DoxyCodeLine{00406\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00407\ \textcolor{comment}{\ *\ Returns\ 1\ if\ the\ QUIC\_STREAM\ has\ a\ sending\ part\ which\ is\ in\ one\ of\ the\ reset}}
+\DoxyCodeLine{00408\ \textcolor{comment}{\ *\ states.}}
+\DoxyCodeLine{00409\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00410\ \textcolor{keyword}{static}\ ossl\_inline\ ossl\_unused\ \textcolor{keywordtype}{int}\ ossl\_quic\_stream\_send\_is\_reset(\textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__stream__st}{QUIC\_STREAM}}\ *s)}
+\DoxyCodeLine{00411\ \{}
+\DoxyCodeLine{00412\ \ \ \ \ \textcolor{keywordflow}{return}\ s-\/>send\_state\ ==\ QUIC\_SSTREAM\_STATE\_RESET\_SENT}
+\DoxyCodeLine{00413\ \ \ \ \ \ \ \ \ ||\ s-\/>send\_state\ ==\ QUIC\_SSTREAM\_STATE\_RESET\_RECVD;}
+\DoxyCodeLine{00414\ \}}
+\DoxyCodeLine{00415\ }
+\DoxyCodeLine{00416\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00417\ \textcolor{comment}{\ *\ Returns\ 1\ if\ the\ QUIC\_STREAM\ has\ a\ QUIC\_RSTREAM\ receive\ buffer\ associated}}
+\DoxyCodeLine{00418\ \textcolor{comment}{\ *\ with\ it.\ If\ this\ returns\ 1,\ s-\/>rstream\ is\ guaranteed\ to\ be\ non-\/NULL.\ The}}
+\DoxyCodeLine{00419\ \textcolor{comment}{\ *\ converse\ is\ not\ necessarily\ true;\ erasure\ of\ a\ receive\ stream\ buffer\ which\ is}}
+\DoxyCodeLine{00420\ \textcolor{comment}{\ *\ no\ longer\ required\ is\ an\ optimisation\ which\ the\ QSM\ may,\ but\ is\ not\ obliged,}}
+\DoxyCodeLine{00421\ \textcolor{comment}{\ *\ to\ perform.}}
+\DoxyCodeLine{00422\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00423\ \textcolor{comment}{\ *\ This\ call\ should\ be\ used\ where\ it\ is\ desired\ to\ do\ something\ with\ the\ receive}}
+\DoxyCodeLine{00424\ \textcolor{comment}{\ *\ stream\ buffer\ but\ there\ is\ no\ more\ specific\ receive\ state\ restriction\ which\ is}}
+\DoxyCodeLine{00425\ \textcolor{comment}{\ *\ applicable.}}
+\DoxyCodeLine{00426\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00427\ \textcolor{keyword}{static}\ ossl\_inline\ ossl\_unused\ \textcolor{keywordtype}{int}\ ossl\_quic\_stream\_has\_recv\_buffer(\textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__stream__st}{QUIC\_STREAM}}\ *s)}
+\DoxyCodeLine{00428\ \{}
+\DoxyCodeLine{00429\ \ \ \ \ \textcolor{keywordflow}{switch}\ (s-\/>recv\_state)\ \{}
+\DoxyCodeLine{00430\ \ \ \ \ \textcolor{keywordflow}{case}\ QUIC\_RSTREAM\_STATE\_RECV:}
+\DoxyCodeLine{00431\ \ \ \ \ \textcolor{keywordflow}{case}\ QUIC\_RSTREAM\_STATE\_SIZE\_KNOWN:}
+\DoxyCodeLine{00432\ \ \ \ \ \textcolor{keywordflow}{case}\ QUIC\_RSTREAM\_STATE\_DATA\_RECVD:}
+\DoxyCodeLine{00433\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00434\ \ \ \ \ \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{00435\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00436\ \ \ \ \ \}}
+\DoxyCodeLine{00437\ \}}
+\DoxyCodeLine{00438\ }
+\DoxyCodeLine{00439\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00440\ \textcolor{comment}{\ *\ Returns\ 1\ if\ the\ QUIC\_STREAM\ has\ a\ receiving\ part\ which\ is\ in\ one\ of\ the}}
+\DoxyCodeLine{00441\ \textcolor{comment}{\ *\ reset\ states.}}
+\DoxyCodeLine{00442\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00443\ \textcolor{keyword}{static}\ ossl\_inline\ ossl\_unused\ \textcolor{keywordtype}{int}\ ossl\_quic\_stream\_recv\_is\_reset(\textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__stream__st}{QUIC\_STREAM}}\ *s)}
+\DoxyCodeLine{00444\ \{}
+\DoxyCodeLine{00445\ \ \ \ \ \textcolor{keywordflow}{return}\ s-\/>recv\_state\ ==\ QUIC\_RSTREAM\_STATE\_RESET\_RECVD}
+\DoxyCodeLine{00446\ \ \ \ \ \ \ \ \ ||\ s-\/>recv\_state\ ==\ QUIC\_RSTREAM\_STATE\_RESET\_READ;}
+\DoxyCodeLine{00447\ \}}
+\DoxyCodeLine{00448\ }
+\DoxyCodeLine{00449\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00450\ \textcolor{comment}{\ *\ Returns\ 1\ if\ the\ stream\ has\ a\ send\ part\ and\ that\ part\ has\ a\ final\ size.}}
+\DoxyCodeLine{00451\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00452\ \textcolor{comment}{\ *\ If\ final\_size\ is\ non-\/NULL,\ *final\_size\ is\ the\ final\ size\ (on\ success)\ or\ an}}
+\DoxyCodeLine{00453\ \textcolor{comment}{\ *\ undefined\ value\ otherwise.}}
+\DoxyCodeLine{00454\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00455\ \textcolor{keyword}{static}\ ossl\_inline\ ossl\_unused\ \textcolor{keywordtype}{int}\ ossl\_quic\_stream\_send\_get\_final\_size(\textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__stream__st}{QUIC\_STREAM}}\ *s,}
+\DoxyCodeLine{00456\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ *final\_size)}
+\DoxyCodeLine{00457\ \{}
+\DoxyCodeLine{00458\ \ \ \ \ \textcolor{keywordflow}{switch}\ (s-\/>send\_state)\ \{}
+\DoxyCodeLine{00459\ \ \ \ \ \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{00460\ \ \ \ \ \textcolor{keywordflow}{case}\ QUIC\_SSTREAM\_STATE\_NONE:}
+\DoxyCodeLine{00461\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00462\ \ \ \ \ \textcolor{keywordflow}{case}\ QUIC\_SSTREAM\_STATE\_SEND:}
+\DoxyCodeLine{00463\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00464\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ *\ SEND\ may\ or\ may\ not\ have\ had\ a\ FIN\ -\/\ even\ if\ we\ have\ a\ FIN\ we\ do\ not}}
+\DoxyCodeLine{00465\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ *\ move\ to\ DATA\_SENT\ until\ we\ have\ actually\ sent\ all\ the\ data.\ So}}
+\DoxyCodeLine{00466\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ *\ ask\ the\ QUIC\_SSTREAM.}}
+\DoxyCodeLine{00467\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00468\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ ossl\_quic\_sstream\_get\_final\_size(s-\/>sstream,\ final\_size);}
+\DoxyCodeLine{00469\ \ \ \ \ \textcolor{keywordflow}{case}\ QUIC\_SSTREAM\_STATE\_DATA\_SENT:}
+\DoxyCodeLine{00470\ \ \ \ \ \textcolor{keywordflow}{case}\ QUIC\_SSTREAM\_STATE\_DATA\_RECVD:}
+\DoxyCodeLine{00471\ \ \ \ \ \textcolor{keywordflow}{case}\ QUIC\_SSTREAM\_STATE\_RESET\_SENT:}
+\DoxyCodeLine{00472\ \ \ \ \ \textcolor{keywordflow}{case}\ QUIC\_SSTREAM\_STATE\_RESET\_RECVD:}
+\DoxyCodeLine{00473\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (final\_size\ !=\ NULL)}
+\DoxyCodeLine{00474\ \ \ \ \ \ \ \ \ \ \ \ \ *final\_size\ =\ s-\/>send\_final\_size;}
+\DoxyCodeLine{00475\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00476\ \ \ \ \ \}}
+\DoxyCodeLine{00477\ \}}
+\DoxyCodeLine{00478\ }
+\DoxyCodeLine{00479\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00480\ \textcolor{comment}{\ *\ Returns\ 1\ if\ the\ stream\ has\ a\ receive\ part\ and\ that\ part\ has\ a\ final\ size.}}
+\DoxyCodeLine{00481\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00482\ \textcolor{comment}{\ *\ If\ final\_size\ is\ non-\/NULL,\ *final\_size\ is\ the\ final\ size\ (on\ success)\ or\ an}}
+\DoxyCodeLine{00483\ \textcolor{comment}{\ *\ undefined\ value\ otherwise.}}
+\DoxyCodeLine{00484\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00485\ \textcolor{keyword}{static}\ ossl\_inline\ ossl\_unused\ \textcolor{keywordtype}{int}\ ossl\_quic\_stream\_recv\_get\_final\_size(\textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__stream__st}{QUIC\_STREAM}}\ *s,}
+\DoxyCodeLine{00486\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ *final\_size)}
+\DoxyCodeLine{00487\ \{}
+\DoxyCodeLine{00488\ \ \ \ \ \textcolor{keywordflow}{switch}\ (s-\/>recv\_state)\ \{}
+\DoxyCodeLine{00489\ \ \ \ \ \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{00490\ \ \ \ \ \textcolor{keywordflow}{case}\ QUIC\_RSTREAM\_STATE\_NONE:}
+\DoxyCodeLine{00491\ \ \ \ \ \textcolor{keywordflow}{case}\ QUIC\_RSTREAM\_STATE\_RECV:}
+\DoxyCodeLine{00492\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00493\ }
+\DoxyCodeLine{00494\ \ \ \ \ \textcolor{keywordflow}{case}\ QUIC\_RSTREAM\_STATE\_SIZE\_KNOWN:}
+\DoxyCodeLine{00495\ \ \ \ \ \textcolor{keywordflow}{case}\ QUIC\_RSTREAM\_STATE\_DATA\_RECVD:}
+\DoxyCodeLine{00496\ \ \ \ \ \textcolor{keywordflow}{case}\ QUIC\_RSTREAM\_STATE\_DATA\_READ:}
+\DoxyCodeLine{00497\ \ \ \ \ \textcolor{keywordflow}{case}\ QUIC\_RSTREAM\_STATE\_RESET\_RECVD:}
+\DoxyCodeLine{00498\ \ \ \ \ \textcolor{keywordflow}{case}\ QUIC\_RSTREAM\_STATE\_RESET\_READ:}
+\DoxyCodeLine{00499\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!ossl\_assert(ossl\_quic\_rxfc\_get\_final\_size(\&s-\/>rxfc,\ final\_size)))}
+\DoxyCodeLine{00500\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00501\ }
+\DoxyCodeLine{00502\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00503\ \ \ \ \ \}}
+\DoxyCodeLine{00504\ \}}
+\DoxyCodeLine{00505\ }
+\DoxyCodeLine{00506\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00507\ \textcolor{comment}{\ *\ QUIC\ Stream\ Map}}
+\DoxyCodeLine{00508\ \textcolor{comment}{\ *\ ===============}}
+\DoxyCodeLine{00509\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00510\ \textcolor{comment}{\ *\ The\ QUIC\ stream\ map:}}
+\DoxyCodeLine{00511\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00512\ \textcolor{comment}{\ *\ \ \ -\/\ maps\ stream\ IDs\ to\ QUIC\_STREAM\ objects;}}
+\DoxyCodeLine{00513\ \textcolor{comment}{\ *\ \ \ -\/\ tracks\ which\ streams\ are\ 'active'\ (currently\ have\ data\ for\ transmission);}}
+\DoxyCodeLine{00514\ \textcolor{comment}{\ *\ \ \ -\/\ allows\ iteration\ over\ the\ active\ streams\ only.}}
+\DoxyCodeLine{00515\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00516\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00517\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structquic__stream__map__st}{quic\_stream\_map\_st}}\ \{}
+\DoxyCodeLine{00518\ \ \ \ \ LHASH\_OF(\mbox{\hyperlink{structquic__stream__st}{QUIC\_STREAM}})\ \ \ *map;}
+\DoxyCodeLine{00519\ \ \ \ \ \mbox{\hyperlink{structquic__stream__list__node__st}{QUIC\_STREAM\_LIST\_NODE}}\ \ \ active\_list;}
+\DoxyCodeLine{00520\ \ \ \ \ \mbox{\hyperlink{structquic__stream__list__node__st}{QUIC\_STREAM\_LIST\_NODE}}\ \ \ accept\_list;}
+\DoxyCodeLine{00521\ \ \ \ \ \mbox{\hyperlink{structquic__stream__list__node__st}{QUIC\_STREAM\_LIST\_NODE}}\ \ \ ready\_for\_gc\_list;}
+\DoxyCodeLine{00522\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rr\_stepping,\ rr\_counter;}
+\DoxyCodeLine{00523\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ num\_accept,\ num\_shutdown\_flush;}
+\DoxyCodeLine{00524\ \ \ \ \ \mbox{\hyperlink{structquic__stream__st}{QUIC\_STREAM}}\ \ \ \ \ \ \ \ \ \ \ \ \ *rr\_cur;}
+\DoxyCodeLine{00525\ \ \ \ \ uint64\_t\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (*get\_stream\_limit\_cb)(\textcolor{keywordtype}{int}\ uni,\ \textcolor{keywordtype}{void}\ *arg);}
+\DoxyCodeLine{00526\ \ \ \ \ \textcolor{keywordtype}{void}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *get\_stream\_limit\_cb\_arg;}
+\DoxyCodeLine{00527\ \ \ \ \ \mbox{\hyperlink{structquic__rxfc__st}{QUIC\_RXFC}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *max\_streams\_bidi\_rxfc;}
+\DoxyCodeLine{00528\ \ \ \ \ \mbox{\hyperlink{structquic__rxfc__st}{QUIC\_RXFC}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *max\_streams\_uni\_rxfc;}
+\DoxyCodeLine{00529\ \ \ \ \ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ is\_server;}
+\DoxyCodeLine{00530\ \}\ \mbox{\hyperlink{structquic__stream__map__st}{QUIC\_STREAM\_MAP}};}
+\DoxyCodeLine{00531\ }
+\DoxyCodeLine{00532\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00533\ \textcolor{comment}{\ *\ get\_stream\_limit\ is\ a\ callback\ which\ is\ called\ to\ retrieve\ the\ current\ stream}}
+\DoxyCodeLine{00534\ \textcolor{comment}{\ *\ limit\ for\ streams\ created\ by\ us.\ This\ mechanism\ is\ not\ used\ for}}
+\DoxyCodeLine{00535\ \textcolor{comment}{\ *\ peer-\/initiated\ streams.\ If\ a\ stream's\ stream\ ID\ is\ x,\ a\ stream\ is\ allowed\ if}}
+\DoxyCodeLine{00536\ \textcolor{comment}{\ *\ (x\ >>\ 2)\ <\ returned\ limit\ value;\ i.e.,\ the\ returned\ value\ is\ exclusive.}}
+\DoxyCodeLine{00537\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00538\ \textcolor{comment}{\ *\ If\ uni\ is\ 1,\ get\ the\ limit\ for\ locally-\/initiated\ unidirectional\ streams,\ else}}
+\DoxyCodeLine{00539\ \textcolor{comment}{\ *\ get\ the\ limit\ for\ locally-\/initiated\ bidirectional\ streams.}}
+\DoxyCodeLine{00540\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00541\ \textcolor{comment}{\ *\ If\ the\ callback\ is\ NULL,\ stream\ limiting\ is\ not\ applied.}}
+\DoxyCodeLine{00542\ \textcolor{comment}{\ *\ Stream\ limiting\ is\ used\ to\ determine\ if\ frames\ can\ currently\ be\ produced\ for}}
+\DoxyCodeLine{00543\ \textcolor{comment}{\ *\ a\ stream.}}
+\DoxyCodeLine{00544\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00545\ \textcolor{keywordtype}{int}\ ossl\_quic\_stream\_map\_init(\mbox{\hyperlink{structquic__stream__map__st}{QUIC\_STREAM\_MAP}}\ *qsm,}
+\DoxyCodeLine{00546\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ (*get\_stream\_limit\_cb)(\textcolor{keywordtype}{int}\ uni,\ \textcolor{keywordtype}{void}\ *arg),}
+\DoxyCodeLine{00547\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *get\_stream\_limit\_cb\_arg,}
+\DoxyCodeLine{00548\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structquic__rxfc__st}{QUIC\_RXFC}}\ *max\_streams\_bidi\_rxfc,}
+\DoxyCodeLine{00549\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structquic__rxfc__st}{QUIC\_RXFC}}\ *max\_streams\_uni\_rxfc,}
+\DoxyCodeLine{00550\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ is\_server);}
+\DoxyCodeLine{00551\ }
+\DoxyCodeLine{00552\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00553\ \textcolor{comment}{\ *\ Any\ streams\ still\ in\ the\ map\ will\ be\ released\ as\ though}}
+\DoxyCodeLine{00554\ \textcolor{comment}{\ *\ ossl\_quic\_stream\_map\_release\ was\ called\ on\ them.}}
+\DoxyCodeLine{00555\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00556\ \textcolor{keywordtype}{void}\ ossl\_quic\_stream\_map\_cleanup(\mbox{\hyperlink{structquic__stream__map__st}{QUIC\_STREAM\_MAP}}\ *qsm);}
+\DoxyCodeLine{00557\ }
+\DoxyCodeLine{00558\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00559\ \textcolor{comment}{\ *\ Allocate\ a\ new\ stream.\ type\ is\ a\ combination\ of\ one\ QUIC\_STREAM\_INITIATOR\_*}}
+\DoxyCodeLine{00560\ \textcolor{comment}{\ *\ value\ and\ one\ QUIC\_STREAM\_DIR\_*\ value.\ Note\ that\ clients\ can\ e.g.\ allocate}}
+\DoxyCodeLine{00561\ \textcolor{comment}{\ *\ server-\/initiated\ streams\ as\ they\ will\ need\ to\ allocate\ a\ QUIC\_STREAM}}
+\DoxyCodeLine{00562\ \textcolor{comment}{\ *\ structure\ to\ track\ any\ stream\ created\ by\ the\ server,\ etc.}}
+\DoxyCodeLine{00563\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00564\ \textcolor{comment}{\ *\ stream\_id\ must\ be\ a\ valid\ value.\ Returns\ NULL\ if\ a\ stream\ already\ exists}}
+\DoxyCodeLine{00565\ \textcolor{comment}{\ *\ with\ the\ given\ ID.}}
+\DoxyCodeLine{00566\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00567\ \mbox{\hyperlink{structquic__stream__st}{QUIC\_STREAM}}\ *ossl\_quic\_stream\_map\_alloc(\mbox{\hyperlink{structquic__stream__map__st}{QUIC\_STREAM\_MAP}}\ *qsm,}
+\DoxyCodeLine{00568\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ stream\_id,}
+\DoxyCodeLine{00569\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ type);}
+\DoxyCodeLine{00570\ }
+\DoxyCodeLine{00571\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00572\ \textcolor{comment}{\ *\ Releases\ a\ stream\ object.\ Note\ that\ this\ must\ only\ be\ done\ once\ the\ teardown}}
+\DoxyCodeLine{00573\ \textcolor{comment}{\ *\ process\ is\ entirely\ complete\ and\ the\ object\ will\ never\ be\ referenced\ again.}}
+\DoxyCodeLine{00574\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00575\ \textcolor{keywordtype}{void}\ ossl\_quic\_stream\_map\_release(\mbox{\hyperlink{structquic__stream__map__st}{QUIC\_STREAM\_MAP}}\ *qsm,\ \mbox{\hyperlink{structquic__stream__st}{QUIC\_STREAM}}\ *stream);}
+\DoxyCodeLine{00576\ }
+\DoxyCodeLine{00577\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00578\ \textcolor{comment}{\ *\ Calls\ visit\_cb()\ for\ each\ stream\ in\ the\ map.\ visit\_cb\_arg\ is\ an\ opaque}}
+\DoxyCodeLine{00579\ \textcolor{comment}{\ *\ argument\ which\ is\ passed\ through.}}
+\DoxyCodeLine{00580\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00581\ \textcolor{keywordtype}{void}\ ossl\_quic\_stream\_map\_visit(\mbox{\hyperlink{structquic__stream__map__st}{QUIC\_STREAM\_MAP}}\ *qsm,}
+\DoxyCodeLine{00582\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ (*visit\_cb)(\mbox{\hyperlink{structquic__stream__st}{QUIC\_STREAM}}\ *stream,\ \textcolor{keywordtype}{void}\ *arg),}
+\DoxyCodeLine{00583\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *visit\_cb\_arg);}
+\DoxyCodeLine{00584\ }
+\DoxyCodeLine{00585\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00586\ \textcolor{comment}{\ *\ Retrieves\ a\ stream\ by\ stream\ ID.\ Returns\ NULL\ if\ it\ does\ not\ exist.}}
+\DoxyCodeLine{00587\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00588\ \mbox{\hyperlink{structquic__stream__st}{QUIC\_STREAM}}\ *ossl\_quic\_stream\_map\_get\_by\_id(\mbox{\hyperlink{structquic__stream__map__st}{QUIC\_STREAM\_MAP}}\ *qsm,}
+\DoxyCodeLine{00589\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ stream\_id);}
+\DoxyCodeLine{00590\ }
+\DoxyCodeLine{00591\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00592\ \textcolor{comment}{\ *\ Marks\ the\ given\ stream\ as\ active\ or\ inactive\ based\ on\ its\ state.\ Idempotent.}}
+\DoxyCodeLine{00593\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00594\ \textcolor{comment}{\ *\ When\ a\ stream\ is\ marked\ active,\ it\ becomes\ available\ in\ the\ iteration\ list,}}
+\DoxyCodeLine{00595\ \textcolor{comment}{\ *\ and\ when\ a\ stream\ is\ marked\ inactive,\ it\ no\ longer\ appears\ in\ the\ iteration}}
+\DoxyCodeLine{00596\ \textcolor{comment}{\ *\ list.}}
+\DoxyCodeLine{00597\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00598\ \textcolor{comment}{\ *\ Calling\ this\ function\ invalidates\ any\ iterator\ currently\ pointing\ at\ the}}
+\DoxyCodeLine{00599\ \textcolor{comment}{\ *\ given\ stream\ object,\ but\ iterators\ not\ currently\ pointing\ at\ the\ given\ stream}}
+\DoxyCodeLine{00600\ \textcolor{comment}{\ *\ object\ are\ not\ invalidated.}}
+\DoxyCodeLine{00601\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00602\ \textcolor{keywordtype}{void}\ ossl\_quic\_stream\_map\_update\_state(\mbox{\hyperlink{structquic__stream__map__st}{QUIC\_STREAM\_MAP}}\ *qsm,\ \mbox{\hyperlink{structquic__stream__st}{QUIC\_STREAM}}\ *s);}
+\DoxyCodeLine{00603\ }
+\DoxyCodeLine{00604\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00605\ \textcolor{comment}{\ *\ Sets\ the\ RR\ stepping\ value,\ n.\ The\ RR\ rotation\ will\ be\ advanced\ every\ n}}
+\DoxyCodeLine{00606\ \textcolor{comment}{\ *\ packets.\ The\ default\ value\ is\ 1.}}
+\DoxyCodeLine{00607\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00608\ \textcolor{keywordtype}{void}\ ossl\_quic\_stream\_map\_set\_rr\_stepping(\mbox{\hyperlink{structquic__stream__map__st}{QUIC\_STREAM\_MAP}}\ *qsm,\ \textcolor{keywordtype}{size\_t}\ stepping);}
+\DoxyCodeLine{00609\ }
+\DoxyCodeLine{00610\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00611\ \textcolor{comment}{\ *\ Returns\ 1\ if\ the\ stream\ ordinal\ given\ is\ allowed\ by\ the\ current\ stream\ count}}
+\DoxyCodeLine{00612\ \textcolor{comment}{\ *\ flow\ control\ limit,\ assuming\ a\ locally\ initiated\ stream\ of\ a\ type\ described}}
+\DoxyCodeLine{00613\ \textcolor{comment}{\ *\ by\ is\_uni.}}
+\DoxyCodeLine{00614\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00615\ \textcolor{comment}{\ *\ Note\ that\ stream\_ordinal\ is\ a\ stream\ ordinal,\ not\ a\ stream\ ID.}}
+\DoxyCodeLine{00616\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00617\ \textcolor{keywordtype}{int}\ ossl\_quic\_stream\_map\_is\_local\_allowed\_by\_stream\_limit(\mbox{\hyperlink{structquic__stream__map__st}{QUIC\_STREAM\_MAP}}\ *qsm,}
+\DoxyCodeLine{00618\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ stream\_ordinal,}
+\DoxyCodeLine{00619\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ is\_uni);}
+\DoxyCodeLine{00620\ }
+\DoxyCodeLine{00621\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00622\ \textcolor{comment}{\ *\ Stream\ Send\ Part}}
+\DoxyCodeLine{00623\ \textcolor{comment}{\ *\ ================}}
+\DoxyCodeLine{00624\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00625\ }
+\DoxyCodeLine{00626\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00627\ \textcolor{comment}{\ *\ Ensures\ that\ the\ sending\ part\ has\ transitioned\ out\ of\ the\ READY\ state\ (i.e.,}}
+\DoxyCodeLine{00628\ \textcolor{comment}{\ *\ to\ SEND,\ or\ a\ subsequent\ state).\ This\ function\ is\ named\ as\ it\ is\ because,}}
+\DoxyCodeLine{00629\ \textcolor{comment}{\ *\ while\ on\ paper\ the\ distinction\ between\ READY\ and\ SEND\ is\ whether\ we\ have}}
+\DoxyCodeLine{00630\ \textcolor{comment}{\ *\ started\ transmitting\ application\ data,\ in\ practice\ the\ meaningful\ distinction}}
+\DoxyCodeLine{00631\ \textcolor{comment}{\ *\ between\ the\ two\ states\ is\ whether\ we\ have\ allocated\ a\ stream\ ID\ to\ the\ stream}}
+\DoxyCodeLine{00632\ \textcolor{comment}{\ *\ or\ not.\ QUIC\ permits\ us\ to\ defer\ stream\ ID\ allocation\ until\ first\ STREAM\ (or}}
+\DoxyCodeLine{00633\ \textcolor{comment}{\ *\ STREAM\_DATA\_BLOCKED)\ frame\ transmission\ for\ locally-\/initiated\ streams.}}
+\DoxyCodeLine{00634\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00635\ \textcolor{comment}{\ *\ Our\ implementation\ does\ not\ currently\ do\ this\ and\ we\ allocate\ stream\ IDs\ up}}
+\DoxyCodeLine{00636\ \textcolor{comment}{\ *\ front,\ however\ we\ may\ revisit\ this\ in\ the\ future.\ Calling\ this\ represents\ a}}
+\DoxyCodeLine{00637\ \textcolor{comment}{\ *\ demand\ for\ a\ stream\ ID\ by\ the\ caller\ and\ ensures\ one\ has\ been\ allocated\ to}}
+\DoxyCodeLine{00638\ \textcolor{comment}{\ *\ the\ stream,\ and\ causes\ us\ to\ transition\ to\ SEND\ if\ we\ are\ still\ in\ the\ READY}}
+\DoxyCodeLine{00639\ \textcolor{comment}{\ *\ state.}}
+\DoxyCodeLine{00640\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00641\ \textcolor{comment}{\ *\ Returns\ 0\ if\ there\ is\ no\ send\ part\ (caller\ error)\ and\ 1\ otherwise.}}
+\DoxyCodeLine{00642\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00643\ \textcolor{keywordtype}{int}\ ossl\_quic\_stream\_map\_ensure\_send\_part\_id(\mbox{\hyperlink{structquic__stream__map__st}{QUIC\_STREAM\_MAP}}\ *qsm,}
+\DoxyCodeLine{00644\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structquic__stream__st}{QUIC\_STREAM}}\ *qs);}
+\DoxyCodeLine{00645\ }
+\DoxyCodeLine{00646\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00647\ \textcolor{comment}{\ *\ Transitions\ from\ SEND\ to\ the\ DATA\_SENT\ state.\ Note\ that\ this\ is\ NOT\ the\ same}}
+\DoxyCodeLine{00648\ \textcolor{comment}{\ *\ as\ the\ point\ in\ time\ at\ which\ the\ final\ size\ of\ the\ stream\ becomes\ known}}
+\DoxyCodeLine{00649\ \textcolor{comment}{\ *\ (i.e.,\ the\ time\ at\ which\ ossl\_quic\_sstream\_fin())\ is\ called\ as\ it\ occurs\ when}}
+\DoxyCodeLine{00650\ \textcolor{comment}{\ *\ we\ have\ SENT\ all\ data\ on\ a\ given\ stream\ send\ part,\ not\ merely\ buffered\ it.}}
+\DoxyCodeLine{00651\ \textcolor{comment}{\ *\ Note\ that\ this\ transition\ is\ NOT\ reversed\ in\ the\ event\ of\ some\ of\ that\ data}}
+\DoxyCodeLine{00652\ \textcolor{comment}{\ *\ being\ lost.}}
+\DoxyCodeLine{00653\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00654\ \textcolor{comment}{\ *\ Returns\ 1\ if\ the\ state\ transition\ was\ successfully\ taken.\ Returns\ 0\ if\ there}}
+\DoxyCodeLine{00655\ \textcolor{comment}{\ *\ is\ no\ send\ part\ (caller\ error)\ or\ if\ the\ state\ transition\ cannot\ be\ taken}}
+\DoxyCodeLine{00656\ \textcolor{comment}{\ *\ because\ the\ send\ part\ is\ not\ in\ the\ SEND\ state.}}
+\DoxyCodeLine{00657\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00658\ \textcolor{keywordtype}{int}\ ossl\_quic\_stream\_map\_notify\_all\_data\_sent(\mbox{\hyperlink{structquic__stream__map__st}{QUIC\_STREAM\_MAP}}\ *qsm,}
+\DoxyCodeLine{00659\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structquic__stream__st}{QUIC\_STREAM}}\ *qs);}
+\DoxyCodeLine{00660\ }
+\DoxyCodeLine{00661\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00662\ \textcolor{comment}{\ *\ Transitions\ from\ the\ DATA\_SENT\ to\ DATA\_RECVD\ state;\ should\ be\ called}}
+\DoxyCodeLine{00663\ \textcolor{comment}{\ *\ when\ all\ transmitted\ stream\ data\ is\ ACKed\ by\ the\ peer.}}
+\DoxyCodeLine{00664\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00665\ \textcolor{comment}{\ *\ Returns\ 1\ if\ the\ state\ transition\ was\ successfully\ taken.\ Returns\ 0\ if\ there}}
+\DoxyCodeLine{00666\ \textcolor{comment}{\ *\ is\ no\ send\ part\ (caller\ error)\ or\ the\ state\ transition\ cannot\ be\ taken}}
+\DoxyCodeLine{00667\ \textcolor{comment}{\ *\ because\ the\ send\ part\ is\ not\ in\ the\ DATA\_SENT\ state.\ Because}}
+\DoxyCodeLine{00668\ \textcolor{comment}{\ *\ ossl\_quic\_stream\_map\_notify\_all\_data\_sent()\ should\ always\ be\ called\ prior\ to}}
+\DoxyCodeLine{00669\ \textcolor{comment}{\ *\ this\ function,\ the\ send\ state\ must\ already\ be\ in\ DATA\_SENT\ in\ order\ for\ this}}
+\DoxyCodeLine{00670\ \textcolor{comment}{\ *\ function\ to\ succeed.}}
+\DoxyCodeLine{00671\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00672\ \textcolor{keywordtype}{int}\ ossl\_quic\_stream\_map\_notify\_totally\_acked(\mbox{\hyperlink{structquic__stream__map__st}{QUIC\_STREAM\_MAP}}\ *qsm,}
+\DoxyCodeLine{00673\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structquic__stream__st}{QUIC\_STREAM}}\ *qs);}
+\DoxyCodeLine{00674\ }
+\DoxyCodeLine{00675\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00676\ \textcolor{comment}{\ *\ Resets\ the\ sending\ part\ of\ a\ stream.\ This\ is\ a\ transition\ from\ the\ READY,}}
+\DoxyCodeLine{00677\ \textcolor{comment}{\ *\ SEND\ or\ DATA\_SENT\ send\ stream\ states\ to\ the\ RESET\_SENT\ state.}}
+\DoxyCodeLine{00678\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00679\ \textcolor{comment}{\ *\ This\ function\ returns\ 1\ if\ the\ transition\ is\ taken\ (i.e.,\ if\ the\ send\ stream}}
+\DoxyCodeLine{00680\ \textcolor{comment}{\ *\ part\ was\ in\ one\ of\ the\ states\ above),\ or\ if\ it\ is\ already\ in\ the\ RESET\_SENT}}
+\DoxyCodeLine{00681\ \textcolor{comment}{\ *\ state\ (idempotent\ operation),\ or\ if\ it\ has\ reached\ the\ RESET\_RECVD\ state.}}
+\DoxyCodeLine{00682\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00683\ \textcolor{comment}{\ *\ It\ returns\ 0\ if\ in\ the\ DATA\_RECVD\ state,\ as\ a\ send\ stream\ cannot\ be\ reset}}
+\DoxyCodeLine{00684\ \textcolor{comment}{\ *\ in\ this\ state.\ It\ also\ returns\ 0\ if\ there\ is\ no\ send\ part\ (caller\ error).}}
+\DoxyCodeLine{00685\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00686\ \textcolor{keywordtype}{int}\ ossl\_quic\_stream\_map\_reset\_stream\_send\_part(\mbox{\hyperlink{structquic__stream__map__st}{QUIC\_STREAM\_MAP}}\ *qsm,}
+\DoxyCodeLine{00687\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structquic__stream__st}{QUIC\_STREAM}}\ *qs,}
+\DoxyCodeLine{00688\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ aec);}
+\DoxyCodeLine{00689\ }
+\DoxyCodeLine{00690\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00691\ \textcolor{comment}{\ *\ Transitions\ from\ the\ RESET\_SENT\ to\ the\ RESET\_RECVD\ state.\ This\ should\ be}}
+\DoxyCodeLine{00692\ \textcolor{comment}{\ *\ called\ when\ a\ sent\ RESET\_STREAM\ frame\ has\ been\ acknowledged\ by\ the\ peer.}}
+\DoxyCodeLine{00693\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00694\ \textcolor{comment}{\ *\ This\ function\ returns\ 1\ if\ the\ transition\ is\ taken\ (i.e.,\ if\ the\ send\ stream}}
+\DoxyCodeLine{00695\ \textcolor{comment}{\ *\ part\ was\ in\ one\ of\ the\ states\ above)\ or\ if\ it\ is\ already\ in\ the\ RESET\_RECVD}}
+\DoxyCodeLine{00696\ \textcolor{comment}{\ *\ state\ (idempotent\ operation).}}
+\DoxyCodeLine{00697\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00698\ \textcolor{comment}{\ *\ It\ returns\ 0\ if\ not\ in\ the\ RESET\_SENT\ or\ RESET\_RECVD\ states,\ as\ this\ function}}
+\DoxyCodeLine{00699\ \textcolor{comment}{\ *\ should\ only\ be\ called\ after\ we\ have\ already\ sent\ a\ RESET\_STREAM\ frame\ and}}
+\DoxyCodeLine{00700\ \textcolor{comment}{\ *\ entered\ the\ RESET\_SENT\ state.\ It\ also\ returns\ 0\ if\ there\ is\ no\ send\ part}}
+\DoxyCodeLine{00701\ \textcolor{comment}{\ *\ (caller\ error).}}
+\DoxyCodeLine{00702\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00703\ \textcolor{keywordtype}{int}\ ossl\_quic\_stream\_map\_notify\_reset\_stream\_acked(\mbox{\hyperlink{structquic__stream__map__st}{QUIC\_STREAM\_MAP}}\ *qsm,}
+\DoxyCodeLine{00704\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structquic__stream__st}{QUIC\_STREAM}}\ *qs);}
+\DoxyCodeLine{00705\ }
+\DoxyCodeLine{00706\ }
+\DoxyCodeLine{00707\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00708\ \textcolor{comment}{\ *\ Stream\ Receive\ Part}}
+\DoxyCodeLine{00709\ \textcolor{comment}{\ *\ ===================}}
+\DoxyCodeLine{00710\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00711\ }
+\DoxyCodeLine{00712\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00713\ \textcolor{comment}{\ *\ Transitions\ from\ the\ RECV\ receive\ stream\ state\ to\ the\ SIZE\_KNOWN\ state.\ This}}
+\DoxyCodeLine{00714\ \textcolor{comment}{\ *\ should\ be\ called\ once\ a\ STREAM\ frame\ is\ received\ for\ the\ stream\ with\ the\ FIN}}
+\DoxyCodeLine{00715\ \textcolor{comment}{\ *\ bit\ set.\ final\_size\ should\ be\ the\ final\ size\ of\ the\ stream\ in\ bytes.}}
+\DoxyCodeLine{00716\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00717\ \textcolor{comment}{\ *\ Returns\ 1\ if\ the\ transition\ was\ taken.}}
+\DoxyCodeLine{00718\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00719\ \textcolor{keywordtype}{int}\ ossl\_quic\_stream\_map\_notify\_size\_known\_recv\_part(\mbox{\hyperlink{structquic__stream__map__st}{QUIC\_STREAM\_MAP}}\ *qsm,}
+\DoxyCodeLine{00720\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structquic__stream__st}{QUIC\_STREAM}}\ *qs,}
+\DoxyCodeLine{00721\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ final\_size);}
+\DoxyCodeLine{00722\ }
+\DoxyCodeLine{00723\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00724\ \textcolor{comment}{\ *\ Transitions\ from\ the\ SIZE\_KNOWN\ receive\ stream\ state\ to\ the\ DATA\_RECVD\ state.}}
+\DoxyCodeLine{00725\ \textcolor{comment}{\ *\ This\ should\ be\ called\ once\ all\ data\ for\ a\ receive\ stream\ is\ received.}}
+\DoxyCodeLine{00726\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00727\ \textcolor{comment}{\ *\ Returns\ 1\ if\ the\ transition\ was\ taken.}}
+\DoxyCodeLine{00728\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00729\ \textcolor{keywordtype}{int}\ ossl\_quic\_stream\_map\_notify\_totally\_received(\mbox{\hyperlink{structquic__stream__map__st}{QUIC\_STREAM\_MAP}}\ *qsm,}
+\DoxyCodeLine{00730\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structquic__stream__st}{QUIC\_STREAM}}\ *qs);}
+\DoxyCodeLine{00731\ }
+\DoxyCodeLine{00732\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00733\ \textcolor{comment}{\ *\ Transitions\ from\ the\ DATA\_RECVD\ receive\ stream\ state\ to\ the\ DATA\_READ\ state.}}
+\DoxyCodeLine{00734\ \textcolor{comment}{\ *\ This\ should\ be\ called\ once\ all\ data\ for\ a\ receive\ stream\ is\ read\ by\ the}}
+\DoxyCodeLine{00735\ \textcolor{comment}{\ *\ application.}}
+\DoxyCodeLine{00736\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00737\ \textcolor{comment}{\ *\ Returns\ 1\ if\ the\ transition\ was\ taken.}}
+\DoxyCodeLine{00738\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00739\ \textcolor{keywordtype}{int}\ ossl\_quic\_stream\_map\_notify\_totally\_read(\mbox{\hyperlink{structquic__stream__map__st}{QUIC\_STREAM\_MAP}}\ *qsm,}
+\DoxyCodeLine{00740\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structquic__stream__st}{QUIC\_STREAM}}\ *qs);}
+\DoxyCodeLine{00741\ }
+\DoxyCodeLine{00742\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00743\ \textcolor{comment}{\ *\ Transitions\ from\ the\ RECV,\ SIZE\_KNOWN\ or\ DATA\_RECVD\ receive\ stream\ state\ to}}
+\DoxyCodeLine{00744\ \textcolor{comment}{\ *\ the\ RESET\_RECVD\ state.\ This\ should\ be\ called\ on\ RESET\_STREAM.}}
+\DoxyCodeLine{00745\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00746\ \textcolor{comment}{\ *\ Returns\ 1\ if\ the\ transition\ was\ taken.}}
+\DoxyCodeLine{00747\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00748\ \textcolor{keywordtype}{int}\ ossl\_quic\_stream\_map\_notify\_reset\_recv\_part(\mbox{\hyperlink{structquic__stream__map__st}{QUIC\_STREAM\_MAP}}\ *qsm,}
+\DoxyCodeLine{00749\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structquic__stream__st}{QUIC\_STREAM}}\ *qs,}
+\DoxyCodeLine{00750\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ app\_error\_code,}
+\DoxyCodeLine{00751\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ final\_size);}
+\DoxyCodeLine{00752\ }
+\DoxyCodeLine{00753\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00754\ \textcolor{comment}{\ *\ Transitions\ from\ the\ RESET\_RECVD\ receive\ stream\ state\ to\ the\ RESET\_READ}}
+\DoxyCodeLine{00755\ \textcolor{comment}{\ *\ receive\ stream\ state.\ This\ should\ be\ called\ when\ the\ application\ is\ notified}}
+\DoxyCodeLine{00756\ \textcolor{comment}{\ *\ of\ a\ stream\ reset.}}
+\DoxyCodeLine{00757\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00758\ \textcolor{keywordtype}{int}\ ossl\_quic\_stream\_map\_notify\_app\_read\_reset\_recv\_part(\mbox{\hyperlink{structquic__stream__map__st}{QUIC\_STREAM\_MAP}}\ *qsm,}
+\DoxyCodeLine{00759\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structquic__stream__st}{QUIC\_STREAM}}\ *qs);}
+\DoxyCodeLine{00760\ }
+\DoxyCodeLine{00761\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00762\ \textcolor{comment}{\ *\ Marks\ the\ receiving\ part\ of\ a\ stream\ for\ STOP\_SENDING.\ This\ is\ orthogonal\ to}}
+\DoxyCodeLine{00763\ \textcolor{comment}{\ *\ receive\ stream\ state\ as\ it\ does\ not\ affect\ it\ directly.}}
+\DoxyCodeLine{00764\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00765\ \textcolor{comment}{\ *\ Returns\ 1\ if\ the\ receiving\ part\ of\ a\ stream\ was\ not\ already\ marked\ for}}
+\DoxyCodeLine{00766\ \textcolor{comment}{\ *\ STOP\_SENDING.}}
+\DoxyCodeLine{00767\ \textcolor{comment}{\ *\ Returns\ 0\ otherwise,\ which\ need\ not\ be\ considered\ an\ error.}}
+\DoxyCodeLine{00768\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00769\ \textcolor{keywordtype}{int}\ ossl\_quic\_stream\_map\_stop\_sending\_recv\_part(\mbox{\hyperlink{structquic__stream__map__st}{QUIC\_STREAM\_MAP}}\ *qsm,}
+\DoxyCodeLine{00770\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structquic__stream__st}{QUIC\_STREAM}}\ *qs,}
+\DoxyCodeLine{00771\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ aec);}
+\DoxyCodeLine{00772\ }
+\DoxyCodeLine{00773\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00774\ \textcolor{comment}{\ *\ Marks\ the\ stream\ as\ wanting\ a\ STOP\_SENDING\ frame\ transmitted.\ It\ is\ not\ valid}}
+\DoxyCodeLine{00775\ \textcolor{comment}{\ *\ to\ call\ this\ if\ ossl\_quic\_stream\_map\_stop\_sending\_recv\_part()\ has\ not\ been}}
+\DoxyCodeLine{00776\ \textcolor{comment}{\ *\ called.\ For\ TXP\ use.}}
+\DoxyCodeLine{00777\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00778\ \textcolor{keywordtype}{int}\ ossl\_quic\_stream\_map\_schedule\_stop\_sending(\mbox{\hyperlink{structquic__stream__map__st}{QUIC\_STREAM\_MAP}}\ *qsm,}
+\DoxyCodeLine{00779\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structquic__stream__st}{QUIC\_STREAM}}\ *qs);}
+\DoxyCodeLine{00780\ }
+\DoxyCodeLine{00781\ }
+\DoxyCodeLine{00782\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00783\ \textcolor{comment}{\ *\ Accept\ Queue\ Management}}
+\DoxyCodeLine{00784\ \textcolor{comment}{\ *\ =======================}}
+\DoxyCodeLine{00785\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00786\ }
+\DoxyCodeLine{00787\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00788\ \textcolor{comment}{\ *\ Adds\ a\ stream\ to\ the\ accept\ queue.}}
+\DoxyCodeLine{00789\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00790\ \textcolor{keywordtype}{void}\ ossl\_quic\_stream\_map\_push\_accept\_queue(\mbox{\hyperlink{structquic__stream__map__st}{QUIC\_STREAM\_MAP}}\ *qsm,}
+\DoxyCodeLine{00791\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structquic__stream__st}{QUIC\_STREAM}}\ *s);}
+\DoxyCodeLine{00792\ }
+\DoxyCodeLine{00793\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00794\ \textcolor{comment}{\ *\ Returns\ the\ next\ item\ to\ be\ popped\ from\ the\ accept\ queue,\ or\ NULL\ if\ it\ is}}
+\DoxyCodeLine{00795\ \textcolor{comment}{\ *\ empty.}}
+\DoxyCodeLine{00796\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00797\ \mbox{\hyperlink{structquic__stream__st}{QUIC\_STREAM}}\ *ossl\_quic\_stream\_map\_peek\_accept\_queue(\mbox{\hyperlink{structquic__stream__map__st}{QUIC\_STREAM\_MAP}}\ *qsm);}
+\DoxyCodeLine{00798\ }
+\DoxyCodeLine{00799\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00800\ \textcolor{comment}{\ *\ Removes\ a\ stream\ from\ the\ accept\ queue.\ rtt\ is\ the\ estimated\ connection\ RTT.}}
+\DoxyCodeLine{00801\ \textcolor{comment}{\ *\ The\ stream\ is\ retired\ for\ the\ purposes\ of\ MAX\_STREAMS\ RXFC.}}
+\DoxyCodeLine{00802\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00803\ \textcolor{comment}{\ *\ Precondition:\ s\ is\ in\ the\ accept\ queue.}}
+\DoxyCodeLine{00804\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00805\ \textcolor{keywordtype}{void}\ ossl\_quic\_stream\_map\_remove\_from\_accept\_queue(\mbox{\hyperlink{structquic__stream__map__st}{QUIC\_STREAM\_MAP}}\ *qsm,}
+\DoxyCodeLine{00806\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structquic__stream__st}{QUIC\_STREAM}}\ *s,}
+\DoxyCodeLine{00807\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ rtt);}
+\DoxyCodeLine{00808\ }
+\DoxyCodeLine{00809\ \textcolor{comment}{/*\ Returns\ the\ length\ of\ the\ accept\ queue.\ */}}
+\DoxyCodeLine{00810\ \textcolor{keywordtype}{size\_t}\ ossl\_quic\_stream\_map\_get\_accept\_queue\_len(\mbox{\hyperlink{structquic__stream__map__st}{QUIC\_STREAM\_MAP}}\ *qsm);}
+\DoxyCodeLine{00811\ }
+\DoxyCodeLine{00812\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00813\ \textcolor{comment}{\ *\ Shutdown\ Flush\ and\ GC}}
+\DoxyCodeLine{00814\ \textcolor{comment}{\ *\ =====================}}
+\DoxyCodeLine{00815\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00816\ }
+\DoxyCodeLine{00817\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00818\ \textcolor{comment}{\ *\ Delete\ streams\ ready\ for\ GC.\ Pointers\ to\ those\ QUIC\_STREAM\ objects\ become}}
+\DoxyCodeLine{00819\ \textcolor{comment}{\ *\ invalid.}}
+\DoxyCodeLine{00820\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00821\ \textcolor{keywordtype}{void}\ ossl\_quic\_stream\_map\_gc(\mbox{\hyperlink{structquic__stream__map__st}{QUIC\_STREAM\_MAP}}\ *qsm);}
+\DoxyCodeLine{00822\ }
+\DoxyCodeLine{00823\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00824\ \textcolor{comment}{\ *\ Begins\ shutdown\ stream\ flush\ triage.\ Analyses\ all\ streams,\ including\ deleted}}
+\DoxyCodeLine{00825\ \textcolor{comment}{\ *\ but\ not\ yet\ GC'd\ streams,\ to\ determine\ if\ we\ should\ wait\ for\ that\ stream\ to}}
+\DoxyCodeLine{00826\ \textcolor{comment}{\ *\ be\ fully\ flushed\ before\ shutdown.\ After\ calling\ this,\ call}}
+\DoxyCodeLine{00827\ \textcolor{comment}{\ *\ ossl\_quic\_stream\_map\_is\_shutdown\_flush\_finished()\ to\ determine\ if\ all}}
+\DoxyCodeLine{00828\ \textcolor{comment}{\ *\ shutdown\ flush\ eligible\ streams\ have\ been\ flushed.}}
+\DoxyCodeLine{00829\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00830\ \textcolor{keywordtype}{void}\ ossl\_quic\_stream\_map\_begin\_shutdown\_flush(\mbox{\hyperlink{structquic__stream__map__st}{QUIC\_STREAM\_MAP}}\ *qsm);}
+\DoxyCodeLine{00831\ }
+\DoxyCodeLine{00832\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00833\ \textcolor{comment}{\ *\ Returns\ 1\ if\ all\ shutdown\ flush\ eligible\ streams\ have\ finished\ flushing,}}
+\DoxyCodeLine{00834\ \textcolor{comment}{\ *\ or\ if\ ossl\_quic\_stream\_map\_begin\_shutdown\_flush()\ has\ not\ been\ called.}}
+\DoxyCodeLine{00835\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00836\ \textcolor{keywordtype}{int}\ ossl\_quic\_stream\_map\_is\_shutdown\_flush\_finished(\mbox{\hyperlink{structquic__stream__map__st}{QUIC\_STREAM\_MAP}}\ *qsm);}
+\DoxyCodeLine{00837\ }
+\DoxyCodeLine{00838\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00839\ \textcolor{comment}{\ *\ QUIC\ Stream\ Iterator}}
+\DoxyCodeLine{00840\ \textcolor{comment}{\ *\ ====================}}
+\DoxyCodeLine{00841\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00842\ \textcolor{comment}{\ *\ Allows\ the\ current\ set\ of\ active\ streams\ to\ be\ walked\ using\ a\ RR-\/based}}
+\DoxyCodeLine{00843\ \textcolor{comment}{\ *\ algorithm.\ Each\ time\ ossl\_quic\_stream\_iter\_init\ is\ called,\ the\ RR\ algorithm}}
+\DoxyCodeLine{00844\ \textcolor{comment}{\ *\ is\ stepped.\ The\ RR\ algorithm\ rotates\ the\ iteration\ order\ such\ that\ the\ next}}
+\DoxyCodeLine{00845\ \textcolor{comment}{\ *\ active\ stream\ is\ returned\ first\ after\ n\ calls\ to\ ossl\_quic\_stream\_iter\_init,}}
+\DoxyCodeLine{00846\ \textcolor{comment}{\ *\ where\ n\ is\ the\ stepping\ value\ configured\ via}}
+\DoxyCodeLine{00847\ \textcolor{comment}{\ *\ ossl\_quic\_stream\_map\_set\_rr\_stepping.}}
+\DoxyCodeLine{00848\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00849\ \textcolor{comment}{\ *\ Suppose\ there\ are\ three\ active\ streams\ and\ the\ configured\ stepping\ is\ n:}}
+\DoxyCodeLine{00850\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00851\ \textcolor{comment}{\ *\ \ \ Iteration\ 0n:\ \ [Stream\ 1]\ [Stream\ 2]\ [Stream\ 3]}}
+\DoxyCodeLine{00852\ \textcolor{comment}{\ *\ \ \ Iteration\ 1n:\ \ [Stream\ 2]\ [Stream\ 3]\ [Stream\ 1]}}
+\DoxyCodeLine{00853\ \textcolor{comment}{\ *\ \ \ Iteration\ 2n:\ \ [Stream\ 3]\ [Stream\ 1]\ [Stream\ 2]}}
+\DoxyCodeLine{00854\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00855\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00856\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structquic__stream__iter__st}{quic\_stream\_iter\_st}}\ \{}
+\DoxyCodeLine{00857\ \ \ \ \ \mbox{\hyperlink{structquic__stream__map__st}{QUIC\_STREAM\_MAP}}\ \ \ \ \ *qsm;}
+\DoxyCodeLine{00858\ \ \ \ \ \mbox{\hyperlink{structquic__stream__st}{QUIC\_STREAM}}\ \ \ \ \ \ \ \ \ *first\_stream,\ *stream;}
+\DoxyCodeLine{00859\ \}\ \mbox{\hyperlink{structquic__stream__iter__st}{QUIC\_STREAM\_ITER}};}
+\DoxyCodeLine{00860\ }
+\DoxyCodeLine{00861\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00862\ \textcolor{comment}{\ *\ Initialise\ an\ iterator,\ advancing\ the\ RR\ algorithm\ as\ necessary\ (if}}
+\DoxyCodeLine{00863\ \textcolor{comment}{\ *\ advance\_rr\ is\ 1).\ After\ calling\ this,\ it-\/>stream\ will\ be\ the\ first\ stream\ in}}
+\DoxyCodeLine{00864\ \textcolor{comment}{\ *\ the\ iteration\ sequence,\ or\ NULL\ if\ there\ are\ no\ active\ streams.}}
+\DoxyCodeLine{00865\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00866\ \textcolor{keywordtype}{void}\ ossl\_quic\_stream\_iter\_init(\mbox{\hyperlink{structquic__stream__iter__st}{QUIC\_STREAM\_ITER}}\ *it,\ \mbox{\hyperlink{structquic__stream__map__st}{QUIC\_STREAM\_MAP}}\ *qsm,}
+\DoxyCodeLine{00867\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ advance\_rr);}
+\DoxyCodeLine{00868\ }
+\DoxyCodeLine{00869\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00870\ \textcolor{comment}{\ *\ Advances\ to\ next\ stream\ in\ iteration\ sequence.\ You\ do\ not\ need\ to\ call\ this}}
+\DoxyCodeLine{00871\ \textcolor{comment}{\ *\ immediately\ after\ calling\ ossl\_quic\_stream\_iter\_init().\ If\ the\ end\ of\ the}}
+\DoxyCodeLine{00872\ \textcolor{comment}{\ *\ list\ is\ reached,\ it-\/>stream\ will\ be\ NULL\ after\ calling\ this.}}
+\DoxyCodeLine{00873\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00874\ \textcolor{keywordtype}{void}\ ossl\_quic\_stream\_iter\_next(\mbox{\hyperlink{structquic__stream__iter__st}{QUIC\_STREAM\_ITER}}\ *it);}
+\DoxyCodeLine{00875\ }
+\DoxyCodeLine{00876\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00877\ }
+\DoxyCodeLine{00878\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

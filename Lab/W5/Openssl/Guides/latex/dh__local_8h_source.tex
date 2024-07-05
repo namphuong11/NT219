@@ -1,0 +1,66 @@
+\doxysection{dh\+\_\+local.\+h}
+\hypertarget{dh__local_8h_source}{}\label{dh__local_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/dh/dh\_local.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/dh/dh\_local.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2016-\/2020\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <openssl/dh.h>}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ "{}internal/refcount.h"{}}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ "{}internal/ffc.h"{}}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#define\ DH\_MIN\_MODULUS\_BITS\ \ \ \ \ 512}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structdh__st}{dh\_st}}\ \{}
+\DoxyCodeLine{00017\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ \ \ \ \ *\ This\ first\ argument\ is\ used\ to\ pick\ up\ errors\ when\ a\ DH\ is\ passed}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ \ \ \ \ *\ instead\ of\ a\ EVP\_PKEY}}
+\DoxyCodeLine{00020\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00021\ \ \ \ \ \textcolor{keywordtype}{int}\ pad;}
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{keywordtype}{int}\ version;}
+\DoxyCodeLine{00023\ \ \ \ \ \mbox{\hyperlink{structffc__params__st}{FFC\_PARAMS}}\ params;}
+\DoxyCodeLine{00024\ \ \ \ \ \textcolor{comment}{/*\ max\ generated\ private\ key\ length\ (can\ be\ less\ than\ len(q))\ */}}
+\DoxyCodeLine{00025\ \ \ \ \ int32\_t\ length;}
+\DoxyCodeLine{00026\ \ \ \ \ BIGNUM\ *pub\_key;\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ g\string^x\ \%\ p\ */}}
+\DoxyCodeLine{00027\ \ \ \ \ BIGNUM\ *priv\_key;\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ x\ */}}
+\DoxyCodeLine{00028\ \ \ \ \ \textcolor{keywordtype}{int}\ flags;}
+\DoxyCodeLine{00029\ \ \ \ \ BN\_MONT\_CTX\ *method\_mont\_p;}
+\DoxyCodeLine{00030\ \ \ \ \ \mbox{\hyperlink{struct_c_r_y_p_t_o___r_e_f___c_o_u_n_t}{CRYPTO\_REF\_COUNT}}\ references;}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#ifndef\ FIPS\_MODULE}}
+\DoxyCodeLine{00032\ \ \ \ \ CRYPTO\_EX\_DATA\ ex\_data;}
+\DoxyCodeLine{00033\ \ \ \ \ ENGINE\ *engine;}
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00035\ \ \ \ \ OSSL\_LIB\_CTX\ *libctx;}
+\DoxyCodeLine{00036\ \ \ \ \ \textcolor{keyword}{const}\ DH\_METHOD\ *meth;}
+\DoxyCodeLine{00037\ \ \ \ \ CRYPTO\_RWLOCK\ *lock;}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{comment}{/*\ Provider\ data\ */}}
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ dirty\_cnt;\ \textcolor{comment}{/*\ If\ any\ key\ material\ changes,\ increment\ this\ */}}
+\DoxyCodeLine{00041\ \};}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structdh__method}{dh\_method}}\ \{}
+\DoxyCodeLine{00044\ \ \ \ \ \textcolor{keywordtype}{char}\ *name;}
+\DoxyCodeLine{00045\ \ \ \ \ \textcolor{comment}{/*\ Methods\ here\ */}}
+\DoxyCodeLine{00046\ \ \ \ \ int\ (*generate\_key)\ (DH\ *dh);}
+\DoxyCodeLine{00047\ \ \ \ \ int\ (*compute\_key)\ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *key,\ \textcolor{keyword}{const}\ BIGNUM\ *pub\_key,\ DH\ *dh);}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{comment}{/*\ Can\ be\ null\ */}}
+\DoxyCodeLine{00050\ \ \ \ \ int\ (*bn\_mod\_exp)\ (\textcolor{keyword}{const}\ DH\ *dh,\ BIGNUM\ *r,\ \textcolor{keyword}{const}\ BIGNUM\ *a,}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *p,\ \textcolor{keyword}{const}\ BIGNUM\ *m,\ BN\_CTX\ *ctx,}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BN\_MONT\_CTX\ *m\_ctx);}
+\DoxyCodeLine{00053\ \ \ \ \ int\ (*init)\ (DH\ *dh);}
+\DoxyCodeLine{00054\ \ \ \ \ int\ (*finish)\ (DH\ *dh);}
+\DoxyCodeLine{00055\ \ \ \ \ \textcolor{keywordtype}{int}\ flags;}
+\DoxyCodeLine{00056\ \ \ \ \ \textcolor{keywordtype}{char}\ *app\_data;}
+\DoxyCodeLine{00057\ \ \ \ \ \textcolor{comment}{/*\ If\ this\ is\ non-\/NULL,\ it\ will\ be\ used\ to\ generate\ parameters\ */}}
+\DoxyCodeLine{00058\ \ \ \ \ int\ (*generate\_params)\ (DH\ *dh,\ \textcolor{keywordtype}{int}\ prime\_len,\ \textcolor{keywordtype}{int}\ generator,}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BN\_GENCB\ *cb);}
+\DoxyCodeLine{00060\ \};}
+
+\end{DoxyCode}

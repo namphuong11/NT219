@@ -1,0 +1,31 @@
+\doxysection{PROV\+\_\+\+CHACHA20\+\_\+\+CTX Struct Reference}
+\hypertarget{struct_p_r_o_v___c_h_a_c_h_a20___c_t_x}{}\label{struct_p_r_o_v___c_h_a_c_h_a20___c_t_x}\index{PROV\_CHACHA20\_CTX@{PROV\_CHACHA20\_CTX}}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{struct_p_r_o_v___c_h_a_c_h_a20___c_t_x_a336b5f05d3a07755cfb6ec20c98f2eac}\label{struct_p_r_o_v___c_h_a_c_h_a20___c_t_x_a336b5f05d3a07755cfb6ec20c98f2eac} 
+\mbox{\hyperlink{structprov__cipher__ctx__st}{PROV\+\_\+\+CIPHER\+\_\+\+CTX}} {\bfseries base}
+\item 
+\Hypertarget{struct_p_r_o_v___c_h_a_c_h_a20___c_t_x_ac0c3c298f6a4f44492cfa7686f942b7b}\label{struct_p_r_o_v___c_h_a_c_h_a20___c_t_x_ac0c3c298f6a4f44492cfa7686f942b7b} 
+\begin{tabbing}
+xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=\kill
+union \{\\
+\>{\bfseries OSSL\_UNION\_ALIGN}\\
+\>unsigned int {\bfseries d} \mbox{[}CHACHA\_KEY\_SIZE/4\mbox{]}\\
+\} {\bfseries key}\\
+
+\end{tabbing}\item 
+\Hypertarget{struct_p_r_o_v___c_h_a_c_h_a20___c_t_x_abc04cf0caf0b8bc208aabee2dc5ba9e2}\label{struct_p_r_o_v___c_h_a_c_h_a20___c_t_x_abc04cf0caf0b8bc208aabee2dc5ba9e2} 
+unsigned int {\bfseries counter} \mbox{[}CHACHA\+\_\+\+CTR\+\_\+\+SIZE/4\mbox{]}
+\item 
+\Hypertarget{struct_p_r_o_v___c_h_a_c_h_a20___c_t_x_a7ef3d0b544aa521bd004397f3a4d7b38}\label{struct_p_r_o_v___c_h_a_c_h_a20___c_t_x_a7ef3d0b544aa521bd004397f3a4d7b38} 
+unsigned char {\bfseries buf} \mbox{[}CHACHA\+\_\+\+BLK\+\_\+\+SIZE\mbox{]}
+\item 
+\Hypertarget{struct_p_r_o_v___c_h_a_c_h_a20___c_t_x_ab15a01b1a1e56ea3e188f914c8418fbb}\label{struct_p_r_o_v___c_h_a_c_h_a20___c_t_x_ab15a01b1a1e56ea3e188f914c8418fbb} 
+unsigned int {\bfseries partial\+\_\+len}
+\end{DoxyCompactItemize}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/namph/\+Downloads/openssl/openssl-\/3.\+2.\+1/providers/implementations/ciphers/cipher\+\_\+chacha20.\+h\end{DoxyCompactItemize}

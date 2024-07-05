@@ -1,0 +1,578 @@
+\doxysection{statem\+\_\+local.\+h}
+\hypertarget{statem__local_8h_source}{}\label{statem__local_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/ssl/statem/statem\_local.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/ssl/statem/statem\_local.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2015-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{comment}{/*****************************************************************************}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ *\ The\ following\ definitions\ are\ PRIVATE\ to\ the\ state\ machine.\ They\ should\ \ \ *}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ *\ NOT\ be\ used\ outside\ of\ the\ state\ machine.\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ *****************************************************************************/}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{comment}{/*\ Max\ message\ length\ definitions\ */}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{comment}{/*\ The\ spec\ allows\ for\ a\ longer\ length\ than\ this,\ but\ we\ limit\ it\ */}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#define\ HELLO\_VERIFY\_REQUEST\_MAX\_LENGTH\ 258}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#define\ END\_OF\_EARLY\_DATA\_MAX\_LENGTH\ \ \ \ 0}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#define\ HELLO\_RETRY\_REQUEST\_MAX\_LENGTH\ \ 20000}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#define\ ENCRYPTED\_EXTENSIONS\_MAX\_LENGTH\ 20000}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#define\ SESSION\_TICKET\_MAX\_LENGTH\_TLS13\ 131338}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#define\ SESSION\_TICKET\_MAX\_LENGTH\_TLS12\ 65541}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#define\ SERVER\_KEY\_EXCH\_MAX\_LENGTH\ \ \ \ \ \ 102400}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#define\ SERVER\_HELLO\_DONE\_MAX\_LENGTH\ \ \ \ 0}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#define\ KEY\_UPDATE\_MAX\_LENGTH\ \ \ \ \ \ \ \ \ \ \ 1}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#define\ CCS\_MAX\_LENGTH\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 1}}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \textcolor{comment}{/*\ Max\ ServerHello\ size\ permitted\ by\ RFC\ 8446\ */}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#define\ SERVER\_HELLO\_MAX\_LENGTH\ \ \ \ \ \ \ \ \ 65607}}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \textcolor{comment}{/*\ Max\ CertificateVerify\ size\ permitted\ by\ RFC\ 8446\ */}}
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#define\ CERTIFICATE\_VERIFY\_MAX\_LENGTH\ \ \ 65539}}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \textcolor{comment}{/*\ Max\ should\ actually\ be\ 36\ but\ we\ are\ generous\ */}}
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#define\ FINISHED\_MAX\_LENGTH\ \ \ \ \ \ \ \ \ \ \ \ \ 64}}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \textcolor{comment}{/*\ Dummy\ message\ type\ */}}
+\DoxyCodeLine{00041\ \textcolor{preprocessor}{\#define\ SSL3\_MT\_DUMMY\ \ \ -\/1}}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \textcolor{comment}{/*\ Invalid\ extension\ ID\ for\ non-\/supported\ extensions\ */}}
+\DoxyCodeLine{00044\ \textcolor{preprocessor}{\#define\ TLSEXT\_TYPE\_invalid\ \ \ \ \ \ \ \ \ \ \ \ 0x10000}}
+\DoxyCodeLine{00045\ \textcolor{preprocessor}{\#define\ TLSEXT\_TYPE\_out\_of\_range\ \ \ \ \ \ \ 0x10001}}
+\DoxyCodeLine{00046\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ ossl\_get\_extension\_type(\textcolor{keywordtype}{size\_t}\ idx);}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ hrrrandom[];}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \textcolor{comment}{/*\ Message\ processing\ return\ codes\ */}}
+\DoxyCodeLine{00051\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}\ \{}
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{comment}{/*\ Something\ bad\ happened\ */}}
+\DoxyCodeLine{00053\ \ \ \ \ MSG\_PROCESS\_ERROR,}
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{comment}{/*\ We've\ finished\ reading\ -\/\ swap\ to\ writing\ */}}
+\DoxyCodeLine{00055\ \ \ \ \ MSG\_PROCESS\_FINISHED\_READING,}
+\DoxyCodeLine{00056\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00057\ \textcolor{comment}{\ \ \ \ \ *\ We've\ completed\ the\ main\ processing\ of\ this\ message\ but\ there\ is\ some}}
+\DoxyCodeLine{00058\ \textcolor{comment}{\ \ \ \ \ *\ post\ processing\ to\ be\ done.}}
+\DoxyCodeLine{00059\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00060\ \ \ \ \ MSG\_PROCESS\_CONTINUE\_PROCESSING,}
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{comment}{/*\ We've\ finished\ this\ message\ -\/\ read\ the\ next\ message\ */}}
+\DoxyCodeLine{00062\ \ \ \ \ MSG\_PROCESS\_CONTINUE\_READING}
+\DoxyCodeLine{00063\ \}\ MSG\_PROCESS\_RETURN;}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ \textcolor{keyword}{typedef}\ CON\_FUNC\_RETURN\ (*confunc\_f)\ (\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt);}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00067\ \textcolor{keywordtype}{int}\ ssl3\_take\_mac(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s);}
+\DoxyCodeLine{00068\ \textcolor{keywordtype}{int}\ check\_in\_list(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ uint16\_t\ group\_id,\ \textcolor{keyword}{const}\ uint16\_t\ *groups,}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ num\_groups,\ \textcolor{keywordtype}{int}\ checkallow);}
+\DoxyCodeLine{00070\ \textcolor{keywordtype}{int}\ create\_synthetic\_message\_hash(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *hashval,}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ hashlen,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *hrr,}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ hrrlen);}
+\DoxyCodeLine{00074\ \textcolor{keywordtype}{int}\ parse\_ca\_names(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt);}
+\DoxyCodeLine{00075\ \textcolor{keyword}{const}\ STACK\_OF(X509\_NAME)\ *get\_ca\_names(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s);}
+\DoxyCodeLine{00076\ \textcolor{keywordtype}{int}\ construct\_ca\_names(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \textcolor{keyword}{const}\ STACK\_OF(X509\_NAME)\ *ca\_sk,}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt);}
+\DoxyCodeLine{00078\ \textcolor{keywordtype}{size\_t}\ construct\_key\_exchange\_tbs(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **ptbs,}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *param,\ \textcolor{keywordtype}{size\_t}\ paramlen);}
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00081\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00082\ \textcolor{comment}{\ *\ TLS/DTLS\ client\ state\ machine\ functions}}
+\DoxyCodeLine{00083\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00084\ \textcolor{keywordtype}{int}\ ossl\_statem\_client\_read\_transition(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \textcolor{keywordtype}{int}\ mt);}
+\DoxyCodeLine{00085\ WRITE\_TRAN\ ossl\_statem\_client\_write\_transition(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s);}
+\DoxyCodeLine{00086\ WORK\_STATE\ ossl\_statem\_client\_pre\_work(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ WORK\_STATE\ wst);}
+\DoxyCodeLine{00087\ WORK\_STATE\ ossl\_statem\_client\_post\_work(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ WORK\_STATE\ wst);}
+\DoxyCodeLine{00088\ \textcolor{keywordtype}{int}\ ossl\_statem\_client\_construct\_message(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ confunc\_f\ *confunc,\ \textcolor{keywordtype}{int}\ *mt);}
+\DoxyCodeLine{00090\ \textcolor{keywordtype}{size\_t}\ ossl\_statem\_client\_max\_message\_size(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s);}
+\DoxyCodeLine{00091\ MSG\_PROCESS\_RETURN\ ossl\_statem\_client\_process\_message(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt);}
+\DoxyCodeLine{00093\ WORK\_STATE\ ossl\_statem\_client\_post\_process\_message(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ WORK\_STATE\ wst);}
+\DoxyCodeLine{00095\ }
+\DoxyCodeLine{00096\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00097\ \textcolor{comment}{\ *\ TLS/DTLS\ server\ state\ machine\ functions}}
+\DoxyCodeLine{00098\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00099\ \textcolor{keywordtype}{int}\ ossl\_statem\_server\_read\_transition(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \textcolor{keywordtype}{int}\ mt);}
+\DoxyCodeLine{00100\ WRITE\_TRAN\ ossl\_statem\_server\_write\_transition(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s);}
+\DoxyCodeLine{00101\ WORK\_STATE\ ossl\_statem\_server\_pre\_work(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ WORK\_STATE\ wst);}
+\DoxyCodeLine{00102\ WORK\_STATE\ ossl\_statem\_server\_post\_work(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ WORK\_STATE\ wst);}
+\DoxyCodeLine{00103\ \textcolor{keywordtype}{int}\ ossl\_statem\_server\_construct\_message(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ confunc\_f\ *confunc,\textcolor{keywordtype}{int}\ *mt);}
+\DoxyCodeLine{00105\ \textcolor{keywordtype}{size\_t}\ ossl\_statem\_server\_max\_message\_size(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s);}
+\DoxyCodeLine{00106\ MSG\_PROCESS\_RETURN\ ossl\_statem\_server\_process\_message(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt);}
+\DoxyCodeLine{00108\ WORK\_STATE\ ossl\_statem\_server\_post\_process\_message(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ WORK\_STATE\ wst);}
+\DoxyCodeLine{00110\ }
+\DoxyCodeLine{00111\ \textcolor{comment}{/*\ Functions\ for\ getting\ new\ message\ data\ */}}
+\DoxyCodeLine{00112\ \_\_owur\ \textcolor{keywordtype}{int}\ tls\_get\_message\_header(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \textcolor{keywordtype}{int}\ *mt);}
+\DoxyCodeLine{00113\ \_\_owur\ \textcolor{keywordtype}{int}\ tls\_get\_message\_body(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \textcolor{keywordtype}{size\_t}\ *len);}
+\DoxyCodeLine{00114\ \_\_owur\ \textcolor{keywordtype}{int}\ dtls\_get\_message(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \textcolor{keywordtype}{int}\ *mt);}
+\DoxyCodeLine{00115\ \_\_owur\ \textcolor{keywordtype}{int}\ dtls\_get\_message\_body(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \textcolor{keywordtype}{size\_t}\ *len);}
+\DoxyCodeLine{00116\ }
+\DoxyCodeLine{00117\ \textcolor{comment}{/*\ Message\ construction\ and\ processing\ functions\ */}}
+\DoxyCodeLine{00118\ \_\_owur\ \textcolor{keywordtype}{int}\ tls\_process\_initial\_server\_flight(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s);}
+\DoxyCodeLine{00119\ \_\_owur\ MSG\_PROCESS\_RETURN\ tls\_process\_change\_cipher\_spec(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,}
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt);}
+\DoxyCodeLine{00121\ \_\_owur\ MSG\_PROCESS\_RETURN\ tls\_process\_finished(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt);}
+\DoxyCodeLine{00122\ \_\_owur\ CON\_FUNC\_RETURN\ \ tls\_construct\_change\_cipher\_spec(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt);}
+\DoxyCodeLine{00124\ \_\_owur\ CON\_FUNC\_RETURN\ dtls\_construct\_change\_cipher\_spec(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,}
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt);}
+\DoxyCodeLine{00126\ }
+\DoxyCodeLine{00127\ \_\_owur\ CON\_FUNC\_RETURN\ tls\_construct\_finished(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt);}
+\DoxyCodeLine{00128\ \_\_owur\ CON\_FUNC\_RETURN\ tls\_construct\_key\_update(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt);}
+\DoxyCodeLine{00129\ \_\_owur\ MSG\_PROCESS\_RETURN\ tls\_process\_key\_update(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt);}
+\DoxyCodeLine{00131\ \_\_owur\ WORK\_STATE\ tls\_finish\_handshake(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ WORK\_STATE\ wst,}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ clearbufs,\ \textcolor{keywordtype}{int}\ stop);}
+\DoxyCodeLine{00133\ \_\_owur\ WORK\_STATE\ dtls\_wait\_for\_dry(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s);}
+\DoxyCodeLine{00134\ }
+\DoxyCodeLine{00135\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_COMP\_ALG}}
+\DoxyCodeLine{00136\ \_\_owur\ MSG\_PROCESS\_RETURN\ tls13\_process\_compressed\_certificate(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *sc,}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *tmppkt,}
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BUF\_MEM\ *buf);}
+\DoxyCodeLine{00140\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00141\ }
+\DoxyCodeLine{00142\ \textcolor{comment}{/*\ some\ client-\/only\ functions\ */}}
+\DoxyCodeLine{00143\ \_\_owur\ CON\_FUNC\_RETURN\ tls\_construct\_client\_hello(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt);}
+\DoxyCodeLine{00145\ \_\_owur\ MSG\_PROCESS\_RETURN\ tls\_process\_server\_hello(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,}
+\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt);}
+\DoxyCodeLine{00147\ \_\_owur\ MSG\_PROCESS\_RETURN\ tls\_process\_certificate\_request(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,}
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt);}
+\DoxyCodeLine{00149\ \_\_owur\ MSG\_PROCESS\_RETURN\ tls\_process\_new\_session\_ticket(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,}
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt);}
+\DoxyCodeLine{00151\ \_\_owur\ \textcolor{keywordtype}{int}\ tls\_process\_cert\_status\_body(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt);}
+\DoxyCodeLine{00152\ \_\_owur\ MSG\_PROCESS\_RETURN\ tls\_process\_cert\_status(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,}
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt);}
+\DoxyCodeLine{00154\ \_\_owur\ MSG\_PROCESS\_RETURN\ tls\_process\_server\_done(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt);}
+\DoxyCodeLine{00156\ \_\_owur\ CON\_FUNC\_RETURN\ tls\_construct\_cert\_verify(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,}
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt);}
+\DoxyCodeLine{00158\ \_\_owur\ WORK\_STATE\ tls\_prepare\_client\_certificate(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,}
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ WORK\_STATE\ wst);}
+\DoxyCodeLine{00160\ \_\_owur\ CON\_FUNC\_RETURN\ tls\_construct\_client\_certificate(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,}
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt);}
+\DoxyCodeLine{00162\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_COMP\_ALG}}
+\DoxyCodeLine{00163\ \_\_owur\ CON\_FUNC\_RETURN\ tls\_construct\_client\_compressed\_certificate(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *sc,}
+\DoxyCodeLine{00164\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt);}
+\DoxyCodeLine{00165\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00166\ \_\_owur\ \textcolor{keywordtype}{int}\ ssl\_do\_client\_cert\_cb(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ X509\ **px509,}
+\DoxyCodeLine{00167\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ EVP\_PKEY\ **ppkey);}
+\DoxyCodeLine{00168\ \_\_owur\ CON\_FUNC\_RETURN\ tls\_construct\_client\_key\_exchange(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,}
+\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt);}
+\DoxyCodeLine{00170\ \_\_owur\ \textcolor{keywordtype}{int}\ tls\_client\_key\_exchange\_post\_work(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s);}
+\DoxyCodeLine{00171\ \_\_owur\ \textcolor{keywordtype}{int}\ tls\_construct\_cert\_status\_body(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt);}
+\DoxyCodeLine{00172\ \_\_owur\ CON\_FUNC\_RETURN\ tls\_construct\_cert\_status(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,}
+\DoxyCodeLine{00173\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt);}
+\DoxyCodeLine{00174\ \_\_owur\ MSG\_PROCESS\_RETURN\ tls\_process\_key\_exchange(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,}
+\DoxyCodeLine{00175\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt);}
+\DoxyCodeLine{00176\ \_\_owur\ MSG\_PROCESS\_RETURN\ tls\_process\_server\_rpk(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *sc,}
+\DoxyCodeLine{00177\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt);}
+\DoxyCodeLine{00178\ \_\_owur\ MSG\_PROCESS\_RETURN\ tls\_process\_client\_rpk(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *sc,}
+\DoxyCodeLine{00179\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt);}
+\DoxyCodeLine{00180\ \_\_owur\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ tls\_output\_rpk(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *sc,\ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00181\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structcert__pkey__st}{CERT\_PKEY}}\ *cpk);}
+\DoxyCodeLine{00182\ \_\_owur\ \textcolor{keywordtype}{int}\ tls\_process\_rpk(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,\ EVP\_PKEY\ **peer\_rpk);}
+\DoxyCodeLine{00183\ \_\_owur\ MSG\_PROCESS\_RETURN\ tls\_process\_server\_certificate(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,}
+\DoxyCodeLine{00184\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt);}
+\DoxyCodeLine{00185\ \_\_owur\ WORK\_STATE\ tls\_post\_process\_server\_certificate(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,}
+\DoxyCodeLine{00186\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ WORK\_STATE\ wst);}
+\DoxyCodeLine{00187\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_COMP\_ALG}}
+\DoxyCodeLine{00188\ \_\_owur\ MSG\_PROCESS\_RETURN\ tls\_process\_server\_compressed\_certificate(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *sc,}
+\DoxyCodeLine{00189\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt);}
+\DoxyCodeLine{00190\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00191\ \_\_owur\ \textcolor{keywordtype}{int}\ ssl3\_check\_cert\_and\_algorithm(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s);}
+\DoxyCodeLine{00192\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_NEXTPROTONEG}}
+\DoxyCodeLine{00193\ \_\_owur\ CON\_FUNC\_RETURN\ tls\_construct\_next\_proto(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt);}
+\DoxyCodeLine{00194\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00195\ \_\_owur\ MSG\_PROCESS\_RETURN\ tls\_process\_hello\_req(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt);}
+\DoxyCodeLine{00196\ \_\_owur\ MSG\_PROCESS\_RETURN\ dtls\_process\_hello\_verify(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt);}
+\DoxyCodeLine{00197\ \_\_owur\ CON\_FUNC\_RETURN\ tls\_construct\_end\_of\_early\_data(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,}
+\DoxyCodeLine{00198\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt);}
+\DoxyCodeLine{00199\ }
+\DoxyCodeLine{00200\ \textcolor{comment}{/*\ some\ server-\/only\ functions\ */}}
+\DoxyCodeLine{00201\ \_\_owur\ MSG\_PROCESS\_RETURN\ tls\_process\_client\_hello(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,}
+\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt);}
+\DoxyCodeLine{00203\ \_\_owur\ WORK\_STATE\ tls\_post\_process\_client\_hello(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,}
+\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ WORK\_STATE\ wst);}
+\DoxyCodeLine{00205\ \_\_owur\ CON\_FUNC\_RETURN\ tls\_construct\_server\_hello(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,}
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt);}
+\DoxyCodeLine{00207\ \_\_owur\ CON\_FUNC\_RETURN\ dtls\_construct\_hello\_verify\_request(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,}
+\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt);}
+\DoxyCodeLine{00209\ \_\_owur\ CON\_FUNC\_RETURN\ tls\_construct\_server\_certificate(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,}
+\DoxyCodeLine{00210\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt);}
+\DoxyCodeLine{00211\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_COMP\_ALG}}
+\DoxyCodeLine{00212\ \_\_owur\ CON\_FUNC\_RETURN\ tls\_construct\_server\_compressed\_certificate(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *sc,}
+\DoxyCodeLine{00213\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt);}
+\DoxyCodeLine{00214\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00215\ \_\_owur\ CON\_FUNC\_RETURN\ tls\_construct\_server\_key\_exchange(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,}
+\DoxyCodeLine{00216\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt);}
+\DoxyCodeLine{00217\ \_\_owur\ CON\_FUNC\_RETURN\ tls\_construct\_certificate\_request(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,}
+\DoxyCodeLine{00218\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt);}
+\DoxyCodeLine{00219\ \_\_owur\ CON\_FUNC\_RETURN\ tls\_construct\_server\_done(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,}
+\DoxyCodeLine{00220\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt);}
+\DoxyCodeLine{00221\ \_\_owur\ MSG\_PROCESS\_RETURN\ tls\_process\_client\_certificate(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,}
+\DoxyCodeLine{00222\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt);}
+\DoxyCodeLine{00223\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_COMP\_ALG}}
+\DoxyCodeLine{00224\ \_\_owur\ MSG\_PROCESS\_RETURN\ tls\_process\_client\_compressed\_certificate(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *sc,}
+\DoxyCodeLine{00225\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt);}
+\DoxyCodeLine{00226\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00227\ \_\_owur\ MSG\_PROCESS\_RETURN\ tls\_process\_client\_key\_exchange(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,}
+\DoxyCodeLine{00228\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt);}
+\DoxyCodeLine{00229\ \_\_owur\ WORK\_STATE\ tls\_post\_process\_client\_key\_exchange(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,}
+\DoxyCodeLine{00230\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ WORK\_STATE\ wst);}
+\DoxyCodeLine{00231\ \_\_owur\ MSG\_PROCESS\_RETURN\ tls\_process\_cert\_verify(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,}
+\DoxyCodeLine{00232\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt);}
+\DoxyCodeLine{00233\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_NEXTPROTONEG}}
+\DoxyCodeLine{00234\ \_\_owur\ MSG\_PROCESS\_RETURN\ tls\_process\_next\_proto(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,}
+\DoxyCodeLine{00235\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt);}
+\DoxyCodeLine{00236\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00237\ \_\_owur\ CON\_FUNC\_RETURN\ tls\_construct\_new\_session\_ticket(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,}
+\DoxyCodeLine{00238\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt);}
+\DoxyCodeLine{00239\ MSG\_PROCESS\_RETURN\ tls\_process\_end\_of\_early\_data(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,}
+\DoxyCodeLine{00240\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt);}
+\DoxyCodeLine{00241\ }
+\DoxyCodeLine{00242\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_GOST}}
+\DoxyCodeLine{00243\ \textcolor{comment}{/*\ These\ functions\ are\ used\ in\ GOST18\ CKE,\ both\ for\ client\ and\ server\ */}}
+\DoxyCodeLine{00244\ \textcolor{keywordtype}{int}\ ossl\_gost18\_cke\_cipher\_nid(\textcolor{keyword}{const}\ \mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s);}
+\DoxyCodeLine{00245\ \textcolor{keywordtype}{int}\ ossl\_gost\_ukm(\textcolor{keyword}{const}\ \mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *dgst\_buf);}
+\DoxyCodeLine{00246\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00247\ }
+\DoxyCodeLine{00248\ \textcolor{comment}{/*\ Extension\ processing\ */}}
+\DoxyCodeLine{00249\ }
+\DoxyCodeLine{00250\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}\ ext\_return\_en\ \{}
+\DoxyCodeLine{00251\ \ \ \ \ EXT\_RETURN\_FAIL,}
+\DoxyCodeLine{00252\ \ \ \ \ EXT\_RETURN\_SENT,}
+\DoxyCodeLine{00253\ \ \ \ \ EXT\_RETURN\_NOT\_SENT}
+\DoxyCodeLine{00254\ \}\ EXT\_RETURN;}
+\DoxyCodeLine{00255\ }
+\DoxyCodeLine{00256\ \_\_owur\ \textcolor{keywordtype}{int}\ tls\_validate\_all\_contexts(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ thisctx,}
+\DoxyCodeLine{00257\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structraw__extension__st}{RAW\_EXTENSION}}\ *exts);}
+\DoxyCodeLine{00258\ \_\_owur\ \textcolor{keywordtype}{int}\ extension\_is\_relevant(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ extctx,}
+\DoxyCodeLine{00259\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ thisctx);}
+\DoxyCodeLine{00260\ \_\_owur\ \textcolor{keywordtype}{int}\ tls\_collect\_extensions(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *packet,}
+\DoxyCodeLine{00261\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,}
+\DoxyCodeLine{00262\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structraw__extension__st}{RAW\_EXTENSION}}\ **res,\ \textcolor{keywordtype}{size\_t}\ *len,\ \textcolor{keywordtype}{int}\ init);}
+\DoxyCodeLine{00263\ \_\_owur\ \textcolor{keywordtype}{int}\ tls\_parse\_extension(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ TLSEXT\_INDEX\ idx,\ \textcolor{keywordtype}{int}\ context,}
+\DoxyCodeLine{00264\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structraw__extension__st}{RAW\_EXTENSION}}\ *exts,\ \ X509\ *x,\ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00265\ \_\_owur\ \textcolor{keywordtype}{int}\ tls\_parse\_all\_extensions(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \textcolor{keywordtype}{int}\ context,}
+\DoxyCodeLine{00266\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structraw__extension__st}{RAW\_EXTENSION}}\ *exts,}
+\DoxyCodeLine{00267\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\ *x,\ \textcolor{keywordtype}{size\_t}\ chainidx,\ \textcolor{keywordtype}{int}\ fin);}
+\DoxyCodeLine{00268\ \_\_owur\ \textcolor{keywordtype}{int}\ should\_add\_extension(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ extctx,}
+\DoxyCodeLine{00269\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ thisctx,\ \textcolor{keywordtype}{int}\ max\_version);}
+\DoxyCodeLine{00270\ \_\_owur\ \textcolor{keywordtype}{int}\ tls\_construct\_extensions(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00271\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,}
+\DoxyCodeLine{00272\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\ *x,\ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00273\ }
+\DoxyCodeLine{00274\ \_\_owur\ \textcolor{keywordtype}{int}\ tls\_psk\_do\_binder(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \textcolor{keyword}{const}\ EVP\_MD\ *md,}
+\DoxyCodeLine{00275\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *msgstart,}
+\DoxyCodeLine{00276\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ binderoffset,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *binderin,}
+\DoxyCodeLine{00277\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *binderout,}
+\DoxyCodeLine{00278\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ SSL\_SESSION\ *sess,\ \textcolor{keywordtype}{int}\ sign,\ \textcolor{keywordtype}{int}\ external);}
+\DoxyCodeLine{00279\ }
+\DoxyCodeLine{00280\ \textcolor{comment}{/*\ Server\ Extension\ processing\ */}}
+\DoxyCodeLine{00281\ \textcolor{keywordtype}{int}\ tls\_parse\_ctos\_renegotiate(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00282\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,}
+\DoxyCodeLine{00283\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\ *x,\ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00284\ \textcolor{keywordtype}{int}\ tls\_parse\_ctos\_server\_name(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00285\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,}
+\DoxyCodeLine{00286\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\ *x,\ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00287\ \textcolor{keywordtype}{int}\ tls\_parse\_ctos\_maxfragmentlen(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00288\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,}
+\DoxyCodeLine{00289\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\ *x,\ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00290\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_SRP}}
+\DoxyCodeLine{00291\ \textcolor{keywordtype}{int}\ tls\_parse\_ctos\_srp(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,}
+\DoxyCodeLine{00292\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\ *x,\ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00293\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00294\ \textcolor{keywordtype}{int}\ tls\_parse\_ctos\_early\_data(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00295\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,}
+\DoxyCodeLine{00296\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\ *x,\ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00297\ \textcolor{keywordtype}{int}\ tls\_parse\_ctos\_ec\_pt\_formats(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00298\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,}
+\DoxyCodeLine{00299\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\ *x,\ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00300\ \textcolor{keywordtype}{int}\ tls\_parse\_ctos\_supported\_groups(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00301\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,}
+\DoxyCodeLine{00302\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\ *x,\ \textcolor{keywordtype}{size\_t}\ chainidxl);}
+\DoxyCodeLine{00303\ \textcolor{keywordtype}{int}\ tls\_parse\_ctos\_session\_ticket(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00304\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,}
+\DoxyCodeLine{00305\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\ *x,\ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00306\ \textcolor{keywordtype}{int}\ tls\_parse\_ctos\_sig\_algs\_cert(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00307\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,}
+\DoxyCodeLine{00308\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\ *x,\ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00309\ \textcolor{keywordtype}{int}\ tls\_parse\_ctos\_sig\_algs(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00310\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,\ X509\ *x,\ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00311\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_OCSP}}
+\DoxyCodeLine{00312\ \textcolor{keywordtype}{int}\ tls\_parse\_ctos\_status\_request(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00313\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,}
+\DoxyCodeLine{00314\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\ *x,\ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00315\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00316\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_NEXTPROTONEG}}
+\DoxyCodeLine{00317\ \textcolor{keywordtype}{int}\ tls\_parse\_ctos\_npn(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,}
+\DoxyCodeLine{00318\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\ *x,\ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00319\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00320\ \textcolor{keywordtype}{int}\ tls\_parse\_ctos\_alpn(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,}
+\DoxyCodeLine{00321\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\ *x,\ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00322\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_SRTP}}
+\DoxyCodeLine{00323\ \textcolor{keywordtype}{int}\ tls\_parse\_ctos\_use\_srtp(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00324\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,\ X509\ *x,\ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00325\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00326\ \textcolor{keywordtype}{int}\ tls\_parse\_ctos\_etm(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,}
+\DoxyCodeLine{00327\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\ *x,\ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00328\ \textcolor{keywordtype}{int}\ tls\_parse\_ctos\_key\_share(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00329\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,\ X509\ *x,\ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00330\ \textcolor{keywordtype}{int}\ tls\_parse\_ctos\_cookie(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,}
+\DoxyCodeLine{00331\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\ *x,\ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00332\ \textcolor{keywordtype}{int}\ tls\_parse\_ctos\_ems(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,}
+\DoxyCodeLine{00333\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\ *x,\ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00334\ \textcolor{keywordtype}{int}\ tls\_parse\_ctos\_psk\_kex\_modes(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00335\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,}
+\DoxyCodeLine{00336\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\ *x,\ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00337\ \textcolor{keywordtype}{int}\ tls\_parse\_ctos\_psk(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,}
+\DoxyCodeLine{00338\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\ *x,\ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00339\ \textcolor{keywordtype}{int}\ tls\_parse\_ctos\_post\_handshake\_auth(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *,\ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00340\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,}
+\DoxyCodeLine{00341\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\ *x,\ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00342\ }
+\DoxyCodeLine{00343\ EXT\_RETURN\ tls\_construct\_stoc\_renegotiate(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00344\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,\ X509\ *x,}
+\DoxyCodeLine{00345\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00346\ EXT\_RETURN\ tls\_construct\_stoc\_server\_name(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00347\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,\ X509\ *x,}
+\DoxyCodeLine{00348\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00349\ EXT\_RETURN\ tls\_construct\_stoc\_early\_data(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00350\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,\ X509\ *x,}
+\DoxyCodeLine{00351\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00352\ EXT\_RETURN\ tls\_construct\_stoc\_maxfragmentlen(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00353\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,\ X509\ *x,}
+\DoxyCodeLine{00354\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00355\ EXT\_RETURN\ tls\_construct\_stoc\_ec\_pt\_formats(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00356\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,\ X509\ *x,}
+\DoxyCodeLine{00357\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00358\ EXT\_RETURN\ tls\_construct\_stoc\_supported\_groups(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00359\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,\ X509\ *x,}
+\DoxyCodeLine{00360\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00361\ EXT\_RETURN\ tls\_construct\_stoc\_session\_ticket(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00362\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,\ X509\ *x,}
+\DoxyCodeLine{00363\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00364\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_OCSP}}
+\DoxyCodeLine{00365\ EXT\_RETURN\ tls\_construct\_stoc\_status\_request(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00366\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,\ X509\ *x,}
+\DoxyCodeLine{00367\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00368\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00369\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_NEXTPROTONEG}}
+\DoxyCodeLine{00370\ EXT\_RETURN\ tls\_construct\_stoc\_next\_proto\_neg(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00371\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,\ X509\ *x,}
+\DoxyCodeLine{00372\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00373\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00374\ EXT\_RETURN\ tls\_construct\_stoc\_alpn(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00375\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,}
+\DoxyCodeLine{00376\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\ *x,\ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00377\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_SRTP}}
+\DoxyCodeLine{00378\ EXT\_RETURN\ tls\_construct\_stoc\_use\_srtp(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00379\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,}
+\DoxyCodeLine{00380\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\ *x,\ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00381\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00382\ EXT\_RETURN\ tls\_construct\_stoc\_etm(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00383\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,}
+\DoxyCodeLine{00384\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\ *x,\ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00385\ EXT\_RETURN\ tls\_construct\_stoc\_ems(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00386\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,}
+\DoxyCodeLine{00387\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\ *x,\ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00388\ EXT\_RETURN\ tls\_construct\_stoc\_supported\_versions(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00389\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,\ X509\ *x,}
+\DoxyCodeLine{00390\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00391\ EXT\_RETURN\ tls\_construct\_stoc\_key\_share(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00392\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,\ X509\ *x,}
+\DoxyCodeLine{00393\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00394\ EXT\_RETURN\ tls\_construct\_stoc\_cookie(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00395\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,}
+\DoxyCodeLine{00396\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\ *x,\ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00397\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00398\ \textcolor{comment}{\ *\ Not\ in\ public\ headers\ as\ this\ is\ not\ an\ official\ extension.\ Only\ used\ when}}
+\DoxyCodeLine{00399\ \textcolor{comment}{\ *\ SSL\_OP\_CRYPTOPRO\_TLSEXT\_BUG\ is\ set.}}
+\DoxyCodeLine{00400\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00401\ \textcolor{preprocessor}{\#define\ TLSEXT\_TYPE\_cryptopro\_bug\ \ \ \ \ \ 0xfde8}}
+\DoxyCodeLine{00402\ EXT\_RETURN\ tls\_construct\_stoc\_cryptopro\_bug(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00403\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,\ X509\ *x,}
+\DoxyCodeLine{00404\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00405\ EXT\_RETURN\ tls\_construct\_stoc\_psk(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00406\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,}
+\DoxyCodeLine{00407\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\ *x,\ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00408\ }
+\DoxyCodeLine{00409\ \textcolor{comment}{/*\ Client\ Extension\ processing\ */}}
+\DoxyCodeLine{00410\ EXT\_RETURN\ tls\_construct\_ctos\_renegotiate(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00411\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,}
+\DoxyCodeLine{00412\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\ *x,\ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00413\ EXT\_RETURN\ tls\_construct\_ctos\_server\_name(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00414\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,}
+\DoxyCodeLine{00415\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\ *x,\ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00416\ EXT\_RETURN\ tls\_construct\_ctos\_maxfragmentlen(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00417\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,}
+\DoxyCodeLine{00418\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\ *x,\ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00419\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_SRP}}
+\DoxyCodeLine{00420\ EXT\_RETURN\ tls\_construct\_ctos\_srp(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00421\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,\ X509\ *x,}
+\DoxyCodeLine{00422\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00423\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00424\ EXT\_RETURN\ tls\_construct\_ctos\_ec\_pt\_formats(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00425\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,\ X509\ *x,}
+\DoxyCodeLine{00426\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00427\ EXT\_RETURN\ tls\_construct\_ctos\_supported\_groups(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00428\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,\ X509\ *x,}
+\DoxyCodeLine{00429\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00430\ }
+\DoxyCodeLine{00431\ EXT\_RETURN\ tls\_construct\_ctos\_early\_data(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00432\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,\ X509\ *x,}
+\DoxyCodeLine{00433\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00434\ EXT\_RETURN\ tls\_construct\_ctos\_session\_ticket(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00435\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,\ X509\ *x,}
+\DoxyCodeLine{00436\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00437\ EXT\_RETURN\ tls\_construct\_ctos\_sig\_algs(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00438\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,\ X509\ *x,}
+\DoxyCodeLine{00439\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00440\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_OCSP}}
+\DoxyCodeLine{00441\ EXT\_RETURN\ tls\_construct\_ctos\_status\_request(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00442\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,\ X509\ *x,}
+\DoxyCodeLine{00443\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00444\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00445\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_NEXTPROTONEG}}
+\DoxyCodeLine{00446\ EXT\_RETURN\ tls\_construct\_ctos\_npn(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00447\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,}
+\DoxyCodeLine{00448\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\ *x,\ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00449\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00450\ EXT\_RETURN\ tls\_construct\_ctos\_alpn(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00451\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,}
+\DoxyCodeLine{00452\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\ *x,\ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00453\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_SRTP}}
+\DoxyCodeLine{00454\ EXT\_RETURN\ tls\_construct\_ctos\_use\_srtp(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00455\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,}
+\DoxyCodeLine{00456\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\ *x,\ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00457\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00458\ EXT\_RETURN\ tls\_construct\_ctos\_etm(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00459\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,}
+\DoxyCodeLine{00460\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\ *x,\ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00461\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_CT}}
+\DoxyCodeLine{00462\ EXT\_RETURN\ tls\_construct\_ctos\_sct(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00463\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,}
+\DoxyCodeLine{00464\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\ *x,\ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00465\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00466\ EXT\_RETURN\ tls\_construct\_ctos\_ems(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00467\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,}
+\DoxyCodeLine{00468\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\ *x,\ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00469\ EXT\_RETURN\ tls\_construct\_ctos\_supported\_versions(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00470\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,\ X509\ *x,}
+\DoxyCodeLine{00471\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00472\ EXT\_RETURN\ tls\_construct\_ctos\_key\_share(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00473\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,\ X509\ *x,}
+\DoxyCodeLine{00474\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00475\ EXT\_RETURN\ tls\_construct\_ctos\_psk\_kex\_modes(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00476\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,\ X509\ *x,}
+\DoxyCodeLine{00477\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00478\ EXT\_RETURN\ tls\_construct\_ctos\_cookie(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00479\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,}
+\DoxyCodeLine{00480\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\ *x,\ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00481\ EXT\_RETURN\ tls\_construct\_ctos\_padding(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00482\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,\ X509\ *x,}
+\DoxyCodeLine{00483\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00484\ EXT\_RETURN\ tls\_construct\_ctos\_psk(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00485\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,}
+\DoxyCodeLine{00486\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\ *x,\ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00487\ EXT\_RETURN\ tls\_construct\_ctos\_post\_handshake\_auth(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00488\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,}
+\DoxyCodeLine{00489\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\ *x,\ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00490\ }
+\DoxyCodeLine{00491\ \textcolor{keywordtype}{int}\ tls\_parse\_stoc\_renegotiate(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00492\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,}
+\DoxyCodeLine{00493\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\ *x,\ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00494\ \textcolor{keywordtype}{int}\ tls\_parse\_stoc\_server\_name(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00495\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,}
+\DoxyCodeLine{00496\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\ *x,\ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00497\ \textcolor{keywordtype}{int}\ tls\_parse\_stoc\_early\_data(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00498\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,}
+\DoxyCodeLine{00499\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\ *x,\ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00500\ \textcolor{keywordtype}{int}\ tls\_parse\_stoc\_maxfragmentlen(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00501\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,}
+\DoxyCodeLine{00502\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\ *x,\ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00503\ \textcolor{keywordtype}{int}\ tls\_parse\_stoc\_ec\_pt\_formats(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00504\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,}
+\DoxyCodeLine{00505\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\ *x,\ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00506\ \textcolor{keywordtype}{int}\ tls\_parse\_stoc\_session\_ticket(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00507\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,}
+\DoxyCodeLine{00508\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\ *x,\ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00509\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_OCSP}}
+\DoxyCodeLine{00510\ \textcolor{keywordtype}{int}\ tls\_parse\_stoc\_status\_request(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00511\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,}
+\DoxyCodeLine{00512\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\ *x,\ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00513\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00514\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_CT}}
+\DoxyCodeLine{00515\ \textcolor{keywordtype}{int}\ tls\_parse\_stoc\_sct(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,}
+\DoxyCodeLine{00516\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\ *x,\ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00517\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00518\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_NEXTPROTONEG}}
+\DoxyCodeLine{00519\ \textcolor{keywordtype}{int}\ tls\_parse\_stoc\_npn(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,}
+\DoxyCodeLine{00520\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\ *x,\ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00521\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00522\ \textcolor{keywordtype}{int}\ tls\_parse\_stoc\_alpn(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,}
+\DoxyCodeLine{00523\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\ *x,\ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00524\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_SRTP}}
+\DoxyCodeLine{00525\ \textcolor{keywordtype}{int}\ tls\_parse\_stoc\_use\_srtp(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00526\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,\ X509\ *x,\ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00527\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00528\ \textcolor{keywordtype}{int}\ tls\_parse\_stoc\_etm(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,}
+\DoxyCodeLine{00529\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\ *x,\ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00530\ \textcolor{keywordtype}{int}\ tls\_parse\_stoc\_ems(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,}
+\DoxyCodeLine{00531\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\ *x,\ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00532\ \textcolor{keywordtype}{int}\ tls\_parse\_stoc\_supported\_versions(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00533\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,}
+\DoxyCodeLine{00534\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\ *x,\ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00535\ \textcolor{keywordtype}{int}\ tls\_parse\_stoc\_key\_share(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00536\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,\ X509\ *x,\ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00537\ \textcolor{keywordtype}{int}\ tls\_parse\_stoc\_cookie(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,}
+\DoxyCodeLine{00538\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\ *x,\ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00539\ \textcolor{keywordtype}{int}\ tls\_parse\_stoc\_psk(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,}
+\DoxyCodeLine{00540\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\ *x,\ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00541\ }
+\DoxyCodeLine{00542\ \textcolor{keywordtype}{int}\ tls\_handle\_alpn(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s);}
+\DoxyCodeLine{00543\ }
+\DoxyCodeLine{00544\ \textcolor{keywordtype}{int}\ tls13\_save\_handshake\_digest\_for\_pha(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s);}
+\DoxyCodeLine{00545\ \textcolor{keywordtype}{int}\ tls13\_restore\_handshake\_digest\_for\_pha(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s);}
+\DoxyCodeLine{00546\ }
+\DoxyCodeLine{00547\ \_\_owur\ EVP\_PKEY*\ tls\_get\_peer\_pkey(\textcolor{keyword}{const}\ \mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *sc);}
+\DoxyCodeLine{00548\ \textcolor{comment}{/*\ RFC7250\ */}}
+\DoxyCodeLine{00549\ EXT\_RETURN\ tls\_construct\_ctos\_client\_cert\_type(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *sc,\ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00550\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,}
+\DoxyCodeLine{00551\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\ *x,\ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00552\ EXT\_RETURN\ tls\_construct\_stoc\_client\_cert\_type(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *sc,\ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00553\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,}
+\DoxyCodeLine{00554\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\ *x,\ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00555\ \textcolor{keywordtype}{int}\ tls\_parse\_ctos\_client\_cert\_type(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *sc,\ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00556\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,}
+\DoxyCodeLine{00557\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\ *x,\ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00558\ \textcolor{keywordtype}{int}\ tls\_parse\_stoc\_client\_cert\_type(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *sc,\ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00559\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,}
+\DoxyCodeLine{00560\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\ *x,\ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00561\ EXT\_RETURN\ tls\_construct\_ctos\_server\_cert\_type(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *sc,\ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00562\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,}
+\DoxyCodeLine{00563\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\ *x,\ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00564\ EXT\_RETURN\ tls\_construct\_stoc\_server\_cert\_type(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *sc,\ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00565\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,}
+\DoxyCodeLine{00566\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\ *x,\ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00567\ \textcolor{keywordtype}{int}\ tls\_parse\_ctos\_server\_cert\_type(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *sc,\ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00568\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,}
+\DoxyCodeLine{00569\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\ *x,\ \textcolor{keywordtype}{size\_t}\ chainidx);}
+\DoxyCodeLine{00570\ \textcolor{keywordtype}{int}\ tls\_parse\_stoc\_server\_cert\_type(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00571\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ context,}
+\DoxyCodeLine{00572\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\ *x,\ \textcolor{keywordtype}{size\_t}\ chainidx);}
+
+\end{DoxyCode}

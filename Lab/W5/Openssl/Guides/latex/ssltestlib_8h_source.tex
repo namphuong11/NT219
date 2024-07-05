@@ -1,0 +1,90 @@
+\doxysection{ssltestlib.\+h}
+\hypertarget{ssltestlib_8h_source}{}\label{ssltestlib_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/test/helpers/ssltestlib.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/test/helpers/ssltestlib.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2016-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_TEST\_SSLTESTLIB\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_TEST\_SSLTESTLIB\_H}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#\ include\ <openssl/ssl.h>}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#define\ TLS13\_AES\_128\_GCM\_SHA256\_BYTES\ \ ((const\ unsigned\ char\ *)"{}\(\backslash\)x13\(\backslash\)x01"{})}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#define\ TLS13\_AES\_256\_GCM\_SHA384\_BYTES\ \ ((const\ unsigned\ char\ *)"{}\(\backslash\)x13\(\backslash\)x02"{})}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ TLS13\_CHACHA20\_POLY1305\_SHA256\_BYTES\ ((const\ unsigned\ char\ *)"{}\(\backslash\)x13\(\backslash\)x03"{})}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#define\ TLS13\_AES\_128\_CCM\_SHA256\_BYTES\ ((const\ unsigned\ char\ *)"{}\(\backslash\)x13\(\backslash\)x04"{})}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#define\ TLS13\_AES\_128\_CCM\_8\_SHA256\_BYTES\ ((const\ unsigned\ char\ *)"{}\(\backslash\)x13\(\backslash\)05"{})}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{keywordtype}{int}\ create\_ssl\_ctx\_pair(OSSL\_LIB\_CTX\ *libctx,\ \textcolor{keyword}{const}\ SSL\_METHOD\ *sm,}
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ SSL\_METHOD\ *cm,\ \textcolor{keywordtype}{int}\ min\_proto\_version,}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ max\_proto\_version,\ SSL\_CTX\ **sctx,\ SSL\_CTX\ **cctx,}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{char}\ *certfile,\ \textcolor{keywordtype}{char}\ *privkeyfile);}
+\DoxyCodeLine{00025\ \textcolor{keywordtype}{int}\ create\_ssl\_objects(SSL\_CTX\ *serverctx,\ SSL\_CTX\ *clientctx,\ SSL\ **sssl,}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ SSL\ **cssl,\ BIO\ *s\_to\_c\_fbio,\ BIO\ *c\_to\_s\_fbio);}
+\DoxyCodeLine{00027\ \textcolor{keywordtype}{int}\ create\_bare\_ssl\_connection(SSL\ *serverssl,\ SSL\ *clientssl,\ \textcolor{keywordtype}{int}\ want,}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ read,\ \textcolor{keywordtype}{int}\ listen);}
+\DoxyCodeLine{00029\ \textcolor{keywordtype}{int}\ create\_ssl\_objects2(SSL\_CTX\ *serverctx,\ SSL\_CTX\ *clientctx,\ SSL\ **sssl,}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ SSL\ **cssl,\ \textcolor{keywordtype}{int}\ sfd,\ \textcolor{keywordtype}{int}\ cfd);}
+\DoxyCodeLine{00031\ \textcolor{keywordtype}{int}\ wait\_until\_sock\_readable(\textcolor{keywordtype}{int}\ sock);}
+\DoxyCodeLine{00032\ \textcolor{keywordtype}{int}\ create\_test\_sockets(\textcolor{keywordtype}{int}\ *cfdp,\ \textcolor{keywordtype}{int}\ *sfdp,\ \textcolor{keywordtype}{int}\ socktype,\ BIO\_ADDR\ *saddr);}
+\DoxyCodeLine{00033\ \textcolor{keywordtype}{int}\ create\_ssl\_connection(SSL\ *serverssl,\ SSL\ *clientssl,\ \textcolor{keywordtype}{int}\ want);}
+\DoxyCodeLine{00034\ \textcolor{keywordtype}{void}\ shutdown\_ssl\_connection(SSL\ *serverssl,\ SSL\ *clientssl);}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \textcolor{comment}{/*\ Note:\ Not\ thread\ safe!\ */}}
+\DoxyCodeLine{00037\ \textcolor{keyword}{const}\ BIO\_METHOD\ *bio\_f\_tls\_dump\_filter(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00038\ \textcolor{keywordtype}{void}\ bio\_f\_tls\_dump\_filter\_free(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \textcolor{keyword}{const}\ BIO\_METHOD\ *bio\_s\_mempacket\_test(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00041\ \textcolor{keywordtype}{void}\ bio\_s\_mempacket\_test\_free(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \textcolor{keyword}{const}\ BIO\_METHOD\ *bio\_s\_always\_retry(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00044\ \textcolor{keywordtype}{void}\ bio\_s\_always\_retry\_free(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00045\ \textcolor{keywordtype}{void}\ set\_always\_retry\_err\_val(\textcolor{keywordtype}{int}\ err);}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00048\ \textcolor{comment}{\ *\ Maybe\ retry\ BIO\ ctrls.\ We\ make\ them\ large\ enough\ to\ not\ clash\ with\ standard}}
+\DoxyCodeLine{00049\ \textcolor{comment}{\ *\ BIO\ ctrl\ codes.}}
+\DoxyCodeLine{00050\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00051\ \textcolor{preprocessor}{\#define\ MAYBE\_RETRY\_CTRL\_SET\_RETRY\_AFTER\_CNT\ \ \ \ \ \ \ (1\ <<\ 15)}}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \textcolor{keyword}{const}\ BIO\_METHOD\ *bio\_s\_maybe\_retry(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00054\ \textcolor{keywordtype}{void}\ bio\_s\_maybe\_retry\_free(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \textcolor{comment}{/*\ Packet\ types\ -\/\ value\ 0\ is\ reserved\ */}}
+\DoxyCodeLine{00057\ \textcolor{preprocessor}{\#define\ INJECT\_PACKET\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 1}}
+\DoxyCodeLine{00058\ \textcolor{preprocessor}{\#define\ INJECT\_PACKET\_IGNORE\_REC\_SEQ\ \ \ \ 2}}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00061\ \textcolor{comment}{\ *\ Mempacket\ BIO\ ctrls.\ We\ make\ them\ large\ enough\ to\ not\ clash\ with\ standard\ BIO}}
+\DoxyCodeLine{00062\ \textcolor{comment}{\ *\ ctrl\ codes.}}
+\DoxyCodeLine{00063\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00064\ \textcolor{preprocessor}{\#define\ MEMPACKET\_CTRL\_SET\_DROP\_EPOCH\ \ \ \ \ \ \ (1\ <<\ 15)}}
+\DoxyCodeLine{00065\ \textcolor{preprocessor}{\#define\ MEMPACKET\_CTRL\_SET\_DROP\_REC\ \ \ \ \ \ \ \ \ (2\ <<\ 15)}}
+\DoxyCodeLine{00066\ \textcolor{preprocessor}{\#define\ MEMPACKET\_CTRL\_GET\_DROP\_REC\ \ \ \ \ \ \ \ \ (3\ <<\ 15)}}
+\DoxyCodeLine{00067\ \textcolor{preprocessor}{\#define\ MEMPACKET\_CTRL\_SET\_DUPLICATE\_REC\ \ \ \ (4\ <<\ 15)}}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ \textcolor{keywordtype}{int}\ mempacket\_swap\_epoch(BIO\ *bio);}
+\DoxyCodeLine{00070\ \textcolor{keywordtype}{int}\ mempacket\_move\_packet(BIO\ *bio,\ \textcolor{keywordtype}{int}\ d,\ \textcolor{keywordtype}{int}\ s);}
+\DoxyCodeLine{00071\ \textcolor{keywordtype}{int}\ mempacket\_test\_inject(BIO\ *bio,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *in,\ \textcolor{keywordtype}{int}\ inl,\ \textcolor{keywordtype}{int}\ pktnum,}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ type);}
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00074\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structmempacket__st}{mempacket\_st}}\ \mbox{\hyperlink{structmempacket__st}{MEMPACKET}};}
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00076\ DEFINE\_STACK\_OF(\mbox{\hyperlink{structmempacket__st}{MEMPACKET}})}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ SSL\_SESSION\ *create\_a\_psk(SSL\ *ssl,\ \textcolor{keywordtype}{size\_t}\ mdsize);}
+\DoxyCodeLine{00079\ }
+\DoxyCodeLine{00080\ \textcolor{comment}{/*\ Add\ cert\ from\ \`{}cert\_file`\ multiple\ times\ to\ create\ large\ extra\ cert\ chain\ */}}
+\DoxyCodeLine{00081\ \textcolor{keywordtype}{int}\ ssl\_ctx\_add\_large\_cert\_chain(OSSL\_LIB\_CTX\ *libctx,\ SSL\_CTX\ *sctx,}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *cert\_file);}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ OSSL\_TEST\_SSLTESTLIB\_H\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

@@ -1,0 +1,169 @@
+\doxysection{spr.\+h}
+\hypertarget{spr_8h_source}{}\label{spr_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/des/spr.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/des/spr.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 1995-\/2016\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{keyword}{const}\ DES\_LONG\ DES\_SPtrans[8][64]\ =\ \{}
+\DoxyCodeLine{00011\ \ \ \ \ \{}
+\DoxyCodeLine{00012\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ nibble\ 0\ */}}
+\DoxyCodeLine{00013\ \ \ \ \ \ \ \ \ 0x02080800L,\ 0x00080000L,\ 0x02000002L,\ 0x02080802L,}
+\DoxyCodeLine{00014\ \ \ \ \ \ \ \ \ 0x02000000L,\ 0x00080802L,\ 0x00080002L,\ 0x02000002L,}
+\DoxyCodeLine{00015\ \ \ \ \ \ \ \ \ 0x00080802L,\ 0x02080800L,\ 0x02080000L,\ 0x00000802L,}
+\DoxyCodeLine{00016\ \ \ \ \ \ \ \ \ 0x02000802L,\ 0x02000000L,\ 0x00000000L,\ 0x00080002L,}
+\DoxyCodeLine{00017\ \ \ \ \ \ \ \ \ 0x00080000L,\ 0x00000002L,\ 0x02000800L,\ 0x00080800L,}
+\DoxyCodeLine{00018\ \ \ \ \ \ \ \ \ 0x02080802L,\ 0x02080000L,\ 0x00000802L,\ 0x02000800L,}
+\DoxyCodeLine{00019\ \ \ \ \ \ \ \ \ 0x00000002L,\ 0x00000800L,\ 0x00080800L,\ 0x02080002L,}
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ 0x00000800L,\ 0x02000802L,\ 0x02080002L,\ 0x00000000L,}
+\DoxyCodeLine{00021\ \ \ \ \ \ \ \ \ 0x00000000L,\ 0x02080802L,\ 0x02000800L,\ 0x00080002L,}
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ 0x02080800L,\ 0x00080000L,\ 0x00000802L,\ 0x02000800L,}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ 0x02080002L,\ 0x00000800L,\ 0x00080800L,\ 0x02000002L,}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ 0x00080802L,\ 0x00000002L,\ 0x02000002L,\ 0x02080000L,}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ 0x02080802L,\ 0x00080800L,\ 0x02080000L,\ 0x02000802L,}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ 0x02000000L,\ 0x00000802L,\ 0x00080002L,\ 0x00000000L,}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ 0x00080000L,\ 0x02000000L,\ 0x02000802L,\ 0x02080800L,}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ 0x00000002L,\ 0x02080002L,\ 0x00000800L,\ 0x00080802L,}
+\DoxyCodeLine{00029\ \ \ \ \ \},}
+\DoxyCodeLine{00030\ \ \ \ \ \{}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ nibble\ 1\ */}}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ 0x40108010L,\ 0x00000000L,\ 0x00108000L,\ 0x40100000L,}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ 0x40000010L,\ 0x00008010L,\ 0x40008000L,\ 0x00108000L,}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ 0x00008000L,\ 0x40100010L,\ 0x00000010L,\ 0x40008000L,}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ 0x00100010L,\ 0x40108000L,\ 0x40100000L,\ 0x00000010L,}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ 0x00100000L,\ 0x40008010L,\ 0x40100010L,\ 0x00008000L,}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ 0x00108010L,\ 0x40000000L,\ 0x00000000L,\ 0x00100010L,}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ 0x40008010L,\ 0x00108010L,\ 0x40108000L,\ 0x40000010L,}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ 0x40000000L,\ 0x00100000L,\ 0x00008010L,\ 0x40108010L,}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ 0x00100010L,\ 0x40108000L,\ 0x40008000L,\ 0x00108010L,}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ 0x40108010L,\ 0x00100010L,\ 0x40000010L,\ 0x00000000L,}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ 0x40000000L,\ 0x00008010L,\ 0x00100000L,\ 0x40100010L,}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ 0x00008000L,\ 0x40000000L,\ 0x00108010L,\ 0x40008010L,}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ 0x40108000L,\ 0x00008000L,\ 0x00000000L,\ 0x40000010L,}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ 0x00000010L,\ 0x40108010L,\ 0x00108000L,\ 0x40100000L,}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ 0x40100010L,\ 0x00100000L,\ 0x00008010L,\ 0x40008000L,}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ 0x40008010L,\ 0x00000010L,\ 0x40100000L,\ 0x00108000L,}
+\DoxyCodeLine{00048\ \ \ \ \ \},}
+\DoxyCodeLine{00049\ \ \ \ \ \{}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ nibble\ 2\ */}}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ 0x04000001L,\ 0x04040100L,\ 0x00000100L,\ 0x04000101L,}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ 0x00040001L,\ 0x04000000L,\ 0x04000101L,\ 0x00040100L,}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ 0x04000100L,\ 0x00040000L,\ 0x04040000L,\ 0x00000001L,}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ 0x04040101L,\ 0x00000101L,\ 0x00000001L,\ 0x04040001L,}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ 0x00000000L,\ 0x00040001L,\ 0x04040100L,\ 0x00000100L,}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ 0x00000101L,\ 0x04040101L,\ 0x00040000L,\ 0x04000001L,}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ 0x04040001L,\ 0x04000100L,\ 0x00040101L,\ 0x04040000L,}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ 0x00040100L,\ 0x00000000L,\ 0x04000000L,\ 0x00040101L,}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ 0x04040100L,\ 0x00000100L,\ 0x00000001L,\ 0x00040000L,}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ 0x00000101L,\ 0x00040001L,\ 0x04040000L,\ 0x04000101L,}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ 0x00000000L,\ 0x04040100L,\ 0x00040100L,\ 0x04040001L,}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ 0x00040001L,\ 0x04000000L,\ 0x04040101L,\ 0x00000001L,}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ 0x00040101L,\ 0x04000001L,\ 0x04000000L,\ 0x04040101L,}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ 0x00040000L,\ 0x04000100L,\ 0x04000101L,\ 0x00040100L,}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ 0x04000100L,\ 0x00000000L,\ 0x04040001L,\ 0x00000101L,}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ 0x04000001L,\ 0x00040101L,\ 0x00000100L,\ 0x04040000L,}
+\DoxyCodeLine{00067\ \ \ \ \ \},}
+\DoxyCodeLine{00068\ \ \ \ \ \{}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ nibble\ 3\ */}}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ 0x00401008L,\ 0x10001000L,\ 0x00000008L,\ 0x10401008L,}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ 0x00000000L,\ 0x10400000L,\ 0x10001008L,\ 0x00400008L,}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ 0x10401000L,\ 0x10000008L,\ 0x10000000L,\ 0x00001008L,}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ 0x10000008L,\ 0x00401008L,\ 0x00400000L,\ 0x10000000L,}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ 0x10400008L,\ 0x00401000L,\ 0x00001000L,\ 0x00000008L,}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ 0x00401000L,\ 0x10001008L,\ 0x10400000L,\ 0x00001000L,}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ 0x00001008L,\ 0x00000000L,\ 0x00400008L,\ 0x10401000L,}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ 0x10001000L,\ 0x10400008L,\ 0x10401008L,\ 0x00400000L,}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ 0x10400008L,\ 0x00001008L,\ 0x00400000L,\ 0x10000008L,}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ 0x00401000L,\ 0x10001000L,\ 0x00000008L,\ 0x10400000L,}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ 0x10001008L,\ 0x00000000L,\ 0x00001000L,\ 0x00400008L,}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ 0x00000000L,\ 0x10400008L,\ 0x10401000L,\ 0x00001000L,}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ 0x10000000L,\ 0x10401008L,\ 0x00401008L,\ 0x00400000L,}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ 0x10401008L,\ 0x00000008L,\ 0x10001000L,\ 0x00401008L,}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ 0x00400008L,\ 0x00401000L,\ 0x10400000L,\ 0x10001008L,}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ 0x00001008L,\ 0x10000000L,\ 0x10000008L,\ 0x10401000L,}
+\DoxyCodeLine{00086\ \ \ \ \ \},}
+\DoxyCodeLine{00087\ \ \ \ \ \{}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ nibble\ 4\ */}}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ 0x08000000L,\ 0x00010000L,\ 0x00000400L,\ 0x08010420L,}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ 0x08010020L,\ 0x08000400L,\ 0x00010420L,\ 0x08010000L,}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ 0x00010000L,\ 0x00000020L,\ 0x08000020L,\ 0x00010400L,}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ 0x08000420L,\ 0x08010020L,\ 0x08010400L,\ 0x00000000L,}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ 0x00010400L,\ 0x08000000L,\ 0x00010020L,\ 0x00000420L,}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ 0x08000400L,\ 0x00010420L,\ 0x00000000L,\ 0x08000020L,}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ 0x00000020L,\ 0x08000420L,\ 0x08010420L,\ 0x00010020L,}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ 0x08010000L,\ 0x00000400L,\ 0x00000420L,\ 0x08010400L,}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ 0x08010400L,\ 0x08000420L,\ 0x00010020L,\ 0x08010000L,}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ 0x00010000L,\ 0x00000020L,\ 0x08000020L,\ 0x08000400L,}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ 0x08000000L,\ 0x00010400L,\ 0x08010420L,\ 0x00000000L,}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ 0x00010420L,\ 0x08000000L,\ 0x00000400L,\ 0x00010020L,}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ 0x08000420L,\ 0x00000400L,\ 0x00000000L,\ 0x08010420L,}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ 0x08010020L,\ 0x08010400L,\ 0x00000420L,\ 0x00010000L,}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ 0x00010400L,\ 0x08010020L,\ 0x08000400L,\ 0x00000420L,}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ 0x00000020L,\ 0x00010420L,\ 0x08010000L,\ 0x08000020L,}
+\DoxyCodeLine{00105\ \ \ \ \ \},}
+\DoxyCodeLine{00106\ \ \ \ \ \{}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ nibble\ 5\ */}}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ 0x80000040L,\ 0x00200040L,\ 0x00000000L,\ 0x80202000L,}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ 0x00200040L,\ 0x00002000L,\ 0x80002040L,\ 0x00200000L,}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ 0x00002040L,\ 0x80202040L,\ 0x00202000L,\ 0x80000000L,}
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ 0x80002000L,\ 0x80000040L,\ 0x80200000L,\ 0x00202040L,}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ 0x00200000L,\ 0x80002040L,\ 0x80200040L,\ 0x00000000L,}
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ 0x00002000L,\ 0x00000040L,\ 0x80202000L,\ 0x80200040L,}
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ 0x80202040L,\ 0x80200000L,\ 0x80000000L,\ 0x00002040L,}
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ 0x00000040L,\ 0x00202000L,\ 0x00202040L,\ 0x80002000L,}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ 0x00002040L,\ 0x80000000L,\ 0x80002000L,\ 0x00202040L,}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ 0x80202000L,\ 0x00200040L,\ 0x00000000L,\ 0x80002000L,}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ 0x80000000L,\ 0x00002000L,\ 0x80200040L,\ 0x00200000L,}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ 0x00200040L,\ 0x80202040L,\ 0x00202000L,\ 0x00000040L,}
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ 0x80202040L,\ 0x00202000L,\ 0x00200000L,\ 0x80002040L,}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ 0x80000040L,\ 0x80200000L,\ 0x00202040L,\ 0x00000000L,}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ 0x00002000L,\ 0x80000040L,\ 0x80002040L,\ 0x80202000L,}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ 0x80200000L,\ 0x00002040L,\ 0x00000040L,\ 0x80200040L,}
+\DoxyCodeLine{00124\ \ \ \ \ \},}
+\DoxyCodeLine{00125\ \ \ \ \ \{}
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ nibble\ 6\ */}}
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ 0x00004000L,\ 0x00000200L,\ 0x01000200L,\ 0x01000004L,}
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ 0x01004204L,\ 0x00004004L,\ 0x00004200L,\ 0x00000000L,}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ 0x01000000L,\ 0x01000204L,\ 0x00000204L,\ 0x01004000L,}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ 0x00000004L,\ 0x01004200L,\ 0x01004000L,\ 0x00000204L,}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ 0x01000204L,\ 0x00004000L,\ 0x00004004L,\ 0x01004204L,}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ 0x00000000L,\ 0x01000200L,\ 0x01000004L,\ 0x00004200L,}
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ 0x01004004L,\ 0x00004204L,\ 0x01004200L,\ 0x00000004L,}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ 0x00004204L,\ 0x01004004L,\ 0x00000200L,\ 0x01000000L,}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ 0x00004204L,\ 0x01004000L,\ 0x01004004L,\ 0x00000204L,}
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ 0x00004000L,\ 0x00000200L,\ 0x01000000L,\ 0x01004004L,}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ 0x01000204L,\ 0x00004204L,\ 0x00004200L,\ 0x00000000L,}
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ 0x00000200L,\ 0x01000004L,\ 0x00000004L,\ 0x01000200L,}
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ 0x00000000L,\ 0x01000204L,\ 0x01000200L,\ 0x00004200L,}
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ 0x00000204L,\ 0x00004000L,\ 0x01004204L,\ 0x01000000L,}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ 0x01004200L,\ 0x00000004L,\ 0x00004004L,\ 0x01004204L,}
+\DoxyCodeLine{00142\ \ \ \ \ \ \ \ \ 0x01000004L,\ 0x01004200L,\ 0x01004000L,\ 0x00004004L,}
+\DoxyCodeLine{00143\ \ \ \ \ \},}
+\DoxyCodeLine{00144\ \ \ \ \ \{}
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ nibble\ 7\ */}}
+\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ 0x20800080L,\ 0x20820000L,\ 0x00020080L,\ 0x00000000L,}
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ 0x20020000L,\ 0x00800080L,\ 0x20800000L,\ 0x20820080L,}
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ 0x00000080L,\ 0x20000000L,\ 0x00820000L,\ 0x00020080L,}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ 0x00820080L,\ 0x20020080L,\ 0x20000080L,\ 0x20800000L,}
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ 0x00020000L,\ 0x00820080L,\ 0x00800080L,\ 0x20020000L,}
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ 0x20820080L,\ 0x20000080L,\ 0x00000000L,\ 0x00820000L,}
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ 0x20000000L,\ 0x00800000L,\ 0x20020080L,\ 0x20800080L,}
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ 0x00800000L,\ 0x00020000L,\ 0x20820000L,\ 0x00000080L,}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ 0x00800000L,\ 0x00020000L,\ 0x20000080L,\ 0x20820080L,}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ 0x00020080L,\ 0x20000000L,\ 0x00000000L,\ 0x00820000L,}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ 0x20800080L,\ 0x20020080L,\ 0x20020000L,\ 0x00800080L,}
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ 0x20820000L,\ 0x00000080L,\ 0x00800080L,\ 0x20020000L,}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ 0x20820080L,\ 0x00800000L,\ 0x20800000L,\ 0x20000080L,}
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ 0x00820000L,\ 0x00020080L,\ 0x20020080L,\ 0x20800000L,}
+\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ 0x00000080L,\ 0x20820000L,\ 0x00820080L,\ 0x00000000L,}
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ 0x20000000L,\ 0x20800080L,\ 0x00020000L,\ 0x00820080L,}
+\DoxyCodeLine{00162\ \ \ \ \ \}}
+\DoxyCodeLine{00163\ \};}
+
+\end{DoxyCode}

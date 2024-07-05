@@ -1,0 +1,188 @@
+\doxysection{asn1\+\_\+item\+\_\+list.\+h}
+\hypertarget{asn1__item__list_8h_source}{}\label{asn1__item__list_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/asn1/asn1\_item\_list.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/asn1/asn1\_item\_list.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2000-\/2021\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{keyword}{static}\ ASN1\_ITEM\_EXP\ *asn1\_item\_list[]\ =\ \{}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \ \ \ \ ASN1\_ITEM\_ref(ACCESS\_DESCRIPTION),}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_RFC3779}}
+\DoxyCodeLine{00014\ \ \ \ \ ASN1\_ITEM\_ref(ASIdOrRange),}
+\DoxyCodeLine{00015\ \ \ \ \ ASN1\_ITEM\_ref(ASIdentifierChoice),}
+\DoxyCodeLine{00016\ \ \ \ \ ASN1\_ITEM\_ref(ASIdentifiers),}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00018\ \ \ \ \ ASN1\_ITEM\_ref(ASN1\_ANY),}
+\DoxyCodeLine{00019\ \ \ \ \ ASN1\_ITEM\_ref(ASN1\_BIT\_STRING),}
+\DoxyCodeLine{00020\ \ \ \ \ ASN1\_ITEM\_ref(ASN1\_BMPSTRING),}
+\DoxyCodeLine{00021\ \ \ \ \ ASN1\_ITEM\_ref(ASN1\_BOOLEAN),}
+\DoxyCodeLine{00022\ \ \ \ \ ASN1\_ITEM\_ref(ASN1\_ENUMERATED),}
+\DoxyCodeLine{00023\ \ \ \ \ ASN1\_ITEM\_ref(ASN1\_FBOOLEAN),}
+\DoxyCodeLine{00024\ \ \ \ \ ASN1\_ITEM\_ref(ASN1\_GENERALIZEDTIME),}
+\DoxyCodeLine{00025\ \ \ \ \ ASN1\_ITEM\_ref(ASN1\_GENERALSTRING),}
+\DoxyCodeLine{00026\ \ \ \ \ ASN1\_ITEM\_ref(ASN1\_IA5STRING),}
+\DoxyCodeLine{00027\ \ \ \ \ ASN1\_ITEM\_ref(ASN1\_INTEGER),}
+\DoxyCodeLine{00028\ \ \ \ \ ASN1\_ITEM\_ref(ASN1\_NULL),}
+\DoxyCodeLine{00029\ \ \ \ \ ASN1\_ITEM\_ref(ASN1\_OBJECT),}
+\DoxyCodeLine{00030\ \ \ \ \ ASN1\_ITEM\_ref(ASN1\_OCTET\_STRING\_NDEF),}
+\DoxyCodeLine{00031\ \ \ \ \ ASN1\_ITEM\_ref(ASN1\_OCTET\_STRING),}
+\DoxyCodeLine{00032\ \ \ \ \ ASN1\_ITEM\_ref(ASN1\_PRINTABLESTRING),}
+\DoxyCodeLine{00033\ \ \ \ \ ASN1\_ITEM\_ref(ASN1\_PRINTABLE),}
+\DoxyCodeLine{00034\ \ \ \ \ ASN1\_ITEM\_ref(ASN1\_SEQUENCE\_ANY),}
+\DoxyCodeLine{00035\ \ \ \ \ ASN1\_ITEM\_ref(ASN1\_SEQUENCE),}
+\DoxyCodeLine{00036\ \ \ \ \ ASN1\_ITEM\_ref(ASN1\_SET\_ANY),}
+\DoxyCodeLine{00037\ \ \ \ \ ASN1\_ITEM\_ref(ASN1\_T61STRING),}
+\DoxyCodeLine{00038\ \ \ \ \ ASN1\_ITEM\_ref(ASN1\_TBOOLEAN),}
+\DoxyCodeLine{00039\ \ \ \ \ ASN1\_ITEM\_ref(ASN1\_TIME),}
+\DoxyCodeLine{00040\ \ \ \ \ ASN1\_ITEM\_ref(ASN1\_UNIVERSALSTRING),}
+\DoxyCodeLine{00041\ \ \ \ \ ASN1\_ITEM\_ref(ASN1\_UTCTIME),}
+\DoxyCodeLine{00042\ \ \ \ \ ASN1\_ITEM\_ref(ASN1\_UTF8STRING),}
+\DoxyCodeLine{00043\ \ \ \ \ ASN1\_ITEM\_ref(ASN1\_VISIBLESTRING),}
+\DoxyCodeLine{00044\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_RFC3779}}
+\DoxyCodeLine{00045\ \ \ \ \ ASN1\_ITEM\_ref(ASRange),}
+\DoxyCodeLine{00046\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00047\ \ \ \ \ ASN1\_ITEM\_ref(AUTHORITY\_INFO\_ACCESS),}
+\DoxyCodeLine{00048\ \ \ \ \ ASN1\_ITEM\_ref(AUTHORITY\_KEYID),}
+\DoxyCodeLine{00049\ \ \ \ \ ASN1\_ITEM\_ref(BASIC\_CONSTRAINTS),}
+\DoxyCodeLine{00050\ \ \ \ \ ASN1\_ITEM\_ref(BIGNUM),}
+\DoxyCodeLine{00051\ \ \ \ \ ASN1\_ITEM\_ref(CBIGNUM),}
+\DoxyCodeLine{00052\ \ \ \ \ ASN1\_ITEM\_ref(CERTIFICATEPOLICIES),}
+\DoxyCodeLine{00053\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_CMS}}
+\DoxyCodeLine{00054\ \ \ \ \ ASN1\_ITEM\_ref(CMS\_ContentInfo),}
+\DoxyCodeLine{00055\ \ \ \ \ ASN1\_ITEM\_ref(CMS\_EnvelopedData),}
+\DoxyCodeLine{00056\ \ \ \ \ ASN1\_ITEM\_ref(CMS\_ReceiptRequest),}
+\DoxyCodeLine{00057\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00058\ \ \ \ \ ASN1\_ITEM\_ref(CRL\_DIST\_POINTS),}
+\DoxyCodeLine{00059\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_DH}}
+\DoxyCodeLine{00060\ \ \ \ \ ASN1\_ITEM\_ref(DHparams),}
+\DoxyCodeLine{00061\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00062\ \ \ \ \ ASN1\_ITEM\_ref(DIRECTORYSTRING),}
+\DoxyCodeLine{00063\ \ \ \ \ ASN1\_ITEM\_ref(DISPLAYTEXT),}
+\DoxyCodeLine{00064\ \ \ \ \ ASN1\_ITEM\_ref(DIST\_POINT\_NAME),}
+\DoxyCodeLine{00065\ \ \ \ \ ASN1\_ITEM\_ref(DIST\_POINT),}
+\DoxyCodeLine{00066\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_EC}}
+\DoxyCodeLine{00067\ \textcolor{preprocessor}{\#\ ifndef\ OPENSSL\_NO\_DEPRECATED\_3\_0}}
+\DoxyCodeLine{00068\ \ \ \ \ ASN1\_ITEM\_ref(ECPARAMETERS),}
+\DoxyCodeLine{00069\ \ \ \ \ ASN1\_ITEM\_ref(ECPKPARAMETERS),}
+\DoxyCodeLine{00070\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00071\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00072\ \ \ \ \ ASN1\_ITEM\_ref(EDIPARTYNAME),}
+\DoxyCodeLine{00073\ \ \ \ \ ASN1\_ITEM\_ref(EXTENDED\_KEY\_USAGE),}
+\DoxyCodeLine{00074\ \ \ \ \ ASN1\_ITEM\_ref(GENERAL\_NAMES),}
+\DoxyCodeLine{00075\ \ \ \ \ ASN1\_ITEM\_ref(GENERAL\_NAME),}
+\DoxyCodeLine{00076\ \ \ \ \ ASN1\_ITEM\_ref(GENERAL\_SUBTREE),}
+\DoxyCodeLine{00077\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_RFC3779}}
+\DoxyCodeLine{00078\ \ \ \ \ ASN1\_ITEM\_ref(IPAddressChoice),}
+\DoxyCodeLine{00079\ \ \ \ \ ASN1\_ITEM\_ref(IPAddressFamily),}
+\DoxyCodeLine{00080\ \ \ \ \ ASN1\_ITEM\_ref(IPAddressOrRange),}
+\DoxyCodeLine{00081\ \ \ \ \ ASN1\_ITEM\_ref(IPAddressRange),}
+\DoxyCodeLine{00082\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00083\ \ \ \ \ ASN1\_ITEM\_ref(ISSUING\_DIST\_POINT),}
+\DoxyCodeLine{00084\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_DEPRECATED\_3\_0}}
+\DoxyCodeLine{00085\ \ \ \ \ ASN1\_ITEM\_ref(LONG),}
+\DoxyCodeLine{00086\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00087\ \ \ \ \ ASN1\_ITEM\_ref(NAME\_CONSTRAINTS),}
+\DoxyCodeLine{00088\ \ \ \ \ ASN1\_ITEM\_ref(NETSCAPE\_CERT\_SEQUENCE),}
+\DoxyCodeLine{00089\ \ \ \ \ ASN1\_ITEM\_ref(NETSCAPE\_SPKAC),}
+\DoxyCodeLine{00090\ \ \ \ \ ASN1\_ITEM\_ref(NETSCAPE\_SPKI),}
+\DoxyCodeLine{00091\ \ \ \ \ ASN1\_ITEM\_ref(NOTICEREF),}
+\DoxyCodeLine{00092\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_OCSP}}
+\DoxyCodeLine{00093\ \ \ \ \ ASN1\_ITEM\_ref(OCSP\_BASICRESP),}
+\DoxyCodeLine{00094\ \ \ \ \ ASN1\_ITEM\_ref(OCSP\_CERTID),}
+\DoxyCodeLine{00095\ \ \ \ \ ASN1\_ITEM\_ref(OCSP\_CERTSTATUS),}
+\DoxyCodeLine{00096\ \ \ \ \ ASN1\_ITEM\_ref(OCSP\_CRLID),}
+\DoxyCodeLine{00097\ \ \ \ \ ASN1\_ITEM\_ref(OCSP\_ONEREQ),}
+\DoxyCodeLine{00098\ \ \ \ \ ASN1\_ITEM\_ref(OCSP\_REQINFO),}
+\DoxyCodeLine{00099\ \ \ \ \ ASN1\_ITEM\_ref(OCSP\_REQUEST),}
+\DoxyCodeLine{00100\ \ \ \ \ ASN1\_ITEM\_ref(OCSP\_RESPBYTES),}
+\DoxyCodeLine{00101\ \ \ \ \ ASN1\_ITEM\_ref(OCSP\_RESPDATA),}
+\DoxyCodeLine{00102\ \ \ \ \ ASN1\_ITEM\_ref(OCSP\_RESPID),}
+\DoxyCodeLine{00103\ \ \ \ \ ASN1\_ITEM\_ref(OCSP\_RESPONSE),}
+\DoxyCodeLine{00104\ \ \ \ \ ASN1\_ITEM\_ref(OCSP\_REVOKEDINFO),}
+\DoxyCodeLine{00105\ \ \ \ \ ASN1\_ITEM\_ref(OCSP\_SERVICELOC),}
+\DoxyCodeLine{00106\ \ \ \ \ ASN1\_ITEM\_ref(OCSP\_SIGNATURE),}
+\DoxyCodeLine{00107\ \ \ \ \ ASN1\_ITEM\_ref(OCSP\_SINGLERESP),}
+\DoxyCodeLine{00108\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00109\ \ \ \ \ ASN1\_ITEM\_ref(OTHERNAME),}
+\DoxyCodeLine{00110\ \ \ \ \ ASN1\_ITEM\_ref(PBE2PARAM),}
+\DoxyCodeLine{00111\ \ \ \ \ ASN1\_ITEM\_ref(PBEPARAM),}
+\DoxyCodeLine{00112\ \ \ \ \ ASN1\_ITEM\_ref(PBKDF2PARAM),}
+\DoxyCodeLine{00113\ \ \ \ \ ASN1\_ITEM\_ref(PKCS12\_AUTHSAFES),}
+\DoxyCodeLine{00114\ \ \ \ \ ASN1\_ITEM\_ref(PKCS12\_BAGS),}
+\DoxyCodeLine{00115\ \ \ \ \ ASN1\_ITEM\_ref(PKCS12\_MAC\_DATA),}
+\DoxyCodeLine{00116\ \ \ \ \ ASN1\_ITEM\_ref(PKCS12\_SAFEBAGS),}
+\DoxyCodeLine{00117\ \ \ \ \ ASN1\_ITEM\_ref(PKCS12\_SAFEBAG),}
+\DoxyCodeLine{00118\ \ \ \ \ ASN1\_ITEM\_ref(PKCS12),}
+\DoxyCodeLine{00119\ \ \ \ \ ASN1\_ITEM\_ref(PKCS7\_ATTR\_SIGN),}
+\DoxyCodeLine{00120\ \ \ \ \ ASN1\_ITEM\_ref(PKCS7\_ATTR\_VERIFY),}
+\DoxyCodeLine{00121\ \ \ \ \ ASN1\_ITEM\_ref(PKCS7\_DIGEST),}
+\DoxyCodeLine{00122\ \ \ \ \ ASN1\_ITEM\_ref(PKCS7\_ENCRYPT),}
+\DoxyCodeLine{00123\ \ \ \ \ ASN1\_ITEM\_ref(PKCS7\_ENC\_CONTENT),}
+\DoxyCodeLine{00124\ \ \ \ \ ASN1\_ITEM\_ref(PKCS7\_ENVELOPE),}
+\DoxyCodeLine{00125\ \ \ \ \ ASN1\_ITEM\_ref(PKCS7\_ISSUER\_AND\_SERIAL),}
+\DoxyCodeLine{00126\ \ \ \ \ ASN1\_ITEM\_ref(PKCS7\_RECIP\_INFO),}
+\DoxyCodeLine{00127\ \ \ \ \ ASN1\_ITEM\_ref(PKCS7\_SIGNED),}
+\DoxyCodeLine{00128\ \ \ \ \ ASN1\_ITEM\_ref(PKCS7\_SIGNER\_INFO),}
+\DoxyCodeLine{00129\ \ \ \ \ ASN1\_ITEM\_ref(PKCS7\_SIGN\_ENVELOPE),}
+\DoxyCodeLine{00130\ \ \ \ \ ASN1\_ITEM\_ref(PKCS7),}
+\DoxyCodeLine{00131\ \ \ \ \ ASN1\_ITEM\_ref(PKCS8\_PRIV\_KEY\_INFO),}
+\DoxyCodeLine{00132\ \ \ \ \ ASN1\_ITEM\_ref(PKEY\_USAGE\_PERIOD),}
+\DoxyCodeLine{00133\ \ \ \ \ ASN1\_ITEM\_ref(POLICYINFO),}
+\DoxyCodeLine{00134\ \ \ \ \ ASN1\_ITEM\_ref(POLICYQUALINFO),}
+\DoxyCodeLine{00135\ \ \ \ \ ASN1\_ITEM\_ref(POLICY\_CONSTRAINTS),}
+\DoxyCodeLine{00136\ \ \ \ \ ASN1\_ITEM\_ref(POLICY\_MAPPINGS),}
+\DoxyCodeLine{00137\ \ \ \ \ ASN1\_ITEM\_ref(POLICY\_MAPPING),}
+\DoxyCodeLine{00138\ \ \ \ \ ASN1\_ITEM\_ref(PROXY\_CERT\_INFO\_EXTENSION),}
+\DoxyCodeLine{00139\ \ \ \ \ ASN1\_ITEM\_ref(PROXY\_POLICY),}
+\DoxyCodeLine{00140\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_DEPRECATED\_3\_0}}
+\DoxyCodeLine{00141\ \ \ \ \ ASN1\_ITEM\_ref(RSAPrivateKey),}
+\DoxyCodeLine{00142\ \ \ \ \ ASN1\_ITEM\_ref(RSAPublicKey),}
+\DoxyCodeLine{00143\ \ \ \ \ ASN1\_ITEM\_ref(RSA\_OAEP\_PARAMS),}
+\DoxyCodeLine{00144\ \ \ \ \ ASN1\_ITEM\_ref(RSA\_PSS\_PARAMS),}
+\DoxyCodeLine{00145\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00146\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_SCRYPT}}
+\DoxyCodeLine{00147\ \ \ \ \ ASN1\_ITEM\_ref(SCRYPT\_PARAMS),}
+\DoxyCodeLine{00148\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00149\ \ \ \ \ ASN1\_ITEM\_ref(SXNETID),}
+\DoxyCodeLine{00150\ \ \ \ \ ASN1\_ITEM\_ref(SXNET),}
+\DoxyCodeLine{00151\ \ \ \ \ ASN1\_ITEM\_ref(ISSUER\_SIGN\_TOOL),}
+\DoxyCodeLine{00152\ \ \ \ \ ASN1\_ITEM\_ref(USERNOTICE),}
+\DoxyCodeLine{00153\ \ \ \ \ ASN1\_ITEM\_ref(X509\_ALGORS),}
+\DoxyCodeLine{00154\ \ \ \ \ ASN1\_ITEM\_ref(X509\_ALGOR),}
+\DoxyCodeLine{00155\ \ \ \ \ ASN1\_ITEM\_ref(X509\_ATTRIBUTE),}
+\DoxyCodeLine{00156\ \ \ \ \ ASN1\_ITEM\_ref(X509\_CERT\_AUX),}
+\DoxyCodeLine{00157\ \ \ \ \ ASN1\_ITEM\_ref(X509\_CINF),}
+\DoxyCodeLine{00158\ \ \ \ \ ASN1\_ITEM\_ref(X509\_CRL\_INFO),}
+\DoxyCodeLine{00159\ \ \ \ \ ASN1\_ITEM\_ref(X509\_CRL),}
+\DoxyCodeLine{00160\ \ \ \ \ ASN1\_ITEM\_ref(X509\_EXTENSIONS),}
+\DoxyCodeLine{00161\ \ \ \ \ ASN1\_ITEM\_ref(X509\_EXTENSION),}
+\DoxyCodeLine{00162\ \ \ \ \ ASN1\_ITEM\_ref(X509\_NAME\_ENTRY),}
+\DoxyCodeLine{00163\ \ \ \ \ ASN1\_ITEM\_ref(X509\_NAME),}
+\DoxyCodeLine{00164\ \ \ \ \ ASN1\_ITEM\_ref(X509\_PUBKEY),}
+\DoxyCodeLine{00165\ \ \ \ \ ASN1\_ITEM\_ref(X509\_REQ\_INFO),}
+\DoxyCodeLine{00166\ \ \ \ \ ASN1\_ITEM\_ref(X509\_REQ),}
+\DoxyCodeLine{00167\ \ \ \ \ ASN1\_ITEM\_ref(X509\_REVOKED),}
+\DoxyCodeLine{00168\ \ \ \ \ ASN1\_ITEM\_ref(X509\_SIG),}
+\DoxyCodeLine{00169\ \ \ \ \ ASN1\_ITEM\_ref(X509\_VAL),}
+\DoxyCodeLine{00170\ \ \ \ \ ASN1\_ITEM\_ref(X509),}
+\DoxyCodeLine{00171\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_DEPRECATED\_3\_0}}
+\DoxyCodeLine{00172\ \ \ \ \ ASN1\_ITEM\_ref(ZLONG),}
+\DoxyCodeLine{00173\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00174\ \ \ \ \ ASN1\_ITEM\_ref(INT32),}
+\DoxyCodeLine{00175\ \ \ \ \ ASN1\_ITEM\_ref(UINT32),}
+\DoxyCodeLine{00176\ \ \ \ \ ASN1\_ITEM\_ref(ZINT32),}
+\DoxyCodeLine{00177\ \ \ \ \ ASN1\_ITEM\_ref(ZUINT32),}
+\DoxyCodeLine{00178\ \ \ \ \ ASN1\_ITEM\_ref(INT64),}
+\DoxyCodeLine{00179\ \ \ \ \ ASN1\_ITEM\_ref(UINT64),}
+\DoxyCodeLine{00180\ \ \ \ \ ASN1\_ITEM\_ref(ZINT64),}
+\DoxyCodeLine{00181\ \ \ \ \ ASN1\_ITEM\_ref(ZUINT64),}
+\DoxyCodeLine{00182\ \};}
+
+\end{DoxyCode}

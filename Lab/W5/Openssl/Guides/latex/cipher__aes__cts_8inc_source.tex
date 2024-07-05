@@ -1,0 +1,100 @@
+\doxysection{cipher\+\_\+aes\+\_\+cts.\+inc}
+\hypertarget{cipher__aes__cts_8inc_source}{}\label{cipher__aes__cts_8inc_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/providers/implementations/ciphers/cipher\_aes\_cts.inc@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/providers/implementations/ciphers/cipher\_aes\_cts.inc}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2020-\/2021\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{comment}{/*\ Dispatch\ functions\ for\ AES\ CBC\ CTS\ ciphers\ */}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ <openssl/proverr.h>}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ "{}cipher\_cts.h"{}}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#define\ CTS\_FLAGS\ PROV\_CIPHER\_FLAG\_CTS}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{keyword}{static}\ OSSL\_FUNC\_cipher\_encrypt\_init\_fn\ aes\_cbc\_cts\_einit;}
+\DoxyCodeLine{00018\ \textcolor{keyword}{static}\ OSSL\_FUNC\_cipher\_decrypt\_init\_fn\ aes\_cbc\_cts\_dinit;}
+\DoxyCodeLine{00019\ \textcolor{keyword}{static}\ OSSL\_FUNC\_cipher\_get\_ctx\_params\_fn\ aes\_cbc\_cts\_get\_ctx\_params;}
+\DoxyCodeLine{00020\ \textcolor{keyword}{static}\ OSSL\_FUNC\_cipher\_set\_ctx\_params\_fn\ aes\_cbc\_cts\_set\_ctx\_params;}
+\DoxyCodeLine{00021\ \textcolor{keyword}{static}\ OSSL\_FUNC\_cipher\_gettable\_ctx\_params\_fn\ aes\_cbc\_cts\_gettable\_ctx\_params;}
+\DoxyCodeLine{00022\ \textcolor{keyword}{static}\ OSSL\_FUNC\_cipher\_settable\_ctx\_params\_fn\ aes\_cbc\_cts\_settable\_ctx\_params;}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ CIPHER\_DEFAULT\_GETTABLE\_CTX\_PARAMS\_START(aes\_cbc\_cts)}
+\DoxyCodeLine{00025\ OSSL\_PARAM\_utf8\_string(OSSL\_CIPHER\_PARAM\_CTS\_MODE,\ NULL,\ 0),}
+\DoxyCodeLine{00026\ CIPHER\_DEFAULT\_GETTABLE\_CTX\_PARAMS\_END(aes\_cbc\_cts)}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ aes\_cbc\_cts\_einit(\textcolor{keywordtype}{void}\ *ctx,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *key,\ \textcolor{keywordtype}{size\_t}\ keylen,}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *iv,\ \textcolor{keywordtype}{size\_t}\ ivlen,}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ OSSL\_PARAM\ params[])}
+\DoxyCodeLine{00031\ \{}
+\DoxyCodeLine{00032\ \ \ \ \ \textcolor{keywordflow}{if}\ (!ossl\_cipher\_generic\_einit(ctx,\ key,\ keylen,\ iv,\ ivlen,\ NULL))}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{keywordflow}{return}\ aes\_cbc\_cts\_set\_ctx\_params(ctx,\ params);}
+\DoxyCodeLine{00035\ \}}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ aes\_cbc\_cts\_dinit(\textcolor{keywordtype}{void}\ *ctx,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *key,\ \textcolor{keywordtype}{size\_t}\ keylen,}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *iv,\ \textcolor{keywordtype}{size\_t}\ ivlen,}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ OSSL\_PARAM\ params[])}
+\DoxyCodeLine{00040\ \{}
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{keywordflow}{if}\ (!ossl\_cipher\_generic\_dinit(ctx,\ key,\ keylen,\ iv,\ ivlen,\ NULL))}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{keywordflow}{return}\ aes\_cbc\_cts\_set\_ctx\_params(ctx,\ params);}
+\DoxyCodeLine{00044\ \}}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ aes\_cbc\_cts\_get\_ctx\_params(\textcolor{keywordtype}{void}\ *vctx,\ OSSL\_PARAM\ params[])}
+\DoxyCodeLine{00047\ \{}
+\DoxyCodeLine{00048\ \ \ \ \ \mbox{\hyperlink{structprov__cipher__ctx__st}{PROV\_CIPHER\_CTX}}\ *ctx\ =\ (\mbox{\hyperlink{structprov__cipher__ctx__st}{PROV\_CIPHER\_CTX}}\ *)vctx;}
+\DoxyCodeLine{00049\ \ \ \ \ OSSL\_PARAM\ *p;}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \ \ \ \ p\ =\ OSSL\_PARAM\_locate(params,\ OSSL\_CIPHER\_PARAM\_CTS\_MODE);}
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{keywordflow}{if}\ (p\ !=\ NULL)\ \{}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *name\ =\ ossl\_cipher\_cbc\_cts\_mode\_id2name(ctx-\/>cts\_mode);}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (name\ ==\ NULL\ ||\ !OSSL\_PARAM\_set\_utf8\_string(p,\ name))\ \{}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \ \ \ \ ERR\_raise(ERR\_LIB\_PROV,\ PROV\_R\_FAILED\_TO\_SET\_PARAMETER);}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00059\ \ \ \ \ \}}
+\DoxyCodeLine{00060\ \ \ \ \ \textcolor{keywordflow}{return}\ ossl\_cipher\_generic\_get\_ctx\_params(vctx,\ params);}
+\DoxyCodeLine{00061\ \}}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00063\ CIPHER\_DEFAULT\_SETTABLE\_CTX\_PARAMS\_START(aes\_cbc\_cts)}
+\DoxyCodeLine{00064\ OSSL\_PARAM\_utf8\_string(OSSL\_CIPHER\_PARAM\_CTS\_MODE,\ NULL,\ 0),}
+\DoxyCodeLine{00065\ CIPHER\_DEFAULT\_SETTABLE\_CTX\_PARAMS\_END(aes\_cbc\_cts)}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00067\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ aes\_cbc\_cts\_set\_ctx\_params(\textcolor{keywordtype}{void}\ *vctx,\ \textcolor{keyword}{const}\ OSSL\_PARAM\ params[])}
+\DoxyCodeLine{00068\ \{}
+\DoxyCodeLine{00069\ \ \ \ \ \mbox{\hyperlink{structprov__cipher__ctx__st}{PROV\_CIPHER\_CTX}}\ *ctx\ =\ (\mbox{\hyperlink{structprov__cipher__ctx__st}{PROV\_CIPHER\_CTX}}\ *)vctx;}
+\DoxyCodeLine{00070\ \ \ \ \ \textcolor{keyword}{const}\ OSSL\_PARAM\ *p;}
+\DoxyCodeLine{00071\ \ \ \ \ \textcolor{keywordtype}{int}\ id;}
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00073\ \ \ \ \ p\ =\ OSSL\_PARAM\_locate\_const(params,\ OSSL\_CIPHER\_PARAM\_CTS\_MODE);}
+\DoxyCodeLine{00074\ \ \ \ \ \textcolor{keywordflow}{if}\ (p\ !=\ NULL)\ \{}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (p-\/>data\_type\ !=\ OSSL\_PARAM\_UTF8\_STRING)}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{goto}\ err;}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{id}\ =\ ossl\_cipher\_cbc\_cts\_mode\_name2id(p-\/>data);}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\textcolor{keywordtype}{id}\ <\ 0)}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{goto}\ err;}
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ ctx-\/>cts\_mode\ =\ (\textcolor{keywordtype}{unsigned}\ int)\textcolor{keywordtype}{id};}
+\DoxyCodeLine{00082\ \ \ \ \ \}}
+\DoxyCodeLine{00083\ \ \ \ \ \textcolor{keywordflow}{return}\ ossl\_cipher\_generic\_set\_ctx\_params(vctx,\ params);}
+\DoxyCodeLine{00084\ err:}
+\DoxyCodeLine{00085\ \ \ \ \ ERR\_raise(ERR\_LIB\_PROV,\ PROV\_R\_FAILED\_TO\_SET\_PARAMETER);}
+\DoxyCodeLine{00086\ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00087\ \}}
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00089\ \textcolor{comment}{/*\ ossl\_aes256cbc\_cts\_functions\ */}}
+\DoxyCodeLine{00090\ IMPLEMENT\_cts\_cipher(aes,\ AES,\ cbc,\ CBC,\ CTS\_FLAGS,\ 256,\ 128,\ 128,\ block)}
+\DoxyCodeLine{00091\ \textcolor{comment}{/*\ ossl\_aes192cbc\_cts\_functions\ */}}
+\DoxyCodeLine{00092\ IMPLEMENT\_cts\_cipher(aes,\ AES,\ cbc,\ CBC,\ CTS\_FLAGS,\ 192,\ 128,\ 128,\ block)}
+\DoxyCodeLine{00093\ \textcolor{comment}{/*\ ossl\_aes128cbc\_cts\_functions\ */}}
+\DoxyCodeLine{00094\ IMPLEMENT\_cts\_cipher(aes,\ AES,\ cbc,\ CBC,\ CTS\_FLAGS,\ 128,\ 128,\ 128,\ block)}
+
+\end{DoxyCode}

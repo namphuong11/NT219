@@ -1,0 +1,50 @@
+\doxysection{file\+\_\+ctx\+\_\+st Struct Reference}
+\hypertarget{structfile__ctx__st}{}\label{structfile__ctx__st}\index{file\_ctx\_st@{file\_ctx\_st}}
+\doxysubsubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{structfile__ctx__st_acf9ce08192973d884f73850fa2e56c8b}\label{structfile__ctx__st_acf9ce08192973d884f73850fa2e56c8b} 
+enum \{ {\bfseries IS\+\_\+\+FILE} = 0
+, {\bfseries IS\+\_\+\+DIR}
+ \}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{structfile__ctx__st_aa00665b95b04993681dc40aa5e90054a}\label{structfile__ctx__st_aa00665b95b04993681dc40aa5e90054a} 
+void \texorpdfstring{$\ast$}{*} {\bfseries provctx}
+\item 
+\Hypertarget{structfile__ctx__st_a7c1472fe0ab93c54373bb18c6c3f7ada}\label{structfile__ctx__st_a7c1472fe0ab93c54373bb18c6c3f7ada} 
+char \texorpdfstring{$\ast$}{*} {\bfseries uri}
+\item 
+\Hypertarget{structfile__ctx__st_a7ebf803abf9ed56bd49fc581b74ee3c3}\label{structfile__ctx__st_a7ebf803abf9ed56bd49fc581b74ee3c3} 
+enum file\+\_\+ctx\+\_\+st\+:: \{ ... \}  {\bfseries type}
+\item 
+\Hypertarget{structfile__ctx__st_ab31080834c8eca0a192853762692398a}\label{structfile__ctx__st_ab31080834c8eca0a192853762692398a} 
+\begin{tabbing}
+xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=\kill
+union \{\\
+\>struct \{\\
+\>\>BIO \texorpdfstring{$\ast$}{*} {\bfseries file}\\
+\>\>OSSL\_DECODER\_CTX \texorpdfstring{$\ast$}{*} {\bfseries decoderctx}\\
+\>\>char \texorpdfstring{$\ast$}{*} {\bfseries input\_type}\\
+\>\>char \texorpdfstring{$\ast$}{*} {\bfseries propq}\\
+\>\} {\bfseries file}\\
+\>struct \{\\
+\>\>OPENSSL\_DIR\_CTX \texorpdfstring{$\ast$}{*} {\bfseries ctx}\\
+\>\>int {\bfseries end\_reached}\\
+\>\>char {\bfseries search\_name} \mbox{[}9\mbox{]}\\
+\>\>const char \texorpdfstring{$\ast$}{*} {\bfseries last\_entry}\\
+\>\>int {\bfseries last\_errno}\\
+\>\} {\bfseries dir}\\
+\} {\bfseries \_}\\
+
+\end{tabbing}\item 
+\Hypertarget{structfile__ctx__st_a22ad9b124ba264c06445dcb5d1c00697}\label{structfile__ctx__st_a22ad9b124ba264c06445dcb5d1c00697} 
+int {\bfseries expected\+\_\+type}
+\end{DoxyCompactItemize}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/namph/\+Downloads/openssl/openssl-\/3.\+2.\+1/providers/implementations/storemgmt/file\+\_\+store.\+c\end{DoxyCompactItemize}

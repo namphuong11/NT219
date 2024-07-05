@@ -1,0 +1,61 @@
+\chapter{QUIC Statistics Manager}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-statm}{}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-statm}\index{QUIC Statistics Manager@{QUIC Statistics Manager}}
+The statistics manager keeps track of RTT statistics for use by the QUIC implementation.
+
+It provides the following interface\+:\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-statm_autotoc_md443}{}\doxysection{\texorpdfstring{Instantiation}{Instantiation}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-statm_autotoc_md443}
+The QUIC statistics manager is instantiated as follows\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__statm__st}{ossl\_statm\_st}}\ \{}
+\DoxyCodeLine{\ \ \ \ ...}
+\DoxyCodeLine{\}\ \mbox{\hyperlink{structossl__statm__st}{OSSL\_STATM}};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{int}\ ossl\_statm\_init(\mbox{\hyperlink{structossl__statm__st}{OSSL\_STATM}}\ *statm);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{void}\ ossl\_statm\_destroy(\mbox{\hyperlink{structossl__statm__st}{OSSL\_STATM}}\ *statm);}
+
+\end{DoxyCode}
+
+
+The structure is defined in headers, so it may be initialised without needing its own memory allocation. However, other code should not examine the fields of {\ttfamily OSSL\+\_\+\+STATM} directly.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-statm_autotoc_md444}{}\doxysection{\texorpdfstring{Get RTT Info}{Get RTT Info}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-statm_autotoc_md444}
+The current RTT info is retrieved using the function {\ttfamily ossl\+\_\+statm\+\_\+get\+\_\+rtt\+\_\+info}, which fills an {\ttfamily OSSL\+\_\+\+RTT\+\_\+\+INFO} structure\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__rtt__info__st}{ossl\_rtt\_info\_st}}\ \{}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{/*\ As\ defined\ in\ RFC\ 9002.\ */}}
+\DoxyCodeLine{\ \ \ \ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ smoothed\_rtt,\ latest\_rtt,\ rtt\_variance,\ min\_rtt,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ max\_ack\_delay;}
+\DoxyCodeLine{\}\ \mbox{\hyperlink{structossl__rtt__info__st}{OSSL\_RTT\_INFO}};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{void}\ ossl\_statm\_get\_rtt\_info(\mbox{\hyperlink{structossl__statm__st}{OSSL\_STATM}}\ *statm,\ \mbox{\hyperlink{structossl__rtt__info__st}{OSSL\_RTT\_INFO}}\ *rtt\_info);}
+
+\end{DoxyCode}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-statm_autotoc_md445}{}\doxysection{\texorpdfstring{Update RTT}{Update RTT}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-statm_autotoc_md445}
+New RTT samples are provided using the {\ttfamily ossl\+\_\+statm\+\_\+update\+\_\+rtt} function\+:
+
+
+\begin{DoxyItemize}
+\item {\ttfamily ack\+\_\+delay}. This is the ACK Delay value; see RFC 9000.
+\item {\ttfamily override\+\_\+latest\+\_\+rtt} provides a new latest RTT sample. If it is {\ttfamily OSSL\+\_\+\+TIME\+\_\+\+ZERO}, the existing Latest RTT value is used when updating the RTT.
+\end{DoxyItemize}
+
+The maximum ACK delay configured using {\ttfamily ossl\+\_\+statm\+\_\+set\+\_\+max\+\_\+ack\+\_\+delay} is not enforced automatically on the {\ttfamily ack\+\_\+delay} argument as the circumstances where this should be enforced are context sensitive. It is the caller\textquotesingle{}s responsibility to retrieve the value and enforce the maximum ACK delay if appropriate.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keywordtype}{void}\ ossl\_statm\_update\_rtt(\mbox{\hyperlink{structossl__statm__st}{OSSL\_STATM}}\ *statm,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ ack\_delay,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ override\_latest\_rtt);}
+
+\end{DoxyCode}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-statm_autotoc_md446}{}\doxysection{\texorpdfstring{Set Max. Ack Delay}{Set Max. Ack Delay}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-statm_autotoc_md446}
+Sets the maximum ACK delay field reported by {\ttfamily OSSL\+\_\+\+RTT\+\_\+\+INFO}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keywordtype}{void}\ ossl\_statm\_set\_max\_ack\_delay(\mbox{\hyperlink{structossl__statm__st}{OSSL\_STATM}}\ *statm,\ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ max\_ack\_delay);}
+
+\end{DoxyCode}
+ 

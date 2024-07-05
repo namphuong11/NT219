@@ -1,0 +1,66 @@
+\doxysection{md4\+\_\+local.\+h}
+\hypertarget{md4__local_8h_source}{}\label{md4__local_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/md4/md4\_local.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/md4/md4\_local.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 1995-\/2016\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <stdlib.h>}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ <string.h>}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ <openssl/opensslconf.h>}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ <openssl/md4.h>}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{keywordtype}{void}\ md4\_block\_data\_order(MD4\_CTX\ *c,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *p,\ \textcolor{keywordtype}{size\_t}\ num);}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ DATA\_ORDER\_IS\_LITTLE\_ENDIAN}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#define\ HASH\_LONG\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ MD4\_LONG}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#define\ HASH\_CTX\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ MD4\_CTX}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#define\ HASH\_CBLOCK\ \ \ \ \ \ \ \ \ \ \ \ \ MD4\_CBLOCK}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#define\ HASH\_UPDATE\ \ \ \ \ \ \ \ \ \ \ \ \ MD4\_Update}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#define\ HASH\_TRANSFORM\ \ \ \ \ \ \ \ \ \ MD4\_Transform}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#define\ HASH\_FINAL\ \ \ \ \ \ \ \ \ \ \ \ \ \ MD4\_Final}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#define\ HASH\_MAKE\_STRING(c,s)\ \ \ do\ \{\ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ unsigned\ long\ ll;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ ll=(c)-\/>A;\ (void)HOST\_l2c(ll,(s));\ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ ll=(c)-\/>B;\ (void)HOST\_l2c(ll,(s));\ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ ll=(c)-\/>C;\ (void)HOST\_l2c(ll,(s));\ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ ll=(c)-\/>D;\ (void)HOST\_l2c(ll,(s));\ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \}\ while\ (0)}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#define\ HASH\_BLOCK\_DATA\_ORDER\ \ \ md4\_block\_data\_order}}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#include\ "{}crypto/md32\_common.h"{}}}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00037\ \textcolor{comment}{\#define\ F(x,y,z)\ \ \ \ \ \ \ \ (((x)\ \&\ (y))\ \ |\ \ ((\string~(x))\ \&\ (z)))}}
+\DoxyCodeLine{00038\ \textcolor{comment}{\#define\ G(x,y,z)\ \ \ \ \ \ \ \ (((x)\ \&\ (y))\ \ |\ \ ((x)\ \&\ ((z)))\ |\ ((y)\ \&\ ((z))))}}
+\DoxyCodeLine{00039\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00042\ \textcolor{comment}{\ *\ As\ pointed\ out\ by\ Wei\ Dai,\ the\ above\ can\ be\ simplified\ to\ the\ code}}
+\DoxyCodeLine{00043\ \textcolor{comment}{\ *\ below.\ \ Wei\ attributes\ these\ optimizations\ to\ Peter\ Gutmann's\ SHS\ code,}}
+\DoxyCodeLine{00044\ \textcolor{comment}{\ *\ and\ he\ attributes\ it\ to\ Rich\ Schroeppel.}}
+\DoxyCodeLine{00045\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00046\ \textcolor{preprocessor}{\#define\ F(b,c,d)\ \ \ \ \ \ \ \ ((((c)\ \string^\ (d))\ \&\ (b))\ \string^\ (d))}}
+\DoxyCodeLine{00047\ \textcolor{preprocessor}{\#define\ G(b,c,d)\ \ \ \ \ \ \ \ (((b)\ \&\ (c))\ |\ ((b)\ \&\ (d))\ |\ ((c)\ \&\ (d)))}}
+\DoxyCodeLine{00048\ \textcolor{preprocessor}{\#define\ H(b,c,d)\ \ \ \ \ \ \ \ ((b)\ \string^\ (c)\ \string^\ (d))}}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \textcolor{preprocessor}{\#define\ R0(a,b,c,d,k,s,t)\ \{\ \(\backslash\)}}
+\DoxyCodeLine{00051\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ a+=((k)+(t)+F((b),(c),(d)));\ \(\backslash\)}}
+\DoxyCodeLine{00052\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ a=ROTATE(a,s);\ \};}}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \textcolor{preprocessor}{\#define\ R1(a,b,c,d,k,s,t)\ \{\ \(\backslash\)}}
+\DoxyCodeLine{00055\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ a+=((k)+(t)+G((b),(c),(d)));\ \(\backslash\)}}
+\DoxyCodeLine{00056\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ a=ROTATE(a,s);\ \};}}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \textcolor{preprocessor}{\#define\ R2(a,b,c,d,k,s,t)\ \{\ \(\backslash\)}}
+\DoxyCodeLine{00059\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ a+=((k)+(t)+H((b),(c),(d)));\ \(\backslash\)}}
+\DoxyCodeLine{00060\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ a=ROTATE(a,s);\ \};}}
+
+\end{DoxyCode}

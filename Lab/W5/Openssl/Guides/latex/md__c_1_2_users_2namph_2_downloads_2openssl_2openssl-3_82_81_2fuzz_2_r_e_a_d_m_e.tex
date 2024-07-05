@@ -1,0 +1,108 @@
+\chapter{Fuzzing Open\+SSL}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2fuzz_2_r_e_a_d_m_e}{}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2fuzz_2_r_e_a_d_m_e}\index{Fuzzing OpenSSL@{Fuzzing OpenSSL}}
+Open\+SSL can use either Lib\+Fuzzer or AFL to do fuzzing.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2fuzz_2_r_e_a_d_m_e_autotoc_md519}{}\doxysection{\texorpdfstring{Lib\+Fuzzer}{Lib\+Fuzzer}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2fuzz_2_r_e_a_d_m_e_autotoc_md519}
+How to fuzz Open\+SSL with \href{http://llvm.org/docs/LibFuzzer.html}{\texttt{ libfuzzer}}, starting from a vanilla+\+Open\+SSH server Ubuntu install.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2fuzz_2_r_e_a_d_m_e_autotoc_md520}{}\doxysection{\texorpdfstring{With {\ttfamily clang} from a package manager}{With {\ttfamily clang} from a package manager}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2fuzz_2_r_e_a_d_m_e_autotoc_md520}
+Install {\ttfamily clang}, which \href{http://llvm.org/docs/LibFuzzer.html\#fuzzer-usage}{\texttt{ ships with {\ttfamily libfuzzer}}} since version 6.\+0\+: \begin{DoxyVerb}sudo apt-get install clang
+\end{DoxyVerb}
+ Configure {\ttfamily openssl} for fuzzing. For now, you\textquotesingle{}ll still need to pass in the path to the {\ttfamily lib\+Fuzzer} library file while configuring; this is represented as {\ttfamily \$PATH\+\_\+\+TO\+\_\+\+LIBFUZZER} below. A typical value would be {\ttfamily /usr/lib/llvm-\/7/lib/clang/7.0.\+1/lib/linux/libclang\+\_\+rt.fuzzer-\/x86\+\_\+64.\+a}. \begin{DoxyVerb}CC=clang ./config enable-fuzz-libfuzzer \
+        --with-fuzzer-lib=$PATH_TO_LIBFUZZER \
+        -DPEDANTIC enable-asan enable-ubsan no-shared \
+        -DFUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION \
+        -fsanitize=fuzzer-no-link \
+        enable-ec_nistp_64_gcc_128 -fno-sanitize=alignment \
+        enable-weak-ssl-ciphers enable-rc5 enable-md2 \
+        enable-ssl3 enable-ssl3-method enable-nextprotoneg \
+        --debug
+\end{DoxyVerb}
+ Clang uses the gcc libstdc++ library so this must also be installed. You can check which version of gcc clang is using like this\+: \begin{DoxyVerb}$ clang --verbose
+Ubuntu clang version 14.0.0-1ubuntu1.1
+Target: x86_64-pc-linux-gnu
+Thread model: posix
+InstalledDir: /usr/bin
+Found candidate GCC installation: /usr/bin/../lib/gcc/i686-linux-gnu/12
+Found candidate GCC installation: /usr/bin/../lib/gcc/x86_64-linux-gnu/10
+Found candidate GCC installation: /usr/bin/../lib/gcc/x86_64-linux-gnu/11
+Found candidate GCC installation: /usr/bin/../lib/gcc/x86_64-linux-gnu/12
+Selected GCC installation: /usr/bin/../lib/gcc/x86_64-linux-gnu/12
+Candidate multilib: .;@m64
+Selected multilib: .;@m64
+\end{DoxyVerb}
+ So, in the above example clang is using gcc version 12. Ensure that the selected gcc version has the relevant libstdc++ files installed\+: \begin{DoxyVerb}$ ls /usr/lib/gcc/x86_64-linux-gnu/12 | grep stdc++
+libstdc++.a
+libstdc++fs.a
+libstdc++.so
+\end{DoxyVerb}
+ On Ubuntu for gcc-\/12 this requires the libstdc++-\/12-\/dev package installed. \begin{DoxyVerb}$ sudo apt-get install libstdc++-12-dev
+\end{DoxyVerb}
+ Compile\+: \begin{DoxyVerb}sudo apt-get install make
+make clean
+LDCMD=clang++ make -j4
+\end{DoxyVerb}
+ Finally, perform the actual fuzzing\+: \begin{DoxyVerb}fuzz/helper.py $FUZZER
+\end{DoxyVerb}
+ where \$\+FUZZER is one of the executables in {\ttfamily fuzz/}. It will run until you stop it.
+
+If you get a crash, you should find a corresponding input file in {\ttfamily fuzz/corpora/\$FUZZER-\/crash/}.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2fuzz_2_r_e_a_d_m_e_autotoc_md521}{}\doxysection{\texorpdfstring{With {\ttfamily clang} from source/pre-\/built binaries}{With {\ttfamily clang} from source/pre-\/built binaries}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2fuzz_2_r_e_a_d_m_e_autotoc_md521}
+You may also wish to use a pre-\/built binary from the \href{http://releases.llvm.org/download.html}{\texttt{ LLVM Download site}}, or to \href{https://clang.llvm.org/get_started.html}{\texttt{ build {\ttfamily clang} from source}}. After adding {\ttfamily clang} to your path and locating the {\ttfamily libfuzzer} library file, the procedure for configuring fuzzing is the same, except that you also need to specify a {\ttfamily -\/-\/with-\/fuzzer-\/include} option, which should be the parent directory of the prebuilt fuzzer library. This is represented as {\ttfamily \$PATH\+\_\+\+TO\+\_\+\+LIBFUZZER\+\_\+\+DIR} below. \begin{DoxyVerb}CC=clang ./config enable-fuzz-libfuzzer \
+        --with-fuzzer-include=$PATH_TO_LIBFUZZER_DIR \
+        --with-fuzzer-lib=$PATH_TO_LIBFUZZER \
+        -DPEDANTIC enable-asan enable-ubsan no-shared \
+        -DFUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION \
+        -fsanitize=fuzzer-no-link \
+        enable-ec_nistp_64_gcc_128 -fno-sanitize=alignment \
+        enable-weak-ssl-ciphers enable-rc5 enable-md2 \
+        enable-ssl3 enable-ssl3-method enable-nextprotoneg \
+        --debug
+\end{DoxyVerb}
+ \hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2fuzz_2_r_e_a_d_m_e_autotoc_md522}{}\doxysection{\texorpdfstring{AFL}{AFL}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2fuzz_2_r_e_a_d_m_e_autotoc_md522}
+This is an alternative to using Lib\+Fuzzer.
+
+Configure for fuzzing\+: \begin{DoxyVerb}sudo apt-get install afl-clang
+CC=afl-clang-fast ./config enable-fuzz-afl no-shared no-module \
+    -DPEDANTIC enable-tls1_3 enable-weak-ssl-ciphers enable-rc5 \
+    enable-md2 enable-ssl3 enable-ssl3-method enable-nextprotoneg \
+    enable-ec_nistp_64_gcc_128 -fno-sanitize=alignment \
+    --debug
+make clean
+make
+\end{DoxyVerb}
+ The following options can also be enabled\+: enable-\/asan, enable-\/ubsan, enable-\/msan
+
+Run one of the fuzzers\+: \begin{DoxyVerb}afl-fuzz -i fuzz/corpora/$FUZZER -o fuzz/corpora/$FUZZER/out fuzz/$FUZZER
+\end{DoxyVerb}
+ Where \$\+FUZZER is one of the executables in {\ttfamily fuzz/}.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2fuzz_2_r_e_a_d_m_e_autotoc_md523}{}\doxysection{\texorpdfstring{Reproducing issues}{Reproducing issues}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2fuzz_2_r_e_a_d_m_e_autotoc_md523}
+If a fuzzer generates a reproducible error, you can reproduce the problem using the fuzz/\texorpdfstring{$\ast$}{*}-\/test binaries and the file generated by the fuzzer. They binaries don\textquotesingle{}t need to be built for fuzzing, there is no need to set CC or the call config with enable-\/fuzz-\/\texorpdfstring{$\ast$}{*} or -\/fsanitize-\/coverage, but some of the other options above might be needed. For instance the enable-\/asan or enable-\/ubsan option might be useful to show you when the problem happens. For the client and server fuzzer it might be needed to use -\/DFUZZING\+\_\+\+BUILD\+\_\+\+MODE\+\_\+\+UNSAFE\+\_\+\+FOR\+\_\+\+PRODUCTION to reproduce the generated random numbers.
+
+To reproduce the crash you can run\+: \begin{DoxyVerb}fuzz/$FUZZER-test $file
+\end{DoxyVerb}
+ To do all the tests of a specific fuzzer such as asn1 you can run \begin{DoxyVerb}fuzz/asn1-test fuzz/corpora/asn1
+\end{DoxyVerb}
+ or make test TESTS=fuzz\+\_\+test\+\_\+asn1
+
+To run several fuzz tests you can use for instance\+: \begin{DoxyVerb}make test TESTS='test_fuzz_cmp test_fuzz_cms'
+\end{DoxyVerb}
+ To run all fuzz tests you can use\+: \begin{DoxyVerb}make test TESTS='test_fuzz_*'
+\end{DoxyVerb}
+ \hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2fuzz_2_r_e_a_d_m_e_autotoc_md524}{}\doxysection{\texorpdfstring{Random numbers}{Random numbers}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2fuzz_2_r_e_a_d_m_e_autotoc_md524}
+The client and server fuzzer normally generate random numbers as part of the TLS connection setup. This results in the coverage of the fuzzing corpus changing depending on the random numbers. This also has an effect for coverage of the rest of the test suite and you see the coverage change for each commit even when no code has been modified.
+
+Since we want to maximize the coverage of the fuzzing corpus, the client and server fuzzer will use predictable numbers instead of the random numbers. This is controlled by the FUZZING\+\_\+\+BUILD\+\_\+\+MODE\+\_\+\+UNSAFE\+\_\+\+FOR\+\_\+\+PRODUCTION define.
+
+The coverage depends on the way the numbers are generated. We don\textquotesingle{}t disable any check of hashes, but the corpus has the correct hash in it for the random numbers that were generated. For instance the client fuzzer will always generate the same client hello with the same random number in it, and so the server, as emulated by the file, can be generated for that client hello.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2fuzz_2_r_e_a_d_m_e_autotoc_md525}{}\doxysection{\texorpdfstring{Coverage changes}{Coverage changes}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2fuzz_2_r_e_a_d_m_e_autotoc_md525}
+Since the corpus depends on the default behaviour of the client and the server, changes in what they send by default will have an impact on the coverage. The corpus will need to be updated in that case.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2fuzz_2_r_e_a_d_m_e_autotoc_md526}{}\doxysection{\texorpdfstring{Updating the corpus}{Updating the corpus}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2fuzz_2_r_e_a_d_m_e_autotoc_md526}
+The client and server corpus is generated with multiple config options\+:
+
+
+\begin{DoxyItemize}
+\item The options as documented above
+\item Without enable-\/ec\+\_\+nistp\+\_\+64\+\_\+gcc\+\_\+128 and without --debug
+\item With no-\/asm
+\item Using 32 bit
+\item A default config, plus options needed to generate the fuzzer.
+\end{DoxyItemize}
+
+The libfuzzer merge option is used to add the additional coverage from each config to the minimal set.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2fuzz_2_r_e_a_d_m_e_autotoc_md527}{}\doxysection{\texorpdfstring{Minimizing the corpus}{Minimizing the corpus}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2fuzz_2_r_e_a_d_m_e_autotoc_md527}
+When you have gathered corpus data from more than one fuzzer run or for any other reason want to minimize the data in some corpus subdirectory {\ttfamily fuzz/corpora/\+DIR} this can be done as follows\+: \begin{DoxyVerb}mkdir fuzz/corpora/NEWDIR
+fuzz/$FUZZER -merge=1 fuzz/corpora/NEWDIR fuzz/corpora/DIR
+\end{DoxyVerb}
+ 

@@ -1,0 +1,87 @@
+\doxysection{async\+\_\+local.\+h}
+\hypertarget{async__local_8h_source}{}\label{async__local_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/async/async\_local.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/async/async\_local.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2015-\/2020\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ *\ Must\ do\ this\ before\ including\ any\ header\ files,\ because\ on\ MacOS/X\ <stlib.h>}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ *\ includes\ <signal.h>\ which\ includes\ <ucontext.h>}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#if\ defined(\_\_APPLE\_\_)\ \&\&\ defined(\_\_MACH\_\_)\ \&\&\ !defined(\_XOPEN\_SOURCE)}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#\ define\ \_XOPEN\_SOURCE\ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{/*\ Otherwise\ incomplete\ ucontext\_t\ structure\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#\ pragma\ GCC\ diagnostic\ ignored\ "{}-\/Wdeprecated-\/declarations"{}}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#if\ defined(\_WIN32)}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#\ include\ <windows.h>}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ "{}crypto/async.h"{}}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ <openssl/crypto.h>}}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structasync__ctx__st}{async\_ctx\_st}}\ \mbox{\hyperlink{structasync__ctx__st}{async\_ctx}};}
+\DoxyCodeLine{00027\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structasync__pool__st}{async\_pool\_st}}\ \mbox{\hyperlink{structasync__pool__st}{async\_pool}};}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#include\ "{}arch/async\_win.h"{}}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#include\ "{}arch/async\_posix.h"{}}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#include\ "{}arch/async\_null.h"{}}}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structasync__ctx__st}{async\_ctx\_st}}\ \{}
+\DoxyCodeLine{00034\ \ \ \ \ \mbox{\hyperlink{structasync__fibre__st}{async\_fibre}}\ dispatcher;}
+\DoxyCodeLine{00035\ \ \ \ \ ASYNC\_JOB\ *currjob;}
+\DoxyCodeLine{00036\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ blocked;}
+\DoxyCodeLine{00037\ \};}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structasync__job__st}{async\_job\_st}}\ \{}
+\DoxyCodeLine{00040\ \ \ \ \ \mbox{\hyperlink{structasync__fibre__st}{async\_fibre}}\ fibrectx;}
+\DoxyCodeLine{00041\ \ \ \ \ int\ (*func)\ (\textcolor{keywordtype}{void}\ *);}
+\DoxyCodeLine{00042\ \ \ \ \ \textcolor{keywordtype}{void}\ *funcargs;}
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{keywordtype}{int}\ ret;}
+\DoxyCodeLine{00044\ \ \ \ \ \textcolor{keywordtype}{int}\ status;}
+\DoxyCodeLine{00045\ \ \ \ \ ASYNC\_WAIT\_CTX\ *waitctx;}
+\DoxyCodeLine{00046\ \ \ \ \ OSSL\_LIB\_CTX\ *libctx;}
+\DoxyCodeLine{00047\ \};}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structfd__lookup__st}{fd\_lookup\_st}}\ \{}
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *key;}
+\DoxyCodeLine{00051\ \ \ \ \ OSSL\_ASYNC\_FD\ fd;}
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{keywordtype}{void}\ *custom\_data;}
+\DoxyCodeLine{00053\ \ \ \ \ void\ (*cleanup)(ASYNC\_WAIT\_CTX\ *,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *,\ OSSL\_ASYNC\_FD,\ \textcolor{keywordtype}{void}\ *);}
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{keywordtype}{int}\ add;}
+\DoxyCodeLine{00055\ \ \ \ \ \textcolor{keywordtype}{int}\ del;}
+\DoxyCodeLine{00056\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structfd__lookup__st}{fd\_lookup\_st}}\ *next;}
+\DoxyCodeLine{00057\ \};}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structasync__wait__ctx__st}{async\_wait\_ctx\_st}}\ \{}
+\DoxyCodeLine{00060\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structfd__lookup__st}{fd\_lookup\_st}}\ *fds;}
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ numadd;}
+\DoxyCodeLine{00062\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ numdel;}
+\DoxyCodeLine{00063\ \ \ \ \ ASYNC\_callback\_fn\ callback;}
+\DoxyCodeLine{00064\ \ \ \ \ \textcolor{keywordtype}{void}\ *callback\_arg;}
+\DoxyCodeLine{00065\ \ \ \ \ \textcolor{keywordtype}{int}\ status;}
+\DoxyCodeLine{00066\ \};}
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00068\ DEFINE\_STACK\_OF(ASYNC\_JOB)}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ struct\ \mbox{\hyperlink{structasync__pool__st}{async\_pool\_st}}\ \{}
+\DoxyCodeLine{00071\ \ \ \ \ STACK\_OF(ASYNC\_JOB)\ *jobs;}
+\DoxyCodeLine{00072\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ curr\_size;}
+\DoxyCodeLine{00073\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ max\_size;}
+\DoxyCodeLine{00074\ \};}
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00076\ \textcolor{keywordtype}{void}\ async\_local\_cleanup(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00077\ \textcolor{keywordtype}{void}\ async\_start\_func(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00078\ \mbox{\hyperlink{structasync__ctx__st}{async\_ctx}}\ *async\_get\_ctx(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00079\ }
+\DoxyCodeLine{00080\ \textcolor{keywordtype}{void}\ async\_wait\_ctx\_reset\_counts(ASYNC\_WAIT\_CTX\ *ctx);}
+\DoxyCodeLine{00081\ }
+
+\end{DoxyCode}

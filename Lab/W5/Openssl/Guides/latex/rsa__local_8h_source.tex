@@ -1,0 +1,202 @@
+\doxysection{rsa\+\_\+local.\+h}
+\hypertarget{rsa__local_8h_source}{}\label{rsa__local_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/rsa/rsa\_local.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/rsa/rsa\_local.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2006-\/2021\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_CRYPTO\_RSA\_LOCAL\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#define\ OSSL\_CRYPTO\_RSA\_LOCAL\_H}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ "{}internal/refcount.h"{}}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ "{}crypto/rsa.h"{}}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#define\ RSA\_MAX\_PRIME\_NUM\ \ \ \ \ \ \ 5}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structrsa__prime__info__st}{rsa\_prime\_info\_st}}\ \{}
+\DoxyCodeLine{00019\ \ \ \ \ BIGNUM\ *r;}
+\DoxyCodeLine{00020\ \ \ \ \ BIGNUM\ *d;}
+\DoxyCodeLine{00021\ \ \ \ \ BIGNUM\ *t;}
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{comment}{/*\ save\ product\ of\ primes\ prior\ to\ this\ one\ */}}
+\DoxyCodeLine{00023\ \ \ \ \ BIGNUM\ *pp;}
+\DoxyCodeLine{00024\ \ \ \ \ BN\_MONT\_CTX\ *m;}
+\DoxyCodeLine{00025\ \}\ \mbox{\hyperlink{structrsa__prime__info__st}{RSA\_PRIME\_INFO}};}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ DECLARE\_ASN1\_ITEM(\mbox{\hyperlink{structrsa__prime__info__st}{RSA\_PRIME\_INFO}})}
+\DoxyCodeLine{00028\ DEFINE\_STACK\_OF(\mbox{\hyperlink{structrsa__prime__info__st}{RSA\_PRIME\_INFO}})}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#if\ defined(FIPS\_MODULE)\ \&\&\ !defined(OPENSSL\_NO\_ACVP\_TESTS)}}
+\DoxyCodeLine{00031\ \textcolor{keyword}{struct\ }rsa\_acvp\_test\_st\ \{}
+\DoxyCodeLine{00032\ \ \ \ \ \textcolor{comment}{/*\ optional\ inputs\ */}}
+\DoxyCodeLine{00033\ \ \ \ \ BIGNUM\ *Xp1;}
+\DoxyCodeLine{00034\ \ \ \ \ BIGNUM\ *Xp2;}
+\DoxyCodeLine{00035\ \ \ \ \ BIGNUM\ *Xq1;}
+\DoxyCodeLine{00036\ \ \ \ \ BIGNUM\ *Xq2;}
+\DoxyCodeLine{00037\ \ \ \ \ BIGNUM\ *Xp;}
+\DoxyCodeLine{00038\ \ \ \ \ BIGNUM\ *Xq;}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{comment}{/*\ optional\ outputs\ */}}
+\DoxyCodeLine{00041\ \ \ \ \ BIGNUM\ *p1;}
+\DoxyCodeLine{00042\ \ \ \ \ BIGNUM\ *p2;}
+\DoxyCodeLine{00043\ \ \ \ \ BIGNUM\ *q1;}
+\DoxyCodeLine{00044\ \ \ \ \ BIGNUM\ *q2;}
+\DoxyCodeLine{00045\ \};}
+\DoxyCodeLine{00046\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structrsa__st}{rsa\_st}}\ \{}
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00050\ \textcolor{comment}{\ \ \ \ \ *\ \#legacy}}
+\DoxyCodeLine{00051\ \textcolor{comment}{\ \ \ \ \ *\ The\ first\ field\ is\ used\ to\ pickup\ errors\ where\ this\ is\ passed}}
+\DoxyCodeLine{00052\ \textcolor{comment}{\ \ \ \ \ *\ instead\ of\ an\ EVP\_PKEY.\ \ It\ is\ always\ zero.}}
+\DoxyCodeLine{00053\ \textcolor{comment}{\ \ \ \ \ *\ THIS\ MUST\ REMAIN\ THE\ FIRST\ FIELD.}}
+\DoxyCodeLine{00054\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00055\ \ \ \ \ \textcolor{keywordtype}{int}\ dummy\_zero;}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \ \ \ \ OSSL\_LIB\_CTX\ *libctx;}
+\DoxyCodeLine{00058\ \ \ \ \ int32\_t\ version;}
+\DoxyCodeLine{00059\ \ \ \ \ \textcolor{keyword}{const}\ RSA\_METHOD\ *meth;}
+\DoxyCodeLine{00060\ \ \ \ \ \textcolor{comment}{/*\ functional\ reference\ if\ 'meth'\ is\ ENGINE-\/provided\ */}}
+\DoxyCodeLine{00061\ \ \ \ \ ENGINE\ *engine;}
+\DoxyCodeLine{00062\ \ \ \ \ BIGNUM\ *n;}
+\DoxyCodeLine{00063\ \ \ \ \ BIGNUM\ *\mbox{\hyperlink{structe}{e}};}
+\DoxyCodeLine{00064\ \ \ \ \ BIGNUM\ *d;}
+\DoxyCodeLine{00065\ \ \ \ \ BIGNUM\ *p;}
+\DoxyCodeLine{00066\ \ \ \ \ BIGNUM\ *q;}
+\DoxyCodeLine{00067\ \ \ \ \ BIGNUM\ *dmp1;}
+\DoxyCodeLine{00068\ \ \ \ \ BIGNUM\ *dmq1;}
+\DoxyCodeLine{00069\ \ \ \ \ BIGNUM\ *iqmp;}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00071\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00072\ \textcolor{comment}{\ \ \ \ \ *\ If\ a\ PSS\ only\ key\ this\ contains\ the\ parameter\ restrictions.}}
+\DoxyCodeLine{00073\ \textcolor{comment}{\ \ \ \ \ *\ There\ are\ two\ structures\ for\ the\ same\ thing,\ used\ in\ different\ cases.}}
+\DoxyCodeLine{00074\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00075\ \ \ \ \ \textcolor{comment}{/*\ This\ is\ used\ uniquely\ by\ OpenSSL\ provider\ implementations.\ */}}
+\DoxyCodeLine{00076\ \ \ \ \ \mbox{\hyperlink{structrsa__pss__params__30__st}{RSA\_PSS\_PARAMS\_30}}\ pss\_params;}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ \textcolor{preprocessor}{\#if\ defined(FIPS\_MODULE)\ \&\&\ !defined(OPENSSL\_NO\_ACVP\_TESTS)}}
+\DoxyCodeLine{00079\ \ \ \ \ RSA\_ACVP\_TEST\ *acvp\_test;}
+\DoxyCodeLine{00080\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00082\ \textcolor{preprocessor}{\#ifndef\ FIPS\_MODULE}}
+\DoxyCodeLine{00083\ \ \ \ \ \textcolor{comment}{/*\ This\ is\ used\ uniquely\ by\ rsa\_ameth.c\ and\ rsa\_pmeth.c.\ */}}
+\DoxyCodeLine{00084\ \ \ \ \ RSA\_PSS\_PARAMS\ *pss;}
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{comment}{/*\ for\ multi-\/prime\ RSA,\ defined\ in\ RFC\ 8017\ */}}
+\DoxyCodeLine{00086\ \ \ \ \ STACK\_OF(\mbox{\hyperlink{structrsa__prime__info__st}{RSA\_PRIME\_INFO}})\ *prime\_infos;}
+\DoxyCodeLine{00087\ \ \ \ \ \textcolor{comment}{/*\ Be\ careful\ using\ this\ if\ the\ RSA\ structure\ is\ shared\ */}}
+\DoxyCodeLine{00088\ \ \ \ \ CRYPTO\_EX\_DATA\ ex\_data;}
+\DoxyCodeLine{00089\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00090\ \ \ \ \ \mbox{\hyperlink{struct_c_r_y_p_t_o___r_e_f___c_o_u_n_t}{CRYPTO\_REF\_COUNT}}\ references;}
+\DoxyCodeLine{00091\ \ \ \ \ \textcolor{keywordtype}{int}\ flags;}
+\DoxyCodeLine{00092\ \ \ \ \ \textcolor{comment}{/*\ Used\ to\ cache\ montgomery\ values\ */}}
+\DoxyCodeLine{00093\ \ \ \ \ BN\_MONT\_CTX\ *\_method\_mod\_n;}
+\DoxyCodeLine{00094\ \ \ \ \ BN\_MONT\_CTX\ *\_method\_mod\_p;}
+\DoxyCodeLine{00095\ \ \ \ \ BN\_MONT\_CTX\ *\_method\_mod\_q;}
+\DoxyCodeLine{00096\ \ \ \ \ BN\_BLINDING\ *blinding;}
+\DoxyCodeLine{00097\ \ \ \ \ BN\_BLINDING\ *mt\_blinding;}
+\DoxyCodeLine{00098\ \ \ \ \ CRYPTO\_RWLOCK\ *lock;}
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00100\ \ \ \ \ \textcolor{keywordtype}{int}\ dirty\_cnt;}
+\DoxyCodeLine{00101\ \};}
+\DoxyCodeLine{00102\ }
+\DoxyCodeLine{00103\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structrsa__meth__st}{rsa\_meth\_st}}\ \{}
+\DoxyCodeLine{00104\ \ \ \ \ \textcolor{keywordtype}{char}\ *name;}
+\DoxyCodeLine{00105\ \ \ \ \ int\ (*rsa\_pub\_enc)\ (\textcolor{keywordtype}{int}\ flen,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *from,}
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *to,\ RSA\ *rsa,\ \textcolor{keywordtype}{int}\ padding);}
+\DoxyCodeLine{00107\ \ \ \ \ int\ (*rsa\_pub\_dec)\ (\textcolor{keywordtype}{int}\ flen,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *from,}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *to,\ RSA\ *rsa,\ \textcolor{keywordtype}{int}\ padding);}
+\DoxyCodeLine{00109\ \ \ \ \ int\ (*rsa\_priv\_enc)\ (\textcolor{keywordtype}{int}\ flen,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *from,}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *to,\ RSA\ *rsa,\ \textcolor{keywordtype}{int}\ padding);}
+\DoxyCodeLine{00111\ \ \ \ \ int\ (*rsa\_priv\_dec)\ (\textcolor{keywordtype}{int}\ flen,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *from,}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *to,\ RSA\ *rsa,\ \textcolor{keywordtype}{int}\ padding);}
+\DoxyCodeLine{00113\ \ \ \ \ \textcolor{comment}{/*\ Can\ be\ null\ */}}
+\DoxyCodeLine{00114\ \ \ \ \ int\ (*rsa\_mod\_exp)\ (BIGNUM\ *r0,\ \textcolor{keyword}{const}\ BIGNUM\ *I,\ RSA\ *rsa,\ BN\_CTX\ *ctx);}
+\DoxyCodeLine{00115\ \ \ \ \ \textcolor{comment}{/*\ Can\ be\ null\ */}}
+\DoxyCodeLine{00116\ \ \ \ \ int\ (*bn\_mod\_exp)\ (BIGNUM\ *r,\ \textcolor{keyword}{const}\ BIGNUM\ *a,\ \textcolor{keyword}{const}\ BIGNUM\ *p,}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *m,\ BN\_CTX\ *ctx,\ BN\_MONT\_CTX\ *m\_ctx);}
+\DoxyCodeLine{00118\ \ \ \ \ \textcolor{comment}{/*\ called\ at\ new\ */}}
+\DoxyCodeLine{00119\ \ \ \ \ int\ (*init)\ (RSA\ *rsa);}
+\DoxyCodeLine{00120\ \ \ \ \ \textcolor{comment}{/*\ called\ at\ free\ */}}
+\DoxyCodeLine{00121\ \ \ \ \ int\ (*finish)\ (RSA\ *rsa);}
+\DoxyCodeLine{00122\ \ \ \ \ \textcolor{comment}{/*\ RSA\_METHOD\_FLAG\_*\ things\ */}}
+\DoxyCodeLine{00123\ \ \ \ \ \textcolor{keywordtype}{int}\ flags;}
+\DoxyCodeLine{00124\ \ \ \ \ \textcolor{comment}{/*\ may\ be\ needed!\ */}}
+\DoxyCodeLine{00125\ \ \ \ \ \textcolor{keywordtype}{char}\ *app\_data;}
+\DoxyCodeLine{00126\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00127\ \textcolor{comment}{\ \ \ \ \ *\ New\ sign\ and\ verify\ functions:\ some\ libraries\ don't\ allow\ arbitrary}}
+\DoxyCodeLine{00128\ \textcolor{comment}{\ \ \ \ \ *\ data\ to\ be\ signed/verified:\ this\ allows\ them\ to\ be\ used.\ Note:\ for}}
+\DoxyCodeLine{00129\ \textcolor{comment}{\ \ \ \ \ *\ this\ to\ work\ the\ RSA\_public\_decrypt()\ and\ RSA\_private\_encrypt()\ should}}
+\DoxyCodeLine{00130\ \textcolor{comment}{\ \ \ \ \ *\ *NOT*\ be\ used.\ RSA\_sign(),\ RSA\_verify()\ should\ be\ used\ instead.}}
+\DoxyCodeLine{00131\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00132\ \ \ \ \ int\ (*rsa\_sign)\ (\textcolor{keywordtype}{int}\ type,}
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *m,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ m\_length,}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *sigret,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ *siglen,}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ RSA\ *rsa);}
+\DoxyCodeLine{00136\ \ \ \ \ int\ (*rsa\_verify)\ (\textcolor{keywordtype}{int}\ dtype,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *m,}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ m\_length,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *sigbuf,}
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ siglen,\ \textcolor{keyword}{const}\ RSA\ *rsa);}
+\DoxyCodeLine{00139\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00140\ \textcolor{comment}{\ \ \ \ \ *\ If\ this\ callback\ is\ NULL,\ the\ builtin\ software\ RSA\ key-\/gen\ will\ be}}
+\DoxyCodeLine{00141\ \textcolor{comment}{\ \ \ \ \ *\ used.\ This\ is\ for\ behavioural\ compatibility\ whilst\ the\ code\ gets}}
+\DoxyCodeLine{00142\ \textcolor{comment}{\ \ \ \ \ *\ rewired,\ but\ one\ day\ it\ would\ be\ nice\ to\ assume\ there\ are\ no\ such}}
+\DoxyCodeLine{00143\ \textcolor{comment}{\ \ \ \ \ *\ things\ as\ "{}builtin\ software"{}\ implementations.}}
+\DoxyCodeLine{00144\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00145\ \ \ \ \ int\ (*rsa\_keygen)\ (RSA\ *rsa,\ \textcolor{keywordtype}{int}\ bits,\ BIGNUM\ *\mbox{\hyperlink{structe}{e}},\ BN\_GENCB\ *cb);}
+\DoxyCodeLine{00146\ \ \ \ \ int\ (*rsa\_multi\_prime\_keygen)\ (RSA\ *rsa,\ \textcolor{keywordtype}{int}\ bits,\ \textcolor{keywordtype}{int}\ primes,}
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BIGNUM\ *\mbox{\hyperlink{structe}{e}},\ BN\_GENCB\ *cb);}
+\DoxyCodeLine{00148\ \};}
+\DoxyCodeLine{00149\ }
+\DoxyCodeLine{00150\ \textcolor{comment}{/*\ Macros\ to\ test\ if\ a\ pkey\ or\ ctx\ is\ for\ a\ PSS\ key\ */}}
+\DoxyCodeLine{00151\ \textcolor{preprocessor}{\#define\ pkey\_is\_pss(pkey)\ (pkey-\/>ameth-\/>pkey\_id\ ==\ EVP\_PKEY\_RSA\_PSS)}}
+\DoxyCodeLine{00152\ \textcolor{preprocessor}{\#define\ pkey\_ctx\_is\_pss(ctx)\ (ctx-\/>pmeth-\/>pkey\_id\ ==\ EVP\_PKEY\_RSA\_PSS)}}
+\DoxyCodeLine{00153\ }
+\DoxyCodeLine{00154\ RSA\_PSS\_PARAMS\ *ossl\_rsa\_pss\_params\_create(\textcolor{keyword}{const}\ EVP\_MD\ *sigmd,}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ EVP\_MD\ *mgf1md,\ \textcolor{keywordtype}{int}\ saltlen);}
+\DoxyCodeLine{00156\ \textcolor{keywordtype}{int}\ ossl\_rsa\_pss\_get\_param(\textcolor{keyword}{const}\ RSA\_PSS\_PARAMS\ *pss,\ \textcolor{keyword}{const}\ EVP\_MD\ **pmd,}
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ EVP\_MD\ **pmgf1md,\ \textcolor{keywordtype}{int}\ *psaltlen);}
+\DoxyCodeLine{00158\ \textcolor{comment}{/*\ internal\ function\ to\ clear\ and\ free\ multi-\/prime\ parameters\ */}}
+\DoxyCodeLine{00159\ \textcolor{keywordtype}{void}\ ossl\_rsa\_multip\_info\_free\_ex(\mbox{\hyperlink{structrsa__prime__info__st}{RSA\_PRIME\_INFO}}\ *pinfo);}
+\DoxyCodeLine{00160\ \textcolor{keywordtype}{void}\ ossl\_rsa\_multip\_info\_free(\mbox{\hyperlink{structrsa__prime__info__st}{RSA\_PRIME\_INFO}}\ *pinfo);}
+\DoxyCodeLine{00161\ \mbox{\hyperlink{structrsa__prime__info__st}{RSA\_PRIME\_INFO}}\ *ossl\_rsa\_multip\_info\_new(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00162\ \textcolor{keywordtype}{int}\ ossl\_rsa\_multip\_calc\_product(RSA\ *rsa);}
+\DoxyCodeLine{00163\ \textcolor{keywordtype}{int}\ ossl\_rsa\_multip\_cap(\textcolor{keywordtype}{int}\ bits);}
+\DoxyCodeLine{00164\ }
+\DoxyCodeLine{00165\ \textcolor{keywordtype}{int}\ ossl\_rsa\_sp800\_56b\_validate\_strength(\textcolor{keywordtype}{int}\ nbits,\ \textcolor{keywordtype}{int}\ strength);}
+\DoxyCodeLine{00166\ \textcolor{keywordtype}{int}\ ossl\_rsa\_check\_pminusq\_diff(BIGNUM\ *diff,\ \textcolor{keyword}{const}\ BIGNUM\ *p,\ \textcolor{keyword}{const}\ BIGNUM\ *q,}
+\DoxyCodeLine{00167\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ nbits);}
+\DoxyCodeLine{00168\ \textcolor{keywordtype}{int}\ ossl\_rsa\_get\_lcm(BN\_CTX\ *ctx,\ \textcolor{keyword}{const}\ BIGNUM\ *p,\ \textcolor{keyword}{const}\ BIGNUM\ *q,}
+\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BIGNUM\ *lcm,\ BIGNUM\ *gcd,\ BIGNUM\ *p1,\ BIGNUM\ *q1,}
+\DoxyCodeLine{00170\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BIGNUM\ *p1q1);}
+\DoxyCodeLine{00171\ }
+\DoxyCodeLine{00172\ \textcolor{keywordtype}{int}\ ossl\_rsa\_check\_public\_exponent(\textcolor{keyword}{const}\ BIGNUM\ *\mbox{\hyperlink{structe}{e}});}
+\DoxyCodeLine{00173\ \textcolor{keywordtype}{int}\ ossl\_rsa\_check\_private\_exponent(\textcolor{keyword}{const}\ RSA\ *rsa,\ \textcolor{keywordtype}{int}\ nbits,\ BN\_CTX\ *ctx);}
+\DoxyCodeLine{00174\ \textcolor{keywordtype}{int}\ ossl\_rsa\_check\_prime\_factor(BIGNUM\ *p,\ BIGNUM\ *\mbox{\hyperlink{structe}{e}},\ \textcolor{keywordtype}{int}\ nbits,\ BN\_CTX\ *ctx);}
+\DoxyCodeLine{00175\ \textcolor{keywordtype}{int}\ ossl\_rsa\_check\_prime\_factor\_range(\textcolor{keyword}{const}\ BIGNUM\ *p,\ \textcolor{keywordtype}{int}\ nbits,\ BN\_CTX\ *ctx);}
+\DoxyCodeLine{00176\ \textcolor{keywordtype}{int}\ ossl\_rsa\_check\_crt\_components(\textcolor{keyword}{const}\ RSA\ *rsa,\ BN\_CTX\ *ctx);}
+\DoxyCodeLine{00177\ }
+\DoxyCodeLine{00178\ \textcolor{keywordtype}{int}\ ossl\_rsa\_sp800\_56b\_pairwise\_test(RSA\ *rsa,\ BN\_CTX\ *ctx);}
+\DoxyCodeLine{00179\ \textcolor{keywordtype}{int}\ ossl\_rsa\_sp800\_56b\_check\_public(\textcolor{keyword}{const}\ RSA\ *rsa);}
+\DoxyCodeLine{00180\ \textcolor{keywordtype}{int}\ ossl\_rsa\_sp800\_56b\_check\_private(\textcolor{keyword}{const}\ RSA\ *rsa);}
+\DoxyCodeLine{00181\ \textcolor{keywordtype}{int}\ ossl\_rsa\_sp800\_56b\_check\_keypair(\textcolor{keyword}{const}\ RSA\ *rsa,\ \textcolor{keyword}{const}\ BIGNUM\ *efixed,}
+\DoxyCodeLine{00182\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ strength,\ \textcolor{keywordtype}{int}\ nbits);}
+\DoxyCodeLine{00183\ \textcolor{keywordtype}{int}\ ossl\_rsa\_sp800\_56b\_generate\_key(RSA\ *rsa,\ \textcolor{keywordtype}{int}\ nbits,\ \textcolor{keyword}{const}\ BIGNUM\ *efixed,}
+\DoxyCodeLine{00184\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BN\_GENCB\ *cb);}
+\DoxyCodeLine{00185\ }
+\DoxyCodeLine{00186\ \textcolor{keywordtype}{int}\ ossl\_rsa\_sp800\_56b\_derive\_params\_from\_pq(RSA\ *rsa,\ \textcolor{keywordtype}{int}\ nbits,}
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *\mbox{\hyperlink{structe}{e}},\ BN\_CTX\ *ctx);}
+\DoxyCodeLine{00188\ \textcolor{keywordtype}{int}\ ossl\_rsa\_fips186\_4\_gen\_prob\_primes(RSA\ *rsa,\ RSA\_ACVP\_TEST\ *test,}
+\DoxyCodeLine{00189\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ nbits,\ \textcolor{keyword}{const}\ BIGNUM\ *\mbox{\hyperlink{structe}{e}},\ BN\_CTX\ *ctx,}
+\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BN\_GENCB\ *cb);}
+\DoxyCodeLine{00191\ }
+\DoxyCodeLine{00192\ \textcolor{keywordtype}{int}\ ossl\_rsa\_padding\_add\_PKCS1\_type\_2\_ex(OSSL\_LIB\_CTX\ *libctx,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *to,}
+\DoxyCodeLine{00193\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ tlen,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *from,}
+\DoxyCodeLine{00194\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ flen);}
+\DoxyCodeLine{00195\ }
+\DoxyCodeLine{00196\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ OSSL\_CRYPTO\_RSA\_LOCAL\_H\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

@@ -1,0 +1,265 @@
+\doxysection{drbg\+\_\+local.\+h}
+\hypertarget{drbg__local_8h_source}{}\label{drbg__local_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/providers/implementations/rands/drbg\_local.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/providers/implementations/rands/drbg\_local.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 1995-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_CRYPTO\_PROV\_LOCAL\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_CRYPTO\_PROV\_LOCAL\_H}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#\ include\ <openssl/evp.h>}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ include\ <openssl/core\_dispatch.h>}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#\ include\ <openssl/core\_names.h>}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#\ include\ <openssl/params.h>}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#\ include\ "{}internal/tsan\_assist.h"{}}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#\ include\ "{}internal/nelem.h"{}}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#\ include\ "{}internal/numbers.h"{}}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#\ include\ "{}prov/provider\_ctx.h"{}}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{comment}{/*\ How\ many\ times\ to\ read\ the\ TSC\ as\ a\ randomness\ source.\ */}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#\ define\ TSC\_READ\_COUNT\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 4}}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{comment}{/*\ Maximum\ reseed\ intervals\ */}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#\ define\ MAX\_RESEED\_INTERVAL\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (1\ <<\ 24)}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#\ define\ MAX\_RESEED\_TIME\_INTERVAL\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (1\ <<\ 20)\ }\textcolor{comment}{/*\ approx.\ 12\ days\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \textcolor{comment}{/*\ Default\ reseed\ intervals\ */}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#\ define\ RESEED\_INTERVAL\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (1\ <<\ 8)}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#\ define\ TIME\_INTERVAL\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (60*60)\ \ \ }\textcolor{comment}{/*\ 1\ hour\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00034\ \textcolor{comment}{\ *\ The\ number\ of\ bytes\ that\ constitutes\ an\ atomic\ lump\ of\ entropy\ with\ respect}}
+\DoxyCodeLine{00035\ \textcolor{comment}{\ *\ to\ the\ FIPS\ 140-\/2\ section\ 4.9.2\ Conditional\ Tests.\ \ The\ size\ is\ somewhat}}
+\DoxyCodeLine{00036\ \textcolor{comment}{\ *\ arbitrary,\ the\ smaller\ the\ value,\ the\ less\ entropy\ is\ consumed\ on\ first}}
+\DoxyCodeLine{00037\ \textcolor{comment}{\ *\ read\ but\ the\ higher\ the\ probability\ of\ the\ test\ failing\ by\ accident.}}
+\DoxyCodeLine{00038\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00039\ \textcolor{comment}{\ *\ The\ value\ is\ in\ bytes.}}
+\DoxyCodeLine{00040\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00041\ \textcolor{preprocessor}{\#define\ CRNGT\_BUFSIZ\ \ \ \ 16}}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00044\ \textcolor{comment}{\ *\ Maximum\ input\ size\ for\ the\ DRBG\ (entropy,\ nonce,\ personalization\ string)}}
+\DoxyCodeLine{00045\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00046\ \textcolor{comment}{\ *\ NIST\ SP800\ 90Ar1\ allows\ a\ maximum\ of\ (1\ <<\ 35)\ bits\ i.e.,\ (1\ <<\ 32)\ bytes.}}
+\DoxyCodeLine{00047\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00048\ \textcolor{comment}{\ *\ We\ lower\ it\ to\ 'only'\ INT32\_MAX\ bytes,\ which\ is\ equivalent\ to\ 2\ gigabytes.}}
+\DoxyCodeLine{00049\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00050\ \textcolor{preprocessor}{\#\ define\ DRBG\_MAX\_LENGTH\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ INT32\_MAX}}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ \textcolor{comment}{/*\ The\ default\ nonce\ */}}
+\DoxyCodeLine{00053\ \textcolor{comment}{/*\ ASCII:\ "{}OpenSSL\ NIST\ SP\ 800-\/90A\ DRBG"{},\ in\ hex\ for\ EBCDIC\ compatibility\ */}}
+\DoxyCodeLine{00054\ \textcolor{preprocessor}{\#define\ DRBG\_DEFAULT\_PERS\_STRING\ "{}\(\backslash\)x4f\(\backslash\)x70\(\backslash\)x65\(\backslash\)x6e\(\backslash\)x53\(\backslash\)x53\(\backslash\)x4c\(\backslash\)x20\(\backslash\)x4e\(\backslash\)x49\(\backslash\)x53\(\backslash\)x54\(\backslash\)x20\(\backslash\)x53\(\backslash\)x50\(\backslash\)x20\(\backslash\)x38\(\backslash\)x30\(\backslash\)x30\(\backslash\)x2d\(\backslash\)x39\(\backslash\)x30\(\backslash\)x41\(\backslash\)x20\(\backslash\)x44\(\backslash\)x52\(\backslash\)x42\(\backslash\)x47"{}}}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structprov__drbg__st}{prov\_drbg\_st}}\ \mbox{\hyperlink{structprov__drbg__st}{PROV\_DRBG}};}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \textcolor{comment}{/*\ DRBG\ status\ values\ */}}
+\DoxyCodeLine{00059\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}\ drbg\_status\_e\ \{}
+\DoxyCodeLine{00060\ \ \ \ \ DRBG\_UNINITIALISED,}
+\DoxyCodeLine{00061\ \ \ \ \ DRBG\_READY,}
+\DoxyCodeLine{00062\ \ \ \ \ DRBG\_ERROR}
+\DoxyCodeLine{00063\ \}\ DRBG\_STATUS;}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00066\ \textcolor{comment}{\ *\ The\ state\ of\ all\ types\ of\ DRBGs.}}
+\DoxyCodeLine{00067\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00068\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structprov__drbg__st}{prov\_drbg\_st}}\ \{}
+\DoxyCodeLine{00069\ \ \ \ \ CRYPTO\_RWLOCK\ *lock;}
+\DoxyCodeLine{00070\ \ \ \ \ \mbox{\hyperlink{structprov__ctx__st}{PROV\_CTX}}\ *provctx;}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00072\ \ \ \ \ \textcolor{comment}{/*\ Virtual\ functions\ are\ cache\ here\ */}}
+\DoxyCodeLine{00073\ \ \ \ \ int\ (*instantiate)(\mbox{\hyperlink{structprov__drbg__st}{PROV\_DRBG}}\ *drbg,}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *entropy,\ \textcolor{keywordtype}{size\_t}\ entropylen,}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *nonce,\ \textcolor{keywordtype}{size\_t}\ noncelen,}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *pers,\ \textcolor{keywordtype}{size\_t}\ perslen);}
+\DoxyCodeLine{00077\ \ \ \ \ int\ (*uninstantiate)(\mbox{\hyperlink{structprov__drbg__st}{PROV\_DRBG}}\ *ctx);}
+\DoxyCodeLine{00078\ \ \ \ \ int\ (*reseed)(\mbox{\hyperlink{structprov__drbg__st}{PROV\_DRBG}}\ *drbg,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *ent,\ \textcolor{keywordtype}{size\_t}\ ent\_len,}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *adin,\ \textcolor{keywordtype}{size\_t}\ adin\_len);}
+\DoxyCodeLine{00080\ \ \ \ \ int\ (*generate)(\mbox{\hyperlink{structprov__drbg__st}{PROV\_DRBG}}\ *,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,\ \textcolor{keywordtype}{size\_t}\ outlen,}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *adin,\ \textcolor{keywordtype}{size\_t}\ adin\_len);}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00083\ \ \ \ \ \textcolor{comment}{/*\ Parent\ PROV\_RAND\ and\ its\ dispatch\ table\ functions\ */}}
+\DoxyCodeLine{00084\ \ \ \ \ \textcolor{keywordtype}{void}\ *parent;}
+\DoxyCodeLine{00085\ \ \ \ \ OSSL\_FUNC\_rand\_enable\_locking\_fn\ *parent\_enable\_locking;}
+\DoxyCodeLine{00086\ \ \ \ \ OSSL\_FUNC\_rand\_lock\_fn\ *parent\_lock;}
+\DoxyCodeLine{00087\ \ \ \ \ OSSL\_FUNC\_rand\_unlock\_fn\ *parent\_unlock;}
+\DoxyCodeLine{00088\ \ \ \ \ OSSL\_FUNC\_rand\_get\_ctx\_params\_fn\ *parent\_get\_ctx\_params;}
+\DoxyCodeLine{00089\ \ \ \ \ OSSL\_FUNC\_rand\_nonce\_fn\ *parent\_nonce;}
+\DoxyCodeLine{00090\ \ \ \ \ OSSL\_FUNC\_rand\_get\_seed\_fn\ *parent\_get\_seed;}
+\DoxyCodeLine{00091\ \ \ \ \ OSSL\_FUNC\_rand\_clear\_seed\_fn\ *parent\_clear\_seed;}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \ \ \ \ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ *parent\_dispatch;}
+\DoxyCodeLine{00094\ }
+\DoxyCodeLine{00095\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00096\ \textcolor{comment}{\ \ \ \ \ *\ Stores\ the\ return\ value\ of\ openssl\_get\_fork\_id()\ as\ of\ when\ we\ last}}
+\DoxyCodeLine{00097\ \textcolor{comment}{\ \ \ \ \ *\ reseeded.\ \ The\ DRBG\ reseeds\ automatically\ whenever\ drbg-\/>fork\_id\ !=}}
+\DoxyCodeLine{00098\ \textcolor{comment}{\ \ \ \ \ *\ openssl\_get\_fork\_id().\ \ Used\ to\ provide\ fork-\/safety\ and\ reseed\ this}}
+\DoxyCodeLine{00099\ \textcolor{comment}{\ \ \ \ \ *\ DRBG\ in\ the\ child\ process.}}
+\DoxyCodeLine{00100\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00101\ \ \ \ \ \textcolor{keywordtype}{int}\ fork\_id;}
+\DoxyCodeLine{00102\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{short}\ flags;\ \textcolor{comment}{/*\ various\ external\ flags\ */}}
+\DoxyCodeLine{00103\ }
+\DoxyCodeLine{00104\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00105\ \textcolor{comment}{\ \ \ \ \ *\ The\ following\ parameters\ are\ setup\ by\ the\ per-\/type\ "{}init"{}\ function.}}
+\DoxyCodeLine{00106\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00107\ \textcolor{comment}{\ \ \ \ \ *\ The\ supported\ types\ and\ their\ init\ functions\ are:}}
+\DoxyCodeLine{00108\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ (1)\ CTR\_DRBG:\ \ drbg\_ctr\_init().}}
+\DoxyCodeLine{00109\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ (2)\ HMAC\_DRBG:\ drbg\_hmac\_init().}}
+\DoxyCodeLine{00110\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ (3)\ HASH\_DRBG:\ drbg\_hash\_init().}}
+\DoxyCodeLine{00111\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00112\ \textcolor{comment}{\ \ \ \ \ *\ The\ parameters\ are\ closely\ related\ to\ the\ ones\ described\ in}}
+\DoxyCodeLine{00113\ \textcolor{comment}{\ \ \ \ \ *\ section\ '10.2.1\ CTR\_DRBG'\ of\ [NIST\ SP\ 800-\/90Ar1],\ with\ one}}
+\DoxyCodeLine{00114\ \textcolor{comment}{\ \ \ \ \ *\ crucial\ difference:\ In\ the\ NIST\ standard,\ all\ counts\ are\ given}}
+\DoxyCodeLine{00115\ \textcolor{comment}{\ \ \ \ \ *\ in\ bits,\ whereas\ in\ OpenSSL\ entropy\ counts\ are\ given\ in\ bits}}
+\DoxyCodeLine{00116\ \textcolor{comment}{\ \ \ \ \ *\ and\ buffer\ lengths\ are\ given\ in\ bytes.}}
+\DoxyCodeLine{00117\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00118\ \textcolor{comment}{\ \ \ \ \ *\ Since\ this\ difference\ has\ lead\ to\ some\ confusion\ in\ the\ past,}}
+\DoxyCodeLine{00119\ \textcolor{comment}{\ \ \ \ \ *\ (see\ [GitHub\ Issue\ \#2443],\ formerly\ [rt.openssl.org\ \#4055])}}
+\DoxyCodeLine{00120\ \textcolor{comment}{\ \ \ \ \ *\ the\ 'len'\ suffix\ has\ been\ added\ to\ all\ buffer\ sizes\ for}}
+\DoxyCodeLine{00121\ \textcolor{comment}{\ \ \ \ \ *\ clarification.}}
+\DoxyCodeLine{00122\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00123\ }
+\DoxyCodeLine{00124\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ strength;}
+\DoxyCodeLine{00125\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ max\_request;}
+\DoxyCodeLine{00126\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ min\_entropylen,\ max\_entropylen;}
+\DoxyCodeLine{00127\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ min\_noncelen,\ max\_noncelen;}
+\DoxyCodeLine{00128\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ max\_perslen,\ max\_adinlen;}
+\DoxyCodeLine{00129\ }
+\DoxyCodeLine{00130\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00131\ \textcolor{comment}{\ \ \ \ \ *\ Counts\ the\ number\ of\ generate\ requests\ since\ the\ last\ reseed}}
+\DoxyCodeLine{00132\ \textcolor{comment}{\ \ \ \ \ *\ (Starts\ at\ 1).\ This\ value\ is\ the\ reseed\_counter\ as\ defined\ in}}
+\DoxyCodeLine{00133\ \textcolor{comment}{\ \ \ \ \ *\ NIST\ SP\ 800-\/90Ar1}}
+\DoxyCodeLine{00134\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00135\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ generate\_counter;}
+\DoxyCodeLine{00136\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00137\ \textcolor{comment}{\ \ \ \ \ *\ Maximum\ number\ of\ generate\ requests\ until\ a\ reseed\ is\ required.}}
+\DoxyCodeLine{00138\ \textcolor{comment}{\ \ \ \ \ *\ This\ value\ is\ ignored\ if\ it\ is\ zero.}}
+\DoxyCodeLine{00139\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00140\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ reseed\_interval;}
+\DoxyCodeLine{00141\ \ \ \ \ \textcolor{comment}{/*\ Stores\ the\ time\ when\ the\ last\ reseeding\ occurred\ */}}
+\DoxyCodeLine{00142\ \ \ \ \ time\_t\ reseed\_time;}
+\DoxyCodeLine{00143\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00144\ \textcolor{comment}{\ \ \ \ \ *\ Specifies\ the\ maximum\ time\ interval\ (in\ seconds)\ between\ reseeds.}}
+\DoxyCodeLine{00145\ \textcolor{comment}{\ \ \ \ \ *\ This\ value\ is\ ignored\ if\ it\ is\ zero.}}
+\DoxyCodeLine{00146\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00147\ \ \ \ \ time\_t\ reseed\_time\_interval;}
+\DoxyCodeLine{00148\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00149\ \textcolor{comment}{\ \ \ \ \ *\ Counts\ the\ number\ of\ reseeds\ since\ instantiation.}}
+\DoxyCodeLine{00150\ \textcolor{comment}{\ \ \ \ \ *\ This\ value\ is\ ignored\ if\ it\ is\ zero.}}
+\DoxyCodeLine{00151\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00152\ \textcolor{comment}{\ \ \ \ \ *\ This\ counter\ is\ used\ only\ for\ seed\ propagation\ from\ the\ <master>\ DRBG}}
+\DoxyCodeLine{00153\ \textcolor{comment}{\ \ \ \ \ *\ to\ its\ two\ children,\ the\ <public>\ and\ <private>\ DRBG.\ This\ feature\ is}}
+\DoxyCodeLine{00154\ \textcolor{comment}{\ \ \ \ \ *\ very\ special\ and\ its\ sole\ purpose\ is\ to\ ensure\ that\ any\ randomness\ which}}
+\DoxyCodeLine{00155\ \textcolor{comment}{\ \ \ \ \ *\ is\ added\ by\ PROV\_add()\ or\ PROV\_seed()\ will\ have\ an\ immediate\ effect\ on}}
+\DoxyCodeLine{00156\ \textcolor{comment}{\ \ \ \ \ *\ the\ output\ of\ PROV\_bytes()\ resp.\ PROV\_priv\_bytes().}}
+\DoxyCodeLine{00157\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00158\ \ \ \ \ TSAN\_QUALIFIER\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ reseed\_counter;}
+\DoxyCodeLine{00159\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ reseed\_next\_counter;}
+\DoxyCodeLine{00160\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ parent\_reseed\_counter;}
+\DoxyCodeLine{00161\ }
+\DoxyCodeLine{00162\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ seedlen;}
+\DoxyCodeLine{00163\ \ \ \ \ DRBG\_STATUS\ state;}
+\DoxyCodeLine{00164\ }
+\DoxyCodeLine{00165\ \ \ \ \ \textcolor{comment}{/*\ DRBG\ specific\ data\ */}}
+\DoxyCodeLine{00166\ \ \ \ \ \textcolor{keywordtype}{void}\ *data;}
+\DoxyCodeLine{00167\ }
+\DoxyCodeLine{00168\ \ \ \ \ \textcolor{comment}{/*\ Entropy\ and\ nonce\ gathering\ callbacks\ */}}
+\DoxyCodeLine{00169\ \ \ \ \ \textcolor{keywordtype}{void}\ *callback\_arg;}
+\DoxyCodeLine{00170\ \ \ \ \ OSSL\_INOUT\_CALLBACK\ *get\_entropy\_fn;}
+\DoxyCodeLine{00171\ \ \ \ \ OSSL\_CALLBACK\ *cleanup\_entropy\_fn;}
+\DoxyCodeLine{00172\ \ \ \ \ OSSL\_INOUT\_CALLBACK\ *get\_nonce\_fn;}
+\DoxyCodeLine{00173\ \ \ \ \ OSSL\_CALLBACK\ *cleanup\_nonce\_fn;}
+\DoxyCodeLine{00174\ \};}
+\DoxyCodeLine{00175\ }
+\DoxyCodeLine{00176\ \mbox{\hyperlink{structprov__drbg__st}{PROV\_DRBG}}\ *ossl\_rand\_drbg\_new}
+\DoxyCodeLine{00177\ \ \ \ \ (\textcolor{keywordtype}{void}\ *provctx,\ \textcolor{keywordtype}{void}\ *parent,\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ *parent\_dispatch,}
+\DoxyCodeLine{00178\ \ \ \ \ \ \textcolor{keywordtype}{int}\ (*dnew)(\mbox{\hyperlink{structprov__drbg__st}{PROV\_DRBG}}\ *ctx),}
+\DoxyCodeLine{00179\ \ \ \ \ \ \textcolor{keywordtype}{int}\ (*instantiate)(\mbox{\hyperlink{structprov__drbg__st}{PROV\_DRBG}}\ *drbg,}
+\DoxyCodeLine{00180\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *entropy,\ \textcolor{keywordtype}{size\_t}\ entropylen,}
+\DoxyCodeLine{00181\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *nonce,\ \textcolor{keywordtype}{size\_t}\ noncelen,}
+\DoxyCodeLine{00182\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *pers,\ \textcolor{keywordtype}{size\_t}\ perslen),}
+\DoxyCodeLine{00183\ \ \ \ \ \ \textcolor{keywordtype}{int}\ (*uninstantiate)(\mbox{\hyperlink{structprov__drbg__st}{PROV\_DRBG}}\ *ctx),}
+\DoxyCodeLine{00184\ \ \ \ \ \ \textcolor{keywordtype}{int}\ (*reseed)(\mbox{\hyperlink{structprov__drbg__st}{PROV\_DRBG}}\ *drbg,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *ent,\ \textcolor{keywordtype}{size\_t}\ ent\_len,}
+\DoxyCodeLine{00185\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *adin,\ \textcolor{keywordtype}{size\_t}\ adin\_len),}
+\DoxyCodeLine{00186\ \ \ \ \ \ \textcolor{keywordtype}{int}\ (*generate)(\mbox{\hyperlink{structprov__drbg__st}{PROV\_DRBG}}\ *,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,\ \textcolor{keywordtype}{size\_t}\ outlen,}
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *adin,\ \textcolor{keywordtype}{size\_t}\ adin\_len));}
+\DoxyCodeLine{00188\ \textcolor{keywordtype}{void}\ ossl\_rand\_drbg\_free(\mbox{\hyperlink{structprov__drbg__st}{PROV\_DRBG}}\ *drbg);}
+\DoxyCodeLine{00189\ }
+\DoxyCodeLine{00190\ \textcolor{keywordtype}{int}\ ossl\_prov\_drbg\_instantiate(\mbox{\hyperlink{structprov__drbg__st}{PROV\_DRBG}}\ *drbg,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ strength,}
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ prediction\_resistance,}
+\DoxyCodeLine{00192\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *pers,\ \textcolor{keywordtype}{size\_t}\ perslen);}
+\DoxyCodeLine{00193\ }
+\DoxyCodeLine{00194\ \textcolor{keywordtype}{int}\ ossl\_prov\_drbg\_uninstantiate(\mbox{\hyperlink{structprov__drbg__st}{PROV\_DRBG}}\ *drbg);}
+\DoxyCodeLine{00195\ }
+\DoxyCodeLine{00196\ \textcolor{keywordtype}{int}\ ossl\_prov\_drbg\_reseed(\mbox{\hyperlink{structprov__drbg__st}{PROV\_DRBG}}\ *drbg,\ \textcolor{keywordtype}{int}\ prediction\_resistance,}
+\DoxyCodeLine{00197\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *ent,\ \textcolor{keywordtype}{size\_t}\ ent\_len,}
+\DoxyCodeLine{00198\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *adin,\ \textcolor{keywordtype}{size\_t}\ adinlen);}
+\DoxyCodeLine{00199\ }
+\DoxyCodeLine{00200\ \textcolor{keywordtype}{int}\ ossl\_prov\_drbg\_generate(\mbox{\hyperlink{structprov__drbg__st}{PROV\_DRBG}}\ *drbg,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,\ \textcolor{keywordtype}{size\_t}\ outlen,}
+\DoxyCodeLine{00201\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ strength,\ \textcolor{keywordtype}{int}\ prediction\_resistance,}
+\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *adin,\ \textcolor{keywordtype}{size\_t}\ adinlen);}
+\DoxyCodeLine{00203\ }
+\DoxyCodeLine{00204\ \textcolor{comment}{/*\ Seeding\ api\ */}}
+\DoxyCodeLine{00205\ OSSL\_FUNC\_rand\_get\_seed\_fn\ ossl\_drbg\_get\_seed;}
+\DoxyCodeLine{00206\ OSSL\_FUNC\_rand\_clear\_seed\_fn\ ossl\_drbg\_clear\_seed;}
+\DoxyCodeLine{00207\ }
+\DoxyCodeLine{00208\ \textcolor{comment}{/*\ Verify\ that\ an\ array\ of\ numeric\ values\ is\ all\ zero\ */}}
+\DoxyCodeLine{00209\ \textcolor{preprocessor}{\#define\ PROV\_DRBG\_VERIFY\_ZEROIZATION(v)\ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00210\ \textcolor{preprocessor}{\ \ \ \ \{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00211\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ size\_t\ i;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00212\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00213\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ for\ (i\ =\ 0;\ i\ <\ OSSL\_NELEM(v);\ i++)\ \(\backslash\)}}
+\DoxyCodeLine{00214\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ if\ ((v)[i]\ !=\ 0)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00215\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ goto\ err;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00216\ \textcolor{preprocessor}{\ \ \ \ \}}}
+\DoxyCodeLine{00217\ }
+\DoxyCodeLine{00218\ \textcolor{comment}{/*\ locking\ api\ */}}
+\DoxyCodeLine{00219\ OSSL\_FUNC\_rand\_enable\_locking\_fn\ ossl\_drbg\_enable\_locking;}
+\DoxyCodeLine{00220\ OSSL\_FUNC\_rand\_lock\_fn\ ossl\_drbg\_lock;}
+\DoxyCodeLine{00221\ OSSL\_FUNC\_rand\_unlock\_fn\ ossl\_drbg\_unlock;}
+\DoxyCodeLine{00222\ }
+\DoxyCodeLine{00223\ \textcolor{comment}{/*\ Common\ parameters\ for\ all\ of\ our\ DRBGs\ */}}
+\DoxyCodeLine{00224\ \textcolor{keywordtype}{int}\ ossl\_drbg\_get\_ctx\_params(\mbox{\hyperlink{structprov__drbg__st}{PROV\_DRBG}}\ *drbg,\ OSSL\_PARAM\ params[]);}
+\DoxyCodeLine{00225\ \textcolor{keywordtype}{int}\ ossl\_drbg\_get\_ctx\_params\_no\_lock(\mbox{\hyperlink{structprov__drbg__st}{PROV\_DRBG}}\ *drbg,\ OSSL\_PARAM\ params[],}
+\DoxyCodeLine{00226\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ *complete);}
+\DoxyCodeLine{00227\ \textcolor{keywordtype}{int}\ ossl\_drbg\_set\_ctx\_params(\mbox{\hyperlink{structprov__drbg__st}{PROV\_DRBG}}\ *drbg,\ \textcolor{keyword}{const}\ OSSL\_PARAM\ params[]);}
+\DoxyCodeLine{00228\ }
+\DoxyCodeLine{00229\ \textcolor{preprocessor}{\#define\ OSSL\_PARAM\_DRBG\_SETTABLE\_CTX\_COMMON\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00230\ \textcolor{preprocessor}{\ \ \ \ OSSL\_PARAM\_uint(OSSL\_DRBG\_PARAM\_RESEED\_REQUESTS,\ NULL),\ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00231\ \textcolor{preprocessor}{\ \ \ \ OSSL\_PARAM\_uint64(OSSL\_DRBG\_PARAM\_RESEED\_TIME\_INTERVAL,\ NULL)}}
+\DoxyCodeLine{00232\ }
+\DoxyCodeLine{00233\ \textcolor{preprocessor}{\#define\ OSSL\_PARAM\_DRBG\_GETTABLE\_CTX\_COMMON\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00234\ \textcolor{preprocessor}{\ \ \ \ OSSL\_PARAM\_int(OSSL\_RAND\_PARAM\_STATE,\ NULL),\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00235\ \textcolor{preprocessor}{\ \ \ \ OSSL\_PARAM\_uint(OSSL\_RAND\_PARAM\_STRENGTH,\ NULL),\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00236\ \textcolor{preprocessor}{\ \ \ \ OSSL\_PARAM\_size\_t(OSSL\_RAND\_PARAM\_MAX\_REQUEST,\ NULL),\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00237\ \textcolor{preprocessor}{\ \ \ \ OSSL\_PARAM\_size\_t(OSSL\_DRBG\_PARAM\_MIN\_ENTROPYLEN,\ NULL),\ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00238\ \textcolor{preprocessor}{\ \ \ \ OSSL\_PARAM\_size\_t(OSSL\_DRBG\_PARAM\_MAX\_ENTROPYLEN,\ NULL),\ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00239\ \textcolor{preprocessor}{\ \ \ \ OSSL\_PARAM\_size\_t(OSSL\_DRBG\_PARAM\_MIN\_NONCELEN,\ NULL),\ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00240\ \textcolor{preprocessor}{\ \ \ \ OSSL\_PARAM\_size\_t(OSSL\_DRBG\_PARAM\_MAX\_NONCELEN,\ NULL),\ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00241\ \textcolor{preprocessor}{\ \ \ \ OSSL\_PARAM\_size\_t(OSSL\_DRBG\_PARAM\_MAX\_PERSLEN,\ NULL),\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00242\ \textcolor{preprocessor}{\ \ \ \ OSSL\_PARAM\_size\_t(OSSL\_DRBG\_PARAM\_MAX\_ADINLEN,\ NULL),\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00243\ \textcolor{preprocessor}{\ \ \ \ OSSL\_PARAM\_uint(OSSL\_DRBG\_PARAM\_RESEED\_COUNTER,\ NULL),\ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00244\ \textcolor{preprocessor}{\ \ \ \ OSSL\_PARAM\_time\_t(OSSL\_DRBG\_PARAM\_RESEED\_TIME,\ NULL),\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00245\ \textcolor{preprocessor}{\ \ \ \ OSSL\_PARAM\_uint(OSSL\_DRBG\_PARAM\_RESEED\_REQUESTS,\ NULL),\ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00246\ \textcolor{preprocessor}{\ \ \ \ OSSL\_PARAM\_uint64(OSSL\_DRBG\_PARAM\_RESEED\_TIME\_INTERVAL,\ NULL)}}
+\DoxyCodeLine{00247\ }
+\DoxyCodeLine{00248\ \textcolor{comment}{/*\ Continuous\ test\ "{}entropy"{}\ calls\ */}}
+\DoxyCodeLine{00249\ \textcolor{keywordtype}{size\_t}\ ossl\_crngt\_get\_entropy(\mbox{\hyperlink{structprov__drbg__st}{PROV\_DRBG}}\ *drbg,}
+\DoxyCodeLine{00250\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **pout,}
+\DoxyCodeLine{00251\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ entropy,\ \textcolor{keywordtype}{size\_t}\ min\_len,\ \textcolor{keywordtype}{size\_t}\ max\_len,}
+\DoxyCodeLine{00252\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ prediction\_resistance);}
+\DoxyCodeLine{00253\ \textcolor{keywordtype}{void}\ ossl\_crngt\_cleanup\_entropy(\mbox{\hyperlink{structprov__drbg__st}{PROV\_DRBG}}\ *drbg,}
+\DoxyCodeLine{00254\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,\ \textcolor{keywordtype}{size\_t}\ outlen);}
+\DoxyCodeLine{00255\ }
+\DoxyCodeLine{00256\ \textcolor{comment}{/*\ Confirm\ digest\ is\ allowed\ to\ be\ used\ with\ a\ DRBG\ */}}
+\DoxyCodeLine{00257\ \textcolor{keywordtype}{int}\ ossl\_drbg\_verify\_digest(ossl\_unused\ OSSL\_LIB\_CTX\ *libctx,\ \textcolor{keyword}{const}\ EVP\_MD\ *md);}
+\DoxyCodeLine{00258\ }
+\DoxyCodeLine{00259\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

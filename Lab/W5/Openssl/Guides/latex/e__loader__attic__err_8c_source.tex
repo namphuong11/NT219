@@ -1,0 +1,79 @@
+\doxysection{e\+\_\+loader\+\_\+attic\+\_\+err.\+c}
+\hypertarget{e__loader__attic__err_8c_source}{}\label{e__loader__attic__err_8c_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/engines/e\_loader\_attic\_err.c@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/engines/e\_loader\_attic\_err.c}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Generated\ by\ util/mkerr.pl\ DO\ NOT\ EDIT}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *\ Copyright\ 1995-\/2021\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ <openssl/err.h>}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ "{}e\_loader\_attic\_err.h"{}}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_ERR}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{keyword}{static}\ ERR\_STRING\_DATA\ ATTIC\_str\_reasons[]\ =\ \{}
+\DoxyCodeLine{00017\ \ \ \ \ \{ERR\_PACK(0,\ 0,\ ATTIC\_R\_AMBIGUOUS\_CONTENT\_TYPE),\ \textcolor{stringliteral}{"{}ambiguous\ content\ type"{}}\},}
+\DoxyCodeLine{00018\ \ \ \ \ \{ERR\_PACK(0,\ 0,\ ATTIC\_R\_BAD\_PASSWORD\_READ),\ \textcolor{stringliteral}{"{}bad\ password\ read"{}}\},}
+\DoxyCodeLine{00019\ \ \ \ \ \{ERR\_PACK(0,\ 0,\ ATTIC\_R\_ERROR\_VERIFYING\_PKCS12\_MAC),}
+\DoxyCodeLine{00020\ \ \ \ \ \textcolor{stringliteral}{"{}error\ verifying\ pkcs12\ mac"{}}\},}
+\DoxyCodeLine{00021\ \ \ \ \ \{ERR\_PACK(0,\ 0,\ ATTIC\_R\_INIT\_FAILED),\ \textcolor{stringliteral}{"{}init\ failed"{}}\},}
+\DoxyCodeLine{00022\ \ \ \ \ \{ERR\_PACK(0,\ 0,\ ATTIC\_R\_PASSPHRASE\_CALLBACK\_ERROR),}
+\DoxyCodeLine{00023\ \ \ \ \ \textcolor{stringliteral}{"{}passphrase\ callback\ error"{}}\},}
+\DoxyCodeLine{00024\ \ \ \ \ \{ERR\_PACK(0,\ 0,\ ATTIC\_R\_PATH\_MUST\_BE\_ABSOLUTE),\ \textcolor{stringliteral}{"{}path\ must\ be\ absolute"{}}\},}
+\DoxyCodeLine{00025\ \ \ \ \ \{ERR\_PACK(0,\ 0,\ ATTIC\_R\_SEARCH\_ONLY\_SUPPORTED\_FOR\_DIRECTORIES),}
+\DoxyCodeLine{00026\ \ \ \ \ \textcolor{stringliteral}{"{}search\ only\ supported\ for\ directories"{}}\},}
+\DoxyCodeLine{00027\ \ \ \ \ \{ERR\_PACK(0,\ 0,\ ATTIC\_R\_UI\_PROCESS\_INTERRUPTED\_OR\_CANCELLED),}
+\DoxyCodeLine{00028\ \ \ \ \ \textcolor{stringliteral}{"{}ui\ process\ interrupted\ or\ cancelled"{}}\},}
+\DoxyCodeLine{00029\ \ \ \ \ \{ERR\_PACK(0,\ 0,\ ATTIC\_R\_UNSUPPORTED\_CONTENT\_TYPE),}
+\DoxyCodeLine{00030\ \ \ \ \ \textcolor{stringliteral}{"{}unsupported\ content\ type"{}}\},}
+\DoxyCodeLine{00031\ \ \ \ \ \{ERR\_PACK(0,\ 0,\ ATTIC\_R\_UNSUPPORTED\_SEARCH\_TYPE),}
+\DoxyCodeLine{00032\ \ \ \ \ \textcolor{stringliteral}{"{}unsupported\ search\ type"{}}\},}
+\DoxyCodeLine{00033\ \ \ \ \ \{ERR\_PACK(0,\ 0,\ ATTIC\_R\_URI\_AUTHORITY\_UNSUPPORTED),}
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{stringliteral}{"{}uri\ authority\ unsupported"{}}\},}
+\DoxyCodeLine{00035\ \ \ \ \ \{0,\ NULL\}}
+\DoxyCodeLine{00036\ \};}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ lib\_code\ =\ 0;}
+\DoxyCodeLine{00041\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ error\_loaded\ =\ 0;}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ ERR\_load\_ATTIC\_strings(\textcolor{keywordtype}{void})}
+\DoxyCodeLine{00044\ \{}
+\DoxyCodeLine{00045\ \ \ \ \ \textcolor{keywordflow}{if}\ (lib\_code\ ==\ 0)}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ lib\_code\ =\ ERR\_get\_next\_error\_library();}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \ \ \ \ \textcolor{keywordflow}{if}\ (!error\_loaded)\ \{}
+\DoxyCodeLine{00049\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_ERR}}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ ERR\_load\_strings(lib\_code,\ ATTIC\_str\_reasons);}
+\DoxyCodeLine{00051\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ error\_loaded\ =\ 1;}
+\DoxyCodeLine{00053\ \ \ \ \ \}}
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00055\ \}}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ ERR\_unload\_ATTIC\_strings(\textcolor{keywordtype}{void})}
+\DoxyCodeLine{00058\ \{}
+\DoxyCodeLine{00059\ \ \ \ \ \textcolor{keywordflow}{if}\ (error\_loaded)\ \{}
+\DoxyCodeLine{00060\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_ERR}}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ ERR\_unload\_strings(lib\_code,\ ATTIC\_str\_reasons);}
+\DoxyCodeLine{00062\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ error\_loaded\ =\ 0;}
+\DoxyCodeLine{00064\ \ \ \ \ \}}
+\DoxyCodeLine{00065\ \}}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00067\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ ERR\_ATTIC\_error(\textcolor{keywordtype}{int}\ function,\ \textcolor{keywordtype}{int}\ reason,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *file,\ \textcolor{keywordtype}{int}\ line)}
+\DoxyCodeLine{00068\ \{}
+\DoxyCodeLine{00069\ \ \ \ \ \textcolor{keywordflow}{if}\ (lib\_code\ ==\ 0)}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ lib\_code\ =\ ERR\_get\_next\_error\_library();}
+\DoxyCodeLine{00071\ \ \ \ \ ERR\_raise(lib\_code,\ reason);}
+\DoxyCodeLine{00072\ \ \ \ \ ERR\_set\_debug(file,\ line,\ NULL);}
+\DoxyCodeLine{00073\ \}}
+
+\end{DoxyCode}

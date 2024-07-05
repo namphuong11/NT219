@@ -1,0 +1,50 @@
+\doxysection{function.\+h}
+\hypertarget{function_8h_source}{}\label{function_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/apps/include/function.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/apps/include/function.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2019-\/2020\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_APPS\_FUNCTION\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_APPS\_FUNCTION\_H}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#\ include\ <openssl/lhash.h>}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ include\ "{}opt.h"{}}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#define\ DEPRECATED\_NO\_ALTERNATIVE\ \ \ "{}unknown"{}}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}\ FUNC\_TYPE\ \{}
+\DoxyCodeLine{00019\ \ \ \ \ FT\_none,\ FT\_general,\ FT\_md,\ FT\_cipher,\ FT\_pkey,}
+\DoxyCodeLine{00020\ \ \ \ \ FT\_md\_alg,\ FT\_cipher\_alg}
+\DoxyCodeLine{00021\ \}\ FUNC\_TYPE;}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structfunction__st}{function\_st}}\ \{}
+\DoxyCodeLine{00024\ \ \ \ \ FUNC\_TYPE\ type;}
+\DoxyCodeLine{00025\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *name;}
+\DoxyCodeLine{00026\ \ \ \ \ int\ (*func)(\textcolor{keywordtype}{int}\ argc,\ \textcolor{keywordtype}{char}\ *argv[]);}
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structoptions__st}{OPTIONS}}\ *help;}
+\DoxyCodeLine{00028\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *deprecated\_alternative;}
+\DoxyCodeLine{00029\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *deprecated\_version;}
+\DoxyCodeLine{00030\ \}\ \mbox{\hyperlink{structfunction__st}{FUNCTION}};}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ DEFINE\_LHASH\_OF\_EX(\mbox{\hyperlink{structfunction__st}{FUNCTION}});}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \textcolor{comment}{/*\ Structure\ to\ hold\ the\ number\ of\ columns\ to\ be\ displayed\ and\ the}}
+\DoxyCodeLine{00035\ \textcolor{comment}{\ *\ field\ width\ used\ to\ display\ them.}}
+\DoxyCodeLine{00036\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00037\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00038\ \ \ \ \ \textcolor{keywordtype}{int}\ columns;}
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keywordtype}{int}\ width;}
+\DoxyCodeLine{00040\ \}\ \mbox{\hyperlink{struct_d_i_s_p_l_a_y___c_o_l_u_m_n_s}{DISPLAY\_COLUMNS}};}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \textcolor{keywordtype}{void}\ calculate\_columns(\mbox{\hyperlink{structfunction__st}{FUNCTION}}\ *functions,\ \mbox{\hyperlink{struct_d_i_s_p_l_a_y___c_o_l_u_m_n_s}{DISPLAY\_COLUMNS}}\ *dc);}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

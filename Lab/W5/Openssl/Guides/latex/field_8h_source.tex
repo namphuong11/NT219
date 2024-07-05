@@ -1,0 +1,179 @@
+\doxysection{field.\+h}
+\hypertarget{field_8h_source}{}\label{field_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/ec/curve448/field.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/ec/curve448/field.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2017-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *\ Copyright\ 2014\ Cryptography\ Research,\ Inc.}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ *\ Originally\ written\ by\ Mike\ Hamburg}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#ifndef\ OSSL\_CRYPTO\_EC\_CURVE448\_FIELD\_H}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ define\ OSSL\_CRYPTO\_EC\_CURVE448\_FIELD\_H}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#\ include\ "{}internal/constant\_time.h"{}}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#\ include\ <string.h>}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#\ include\ <assert.h>}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#\ include\ "{}word.h"{}}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#\ define\ NLIMBS\ (64/sizeof(word\_t))}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#\ define\ X\_SER\_BYTES\ 56}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#\ define\ SER\_BYTES\ 56}}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#\ if\ defined(\_\_GNUC\_\_)\ ||\ defined(\_\_clang\_\_)}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#\ \ define\ INLINE\_UNUSED\ \_\_inline\_\_\ \_\_attribute\_\_((\_\_unused\_\_,\_\_always\_inline\_\_))}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#\ \ define\ RESTRICT\ \_\_restrict\_\_}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#\ \ define\ ALIGNED\ \_\_attribute\_\_((\_\_aligned\_\_(16)))}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#\ else}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#\ \ define\ INLINE\_UNUSED\ ossl\_inline}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#\ \ define\ RESTRICT}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#\ \ define\ ALIGNED}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structgf__s}{gf\_s}}\ \{}
+\DoxyCodeLine{00036\ \ \ \ \ word\_t\ limb[NLIMBS];}
+\DoxyCodeLine{00037\ \}\ ALIGNED\ \mbox{\hyperlink{structgf__s}{gf\_s}},\ gf[1];}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \textcolor{comment}{/*\ RFC\ 7748\ support\ */}}
+\DoxyCodeLine{00040\ \textcolor{preprocessor}{\#\ define\ X\_PUBLIC\_BYTES\ \ X\_SER\_BYTES}}
+\DoxyCodeLine{00041\ \textcolor{preprocessor}{\#\ define\ X\_PRIVATE\_BYTES\ X\_PUBLIC\_BYTES}}
+\DoxyCodeLine{00042\ \textcolor{preprocessor}{\#\ define\ X\_PRIVATE\_BITS\ \ 448}}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ \textcolor{keyword}{static}\ INLINE\_UNUSED\ \textcolor{keywordtype}{void}\ gf\_copy(gf\ out,\ \textcolor{keyword}{const}\ gf\ a)}
+\DoxyCodeLine{00045\ \{}
+\DoxyCodeLine{00046\ \ \ \ \ *out\ =\ *a;}
+\DoxyCodeLine{00047\ \}}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \textcolor{keyword}{static}\ INLINE\_UNUSED\ \textcolor{keywordtype}{void}\ gf\_add\_RAW(gf\ out,\ \textcolor{keyword}{const}\ gf\ a,\ \textcolor{keyword}{const}\ gf\ \mbox{\hyperlink{structb}{b}});}
+\DoxyCodeLine{00050\ \textcolor{keyword}{static}\ INLINE\_UNUSED\ \textcolor{keywordtype}{void}\ gf\_sub\_RAW(gf\ out,\ \textcolor{keyword}{const}\ gf\ a,\ \textcolor{keyword}{const}\ gf\ \mbox{\hyperlink{structb}{b}});}
+\DoxyCodeLine{00051\ \textcolor{keyword}{static}\ INLINE\_UNUSED\ \textcolor{keywordtype}{void}\ gf\_bias(gf\ inout,\ \textcolor{keywordtype}{int}\ amount);}
+\DoxyCodeLine{00052\ \textcolor{keyword}{static}\ INLINE\_UNUSED\ \textcolor{keywordtype}{void}\ gf\_weak\_reduce(gf\ inout);}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \textcolor{keywordtype}{void}\ gf\_strong\_reduce(gf\ inout);}
+\DoxyCodeLine{00055\ \textcolor{keywordtype}{void}\ gf\_add(gf\ out,\ \textcolor{keyword}{const}\ gf\ a,\ \textcolor{keyword}{const}\ gf\ \mbox{\hyperlink{structb}{b}});}
+\DoxyCodeLine{00056\ \textcolor{keywordtype}{void}\ gf\_sub(gf\ out,\ \textcolor{keyword}{const}\ gf\ a,\ \textcolor{keyword}{const}\ gf\ \mbox{\hyperlink{structb}{b}});}
+\DoxyCodeLine{00057\ \textcolor{keywordtype}{void}\ ossl\_gf\_mul(\mbox{\hyperlink{structgf__s}{gf\_s}}\ *\ RESTRICT\ out,\ \textcolor{keyword}{const}\ gf\ a,\ \textcolor{keyword}{const}\ gf\ \mbox{\hyperlink{structb}{b}});}
+\DoxyCodeLine{00058\ \textcolor{keywordtype}{void}\ ossl\_gf\_mulw\_unsigned(\mbox{\hyperlink{structgf__s}{gf\_s}}\ *\ RESTRICT\ out,\ \textcolor{keyword}{const}\ gf\ a,\ uint32\_t\ \mbox{\hyperlink{structb}{b}});}
+\DoxyCodeLine{00059\ \textcolor{keywordtype}{void}\ ossl\_gf\_sqr(\mbox{\hyperlink{structgf__s}{gf\_s}}\ *\ RESTRICT\ out,\ \textcolor{keyword}{const}\ gf\ a);}
+\DoxyCodeLine{00060\ mask\_t\ gf\_isr(gf\ a,\ \textcolor{keyword}{const}\ gf\ x);\ }
+\DoxyCodeLine{00061\ mask\_t\ gf\_eq(\textcolor{keyword}{const}\ gf\ x,\ \textcolor{keyword}{const}\ gf\ y);}
+\DoxyCodeLine{00062\ mask\_t\ gf\_lobit(\textcolor{keyword}{const}\ gf\ x);}
+\DoxyCodeLine{00063\ mask\_t\ gf\_hibit(\textcolor{keyword}{const}\ gf\ x);}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ \textcolor{keywordtype}{void}\ gf\_serialize(uint8\_t\ serial[SER\_BYTES],\ \textcolor{keyword}{const}\ gf\ x,\ \textcolor{keywordtype}{int}\ with\_highbit);}
+\DoxyCodeLine{00066\ mask\_t\ gf\_deserialize(gf\ x,\ \textcolor{keyword}{const}\ uint8\_t\ serial[SER\_BYTES],\ \textcolor{keywordtype}{int}\ with\_hibit,}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint8\_t\ hi\_nmask);}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ \textcolor{preprocessor}{\#\ define\ LIMBPERM(i)\ (i)}}
+\DoxyCodeLine{00071\ \textcolor{preprocessor}{\#\ if\ (ARCH\_WORD\_BITS\ ==\ 32)}}
+\DoxyCodeLine{00072\ \textcolor{preprocessor}{\#\ \ include\ "{}arch\_32/f\_impl.h"{}}\ \ \ \ \textcolor{comment}{/*\ Bring\ in\ the\ inline\ implementations\ */}}
+\DoxyCodeLine{00073\ \textcolor{preprocessor}{\#\ \ define\ LIMB\_MASK(i)\ (((1)<<LIMB\_PLACE\_VALUE(i))-\/1)}}
+\DoxyCodeLine{00074\ \textcolor{preprocessor}{\#\ elif\ (ARCH\_WORD\_BITS\ ==\ 64)}}
+\DoxyCodeLine{00075\ \textcolor{preprocessor}{\#\ \ include\ "{}arch\_64/f\_impl.h"{}}\ \ \ \ \textcolor{comment}{/*\ Bring\ in\ the\ inline\ implementations\ */}}
+\DoxyCodeLine{00076\ \textcolor{preprocessor}{\#\ \ define\ LIMB\_MASK(i)\ (((1ULL)<<LIMB\_PLACE\_VALUE(i))-\/1)}}
+\DoxyCodeLine{00077\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ gf\ ZERO\ =\ \{\{\{0\}\}\},\ ONE\ =\ \{\{\{1\}\}\};}
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00081\ \textcolor{comment}{/*\ Square\ x,\ n\ times.\ */}}
+\DoxyCodeLine{00082\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{void}\ gf\_sqrn(\mbox{\hyperlink{structgf__s}{gf\_s}}\ *\ RESTRICT\ y,\ \textcolor{keyword}{const}\ gf\ x,\ \textcolor{keywordtype}{int}\ n)}
+\DoxyCodeLine{00083\ \{}
+\DoxyCodeLine{00084\ \ \ \ \ gf\ tmp;}
+\DoxyCodeLine{00085\ }
+\DoxyCodeLine{00086\ \ \ \ \ assert(n\ >\ 0);}
+\DoxyCodeLine{00087\ \ \ \ \ \textcolor{keywordflow}{if}\ (n\ \&\ 1)\ \{}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ ossl\_gf\_sqr(y,\ x);}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ n-\/-\/;}
+\DoxyCodeLine{00090\ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ ossl\_gf\_sqr(tmp,\ x);}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ ossl\_gf\_sqr(y,\ tmp);}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ n\ -\/=\ 2;}
+\DoxyCodeLine{00094\ \ \ \ \ \}}
+\DoxyCodeLine{00095\ \ \ \ \ \textcolor{keywordflow}{for}\ (;\ n;\ n\ -\/=\ 2)\ \{}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ ossl\_gf\_sqr(tmp,\ y);}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ ossl\_gf\_sqr(y,\ tmp);}
+\DoxyCodeLine{00098\ \ \ \ \ \}}
+\DoxyCodeLine{00099\ \}}
+\DoxyCodeLine{00100\ }
+\DoxyCodeLine{00101\ \textcolor{preprocessor}{\#\ define\ gf\_add\_nr\ gf\_add\_RAW}}
+\DoxyCodeLine{00102\ }
+\DoxyCodeLine{00103\ \textcolor{comment}{/*\ Subtract\ mod\ p.\ \ Bias\ by\ 2\ and\ don't\ reduce\ \ */}}
+\DoxyCodeLine{00104\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{void}\ gf\_sub\_nr(gf\ c,\ \textcolor{keyword}{const}\ gf\ a,\ \textcolor{keyword}{const}\ gf\ \mbox{\hyperlink{structb}{b}})}
+\DoxyCodeLine{00105\ \{}
+\DoxyCodeLine{00106\ \ \ \ \ gf\_sub\_RAW(c,\ a,\ \mbox{\hyperlink{structb}{b}});}
+\DoxyCodeLine{00107\ \ \ \ \ gf\_bias(c,\ 2);}
+\DoxyCodeLine{00108\ \ \ \ \ \textcolor{keywordflow}{if}\ (GF\_HEADROOM\ <\ 3)}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ gf\_weak\_reduce(c);}
+\DoxyCodeLine{00110\ \}}
+\DoxyCodeLine{00111\ }
+\DoxyCodeLine{00112\ \textcolor{comment}{/*\ Subtract\ mod\ p.\ Bias\ by\ amt\ but\ don't\ reduce.\ \ */}}
+\DoxyCodeLine{00113\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{void}\ gf\_subx\_nr(gf\ c,\ \textcolor{keyword}{const}\ gf\ a,\ \textcolor{keyword}{const}\ gf\ \mbox{\hyperlink{structb}{b}},\ \textcolor{keywordtype}{int}\ amt)}
+\DoxyCodeLine{00114\ \{}
+\DoxyCodeLine{00115\ \ \ \ \ gf\_sub\_RAW(c,\ a,\ \mbox{\hyperlink{structb}{b}});}
+\DoxyCodeLine{00116\ \ \ \ \ gf\_bias(c,\ amt);}
+\DoxyCodeLine{00117\ \ \ \ \ \textcolor{keywordflow}{if}\ (GF\_HEADROOM\ <\ amt\ +\ 1)}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ gf\_weak\_reduce(c);}
+\DoxyCodeLine{00119\ \}}
+\DoxyCodeLine{00120\ }
+\DoxyCodeLine{00121\ \textcolor{comment}{/*\ Mul\ by\ signed\ int.\ \ Not\ constant-\/time\ WRT\ the\ sign\ of\ that\ int.\ */}}
+\DoxyCodeLine{00122\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{void}\ gf\_mulw(gf\ c,\ \textcolor{keyword}{const}\ gf\ a,\ int32\_t\ w)}
+\DoxyCodeLine{00123\ \{}
+\DoxyCodeLine{00124\ \ \ \ \ \textcolor{keywordflow}{if}\ (w\ >\ 0)\ \{}
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ ossl\_gf\_mulw\_unsigned(c,\ a,\ w);}
+\DoxyCodeLine{00126\ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ ossl\_gf\_mulw\_unsigned(c,\ a,\ -\/w);}
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ gf\_sub(c,\ ZERO,\ c);}
+\DoxyCodeLine{00129\ \ \ \ \ \}}
+\DoxyCodeLine{00130\ \}}
+\DoxyCodeLine{00131\ }
+\DoxyCodeLine{00132\ \textcolor{comment}{/*\ Constant\ time,\ x\ =\ is\_z\ ?\ z\ :\ y\ */}}
+\DoxyCodeLine{00133\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{void}\ gf\_cond\_sel(gf\ x,\ \textcolor{keyword}{const}\ gf\ y,\ \textcolor{keyword}{const}\ gf\ z,\ mask\_t\ is\_z)}
+\DoxyCodeLine{00134\ \{}
+\DoxyCodeLine{00135\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ i;}
+\DoxyCodeLine{00136\ }
+\DoxyCodeLine{00137\ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ NLIMBS;\ i++)\ \{}
+\DoxyCodeLine{00138\ \textcolor{preprocessor}{\#if\ ARCH\_WORD\_BITS\ ==\ 32}}
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ x[0].limb[i]\ =\ constant\_time\_select\_32(is\_z,\ z[0].limb[i],}
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ y[0].limb[i]);}
+\DoxyCodeLine{00141\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00142\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Must\ be\ 64\ bit\ */}}
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ x[0].limb[i]\ =\ constant\_time\_select\_64(is\_z,\ z[0].limb[i],}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ y[0].limb[i]);}
+\DoxyCodeLine{00145\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00146\ \ \ \ \ \}}
+\DoxyCodeLine{00147\ \}}
+\DoxyCodeLine{00148\ }
+\DoxyCodeLine{00149\ \textcolor{comment}{/*\ Constant\ time,\ if\ (neg)\ x=-\/x;\ */}}
+\DoxyCodeLine{00150\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{void}\ gf\_cond\_neg(gf\ x,\ mask\_t\ neg)}
+\DoxyCodeLine{00151\ \{}
+\DoxyCodeLine{00152\ \ \ \ \ gf\ y;}
+\DoxyCodeLine{00153\ }
+\DoxyCodeLine{00154\ \ \ \ \ gf\_sub(y,\ ZERO,\ x);}
+\DoxyCodeLine{00155\ \ \ \ \ gf\_cond\_sel(x,\ x,\ y,\ neg);}
+\DoxyCodeLine{00156\ \}}
+\DoxyCodeLine{00157\ }
+\DoxyCodeLine{00158\ \textcolor{comment}{/*\ Constant\ time,\ if\ (swap)\ (x,y)\ =\ (y,x);\ */}}
+\DoxyCodeLine{00159\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{void}\ gf\_cond\_swap(gf\ x,\ \mbox{\hyperlink{structgf__s}{gf\_s}}\ *\ RESTRICT\ y,\ mask\_t\ swap)}
+\DoxyCodeLine{00160\ \{}
+\DoxyCodeLine{00161\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ i;}
+\DoxyCodeLine{00162\ }
+\DoxyCodeLine{00163\ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ NLIMBS;\ i++)\ \{}
+\DoxyCodeLine{00164\ \textcolor{preprocessor}{\#if\ ARCH\_WORD\_BITS\ ==\ 32}}
+\DoxyCodeLine{00165\ \ \ \ \ \ \ \ \ constant\_time\_cond\_swap\_32(swap,\ \&(x[0].limb[i]),\ \&(y-\/>limb[i]));}
+\DoxyCodeLine{00166\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00167\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Must\ be\ 64\ bit\ */}}
+\DoxyCodeLine{00168\ \ \ \ \ \ \ \ \ constant\_time\_cond\_swap\_64(swap,\ \&(x[0].limb[i]),\ \&(y-\/>limb[i]));}
+\DoxyCodeLine{00169\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00170\ \ \ \ \ \}}
+\DoxyCodeLine{00171\ \}}
+\DoxyCodeLine{00172\ }
+\DoxyCodeLine{00173\ \textcolor{preprocessor}{\#endif\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{/*\ OSSL\_CRYPTO\_EC\_CURVE448\_FIELD\_H\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

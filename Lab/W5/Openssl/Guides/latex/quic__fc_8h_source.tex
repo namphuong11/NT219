@@ -1,0 +1,283 @@
+\doxysection{quic\+\_\+fc.\+h}
+\hypertarget{quic__fc_8h_source}{}\label{quic__fc_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/quic\_fc.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/quic\_fc.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2022-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_QUIC\_FC\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_QUIC\_FC\_H}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#\ include\ <openssl/ssl.h>}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ include\ "{}internal/time.h"{}}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#\ ifndef\ OPENSSL\_NO\_QUIC}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ *\ TX\ Flow\ Controller\ (TXFC)}}
+\DoxyCodeLine{00020\ \textcolor{comment}{\ *\ =========================}}
+\DoxyCodeLine{00021\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00022\ \textcolor{comment}{\ *\ For\ discussion,\ see\ doc/designs/quic-\/design/quic-\/fc.md.}}
+\DoxyCodeLine{00023\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00024\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structquic__txfc__st}{quic\_txfc\_st}}\ \mbox{\hyperlink{structquic__txfc__st}{QUIC\_TXFC}};}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structquic__txfc__st}{quic\_txfc\_st}}\ \{}
+\DoxyCodeLine{00027\ \ \ \ \ \mbox{\hyperlink{structquic__txfc__st}{QUIC\_TXFC}}\ \ \ *parent;\ \textcolor{comment}{/*\ stream-\/level\ iff\ non-\/NULL\ */}}
+\DoxyCodeLine{00028\ \ \ \ \ uint64\_t\ \ \ \ swm,\ cwm;}
+\DoxyCodeLine{00029\ \ \ \ \ \textcolor{keywordtype}{char}\ \ \ \ \ \ \ \ has\_become\_blocked;}
+\DoxyCodeLine{00030\ \};}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00033\ \textcolor{comment}{\ *\ Initialises\ a\ TX\ flow\ controller.\ conn\_txfc\ should\ be\ non-\/NULL\ and\ point\ to}}
+\DoxyCodeLine{00034\ \textcolor{comment}{\ *\ the\ connection-\/level\ flow\ controller\ if\ the\ TXFC\ is\ for\ stream-\/level\ flow}}
+\DoxyCodeLine{00035\ \textcolor{comment}{\ *\ control,\ and\ NULL\ otherwise.}}
+\DoxyCodeLine{00036\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00037\ \textcolor{keywordtype}{int}\ ossl\_quic\_txfc\_init(\mbox{\hyperlink{structquic__txfc__st}{QUIC\_TXFC}}\ *txfc,\ \mbox{\hyperlink{structquic__txfc__st}{QUIC\_TXFC}}\ *conn\_txfc);}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00040\ \textcolor{comment}{\ *\ Gets\ the\ parent\ (i.e.,\ connection-\/level)\ TX\ flow\ controller.\ Returns\ NULL\ if}}
+\DoxyCodeLine{00041\ \textcolor{comment}{\ *\ called\ on\ a\ connection-\/level\ TX\ flow\ controller.}}
+\DoxyCodeLine{00042\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00043\ \mbox{\hyperlink{structquic__txfc__st}{QUIC\_TXFC}}\ *ossl\_quic\_txfc\_get\_parent(\mbox{\hyperlink{structquic__txfc__st}{QUIC\_TXFC}}\ *txfc);}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00046\ \textcolor{comment}{\ *\ Bump\ the\ credit\ watermark\ (CWM)\ value.\ This\ is\ the\ 'On\ TX\ Window\ Updated'}}
+\DoxyCodeLine{00047\ \textcolor{comment}{\ *\ operation.\ This\ function\ is\ a\ no-\/op\ if\ it\ has\ already\ been\ called\ with\ an}}
+\DoxyCodeLine{00048\ \textcolor{comment}{\ *\ equal\ or\ higher\ CWM\ value.}}
+\DoxyCodeLine{00049\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00050\ \textcolor{comment}{\ *\ It\ returns\ 1\ iff\ the\ call\ resulted\ in\ the\ CWM\ being\ bumped\ and\ 0\ if\ it\ was}}
+\DoxyCodeLine{00051\ \textcolor{comment}{\ *\ not\ increased\ because\ it\ has\ already\ been\ called\ with\ an\ equal\ or\ higher\ CWM}}
+\DoxyCodeLine{00052\ \textcolor{comment}{\ *\ value.\ This\ is\ not\ an\ error\ per\ se\ but\ may\ indicate\ a\ local\ programming\ error}}
+\DoxyCodeLine{00053\ \textcolor{comment}{\ *\ or\ a\ protocol\ error\ in\ a\ remote\ peer.}}
+\DoxyCodeLine{00054\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00055\ \textcolor{keywordtype}{int}\ ossl\_quic\_txfc\_bump\_cwm(\mbox{\hyperlink{structquic__txfc__st}{QUIC\_TXFC}}\ *txfc,\ uint64\_t\ cwm);}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00058\ \textcolor{comment}{\ *\ Get\ the\ number\ of\ bytes\ by\ which\ we\ are\ in\ credit.\ This\ is\ the\ number\ of}}
+\DoxyCodeLine{00059\ \textcolor{comment}{\ *\ controlled\ bytes\ we\ are\ allowed\ to\ send.\ (Thus\ if\ this\ function\ returns\ 0,\ we}}
+\DoxyCodeLine{00060\ \textcolor{comment}{\ *\ are\ currently\ blocked.)}}
+\DoxyCodeLine{00061\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00062\ \textcolor{comment}{\ *\ If\ called\ on\ a\ stream-\/level\ TXFC,\ ossl\_quic\_txfc\_get\_credit\ is\ called\ on}}
+\DoxyCodeLine{00063\ \textcolor{comment}{\ *\ the\ connection-\/level\ TXFC\ as\ well,\ and\ the\ lesser\ of\ the\ two\ values\ is}}
+\DoxyCodeLine{00064\ \textcolor{comment}{\ *\ returned.\ The\ consumed\ value\ is\ the\ amount\ already\ consumed\ on\ the\ connection}}
+\DoxyCodeLine{00065\ \textcolor{comment}{\ *\ level\ TXFC.}}
+\DoxyCodeLine{00066\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00067\ uint64\_t\ ossl\_quic\_txfc\_get\_credit(\mbox{\hyperlink{structquic__txfc__st}{QUIC\_TXFC}}\ *txfc,\ uint64\_t\ consumed);}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00070\ \textcolor{comment}{\ *\ Like\ ossl\_quic\_txfc\_get\_credit(),\ but\ when\ called\ on\ a\ stream-\/level\ TXFC,}}
+\DoxyCodeLine{00071\ \textcolor{comment}{\ *\ retrieves\ only\ the\ stream-\/level\ credit\ value\ and\ does\ not\ clamp\ it\ based\ on}}
+\DoxyCodeLine{00072\ \textcolor{comment}{\ *\ connection-\/level\ flow\ control.\ Any\ credit\ value\ is\ reduced\ by\ the\ consumed}}
+\DoxyCodeLine{00073\ \textcolor{comment}{\ *\ amount.}}
+\DoxyCodeLine{00074\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00075\ uint64\_t\ ossl\_quic\_txfc\_get\_credit\_local(\mbox{\hyperlink{structquic__txfc__st}{QUIC\_TXFC}}\ *txfc,\ uint64\_t\ consumed);}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00077\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00078\ \textcolor{comment}{\ *\ Consume\ num\_bytes\ of\ credit.\ This\ is\ the\ 'On\ TX'\ operation.\ This\ should\ be}}
+\DoxyCodeLine{00079\ \textcolor{comment}{\ *\ called\ when\ we\ transmit\ any\ controlled\ bytes.\ Calling\ this\ with\ an\ argument}}
+\DoxyCodeLine{00080\ \textcolor{comment}{\ *\ of\ 0\ is\ a\ no-\/op.}}
+\DoxyCodeLine{00081\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00082\ \textcolor{comment}{\ *\ We\ must\ never\ transmit\ more\ controlled\ bytes\ than\ we\ are\ in\ credit\ for\ (see}}
+\DoxyCodeLine{00083\ \textcolor{comment}{\ *\ the\ return\ value\ of\ ossl\_quic\_txfc\_get\_credit()).\ If\ you\ call\ this\ function}}
+\DoxyCodeLine{00084\ \textcolor{comment}{\ *\ with\ num\_bytes\ greater\ than\ our\ current\ credit,\ this\ function\ consumes\ the}}
+\DoxyCodeLine{00085\ \textcolor{comment}{\ *\ remainder\ of\ the\ credit\ and\ returns\ 0.\ This\ indicates\ a\ serious\ programming}}
+\DoxyCodeLine{00086\ \textcolor{comment}{\ *\ error\ on\ the\ caller's\ part.\ Otherwise,\ the\ function\ returns\ 1.}}
+\DoxyCodeLine{00087\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00088\ \textcolor{comment}{\ *\ If\ called\ on\ a\ stream-\/level\ TXFC,\ ossl\_quic\_txfc\_consume\_credit()\ is\ called}}
+\DoxyCodeLine{00089\ \textcolor{comment}{\ *\ on\ the\ connection-\/level\ TXFC\ also.\ If\ the\ call\ to\ that\ function\ on\ the}}
+\DoxyCodeLine{00090\ \textcolor{comment}{\ *\ connection-\/level\ TXFC\ returns\ zero,\ this\ function\ will\ also\ return\ zero.}}
+\DoxyCodeLine{00091\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00092\ \textcolor{keywordtype}{int}\ ossl\_quic\_txfc\_consume\_credit(\mbox{\hyperlink{structquic__txfc__st}{QUIC\_TXFC}}\ *txfc,\ uint64\_t\ num\_bytes);}
+\DoxyCodeLine{00093\ }
+\DoxyCodeLine{00094\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00095\ \textcolor{comment}{\ *\ Like\ ossl\_quic\_txfc\_consume\_credit(),\ but\ when\ called\ on\ a\ stream-\/level\ TXFC,}}
+\DoxyCodeLine{00096\ \textcolor{comment}{\ *\ consumes\ only\ from\ the\ stream-\/level\ credit\ and\ does\ not\ inform\ the}}
+\DoxyCodeLine{00097\ \textcolor{comment}{\ *\ connection-\/level\ TXFC.}}
+\DoxyCodeLine{00098\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00099\ \textcolor{keywordtype}{int}\ ossl\_quic\_txfc\_consume\_credit\_local(\mbox{\hyperlink{structquic__txfc__st}{QUIC\_TXFC}}\ *txfc,\ uint64\_t\ num\_bytes);}
+\DoxyCodeLine{00100\ }
+\DoxyCodeLine{00101\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00102\ \textcolor{comment}{\ *\ This\ flag\ is\ provided\ for\ convenience.\ A\ caller\ is\ not\ required\ to\ use\ it.\ It}}
+\DoxyCodeLine{00103\ \textcolor{comment}{\ *\ is\ a\ boolean\ flag\ set\ whenever\ our\ credit\ drops\ to\ zero.\ If\ clear\ is\ 1,\ the}}
+\DoxyCodeLine{00104\ \textcolor{comment}{\ *\ flag\ is\ cleared.\ The\ old\ value\ of\ the\ flag\ is\ returned.\ Callers\ may\ use\ this}}
+\DoxyCodeLine{00105\ \textcolor{comment}{\ *\ to\ determine\ if\ they\ need\ to\ send\ a\ DATA\_BLOCKED\ or\ STREAM\_DATA\_BLOCKED}}
+\DoxyCodeLine{00106\ \textcolor{comment}{\ *\ frame,\ which\ should\ contain\ the\ value\ returned\ by\ ossl\_quic\_txfc\_get\_cwm().}}
+\DoxyCodeLine{00107\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00108\ \textcolor{keywordtype}{int}\ ossl\_quic\_txfc\_has\_become\_blocked(\mbox{\hyperlink{structquic__txfc__st}{QUIC\_TXFC}}\ *txfc,\ \textcolor{keywordtype}{int}\ clear);}
+\DoxyCodeLine{00109\ }
+\DoxyCodeLine{00110\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00111\ \textcolor{comment}{\ *\ Get\ the\ current\ CWM\ value.\ This\ is\ mainly\ only\ needed\ when\ generating\ a}}
+\DoxyCodeLine{00112\ \textcolor{comment}{\ *\ DATA\_BLOCKED\ or\ STREAM\_DATA\_BLOCKED\ frame,\ or\ for\ diagnostic\ purposes.}}
+\DoxyCodeLine{00113\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00114\ uint64\_t\ ossl\_quic\_txfc\_get\_cwm(\mbox{\hyperlink{structquic__txfc__st}{QUIC\_TXFC}}\ *txfc);}
+\DoxyCodeLine{00115\ }
+\DoxyCodeLine{00116\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00117\ \textcolor{comment}{\ *\ Get\ the\ current\ spent\ watermark\ (SWM)\ value.\ This\ is\ purely\ for\ diagnostic}}
+\DoxyCodeLine{00118\ \textcolor{comment}{\ *\ use\ and\ should\ not\ be\ needed\ in\ normal\ circumstances.}}
+\DoxyCodeLine{00119\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00120\ uint64\_t\ ossl\_quic\_txfc\_get\_swm(\mbox{\hyperlink{structquic__txfc__st}{QUIC\_TXFC}}\ *txfc);}
+\DoxyCodeLine{00121\ }
+\DoxyCodeLine{00122\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00123\ \textcolor{comment}{\ *\ RX\ Flow\ Controller\ (RXFC)}}
+\DoxyCodeLine{00124\ \textcolor{comment}{\ *\ =========================}}
+\DoxyCodeLine{00125\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00126\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structquic__rxfc__st}{quic\_rxfc\_st}}\ \mbox{\hyperlink{structquic__rxfc__st}{QUIC\_RXFC}};}
+\DoxyCodeLine{00127\ }
+\DoxyCodeLine{00128\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structquic__rxfc__st}{quic\_rxfc\_st}}\ \{}
+\DoxyCodeLine{00129\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00130\ \textcolor{comment}{\ \ \ \ \ *\ swm\ is\ the\ sent/received\ watermark,\ which\ tracks\ how\ much\ we\ have}}
+\DoxyCodeLine{00131\ \textcolor{comment}{\ \ \ \ \ *\ received\ from\ the\ peer.\ rwm\ is\ the\ retired\ watermark,\ which\ tracks\ how}}
+\DoxyCodeLine{00132\ \textcolor{comment}{\ \ \ \ \ *\ much\ has\ been\ passed\ to\ the\ application.\ esrwm\ is\ the\ rwm\ value\ at\ which}}
+\DoxyCodeLine{00133\ \textcolor{comment}{\ \ \ \ \ *\ the\ current\ auto-\/tuning\ epoch\ started.\ hwm\ is\ the\ highest\ stream\ length}}
+\DoxyCodeLine{00134\ \textcolor{comment}{\ \ \ \ \ *\ (STREAM\ frame\ offset\ +\ payload\ length)\ we\ have\ seen\ from\ a\ STREAM\ frame}}
+\DoxyCodeLine{00135\ \textcolor{comment}{\ \ \ \ \ *\ yet.}}
+\DoxyCodeLine{00136\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00137\ \ \ \ \ uint64\_t\ \ \ \ \ \ \ \ cwm,\ swm,\ rwm,\ esrwm,\ hwm,\ cur\_window\_size,\ max\_window\_size;}
+\DoxyCodeLine{00138\ \ \ \ \ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ \ \ \ \ \ \ epoch\_start;}
+\DoxyCodeLine{00139\ \ \ \ \ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ \ \ \ \ \ \ (*now)(\textcolor{keywordtype}{void}\ *arg);}
+\DoxyCodeLine{00140\ \ \ \ \ \textcolor{keywordtype}{void}\ \ \ \ \ \ \ \ \ \ \ \ *now\_arg;}
+\DoxyCodeLine{00141\ \ \ \ \ \mbox{\hyperlink{structquic__rxfc__st}{QUIC\_RXFC}}\ \ \ \ \ \ \ *parent;}
+\DoxyCodeLine{00142\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \ \ error\_code,\ has\_cwm\_changed,\ is\_fin,\ standalone;}
+\DoxyCodeLine{00143\ \};}
+\DoxyCodeLine{00144\ }
+\DoxyCodeLine{00145\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00146\ \textcolor{comment}{\ *\ Initialises\ an\ RX\ flow\ controller.\ conn\_rxfc\ should\ be\ non-\/NULL\ and\ point\ to}}
+\DoxyCodeLine{00147\ \textcolor{comment}{\ *\ a\ connection-\/level\ RXFC\ if\ the\ RXFC\ is\ for\ stream-\/level\ flow\ control,\ and}}
+\DoxyCodeLine{00148\ \textcolor{comment}{\ *\ NULL\ otherwise.\ initial\_window\_size\ and\ max\_window\_size\ specify\ the\ initial}}
+\DoxyCodeLine{00149\ \textcolor{comment}{\ *\ and\ absolute\ maximum\ window\ sizes,\ respectively.\ Window\ size\ values\ are}}
+\DoxyCodeLine{00150\ \textcolor{comment}{\ *\ expressed\ in\ bytes\ and\ determine\ how\ much\ credit\ the\ RXFC\ extends\ to\ the\ peer}}
+\DoxyCodeLine{00151\ \textcolor{comment}{\ *\ to\ transmit\ more\ data\ at\ a\ time.}}
+\DoxyCodeLine{00152\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00153\ \textcolor{keywordtype}{int}\ ossl\_quic\_rxfc\_init(\mbox{\hyperlink{structquic__rxfc__st}{QUIC\_RXFC}}\ *rxfc,\ \mbox{\hyperlink{structquic__rxfc__st}{QUIC\_RXFC}}\ *conn\_rxfc,}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ initial\_window\_size,}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ max\_window\_size,}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ (*now)(\textcolor{keywordtype}{void}\ *arg),}
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *now\_arg);}
+\DoxyCodeLine{00158\ }
+\DoxyCodeLine{00159\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00160\ \textcolor{comment}{\ *\ Initialises\ an\ RX\ flow\ controller\ which\ is\ used\ by\ itself\ and\ not\ under\ a}}
+\DoxyCodeLine{00161\ \textcolor{comment}{\ *\ connection-\/level\ RX\ flow\ controller.\ This\ can\ be\ used\ for\ stream\ count}}
+\DoxyCodeLine{00162\ \textcolor{comment}{\ *\ enforcement\ as\ well\ as\ CRYPTO\ buffer\ enforcement.}}
+\DoxyCodeLine{00163\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00164\ \textcolor{keywordtype}{int}\ ossl\_quic\_rxfc\_init\_standalone(\mbox{\hyperlink{structquic__rxfc__st}{QUIC\_RXFC}}\ *rxfc,}
+\DoxyCodeLine{00165\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ initial\_window\_size,}
+\DoxyCodeLine{00166\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ (*now)(\textcolor{keywordtype}{void}\ *arg),}
+\DoxyCodeLine{00167\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *now\_arg);}
+\DoxyCodeLine{00168\ }
+\DoxyCodeLine{00169\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00170\ \textcolor{comment}{\ *\ Gets\ the\ parent\ (i.e.,\ connection-\/level)\ RXFC.\ Returns\ NULL\ if\ called\ on\ a}}
+\DoxyCodeLine{00171\ \textcolor{comment}{\ *\ connection-\/level\ RXFC.}}
+\DoxyCodeLine{00172\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00173\ \mbox{\hyperlink{structquic__rxfc__st}{QUIC\_RXFC}}\ *ossl\_quic\_rxfc\_get\_parent(\mbox{\hyperlink{structquic__rxfc__st}{QUIC\_RXFC}}\ *rxfc);}
+\DoxyCodeLine{00174\ }
+\DoxyCodeLine{00175\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00176\ \textcolor{comment}{\ *\ Changes\ the\ current\ maximum\ window\ size\ value.}}
+\DoxyCodeLine{00177\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00178\ \textcolor{keywordtype}{void}\ ossl\_quic\_rxfc\_set\_max\_window\_size(\mbox{\hyperlink{structquic__rxfc__st}{QUIC\_RXFC}}\ *rxfc,}
+\DoxyCodeLine{00179\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ max\_window\_size);}
+\DoxyCodeLine{00180\ }
+\DoxyCodeLine{00181\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00182\ \textcolor{comment}{\ *\ To\ be\ called\ whenever\ a\ STREAM\ frame\ is\ received.}}
+\DoxyCodeLine{00183\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00184\ \textcolor{comment}{\ *\ end\ is\ the\ value\ (offset\ +\ len),\ where\ offset\ is\ the\ offset\ field\ of\ the}}
+\DoxyCodeLine{00185\ \textcolor{comment}{\ *\ STREAM\ frame\ and\ len\ is\ the\ length\ of\ the\ STREAM\ frame's\ payload\ in\ bytes.}}
+\DoxyCodeLine{00186\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00187\ \textcolor{comment}{\ *\ is\_fin\ should\ be\ 1\ if\ the\ STREAM\ frame\ had\ the\ FIN\ flag\ set\ and\ 0\ otherwise.}}
+\DoxyCodeLine{00188\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00189\ \textcolor{comment}{\ *\ This\ function\ may\ be\ used\ on\ a\ stream-\/level\ RXFC\ only.\ The\ connection-\/level}}
+\DoxyCodeLine{00190\ \textcolor{comment}{\ *\ RXFC\ will\ have\ its\ state\ updated\ by\ the\ stream-\/level\ RXFC.}}
+\DoxyCodeLine{00191\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00192\ \textcolor{comment}{\ *\ You\ should\ check\ ossl\_quic\_rxfc\_has\_error()\ on\ both\ connection-\/level\ and}}
+\DoxyCodeLine{00193\ \textcolor{comment}{\ *\ stream-\/level\ RXFCs\ after\ calling\ this\ function,\ as\ an\ incoming\ STREAM\ frame}}
+\DoxyCodeLine{00194\ \textcolor{comment}{\ *\ may\ cause\ flow\ control\ limits\ to\ be\ exceeded\ by\ an\ errant\ peer.\ This}}
+\DoxyCodeLine{00195\ \textcolor{comment}{\ *\ function\ still\ returns\ 1\ in\ this\ case,\ as\ this\ is\ not\ a\ caller\ error.}}
+\DoxyCodeLine{00196\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00197\ \textcolor{comment}{\ *\ Returns\ 1\ on\ success\ or\ 0\ on\ failure.}}
+\DoxyCodeLine{00198\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00199\ \textcolor{keywordtype}{int}\ ossl\_quic\_rxfc\_on\_rx\_stream\_frame(\mbox{\hyperlink{structquic__rxfc__st}{QUIC\_RXFC}}\ *rxfc,}
+\DoxyCodeLine{00200\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ end,\ \textcolor{keywordtype}{int}\ is\_fin);}
+\DoxyCodeLine{00201\ }
+\DoxyCodeLine{00202\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00203\ \textcolor{comment}{\ *\ To\ be\ called\ whenever\ controlled\ bytes\ are\ retired,\ i.e.\ when\ bytes\ are}}
+\DoxyCodeLine{00204\ \textcolor{comment}{\ *\ dequeued\ from\ a\ QUIC\ stream\ and\ passed\ to\ the\ application.\ num\_bytes}}
+\DoxyCodeLine{00205\ \textcolor{comment}{\ *\ is\ the\ number\ of\ bytes\ which\ were\ passed\ to\ the\ application.}}
+\DoxyCodeLine{00206\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00207\ \textcolor{comment}{\ *\ You\ should\ call\ this\ only\ on\ a\ stream-\/level\ RXFC.\ This\ function\ will\ update}}
+\DoxyCodeLine{00208\ \textcolor{comment}{\ *\ the\ connection-\/level\ RXFC\ automatically.}}
+\DoxyCodeLine{00209\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00210\ \textcolor{comment}{\ *\ rtt\ should\ be\ the\ current\ best\ understanding\ of\ the\ RTT\ to\ the\ peer,\ as}}
+\DoxyCodeLine{00211\ \textcolor{comment}{\ *\ offered\ by\ the\ Statistics\ Manager.}}
+\DoxyCodeLine{00212\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00213\ \textcolor{comment}{\ *\ You\ should\ check\ ossl\_quic\_rxfc\_has\_cwm\_changed()\ after\ calling\ this}}
+\DoxyCodeLine{00214\ \textcolor{comment}{\ *\ function,\ as\ it\ may\ have\ caused\ the\ RXFC\ to\ decide\ to\ grant\ more\ flow\ control}}
+\DoxyCodeLine{00215\ \textcolor{comment}{\ *\ credit\ to\ the\ peer.}}
+\DoxyCodeLine{00216\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00217\ \textcolor{comment}{\ *\ Returns\ 1\ on\ success\ and\ 0\ on\ failure.}}
+\DoxyCodeLine{00218\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00219\ \textcolor{keywordtype}{int}\ ossl\_quic\_rxfc\_on\_retire(\mbox{\hyperlink{structquic__rxfc__st}{QUIC\_RXFC}}\ *rxfc,}
+\DoxyCodeLine{00220\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ num\_bytes,}
+\DoxyCodeLine{00221\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ rtt);}
+\DoxyCodeLine{00222\ }
+\DoxyCodeLine{00223\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00224\ \textcolor{comment}{\ *\ Returns\ the\ current\ CWM\ which\ the\ RXFC\ thinks\ the\ peer\ should\ have.}}
+\DoxyCodeLine{00225\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00226\ \textcolor{comment}{\ *\ Note\ that\ the\ RXFC\ will\ increase\ this\ value\ in\ response\ to\ events,\ at\ which}}
+\DoxyCodeLine{00227\ \textcolor{comment}{\ *\ time\ a\ MAX\_DATA\ or\ MAX\_STREAM\_DATA\ frame\ must\ be\ generated.\ Use}}
+\DoxyCodeLine{00228\ \textcolor{comment}{\ *\ ossl\_quic\_rxfc\_has\_cwm\_changed()\ to\ detect\ this\ condition.}}
+\DoxyCodeLine{00229\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00230\ \textcolor{comment}{\ *\ This\ value\ increases\ monotonically.}}
+\DoxyCodeLine{00231\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00232\ uint64\_t\ ossl\_quic\_rxfc\_get\_cwm(\mbox{\hyperlink{structquic__rxfc__st}{QUIC\_RXFC}}\ *rxfc);}
+\DoxyCodeLine{00233\ }
+\DoxyCodeLine{00234\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00235\ \textcolor{comment}{\ *\ Returns\ the\ current\ SWM.\ This\ is\ the\ total\ number\ of\ bytes\ the\ peer\ has}}
+\DoxyCodeLine{00236\ \textcolor{comment}{\ *\ transmitted\ to\ us.\ This\ is\ intended\ for\ diagnostic\ use\ only;\ you\ should}}
+\DoxyCodeLine{00237\ \textcolor{comment}{\ *\ not\ need\ it.}}
+\DoxyCodeLine{00238\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00239\ uint64\_t\ ossl\_quic\_rxfc\_get\_swm(\mbox{\hyperlink{structquic__rxfc__st}{QUIC\_RXFC}}\ *rxfc);}
+\DoxyCodeLine{00240\ }
+\DoxyCodeLine{00241\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00242\ \textcolor{comment}{\ *\ Returns\ the\ current\ RWM.\ This\ is\ the\ total\ number\ of\ bytes\ that\ has\ been}}
+\DoxyCodeLine{00243\ \textcolor{comment}{\ *\ retired.\ This\ is\ intended\ for\ diagnostic\ use\ only;\ you\ should\ not\ need\ it.}}
+\DoxyCodeLine{00244\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00245\ uint64\_t\ ossl\_quic\_rxfc\_get\_rwm(\mbox{\hyperlink{structquic__rxfc__st}{QUIC\_RXFC}}\ *rxfc);}
+\DoxyCodeLine{00246\ }
+\DoxyCodeLine{00247\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00248\ \textcolor{comment}{\ *\ Returns\ the\ CWM\ changed\ flag.\ If\ clear\ is\ 1,\ the\ flag\ is\ cleared\ and\ the\ old}}
+\DoxyCodeLine{00249\ \textcolor{comment}{\ *\ value\ is\ returned.}}
+\DoxyCodeLine{00250\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00251\ \textcolor{keywordtype}{int}\ ossl\_quic\_rxfc\_has\_cwm\_changed(\mbox{\hyperlink{structquic__rxfc__st}{QUIC\_RXFC}}\ *rxfc,\ \textcolor{keywordtype}{int}\ clear);}
+\DoxyCodeLine{00252\ }
+\DoxyCodeLine{00253\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00254\ \textcolor{comment}{\ *\ Returns\ a\ QUIC\_ERR\_*\ error\ code\ if\ a\ flow\ control\ error\ has\ been\ detected.}}
+\DoxyCodeLine{00255\ \textcolor{comment}{\ *\ Otherwise,\ returns\ QUIC\_ERR\_NO\_ERROR.\ If\ clear\ is\ 1,\ the\ error\ is\ cleared}}
+\DoxyCodeLine{00256\ \textcolor{comment}{\ *\ and\ the\ old\ value\ is\ returned.}}
+\DoxyCodeLine{00257\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00258\ \textcolor{comment}{\ *\ May\ return\ one\ of\ the\ following\ values:}}
+\DoxyCodeLine{00259\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00260\ \textcolor{comment}{\ *\ QUIC\_ERR\_FLOW\_CONTROL\_ERROR:}}
+\DoxyCodeLine{00261\ \textcolor{comment}{\ *\ \ \ This\ indicates\ a\ flow\ control\ protocol\ violation\ by\ the\ remote\ peer;\ the}}
+\DoxyCodeLine{00262\ \textcolor{comment}{\ *\ \ \ connection\ should\ be\ terminated\ in\ this\ event.}}
+\DoxyCodeLine{00263\ \textcolor{comment}{\ *\ QUIC\_ERR\_FINAL\_SIZE:}}
+\DoxyCodeLine{00264\ \textcolor{comment}{\ *\ \ \ The\ peer\ attempted\ to\ change\ the\ stream\ length\ after\ ending\ the\ stream.}}
+\DoxyCodeLine{00265\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00266\ \textcolor{keywordtype}{int}\ ossl\_quic\_rxfc\_get\_error(\mbox{\hyperlink{structquic__rxfc__st}{QUIC\_RXFC}}\ *rxfc,\ \textcolor{keywordtype}{int}\ clear);}
+\DoxyCodeLine{00267\ }
+\DoxyCodeLine{00268\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00269\ \textcolor{comment}{\ *\ Returns\ 1\ if\ the\ RXFC\ is\ a\ stream-\/level\ RXFC\ and\ the\ RXFC\ knows\ the\ final}}
+\DoxyCodeLine{00270\ \textcolor{comment}{\ *\ size\ for\ the\ stream\ in\ bytes.\ If\ this\ is\ the\ case\ and\ final\_size\ is\ non-\/NULL,}}
+\DoxyCodeLine{00271\ \textcolor{comment}{\ *\ writes\ the\ final\ size\ to\ *final\_size.\ Otherwise,\ returns\ 0.}}
+\DoxyCodeLine{00272\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00273\ \textcolor{keywordtype}{int}\ ossl\_quic\_rxfc\_get\_final\_size(\textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__rxfc__st}{QUIC\_RXFC}}\ *rxfc,\ uint64\_t\ *final\_size);}
+\DoxyCodeLine{00274\ }
+\DoxyCodeLine{00275\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00276\ }
+\DoxyCodeLine{00277\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

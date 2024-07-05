@@ -1,0 +1,61 @@
+\doxysection{EVP\+\_\+\+AES\+\_\+\+OCB\+\_\+\+CTX Struct Reference}
+\hypertarget{struct_e_v_p___a_e_s___o_c_b___c_t_x}{}\label{struct_e_v_p___a_e_s___o_c_b___c_t_x}\index{EVP\_AES\_OCB\_CTX@{EVP\_AES\_OCB\_CTX}}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{struct_e_v_p___a_e_s___o_c_b___c_t_x_adb5645d185215c1f8d5a821eff8623b3}\label{struct_e_v_p___a_e_s___o_c_b___c_t_x_adb5645d185215c1f8d5a821eff8623b3} 
+\begin{tabbing}
+xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=\kill
+union \{\\
+\>{\bfseries OSSL\_UNION\_ALIGN}\\
+\>AES\_KEY {\bfseries ks}\\
+\} {\bfseries ksenc}\\
+
+\end{tabbing}\item 
+\Hypertarget{struct_e_v_p___a_e_s___o_c_b___c_t_x_a072302c64d43218a7de8eac1f7930de2}\label{struct_e_v_p___a_e_s___o_c_b___c_t_x_a072302c64d43218a7de8eac1f7930de2} 
+\begin{tabbing}
+xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=\kill
+union \{\\
+\>{\bfseries OSSL\_UNION\_ALIGN}\\
+\>AES\_KEY {\bfseries ks}\\
+\} {\bfseries ksdec}\\
+
+\end{tabbing}\item 
+\Hypertarget{struct_e_v_p___a_e_s___o_c_b___c_t_x_a2b3c7b376dcc804ec4a4d7c27d84ceb6}\label{struct_e_v_p___a_e_s___o_c_b___c_t_x_a2b3c7b376dcc804ec4a4d7c27d84ceb6} 
+int {\bfseries key\+\_\+set}
+\item 
+\Hypertarget{struct_e_v_p___a_e_s___o_c_b___c_t_x_ab50ee637e7adc602cd1e0db79426082b}\label{struct_e_v_p___a_e_s___o_c_b___c_t_x_ab50ee637e7adc602cd1e0db79426082b} 
+int {\bfseries iv\+\_\+set}
+\item 
+\Hypertarget{struct_e_v_p___a_e_s___o_c_b___c_t_x_a436a3dc0ced8230999ed271b32acfe5d}\label{struct_e_v_p___a_e_s___o_c_b___c_t_x_a436a3dc0ced8230999ed271b32acfe5d} 
+OCB128\+\_\+\+CONTEXT {\bfseries ocb}
+\item 
+\Hypertarget{struct_e_v_p___a_e_s___o_c_b___c_t_x_a244f0474bcd86c7d37c4f51d8d4f8943}\label{struct_e_v_p___a_e_s___o_c_b___c_t_x_a244f0474bcd86c7d37c4f51d8d4f8943} 
+unsigned char \texorpdfstring{$\ast$}{*} {\bfseries iv}
+\item 
+\Hypertarget{struct_e_v_p___a_e_s___o_c_b___c_t_x_a875445f04839484425fcb1fc79b25025}\label{struct_e_v_p___a_e_s___o_c_b___c_t_x_a875445f04839484425fcb1fc79b25025} 
+unsigned char {\bfseries tag} \mbox{[}16\mbox{]}
+\item 
+\Hypertarget{struct_e_v_p___a_e_s___o_c_b___c_t_x_a6da50cde01f92503cae22d127a298470}\label{struct_e_v_p___a_e_s___o_c_b___c_t_x_a6da50cde01f92503cae22d127a298470} 
+unsigned char {\bfseries data\+\_\+buf} \mbox{[}16\mbox{]}
+\item 
+\Hypertarget{struct_e_v_p___a_e_s___o_c_b___c_t_x_ae1339ea1d7536321b1ebfdc65ac5f789}\label{struct_e_v_p___a_e_s___o_c_b___c_t_x_ae1339ea1d7536321b1ebfdc65ac5f789} 
+unsigned char {\bfseries aad\+\_\+buf} \mbox{[}16\mbox{]}
+\item 
+\Hypertarget{struct_e_v_p___a_e_s___o_c_b___c_t_x_a10696cdb73abb996cf89609b05da1d49}\label{struct_e_v_p___a_e_s___o_c_b___c_t_x_a10696cdb73abb996cf89609b05da1d49} 
+int {\bfseries data\+\_\+buf\+\_\+len}
+\item 
+\Hypertarget{struct_e_v_p___a_e_s___o_c_b___c_t_x_a85de047b555b84e61c98eb9f0e9f2852}\label{struct_e_v_p___a_e_s___o_c_b___c_t_x_a85de047b555b84e61c98eb9f0e9f2852} 
+int {\bfseries aad\+\_\+buf\+\_\+len}
+\item 
+\Hypertarget{struct_e_v_p___a_e_s___o_c_b___c_t_x_a070808b868053b3747d162d903a9c401}\label{struct_e_v_p___a_e_s___o_c_b___c_t_x_a070808b868053b3747d162d903a9c401} 
+int {\bfseries ivlen}
+\item 
+\Hypertarget{struct_e_v_p___a_e_s___o_c_b___c_t_x_a5dfa796a3c663d358b0e77f4225da8fd}\label{struct_e_v_p___a_e_s___o_c_b___c_t_x_a5dfa796a3c663d358b0e77f4225da8fd} 
+int {\bfseries taglen}
+\end{DoxyCompactItemize}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/namph/\+Downloads/openssl/openssl-\/3.\+2.\+1/crypto/evp/e\+\_\+aes.\+c\end{DoxyCompactItemize}

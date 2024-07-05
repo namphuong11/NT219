@@ -1,0 +1,33 @@
+\doxysection{symhacks.\+h}
+\hypertarget{internal_2symhacks_8h_source}{}\label{internal_2symhacks_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/symhacks.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/symhacks.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2019-\/2021\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_INTERNAL\_SYMHACKS\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_INTERNAL\_SYMHACKS\_H}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#\ pragma\ once}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ include\ <openssl/e\_os2.h>}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#\ if\ defined(OPENSSL\_SYS\_VMS)}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{comment}{/*\ ossl\_provider\_gettable\_params\ vs\ OSSL\_PROVIDER\_gettable\_params\ */}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#\ \ undef\ ossl\_provider\_gettable\_params}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#\ \ define\ ossl\_provider\_gettable\_params\ \ \ \ \ \ \ \ \ \ \ \ ossl\_int\_prov\_gettable\_params}}
+\DoxyCodeLine{00021\ \textcolor{comment}{/*\ ossl\_provider\_get\_params\ vs\ OSSL\_PROVIDER\_get\_params\ */}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#\ \ undef\ ossl\_provider\_get\_params}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#\ \ define\ ossl\_provider\_get\_params\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ossl\_int\_prov\_get\_params}}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#endif\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{/*\ !\ defined\ HEADER\_VMS\_IDHACKS\_H\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

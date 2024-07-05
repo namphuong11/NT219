@@ -1,0 +1,43 @@
+\doxysection{der\+\_\+sm2.\+h}
+\hypertarget{der__sm2_8h_source}{}\label{der__sm2_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/providers/common/include/prov/der\_sm2.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/providers/common/include/prov/der\_sm2.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ WARNING:\ do\ not\ edit!}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *\ Generated\ by\ makefile\ from\ providers\(\backslash\)common\(\backslash\)include\(\backslash\)prov\(\backslash\)der\_sm2.h.in}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ Copyright\ 2020-\/2021\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ "{}crypto/ec.h"{}}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ "{}internal/der.h"{}}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{comment}{/*\ Well\ known\ OIDs\ precompiled\ */}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ *\ sm2-\/with-\/SM3\ OBJECT\ IDENTIFIER\ ::=\ \{\ sm-\/scheme\ 501\ \}}}
+\DoxyCodeLine{00020\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#define\ DER\_OID\_V\_sm2\_with\_SM3\ DER\_P\_OBJECT,\ 8,\ 0x2A,\ 0x81,\ 0x1C,\ 0xCF,\ 0x55,\ 0x01,\ 0x83,\ 0x75}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#define\ DER\_OID\_SZ\_sm2\_with\_SM3\ 10}}
+\DoxyCodeLine{00023\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ossl\_der\_oid\_sm2\_with\_SM3[DER\_OID\_SZ\_sm2\_with\_SM3];}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00026\ \textcolor{comment}{\ *\ curveSM2\ OBJECT\ IDENTIFIER\ ::=\ \{\ sm-\/scheme\ 301\ \}}}
+\DoxyCodeLine{00027\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#define\ DER\_OID\_V\_curveSM2\ DER\_P\_OBJECT,\ 8,\ 0x2A,\ 0x81,\ 0x1C,\ 0xCF,\ 0x55,\ 0x01,\ 0x82,\ 0x2D}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#define\ DER\_OID\_SZ\_curveSM2\ 10}}
+\DoxyCodeLine{00030\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ossl\_der\_oid\_curveSM2[DER\_OID\_SZ\_curveSM2];}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \textcolor{comment}{/*\ Subject\ Public\ Key\ Info\ */}}
+\DoxyCodeLine{00034\ \textcolor{keywordtype}{int}\ ossl\_DER\_w\_algorithmIdentifier\_SM2(\mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,\ \textcolor{keywordtype}{int}\ cont,\ EC\_KEY\ *ec);}
+\DoxyCodeLine{00035\ \textcolor{comment}{/*\ Signature\ */}}
+\DoxyCodeLine{00036\ \textcolor{keywordtype}{int}\ ossl\_DER\_w\_algorithmIdentifier\_SM2\_with\_MD(\mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,\ \textcolor{keywordtype}{int}\ cont,}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ EC\_KEY\ *ec,\ \textcolor{keywordtype}{int}\ mdnid);}
+
+\end{DoxyCode}

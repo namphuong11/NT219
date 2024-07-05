@@ -1,0 +1,85 @@
+\doxysection{TS\+\_\+resp\+\_\+ctx Struct Reference}
+\hypertarget{struct_t_s__resp__ctx}{}\label{struct_t_s__resp__ctx}\index{TS\_resp\_ctx@{TS\_resp\_ctx}}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{struct_t_s__resp__ctx_acca3532e1fe120037b15c9069787ebb5}\label{struct_t_s__resp__ctx_acca3532e1fe120037b15c9069787ebb5} 
+{\bfseries STACK\+\_\+\+OF} (X509) \texorpdfstring{$\ast$}{*}certs
+\item 
+\Hypertarget{struct_t_s__resp__ctx_a042ada8c5f09433ffef7a94fd1143ccf}\label{struct_t_s__resp__ctx_a042ada8c5f09433ffef7a94fd1143ccf} 
+{\bfseries STACK\+\_\+\+OF} (ASN1\+\_\+\+OBJECT) \texorpdfstring{$\ast$}{*}policies
+\item 
+\Hypertarget{struct_t_s__resp__ctx_a753cb9f6a9ec57b7fb95dbb24774c058}\label{struct_t_s__resp__ctx_a753cb9f6a9ec57b7fb95dbb24774c058} 
+{\bfseries STACK\+\_\+\+OF} (EVP\+\_\+\+MD) \texorpdfstring{$\ast$}{*}mds
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{struct_t_s__resp__ctx_a2f344dd9dc1e604ee5da7855251b6d57}\label{struct_t_s__resp__ctx_a2f344dd9dc1e604ee5da7855251b6d57} 
+X509 \texorpdfstring{$\ast$}{*} {\bfseries signer\+\_\+cert}
+\item 
+\Hypertarget{struct_t_s__resp__ctx_a0de99406a94785a97ea96c138f8fdadf}\label{struct_t_s__resp__ctx_a0de99406a94785a97ea96c138f8fdadf} 
+EVP\+\_\+\+PKEY \texorpdfstring{$\ast$}{*} {\bfseries signer\+\_\+key}
+\item 
+\Hypertarget{struct_t_s__resp__ctx_aec0d78f968b1d2ecdde8fee7761ce102}\label{struct_t_s__resp__ctx_aec0d78f968b1d2ecdde8fee7761ce102} 
+const EVP\+\_\+\+MD \texorpdfstring{$\ast$}{*} {\bfseries signer\+\_\+md}
+\item 
+\Hypertarget{struct_t_s__resp__ctx_a592d9faff18f5530f611d58fb24e8945}\label{struct_t_s__resp__ctx_a592d9faff18f5530f611d58fb24e8945} 
+const EVP\+\_\+\+MD \texorpdfstring{$\ast$}{*} {\bfseries ess\+\_\+cert\+\_\+id\+\_\+digest}
+\item 
+\Hypertarget{struct_t_s__resp__ctx_ab537ae3d00451f1b0f95e54864b62b9a}\label{struct_t_s__resp__ctx_ab537ae3d00451f1b0f95e54864b62b9a} 
+ASN1\+\_\+\+OBJECT \texorpdfstring{$\ast$}{*} {\bfseries default\+\_\+policy}
+\item 
+\Hypertarget{struct_t_s__resp__ctx_ae0758e43218c983128be53cb999d54b4}\label{struct_t_s__resp__ctx_ae0758e43218c983128be53cb999d54b4} 
+ASN1\+\_\+\+INTEGER \texorpdfstring{$\ast$}{*} {\bfseries seconds}
+\item 
+\Hypertarget{struct_t_s__resp__ctx_aa2b9f8a451b9976b69f484ac83f7d491}\label{struct_t_s__resp__ctx_aa2b9f8a451b9976b69f484ac83f7d491} 
+ASN1\+\_\+\+INTEGER \texorpdfstring{$\ast$}{*} {\bfseries millis}
+\item 
+\Hypertarget{struct_t_s__resp__ctx_a6e30be29e202581977057e896fc72311}\label{struct_t_s__resp__ctx_a6e30be29e202581977057e896fc72311} 
+ASN1\+\_\+\+INTEGER \texorpdfstring{$\ast$}{*} {\bfseries micros}
+\item 
+\Hypertarget{struct_t_s__resp__ctx_ae73547d49818bbce3d755d7c94879c2f}\label{struct_t_s__resp__ctx_ae73547d49818bbce3d755d7c94879c2f} 
+unsigned {\bfseries clock\+\_\+precision\+\_\+digits}
+\item 
+\Hypertarget{struct_t_s__resp__ctx_a3c83f3eb3b737b2c62818fcfd76db5c1}\label{struct_t_s__resp__ctx_a3c83f3eb3b737b2c62818fcfd76db5c1} 
+unsigned {\bfseries flags}
+\item 
+\Hypertarget{struct_t_s__resp__ctx_a26180bbb9b639e92b2b0fa2c84ce30f2}\label{struct_t_s__resp__ctx_a26180bbb9b639e92b2b0fa2c84ce30f2} 
+TS\+\_\+serial\+\_\+cb {\bfseries serial\+\_\+cb}
+\item 
+\Hypertarget{struct_t_s__resp__ctx_a428e1ae893e00dea7088a4caed4ff52b}\label{struct_t_s__resp__ctx_a428e1ae893e00dea7088a4caed4ff52b} 
+void \texorpdfstring{$\ast$}{*} {\bfseries serial\+\_\+cb\+\_\+data}
+\item 
+\Hypertarget{struct_t_s__resp__ctx_a838a0b82016f7bcf6aabe4102f1a4ac8}\label{struct_t_s__resp__ctx_a838a0b82016f7bcf6aabe4102f1a4ac8} 
+TS\+\_\+time\+\_\+cb {\bfseries time\+\_\+cb}
+\item 
+\Hypertarget{struct_t_s__resp__ctx_aa818a3e3400ed231cf9b6fb084fe5cd6}\label{struct_t_s__resp__ctx_aa818a3e3400ed231cf9b6fb084fe5cd6} 
+void \texorpdfstring{$\ast$}{*} {\bfseries time\+\_\+cb\+\_\+data}
+\item 
+\Hypertarget{struct_t_s__resp__ctx_a76759785bdc0835a4501abdd72954561}\label{struct_t_s__resp__ctx_a76759785bdc0835a4501abdd72954561} 
+TS\+\_\+extension\+\_\+cb {\bfseries extension\+\_\+cb}
+\item 
+\Hypertarget{struct_t_s__resp__ctx_aa732cb381d3c1f66e3097adff0df24f0}\label{struct_t_s__resp__ctx_aa732cb381d3c1f66e3097adff0df24f0} 
+void \texorpdfstring{$\ast$}{*} {\bfseries extension\+\_\+cb\+\_\+data}
+\item 
+\Hypertarget{struct_t_s__resp__ctx_a9c66652878d500b08d3c36e258a4d974}\label{struct_t_s__resp__ctx_a9c66652878d500b08d3c36e258a4d974} 
+TS\+\_\+\+REQ \texorpdfstring{$\ast$}{*} {\bfseries request}
+\item 
+\Hypertarget{struct_t_s__resp__ctx_aff6fbaf908c062da548fb3e319d5ac68}\label{struct_t_s__resp__ctx_aff6fbaf908c062da548fb3e319d5ac68} 
+TS\+\_\+\+RESP \texorpdfstring{$\ast$}{*} {\bfseries response}
+\item 
+\Hypertarget{struct_t_s__resp__ctx_a314c23ef39b07c6119b982b9677c844e}\label{struct_t_s__resp__ctx_a314c23ef39b07c6119b982b9677c844e} 
+TS\+\_\+\+TST\+\_\+\+INFO \texorpdfstring{$\ast$}{*} {\bfseries tst\+\_\+info}
+\item 
+\Hypertarget{struct_t_s__resp__ctx_af036c844971cec80fa90bb378deec28e}\label{struct_t_s__resp__ctx_af036c844971cec80fa90bb378deec28e} 
+OSSL\+\_\+\+LIB\+\_\+\+CTX \texorpdfstring{$\ast$}{*} {\bfseries libctx}
+\item 
+\Hypertarget{struct_t_s__resp__ctx_aec5154d9eb4c9412a03b69ab1d10b315}\label{struct_t_s__resp__ctx_aec5154d9eb4c9412a03b69ab1d10b315} 
+char \texorpdfstring{$\ast$}{*} {\bfseries propq}
+\end{DoxyCompactItemize}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/namph/\+Downloads/openssl/openssl-\/3.\+2.\+1/crypto/ts/ts\+\_\+local.\+h\end{DoxyCompactItemize}

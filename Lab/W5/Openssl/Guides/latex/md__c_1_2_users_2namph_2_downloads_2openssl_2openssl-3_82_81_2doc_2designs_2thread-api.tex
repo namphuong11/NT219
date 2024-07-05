@@ -1,0 +1,74 @@
+\chapter{Thread Pool Support}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2thread-api}{}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2thread-api}\index{Thread Pool Support@{Thread Pool Support}}
+Open\+SSL wishes to support the internal use of threads for purposes of concurrency and parallelism in some circumstances. There are various reasons why this is desirable\+:
+
+
+\begin{DoxyItemize}
+\item Some algorithms are designed to be run in parallel (Argon2);
+\item Some transports (e.\+g. QUIC, DTLS) may need to handle timer events independently of application calls to Open\+SSL.
+\end{DoxyItemize}
+
+To support this end, Open\+SSL can manage an internal thread pool. Tasks can be scheduled on the internal thread pool.
+
+There is currently a single model available to an application which wants to use the thread pool functionality, known as the “default model”. More models providing more flexible or advanced usage may be added in future releases.
+
+A thread pool is managed on a per-\/{\ttfamily OSSL\+\_\+\+LIB\+\_\+\+CTX} basis.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2thread-api_autotoc_md513}{}\doxysection{\texorpdfstring{Default Model}{Default Model}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2thread-api_autotoc_md513}
+In the default model, Open\+SSL creates and manages threads up to a maximum number of threads authorized by the application.
+
+The application enables thread pooling by calling the following function during its initialisation\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{/*}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ Set\ the\ maximum\ number\ of\ threads\ to\ be\ used\ by\ the\ thread\ pool.}}
+\DoxyCodeLine{\textcolor{comment}{\ *}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ If\ the\ argument\ is\ 0,\ thread\ pooling\ is\ disabled.\ OpenSSL\ will\ not\ create\ any}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ threads\ and\ existing\ threads\ in\ the\ thread\ pool\ will\ be\ torn\ down.}}
+\DoxyCodeLine{\textcolor{comment}{\ *}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ Returns\ 1\ on\ success\ and\ 0\ on\ failure.\ Returns\ failure\ if\ OpenSSL-\/managed}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ thread\ pooling\ is\ not\ supported\ (for\ example,\ if\ it\ is\ not\ supported\ on\ the}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ current\ platform,\ or\ because\ OpenSSL\ is\ not\ built\ with\ the\ necessary}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ support).}}
+\DoxyCodeLine{\textcolor{comment}{\ */}}
+\DoxyCodeLine{\textcolor{keywordtype}{int}\ OSSL\_set\_max\_threads(OSSL\_LIB\_CTX\ *ctx,\ uint64\_t\ max\_threads);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{/*}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ Get\ the\ maximum\ number\ of\ threads\ currently\ allowed\ to\ be\ used\ by\ the}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ thread\ pool.\ If\ thread\ pooling\ is\ disabled\ or\ not\ available,\ returns\ 0.}}
+\DoxyCodeLine{\textcolor{comment}{\ */}}
+\DoxyCodeLine{uint64\_t\ OSSL\_get\_max\_threads(OSSL\_LIB\_CTX\ *ctx);}
+
+\end{DoxyCode}
+
+
+The maximum thread count is a limit, not a target. Threads will not be spawned unless (and until) there is demand.
+
+As usual, {\ttfamily ctx} can be NULL to use the default library context.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2thread-api_autotoc_md514}{}\doxysection{\texorpdfstring{Capability Detection}{Capability Detection}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2thread-api_autotoc_md514}
+These functions allow the caller to determine if Open\+SSL was built with threads support.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{/*}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ Retrieves\ flags\ indicating\ what\ threading\ functionality\ OpenSSL\ can\ support}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ based\ on\ how\ it\ was\ built\ and\ the\ platform\ on\ which\ it\ was\ running.}}
+\DoxyCodeLine{\textcolor{comment}{\ */}}
+\DoxyCodeLine{\textcolor{comment}{/*\ Is\ thread\ pool\ functionality\ supported\ at\ all?\ */}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#define\ OSSL\_THREAD\_SUPPORT\_FLAG\_THREAD\_POOL\ \ \ \ (1U<<0)}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{/*}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ Is\ the\ default\ model\ supported?\ If\ THREAD\_POOL\ is\ supported\ but\ DEFAULT\_SPAWN}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ is\ not\ supported,\ another\ model\ must\ be\ used.\ Note\ that\ there\ is\ currently}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ only\ one\ supported\ model\ (the\ default\ model),\ but\ there\ may\ be\ more\ in\ the}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ future.}}
+\DoxyCodeLine{\textcolor{comment}{\ */}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#define\ OSSL\_THREAD\_SUPPORT\_FLAG\_DEFAULT\_SPAWN\ \ (1U<<1)}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{/*\ Returns\ zero\ or\ more\ of\ OSSL\_THREAD\_SUPPORT\_FLAG\_*.\ */}}
+\DoxyCodeLine{uint32\_t\ OSSL\_get\_thread\_support\_flags(\textcolor{keywordtype}{void});}
+
+\end{DoxyCode}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2thread-api_autotoc_md515}{}\doxysection{\texorpdfstring{Build Options}{Build Options}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2thread-api_autotoc_md515}
+A build option {\ttfamily thread-\/pool}/{\ttfamily no-\/thread-\/pool} will be introduced which allows thread pool functionality to be compiled out. {\ttfamily no-\/thread-\/pool} implies {\ttfamily no-\/default-\/thread-\/pool}.
+
+A build option {\ttfamily default-\/thread-\/pool}/{\ttfamily no-\/default-\/thread-\/pool} will be introduced which allows the default thread pool functionality to be compiled out. If this functionality is compiled out, another thread pool model must be used. Since the default model is the only currently supported model, disabling the default model renders threading functionality unusable. As such, there is little reason to use this option instead of {\ttfamily thread-\/pool/no-\/thread-\/pool}, however this option is nonetheless provided for symmetry when additional models are introduced in the future.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2thread-api_autotoc_md516}{}\doxysection{\texorpdfstring{Internals}{Internals}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2thread-api_autotoc_md516}
+New internal components will need to be introduced (e.\+g. condition variables) to support this functionality, however there is no intention of making this functionality public at this time. 

@@ -1,0 +1,108 @@
+\doxysection{quic\+\_\+thread\+\_\+assist.\+h}
+\hypertarget{quic__thread__assist_8h_source}{}\label{quic__thread__assist_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/quic\_thread\_assist.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/quic\_thread\_assist.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_QUIC\_THREAD\_ASSIST\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_QUIC\_THREAD\_ASSIST\_H}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#\ include\ <openssl/ssl.h>}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ include\ "{}internal/thread.h"{}}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#\ include\ "{}internal/time.h"{}}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#\ if\ defined(OPENSSL\_NO\_QUIC)\ ||\ defined(OPENSSL\_NO\_THREAD\_POOL)}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#\ \ define\ OPENSSL\_NO\_QUIC\_THREAD\_ASSIST}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#\ ifndef\ OPENSSL\_NO\_QUIC\_THREAD\_ASSIST}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00024\ \textcolor{comment}{\ *\ QUIC\ Thread\ Assisted\ Functionality}}
+\DoxyCodeLine{00025\ \textcolor{comment}{\ *\ ==================================}}
+\DoxyCodeLine{00026\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00027\ \textcolor{comment}{\ *\ Where\ OS\ threading\ support\ is\ available,\ QUIC\ can\ optionally\ support\ a\ thread}}
+\DoxyCodeLine{00028\ \textcolor{comment}{\ *\ assisted\ mode\ of\ operation.\ The\ purpose\ of\ this\ mode\ of\ operation\ is\ to}}
+\DoxyCodeLine{00029\ \textcolor{comment}{\ *\ ensure\ that\ assorted\ timeout\ events\ which\ QUIC\ expects\ to\ be\ handled\ in\ a}}
+\DoxyCodeLine{00030\ \textcolor{comment}{\ *\ timely\ manner\ can\ be\ handled\ without\ the\ application\ needing\ to\ ensure\ that}}
+\DoxyCodeLine{00031\ \textcolor{comment}{\ *\ SSL\_tick()\ is\ called\ \ on\ \ time.\ This\ is\ not\ needed\ if\ the\ application\ always}}
+\DoxyCodeLine{00032\ \textcolor{comment}{\ *\ has\ a\ call\ blocking\ to\ SSL\_read()\ or\ SSL\_write()\ (or\ another\ I/O\ function)\ on}}
+\DoxyCodeLine{00033\ \textcolor{comment}{\ *\ a\ QUIC\ SSL\ object,\ but\ if\ the\ application\ goes\ for\ long\ periods\ of\ time}}
+\DoxyCodeLine{00034\ \textcolor{comment}{\ *\ without\ making\ any\ such\ call\ to\ a\ QUIC\ SSL\ object,\ libssl\ cannot\ ordinarily}}
+\DoxyCodeLine{00035\ \textcolor{comment}{\ *\ guarantee\ that\ QUIC\ timeout\ events\ will\ be\ serviced\ in\ a\ timely\ fashion.}}
+\DoxyCodeLine{00036\ \textcolor{comment}{\ *\ Thread\ assisted\ \ mode\ is\ therefore\ of\ use\ to\ applications\ which\ do\ not\ always}}
+\DoxyCodeLine{00037\ \textcolor{comment}{\ *\ have\ an\ ongoing\ call\ to\ an\ I/O\ function\ on\ a\ QUIC\ SSL\ object\ but\ also\ do\ not}}
+\DoxyCodeLine{00038\ \textcolor{comment}{\ *\ want\ to\ have\ to\ arrange\ periodic\ ticking.}}
+\DoxyCodeLine{00039\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00040\ \textcolor{comment}{\ *\ A\ consequence\ of\ this\ is\ that\ the\ intrusiveness\ of\ thread\ assisted\ mode\ upon}}
+\DoxyCodeLine{00041\ \textcolor{comment}{\ *\ the\ general\ architecture\ of\ our\ QUIC\ engine\ is\ actually\ fairly\ limited\ and}}
+\DoxyCodeLine{00042\ \textcolor{comment}{\ *\ amounts\ to\ an\ automatic\ ticking\ of\ the\ QUIC\ engine\ when\ timeouts\ expire,}}
+\DoxyCodeLine{00043\ \textcolor{comment}{\ *\ synchronised\ correctly\ with\ an\ application's\ own\ threads\ using\ locking.}}
+\DoxyCodeLine{00044\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00045\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structquic__thread__assist__st}{quic\_thread\_assist\_st}}\ \{}
+\DoxyCodeLine{00046\ \ \ \ \ \mbox{\hyperlink{structquic__channel__st}{QUIC\_CHANNEL}}\ *ch;}
+\DoxyCodeLine{00047\ \ \ \ \ CRYPTO\_CONDVAR\ *cv;}
+\DoxyCodeLine{00048\ \ \ \ \ \mbox{\hyperlink{structcrypto__thread__st}{CRYPTO\_THREAD}}\ *t;}
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{keywordtype}{int}\ teardown,\ joined;}
+\DoxyCodeLine{00050\ \ \ \ \ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ (*now\_cb)(\textcolor{keywordtype}{void}\ *arg);}
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{keywordtype}{void}\ *now\_cb\_arg;}
+\DoxyCodeLine{00052\ \}\ \mbox{\hyperlink{structquic__thread__assist__st}{QUIC\_THREAD\_ASSIST}};}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00055\ \textcolor{comment}{\ *\ Initialise\ the\ thread\ assist\ object.\ The\ channel\ must\ have\ a\ valid\ mutex}}
+\DoxyCodeLine{00056\ \textcolor{comment}{\ *\ configured\ on\ it\ which\ will\ be\ retrieved\ automatically.\ It\ is\ assumed\ that}}
+\DoxyCodeLine{00057\ \textcolor{comment}{\ *\ the\ mutex\ is\ currently\ held\ when\ this\ function\ is\ called.\ This\ function\ does}}
+\DoxyCodeLine{00058\ \textcolor{comment}{\ *\ not\ affect\ the\ state\ of\ the\ mutex.}}
+\DoxyCodeLine{00059\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00060\ \textcolor{keywordtype}{int}\ ossl\_quic\_thread\_assist\_init\_start(\mbox{\hyperlink{structquic__thread__assist__st}{QUIC\_THREAD\_ASSIST}}\ *qta,}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structquic__channel__st}{QUIC\_CHANNEL}}\ *ch,}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ (*now\_cb)(\textcolor{keywordtype}{void}\ *arg),}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *now\_cb\_arg);}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00066\ \textcolor{comment}{\ *\ Request\ the\ thread\ assist\ helper\ to\ begin\ stopping\ the\ assist\ thread.\ This}}
+\DoxyCodeLine{00067\ \textcolor{comment}{\ *\ returns\ before\ the\ teardown\ is\ complete.\ Idempotent;\ multiple\ calls\ to\ this}}
+\DoxyCodeLine{00068\ \textcolor{comment}{\ *\ function\ are\ inconsequential.}}
+\DoxyCodeLine{00069\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00070\ \textcolor{comment}{\ *\ Precondition:\ channel\ mutex\ must\ be\ held\ (unchecked)}}
+\DoxyCodeLine{00071\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00072\ \textcolor{keywordtype}{int}\ ossl\_quic\_thread\_assist\_stop\_async(\mbox{\hyperlink{structquic__thread__assist__st}{QUIC\_THREAD\_ASSIST}}\ *qta);}
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00074\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00075\ \textcolor{comment}{\ *\ Wait\ until\ the\ thread\ assist\ helper\ is\ torn\ down.\ This\ automatically\ implies}}
+\DoxyCodeLine{00076\ \textcolor{comment}{\ *\ the\ effects\ of\ ossl\_quic\_thread\_assist\_stop\_async().\ Returns\ immediately}}
+\DoxyCodeLine{00077\ \textcolor{comment}{\ *\ if\ the\ teardown\ has\ already\ completed.}}
+\DoxyCodeLine{00078\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00079\ \textcolor{comment}{\ *\ Precondition:\ channel\ mutex\ must\ be\ held\ (unchecked)}}
+\DoxyCodeLine{00080\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00081\ \textcolor{keywordtype}{int}\ ossl\_quic\_thread\_assist\_wait\_stopped(\mbox{\hyperlink{structquic__thread__assist__st}{QUIC\_THREAD\_ASSIST}}\ *qta);}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00083\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00084\ \textcolor{comment}{\ *\ Deallocates\ state\ associated\ with\ the\ thread\ assist\ helper.}}
+\DoxyCodeLine{00085\ \textcolor{comment}{\ *\ ossl\_quic\_thread\_assist\_wait\_stopped()\ must\ have\ returned\ successfully\ before}}
+\DoxyCodeLine{00086\ \textcolor{comment}{\ *\ calling\ this.\ It\ does\ not\ matter\ whether\ the\ channel\ mutex\ is\ held\ or\ not.}}
+\DoxyCodeLine{00087\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00088\ \textcolor{comment}{\ *\ Precondition:\ ossl\_quic\_thread\_assist\_wait\_stopped()\ has\ returned\ 1}}
+\DoxyCodeLine{00089\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (asserted)}}
+\DoxyCodeLine{00090\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00091\ \textcolor{keywordtype}{int}\ ossl\_quic\_thread\_assist\_cleanup(\mbox{\hyperlink{structquic__thread__assist__st}{QUIC\_THREAD\_ASSIST}}\ *qta);}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00094\ \textcolor{comment}{\ *\ Must\ be\ called\ to\ notify\ the\ assist\ thread\ if\ the\ channel\ deadline\ changes.}}
+\DoxyCodeLine{00095\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00096\ \textcolor{comment}{\ *\ Precondition:\ channel\ mutex\ must\ be\ held\ (unchecked)}}
+\DoxyCodeLine{00097\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00098\ \textcolor{keywordtype}{int}\ ossl\_quic\_thread\_assist\_notify\_deadline\_changed(\mbox{\hyperlink{structquic__thread__assist__st}{QUIC\_THREAD\_ASSIST}}\ *qta);}
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00100\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00101\ }
+\DoxyCodeLine{00102\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

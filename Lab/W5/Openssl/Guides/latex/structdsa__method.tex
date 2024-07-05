@@ -1,0 +1,46 @@
+\doxysection{dsa\+\_\+method Struct Reference}
+\hypertarget{structdsa__method}{}\label{structdsa__method}\index{dsa\_method@{dsa\_method}}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{structdsa__method_a93e4a64ec1e9f5811fedbec263555272}\label{structdsa__method_a93e4a64ec1e9f5811fedbec263555272} 
+char \texorpdfstring{$\ast$}{*} {\bfseries name}
+\item 
+\Hypertarget{structdsa__method_aa00342b6e75f3d50b5915da6d73ad868}\label{structdsa__method_aa00342b6e75f3d50b5915da6d73ad868} 
+DSA\+\_\+\+SIG \texorpdfstring{$\ast$}{*}(\texorpdfstring{$\ast$}{*} {\bfseries dsa\+\_\+do\+\_\+sign} )(const unsigned char \texorpdfstring{$\ast$}{*}dgst, int dlen, DSA \texorpdfstring{$\ast$}{*}dsa)
+\item 
+\Hypertarget{structdsa__method_a6c731fb594e9d87b38351caf21b52f72}\label{structdsa__method_a6c731fb594e9d87b38351caf21b52f72} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries dsa\+\_\+sign\+\_\+setup} )(DSA \texorpdfstring{$\ast$}{*}dsa, BN\+\_\+\+CTX \texorpdfstring{$\ast$}{*}ctx\+\_\+in, BIGNUM \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}kinvp, BIGNUM \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}rp)
+\item 
+\Hypertarget{structdsa__method_a48d8dcf12cd14676633cde4b06dbe1c5}\label{structdsa__method_a48d8dcf12cd14676633cde4b06dbe1c5} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries dsa\+\_\+do\+\_\+verify} )(const unsigned char \texorpdfstring{$\ast$}{*}dgst, int dgst\+\_\+len, DSA\+\_\+\+SIG \texorpdfstring{$\ast$}{*}sig, DSA \texorpdfstring{$\ast$}{*}dsa)
+\item 
+\Hypertarget{structdsa__method_afa89a41a4a372f996bc14aea714f4222}\label{structdsa__method_afa89a41a4a372f996bc14aea714f4222} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries dsa\+\_\+mod\+\_\+exp} )(DSA \texorpdfstring{$\ast$}{*}dsa, BIGNUM \texorpdfstring{$\ast$}{*}rr, const BIGNUM \texorpdfstring{$\ast$}{*}a1, const BIGNUM \texorpdfstring{$\ast$}{*}p1, const BIGNUM \texorpdfstring{$\ast$}{*}a2, const BIGNUM \texorpdfstring{$\ast$}{*}p2, const BIGNUM \texorpdfstring{$\ast$}{*}m, BN\+\_\+\+CTX \texorpdfstring{$\ast$}{*}ctx, BN\+\_\+\+MONT\+\_\+\+CTX \texorpdfstring{$\ast$}{*}in\+\_\+mont)
+\item 
+\Hypertarget{structdsa__method_ade3c564cde54896bfc601ba9cff7a725}\label{structdsa__method_ade3c564cde54896bfc601ba9cff7a725} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries bn\+\_\+mod\+\_\+exp} )(DSA \texorpdfstring{$\ast$}{*}dsa, BIGNUM \texorpdfstring{$\ast$}{*}r, const BIGNUM \texorpdfstring{$\ast$}{*}a, const BIGNUM \texorpdfstring{$\ast$}{*}p, const BIGNUM \texorpdfstring{$\ast$}{*}m, BN\+\_\+\+CTX \texorpdfstring{$\ast$}{*}ctx, BN\+\_\+\+MONT\+\_\+\+CTX \texorpdfstring{$\ast$}{*}m\+\_\+ctx)
+\item 
+\Hypertarget{structdsa__method_acfaf05310756308b9849f278cdfd91c6}\label{structdsa__method_acfaf05310756308b9849f278cdfd91c6} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries init} )(DSA \texorpdfstring{$\ast$}{*}dsa)
+\item 
+\Hypertarget{structdsa__method_aad9fed78046fe8c6f995ba9ee8bd59d2}\label{structdsa__method_aad9fed78046fe8c6f995ba9ee8bd59d2} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries finish} )(DSA \texorpdfstring{$\ast$}{*}dsa)
+\item 
+\Hypertarget{structdsa__method_ae5a10b0b8d5b139e5818da8da5223ebc}\label{structdsa__method_ae5a10b0b8d5b139e5818da8da5223ebc} 
+int {\bfseries flags}
+\item 
+\Hypertarget{structdsa__method_a0777aeb532436e03903df3c2288a4e70}\label{structdsa__method_a0777aeb532436e03903df3c2288a4e70} 
+void \texorpdfstring{$\ast$}{*} {\bfseries app\+\_\+data}
+\item 
+\Hypertarget{structdsa__method_a22d30cb3e62b00cbb818f7d2bacb99f7}\label{structdsa__method_a22d30cb3e62b00cbb818f7d2bacb99f7} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries dsa\+\_\+paramgen} )(DSA \texorpdfstring{$\ast$}{*}dsa, int bits, const unsigned char \texorpdfstring{$\ast$}{*}seed, int seed\+\_\+len, int \texorpdfstring{$\ast$}{*}counter\+\_\+ret, unsigned long \texorpdfstring{$\ast$}{*}h\+\_\+ret, BN\+\_\+\+GENCB \texorpdfstring{$\ast$}{*}cb)
+\item 
+\Hypertarget{structdsa__method_a55bf9cc2d75b43788806388a6e924eb1}\label{structdsa__method_a55bf9cc2d75b43788806388a6e924eb1} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries dsa\+\_\+keygen} )(DSA \texorpdfstring{$\ast$}{*}dsa)
+\end{DoxyCompactItemize}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/namph/\+Downloads/openssl/openssl-\/3.\+2.\+1/crypto/dsa/dsa\+\_\+local.\+h\end{DoxyCompactItemize}

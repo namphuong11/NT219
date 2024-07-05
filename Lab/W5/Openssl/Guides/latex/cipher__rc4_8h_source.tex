@@ -1,0 +1,27 @@
+\doxysection{cipher\+\_\+rc4.\+h}
+\hypertarget{cipher__rc4_8h_source}{}\label{cipher__rc4_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/providers/implementations/ciphers/cipher\_rc4.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/providers/implementations/ciphers/cipher\_rc4.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2019-\/2020\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <openssl/rc4.h>}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ "{}prov/ciphercommon.h"{}}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structprov__rc4__ctx__st}{prov\_rc4\_ctx\_st}}\ \{}
+\DoxyCodeLine{00014\ \ \ \ \ \mbox{\hyperlink{structprov__cipher__ctx__st}{PROV\_CIPHER\_CTX}}\ base;\ \ \ \ \ \ \textcolor{comment}{/*\ Must\ be\ first\ */}}
+\DoxyCodeLine{00015\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00016\ \ \ \ \ \ \ \ \ OSSL\_UNION\_ALIGN;}
+\DoxyCodeLine{00017\ \ \ \ \ \ \ \ \ RC4\_KEY\ ks;}
+\DoxyCodeLine{00018\ \ \ \ \ \}\ ks;}
+\DoxyCodeLine{00019\ \}\ \mbox{\hyperlink{structprov__rc4__ctx__st}{PROV\_RC4\_CTX}};}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structprov__cipher__hw__st}{PROV\_CIPHER\_HW}}\ *ossl\_prov\_cipher\_hw\_rc4(\textcolor{keywordtype}{size\_t}\ keybits);}
+
+\end{DoxyCode}

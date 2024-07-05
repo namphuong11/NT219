@@ -1,0 +1,156 @@
+\doxysection{packet\+\_\+quic.\+h}
+\hypertarget{packet__quic_8h_source}{}\label{packet__quic_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/packet\_quic.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/packet\_quic.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2022-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_INTERNAL\_PACKET\_QUIC\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_INTERNAL\_PACKET\_QUIC\_H}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#\ pragma\ once}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ include\ "{}internal/packet.h"{}}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#\ include\ "{}internal/quic\_vlint.h"{}}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#\ ifndef\ OPENSSL\_NO\_QUIC}}
+\DoxyCodeLine{00018\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ *\ Decodes\ a\ QUIC\ variable-\/length\ integer\ in\ |pkt|\ and\ stores\ the\ result\ in}}
+\DoxyCodeLine{00020\ \textcolor{comment}{\ *\ |data|.}}
+\DoxyCodeLine{00021\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00022\ \_\_owur\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{int}\ PACKET\_get\_quic\_vlint(\mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ *data)}
+\DoxyCodeLine{00024\ \{}
+\DoxyCodeLine{00025\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ enclen;}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keywordflow}{if}\ (PACKET\_remaining(pkt)\ <\ 1)}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \ \ \ \ enclen\ =\ ossl\_quic\_vlint\_decode\_len(*pkt-\/>curr);}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \ \ \ \ \textcolor{keywordflow}{if}\ (PACKET\_remaining(pkt)\ <\ enclen)}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \ \ \ \ *data\ =\ ossl\_quic\_vlint\_decode\_unchecked(pkt-\/>curr);}
+\DoxyCodeLine{00036\ \ \ \ \ packet\_forward(pkt,\ enclen);}
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00038\ \}}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00041\ \textcolor{comment}{\ *\ Decodes\ a\ QUIC\ variable-\/length\ integer\ in\ |pkt|\ and\ stores\ the\ result\ in}}
+\DoxyCodeLine{00042\ \textcolor{comment}{\ *\ |data|.\ Unlike\ PACKET\_get\_quic\_vlint,\ this\ does\ not\ advance\ the\ current}}
+\DoxyCodeLine{00043\ \textcolor{comment}{\ *\ position.\ If\ was\_minimal\ is\ non-\/NULL,\ *was\_minimal\ is\ set\ to\ 1\ if\ the\ integer}}
+\DoxyCodeLine{00044\ \textcolor{comment}{\ *\ was\ encoded\ using\ the\ minimal\ possible\ number\ of\ bytes\ and\ 0\ otherwise.}}
+\DoxyCodeLine{00045\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00046\ \_\_owur\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{int}\ PACKET\_peek\_quic\_vlint\_ex(\mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ *data,}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ *was\_minimal)}
+\DoxyCodeLine{00049\ \{}
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ enclen;}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{keywordflow}{if}\ (PACKET\_remaining(pkt)\ <\ 1)}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ \ \ \ \ enclen\ =\ ossl\_quic\_vlint\_decode\_len(*pkt-\/>curr);}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \ \ \ \ \textcolor{keywordflow}{if}\ (PACKET\_remaining(pkt)\ <\ enclen)}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ \ \ \ \ *data\ =\ ossl\_quic\_vlint\_decode\_unchecked(pkt-\/>curr);}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \ \ \ \ \textcolor{keywordflow}{if}\ (was\_minimal\ !=\ NULL)}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ *was\_minimal\ =\ (enclen\ ==\ ossl\_quic\_vlint\_encode\_len(*data));}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00066\ \}}
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00068\ \_\_owur\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{int}\ PACKET\_peek\_quic\_vlint(\mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ *data)}
+\DoxyCodeLine{00070\ \{}
+\DoxyCodeLine{00071\ \ \ \ \ \textcolor{keywordflow}{return}\ PACKET\_peek\_quic\_vlint\_ex(pkt,\ data,\ NULL);}
+\DoxyCodeLine{00072\ \}}
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00074\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00075\ \textcolor{comment}{\ *\ Skips\ over\ a\ QUIC\ variable-\/length\ integer\ in\ |pkt|\ without\ decoding\ it.}}
+\DoxyCodeLine{00076\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00077\ \_\_owur\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{int}\ PACKET\_skip\_quic\_vlint(\mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt)}
+\DoxyCodeLine{00078\ \{}
+\DoxyCodeLine{00079\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ enclen;}
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00081\ \ \ \ \ \textcolor{keywordflow}{if}\ (PACKET\_remaining(pkt)\ <\ 1)}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \ \ \ \ enclen\ =\ ossl\_quic\_vlint\_decode\_len(*pkt-\/>curr);}
+\DoxyCodeLine{00085\ }
+\DoxyCodeLine{00086\ \ \ \ \ \textcolor{keywordflow}{if}\ (PACKET\_remaining(pkt)\ <\ enclen)}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00089\ \ \ \ \ packet\_forward(pkt,\ enclen);}
+\DoxyCodeLine{00090\ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00091\ \}}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00094\ \textcolor{comment}{\ *\ Reads\ a\ variable-\/length\ vector\ prefixed\ with\ a\ QUIC\ variable-\/length\ integer}}
+\DoxyCodeLine{00095\ \textcolor{comment}{\ *\ denoting\ the\ length,\ and\ stores\ the\ contents\ in\ |subpkt|.\ |pkt|\ can\ equal}}
+\DoxyCodeLine{00096\ \textcolor{comment}{\ *\ |subpkt|.\ Data\ is\ not\ copied:\ the\ |subpkt|\ packet\ will\ share\ its\ underlying}}
+\DoxyCodeLine{00097\ \textcolor{comment}{\ *\ buffer\ with\ the\ original\ |pkt|,\ so\ data\ wrapped\ by\ |pkt|\ must\ outlive\ the}}
+\DoxyCodeLine{00098\ \textcolor{comment}{\ *\ |subpkt|.\ Upon\ failure,\ the\ original\ |pkt|\ and\ |subpkt|\ are\ not\ modified.}}
+\DoxyCodeLine{00099\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00100\ \_\_owur\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{int}\ PACKET\_get\_quic\_length\_prefixed(\mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *subpkt)}
+\DoxyCodeLine{00102\ \{}
+\DoxyCodeLine{00103\ \ \ \ \ uint64\_t\ length;}
+\DoxyCodeLine{00104\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *data;}
+\DoxyCodeLine{00105\ \ \ \ \ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ tmp\ =\ *pkt;}
+\DoxyCodeLine{00106\ }
+\DoxyCodeLine{00107\ \ \ \ \ \textcolor{keywordflow}{if}\ (!PACKET\_get\_quic\_vlint(\&tmp,\ \&length)\ ||}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ length\ >\ SIZE\_MAX\ ||}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ !PACKET\_get\_bytes(\&tmp,\ \&data,\ (\textcolor{keywordtype}{size\_t})length))\ \{}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00111\ \ \ \ \ \}}
+\DoxyCodeLine{00112\ }
+\DoxyCodeLine{00113\ \ \ \ \ *pkt\ =\ tmp;}
+\DoxyCodeLine{00114\ \ \ \ \ subpkt-\/>curr\ =\ data;}
+\DoxyCodeLine{00115\ \ \ \ \ subpkt-\/>remaining\ =\ (size\_t)length;}
+\DoxyCodeLine{00116\ }
+\DoxyCodeLine{00117\ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00118\ \}}
+\DoxyCodeLine{00119\ }
+\DoxyCodeLine{00120\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00121\ \textcolor{comment}{\ *\ Starts\ a\ QUIC\ sub-\/packet\ headed\ by\ a\ QUIC\ variable-\/length\ integer.\ A\ 4-\/byte}}
+\DoxyCodeLine{00122\ \textcolor{comment}{\ *\ representation\ is\ used.}}
+\DoxyCodeLine{00123\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00124\ \_\_owur\ \textcolor{keywordtype}{int}\ WPACKET\_start\_quic\_sub\_packet(\mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt);}
+\DoxyCodeLine{00125\ }
+\DoxyCodeLine{00126\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00127\ \textcolor{comment}{\ *\ Starts\ a\ QUIC\ sub-\/packet\ headed\ by\ a\ QUIC\ variable-\/length\ integer.\ max\_len}}
+\DoxyCodeLine{00128\ \textcolor{comment}{\ *\ specifies\ the\ upper\ bound\ for\ the\ sub-\/packet\ size\ at\ the\ time\ the\ sub-\/packet}}
+\DoxyCodeLine{00129\ \textcolor{comment}{\ *\ is\ closed,\ which\ determines\ the\ encoding\ size\ for\ the\ variable-\/length}}
+\DoxyCodeLine{00130\ \textcolor{comment}{\ *\ integer\ header.\ max\_len\ can\ be\ a\ precise\ figure\ or\ a\ worst-\/case\ bound}}
+\DoxyCodeLine{00131\ \textcolor{comment}{\ *\ if\ a\ precise\ figure\ is\ not\ available.}}
+\DoxyCodeLine{00132\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00133\ \_\_owur\ \textcolor{keywordtype}{int}\ WPACKET\_start\_quic\_sub\_packet\_bound(\mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,\ \textcolor{keywordtype}{size\_t}\ max\_len);}
+\DoxyCodeLine{00134\ }
+\DoxyCodeLine{00135\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00136\ \textcolor{comment}{\ *\ Allocates\ a\ QUIC\ sub-\/packet\ with\ exactly\ len\ bytes\ of\ payload,\ headed\ by\ a}}
+\DoxyCodeLine{00137\ \textcolor{comment}{\ *\ QUIC\ variable-\/length\ integer.\ The\ pointer\ to\ the\ payload\ buffer\ is\ output\ and}}
+\DoxyCodeLine{00138\ \textcolor{comment}{\ *\ must\ be\ filled\ by\ the\ caller.\ This\ function\ assures\ optimal\ selection\ of}}
+\DoxyCodeLine{00139\ \textcolor{comment}{\ *\ variable-\/length\ integer\ encoding\ length.}}
+\DoxyCodeLine{00140\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00141\ \_\_owur\ \textcolor{keywordtype}{int}\ WPACKET\_quic\_sub\_allocate\_bytes(\mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,\ \textcolor{keywordtype}{size\_t}\ len,}
+\DoxyCodeLine{00142\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **bytes);}
+\DoxyCodeLine{00143\ }
+\DoxyCodeLine{00144\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00145\ \textcolor{comment}{\ *\ Write\ a\ QUIC\ variable-\/length\ integer\ to\ the\ packet.}}
+\DoxyCodeLine{00146\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00147\ \_\_owur\ \textcolor{keywordtype}{int}\ WPACKET\_quic\_write\_vlint(\mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,\ uint64\_t\ v);}
+\DoxyCodeLine{00148\ }
+\DoxyCodeLine{00149\ \textcolor{preprocessor}{\#\ endif\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{/*\ OPENSSL\_NO\_QUIC\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00150\ \textcolor{preprocessor}{\#endif\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{/*\ OSSL\_INTERNAL\_PACKET\_QUIC\_H\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

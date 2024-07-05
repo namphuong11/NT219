@@ -1,0 +1,103 @@
+\doxysection{decoders.\+inc}
+\hypertarget{decoders_8inc_source}{}\label{decoders_8inc_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/providers/decoders.inc@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/providers/decoders.inc}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2020-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ DECODER\_PROVIDER}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ error\ Macro\ DECODER\_PROVIDER\ undefined}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#define\ DECODER\_STRUCTURE\_type\_specific\_keypair\ \ \ \ \ \ \ \ \ "{}type-\/specific"{}}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#define\ DECODER\_STRUCTURE\_type\_specific\_params\ \ \ \ \ \ \ \ \ \ "{}type-\/specific"{}}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#define\ DECODER\_STRUCTURE\_type\_specific\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ "{}type-\/specific"{}}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ DECODER\_STRUCTURE\_type\_specific\_no\_pub\ \ \ \ \ \ \ \ \ \ "{}type-\/specific"{}}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#define\ DECODER\_STRUCTURE\_EncryptedPrivateKeyInfo\ \ \ \ \ \ \ "{}EncryptedPrivateKeyInfo"{}}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#define\ DECODER\_STRUCTURE\_PrivateKeyInfo\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ "{}PrivateKeyInfo"{}}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#define\ DECODER\_STRUCTURE\_SubjectPublicKeyInfo\ \ \ \ \ \ \ \ \ \ "{}SubjectPublicKeyInfo"{}}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#define\ DECODER\_STRUCTURE\_DH\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ "{}dh"{}}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#define\ DECODER\_STRUCTURE\_DHX\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ "{}dhx"{}}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#define\ DECODER\_STRUCTURE\_DSA\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ "{}dsa"{}}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#define\ DECODER\_STRUCTURE\_EC\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ "{}ec"{}}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#define\ DECODER\_STRUCTURE\_RSA\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ "{}rsa"{}}}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \textcolor{comment}{/*\ Arguments\ are\ prefixed\ with\ '\_'\ to\ avoid\ build\ breaks\ on\ certain\ platforms\ */}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#define\ DECODER(\_name,\ \_input,\ \_output,\ \_fips)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\ \ \ \ \{\ \_name,\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\ \ \ \ \ \ "{}provider="{}\ DECODER\_PROVIDER\ "{},fips="{}\ \#\_fips\ "{},input="{}\ \#\_input,\ \ \ \(\backslash\)}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\ \ \ \ \ \ (ossl\_\#\#\_input\#\#\_to\_\#\#\_output\#\#\_decoder\_functions)\ \}}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#define\ DECODER\_w\_structure(\_name,\ \_input,\ \_structure,\ \_output,\ \_fips)\ \ \(\backslash\)}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\ \ \ \ \{\ \_name,\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\ \ \ \ \ \ "{}provider="{}\ DECODER\_PROVIDER\ "{},fips="{}\ \#\_fips\ "{},input="{}\ \#\_input\ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\ \ \ \ \ \ "{},structure="{}\ DECODER\_STRUCTURE\_\#\#\_structure,\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\ \ \ \ \ \ (ossl\_\#\#\_structure\#\#\_\#\#\_input\#\#\_to\_\#\#\_output\#\#\_decoder\_functions)\ \}}}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_DH}}
+\DoxyCodeLine{00039\ DECODER\_w\_structure(\textcolor{stringliteral}{"{}DH"{}},\ der,\ PrivateKeyInfo,\ dh,\ yes),}
+\DoxyCodeLine{00040\ DECODER\_w\_structure(\textcolor{stringliteral}{"{}DH"{}},\ der,\ SubjectPublicKeyInfo,\ dh,\ yes),}
+\DoxyCodeLine{00041\ DECODER\_w\_structure(\textcolor{stringliteral}{"{}DH"{}},\ der,\ type\_specific\_params,\ dh,\ yes),}
+\DoxyCodeLine{00042\ DECODER\_w\_structure(\textcolor{stringliteral}{"{}DH"{}},\ der,\ DH,\ dh,\ yes),}
+\DoxyCodeLine{00043\ DECODER\_w\_structure(\textcolor{stringliteral}{"{}DHX"{}},\ der,\ PrivateKeyInfo,\ dhx,\ yes),}
+\DoxyCodeLine{00044\ DECODER\_w\_structure(\textcolor{stringliteral}{"{}DHX"{}},\ der,\ SubjectPublicKeyInfo,\ dhx,\ yes),}
+\DoxyCodeLine{00045\ DECODER\_w\_structure(\textcolor{stringliteral}{"{}DHX"{}},\ der,\ type\_specific\_params,\ dhx,\ yes),}
+\DoxyCodeLine{00046\ DECODER\_w\_structure(\textcolor{stringliteral}{"{}DHX"{}},\ der,\ DHX,\ dhx,\ yes),}
+\DoxyCodeLine{00047\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00048\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_DSA}}
+\DoxyCodeLine{00049\ DECODER\_w\_structure(\textcolor{stringliteral}{"{}DSA"{}},\ der,\ PrivateKeyInfo,\ dsa,\ yes),}
+\DoxyCodeLine{00050\ DECODER\_w\_structure(\textcolor{stringliteral}{"{}DSA"{}},\ der,\ SubjectPublicKeyInfo,\ dsa,\ yes),}
+\DoxyCodeLine{00051\ DECODER\_w\_structure(\textcolor{stringliteral}{"{}DSA"{}},\ der,\ type\_specific,\ dsa,\ yes),}
+\DoxyCodeLine{00052\ DECODER\_w\_structure(\textcolor{stringliteral}{"{}DSA"{}},\ der,\ DSA,\ dsa,\ yes),}
+\DoxyCodeLine{00053\ DECODER(\textcolor{stringliteral}{"{}DSA"{}},\ msblob,\ dsa,\ yes),}
+\DoxyCodeLine{00054\ DECODER(\textcolor{stringliteral}{"{}DSA"{}},\ pvk,\ dsa,\ yes),}
+\DoxyCodeLine{00055\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00056\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_EC}}
+\DoxyCodeLine{00057\ DECODER\_w\_structure(\textcolor{stringliteral}{"{}EC"{}},\ der,\ PrivateKeyInfo,\ ec,\ yes),}
+\DoxyCodeLine{00058\ DECODER\_w\_structure(\textcolor{stringliteral}{"{}EC"{}},\ der,\ SubjectPublicKeyInfo,\ ec,\ yes),}
+\DoxyCodeLine{00059\ DECODER\_w\_structure(\textcolor{stringliteral}{"{}EC"{}},\ der,\ type\_specific\_no\_pub,\ ec,\ yes),}
+\DoxyCodeLine{00060\ DECODER\_w\_structure(\textcolor{stringliteral}{"{}EC"{}},\ der,\ EC,\ ec,\ yes),}
+\DoxyCodeLine{00061\ \textcolor{preprocessor}{\#\ ifndef\ OPENSSL\_NO\_ECX}}
+\DoxyCodeLine{00062\ DECODER\_w\_structure(\textcolor{stringliteral}{"{}ED25519"{}},\ der,\ PrivateKeyInfo,\ ed25519,\ yes),}
+\DoxyCodeLine{00063\ DECODER\_w\_structure(\textcolor{stringliteral}{"{}ED25519"{}},\ der,\ SubjectPublicKeyInfo,\ ed25519,\ yes),}
+\DoxyCodeLine{00064\ DECODER\_w\_structure(\textcolor{stringliteral}{"{}ED448"{}},\ der,\ PrivateKeyInfo,\ ed448,\ yes),}
+\DoxyCodeLine{00065\ DECODER\_w\_structure(\textcolor{stringliteral}{"{}ED448"{}},\ der,\ SubjectPublicKeyInfo,\ ed448,\ yes),}
+\DoxyCodeLine{00066\ DECODER\_w\_structure(\textcolor{stringliteral}{"{}X25519"{}},\ der,\ PrivateKeyInfo,\ x25519,\ yes),}
+\DoxyCodeLine{00067\ DECODER\_w\_structure(\textcolor{stringliteral}{"{}X25519"{}},\ der,\ SubjectPublicKeyInfo,\ x25519,\ yes),}
+\DoxyCodeLine{00068\ DECODER\_w\_structure(\textcolor{stringliteral}{"{}X448"{}},\ der,\ PrivateKeyInfo,\ x448,\ yes),}
+\DoxyCodeLine{00069\ DECODER\_w\_structure(\textcolor{stringliteral}{"{}X448"{}},\ der,\ SubjectPublicKeyInfo,\ x448,\ yes),}
+\DoxyCodeLine{00070\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00071\ \textcolor{preprocessor}{\#\ ifndef\ OPENSSL\_NO\_SM2}}
+\DoxyCodeLine{00072\ DECODER\_w\_structure(\textcolor{stringliteral}{"{}SM2"{}},\ der,\ PrivateKeyInfo,\ sm2,\ no),}
+\DoxyCodeLine{00073\ DECODER\_w\_structure(\textcolor{stringliteral}{"{}SM2"{}},\ der,\ SubjectPublicKeyInfo,\ sm2,\ no),}
+\DoxyCodeLine{00074\ DECODER\_w\_structure(\textcolor{stringliteral}{"{}SM2"{}},\ der,\ type\_specific\_no\_pub,\ sm2,\ no),}
+\DoxyCodeLine{00075\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00076\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00077\ DECODER\_w\_structure(\textcolor{stringliteral}{"{}RSA"{}},\ der,\ PrivateKeyInfo,\ rsa,\ yes),}
+\DoxyCodeLine{00078\ DECODER\_w\_structure(\textcolor{stringliteral}{"{}RSA"{}},\ der,\ SubjectPublicKeyInfo,\ rsa,\ yes),}
+\DoxyCodeLine{00079\ DECODER\_w\_structure(\textcolor{stringliteral}{"{}RSA"{}},\ der,\ type\_specific\_keypair,\ rsa,\ yes),}
+\DoxyCodeLine{00080\ DECODER\_w\_structure(\textcolor{stringliteral}{"{}RSA"{}},\ der,\ RSA,\ rsa,\ yes),}
+\DoxyCodeLine{00081\ DECODER\_w\_structure(\textcolor{stringliteral}{"{}RSA-\/PSS"{}},\ der,\ PrivateKeyInfo,\ rsapss,\ yes),}
+\DoxyCodeLine{00082\ DECODER\_w\_structure(\textcolor{stringliteral}{"{}RSA-\/PSS"{}},\ der,\ SubjectPublicKeyInfo,\ rsapss,\ yes),}
+\DoxyCodeLine{00083\ DECODER(\textcolor{stringliteral}{"{}RSA"{}},\ msblob,\ rsa,\ yes),}
+\DoxyCodeLine{00084\ DECODER(\textcolor{stringliteral}{"{}RSA"{}},\ pvk,\ rsa,\ yes),}
+\DoxyCodeLine{00085\ }
+\DoxyCodeLine{00086\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00087\ \textcolor{comment}{\ *\ A\ decoder\ that\ takes\ a\ SubjectPublicKeyInfo\ and\ figures\ out\ the\ types\ of\ key}}
+\DoxyCodeLine{00088\ \textcolor{comment}{\ *\ that\ it\ contains.\ The\ output\ is\ the\ same\ SubjectPublicKeyInfo}}
+\DoxyCodeLine{00089\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00090\ DECODER\_w\_structure(\textcolor{stringliteral}{"{}DER"{}},\ der,\ SubjectPublicKeyInfo,\ der,\ yes),}
+\DoxyCodeLine{00091\ DECODER(\textcolor{stringliteral}{"{}DER"{}},\ pem,\ der,\ yes),}
+\DoxyCodeLine{00092\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00093\ \textcolor{comment}{\ *\ A\ decoder\ that\ recognises\ PKCS\#8\ EncryptedPrivateKeyInfo\ structure}}
+\DoxyCodeLine{00094\ \textcolor{comment}{\ *\ and\ decrypts\ it,\ passing\ on\ the\ unencrypted\ PrivateKeyInfo\ in\ DER}}
+\DoxyCodeLine{00095\ \textcolor{comment}{\ *\ form\ to\ the\ next\ decoder.}}
+\DoxyCodeLine{00096\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00097\ DECODER\_w\_structure(\textcolor{stringliteral}{"{}DER"{}},\ der,\ EncryptedPrivateKeyInfo,\ der,\ yes),}
+
+\end{DoxyCode}

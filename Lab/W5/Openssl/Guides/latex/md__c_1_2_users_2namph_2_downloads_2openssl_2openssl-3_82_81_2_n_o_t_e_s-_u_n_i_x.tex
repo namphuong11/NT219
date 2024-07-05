@@ -1,0 +1,42 @@
+\chapter{Notes for UNIX-\/like platforms}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_u_n_i_x}{}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_u_n_i_x}\index{Notes for UNIX-\/like platforms@{Notes for UNIX-\/like platforms}}
+For Unix/\+POSIX runtime systems on Windows, please see the \doxysectlink{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_w_i_n_d_o_w_s}{Notes for Windows platforms}{0}.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_u_n_i_x_autotoc_md893}{}\doxysection{\texorpdfstring{Open\+SSL uses the compiler to link programs and shared libraries}{Open\+SSL uses the compiler to link programs and shared libraries}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_u_n_i_x_autotoc_md893}
+Open\+SSL\textquotesingle{}s generated Makefile uses the C compiler command line to link programs, shared libraries and dynamically loadable shared objects. Because of this, any linking option that\textquotesingle{}s given to the configuration scripts MUST be in a form that the compiler can accept. This varies between systems, where some have compilers that accept linker flags directly, while others take them in {\ttfamily -\/Wl,} form. You need to read your compiler documentation to figure out what is acceptable, and {\ttfamily ld(1)} to figure out what linker options are available.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_u_n_i_x_autotoc_md894}{}\doxysection{\texorpdfstring{Shared libraries and installation in non-\/default locations}{Shared libraries and installation in non-\/default locations}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_u_n_i_x_autotoc_md894}
+Every Unix system has its own set of default locations for shared libraries, such as {\ttfamily /lib}, {\ttfamily /usr/lib} or possibly {\ttfamily /usr/local/lib}. If libraries are installed in non-\/default locations, dynamically linked binaries will not find them and therefore fail to run, unless they get a bit of help from a defined runtime shared library search path.
+
+For Open\+SSL\textquotesingle{}s application (the {\ttfamily openssl} command), our configuration scripts do NOT generally set the runtime shared library search path for you. It\textquotesingle{}s therefore advisable to set it explicitly when configuring, unless the libraries are to be installed in directories that you know to be in the default list.
+
+Runtime shared library search paths are specified with different linking options depending on operating system and versions thereof, and are talked about differently in their respective documentation; variations of RPATH are the most usual (note\+: ELF systems have two such tags, more on that below).
+
+Possible options to set the runtime shared library search path include the following\+:
+
+-\/Wl,-\/rpath,/whatever/path \# Linux, \texorpdfstring{$\ast$}{*}\+BSD, etc. -\/R /whatever/path \# Solaris -\/Wl,-\/R,/whatever/path \# AIX (-\/bsvr4 is passed internally) -\/Wl,+b,/whatever/path \# HP-\/\+UX -\/rpath /whatever/path \# Tru64, IRIX
+
+Open\+SSL\textquotesingle{}s configuration scripts recognise all these options and pass them to the Makefile that they build. (In fact, all arguments starting with {\ttfamily -\/Wl,} are recognised as linker options.) Please note that \textquotesingle{}l\textquotesingle{} in \textquotesingle{}-\/Wl\textquotesingle{} is lowercase L and not 1.
+
+Please do not use verbatim directories in your runtime shared library search path! Some Open\+SSL config targets add an extra directory level for multilib installations. To help with that, the produced Makefile includes the variable LIBRPATH, which is a convenience variable to be used with the runtime shared library search path options, as shown in this example\+:
+
+\$ ./\+Configure --prefix=/usr/local/ssl --openssldir=/usr/local/ssl \textbackslash{} \textquotesingle{}-\/Wl,-\/rpath,\textquotesingle{}
+
+On modern ELF based systems, there are two runtime search paths tags to consider, {\ttfamily DT\+\_\+\+RPATH} and {\ttfamily DT\+\_\+\+RUNPATH}. Shared objects are searched for in this order\+:
+
+
+\begin{DoxyEnumerate}
+\item Using directories specified in DT\+\_\+\+RPATH, unless DT\+\_\+\+RUNPATH is also set.
+\item Using the environment variable LD\+\_\+\+LIBRARY\+\_\+\+PATH
+\item Using directories specified in DT\+\_\+\+RUNPATH.
+\item Using system shared object caches and default directories.
+\end{DoxyEnumerate}
+
+This means that the values in the environment variable {\ttfamily LD\+\_\+\+LIBRARY\+\_\+\+PATH} won\textquotesingle{}t matter if the library is found in the paths given by {\ttfamily DT\+\_\+\+RPATH} (and {\ttfamily DT\+\_\+\+RUNPATH} isn\textquotesingle{}t set).
+
+Exactly which of {\ttfamily DT\+\_\+\+RPATH} or {\ttfamily DT\+\_\+\+RUNPATH} is set by default appears to depend on the system. For example, according to documentation, {\ttfamily DT\+\_\+\+RPATH} appears to be deprecated on Solaris in favor of {\ttfamily DT\+\_\+\+RUNPATH}, while on Debian GNU/\+Linux, either can be set, and {\ttfamily DT\+\_\+\+RPATH} is the default at the time of writing.
+
+How to choose which runtime search path tag is to be set depends on your system, please refer to ld(1) for the exact information on your system. As an example, the way to ensure the {\ttfamily DT\+\_\+\+RUNPATH} is set on Debian GNU/\+Linux systems rather than DT\+\_\+\+RPATH is to tell the linker to set new dtags, like this\+:
+
+\$ ./\+Configure --prefix=/usr/local/ssl --openssldir=/usr/local/ssl \textbackslash{} \textquotesingle{}-\/Wl,--enable-\/new-\/dtags,-\/rpath,\textquotesingle{}
+
+It might be worth noting that some/most ELF systems implement support for runtime search path relative to the directory containing current executable, by interpreting {\ttfamily \$ORIGIN} along with some other internal variables. Consult your system documentation.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_u_n_i_x_autotoc_md895}{}\doxysection{\texorpdfstring{Linking your application}{Linking your application}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_u_n_i_x_autotoc_md895}
+Third-\/party applications dynamically linked with Open\+SSL (or any other) shared library face exactly the same problem with non-\/default locations. The Open\+SSL config options mentioned above might or might not have bearing on linking of the target application. "{}\+Might"{} means that under some circumstances, it would be sufficient to link with Open\+SSL shared library "{}naturally"{}, i.\+e. with {\ttfamily -\/L/whatever/path -\/lssl -\/lcrypto}. But there are also cases when you\textquotesingle{}d have to explicitly specify runtime search path when linking your application. Consult your system documentation and use above section as inspiration...
+
+Shared Open\+SSL builds also install static libraries. Linking with the latter is likely to require special care because linkers usually look for shared libraries first and tend to remain "{}blind"{} to static Open\+SSL libraries. Referring to system documentation would suffice, if not for a corner case. On AIX static libraries (in shared build) are named differently, add {\ttfamily \+\_\+a} suffix to link with them, e.\+g. {\ttfamily -\/lcrypto\+\_\+a}. 

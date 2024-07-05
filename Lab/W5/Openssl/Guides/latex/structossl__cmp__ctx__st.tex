@@ -1,0 +1,232 @@
+\doxysection{ossl\+\_\+cmp\+\_\+ctx\+\_\+st Struct Reference}
+\hypertarget{structossl__cmp__ctx__st}{}\label{structossl__cmp__ctx__st}\index{ossl\_cmp\_ctx\_st@{ossl\_cmp\_ctx\_st}}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{structossl__cmp__ctx__st_a8c824e2a829c0ef01a38bf324b4c2d7c}\label{structossl__cmp__ctx__st_a8c824e2a829c0ef01a38bf324b4c2d7c} 
+{\bfseries STACK\+\_\+\+OF} (X509) \texorpdfstring{$\ast$}{*}untrusted
+\item 
+\Hypertarget{structossl__cmp__ctx__st_a59e8a47040c4978087374a2a3b51d5a1}\label{structossl__cmp__ctx__st_a59e8a47040c4978087374a2a3b51d5a1} 
+{\bfseries STACK\+\_\+\+OF} (X509) \texorpdfstring{$\ast$}{*}chain
+\item 
+\Hypertarget{structossl__cmp__ctx__st_a227246806e533c49e85aa717777395eb}\label{structossl__cmp__ctx__st_a227246806e533c49e85aa717777395eb} 
+{\bfseries STACK\+\_\+\+OF} (OSSL\+\_\+\+CMP\+\_\+\+ITAV) \texorpdfstring{$\ast$}{*}geninfo\+\_\+\+ITAVs
+\item 
+\Hypertarget{structossl__cmp__ctx__st_a771bc8b025cf818331dfc8de1bdf2beb}\label{structossl__cmp__ctx__st_a771bc8b025cf818331dfc8de1bdf2beb} 
+{\bfseries STACK\+\_\+\+OF} (X509) \texorpdfstring{$\ast$}{*}extra\+Certs\+Out
+\item 
+\Hypertarget{structossl__cmp__ctx__st_a683daae48d802ddc232b98422ef092b8}\label{structossl__cmp__ctx__st_a683daae48d802ddc232b98422ef092b8} 
+{\bfseries STACK\+\_\+\+OF} (GENERAL\+\_\+\+NAME) \texorpdfstring{$\ast$}{*}subject\+Alt\+Names
+\item 
+\Hypertarget{structossl__cmp__ctx__st_a6f55b7c28b70ec069fea8d08a25c812c}\label{structossl__cmp__ctx__st_a6f55b7c28b70ec069fea8d08a25c812c} 
+{\bfseries STACK\+\_\+\+OF} (OSSL\+\_\+\+CMP\+\_\+\+ITAV) \texorpdfstring{$\ast$}{*}genm\+\_\+\+ITAVs
+\item 
+\Hypertarget{structossl__cmp__ctx__st_a3cbf1aa191e56526a86c77808da776e9}\label{structossl__cmp__ctx__st_a3cbf1aa191e56526a86c77808da776e9} 
+{\bfseries STACK\+\_\+\+OF} (X509) \texorpdfstring{$\ast$}{*}new\+Chain
+\item 
+\Hypertarget{structossl__cmp__ctx__st_a1178d8dba66e70f6d598b249f1e9cedf}\label{structossl__cmp__ctx__st_a1178d8dba66e70f6d598b249f1e9cedf} 
+{\bfseries STACK\+\_\+\+OF} (X509) \texorpdfstring{$\ast$}{*}ca\+Pubs
+\item 
+\Hypertarget{structossl__cmp__ctx__st_a388a47250c63d639002a06ae2d4cd1f3}\label{structossl__cmp__ctx__st_a388a47250c63d639002a06ae2d4cd1f3} 
+{\bfseries STACK\+\_\+\+OF} (X509) \texorpdfstring{$\ast$}{*}extra\+Certs\+In
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{structossl__cmp__ctx__st_a853b893fdb3b069e0b6a2198c4b5c0a7}\label{structossl__cmp__ctx__st_a853b893fdb3b069e0b6a2198c4b5c0a7} 
+OSSL\+\_\+\+LIB\+\_\+\+CTX \texorpdfstring{$\ast$}{*} {\bfseries libctx}
+\item 
+\Hypertarget{structossl__cmp__ctx__st_a21c25901383f5ed861a35dd657f4b295}\label{structossl__cmp__ctx__st_a21c25901383f5ed861a35dd657f4b295} 
+char \texorpdfstring{$\ast$}{*} {\bfseries propq}
+\item 
+\Hypertarget{structossl__cmp__ctx__st_a986d96f80b60cf4084043d72ff7083aa}\label{structossl__cmp__ctx__st_a986d96f80b60cf4084043d72ff7083aa} 
+OSSL\+\_\+\+CMP\+\_\+log\+\_\+cb\+\_\+t {\bfseries log\+\_\+cb}
+\item 
+\Hypertarget{structossl__cmp__ctx__st_aeb114a47d5dda9f24bdefdb7e88b616d}\label{structossl__cmp__ctx__st_aeb114a47d5dda9f24bdefdb7e88b616d} 
+OSSL\+\_\+\+CMP\+\_\+severity {\bfseries log\+\_\+verbosity}
+\item 
+\Hypertarget{structossl__cmp__ctx__st_a5531a41738b0c0a085328a1f49d9a993}\label{structossl__cmp__ctx__st_a5531a41738b0c0a085328a1f49d9a993} 
+OSSL\+\_\+\+CMP\+\_\+transfer\+\_\+cb\+\_\+t {\bfseries transfer\+\_\+cb}
+\item 
+\Hypertarget{structossl__cmp__ctx__st_ab4449067f91a0c09d3a287bb99cbf82d}\label{structossl__cmp__ctx__st_ab4449067f91a0c09d3a287bb99cbf82d} 
+void \texorpdfstring{$\ast$}{*} {\bfseries transfer\+\_\+cb\+\_\+arg}
+\item 
+\Hypertarget{structossl__cmp__ctx__st_a9fa5cedb24730faee1f5b2914c3cb99b}\label{structossl__cmp__ctx__st_a9fa5cedb24730faee1f5b2914c3cb99b} 
+OSSL\+\_\+\+HTTP\+\_\+\+REQ\+\_\+\+CTX \texorpdfstring{$\ast$}{*} {\bfseries http\+\_\+ctx}
+\item 
+\Hypertarget{structossl__cmp__ctx__st_ab09d255e446df858e04486d7135c4cfe}\label{structossl__cmp__ctx__st_ab09d255e446df858e04486d7135c4cfe} 
+char \texorpdfstring{$\ast$}{*} {\bfseries server\+Path}
+\item 
+\Hypertarget{structossl__cmp__ctx__st_a41ce9d4774a3b6ea9e435ab424117ca6}\label{structossl__cmp__ctx__st_a41ce9d4774a3b6ea9e435ab424117ca6} 
+char \texorpdfstring{$\ast$}{*} {\bfseries server}
+\item 
+\Hypertarget{structossl__cmp__ctx__st_a518c1465733d6473702f513dfb7a4bf9}\label{structossl__cmp__ctx__st_a518c1465733d6473702f513dfb7a4bf9} 
+int {\bfseries server\+Port}
+\item 
+\Hypertarget{structossl__cmp__ctx__st_abaddb24c3cadfab9423f7f308483905d}\label{structossl__cmp__ctx__st_abaddb24c3cadfab9423f7f308483905d} 
+char \texorpdfstring{$\ast$}{*} {\bfseries proxy}
+\item 
+\Hypertarget{structossl__cmp__ctx__st_a0ae6ed3b13196510cacb0a81cb39e7de}\label{structossl__cmp__ctx__st_a0ae6ed3b13196510cacb0a81cb39e7de} 
+char \texorpdfstring{$\ast$}{*} {\bfseries no\+\_\+proxy}
+\item 
+\Hypertarget{structossl__cmp__ctx__st_ab50e7e46eabd545190bee552ad5c08c5}\label{structossl__cmp__ctx__st_ab50e7e46eabd545190bee552ad5c08c5} 
+int {\bfseries keep\+\_\+alive}
+\item 
+\Hypertarget{structossl__cmp__ctx__st_a418efe85eb59b06570af1a7dce168c78}\label{structossl__cmp__ctx__st_a418efe85eb59b06570af1a7dce168c78} 
+int {\bfseries msg\+\_\+timeout}
+\item 
+\Hypertarget{structossl__cmp__ctx__st_aaad5bf77f9b4e51a6d4c46c2d7861409}\label{structossl__cmp__ctx__st_aaad5bf77f9b4e51a6d4c46c2d7861409} 
+int {\bfseries total\+\_\+timeout}
+\item 
+\Hypertarget{structossl__cmp__ctx__st_addc1169b0d2446f308f42c8039fee5c1}\label{structossl__cmp__ctx__st_addc1169b0d2446f308f42c8039fee5c1} 
+int {\bfseries tls\+\_\+used}
+\item 
+\Hypertarget{structossl__cmp__ctx__st_abb226fe0c69037c7fe54b9933feca124}\label{structossl__cmp__ctx__st_abb226fe0c69037c7fe54b9933feca124} 
+time\+\_\+t {\bfseries end\+\_\+time}
+\item 
+\Hypertarget{structossl__cmp__ctx__st_a91b98a92d1672d1d7b1baf9676aa43f6}\label{structossl__cmp__ctx__st_a91b98a92d1672d1d7b1baf9676aa43f6} 
+OSSL\+\_\+\+HTTP\+\_\+bio\+\_\+cb\+\_\+t {\bfseries http\+\_\+cb}
+\item 
+\Hypertarget{structossl__cmp__ctx__st_aa6343ebda40f3e36a7b37f7a9751adac}\label{structossl__cmp__ctx__st_aa6343ebda40f3e36a7b37f7a9751adac} 
+void \texorpdfstring{$\ast$}{*} {\bfseries http\+\_\+cb\+\_\+arg}
+\item 
+\Hypertarget{structossl__cmp__ctx__st_a0486851e9852353abdce6583f3da7f53}\label{structossl__cmp__ctx__st_a0486851e9852353abdce6583f3da7f53} 
+int {\bfseries unprotected\+Errors}
+\item 
+\Hypertarget{structossl__cmp__ctx__st_a4374626035c270b0c6df0ed812a5d50d}\label{structossl__cmp__ctx__st_a4374626035c270b0c6df0ed812a5d50d} 
+X509 \texorpdfstring{$\ast$}{*} {\bfseries srv\+Cert}
+\item 
+\Hypertarget{structossl__cmp__ctx__st_aa50bf043933fdc96a39f12fd0b2a4e43}\label{structossl__cmp__ctx__st_aa50bf043933fdc96a39f12fd0b2a4e43} 
+X509 \texorpdfstring{$\ast$}{*} {\bfseries validated\+Srv\+Cert}
+\item 
+\Hypertarget{structossl__cmp__ctx__st_adf1a54a739871bfe32eea6a70dbd7dda}\label{structossl__cmp__ctx__st_adf1a54a739871bfe32eea6a70dbd7dda} 
+X509\+\_\+\+NAME \texorpdfstring{$\ast$}{*} {\bfseries expected\+\_\+sender}
+\item 
+\Hypertarget{structossl__cmp__ctx__st_ad551bd953f5d1374872fd5a9cf04f2e9}\label{structossl__cmp__ctx__st_ad551bd953f5d1374872fd5a9cf04f2e9} 
+X509\+\_\+\+STORE \texorpdfstring{$\ast$}{*} {\bfseries trusted}
+\item 
+\Hypertarget{structossl__cmp__ctx__st_ab4eddc8637dfb66266b5a547d6cd7e6f}\label{structossl__cmp__ctx__st_ab4eddc8637dfb66266b5a547d6cd7e6f} 
+int {\bfseries ignore\+\_\+keyusage}
+\item 
+\Hypertarget{structossl__cmp__ctx__st_a15ebe052b109a3c3095a2372a2253fff}\label{structossl__cmp__ctx__st_a15ebe052b109a3c3095a2372a2253fff} 
+int {\bfseries permit\+TAIn\+Extra\+Certs\+For\+IR}
+\item 
+\Hypertarget{structossl__cmp__ctx__st_ae74a70465856ea7ab8fd555d64eae27f}\label{structossl__cmp__ctx__st_ae74a70465856ea7ab8fd555d64eae27f} 
+int {\bfseries unprotected\+Send}
+\item 
+\Hypertarget{structossl__cmp__ctx__st_a5168b7c33d11fee2d4239a77421ba3e4}\label{structossl__cmp__ctx__st_a5168b7c33d11fee2d4239a77421ba3e4} 
+X509 \texorpdfstring{$\ast$}{*} {\bfseries cert}
+\item 
+\Hypertarget{structossl__cmp__ctx__st_a10bf05dd21fa7eb7763ce740f0000975}\label{structossl__cmp__ctx__st_a10bf05dd21fa7eb7763ce740f0000975} 
+EVP\+\_\+\+PKEY \texorpdfstring{$\ast$}{*} {\bfseries pkey}
+\item 
+\Hypertarget{structossl__cmp__ctx__st_a783a7d098213bebb8b9f5c53936b18b9}\label{structossl__cmp__ctx__st_a783a7d098213bebb8b9f5c53936b18b9} 
+ASN1\+\_\+\+OCTET\+\_\+\+STRING \texorpdfstring{$\ast$}{*} {\bfseries reference\+Value}
+\item 
+\Hypertarget{structossl__cmp__ctx__st_a86686c3f700c74c3e37815c1cb5e49fa}\label{structossl__cmp__ctx__st_a86686c3f700c74c3e37815c1cb5e49fa} 
+ASN1\+\_\+\+OCTET\+\_\+\+STRING \texorpdfstring{$\ast$}{*} {\bfseries secret\+Value}
+\item 
+\Hypertarget{structossl__cmp__ctx__st_af00f347e717dbfca9781fce15b389404}\label{structossl__cmp__ctx__st_af00f347e717dbfca9781fce15b389404} 
+size\+\_\+t {\bfseries pbm\+\_\+slen}
+\item 
+\Hypertarget{structossl__cmp__ctx__st_ad0536abc73994745815cc7161cb76141}\label{structossl__cmp__ctx__st_ad0536abc73994745815cc7161cb76141} 
+EVP\+\_\+\+MD \texorpdfstring{$\ast$}{*} {\bfseries pbm\+\_\+owf}
+\item 
+\Hypertarget{structossl__cmp__ctx__st_a497fca95b21d3bf2a3241fc3caf233bb}\label{structossl__cmp__ctx__st_a497fca95b21d3bf2a3241fc3caf233bb} 
+int {\bfseries pbm\+\_\+itercnt}
+\item 
+\Hypertarget{structossl__cmp__ctx__st_af3bd19ae2abd7627449a94a8e17b779f}\label{structossl__cmp__ctx__st_af3bd19ae2abd7627449a94a8e17b779f} 
+int {\bfseries pbm\+\_\+mac}
+\item 
+\Hypertarget{structossl__cmp__ctx__st_a24fc27e378f2f0f12cd00c22b3b11752}\label{structossl__cmp__ctx__st_a24fc27e378f2f0f12cd00c22b3b11752} 
+X509\+\_\+\+NAME \texorpdfstring{$\ast$}{*} {\bfseries recipient}
+\item 
+\Hypertarget{structossl__cmp__ctx__st_ab846163d0f8faec30395e89ba5988af7}\label{structossl__cmp__ctx__st_ab846163d0f8faec30395e89ba5988af7} 
+EVP\+\_\+\+MD \texorpdfstring{$\ast$}{*} {\bfseries digest}
+\item 
+\Hypertarget{structossl__cmp__ctx__st_a1f44ffae35f01050eb1bfcee29888db5}\label{structossl__cmp__ctx__st_a1f44ffae35f01050eb1bfcee29888db5} 
+ASN1\+\_\+\+OCTET\+\_\+\+STRING \texorpdfstring{$\ast$}{*} {\bfseries transaction\+ID}
+\item 
+\Hypertarget{structossl__cmp__ctx__st_af2e858f5cc942f07d86cc709c11f5c9c}\label{structossl__cmp__ctx__st_af2e858f5cc942f07d86cc709c11f5c9c} 
+ASN1\+\_\+\+OCTET\+\_\+\+STRING \texorpdfstring{$\ast$}{*} {\bfseries sender\+Nonce}
+\item 
+\Hypertarget{structossl__cmp__ctx__st_ace35197743b3f08f6a34a066d64be890}\label{structossl__cmp__ctx__st_ace35197743b3f08f6a34a066d64be890} 
+ASN1\+\_\+\+OCTET\+\_\+\+STRING \texorpdfstring{$\ast$}{*} {\bfseries recip\+Nonce}
+\item 
+\Hypertarget{structossl__cmp__ctx__st_aa3cf13a48a64bd64dc1fb77b4ef59fe6}\label{structossl__cmp__ctx__st_aa3cf13a48a64bd64dc1fb77b4ef59fe6} 
+ASN1\+\_\+\+UTF8\+STRING \texorpdfstring{$\ast$}{*} {\bfseries free\+Text}
+\item 
+\Hypertarget{structossl__cmp__ctx__st_a2afbd7de23b48c60bebfc02043c20890}\label{structossl__cmp__ctx__st_a2afbd7de23b48c60bebfc02043c20890} 
+int {\bfseries implicit\+Confirm}
+\item 
+\Hypertarget{structossl__cmp__ctx__st_a20c0c0fd7f44dff4b675df9b08f478b9}\label{structossl__cmp__ctx__st_a20c0c0fd7f44dff4b675df9b08f478b9} 
+int {\bfseries disable\+Confirm}
+\item 
+\Hypertarget{structossl__cmp__ctx__st_a72574e14fb96e04995f8dfb007912ddf}\label{structossl__cmp__ctx__st_a72574e14fb96e04995f8dfb007912ddf} 
+EVP\+\_\+\+PKEY \texorpdfstring{$\ast$}{*} {\bfseries new\+Pkey}
+\item 
+\Hypertarget{structossl__cmp__ctx__st_aefa4c3e3e08b3c6f6236782dbefd4f13}\label{structossl__cmp__ctx__st_aefa4c3e3e08b3c6f6236782dbefd4f13} 
+int {\bfseries new\+Pkey\+\_\+priv}
+\item 
+\Hypertarget{structossl__cmp__ctx__st_a8e76e7f00d1693e9b93124def55567db}\label{structossl__cmp__ctx__st_a8e76e7f00d1693e9b93124def55567db} 
+X509\+\_\+\+NAME \texorpdfstring{$\ast$}{*} {\bfseries issuer}
+\item 
+\Hypertarget{structossl__cmp__ctx__st_afb1fb212b29e3d1479171d63d7593c2f}\label{structossl__cmp__ctx__st_afb1fb212b29e3d1479171d63d7593c2f} 
+ASN1\+\_\+\+INTEGER \texorpdfstring{$\ast$}{*} {\bfseries serial\+Number}
+\item 
+\Hypertarget{structossl__cmp__ctx__st_a775031930ea9d0120d0c31dbe2f30bbc}\label{structossl__cmp__ctx__st_a775031930ea9d0120d0c31dbe2f30bbc} 
+int {\bfseries days}
+\item 
+\Hypertarget{structossl__cmp__ctx__st_a843ef6e35beb7a8dc94e6023f3527bf1}\label{structossl__cmp__ctx__st_a843ef6e35beb7a8dc94e6023f3527bf1} 
+X509\+\_\+\+NAME \texorpdfstring{$\ast$}{*} {\bfseries subject\+Name}
+\item 
+\Hypertarget{structossl__cmp__ctx__st_ac89beb789225933984818fde7c658074}\label{structossl__cmp__ctx__st_ac89beb789225933984818fde7c658074} 
+int {\bfseries Subject\+Alt\+Name\+\_\+nodefault}
+\item 
+\Hypertarget{structossl__cmp__ctx__st_a3ad18aeca499b7570778c1c3ef85d923}\label{structossl__cmp__ctx__st_a3ad18aeca499b7570778c1c3ef85d923} 
+int {\bfseries set\+Subject\+Alt\+Name\+Critical}
+\item 
+\Hypertarget{structossl__cmp__ctx__st_a0d3b0995013d723f9db506b73b552c37}\label{structossl__cmp__ctx__st_a0d3b0995013d723f9db506b73b552c37} 
+X509\+\_\+\+EXTENSIONS \texorpdfstring{$\ast$}{*} {\bfseries req\+Extensions}
+\item 
+\Hypertarget{structossl__cmp__ctx__st_a9beffb8e6901633e1c55044d330f3be9}\label{structossl__cmp__ctx__st_a9beffb8e6901633e1c55044d330f3be9} 
+CERTIFICATEPOLICIES \texorpdfstring{$\ast$}{*} {\bfseries policies}
+\item 
+\Hypertarget{structossl__cmp__ctx__st_a79ef91b37842284c66bd8948e81be6a8}\label{structossl__cmp__ctx__st_a79ef91b37842284c66bd8948e81be6a8} 
+int {\bfseries set\+Policies\+Critical}
+\item 
+\Hypertarget{structossl__cmp__ctx__st_ad50a2804ac7d894f7aedd79f904acef9}\label{structossl__cmp__ctx__st_ad50a2804ac7d894f7aedd79f904acef9} 
+int {\bfseries popo\+Method}
+\item 
+\Hypertarget{structossl__cmp__ctx__st_aa80bb578daa185e67a5cf0dc3fbfb23b}\label{structossl__cmp__ctx__st_aa80bb578daa185e67a5cf0dc3fbfb23b} 
+X509 \texorpdfstring{$\ast$}{*} {\bfseries old\+Cert}
+\item 
+\Hypertarget{structossl__cmp__ctx__st_a5ff3bf8e3747a38ed61cb7f1a8ed37cc}\label{structossl__cmp__ctx__st_a5ff3bf8e3747a38ed61cb7f1a8ed37cc} 
+X509\+\_\+\+REQ \texorpdfstring{$\ast$}{*} {\bfseries p10\+CSR}
+\item 
+\Hypertarget{structossl__cmp__ctx__st_a11001767df0ab507b2b4986c7b6cef43}\label{structossl__cmp__ctx__st_a11001767df0ab507b2b4986c7b6cef43} 
+int {\bfseries revocation\+Reason}
+\item 
+\Hypertarget{structossl__cmp__ctx__st_ab79eec9c22739bac69ad9476dbbd4487}\label{structossl__cmp__ctx__st_ab79eec9c22739bac69ad9476dbbd4487} 
+int {\bfseries status}
+\item 
+\Hypertarget{structossl__cmp__ctx__st_a985d88c3fb2b6f94f01a7209074d00d7}\label{structossl__cmp__ctx__st_a985d88c3fb2b6f94f01a7209074d00d7} 
+OSSL\+\_\+\+CMP\+\_\+\+PKIFREETEXT \texorpdfstring{$\ast$}{*} {\bfseries status\+String}
+\item 
+\Hypertarget{structossl__cmp__ctx__st_ae3fbec23018731c942083975412a3747}\label{structossl__cmp__ctx__st_ae3fbec23018731c942083975412a3747} 
+int {\bfseries fail\+Info\+Code}
+\item 
+\Hypertarget{structossl__cmp__ctx__st_acf5e6e1be014c344805ccadd2db6aa7a}\label{structossl__cmp__ctx__st_acf5e6e1be014c344805ccadd2db6aa7a} 
+X509 \texorpdfstring{$\ast$}{*} {\bfseries new\+Cert}
+\item 
+\Hypertarget{structossl__cmp__ctx__st_a462abe7fdac6cde00c094641ddf80746}\label{structossl__cmp__ctx__st_a462abe7fdac6cde00c094641ddf80746} 
+OSSL\+\_\+\+CMP\+\_\+cert\+Conf\+\_\+cb\+\_\+t {\bfseries cert\+Conf\+\_\+cb}
+\item 
+\Hypertarget{structossl__cmp__ctx__st_a9fc7a8538a89497f5ec0a7b43eb6f597}\label{structossl__cmp__ctx__st_a9fc7a8538a89497f5ec0a7b43eb6f597} 
+void \texorpdfstring{$\ast$}{*} {\bfseries cert\+Conf\+\_\+cb\+\_\+arg}
+\end{DoxyCompactItemize}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/namph/\+Downloads/openssl/openssl-\/3.\+2.\+1/crypto/cmp/cmp\+\_\+local.\+h\end{DoxyCompactItemize}

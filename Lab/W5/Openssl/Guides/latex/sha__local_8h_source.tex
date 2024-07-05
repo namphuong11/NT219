@@ -1,0 +1,426 @@
+\doxysection{sha\+\_\+local.\+h}
+\hypertarget{sha__local_8h_source}{}\label{sha__local_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/sha/sha\_local.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/sha/sha\_local.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 1995-\/2020\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <stdlib.h>}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ <string.h>}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ <openssl/opensslconf.h>}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ <openssl/sha.h>}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#include\ "{}internal/endian.h"{}}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ DATA\_ORDER\_IS\_BIG\_ENDIAN}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#define\ HASH\_LONG\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ SHA\_LONG}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#define\ HASH\_CTX\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ SHA\_CTX}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#define\ HASH\_CBLOCK\ \ \ \ \ \ \ \ \ \ \ \ \ SHA\_CBLOCK}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#define\ HASH\_MAKE\_STRING(c,s)\ \ \ do\ \{\ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ unsigned\ long\ ll;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ ll=(c)-\/>h0;\ (void)HOST\_l2c(ll,(s));\ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ ll=(c)-\/>h1;\ (void)HOST\_l2c(ll,(s));\ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ ll=(c)-\/>h2;\ (void)HOST\_l2c(ll,(s));\ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ ll=(c)-\/>h3;\ (void)HOST\_l2c(ll,(s));\ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ ll=(c)-\/>h4;\ (void)HOST\_l2c(ll,(s));\ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \}\ while\ (0)}}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#define\ HASH\_UPDATE\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ SHA1\_Update}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#define\ HASH\_TRANSFORM\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ SHA1\_Transform}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#define\ HASH\_FINAL\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ SHA1\_Final}}
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#define\ HASH\_INIT\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ SHA1\_Init}}
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#define\ HASH\_BLOCK\_DATA\_ORDER\ \ \ \ \ \ \ \ \ \ \ sha1\_block\_data\_order}}
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#define\ Xupdate(a,ix,ia,ib,ic,id)\ \ \ \ \ \ \ (\ (a)=(ia\string^ib\string^ic\string^id),\ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ix=(a)=ROTATE((a),1)\ \ \(\backslash\)}}
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ )}}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \textcolor{preprocessor}{\#ifndef\ SHA1\_ASM}}
+\DoxyCodeLine{00041\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ sha1\_block\_data\_order(SHA\_CTX\ *c,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *p,\ \textcolor{keywordtype}{size\_t}\ num);}
+\DoxyCodeLine{00042\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00043\ \textcolor{keywordtype}{void}\ sha1\_block\_data\_order(SHA\_CTX\ *c,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *p,\ \textcolor{keywordtype}{size\_t}\ num);}
+\DoxyCodeLine{00044\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \textcolor{preprocessor}{\#include\ "{}crypto/md32\_common.h"{}}}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \textcolor{preprocessor}{\#define\ INIT\_DATA\_h0\ 0x67452301UL}}
+\DoxyCodeLine{00049\ \textcolor{preprocessor}{\#define\ INIT\_DATA\_h1\ 0xefcdab89UL}}
+\DoxyCodeLine{00050\ \textcolor{preprocessor}{\#define\ INIT\_DATA\_h2\ 0x98badcfeUL}}
+\DoxyCodeLine{00051\ \textcolor{preprocessor}{\#define\ INIT\_DATA\_h3\ 0x10325476UL}}
+\DoxyCodeLine{00052\ \textcolor{preprocessor}{\#define\ INIT\_DATA\_h4\ 0xc3d2e1f0UL}}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \textcolor{keywordtype}{int}\ HASH\_INIT(SHA\_CTX\ *c)}
+\DoxyCodeLine{00055\ \{}
+\DoxyCodeLine{00056\ \ \ \ \ memset(c,\ 0,\ \textcolor{keyword}{sizeof}(*c));}
+\DoxyCodeLine{00057\ \ \ \ \ c-\/>h0\ =\ INIT\_DATA\_h0;}
+\DoxyCodeLine{00058\ \ \ \ \ c-\/>h1\ =\ INIT\_DATA\_h1;}
+\DoxyCodeLine{00059\ \ \ \ \ c-\/>h2\ =\ INIT\_DATA\_h2;}
+\DoxyCodeLine{00060\ \ \ \ \ c-\/>h3\ =\ INIT\_DATA\_h3;}
+\DoxyCodeLine{00061\ \ \ \ \ c-\/>h4\ =\ INIT\_DATA\_h4;}
+\DoxyCodeLine{00062\ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00063\ \}}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ \textcolor{preprocessor}{\#define\ K\_00\_19\ 0x5a827999UL}}
+\DoxyCodeLine{00066\ \textcolor{preprocessor}{\#define\ K\_20\_39\ 0x6ed9eba1UL}}
+\DoxyCodeLine{00067\ \textcolor{preprocessor}{\#define\ K\_40\_59\ 0x8f1bbcdcUL}}
+\DoxyCodeLine{00068\ \textcolor{preprocessor}{\#define\ K\_60\_79\ 0xca62c1d6UL}}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00071\ \textcolor{comment}{\ *\ As\ pointed\ out\ by\ Wei\ Dai,\ F()\ below\ can\ be\ simplified\ to\ the\ code\ in}}
+\DoxyCodeLine{00072\ \textcolor{comment}{\ *\ F\_00\_19.\ \ Wei\ attributes\ these\ optimizations\ to\ Peter\ Gutmann's\ SHS\ code,}}
+\DoxyCodeLine{00073\ \textcolor{comment}{\ *\ and\ he\ attributes\ it\ to\ Rich\ Schroeppel.}}
+\DoxyCodeLine{00074\ \textcolor{comment}{\ *\ \ \ \ \ \ \#define\ F(x,y,z)\ (((x)\ \&\ (y))\ |\ ((\string~(x))\ \&\ (z)))}}
+\DoxyCodeLine{00075\ \textcolor{comment}{\ *\ I've\ just\ become\ aware\ of\ another\ tweak\ to\ be\ made,\ again\ from\ Wei\ Dai,}}
+\DoxyCodeLine{00076\ \textcolor{comment}{\ *\ in\ F\_40\_59,\ (x\&a)|(y\&a)\ -\/>\ (x|y)\&a}}
+\DoxyCodeLine{00077\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00078\ \textcolor{preprocessor}{\#define\ F\_00\_19(b,c,d)\ \ ((((c)\ \string^\ (d))\ \&\ (b))\ \string^\ (d))}}
+\DoxyCodeLine{00079\ \textcolor{preprocessor}{\#define\ F\_20\_39(b,c,d)\ \ ((b)\ \string^\ (c)\ \string^\ (d))}}
+\DoxyCodeLine{00080\ \textcolor{preprocessor}{\#define\ F\_40\_59(b,c,d)\ \ (((b)\ \&\ (c))\ |\ (((b)|(c))\ \&\ (d)))}}
+\DoxyCodeLine{00081\ \textcolor{preprocessor}{\#define\ F\_60\_79(b,c,d)\ \ F\_20\_39(b,c,d)}}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00083\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_SMALL\_FOOTPRINT}}
+\DoxyCodeLine{00084\ }
+\DoxyCodeLine{00085\ \textcolor{preprocessor}{\#\ define\ BODY\_00\_15(i,a,b,c,d,e,f,xi)\ \(\backslash\)}}
+\DoxyCodeLine{00086\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ (f)=xi+(e)+K\_00\_19+ROTATE((a),5)+F\_00\_19((b),(c),(d));\ \(\backslash\)}}
+\DoxyCodeLine{00087\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ (b)=ROTATE((b),30);}}
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00089\ \textcolor{preprocessor}{\#\ define\ BODY\_16\_19(i,a,b,c,d,e,f,xi,xa,xb,xc,xd)\ \(\backslash\)}}
+\DoxyCodeLine{00090\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ Xupdate(f,xi,xa,xb,xc,xd);\ \(\backslash\)}}
+\DoxyCodeLine{00091\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ (f)+=(e)+K\_00\_19+ROTATE((a),5)+F\_00\_19((b),(c),(d));\ \(\backslash\)}}
+\DoxyCodeLine{00092\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ (b)=ROTATE((b),30);}}
+\DoxyCodeLine{00093\ }
+\DoxyCodeLine{00094\ \textcolor{preprocessor}{\#\ define\ BODY\_20\_31(i,a,b,c,d,e,f,xi,xa,xb,xc,xd)\ \(\backslash\)}}
+\DoxyCodeLine{00095\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ Xupdate(f,xi,xa,xb,xc,xd);\ \(\backslash\)}}
+\DoxyCodeLine{00096\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ (f)+=(e)+K\_20\_39+ROTATE((a),5)+F\_20\_39((b),(c),(d));\ \(\backslash\)}}
+\DoxyCodeLine{00097\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ (b)=ROTATE((b),30);}}
+\DoxyCodeLine{00098\ }
+\DoxyCodeLine{00099\ \textcolor{preprocessor}{\#\ define\ BODY\_32\_39(i,a,b,c,d,e,f,xa,xb,xc,xd)\ \(\backslash\)}}
+\DoxyCodeLine{00100\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ Xupdate(f,xa,xa,xb,xc,xd);\ \(\backslash\)}}
+\DoxyCodeLine{00101\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ (f)+=(e)+K\_20\_39+ROTATE((a),5)+F\_20\_39((b),(c),(d));\ \(\backslash\)}}
+\DoxyCodeLine{00102\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ (b)=ROTATE((b),30);}}
+\DoxyCodeLine{00103\ }
+\DoxyCodeLine{00104\ \textcolor{preprocessor}{\#\ define\ BODY\_40\_59(i,a,b,c,d,e,f,xa,xb,xc,xd)\ \(\backslash\)}}
+\DoxyCodeLine{00105\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ Xupdate(f,xa,xa,xb,xc,xd);\ \(\backslash\)}}
+\DoxyCodeLine{00106\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ (f)+=(e)+K\_40\_59+ROTATE((a),5)+F\_40\_59((b),(c),(d));\ \(\backslash\)}}
+\DoxyCodeLine{00107\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ (b)=ROTATE((b),30);}}
+\DoxyCodeLine{00108\ }
+\DoxyCodeLine{00109\ \textcolor{preprocessor}{\#\ define\ BODY\_60\_79(i,a,b,c,d,e,f,xa,xb,xc,xd)\ \(\backslash\)}}
+\DoxyCodeLine{00110\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ Xupdate(f,xa,xa,xb,xc,xd);\ \(\backslash\)}}
+\DoxyCodeLine{00111\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ (f)=xa+(e)+K\_60\_79+ROTATE((a),5)+F\_60\_79((b),(c),(d));\ \(\backslash\)}}
+\DoxyCodeLine{00112\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ (b)=ROTATE((b),30);}}
+\DoxyCodeLine{00113\ }
+\DoxyCodeLine{00114\ \textcolor{preprocessor}{\#\ ifdef\ X}}
+\DoxyCodeLine{00115\ \textcolor{preprocessor}{\#\ \ undef\ X}}
+\DoxyCodeLine{00116\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00117\ \textcolor{preprocessor}{\#\ ifndef\ MD32\_XARRAY}}
+\DoxyCodeLine{00118\ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00119\ \textcolor{comment}{\ \ \ *\ Originally\ X\ was\ an\ array.\ As\ it's\ automatic\ it's\ natural}}
+\DoxyCodeLine{00120\ \textcolor{comment}{\ \ \ *\ to\ expect\ RISC\ compiler\ to\ accommodate\ at\ least\ part\ of\ it\ in}}
+\DoxyCodeLine{00121\ \textcolor{comment}{\ \ \ *\ the\ register\ bank,\ isn't\ it?\ Unfortunately\ not\ all\ compilers}}
+\DoxyCodeLine{00122\ \textcolor{comment}{\ \ \ *\ "{}find"{}\ this\ expectation\ reasonable:-\/(\ On\ order\ to\ make\ such}}
+\DoxyCodeLine{00123\ \textcolor{comment}{\ \ \ *\ compilers\ generate\ better\ code\ I\ replace\ X[]\ with\ a\ bunch\ of}}
+\DoxyCodeLine{00124\ \textcolor{comment}{\ \ \ *\ X0,\ X1,\ etc.\ See\ the\ function\ body\ below...}}
+\DoxyCodeLine{00125\ \textcolor{comment}{\ \ \ */}}
+\DoxyCodeLine{00126\ \textcolor{preprocessor}{\#\ \ define\ X(i)\ \ \ XX\#\#i}}
+\DoxyCodeLine{00127\ \textcolor{preprocessor}{\#\ else}}
+\DoxyCodeLine{00128\ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00129\ \textcolor{comment}{\ \ \ *\ However!\ Some\ compilers\ (most\ notably\ HP\ C)\ get\ overwhelmed\ by}}
+\DoxyCodeLine{00130\ \textcolor{comment}{\ \ \ *\ that\ many\ local\ variables\ so\ that\ we\ have\ to\ have\ the\ way\ to}}
+\DoxyCodeLine{00131\ \textcolor{comment}{\ \ \ *\ fall\ down\ to\ the\ original\ behavior.}}
+\DoxyCodeLine{00132\ \textcolor{comment}{\ \ \ */}}
+\DoxyCodeLine{00133\ \textcolor{preprocessor}{\#\ \ define\ X(i)\ \ \ XX[i]}}
+\DoxyCodeLine{00134\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00135\ }
+\DoxyCodeLine{00136\ \textcolor{preprocessor}{\#\ if\ !defined(SHA1\_ASM)}}
+\DoxyCodeLine{00137\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ HASH\_BLOCK\_DATA\_ORDER(SHA\_CTX\ *c,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *p,\ \textcolor{keywordtype}{size\_t}\ num)}
+\DoxyCodeLine{00138\ \{}
+\DoxyCodeLine{00139\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *data\ =\ p;}
+\DoxyCodeLine{00140\ \ \ \ \ \textcolor{keyword}{register}\ \textcolor{keywordtype}{unsigned}\ MD32\_REG\_T\ A,\ B,\ C,\ D,\ E,\ T,\ l;}
+\DoxyCodeLine{00141\ \textcolor{preprocessor}{\#\ \ ifndef\ MD32\_XARRAY}}
+\DoxyCodeLine{00142\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ MD32\_REG\_T\ XX0,\ XX1,\ XX2,\ XX3,\ XX4,\ XX5,\ XX6,\ XX7,}
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ XX8,\ XX9,\ XX10,\ XX11,\ XX12,\ XX13,\ XX14,\ XX15;}
+\DoxyCodeLine{00144\ \textcolor{preprocessor}{\#\ \ else}}
+\DoxyCodeLine{00145\ \ \ \ \ SHA\_LONG\ XX[16];}
+\DoxyCodeLine{00146\ \textcolor{preprocessor}{\#\ \ endif}}
+\DoxyCodeLine{00147\ }
+\DoxyCodeLine{00148\ \ \ \ \ A\ =\ c-\/>h0;}
+\DoxyCodeLine{00149\ \ \ \ \ B\ =\ c-\/>h1;}
+\DoxyCodeLine{00150\ \ \ \ \ C\ =\ c-\/>h2;}
+\DoxyCodeLine{00151\ \ \ \ \ D\ =\ c-\/>h3;}
+\DoxyCodeLine{00152\ \ \ \ \ E\ =\ c-\/>h4;}
+\DoxyCodeLine{00153\ }
+\DoxyCodeLine{00154\ \ \ \ \ \textcolor{keywordflow}{for}\ (;;)\ \{}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ DECLARE\_IS\_ENDIAN;}
+\DoxyCodeLine{00156\ }
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!IS\_LITTLE\_ENDIAN\ \&\&\ \textcolor{keyword}{sizeof}(SHA\_LONG)\ ==\ 4}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ \ \ \ \ \&\&\ ((\textcolor{keywordtype}{size\_t})p\ \%\ 4)\ ==\ 0)\ \{}
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ SHA\_LONG\ *W\ =\ (\textcolor{keyword}{const}\ SHA\_LONG\ *)data;}
+\DoxyCodeLine{00160\ }
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ \ \ \ \ X(0)\ =\ W[0];}
+\DoxyCodeLine{00162\ \ \ \ \ \ \ \ \ \ \ \ \ X(1)\ =\ W[1];}
+\DoxyCodeLine{00163\ \ \ \ \ \ \ \ \ \ \ \ \ BODY\_00\_15(0,\ A,\ B,\ C,\ D,\ E,\ T,\ X(0));}
+\DoxyCodeLine{00164\ \ \ \ \ \ \ \ \ \ \ \ \ X(2)\ =\ W[2];}
+\DoxyCodeLine{00165\ \ \ \ \ \ \ \ \ \ \ \ \ BODY\_00\_15(1,\ T,\ A,\ B,\ C,\ D,\ E,\ X(1));}
+\DoxyCodeLine{00166\ \ \ \ \ \ \ \ \ \ \ \ \ X(3)\ =\ W[3];}
+\DoxyCodeLine{00167\ \ \ \ \ \ \ \ \ \ \ \ \ BODY\_00\_15(2,\ E,\ T,\ A,\ B,\ C,\ D,\ X(2));}
+\DoxyCodeLine{00168\ \ \ \ \ \ \ \ \ \ \ \ \ X(4)\ =\ W[4];}
+\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ \ \ \ \ BODY\_00\_15(3,\ D,\ E,\ T,\ A,\ B,\ C,\ X(3));}
+\DoxyCodeLine{00170\ \ \ \ \ \ \ \ \ \ \ \ \ X(5)\ =\ W[5];}
+\DoxyCodeLine{00171\ \ \ \ \ \ \ \ \ \ \ \ \ BODY\_00\_15(4,\ C,\ D,\ E,\ T,\ A,\ B,\ X(4));}
+\DoxyCodeLine{00172\ \ \ \ \ \ \ \ \ \ \ \ \ X(6)\ =\ W[6];}
+\DoxyCodeLine{00173\ \ \ \ \ \ \ \ \ \ \ \ \ BODY\_00\_15(5,\ B,\ C,\ D,\ E,\ T,\ A,\ X(5));}
+\DoxyCodeLine{00174\ \ \ \ \ \ \ \ \ \ \ \ \ X(7)\ =\ W[7];}
+\DoxyCodeLine{00175\ \ \ \ \ \ \ \ \ \ \ \ \ BODY\_00\_15(6,\ A,\ B,\ C,\ D,\ E,\ T,\ X(6));}
+\DoxyCodeLine{00176\ \ \ \ \ \ \ \ \ \ \ \ \ X(8)\ =\ W[8];}
+\DoxyCodeLine{00177\ \ \ \ \ \ \ \ \ \ \ \ \ BODY\_00\_15(7,\ T,\ A,\ B,\ C,\ D,\ E,\ X(7));}
+\DoxyCodeLine{00178\ \ \ \ \ \ \ \ \ \ \ \ \ X(9)\ =\ W[9];}
+\DoxyCodeLine{00179\ \ \ \ \ \ \ \ \ \ \ \ \ BODY\_00\_15(8,\ E,\ T,\ A,\ B,\ C,\ D,\ X(8));}
+\DoxyCodeLine{00180\ \ \ \ \ \ \ \ \ \ \ \ \ X(10)\ =\ W[10];}
+\DoxyCodeLine{00181\ \ \ \ \ \ \ \ \ \ \ \ \ BODY\_00\_15(9,\ D,\ E,\ T,\ A,\ B,\ C,\ X(9));}
+\DoxyCodeLine{00182\ \ \ \ \ \ \ \ \ \ \ \ \ X(11)\ =\ W[11];}
+\DoxyCodeLine{00183\ \ \ \ \ \ \ \ \ \ \ \ \ BODY\_00\_15(10,\ C,\ D,\ E,\ T,\ A,\ B,\ X(10));}
+\DoxyCodeLine{00184\ \ \ \ \ \ \ \ \ \ \ \ \ X(12)\ =\ W[12];}
+\DoxyCodeLine{00185\ \ \ \ \ \ \ \ \ \ \ \ \ BODY\_00\_15(11,\ B,\ C,\ D,\ E,\ T,\ A,\ X(11));}
+\DoxyCodeLine{00186\ \ \ \ \ \ \ \ \ \ \ \ \ X(13)\ =\ W[13];}
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ \ \ \ \ BODY\_00\_15(12,\ A,\ B,\ C,\ D,\ E,\ T,\ X(12));}
+\DoxyCodeLine{00188\ \ \ \ \ \ \ \ \ \ \ \ \ X(14)\ =\ W[14];}
+\DoxyCodeLine{00189\ \ \ \ \ \ \ \ \ \ \ \ \ BODY\_00\_15(13,\ T,\ A,\ B,\ C,\ D,\ E,\ X(13));}
+\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ \ \ \ \ X(15)\ =\ W[15];}
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ \ \ \ \ BODY\_00\_15(14,\ E,\ T,\ A,\ B,\ C,\ D,\ X(14));}
+\DoxyCodeLine{00192\ \ \ \ \ \ \ \ \ \ \ \ \ BODY\_00\_15(15,\ D,\ E,\ T,\ A,\ B,\ C,\ X(15));}
+\DoxyCodeLine{00193\ }
+\DoxyCodeLine{00194\ \ \ \ \ \ \ \ \ \ \ \ \ data\ +=\ SHA\_CBLOCK;}
+\DoxyCodeLine{00195\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00196\ \ \ \ \ \ \ \ \ \ \ \ \ (void)HOST\_c2l(data,\ l);}
+\DoxyCodeLine{00197\ \ \ \ \ \ \ \ \ \ \ \ \ X(0)\ =\ l;}
+\DoxyCodeLine{00198\ \ \ \ \ \ \ \ \ \ \ \ \ (void)HOST\_c2l(data,\ l);}
+\DoxyCodeLine{00199\ \ \ \ \ \ \ \ \ \ \ \ \ X(1)\ =\ l;}
+\DoxyCodeLine{00200\ \ \ \ \ \ \ \ \ \ \ \ \ BODY\_00\_15(0,\ A,\ B,\ C,\ D,\ E,\ T,\ X(0));}
+\DoxyCodeLine{00201\ \ \ \ \ \ \ \ \ \ \ \ \ (void)HOST\_c2l(data,\ l);}
+\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ \ \ \ \ X(2)\ =\ l;}
+\DoxyCodeLine{00203\ \ \ \ \ \ \ \ \ \ \ \ \ BODY\_00\_15(1,\ T,\ A,\ B,\ C,\ D,\ E,\ X(1));}
+\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ \ \ \ \ (void)HOST\_c2l(data,\ l);}
+\DoxyCodeLine{00205\ \ \ \ \ \ \ \ \ \ \ \ \ X(3)\ =\ l;}
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ \ \ \ \ BODY\_00\_15(2,\ E,\ T,\ A,\ B,\ C,\ D,\ X(2));}
+\DoxyCodeLine{00207\ \ \ \ \ \ \ \ \ \ \ \ \ (void)HOST\_c2l(data,\ l);}
+\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ \ \ \ \ X(4)\ =\ l;}
+\DoxyCodeLine{00209\ \ \ \ \ \ \ \ \ \ \ \ \ BODY\_00\_15(3,\ D,\ E,\ T,\ A,\ B,\ C,\ X(3));}
+\DoxyCodeLine{00210\ \ \ \ \ \ \ \ \ \ \ \ \ (void)HOST\_c2l(data,\ l);}
+\DoxyCodeLine{00211\ \ \ \ \ \ \ \ \ \ \ \ \ X(5)\ =\ l;}
+\DoxyCodeLine{00212\ \ \ \ \ \ \ \ \ \ \ \ \ BODY\_00\_15(4,\ C,\ D,\ E,\ T,\ A,\ B,\ X(4));}
+\DoxyCodeLine{00213\ \ \ \ \ \ \ \ \ \ \ \ \ (void)HOST\_c2l(data,\ l);}
+\DoxyCodeLine{00214\ \ \ \ \ \ \ \ \ \ \ \ \ X(6)\ =\ l;}
+\DoxyCodeLine{00215\ \ \ \ \ \ \ \ \ \ \ \ \ BODY\_00\_15(5,\ B,\ C,\ D,\ E,\ T,\ A,\ X(5));}
+\DoxyCodeLine{00216\ \ \ \ \ \ \ \ \ \ \ \ \ (void)HOST\_c2l(data,\ l);}
+\DoxyCodeLine{00217\ \ \ \ \ \ \ \ \ \ \ \ \ X(7)\ =\ l;}
+\DoxyCodeLine{00218\ \ \ \ \ \ \ \ \ \ \ \ \ BODY\_00\_15(6,\ A,\ B,\ C,\ D,\ E,\ T,\ X(6));}
+\DoxyCodeLine{00219\ \ \ \ \ \ \ \ \ \ \ \ \ (void)HOST\_c2l(data,\ l);}
+\DoxyCodeLine{00220\ \ \ \ \ \ \ \ \ \ \ \ \ X(8)\ =\ l;}
+\DoxyCodeLine{00221\ \ \ \ \ \ \ \ \ \ \ \ \ BODY\_00\_15(7,\ T,\ A,\ B,\ C,\ D,\ E,\ X(7));}
+\DoxyCodeLine{00222\ \ \ \ \ \ \ \ \ \ \ \ \ (void)HOST\_c2l(data,\ l);}
+\DoxyCodeLine{00223\ \ \ \ \ \ \ \ \ \ \ \ \ X(9)\ =\ l;}
+\DoxyCodeLine{00224\ \ \ \ \ \ \ \ \ \ \ \ \ BODY\_00\_15(8,\ E,\ T,\ A,\ B,\ C,\ D,\ X(8));}
+\DoxyCodeLine{00225\ \ \ \ \ \ \ \ \ \ \ \ \ (void)HOST\_c2l(data,\ l);}
+\DoxyCodeLine{00226\ \ \ \ \ \ \ \ \ \ \ \ \ X(10)\ =\ l;}
+\DoxyCodeLine{00227\ \ \ \ \ \ \ \ \ \ \ \ \ BODY\_00\_15(9,\ D,\ E,\ T,\ A,\ B,\ C,\ X(9));}
+\DoxyCodeLine{00228\ \ \ \ \ \ \ \ \ \ \ \ \ (void)HOST\_c2l(data,\ l);}
+\DoxyCodeLine{00229\ \ \ \ \ \ \ \ \ \ \ \ \ X(11)\ =\ l;}
+\DoxyCodeLine{00230\ \ \ \ \ \ \ \ \ \ \ \ \ BODY\_00\_15(10,\ C,\ D,\ E,\ T,\ A,\ B,\ X(10));}
+\DoxyCodeLine{00231\ \ \ \ \ \ \ \ \ \ \ \ \ (void)HOST\_c2l(data,\ l);}
+\DoxyCodeLine{00232\ \ \ \ \ \ \ \ \ \ \ \ \ X(12)\ =\ l;}
+\DoxyCodeLine{00233\ \ \ \ \ \ \ \ \ \ \ \ \ BODY\_00\_15(11,\ B,\ C,\ D,\ E,\ T,\ A,\ X(11));}
+\DoxyCodeLine{00234\ \ \ \ \ \ \ \ \ \ \ \ \ (void)HOST\_c2l(data,\ l);}
+\DoxyCodeLine{00235\ \ \ \ \ \ \ \ \ \ \ \ \ X(13)\ =\ l;}
+\DoxyCodeLine{00236\ \ \ \ \ \ \ \ \ \ \ \ \ BODY\_00\_15(12,\ A,\ B,\ C,\ D,\ E,\ T,\ X(12));}
+\DoxyCodeLine{00237\ \ \ \ \ \ \ \ \ \ \ \ \ (void)HOST\_c2l(data,\ l);}
+\DoxyCodeLine{00238\ \ \ \ \ \ \ \ \ \ \ \ \ X(14)\ =\ l;}
+\DoxyCodeLine{00239\ \ \ \ \ \ \ \ \ \ \ \ \ BODY\_00\_15(13,\ T,\ A,\ B,\ C,\ D,\ E,\ X(13));}
+\DoxyCodeLine{00240\ \ \ \ \ \ \ \ \ \ \ \ \ (void)HOST\_c2l(data,\ l);}
+\DoxyCodeLine{00241\ \ \ \ \ \ \ \ \ \ \ \ \ X(15)\ =\ l;}
+\DoxyCodeLine{00242\ \ \ \ \ \ \ \ \ \ \ \ \ BODY\_00\_15(14,\ E,\ T,\ A,\ B,\ C,\ D,\ X(14));}
+\DoxyCodeLine{00243\ \ \ \ \ \ \ \ \ \ \ \ \ BODY\_00\_15(15,\ D,\ E,\ T,\ A,\ B,\ C,\ X(15));}
+\DoxyCodeLine{00244\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00245\ }
+\DoxyCodeLine{00246\ \ \ \ \ \ \ \ \ BODY\_16\_19(16,\ C,\ D,\ E,\ T,\ A,\ B,\ X(0),\ X(0),\ X(2),\ X(8),\ X(13));}
+\DoxyCodeLine{00247\ \ \ \ \ \ \ \ \ BODY\_16\_19(17,\ B,\ C,\ D,\ E,\ T,\ A,\ X(1),\ X(1),\ X(3),\ X(9),\ X(14));}
+\DoxyCodeLine{00248\ \ \ \ \ \ \ \ \ BODY\_16\_19(18,\ A,\ B,\ C,\ D,\ E,\ T,\ X(2),\ X(2),\ X(4),\ X(10),\ X(15));}
+\DoxyCodeLine{00249\ \ \ \ \ \ \ \ \ BODY\_16\_19(19,\ T,\ A,\ B,\ C,\ D,\ E,\ X(3),\ X(3),\ X(5),\ X(11),\ X(0));}
+\DoxyCodeLine{00250\ }
+\DoxyCodeLine{00251\ \ \ \ \ \ \ \ \ BODY\_20\_31(20,\ E,\ T,\ A,\ B,\ C,\ D,\ X(4),\ X(4),\ X(6),\ X(12),\ X(1));}
+\DoxyCodeLine{00252\ \ \ \ \ \ \ \ \ BODY\_20\_31(21,\ D,\ E,\ T,\ A,\ B,\ C,\ X(5),\ X(5),\ X(7),\ X(13),\ X(2));}
+\DoxyCodeLine{00253\ \ \ \ \ \ \ \ \ BODY\_20\_31(22,\ C,\ D,\ E,\ T,\ A,\ B,\ X(6),\ X(6),\ X(8),\ X(14),\ X(3));}
+\DoxyCodeLine{00254\ \ \ \ \ \ \ \ \ BODY\_20\_31(23,\ B,\ C,\ D,\ E,\ T,\ A,\ X(7),\ X(7),\ X(9),\ X(15),\ X(4));}
+\DoxyCodeLine{00255\ \ \ \ \ \ \ \ \ BODY\_20\_31(24,\ A,\ B,\ C,\ D,\ E,\ T,\ X(8),\ X(8),\ X(10),\ X(0),\ X(5));}
+\DoxyCodeLine{00256\ \ \ \ \ \ \ \ \ BODY\_20\_31(25,\ T,\ A,\ B,\ C,\ D,\ E,\ X(9),\ X(9),\ X(11),\ X(1),\ X(6));}
+\DoxyCodeLine{00257\ \ \ \ \ \ \ \ \ BODY\_20\_31(26,\ E,\ T,\ A,\ B,\ C,\ D,\ X(10),\ X(10),\ X(12),\ X(2),\ X(7));}
+\DoxyCodeLine{00258\ \ \ \ \ \ \ \ \ BODY\_20\_31(27,\ D,\ E,\ T,\ A,\ B,\ C,\ X(11),\ X(11),\ X(13),\ X(3),\ X(8));}
+\DoxyCodeLine{00259\ \ \ \ \ \ \ \ \ BODY\_20\_31(28,\ C,\ D,\ E,\ T,\ A,\ B,\ X(12),\ X(12),\ X(14),\ X(4),\ X(9));}
+\DoxyCodeLine{00260\ \ \ \ \ \ \ \ \ BODY\_20\_31(29,\ B,\ C,\ D,\ E,\ T,\ A,\ X(13),\ X(13),\ X(15),\ X(5),\ X(10));}
+\DoxyCodeLine{00261\ \ \ \ \ \ \ \ \ BODY\_20\_31(30,\ A,\ B,\ C,\ D,\ E,\ T,\ X(14),\ X(14),\ X(0),\ X(6),\ X(11));}
+\DoxyCodeLine{00262\ \ \ \ \ \ \ \ \ BODY\_20\_31(31,\ T,\ A,\ B,\ C,\ D,\ E,\ X(15),\ X(15),\ X(1),\ X(7),\ X(12));}
+\DoxyCodeLine{00263\ }
+\DoxyCodeLine{00264\ \ \ \ \ \ \ \ \ BODY\_32\_39(32,\ E,\ T,\ A,\ B,\ C,\ D,\ X(0),\ X(2),\ X(8),\ X(13));}
+\DoxyCodeLine{00265\ \ \ \ \ \ \ \ \ BODY\_32\_39(33,\ D,\ E,\ T,\ A,\ B,\ C,\ X(1),\ X(3),\ X(9),\ X(14));}
+\DoxyCodeLine{00266\ \ \ \ \ \ \ \ \ BODY\_32\_39(34,\ C,\ D,\ E,\ T,\ A,\ B,\ X(2),\ X(4),\ X(10),\ X(15));}
+\DoxyCodeLine{00267\ \ \ \ \ \ \ \ \ BODY\_32\_39(35,\ B,\ C,\ D,\ E,\ T,\ A,\ X(3),\ X(5),\ X(11),\ X(0));}
+\DoxyCodeLine{00268\ \ \ \ \ \ \ \ \ BODY\_32\_39(36,\ A,\ B,\ C,\ D,\ E,\ T,\ X(4),\ X(6),\ X(12),\ X(1));}
+\DoxyCodeLine{00269\ \ \ \ \ \ \ \ \ BODY\_32\_39(37,\ T,\ A,\ B,\ C,\ D,\ E,\ X(5),\ X(7),\ X(13),\ X(2));}
+\DoxyCodeLine{00270\ \ \ \ \ \ \ \ \ BODY\_32\_39(38,\ E,\ T,\ A,\ B,\ C,\ D,\ X(6),\ X(8),\ X(14),\ X(3));}
+\DoxyCodeLine{00271\ \ \ \ \ \ \ \ \ BODY\_32\_39(39,\ D,\ E,\ T,\ A,\ B,\ C,\ X(7),\ X(9),\ X(15),\ X(4));}
+\DoxyCodeLine{00272\ }
+\DoxyCodeLine{00273\ \ \ \ \ \ \ \ \ BODY\_40\_59(40,\ C,\ D,\ E,\ T,\ A,\ B,\ X(8),\ X(10),\ X(0),\ X(5));}
+\DoxyCodeLine{00274\ \ \ \ \ \ \ \ \ BODY\_40\_59(41,\ B,\ C,\ D,\ E,\ T,\ A,\ X(9),\ X(11),\ X(1),\ X(6));}
+\DoxyCodeLine{00275\ \ \ \ \ \ \ \ \ BODY\_40\_59(42,\ A,\ B,\ C,\ D,\ E,\ T,\ X(10),\ X(12),\ X(2),\ X(7));}
+\DoxyCodeLine{00276\ \ \ \ \ \ \ \ \ BODY\_40\_59(43,\ T,\ A,\ B,\ C,\ D,\ E,\ X(11),\ X(13),\ X(3),\ X(8));}
+\DoxyCodeLine{00277\ \ \ \ \ \ \ \ \ BODY\_40\_59(44,\ E,\ T,\ A,\ B,\ C,\ D,\ X(12),\ X(14),\ X(4),\ X(9));}
+\DoxyCodeLine{00278\ \ \ \ \ \ \ \ \ BODY\_40\_59(45,\ D,\ E,\ T,\ A,\ B,\ C,\ X(13),\ X(15),\ X(5),\ X(10));}
+\DoxyCodeLine{00279\ \ \ \ \ \ \ \ \ BODY\_40\_59(46,\ C,\ D,\ E,\ T,\ A,\ B,\ X(14),\ X(0),\ X(6),\ X(11));}
+\DoxyCodeLine{00280\ \ \ \ \ \ \ \ \ BODY\_40\_59(47,\ B,\ C,\ D,\ E,\ T,\ A,\ X(15),\ X(1),\ X(7),\ X(12));}
+\DoxyCodeLine{00281\ \ \ \ \ \ \ \ \ BODY\_40\_59(48,\ A,\ B,\ C,\ D,\ E,\ T,\ X(0),\ X(2),\ X(8),\ X(13));}
+\DoxyCodeLine{00282\ \ \ \ \ \ \ \ \ BODY\_40\_59(49,\ T,\ A,\ B,\ C,\ D,\ E,\ X(1),\ X(3),\ X(9),\ X(14));}
+\DoxyCodeLine{00283\ \ \ \ \ \ \ \ \ BODY\_40\_59(50,\ E,\ T,\ A,\ B,\ C,\ D,\ X(2),\ X(4),\ X(10),\ X(15));}
+\DoxyCodeLine{00284\ \ \ \ \ \ \ \ \ BODY\_40\_59(51,\ D,\ E,\ T,\ A,\ B,\ C,\ X(3),\ X(5),\ X(11),\ X(0));}
+\DoxyCodeLine{00285\ \ \ \ \ \ \ \ \ BODY\_40\_59(52,\ C,\ D,\ E,\ T,\ A,\ B,\ X(4),\ X(6),\ X(12),\ X(1));}
+\DoxyCodeLine{00286\ \ \ \ \ \ \ \ \ BODY\_40\_59(53,\ B,\ C,\ D,\ E,\ T,\ A,\ X(5),\ X(7),\ X(13),\ X(2));}
+\DoxyCodeLine{00287\ \ \ \ \ \ \ \ \ BODY\_40\_59(54,\ A,\ B,\ C,\ D,\ E,\ T,\ X(6),\ X(8),\ X(14),\ X(3));}
+\DoxyCodeLine{00288\ \ \ \ \ \ \ \ \ BODY\_40\_59(55,\ T,\ A,\ B,\ C,\ D,\ E,\ X(7),\ X(9),\ X(15),\ X(4));}
+\DoxyCodeLine{00289\ \ \ \ \ \ \ \ \ BODY\_40\_59(56,\ E,\ T,\ A,\ B,\ C,\ D,\ X(8),\ X(10),\ X(0),\ X(5));}
+\DoxyCodeLine{00290\ \ \ \ \ \ \ \ \ BODY\_40\_59(57,\ D,\ E,\ T,\ A,\ B,\ C,\ X(9),\ X(11),\ X(1),\ X(6));}
+\DoxyCodeLine{00291\ \ \ \ \ \ \ \ \ BODY\_40\_59(58,\ C,\ D,\ E,\ T,\ A,\ B,\ X(10),\ X(12),\ X(2),\ X(7));}
+\DoxyCodeLine{00292\ \ \ \ \ \ \ \ \ BODY\_40\_59(59,\ B,\ C,\ D,\ E,\ T,\ A,\ X(11),\ X(13),\ X(3),\ X(8));}
+\DoxyCodeLine{00293\ }
+\DoxyCodeLine{00294\ \ \ \ \ \ \ \ \ BODY\_60\_79(60,\ A,\ B,\ C,\ D,\ E,\ T,\ X(12),\ X(14),\ X(4),\ X(9));}
+\DoxyCodeLine{00295\ \ \ \ \ \ \ \ \ BODY\_60\_79(61,\ T,\ A,\ B,\ C,\ D,\ E,\ X(13),\ X(15),\ X(5),\ X(10));}
+\DoxyCodeLine{00296\ \ \ \ \ \ \ \ \ BODY\_60\_79(62,\ E,\ T,\ A,\ B,\ C,\ D,\ X(14),\ X(0),\ X(6),\ X(11));}
+\DoxyCodeLine{00297\ \ \ \ \ \ \ \ \ BODY\_60\_79(63,\ D,\ E,\ T,\ A,\ B,\ C,\ X(15),\ X(1),\ X(7),\ X(12));}
+\DoxyCodeLine{00298\ \ \ \ \ \ \ \ \ BODY\_60\_79(64,\ C,\ D,\ E,\ T,\ A,\ B,\ X(0),\ X(2),\ X(8),\ X(13));}
+\DoxyCodeLine{00299\ \ \ \ \ \ \ \ \ BODY\_60\_79(65,\ B,\ C,\ D,\ E,\ T,\ A,\ X(1),\ X(3),\ X(9),\ X(14));}
+\DoxyCodeLine{00300\ \ \ \ \ \ \ \ \ BODY\_60\_79(66,\ A,\ B,\ C,\ D,\ E,\ T,\ X(2),\ X(4),\ X(10),\ X(15));}
+\DoxyCodeLine{00301\ \ \ \ \ \ \ \ \ BODY\_60\_79(67,\ T,\ A,\ B,\ C,\ D,\ E,\ X(3),\ X(5),\ X(11),\ X(0));}
+\DoxyCodeLine{00302\ \ \ \ \ \ \ \ \ BODY\_60\_79(68,\ E,\ T,\ A,\ B,\ C,\ D,\ X(4),\ X(6),\ X(12),\ X(1));}
+\DoxyCodeLine{00303\ \ \ \ \ \ \ \ \ BODY\_60\_79(69,\ D,\ E,\ T,\ A,\ B,\ C,\ X(5),\ X(7),\ X(13),\ X(2));}
+\DoxyCodeLine{00304\ \ \ \ \ \ \ \ \ BODY\_60\_79(70,\ C,\ D,\ E,\ T,\ A,\ B,\ X(6),\ X(8),\ X(14),\ X(3));}
+\DoxyCodeLine{00305\ \ \ \ \ \ \ \ \ BODY\_60\_79(71,\ B,\ C,\ D,\ E,\ T,\ A,\ X(7),\ X(9),\ X(15),\ X(4));}
+\DoxyCodeLine{00306\ \ \ \ \ \ \ \ \ BODY\_60\_79(72,\ A,\ B,\ C,\ D,\ E,\ T,\ X(8),\ X(10),\ X(0),\ X(5));}
+\DoxyCodeLine{00307\ \ \ \ \ \ \ \ \ BODY\_60\_79(73,\ T,\ A,\ B,\ C,\ D,\ E,\ X(9),\ X(11),\ X(1),\ X(6));}
+\DoxyCodeLine{00308\ \ \ \ \ \ \ \ \ BODY\_60\_79(74,\ E,\ T,\ A,\ B,\ C,\ D,\ X(10),\ X(12),\ X(2),\ X(7));}
+\DoxyCodeLine{00309\ \ \ \ \ \ \ \ \ BODY\_60\_79(75,\ D,\ E,\ T,\ A,\ B,\ C,\ X(11),\ X(13),\ X(3),\ X(8));}
+\DoxyCodeLine{00310\ \ \ \ \ \ \ \ \ BODY\_60\_79(76,\ C,\ D,\ E,\ T,\ A,\ B,\ X(12),\ X(14),\ X(4),\ X(9));}
+\DoxyCodeLine{00311\ \ \ \ \ \ \ \ \ BODY\_60\_79(77,\ B,\ C,\ D,\ E,\ T,\ A,\ X(13),\ X(15),\ X(5),\ X(10));}
+\DoxyCodeLine{00312\ \ \ \ \ \ \ \ \ BODY\_60\_79(78,\ A,\ B,\ C,\ D,\ E,\ T,\ X(14),\ X(0),\ X(6),\ X(11));}
+\DoxyCodeLine{00313\ \ \ \ \ \ \ \ \ BODY\_60\_79(79,\ T,\ A,\ B,\ C,\ D,\ E,\ X(15),\ X(1),\ X(7),\ X(12));}
+\DoxyCodeLine{00314\ }
+\DoxyCodeLine{00315\ \ \ \ \ \ \ \ \ c-\/>h0\ =\ (c-\/>h0\ +\ E)\ \&\ 0xffffffffL;}
+\DoxyCodeLine{00316\ \ \ \ \ \ \ \ \ c-\/>h1\ =\ (c-\/>h1\ +\ T)\ \&\ 0xffffffffL;}
+\DoxyCodeLine{00317\ \ \ \ \ \ \ \ \ c-\/>h2\ =\ (c-\/>h2\ +\ A)\ \&\ 0xffffffffL;}
+\DoxyCodeLine{00318\ \ \ \ \ \ \ \ \ c-\/>h3\ =\ (c-\/>h3\ +\ B)\ \&\ 0xffffffffL;}
+\DoxyCodeLine{00319\ \ \ \ \ \ \ \ \ c-\/>h4\ =\ (c-\/>h4\ +\ C)\ \&\ 0xffffffffL;}
+\DoxyCodeLine{00320\ }
+\DoxyCodeLine{00321\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (-\/-\/num\ ==\ 0)}
+\DoxyCodeLine{00322\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00323\ }
+\DoxyCodeLine{00324\ \ \ \ \ \ \ \ \ A\ =\ c-\/>h0;}
+\DoxyCodeLine{00325\ \ \ \ \ \ \ \ \ B\ =\ c-\/>h1;}
+\DoxyCodeLine{00326\ \ \ \ \ \ \ \ \ C\ =\ c-\/>h2;}
+\DoxyCodeLine{00327\ \ \ \ \ \ \ \ \ D\ =\ c-\/>h3;}
+\DoxyCodeLine{00328\ \ \ \ \ \ \ \ \ E\ =\ c-\/>h4;}
+\DoxyCodeLine{00329\ }
+\DoxyCodeLine{00330\ \ \ \ \ \}}
+\DoxyCodeLine{00331\ \}}
+\DoxyCodeLine{00332\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00333\ }
+\DoxyCodeLine{00334\ \textcolor{preprocessor}{\#else\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{/*\ OPENSSL\_SMALL\_FOOTPRINT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00335\ }
+\DoxyCodeLine{00336\ \textcolor{preprocessor}{\#\ define\ BODY\_00\_15(xi)\ \ \ \ \ \ \ \ \ \ \ do\ \{\ \ \ \(\backslash\)}}
+\DoxyCodeLine{00337\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ T=E+K\_00\_19+F\_00\_19(B,C,D);\ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00338\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ E=D,\ D=C,\ C=ROTATE(B,30),\ B=A;\ \ \(\backslash\)}}
+\DoxyCodeLine{00339\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ A=ROTATE(A,5)+T+xi;\ \ \ \ \ \ \ \ \ \}\ while(0)}}
+\DoxyCodeLine{00340\ }
+\DoxyCodeLine{00341\ \textcolor{preprocessor}{\#\ define\ BODY\_16\_19(xa,xb,xc,xd)\ \ do\ \{\ \ \ \(\backslash\)}}
+\DoxyCodeLine{00342\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ Xupdate(T,xa,xa,xb,xc,xd);\ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00343\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ T+=E+K\_00\_19+F\_00\_19(B,C,D);\ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00344\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ E=D,\ D=C,\ C=ROTATE(B,30),\ B=A;\ \ \(\backslash\)}}
+\DoxyCodeLine{00345\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ A=ROTATE(A,5)+T;\ \ \ \ \ \ \ \ \ \ \ \ \}\ while(0)}}
+\DoxyCodeLine{00346\ }
+\DoxyCodeLine{00347\ \textcolor{preprocessor}{\#\ define\ BODY\_20\_39(xa,xb,xc,xd)\ \ do\ \{\ \ \ \(\backslash\)}}
+\DoxyCodeLine{00348\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ Xupdate(T,xa,xa,xb,xc,xd);\ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00349\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ T+=E+K\_20\_39+F\_20\_39(B,C,D);\ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00350\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ E=D,\ D=C,\ C=ROTATE(B,30),\ B=A;\ \ \(\backslash\)}}
+\DoxyCodeLine{00351\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ A=ROTATE(A,5)+T;\ \ \ \ \ \ \ \ \ \ \ \ \}\ while(0)}}
+\DoxyCodeLine{00352\ }
+\DoxyCodeLine{00353\ \textcolor{preprocessor}{\#\ define\ BODY\_40\_59(xa,xb,xc,xd)\ \ do\ \{\ \ \ \(\backslash\)}}
+\DoxyCodeLine{00354\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ Xupdate(T,xa,xa,xb,xc,xd);\ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00355\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ T+=E+K\_40\_59+F\_40\_59(B,C,D);\ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00356\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ E=D,\ D=C,\ C=ROTATE(B,30),\ B=A;\ \ \(\backslash\)}}
+\DoxyCodeLine{00357\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ A=ROTATE(A,5)+T;\ \ \ \ \ \ \ \ \ \ \ \ \}\ while(0)}}
+\DoxyCodeLine{00358\ }
+\DoxyCodeLine{00359\ \textcolor{preprocessor}{\#\ define\ BODY\_60\_79(xa,xb,xc,xd)\ \ do\ \{\ \ \ \(\backslash\)}}
+\DoxyCodeLine{00360\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ Xupdate(T,xa,xa,xb,xc,xd);\ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00361\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ T=E+K\_60\_79+F\_60\_79(B,C,D);\ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00362\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ E=D,\ D=C,\ C=ROTATE(B,30),\ B=A;\ \ \(\backslash\)}}
+\DoxyCodeLine{00363\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ A=ROTATE(A,5)+T+xa;\ \ \ \ \ \ \ \ \ \}\ while(0)}}
+\DoxyCodeLine{00364\ }
+\DoxyCodeLine{00365\ \textcolor{preprocessor}{\#\ if\ !defined(SHA1\_ASM)}}
+\DoxyCodeLine{00366\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ HASH\_BLOCK\_DATA\_ORDER(SHA\_CTX\ *c,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *p,\ \textcolor{keywordtype}{size\_t}\ num)}
+\DoxyCodeLine{00367\ \{}
+\DoxyCodeLine{00368\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *data\ =\ p;}
+\DoxyCodeLine{00369\ \ \ \ \ \textcolor{keyword}{register}\ \textcolor{keywordtype}{unsigned}\ MD32\_REG\_T\ A,\ B,\ C,\ D,\ E,\ T,\ l;}
+\DoxyCodeLine{00370\ \ \ \ \ \textcolor{keywordtype}{int}\ i;}
+\DoxyCodeLine{00371\ \ \ \ \ SHA\_LONG\ X[16];}
+\DoxyCodeLine{00372\ }
+\DoxyCodeLine{00373\ \ \ \ \ A\ =\ c-\/>h0;}
+\DoxyCodeLine{00374\ \ \ \ \ B\ =\ c-\/>h1;}
+\DoxyCodeLine{00375\ \ \ \ \ C\ =\ c-\/>h2;}
+\DoxyCodeLine{00376\ \ \ \ \ D\ =\ c-\/>h3;}
+\DoxyCodeLine{00377\ \ \ \ \ E\ =\ c-\/>h4;}
+\DoxyCodeLine{00378\ }
+\DoxyCodeLine{00379\ \ \ \ \ \textcolor{keywordflow}{for}\ (;;)\ \{}
+\DoxyCodeLine{00380\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ 16;\ i++)\ \{}
+\DoxyCodeLine{00381\ \ \ \ \ \ \ \ \ \ \ \ \ (void)HOST\_c2l(data,\ l);}
+\DoxyCodeLine{00382\ \ \ \ \ \ \ \ \ \ \ \ \ X[i]\ =\ l;}
+\DoxyCodeLine{00383\ \ \ \ \ \ \ \ \ \ \ \ \ BODY\_00\_15(X[i]);}
+\DoxyCodeLine{00384\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00385\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ 4;\ i++)\ \{}
+\DoxyCodeLine{00386\ \ \ \ \ \ \ \ \ \ \ \ \ BODY\_16\_19(X[i],\ X[i\ +\ 2],\ X[i\ +\ 8],\ X[(i\ +\ 13)\ \&\ 15]);}
+\DoxyCodeLine{00387\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00388\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (;\ i\ <\ 24;\ i++)\ \{}
+\DoxyCodeLine{00389\ \ \ \ \ \ \ \ \ \ \ \ \ BODY\_20\_39(X[i\ \&\ 15],\ X[(i\ +\ 2)\ \&\ 15],\ X[(i\ +\ 8)\ \&\ 15],}
+\DoxyCodeLine{00390\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X[(i\ +\ 13)\ \&\ 15]);}
+\DoxyCodeLine{00391\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00392\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ 20;\ i++)\ \{}
+\DoxyCodeLine{00393\ \ \ \ \ \ \ \ \ \ \ \ \ BODY\_40\_59(X[(i\ +\ 8)\ \&\ 15],\ X[(i\ +\ 10)\ \&\ 15],\ X[i\ \&\ 15],}
+\DoxyCodeLine{00394\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X[(i\ +\ 5)\ \&\ 15]);}
+\DoxyCodeLine{00395\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00396\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 4;\ i\ <\ 24;\ i++)\ \{}
+\DoxyCodeLine{00397\ \ \ \ \ \ \ \ \ \ \ \ \ BODY\_60\_79(X[(i\ +\ 8)\ \&\ 15],\ X[(i\ +\ 10)\ \&\ 15],\ X[i\ \&\ 15],}
+\DoxyCodeLine{00398\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X[(i\ +\ 5)\ \&\ 15]);}
+\DoxyCodeLine{00399\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00400\ }
+\DoxyCodeLine{00401\ \ \ \ \ \ \ \ \ c-\/>h0\ =\ (c-\/>h0\ +\ A)\ \&\ 0xffffffffL;}
+\DoxyCodeLine{00402\ \ \ \ \ \ \ \ \ c-\/>h1\ =\ (c-\/>h1\ +\ B)\ \&\ 0xffffffffL;}
+\DoxyCodeLine{00403\ \ \ \ \ \ \ \ \ c-\/>h2\ =\ (c-\/>h2\ +\ C)\ \&\ 0xffffffffL;}
+\DoxyCodeLine{00404\ \ \ \ \ \ \ \ \ c-\/>h3\ =\ (c-\/>h3\ +\ D)\ \&\ 0xffffffffL;}
+\DoxyCodeLine{00405\ \ \ \ \ \ \ \ \ c-\/>h4\ =\ (c-\/>h4\ +\ E)\ \&\ 0xffffffffL;}
+\DoxyCodeLine{00406\ }
+\DoxyCodeLine{00407\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (-\/-\/num\ ==\ 0)}
+\DoxyCodeLine{00408\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00409\ }
+\DoxyCodeLine{00410\ \ \ \ \ \ \ \ \ A\ =\ c-\/>h0;}
+\DoxyCodeLine{00411\ \ \ \ \ \ \ \ \ B\ =\ c-\/>h1;}
+\DoxyCodeLine{00412\ \ \ \ \ \ \ \ \ C\ =\ c-\/>h2;}
+\DoxyCodeLine{00413\ \ \ \ \ \ \ \ \ D\ =\ c-\/>h3;}
+\DoxyCodeLine{00414\ \ \ \ \ \ \ \ \ E\ =\ c-\/>h4;}
+\DoxyCodeLine{00415\ }
+\DoxyCodeLine{00416\ \ \ \ \ \}}
+\DoxyCodeLine{00417\ \}}
+\DoxyCodeLine{00418\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00419\ }
+\DoxyCodeLine{00420\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

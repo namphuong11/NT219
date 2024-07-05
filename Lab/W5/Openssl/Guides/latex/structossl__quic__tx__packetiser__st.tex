@@ -1,0 +1,90 @@
+\doxysection{ossl\+\_\+quic\+\_\+tx\+\_\+packetiser\+\_\+st Struct Reference}
+\hypertarget{structossl__quic__tx__packetiser__st}{}\label{structossl__quic__tx__packetiser__st}\index{ossl\_quic\_tx\_packetiser\_st@{ossl\_quic\_tx\_packetiser\_st}}
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structossl__quic__tx__packetiser__st_1_1txp__el}{txp\+\_\+el}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{structossl__quic__tx__packetiser__st_a5f91c8dc3d757c791d1251ff77fcfc7d}\label{structossl__quic__tx__packetiser__st_a5f91c8dc3d757c791d1251ff77fcfc7d} 
+\mbox{\hyperlink{structossl__quic__tx__packetiser__args__st}{OSSL\+\_\+\+QUIC\+\_\+\+TX\+\_\+\+PACKETISER\+\_\+\+ARGS}} {\bfseries args}
+\item 
+\Hypertarget{structossl__quic__tx__packetiser__st_ae182b79e06376bad7de34e147eb8911a}\label{structossl__quic__tx__packetiser__st_ae182b79e06376bad7de34e147eb8911a} 
+const unsigned char \texorpdfstring{$\ast$}{*} {\bfseries initial\+\_\+token}
+\item 
+\Hypertarget{structossl__quic__tx__packetiser__st_a8b74f35ffcba527fc601ea872a0c7b52}\label{structossl__quic__tx__packetiser__st_a8b74f35ffcba527fc601ea872a0c7b52} 
+size\+\_\+t {\bfseries initial\+\_\+token\+\_\+len}
+\item 
+\Hypertarget{structossl__quic__tx__packetiser__st_aa89e8041ef0e3314a31798afe6d50df3}\label{structossl__quic__tx__packetiser__st_aa89e8041ef0e3314a31798afe6d50df3} 
+ossl\+\_\+quic\+\_\+initial\+\_\+token\+\_\+free\+\_\+fn \texorpdfstring{$\ast$}{*} {\bfseries initial\+\_\+token\+\_\+free\+\_\+cb}
+\item 
+\Hypertarget{structossl__quic__tx__packetiser__st_a0b890b448e800c8c96df21060e9e4a8a}\label{structossl__quic__tx__packetiser__st_a0b890b448e800c8c96df21060e9e4a8a} 
+void \texorpdfstring{$\ast$}{*} {\bfseries initial\+\_\+token\+\_\+free\+\_\+cb\+\_\+arg}
+\item 
+\Hypertarget{structossl__quic__tx__packetiser__st_a3f4253aa147a678ba6de9d42a846f977}\label{structossl__quic__tx__packetiser__st_a3f4253aa147a678ba6de9d42a846f977} 
+\mbox{\hyperlink{structquic__fifd__st}{QUIC\+\_\+\+FIFD}} {\bfseries fifd}
+\item 
+\Hypertarget{structossl__quic__tx__packetiser__st_a576133e61458e7055be70c75a5c84772}\label{structossl__quic__tx__packetiser__st_a576133e61458e7055be70c75a5c84772} 
+uint64\+\_\+t {\bfseries next\+\_\+pn} \mbox{[}QUIC\+\_\+\+PN\+\_\+\+SPACE\+\_\+\+NUM\mbox{]}
+\item 
+\Hypertarget{structossl__quic__tx__packetiser__st_aa46f726efa7f8a23f3328d26473f9913}\label{structossl__quic__tx__packetiser__st_aa46f726efa7f8a23f3328d26473f9913} 
+\mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\+\_\+\+TIME}} {\bfseries last\+\_\+tx\+\_\+time}
+\item 
+\Hypertarget{structossl__quic__tx__packetiser__st_a13c03c26a96c2511a7172334666f3be0}\label{structossl__quic__tx__packetiser__st_a13c03c26a96c2511a7172334666f3be0} 
+unsigned int {\bfseries want\+\_\+handshake\+\_\+done}\+: 1
+\item 
+\Hypertarget{structossl__quic__tx__packetiser__st_aa3baba44697c0ec23cf87920c428f74e}\label{structossl__quic__tx__packetiser__st_aa3baba44697c0ec23cf87920c428f74e} 
+unsigned int {\bfseries want\+\_\+max\+\_\+data}\+: 1
+\item 
+\Hypertarget{structossl__quic__tx__packetiser__st_a588f5d8495b33af8a3a30da840c67459}\label{structossl__quic__tx__packetiser__st_a588f5d8495b33af8a3a30da840c67459} 
+unsigned int {\bfseries want\+\_\+max\+\_\+streams\+\_\+bidi}\+: 1
+\item 
+\Hypertarget{structossl__quic__tx__packetiser__st_a80708d9f73783be20293acc959350229}\label{structossl__quic__tx__packetiser__st_a80708d9f73783be20293acc959350229} 
+unsigned int {\bfseries want\+\_\+max\+\_\+streams\+\_\+uni}\+: 1
+\item 
+\Hypertarget{structossl__quic__tx__packetiser__st_a5f45b9ddb74b3d73710f12d7fc2be17a}\label{structossl__quic__tx__packetiser__st_a5f45b9ddb74b3d73710f12d7fc2be17a} 
+unsigned int {\bfseries want\+\_\+ack}\+: QUIC\+\_\+\+PN\+\_\+\+SPACE\+\_\+\+NUM
+\item 
+\Hypertarget{structossl__quic__tx__packetiser__st_ad5dc2f17a9d1f557a827e070f22f0001}\label{structossl__quic__tx__packetiser__st_ad5dc2f17a9d1f557a827e070f22f0001} 
+unsigned int {\bfseries force\+\_\+ack\+\_\+eliciting}\+: QUIC\+\_\+\+PN\+\_\+\+SPACE\+\_\+\+NUM
+\item 
+\Hypertarget{structossl__quic__tx__packetiser__st_a2895a08609e71cb170ae4b405246495c}\label{structossl__quic__tx__packetiser__st_a2895a08609e71cb170ae4b405246495c} 
+unsigned int {\bfseries want\+\_\+conn\+\_\+close}\+: 1
+\item 
+\Hypertarget{structossl__quic__tx__packetiser__st_ac3d0b358b21dc363c784fbd819cc54c5}\label{structossl__quic__tx__packetiser__st_ac3d0b358b21dc363c784fbd819cc54c5} 
+unsigned int {\bfseries handshake\+\_\+complete}\+: 1
+\item 
+\Hypertarget{structossl__quic__tx__packetiser__st_a1f5cfd26b0f2aab3fe5008d1f4b390ad}\label{structossl__quic__tx__packetiser__st_a1f5cfd26b0f2aab3fe5008d1f4b390ad} 
+\mbox{\hyperlink{structossl__quic__frame__conn__close__st}{OSSL\+\_\+\+QUIC\+\_\+\+FRAME\+\_\+\+CONN\+\_\+\+CLOSE}} {\bfseries conn\+\_\+close\+\_\+frame}
+\item 
+\Hypertarget{structossl__quic__tx__packetiser__st_ae6f9c02174020c5874f4f15ee8e9bb8a}\label{structossl__quic__tx__packetiser__st_ae6f9c02174020c5874f4f15ee8e9bb8a} 
+uint64\+\_\+t {\bfseries closing\+\_\+bytes\+\_\+recv}
+\item 
+\Hypertarget{structossl__quic__tx__packetiser__st_a8d0156ea3d41790cc287d8190f53253d}\label{structossl__quic__tx__packetiser__st_a8d0156ea3d41790cc287d8190f53253d} 
+uint64\+\_\+t {\bfseries closing\+\_\+bytes\+\_\+xmit}
+\item 
+\Hypertarget{structossl__quic__tx__packetiser__st_a7c6e334583a19a74d10c265bed546608}\label{structossl__quic__tx__packetiser__st_a7c6e334583a19a74d10c265bed546608} 
+struct \mbox{\hyperlink{structossl__quic__tx__packetiser__st_1_1txp__el}{ossl\+\_\+quic\+\_\+tx\+\_\+packetiser\+\_\+st\+::txp\+\_\+el}} {\bfseries el} \mbox{[}QUIC\+\_\+\+ENC\+\_\+\+LEVEL\+\_\+\+NUM\mbox{]}
+\item 
+\Hypertarget{structossl__quic__tx__packetiser__st_a6f9067fdc86518f8d03c6a0164520174}\label{structossl__quic__tx__packetiser__st_a6f9067fdc86518f8d03c6a0164520174} 
+ossl\+\_\+msg\+\_\+cb {\bfseries msg\+\_\+callback}
+\item 
+\Hypertarget{structossl__quic__tx__packetiser__st_a4144d22d768a262e059ce8db17c62f1a}\label{structossl__quic__tx__packetiser__st_a4144d22d768a262e059ce8db17c62f1a} 
+void \texorpdfstring{$\ast$}{*} {\bfseries msg\+\_\+callback\+\_\+arg}
+\item 
+\Hypertarget{structossl__quic__tx__packetiser__st_a266556e9cbafc3c1dd13cfced6710fb5}\label{structossl__quic__tx__packetiser__st_a266556e9cbafc3c1dd13cfced6710fb5} 
+SSL \texorpdfstring{$\ast$}{*} {\bfseries msg\+\_\+callback\+\_\+ssl}
+\item 
+\Hypertarget{structossl__quic__tx__packetiser__st_ac6c7c54b91cb43731ad6238f68dd9081}\label{structossl__quic__tx__packetiser__st_ac6c7c54b91cb43731ad6238f68dd9081} 
+void(\texorpdfstring{$\ast$}{*} {\bfseries ack\+\_\+tx\+\_\+cb} )(const \mbox{\hyperlink{structossl__quic__frame__ack__st}{OSSL\+\_\+\+QUIC\+\_\+\+FRAME\+\_\+\+ACK}} \texorpdfstring{$\ast$}{*}ack, uint32\+\_\+t pn\+\_\+space, void \texorpdfstring{$\ast$}{*}arg)
+\item 
+\Hypertarget{structossl__quic__tx__packetiser__st_a78e51752609b004215974a7737dced54}\label{structossl__quic__tx__packetiser__st_a78e51752609b004215974a7737dced54} 
+void \texorpdfstring{$\ast$}{*} {\bfseries ack\+\_\+tx\+\_\+cb\+\_\+arg}
+\end{DoxyCompactItemize}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/namph/\+Downloads/openssl/openssl-\/3.\+2.\+1/ssl/quic/quic\+\_\+txp.\+c\end{DoxyCompactItemize}

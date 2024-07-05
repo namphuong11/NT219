@@ -1,0 +1,130 @@
+\doxysection{prov\+\_\+drbg\+\_\+st Struct Reference}
+\hypertarget{structprov__drbg__st}{}\label{structprov__drbg__st}\index{prov\_drbg\_st@{prov\_drbg\_st}}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{structprov__drbg__st_a1520f48e03e62416a816d60d30ff1eff}\label{structprov__drbg__st_a1520f48e03e62416a816d60d30ff1eff} 
+CRYPTO\+\_\+\+RWLOCK \texorpdfstring{$\ast$}{*} {\bfseries lock}
+\item 
+\Hypertarget{structprov__drbg__st_a5842c2e284016002a0c2564ea9bbedc8}\label{structprov__drbg__st_a5842c2e284016002a0c2564ea9bbedc8} 
+\mbox{\hyperlink{structprov__ctx__st}{PROV\+\_\+\+CTX}} \texorpdfstring{$\ast$}{*} {\bfseries provctx}
+\item 
+\Hypertarget{structprov__drbg__st_aded0252e619b7d13c5fdef77a7d5bab3}\label{structprov__drbg__st_aded0252e619b7d13c5fdef77a7d5bab3} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries instantiate} )(\mbox{\hyperlink{structprov__drbg__st}{PROV\+\_\+\+DRBG}} \texorpdfstring{$\ast$}{*}drbg, const unsigned char \texorpdfstring{$\ast$}{*}entropy, size\+\_\+t entropylen, const unsigned char \texorpdfstring{$\ast$}{*}nonce, size\+\_\+t noncelen, const unsigned char \texorpdfstring{$\ast$}{*}pers, size\+\_\+t perslen)
+\item 
+\Hypertarget{structprov__drbg__st_a9759e5b3be66e989fdf83077e1572b6d}\label{structprov__drbg__st_a9759e5b3be66e989fdf83077e1572b6d} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries uninstantiate} )(\mbox{\hyperlink{structprov__drbg__st}{PROV\+\_\+\+DRBG}} \texorpdfstring{$\ast$}{*}ctx)
+\item 
+\Hypertarget{structprov__drbg__st_aa22a06960845cea407484f7f6d86c5c3}\label{structprov__drbg__st_aa22a06960845cea407484f7f6d86c5c3} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries reseed} )(\mbox{\hyperlink{structprov__drbg__st}{PROV\+\_\+\+DRBG}} \texorpdfstring{$\ast$}{*}drbg, const unsigned char \texorpdfstring{$\ast$}{*}ent, size\+\_\+t ent\+\_\+len, const unsigned char \texorpdfstring{$\ast$}{*}adin, size\+\_\+t adin\+\_\+len)
+\item 
+\Hypertarget{structprov__drbg__st_aecffaf868f3f8529c6d63e96088a37bb}\label{structprov__drbg__st_aecffaf868f3f8529c6d63e96088a37bb} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries generate} )(\mbox{\hyperlink{structprov__drbg__st}{PROV\+\_\+\+DRBG}} \texorpdfstring{$\ast$}{*}, unsigned char \texorpdfstring{$\ast$}{*}out, size\+\_\+t outlen, const unsigned char \texorpdfstring{$\ast$}{*}adin, size\+\_\+t adin\+\_\+len)
+\item 
+\Hypertarget{structprov__drbg__st_a1ae0e8b24435bf67d1d70ce365df133d}\label{structprov__drbg__st_a1ae0e8b24435bf67d1d70ce365df133d} 
+void \texorpdfstring{$\ast$}{*} {\bfseries parent}
+\item 
+\Hypertarget{structprov__drbg__st_af2754c7435fcb0a9df5efc310e9272b8}\label{structprov__drbg__st_af2754c7435fcb0a9df5efc310e9272b8} 
+OSSL\+\_\+\+FUNC\+\_\+rand\+\_\+enable\+\_\+locking\+\_\+fn \texorpdfstring{$\ast$}{*} {\bfseries parent\+\_\+enable\+\_\+locking}
+\item 
+\Hypertarget{structprov__drbg__st_ab0d6ee273917e7d4ee8f5ed7e3eb7530}\label{structprov__drbg__st_ab0d6ee273917e7d4ee8f5ed7e3eb7530} 
+OSSL\+\_\+\+FUNC\+\_\+rand\+\_\+lock\+\_\+fn \texorpdfstring{$\ast$}{*} {\bfseries parent\+\_\+lock}
+\item 
+\Hypertarget{structprov__drbg__st_acf8502860bdb384f86047463e5e002f3}\label{structprov__drbg__st_acf8502860bdb384f86047463e5e002f3} 
+OSSL\+\_\+\+FUNC\+\_\+rand\+\_\+unlock\+\_\+fn \texorpdfstring{$\ast$}{*} {\bfseries parent\+\_\+unlock}
+\item 
+\Hypertarget{structprov__drbg__st_ae30ef319c528b5759bf38fc3eb91ae8b}\label{structprov__drbg__st_ae30ef319c528b5759bf38fc3eb91ae8b} 
+OSSL\+\_\+\+FUNC\+\_\+rand\+\_\+get\+\_\+ctx\+\_\+params\+\_\+fn \texorpdfstring{$\ast$}{*} {\bfseries parent\+\_\+get\+\_\+ctx\+\_\+params}
+\item 
+\Hypertarget{structprov__drbg__st_acab33fbe52bfb7a6abc86e20e8c28b6d}\label{structprov__drbg__st_acab33fbe52bfb7a6abc86e20e8c28b6d} 
+OSSL\+\_\+\+FUNC\+\_\+rand\+\_\+nonce\+\_\+fn \texorpdfstring{$\ast$}{*} {\bfseries parent\+\_\+nonce}
+\item 
+\Hypertarget{structprov__drbg__st_a68a87beb673de31ab6c9eddb12636f34}\label{structprov__drbg__st_a68a87beb673de31ab6c9eddb12636f34} 
+OSSL\+\_\+\+FUNC\+\_\+rand\+\_\+get\+\_\+seed\+\_\+fn \texorpdfstring{$\ast$}{*} {\bfseries parent\+\_\+get\+\_\+seed}
+\item 
+\Hypertarget{structprov__drbg__st_ae5e9e8a9a86e581d07456308979b216a}\label{structprov__drbg__st_ae5e9e8a9a86e581d07456308979b216a} 
+OSSL\+\_\+\+FUNC\+\_\+rand\+\_\+clear\+\_\+seed\+\_\+fn \texorpdfstring{$\ast$}{*} {\bfseries parent\+\_\+clear\+\_\+seed}
+\item 
+\Hypertarget{structprov__drbg__st_ae30dc9e563449ab57e83062d4568a9c7}\label{structprov__drbg__st_ae30dc9e563449ab57e83062d4568a9c7} 
+const OSSL\+\_\+\+DISPATCH \texorpdfstring{$\ast$}{*} {\bfseries parent\+\_\+dispatch}
+\item 
+\Hypertarget{structprov__drbg__st_a04ea20ef6b90fb0ddf63179273e1c3ca}\label{structprov__drbg__st_a04ea20ef6b90fb0ddf63179273e1c3ca} 
+int {\bfseries fork\+\_\+id}
+\item 
+\Hypertarget{structprov__drbg__st_a182d11902395a7415728932b16102d6e}\label{structprov__drbg__st_a182d11902395a7415728932b16102d6e} 
+unsigned short {\bfseries flags}
+\item 
+\Hypertarget{structprov__drbg__st_a23b50e35aaeb76e8d049c9a2c55311d6}\label{structprov__drbg__st_a23b50e35aaeb76e8d049c9a2c55311d6} 
+unsigned int {\bfseries strength}
+\item 
+\Hypertarget{structprov__drbg__st_ac51109beaeff8a260271683c9b36e2ab}\label{structprov__drbg__st_ac51109beaeff8a260271683c9b36e2ab} 
+size\+\_\+t {\bfseries max\+\_\+request}
+\item 
+\Hypertarget{structprov__drbg__st_a13f08c9c9d225f8d21151b85a4be2bc6}\label{structprov__drbg__st_a13f08c9c9d225f8d21151b85a4be2bc6} 
+size\+\_\+t {\bfseries min\+\_\+entropylen}
+\item 
+\Hypertarget{structprov__drbg__st_a87a019cffb665b8b38b5f6c9fae8fa57}\label{structprov__drbg__st_a87a019cffb665b8b38b5f6c9fae8fa57} 
+size\+\_\+t {\bfseries max\+\_\+entropylen}
+\item 
+\Hypertarget{structprov__drbg__st_a05cfe5c555ca13a3f674e7abd9deaa09}\label{structprov__drbg__st_a05cfe5c555ca13a3f674e7abd9deaa09} 
+size\+\_\+t {\bfseries min\+\_\+noncelen}
+\item 
+\Hypertarget{structprov__drbg__st_ad1eec305df59baa8467a77e925cacc97}\label{structprov__drbg__st_ad1eec305df59baa8467a77e925cacc97} 
+size\+\_\+t {\bfseries max\+\_\+noncelen}
+\item 
+\Hypertarget{structprov__drbg__st_a0d1415d06b1e5d3e7969992f3457124d}\label{structprov__drbg__st_a0d1415d06b1e5d3e7969992f3457124d} 
+size\+\_\+t {\bfseries max\+\_\+perslen}
+\item 
+\Hypertarget{structprov__drbg__st_a0caf7ab0cc00df37c79180600f7fa301}\label{structprov__drbg__st_a0caf7ab0cc00df37c79180600f7fa301} 
+size\+\_\+t {\bfseries max\+\_\+adinlen}
+\item 
+\Hypertarget{structprov__drbg__st_acdf983d9a02995d002402c854a01a132}\label{structprov__drbg__st_acdf983d9a02995d002402c854a01a132} 
+unsigned int {\bfseries generate\+\_\+counter}
+\item 
+\Hypertarget{structprov__drbg__st_a3089d0392a0c1afc25a0e68d73268d37}\label{structprov__drbg__st_a3089d0392a0c1afc25a0e68d73268d37} 
+unsigned int {\bfseries reseed\+\_\+interval}
+\item 
+\Hypertarget{structprov__drbg__st_a7580e9f20b4bf09b1ec1cde6a975b479}\label{structprov__drbg__st_a7580e9f20b4bf09b1ec1cde6a975b479} 
+time\+\_\+t {\bfseries reseed\+\_\+time}
+\item 
+\Hypertarget{structprov__drbg__st_a4bccfa1c9405842a04dfc708492e6687}\label{structprov__drbg__st_a4bccfa1c9405842a04dfc708492e6687} 
+time\+\_\+t {\bfseries reseed\+\_\+time\+\_\+interval}
+\item 
+\Hypertarget{structprov__drbg__st_aae9b0f3ba78ceaea368fefceb8d069de}\label{structprov__drbg__st_aae9b0f3ba78ceaea368fefceb8d069de} 
+TSAN\+\_\+\+QUALIFIER unsigned int {\bfseries reseed\+\_\+counter}
+\item 
+\Hypertarget{structprov__drbg__st_a5be9e5fe13af349f4a5dc0e60ac131dc}\label{structprov__drbg__st_a5be9e5fe13af349f4a5dc0e60ac131dc} 
+unsigned int {\bfseries reseed\+\_\+next\+\_\+counter}
+\item 
+\Hypertarget{structprov__drbg__st_ad262aa1b7669fc85c62ae90eb445b539}\label{structprov__drbg__st_ad262aa1b7669fc85c62ae90eb445b539} 
+unsigned int {\bfseries parent\+\_\+reseed\+\_\+counter}
+\item 
+\Hypertarget{structprov__drbg__st_a57903378bfa42385578d86a8f63880cb}\label{structprov__drbg__st_a57903378bfa42385578d86a8f63880cb} 
+size\+\_\+t {\bfseries seedlen}
+\item 
+\Hypertarget{structprov__drbg__st_a13ac6b4f70de10322425c33bf991e15a}\label{structprov__drbg__st_a13ac6b4f70de10322425c33bf991e15a} 
+DRBG\+\_\+\+STATUS {\bfseries state}
+\item 
+\Hypertarget{structprov__drbg__st_a022cf54972c13db27c955a8708cecb2a}\label{structprov__drbg__st_a022cf54972c13db27c955a8708cecb2a} 
+void \texorpdfstring{$\ast$}{*} {\bfseries data}
+\item 
+\Hypertarget{structprov__drbg__st_a571bf4fb336b84064016e57b28a1613e}\label{structprov__drbg__st_a571bf4fb336b84064016e57b28a1613e} 
+void \texorpdfstring{$\ast$}{*} {\bfseries callback\+\_\+arg}
+\item 
+\Hypertarget{structprov__drbg__st_a7a6c820a52da6e177ebd909f2e8a621b}\label{structprov__drbg__st_a7a6c820a52da6e177ebd909f2e8a621b} 
+OSSL\+\_\+\+INOUT\+\_\+\+CALLBACK \texorpdfstring{$\ast$}{*} {\bfseries get\+\_\+entropy\+\_\+fn}
+\item 
+\Hypertarget{structprov__drbg__st_ac2a6196a94c63266fd641c3248d55346}\label{structprov__drbg__st_ac2a6196a94c63266fd641c3248d55346} 
+OSSL\+\_\+\+CALLBACK \texorpdfstring{$\ast$}{*} {\bfseries cleanup\+\_\+entropy\+\_\+fn}
+\item 
+\Hypertarget{structprov__drbg__st_a2a4a7e1645bf0109ec465fd4c797a8e2}\label{structprov__drbg__st_a2a4a7e1645bf0109ec465fd4c797a8e2} 
+OSSL\+\_\+\+INOUT\+\_\+\+CALLBACK \texorpdfstring{$\ast$}{*} {\bfseries get\+\_\+nonce\+\_\+fn}
+\item 
+\Hypertarget{structprov__drbg__st_a15c9b7be0b4df4dc2bb7acc1d4482a13}\label{structprov__drbg__st_a15c9b7be0b4df4dc2bb7acc1d4482a13} 
+OSSL\+\_\+\+CALLBACK \texorpdfstring{$\ast$}{*} {\bfseries cleanup\+\_\+nonce\+\_\+fn}
+\end{DoxyCompactItemize}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/namph/\+Downloads/openssl/openssl-\/3.\+2.\+1/providers/implementations/rands/drbg\+\_\+local.\+h\end{DoxyCompactItemize}

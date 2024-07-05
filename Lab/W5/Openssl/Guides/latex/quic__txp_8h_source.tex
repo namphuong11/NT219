@@ -1,0 +1,215 @@
+\doxysection{quic\+\_\+txp.\+h}
+\hypertarget{quic__txp_8h_source}{}\label{quic__txp_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/quic\_txp.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/quic\_txp.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2022-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_QUIC\_TXP\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_QUIC\_TXP\_H}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#\ include\ <openssl/ssl.h>}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ include\ "{}internal/quic\_types.h"{}}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#\ include\ "{}internal/quic\_record\_tx.h"{}}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#\ include\ "{}internal/quic\_cfq.h"{}}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#\ include\ "{}internal/quic\_txpim.h"{}}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#\ include\ "{}internal/quic\_stream.h"{}}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#\ include\ "{}internal/quic\_stream\_map.h"{}}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#\ include\ "{}internal/quic\_fc.h"{}}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#\ include\ "{}internal/bio\_addr.h"{}}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#\ include\ "{}internal/time.h"{}}}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#\ ifndef\ OPENSSL\_NO\_QUIC}}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00027\ \textcolor{comment}{\ *\ QUIC\ TX\ Packetiser}}
+\DoxyCodeLine{00028\ \textcolor{comment}{\ *\ ==================}}
+\DoxyCodeLine{00029\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00030\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__quic__tx__packetiser__args__st}{ossl\_quic\_tx\_packetiser\_args\_st}}\ \{}
+\DoxyCodeLine{00031\ \ \ \ \ \textcolor{comment}{/*\ Configuration\ Settings\ */}}
+\DoxyCodeLine{00032\ \ \ \ \ \mbox{\hyperlink{structquic__conn__id__st}{QUIC\_CONN\_ID}}\ \ \ \ cur\_scid;\ \ \ \textcolor{comment}{/*\ Current\ Source\ Connection\ ID\ we\ use.\ */}}
+\DoxyCodeLine{00033\ \ \ \ \ \mbox{\hyperlink{structquic__conn__id__st}{QUIC\_CONN\_ID}}\ \ \ \ cur\_dcid;\ \ \ \textcolor{comment}{/*\ Current\ Destination\ Connection\ ID\ we\ use.\ */}}
+\DoxyCodeLine{00034\ \ \ \ \ BIO\_ADDR\ \ \ \ \ \ \ \ peer;\ \ \ \ \ \ \ \textcolor{comment}{/*\ Current\ destination\ L4\ address\ we\ use.\ */}}
+\DoxyCodeLine{00035\ \ \ \ \ uint32\_t\ \ \ \ \ \ \ \ ack\_delay\_exponent;\ \textcolor{comment}{/*\ ACK\ delay\ exponent\ used\ when\ encoding.\ */}}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{comment}{/*\ Injected\ Dependencies\ */}}
+\DoxyCodeLine{00038\ \ \ \ \ \mbox{\hyperlink{structossl__qtx__st}{OSSL\_QTX}}\ \ \ \ \ \ \ \ *qtx;\ \ \ \ \ \ \ \textcolor{comment}{/*\ QUIC\ Record\ Layer\ TX\ we\ are\ using\ */}}
+\DoxyCodeLine{00039\ \ \ \ \ \mbox{\hyperlink{structquic__txpim__st}{QUIC\_TXPIM}}\ \ \ \ \ \ *txpim;\ \ \ \ \ \textcolor{comment}{/*\ QUIC\ TX'd\ Packet\ Information\ Manager\ */}}
+\DoxyCodeLine{00040\ \ \ \ \ \mbox{\hyperlink{structquic__cfq__st}{QUIC\_CFQ}}\ \ \ \ \ \ \ \ *cfq;\ \ \ \ \ \ \ \textcolor{comment}{/*\ QUIC\ Control\ Frame\ Queue\ */}}
+\DoxyCodeLine{00041\ \ \ \ \ \mbox{\hyperlink{structossl__ackm__st}{OSSL\_ACKM}}\ \ \ \ \ \ \ *ackm;\ \ \ \ \ \ \textcolor{comment}{/*\ QUIC\ Acknowledgement\ Manager\ */}}
+\DoxyCodeLine{00042\ \ \ \ \ \mbox{\hyperlink{structquic__stream__map__st}{QUIC\_STREAM\_MAP}}\ *qsm;\ \ \ \ \ \ \ \textcolor{comment}{/*\ QUIC\ Streams\ Map\ */}}
+\DoxyCodeLine{00043\ \ \ \ \ \mbox{\hyperlink{structquic__txfc__st}{QUIC\_TXFC}}\ \ \ \ \ \ \ *conn\_txfc;\ \textcolor{comment}{/*\ QUIC\ Connection-\/Level\ TX\ Flow\ Controller\ */}}
+\DoxyCodeLine{00044\ \ \ \ \ \mbox{\hyperlink{structquic__rxfc__st}{QUIC\_RXFC}}\ \ \ \ \ \ \ *conn\_rxfc;\ \textcolor{comment}{/*\ QUIC\ Connection-\/Level\ RX\ Flow\ Controller\ */}}
+\DoxyCodeLine{00045\ \ \ \ \ \mbox{\hyperlink{structquic__rxfc__st}{QUIC\_RXFC}}\ \ \ \ \ \ \ *max\_streams\_bidi\_rxfc;\ \textcolor{comment}{/*\ QUIC\ RXFC\ for\ MAX\_STREAMS\ generation\ */}}
+\DoxyCodeLine{00046\ \ \ \ \ \mbox{\hyperlink{structquic__rxfc__st}{QUIC\_RXFC}}\ \ \ \ \ \ \ *max\_streams\_uni\_rxfc;}
+\DoxyCodeLine{00047\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structossl__cc__method__st}{OSSL\_CC\_METHOD}}\ *cc\_method;\ \textcolor{comment}{/*\ QUIC\ Congestion\ Controller\ */}}
+\DoxyCodeLine{00048\ \ \ \ \ OSSL\_CC\_DATA\ \ \ \ *cc\_data;\ \ \ \textcolor{comment}{/*\ QUIC\ Congestion\ Controller\ Instance\ */}}
+\DoxyCodeLine{00049\ \ \ \ \ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ \ \ \ \ \ \ (*now)(\textcolor{keywordtype}{void}\ *arg);\ \ \textcolor{comment}{/*\ Callback\ to\ get\ current\ time.\ */}}
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{keywordtype}{void}\ \ \ \ \ \ \ \ \ \ \ \ *now\_arg;}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00053\ \textcolor{comment}{\ \ \ \ \ *\ Injected\ dependencies\ -\/\ crypto\ streams.}}
+\DoxyCodeLine{00054\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00055\ \textcolor{comment}{\ \ \ \ \ *\ Note:\ There\ is\ no\ crypto\ stream\ for\ the\ 0-\/RTT\ EL.}}
+\DoxyCodeLine{00056\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ crypto[QUIC\_PN\_SPACE\_APP]\ is\ the\ 1-\/RTT\ crypto\ stream.}}
+\DoxyCodeLine{00057\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00058\ \ \ \ \ \mbox{\hyperlink{structquic__sstream__st}{QUIC\_SSTREAM}}\ \ \ \ *crypto[QUIC\_PN\_SPACE\_NUM];}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ \ \}\ \mbox{\hyperlink{structossl__quic__tx__packetiser__args__st}{OSSL\_QUIC\_TX\_PACKETISER\_ARGS}};}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__quic__tx__packetiser__st}{ossl\_quic\_tx\_packetiser\_st}}\ \mbox{\hyperlink{structossl__quic__tx__packetiser__st}{OSSL\_QUIC\_TX\_PACKETISER}};}
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00064\ \mbox{\hyperlink{structossl__quic__tx__packetiser__st}{OSSL\_QUIC\_TX\_PACKETISER}}\ *ossl\_quic\_tx\_packetiser\_new(\textcolor{keyword}{const}\ \mbox{\hyperlink{structossl__quic__tx__packetiser__args__st}{OSSL\_QUIC\_TX\_PACKETISER\_ARGS}}\ *args);}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \textcolor{keyword}{typedef}\ void\ (ossl\_quic\_initial\_token\_free\_fn)(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *buf,}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ buf\_len,\ \textcolor{keywordtype}{void}\ *arg);}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ \textcolor{keywordtype}{void}\ ossl\_quic\_tx\_packetiser\_free(\mbox{\hyperlink{structossl__quic__tx__packetiser__st}{OSSL\_QUIC\_TX\_PACKETISER}}\ *txp);}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00071\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00072\ \textcolor{comment}{\ *\ When\ in\ the\ closing\ state\ we\ need\ to\ maintain\ a\ count\ of\ received\ bytes}}
+\DoxyCodeLine{00073\ \textcolor{comment}{\ *\ so\ that\ we\ can\ limit\ the\ number\ of\ close\ connection\ frames\ we\ send.}}
+\DoxyCodeLine{00074\ \textcolor{comment}{\ *\ Refer\ RFC\ 9000\ s.\ 10.2.1\ Closing\ Connection\ State.}}
+\DoxyCodeLine{00075\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00076\ \textcolor{keywordtype}{void}\ ossl\_quic\_tx\_packetiser\_record\_received\_closing\_bytes(}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structossl__quic__tx__packetiser__st}{OSSL\_QUIC\_TX\_PACKETISER}}\ *txp,\ \textcolor{keywordtype}{size\_t}\ n);}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00080\ \textcolor{comment}{\ *\ Generates\ a\ datagram\ by\ polling\ the\ various\ ELs\ to\ determine\ if\ they\ want\ to}}
+\DoxyCodeLine{00081\ \textcolor{comment}{\ *\ generate\ any\ frames,\ and\ generating\ a\ datagram\ which\ coalesces\ packets\ for}}
+\DoxyCodeLine{00082\ \textcolor{comment}{\ *\ any\ ELs\ which\ do.}}
+\DoxyCodeLine{00083\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00084\ \textcolor{comment}{\ *\ Returns\ 0\ on\ failure\ (e.g.\ allocation\ error\ or\ other\ errors),\ 1\ otherwise.}}
+\DoxyCodeLine{00085\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00086\ \textcolor{comment}{\ *\ *status\ is\ filled\ with\ status\ information\ about\ the\ generated\ packet.}}
+\DoxyCodeLine{00087\ \textcolor{comment}{\ *\ It\ is\ always\ filled\ even\ in\ case\ of\ failure.\ In\ particular,\ packets\ can\ be}}
+\DoxyCodeLine{00088\ \textcolor{comment}{\ *\ sent\ even\ if\ failure\ is\ later\ returned.}}
+\DoxyCodeLine{00089\ \textcolor{comment}{\ *\ See\ QUIC\_TXP\_STATUS\ for\ details.}}
+\DoxyCodeLine{00090\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00091\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structquic__txp__status__st}{quic\_txp\_status\_st}}\ \{}
+\DoxyCodeLine{00092\ \ \ \ \ \textcolor{keywordtype}{int}\ sent\_ack\_eliciting;\ \textcolor{comment}{/*\ Was\ an\ ACK-\/eliciting\ packet\ sent?\ */}}
+\DoxyCodeLine{00093\ \ \ \ \ \textcolor{keywordtype}{int}\ sent\_handshake;\ \textcolor{comment}{/*\ Was\ a\ Handshake\ packet\ sent?\ */}}
+\DoxyCodeLine{00094\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ sent\_pkt;\ \textcolor{comment}{/*\ Number\ of\ packets\ sent\ (0\ if\ nothing\ was\ sent)\ */}}
+\DoxyCodeLine{00095\ \}\ \mbox{\hyperlink{structquic__txp__status__st}{QUIC\_TXP\_STATUS}};}
+\DoxyCodeLine{00096\ }
+\DoxyCodeLine{00097\ \textcolor{keywordtype}{int}\ ossl\_quic\_tx\_packetiser\_generate(\mbox{\hyperlink{structossl__quic__tx__packetiser__st}{OSSL\_QUIC\_TX\_PACKETISER}}\ *txp,}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structquic__txp__status__st}{QUIC\_TXP\_STATUS}}\ *status);}
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00100\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00101\ \textcolor{comment}{\ *\ Returns\ a\ deadline\ after\ which\ a\ call\ to\ ossl\_quic\_tx\_packetiser\_generate()}}
+\DoxyCodeLine{00102\ \textcolor{comment}{\ *\ might\ succeed\ even\ if\ it\ did\ not\ previously.\ This\ may\ return}}
+\DoxyCodeLine{00103\ \textcolor{comment}{\ *\ ossl\_time\_infinite()\ if\ there\ is\ no\ such\ deadline\ currently\ applicable.\ It}}
+\DoxyCodeLine{00104\ \textcolor{comment}{\ *\ returns\ ossl\_time\_zero()\ if\ there\ is\ (potentially)\ more\ data\ to\ be\ generated}}
+\DoxyCodeLine{00105\ \textcolor{comment}{\ *\ immediately.\ The\ value\ returned\ is\ liable\ to\ change\ after\ any\ call\ to}}
+\DoxyCodeLine{00106\ \textcolor{comment}{\ *\ ossl\_quic\_tx\_packetiser\_generate()\ (or\ after\ ACKM\ or\ CC\ state\ changes).\ Note}}
+\DoxyCodeLine{00107\ \textcolor{comment}{\ *\ that\ ossl\_quic\_tx\_packetiser\_generate()\ can\ also\ start\ to\ succeed\ for\ other}}
+\DoxyCodeLine{00108\ \textcolor{comment}{\ *\ non-\/chronological\ reasons,\ such\ as\ changes\ to\ send\ stream\ buffers,\ etc.}}
+\DoxyCodeLine{00109\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00110\ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ ossl\_quic\_tx\_packetiser\_get\_deadline(\mbox{\hyperlink{structossl__quic__tx__packetiser__st}{OSSL\_QUIC\_TX\_PACKETISER}}\ *txp);}
+\DoxyCodeLine{00111\ }
+\DoxyCodeLine{00112\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00113\ \textcolor{comment}{\ *\ Set\ the\ token\ used\ in\ Initial\ packets.\ The\ callback\ is\ called\ when\ the\ buffer}}
+\DoxyCodeLine{00114\ \textcolor{comment}{\ *\ is\ no\ longer\ needed;\ for\ example,\ when\ the\ TXP\ is\ freed\ or\ when\ this\ function}}
+\DoxyCodeLine{00115\ \textcolor{comment}{\ *\ is\ called\ again\ with\ a\ new\ buffer.\ Fails\ returning\ 0\ if\ the\ token\ is\ too\ big}}
+\DoxyCodeLine{00116\ \textcolor{comment}{\ *\ to\ ever\ be\ reasonably\ encapsulated\ in\ an\ outgoing\ packet\ based\ on\ our\ current}}
+\DoxyCodeLine{00117\ \textcolor{comment}{\ *\ understanding\ of\ our\ PMTU.}}
+\DoxyCodeLine{00118\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00119\ \textcolor{keywordtype}{int}\ ossl\_quic\_tx\_packetiser\_set\_initial\_token(\mbox{\hyperlink{structossl__quic__tx__packetiser__st}{OSSL\_QUIC\_TX\_PACKETISER}}\ *txp,}
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *token,}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ token\_len,}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ossl\_quic\_initial\_token\_free\_fn\ *free\_cb,}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *free\_cb\_arg);}
+\DoxyCodeLine{00124\ }
+\DoxyCodeLine{00125\ \textcolor{comment}{/*\ Change\ the\ DCID\ the\ TXP\ uses\ to\ send\ outgoing\ packets.\ */}}
+\DoxyCodeLine{00126\ \textcolor{keywordtype}{int}\ ossl\_quic\_tx\_packetiser\_set\_cur\_dcid(\mbox{\hyperlink{structossl__quic__tx__packetiser__st}{OSSL\_QUIC\_TX\_PACKETISER}}\ *txp,}
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__conn__id__st}{QUIC\_CONN\_ID}}\ *dcid);}
+\DoxyCodeLine{00128\ }
+\DoxyCodeLine{00129\ \textcolor{comment}{/*\ Change\ the\ SCID\ the\ TXP\ uses\ to\ send\ outgoing\ (long)\ packets.\ */}}
+\DoxyCodeLine{00130\ \textcolor{keywordtype}{int}\ ossl\_quic\_tx\_packetiser\_set\_cur\_scid(\mbox{\hyperlink{structossl__quic__tx__packetiser__st}{OSSL\_QUIC\_TX\_PACKETISER}}\ *txp,}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__conn__id__st}{QUIC\_CONN\_ID}}\ *scid);}
+\DoxyCodeLine{00132\ }
+\DoxyCodeLine{00133\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00134\ \textcolor{comment}{\ *\ Change\ the\ destination\ L4\ address\ the\ TXP\ uses\ to\ send\ datagrams.\ Specify}}
+\DoxyCodeLine{00135\ \textcolor{comment}{\ *\ NULL\ (or\ AF\_UNSPEC)\ to\ disable\ use\ of\ addressed\ mode.}}
+\DoxyCodeLine{00136\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00137\ \textcolor{keywordtype}{int}\ ossl\_quic\_tx\_packetiser\_set\_peer(\mbox{\hyperlink{structossl__quic__tx__packetiser__st}{OSSL\_QUIC\_TX\_PACKETISER}}\ *txp,}
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIO\_ADDR\ *peer);}
+\DoxyCodeLine{00139\ }
+\DoxyCodeLine{00140\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00141\ \textcolor{comment}{\ *\ Inform\ the\ TX\ packetiser\ that\ an\ EL\ has\ been\ discarded.\ Idempotent.}}
+\DoxyCodeLine{00142\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00143\ \textcolor{comment}{\ *\ This\ does\ not\ inform\ the\ QTX\ as\ well;\ the\ caller\ must\ also\ inform\ the\ QTX.}}
+\DoxyCodeLine{00144\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00145\ \textcolor{comment}{\ *\ The\ TXP\ will\ no\ longer\ reference\ the\ crypto[enc\_level]\ QUIC\_SSTREAM\ which\ was}}
+\DoxyCodeLine{00146\ \textcolor{comment}{\ *\ provided\ in\ the\ TXP\ arguments.\ However,\ it\ is\ the\ callers\ responsibility\ to}}
+\DoxyCodeLine{00147\ \textcolor{comment}{\ *\ free\ that\ QUIC\_SSTREAM\ if\ desired.}}
+\DoxyCodeLine{00148\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00149\ \textcolor{keywordtype}{int}\ ossl\_quic\_tx\_packetiser\_discard\_enc\_level(\mbox{\hyperlink{structossl__quic__tx__packetiser__st}{OSSL\_QUIC\_TX\_PACKETISER}}\ *txp,}
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ enc\_level);}
+\DoxyCodeLine{00151\ }
+\DoxyCodeLine{00152\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00153\ \textcolor{comment}{\ *\ Informs\ the\ TX\ packetiser\ that\ the\ handshake\ is\ complete.\ The\ TX\ packetiser}}
+\DoxyCodeLine{00154\ \textcolor{comment}{\ *\ will\ not\ send\ 1-\/RTT\ application\ data\ until\ the\ handshake\ is\ complete,}}
+\DoxyCodeLine{00155\ \textcolor{comment}{\ *\ as\ the\ authenticity\ of\ the\ peer\ is\ not\ confirmed\ until\ the\ handshake}}
+\DoxyCodeLine{00156\ \textcolor{comment}{\ *\ complete\ event\ occurs.}}
+\DoxyCodeLine{00157\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00158\ \textcolor{keywordtype}{void}\ ossl\_quic\_tx\_packetiser\_notify\_handshake\_complete(\mbox{\hyperlink{structossl__quic__tx__packetiser__st}{OSSL\_QUIC\_TX\_PACKETISER}}\ *txp);}
+\DoxyCodeLine{00159\ }
+\DoxyCodeLine{00160\ \textcolor{comment}{/*\ Asks\ the\ TXP\ to\ generate\ a\ HANDSHAKE\_DONE\ frame\ in\ the\ next\ 1-\/RTT\ packet.\ */}}
+\DoxyCodeLine{00161\ \textcolor{keywordtype}{void}\ ossl\_quic\_tx\_packetiser\_schedule\_handshake\_done(\mbox{\hyperlink{structossl__quic__tx__packetiser__st}{OSSL\_QUIC\_TX\_PACKETISER}}\ *txp);}
+\DoxyCodeLine{00162\ }
+\DoxyCodeLine{00163\ \textcolor{comment}{/*\ Asks\ the\ TXP\ to\ ensure\ the\ next\ packet\ in\ the\ given\ PN\ space\ is\ ACK-\/eliciting.\ */}}
+\DoxyCodeLine{00164\ \textcolor{keywordtype}{void}\ ossl\_quic\_tx\_packetiser\_schedule\_ack\_eliciting(\mbox{\hyperlink{structossl__quic__tx__packetiser__st}{OSSL\_QUIC\_TX\_PACKETISER}}\ *txp,}
+\DoxyCodeLine{00165\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ pn\_space);}
+\DoxyCodeLine{00166\ }
+\DoxyCodeLine{00167\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00168\ \textcolor{comment}{\ *\ Asks\ the\ TXP\ to\ ensure\ an\ ACK\ is\ put\ in\ the\ next\ packet\ in\ the\ given\ PN}}
+\DoxyCodeLine{00169\ \textcolor{comment}{\ *\ space.}}
+\DoxyCodeLine{00170\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00171\ \textcolor{keywordtype}{void}\ ossl\_quic\_tx\_packetiser\_schedule\_ack(\mbox{\hyperlink{structossl__quic__tx__packetiser__st}{OSSL\_QUIC\_TX\_PACKETISER}}\ *txp,}
+\DoxyCodeLine{00172\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ pn\_space);}
+\DoxyCodeLine{00173\ }
+\DoxyCodeLine{00174\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00175\ \textcolor{comment}{\ *\ Schedules\ a\ connection\ close.\ *f\ and\ f-\/>reason\ are\ copied.\ This\ operation\ is}}
+\DoxyCodeLine{00176\ \textcolor{comment}{\ *\ irreversible\ and\ causes\ all\ further\ packets\ generated\ by\ the\ TXP\ to\ contain\ a}}
+\DoxyCodeLine{00177\ \textcolor{comment}{\ *\ CONNECTION\_CLOSE\ frame.\ This\ function\ fails\ if\ it\ has\ already\ been\ called}}
+\DoxyCodeLine{00178\ \textcolor{comment}{\ *\ successfully;\ the\ information\ in\ *f\ cannot\ be\ changed\ after\ the\ first}}
+\DoxyCodeLine{00179\ \textcolor{comment}{\ *\ successful\ call\ to\ this\ function.}}
+\DoxyCodeLine{00180\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00181\ \textcolor{keywordtype}{int}\ ossl\_quic\_tx\_packetiser\_schedule\_conn\_close(\mbox{\hyperlink{structossl__quic__tx__packetiser__st}{OSSL\_QUIC\_TX\_PACKETISER}}\ *txp,}
+\DoxyCodeLine{00182\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structossl__quic__frame__conn__close__st}{OSSL\_QUIC\_FRAME\_CONN\_CLOSE}}\ *f);}
+\DoxyCodeLine{00183\ }
+\DoxyCodeLine{00184\ \textcolor{comment}{/*\ Setters\ for\ the\ msg\_callback\ and\ msg\_callback\_arg\ */}}
+\DoxyCodeLine{00185\ \textcolor{keywordtype}{void}\ ossl\_quic\_tx\_packetiser\_set\_msg\_callback(\mbox{\hyperlink{structossl__quic__tx__packetiser__st}{OSSL\_QUIC\_TX\_PACKETISER}}\ *txp,}
+\DoxyCodeLine{00186\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ossl\_msg\_cb\ msg\_callback,}
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ SSL\ *msg\_callback\_ssl);}
+\DoxyCodeLine{00188\ \textcolor{keywordtype}{void}\ ossl\_quic\_tx\_packetiser\_set\_msg\_callback\_arg(\mbox{\hyperlink{structossl__quic__tx__packetiser__st}{OSSL\_QUIC\_TX\_PACKETISER}}\ *txp,}
+\DoxyCodeLine{00189\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *msg\_callback\_arg);}
+\DoxyCodeLine{00190\ }
+\DoxyCodeLine{00191\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00192\ \textcolor{comment}{\ *\ Determines\ the\ next\ PN\ which\ will\ be\ used\ for\ a\ given\ PN\ space.}}
+\DoxyCodeLine{00193\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00194\ QUIC\_PN\ ossl\_quic\_tx\_packetiser\_get\_next\_pn(\mbox{\hyperlink{structossl__quic__tx__packetiser__st}{OSSL\_QUIC\_TX\_PACKETISER}}\ *txp,}
+\DoxyCodeLine{00195\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ pn\_space);}
+\DoxyCodeLine{00196\ }
+\DoxyCodeLine{00197\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00198\ \textcolor{comment}{\ *\ Sets\ a\ callback\ which\ is\ called\ whenever\ TXP\ sends\ an\ ACK\ frame.\ The\ callee}}
+\DoxyCodeLine{00199\ \textcolor{comment}{\ *\ must\ not\ modify\ the\ ACK\ frame\ data.\ Can\ be\ used\ to\ snoop\ on\ PNs\ being\ ACKed.}}
+\DoxyCodeLine{00200\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00201\ \textcolor{keywordtype}{void}\ ossl\_quic\_tx\_packetiser\_set\_ack\_tx\_cb(\mbox{\hyperlink{structossl__quic__tx__packetiser__st}{OSSL\_QUIC\_TX\_PACKETISER}}\ *txp,}
+\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ (*cb)(\textcolor{keyword}{const}\ \mbox{\hyperlink{structossl__quic__frame__ack__st}{OSSL\_QUIC\_FRAME\_ACK}}\ *ack,}
+\DoxyCodeLine{00203\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ pn\_space,}
+\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *arg),}
+\DoxyCodeLine{00205\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *cb\_arg);}
+\DoxyCodeLine{00206\ }
+\DoxyCodeLine{00207\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00208\ }
+\DoxyCodeLine{00209\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

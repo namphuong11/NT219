@@ -1,0 +1,67 @@
+\doxysection{X509\+\_\+crl\+\_\+st Struct Reference}
+\hypertarget{struct_x509__crl__st}{}\label{struct_x509__crl__st}\index{X509\_crl\_st@{X509\_crl\_st}}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{struct_x509__crl__st_af37f4e1a53865648212087fd65206bb6}\label{struct_x509__crl__st_af37f4e1a53865648212087fd65206bb6} 
+{\bfseries STACK\+\_\+\+OF} (GENERAL\+\_\+\+NAMES) \texorpdfstring{$\ast$}{*}issuers
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{struct_x509__crl__st_a8afcd6f7fb5ab55513a497d17c03fb61}\label{struct_x509__crl__st_a8afcd6f7fb5ab55513a497d17c03fb61} 
+X509\+\_\+\+CRL\+\_\+\+INFO {\bfseries crl}
+\item 
+\Hypertarget{struct_x509__crl__st_a302aa5cfe70d2f7083ff2096ddf78aa3}\label{struct_x509__crl__st_a302aa5cfe70d2f7083ff2096ddf78aa3} 
+X509\+\_\+\+ALGOR {\bfseries sig\+\_\+alg}
+\item 
+\Hypertarget{struct_x509__crl__st_af4fb702e6680be3ef64a02f27c865e8f}\label{struct_x509__crl__st_af4fb702e6680be3ef64a02f27c865e8f} 
+ASN1\+\_\+\+BIT\+\_\+\+STRING {\bfseries signature}
+\item 
+\Hypertarget{struct_x509__crl__st_a42f4e1f209c3281daf836b337ff55fac}\label{struct_x509__crl__st_a42f4e1f209c3281daf836b337ff55fac} 
+\mbox{\hyperlink{struct_c_r_y_p_t_o___r_e_f___c_o_u_n_t}{CRYPTO\+\_\+\+REF\+\_\+\+COUNT}} {\bfseries references}
+\item 
+\Hypertarget{struct_x509__crl__st_a8feedb6a09ebbf7750cf2db8766d212b}\label{struct_x509__crl__st_a8feedb6a09ebbf7750cf2db8766d212b} 
+int {\bfseries flags}
+\item 
+\Hypertarget{struct_x509__crl__st_a01527fa4e6518449a4b656103664816f}\label{struct_x509__crl__st_a01527fa4e6518449a4b656103664816f} 
+AUTHORITY\+\_\+\+KEYID \texorpdfstring{$\ast$}{*} {\bfseries akid}
+\item 
+\Hypertarget{struct_x509__crl__st_ab5659c7166162f7688fbb8df843c822f}\label{struct_x509__crl__st_ab5659c7166162f7688fbb8df843c822f} 
+ISSUING\+\_\+\+DIST\+\_\+\+POINT \texorpdfstring{$\ast$}{*} {\bfseries idp}
+\item 
+\Hypertarget{struct_x509__crl__st_a63e54736632f7acfe2376d1022cdbdfe}\label{struct_x509__crl__st_a63e54736632f7acfe2376d1022cdbdfe} 
+int {\bfseries idp\+\_\+flags}
+\item 
+\Hypertarget{struct_x509__crl__st_a1e5c7e949f238d6937a45ff6e57738b9}\label{struct_x509__crl__st_a1e5c7e949f238d6937a45ff6e57738b9} 
+int {\bfseries idp\+\_\+reasons}
+\item 
+\Hypertarget{struct_x509__crl__st_a38d84a6c190dc370d74e145cd4faa8d4}\label{struct_x509__crl__st_a38d84a6c190dc370d74e145cd4faa8d4} 
+ASN1\+\_\+\+INTEGER \texorpdfstring{$\ast$}{*} {\bfseries crl\+\_\+number}
+\item 
+\Hypertarget{struct_x509__crl__st_a758731f9f2c7efcbf2d7e8c6e0b01278}\label{struct_x509__crl__st_a758731f9f2c7efcbf2d7e8c6e0b01278} 
+ASN1\+\_\+\+INTEGER \texorpdfstring{$\ast$}{*} {\bfseries base\+\_\+crl\+\_\+number}
+\item 
+\Hypertarget{struct_x509__crl__st_a1040792ec929f92137cb677e58cc8e94}\label{struct_x509__crl__st_a1040792ec929f92137cb677e58cc8e94} 
+unsigned char {\bfseries sha1\+\_\+hash} \mbox{[}SHA\+\_\+\+DIGEST\+\_\+\+LENGTH\mbox{]}
+\item 
+\Hypertarget{struct_x509__crl__st_a7fbfb8e62320e2a6275153c832c2ccd5}\label{struct_x509__crl__st_a7fbfb8e62320e2a6275153c832c2ccd5} 
+const X509\+\_\+\+CRL\+\_\+\+METHOD \texorpdfstring{$\ast$}{*} {\bfseries meth}
+\item 
+\Hypertarget{struct_x509__crl__st_a409391d6ea1a661d0c27c84e26b9676b}\label{struct_x509__crl__st_a409391d6ea1a661d0c27c84e26b9676b} 
+void \texorpdfstring{$\ast$}{*} {\bfseries meth\+\_\+data}
+\item 
+\Hypertarget{struct_x509__crl__st_ae9dc77dc37822764cec0c4ce53a0b8b4}\label{struct_x509__crl__st_ae9dc77dc37822764cec0c4ce53a0b8b4} 
+CRYPTO\+\_\+\+RWLOCK \texorpdfstring{$\ast$}{*} {\bfseries lock}
+\item 
+\Hypertarget{struct_x509__crl__st_a3a1125be1edf4144ab87afe77c6ffe23}\label{struct_x509__crl__st_a3a1125be1edf4144ab87afe77c6ffe23} 
+OSSL\+\_\+\+LIB\+\_\+\+CTX \texorpdfstring{$\ast$}{*} {\bfseries libctx}
+\item 
+\Hypertarget{struct_x509__crl__st_a6ede4c6fa25b58f95097820bbf197b4f}\label{struct_x509__crl__st_a6ede4c6fa25b58f95097820bbf197b4f} 
+char \texorpdfstring{$\ast$}{*} {\bfseries propq}
+\end{DoxyCompactItemize}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/namph/\+Downloads/openssl/openssl-\/3.\+2.\+1/include/crypto/x509.\+h\end{DoxyCompactItemize}

@@ -1,0 +1,112 @@
+\doxysection{quic\+\_\+stream\+\_\+st Struct Reference}
+\hypertarget{structquic__stream__st}{}\label{structquic__stream__st}\index{quic\_stream\_st@{quic\_stream\_st}}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{structquic__stream__st_a1316c37ae28b09898bac54cbec4ced2a}\label{structquic__stream__st_a1316c37ae28b09898bac54cbec4ced2a} 
+\mbox{\hyperlink{structquic__stream__list__node__st}{QUIC\+\_\+\+STREAM\+\_\+\+LIST\+\_\+\+NODE}} {\bfseries active\+\_\+node}
+\item 
+\Hypertarget{structquic__stream__st_a829a9c91b2a82c5e61e3bd6f6faa150d}\label{structquic__stream__st_a829a9c91b2a82c5e61e3bd6f6faa150d} 
+\mbox{\hyperlink{structquic__stream__list__node__st}{QUIC\+\_\+\+STREAM\+\_\+\+LIST\+\_\+\+NODE}} {\bfseries accept\+\_\+node}
+\item 
+\Hypertarget{structquic__stream__st_ac1eddbd65c5d231cc51d42625f209278}\label{structquic__stream__st_ac1eddbd65c5d231cc51d42625f209278} 
+\mbox{\hyperlink{structquic__stream__list__node__st}{QUIC\+\_\+\+STREAM\+\_\+\+LIST\+\_\+\+NODE}} {\bfseries ready\+\_\+for\+\_\+gc\+\_\+node}
+\item 
+\Hypertarget{structquic__stream__st_a54c1bc7f3e45fcac80eb602984f58ebc}\label{structquic__stream__st_a54c1bc7f3e45fcac80eb602984f58ebc} 
+\mbox{\hyperlink{structquic__stream__st}{QUIC\+\_\+\+STREAM}} \texorpdfstring{$\ast$}{*} {\bfseries txp\+\_\+next}
+\item 
+\Hypertarget{structquic__stream__st_a0950b4a6d1c06950fe0acf1f306b1b18}\label{structquic__stream__st_a0950b4a6d1c06950fe0acf1f306b1b18} 
+uint64\+\_\+t {\bfseries id}
+\item 
+\Hypertarget{structquic__stream__st_a55bafdee2f215ac8b03a8b03501513db}\label{structquic__stream__st_a55bafdee2f215ac8b03a8b03501513db} 
+uint64\+\_\+t {\bfseries stop\+\_\+sending\+\_\+aec}
+\item 
+\Hypertarget{structquic__stream__st_aec6e25cc3da9d68ae350e4fa8fd3ca36}\label{structquic__stream__st_aec6e25cc3da9d68ae350e4fa8fd3ca36} 
+uint64\+\_\+t {\bfseries reset\+\_\+stream\+\_\+aec}
+\item 
+\Hypertarget{structquic__stream__st_ab0e3e60fb6184f08e9880f736cffe305}\label{structquic__stream__st_ab0e3e60fb6184f08e9880f736cffe305} 
+uint64\+\_\+t {\bfseries peer\+\_\+stop\+\_\+sending\+\_\+aec}
+\item 
+\Hypertarget{structquic__stream__st_a7387f7146ed20b70fb63e7cabfcd3671}\label{structquic__stream__st_a7387f7146ed20b70fb63e7cabfcd3671} 
+uint64\+\_\+t {\bfseries peer\+\_\+reset\+\_\+stream\+\_\+aec}
+\item 
+\Hypertarget{structquic__stream__st_a4325165921fd359bb618898cfd7712ca}\label{structquic__stream__st_a4325165921fd359bb618898cfd7712ca} 
+uint64\+\_\+t {\bfseries txp\+\_\+txfc\+\_\+new\+\_\+credit\+\_\+consumed}
+\item 
+\Hypertarget{structquic__stream__st_a579baae727860c18152051f1033a1774}\label{structquic__stream__st_a579baae727860c18152051f1033a1774} 
+uint64\+\_\+t {\bfseries send\+\_\+final\+\_\+size}
+\item 
+\Hypertarget{structquic__stream__st_a0ccd8f1c83456f8831211087fc05151a}\label{structquic__stream__st_a0ccd8f1c83456f8831211087fc05151a} 
+\mbox{\hyperlink{structquic__sstream__st}{QUIC\+\_\+\+SSTREAM}} \texorpdfstring{$\ast$}{*} {\bfseries sstream}
+\item 
+\Hypertarget{structquic__stream__st_a32549c648da9e1dc00cc925f7175d604}\label{structquic__stream__st_a32549c648da9e1dc00cc925f7175d604} 
+\mbox{\hyperlink{structquic__rstream__st}{QUIC\+\_\+\+RSTREAM}} \texorpdfstring{$\ast$}{*} {\bfseries rstream}
+\item 
+\Hypertarget{structquic__stream__st_a2f229a27d05e6217d0104639dabd8d20}\label{structquic__stream__st_a2f229a27d05e6217d0104639dabd8d20} 
+\mbox{\hyperlink{structquic__txfc__st}{QUIC\+\_\+\+TXFC}} {\bfseries txfc}
+\item 
+\Hypertarget{structquic__stream__st_a6e3525833a3eb8ff6882b353a82a6784}\label{structquic__stream__st_a6e3525833a3eb8ff6882b353a82a6784} 
+\mbox{\hyperlink{structquic__rxfc__st}{QUIC\+\_\+\+RXFC}} {\bfseries rxfc}
+\item 
+\Hypertarget{structquic__stream__st_a5337d7982f483ab3b89f2c8740a22173}\label{structquic__stream__st_a5337d7982f483ab3b89f2c8740a22173} 
+unsigned int {\bfseries type}\+: 8
+\item 
+\Hypertarget{structquic__stream__st_a66fffd397f9c619e7640ebe3381a4318}\label{structquic__stream__st_a66fffd397f9c619e7640ebe3381a4318} 
+unsigned int {\bfseries send\+\_\+state}\+: 8
+\item 
+\Hypertarget{structquic__stream__st_a9bc0f31f2dc594a890f6f89f952b0cac}\label{structquic__stream__st_a9bc0f31f2dc594a890f6f89f952b0cac} 
+unsigned int {\bfseries recv\+\_\+state}\+: 8
+\item 
+\Hypertarget{structquic__stream__st_a5fb46075a04c474047d3335b409a201e}\label{structquic__stream__st_a5fb46075a04c474047d3335b409a201e} 
+unsigned int {\bfseries active}\+: 1
+\item 
+\Hypertarget{structquic__stream__st_a9b6cf138c0e53531fbe432cd37949986}\label{structquic__stream__st_a9b6cf138c0e53531fbe432cd37949986} 
+unsigned int {\bfseries as\+\_\+server}\+: 1
+\item 
+\Hypertarget{structquic__stream__st_afef50f81f2b229ad48a30898b97db0a3}\label{structquic__stream__st_afef50f81f2b229ad48a30898b97db0a3} 
+unsigned int {\bfseries stop\+\_\+sending}\+: 1
+\item 
+\Hypertarget{structquic__stream__st_aefa6bad233cce97d400b1397e0a3f84d}\label{structquic__stream__st_aefa6bad233cce97d400b1397e0a3f84d} 
+unsigned int {\bfseries peer\+\_\+stop\+\_\+sending}\+: 1
+\item 
+\Hypertarget{structquic__stream__st_a5764eeddd29d85603fb10da39a826842}\label{structquic__stream__st_a5764eeddd29d85603fb10da39a826842} 
+unsigned int {\bfseries txp\+\_\+sent\+\_\+fc}\+: 1
+\item 
+\Hypertarget{structquic__stream__st_aa6e5ba9d6d166c4ac3a3d9492a003526}\label{structquic__stream__st_aa6e5ba9d6d166c4ac3a3d9492a003526} 
+unsigned int {\bfseries txp\+\_\+sent\+\_\+stop\+\_\+sending}\+: 1
+\item 
+\Hypertarget{structquic__stream__st_a67f02c27ee47544df333492e045f269a}\label{structquic__stream__st_a67f02c27ee47544df333492e045f269a} 
+unsigned int {\bfseries txp\+\_\+sent\+\_\+reset\+\_\+stream}\+: 1
+\item 
+\Hypertarget{structquic__stream__st_a9e1e4b017e2a7a935533fbd31f83e9a8}\label{structquic__stream__st_a9e1e4b017e2a7a935533fbd31f83e9a8} 
+unsigned int {\bfseries txp\+\_\+drained}\+: 1
+\item 
+\Hypertarget{structquic__stream__st_af3285d048592fed1ad90446da223a8c5}\label{structquic__stream__st_af3285d048592fed1ad90446da223a8c5} 
+unsigned int {\bfseries txp\+\_\+blocked}\+: 1
+\item 
+\Hypertarget{structquic__stream__st_af282c0dbf276fabc22c434c0ea922b39}\label{structquic__stream__st_af282c0dbf276fabc22c434c0ea922b39} 
+unsigned int {\bfseries want\+\_\+max\+\_\+stream\+\_\+data}\+: 1
+\item 
+\Hypertarget{structquic__stream__st_a64837aae591daa138f5b616d00a48ed3}\label{structquic__stream__st_a64837aae591daa138f5b616d00a48ed3} 
+unsigned int {\bfseries want\+\_\+stop\+\_\+sending}\+: 1
+\item 
+\Hypertarget{structquic__stream__st_a59ca9203d193ea4fe05ed5466a96d599}\label{structquic__stream__st_a59ca9203d193ea4fe05ed5466a96d599} 
+unsigned int {\bfseries want\+\_\+reset\+\_\+stream}\+: 1
+\item 
+\Hypertarget{structquic__stream__st_a993526bd1c0f5798712d3202b1587619}\label{structquic__stream__st_a993526bd1c0f5798712d3202b1587619} 
+unsigned int {\bfseries acked\+\_\+stop\+\_\+sending}\+: 1
+\item 
+\Hypertarget{structquic__stream__st_a1b4a28eb8890b492827c62bf86af019d}\label{structquic__stream__st_a1b4a28eb8890b492827c62bf86af019d} 
+unsigned int {\bfseries deleted}\+: 1
+\item 
+\Hypertarget{structquic__stream__st_acd56e94a94e21826105746cd321ae10f}\label{structquic__stream__st_acd56e94a94e21826105746cd321ae10f} 
+unsigned int {\bfseries ready\+\_\+for\+\_\+gc}\+: 1
+\item 
+\Hypertarget{structquic__stream__st_a29cce5b155f216ecc39d1fbd403a5775}\label{structquic__stream__st_a29cce5b155f216ecc39d1fbd403a5775} 
+unsigned int {\bfseries shutdown\+\_\+flush}\+: 1
+\end{DoxyCompactItemize}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/namph/\+Downloads/openssl/openssl-\/3.\+2.\+1/include/internal/quic\+\_\+stream\+\_\+map.\+h\end{DoxyCompactItemize}

@@ -1,0 +1,356 @@
+\doxysection{rmdconst.\+h}
+\hypertarget{rmdconst_8h_source}{}\label{rmdconst_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/ripemd/rmdconst.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/ripemd/rmdconst.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 1995-\/2016\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#define\ KL0\ 0x00000000L}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#define\ KL1\ 0x5A827999L}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#define\ KL2\ 0x6ED9EBA1L}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#define\ KL3\ 0x8F1BBCDCL}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#define\ KL4\ 0xA953FD4EL}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#define\ KR0\ 0x50A28BE6L}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ KR1\ 0x5C4DD124L}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#define\ KR2\ 0x6D703EF3L}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#define\ KR3\ 0x7A6D76E9L}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#define\ KR4\ 0x00000000L}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#define\ WL00\ \ 0}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#define\ SL00\ 11}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#define\ WL01\ \ 1}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#define\ SL01\ 14}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#define\ WL02\ \ 2}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#define\ SL02\ 15}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#define\ WL03\ \ 3}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#define\ SL03\ 12}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#define\ WL04\ \ 4}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#define\ SL04\ \ 5}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#define\ WL05\ \ 5}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#define\ SL05\ \ 8}}
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#define\ WL06\ \ 6}}
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#define\ SL06\ \ 7}}
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#define\ WL07\ \ 7}}
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#define\ SL07\ \ 9}}
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#define\ WL08\ \ 8}}
+\DoxyCodeLine{00039\ \textcolor{preprocessor}{\#define\ SL08\ 11}}
+\DoxyCodeLine{00040\ \textcolor{preprocessor}{\#define\ WL09\ \ 9}}
+\DoxyCodeLine{00041\ \textcolor{preprocessor}{\#define\ SL09\ 13}}
+\DoxyCodeLine{00042\ \textcolor{preprocessor}{\#define\ WL10\ 10}}
+\DoxyCodeLine{00043\ \textcolor{preprocessor}{\#define\ SL10\ 14}}
+\DoxyCodeLine{00044\ \textcolor{preprocessor}{\#define\ WL11\ 11}}
+\DoxyCodeLine{00045\ \textcolor{preprocessor}{\#define\ SL11\ 15}}
+\DoxyCodeLine{00046\ \textcolor{preprocessor}{\#define\ WL12\ 12}}
+\DoxyCodeLine{00047\ \textcolor{preprocessor}{\#define\ SL12\ \ 6}}
+\DoxyCodeLine{00048\ \textcolor{preprocessor}{\#define\ WL13\ 13}}
+\DoxyCodeLine{00049\ \textcolor{preprocessor}{\#define\ SL13\ \ 7}}
+\DoxyCodeLine{00050\ \textcolor{preprocessor}{\#define\ WL14\ 14}}
+\DoxyCodeLine{00051\ \textcolor{preprocessor}{\#define\ SL14\ \ 9}}
+\DoxyCodeLine{00052\ \textcolor{preprocessor}{\#define\ WL15\ 15}}
+\DoxyCodeLine{00053\ \textcolor{preprocessor}{\#define\ SL15\ \ 8}}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ \textcolor{preprocessor}{\#define\ WL16\ \ 7}}
+\DoxyCodeLine{00056\ \textcolor{preprocessor}{\#define\ SL16\ \ 7}}
+\DoxyCodeLine{00057\ \textcolor{preprocessor}{\#define\ WL17\ \ 4}}
+\DoxyCodeLine{00058\ \textcolor{preprocessor}{\#define\ SL17\ \ 6}}
+\DoxyCodeLine{00059\ \textcolor{preprocessor}{\#define\ WL18\ 13}}
+\DoxyCodeLine{00060\ \textcolor{preprocessor}{\#define\ SL18\ \ 8}}
+\DoxyCodeLine{00061\ \textcolor{preprocessor}{\#define\ WL19\ \ 1}}
+\DoxyCodeLine{00062\ \textcolor{preprocessor}{\#define\ SL19\ 13}}
+\DoxyCodeLine{00063\ \textcolor{preprocessor}{\#define\ WL20\ 10}}
+\DoxyCodeLine{00064\ \textcolor{preprocessor}{\#define\ SL20\ 11}}
+\DoxyCodeLine{00065\ \textcolor{preprocessor}{\#define\ WL21\ \ 6}}
+\DoxyCodeLine{00066\ \textcolor{preprocessor}{\#define\ SL21\ \ 9}}
+\DoxyCodeLine{00067\ \textcolor{preprocessor}{\#define\ WL22\ 15}}
+\DoxyCodeLine{00068\ \textcolor{preprocessor}{\#define\ SL22\ \ 7}}
+\DoxyCodeLine{00069\ \textcolor{preprocessor}{\#define\ WL23\ \ 3}}
+\DoxyCodeLine{00070\ \textcolor{preprocessor}{\#define\ SL23\ 15}}
+\DoxyCodeLine{00071\ \textcolor{preprocessor}{\#define\ WL24\ 12}}
+\DoxyCodeLine{00072\ \textcolor{preprocessor}{\#define\ SL24\ \ 7}}
+\DoxyCodeLine{00073\ \textcolor{preprocessor}{\#define\ WL25\ \ 0}}
+\DoxyCodeLine{00074\ \textcolor{preprocessor}{\#define\ SL25\ 12}}
+\DoxyCodeLine{00075\ \textcolor{preprocessor}{\#define\ WL26\ \ 9}}
+\DoxyCodeLine{00076\ \textcolor{preprocessor}{\#define\ SL26\ 15}}
+\DoxyCodeLine{00077\ \textcolor{preprocessor}{\#define\ WL27\ \ 5}}
+\DoxyCodeLine{00078\ \textcolor{preprocessor}{\#define\ SL27\ \ 9}}
+\DoxyCodeLine{00079\ \textcolor{preprocessor}{\#define\ WL28\ \ 2}}
+\DoxyCodeLine{00080\ \textcolor{preprocessor}{\#define\ SL28\ 11}}
+\DoxyCodeLine{00081\ \textcolor{preprocessor}{\#define\ WL29\ 14}}
+\DoxyCodeLine{00082\ \textcolor{preprocessor}{\#define\ SL29\ \ 7}}
+\DoxyCodeLine{00083\ \textcolor{preprocessor}{\#define\ WL30\ 11}}
+\DoxyCodeLine{00084\ \textcolor{preprocessor}{\#define\ SL30\ 13}}
+\DoxyCodeLine{00085\ \textcolor{preprocessor}{\#define\ WL31\ \ 8}}
+\DoxyCodeLine{00086\ \textcolor{preprocessor}{\#define\ SL31\ 12}}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00088\ \textcolor{preprocessor}{\#define\ WL32\ \ 3}}
+\DoxyCodeLine{00089\ \textcolor{preprocessor}{\#define\ SL32\ 11}}
+\DoxyCodeLine{00090\ \textcolor{preprocessor}{\#define\ WL33\ 10}}
+\DoxyCodeLine{00091\ \textcolor{preprocessor}{\#define\ SL33\ 13}}
+\DoxyCodeLine{00092\ \textcolor{preprocessor}{\#define\ WL34\ 14}}
+\DoxyCodeLine{00093\ \textcolor{preprocessor}{\#define\ SL34\ \ 6}}
+\DoxyCodeLine{00094\ \textcolor{preprocessor}{\#define\ WL35\ \ 4}}
+\DoxyCodeLine{00095\ \textcolor{preprocessor}{\#define\ SL35\ \ 7}}
+\DoxyCodeLine{00096\ \textcolor{preprocessor}{\#define\ WL36\ \ 9}}
+\DoxyCodeLine{00097\ \textcolor{preprocessor}{\#define\ SL36\ 14}}
+\DoxyCodeLine{00098\ \textcolor{preprocessor}{\#define\ WL37\ 15}}
+\DoxyCodeLine{00099\ \textcolor{preprocessor}{\#define\ SL37\ \ 9}}
+\DoxyCodeLine{00100\ \textcolor{preprocessor}{\#define\ WL38\ \ 8}}
+\DoxyCodeLine{00101\ \textcolor{preprocessor}{\#define\ SL38\ 13}}
+\DoxyCodeLine{00102\ \textcolor{preprocessor}{\#define\ WL39\ \ 1}}
+\DoxyCodeLine{00103\ \textcolor{preprocessor}{\#define\ SL39\ 15}}
+\DoxyCodeLine{00104\ \textcolor{preprocessor}{\#define\ WL40\ \ 2}}
+\DoxyCodeLine{00105\ \textcolor{preprocessor}{\#define\ SL40\ 14}}
+\DoxyCodeLine{00106\ \textcolor{preprocessor}{\#define\ WL41\ \ 7}}
+\DoxyCodeLine{00107\ \textcolor{preprocessor}{\#define\ SL41\ \ 8}}
+\DoxyCodeLine{00108\ \textcolor{preprocessor}{\#define\ WL42\ \ 0}}
+\DoxyCodeLine{00109\ \textcolor{preprocessor}{\#define\ SL42\ 13}}
+\DoxyCodeLine{00110\ \textcolor{preprocessor}{\#define\ WL43\ \ 6}}
+\DoxyCodeLine{00111\ \textcolor{preprocessor}{\#define\ SL43\ \ 6}}
+\DoxyCodeLine{00112\ \textcolor{preprocessor}{\#define\ WL44\ 13}}
+\DoxyCodeLine{00113\ \textcolor{preprocessor}{\#define\ SL44\ \ 5}}
+\DoxyCodeLine{00114\ \textcolor{preprocessor}{\#define\ WL45\ 11}}
+\DoxyCodeLine{00115\ \textcolor{preprocessor}{\#define\ SL45\ 12}}
+\DoxyCodeLine{00116\ \textcolor{preprocessor}{\#define\ WL46\ \ 5}}
+\DoxyCodeLine{00117\ \textcolor{preprocessor}{\#define\ SL46\ \ 7}}
+\DoxyCodeLine{00118\ \textcolor{preprocessor}{\#define\ WL47\ 12}}
+\DoxyCodeLine{00119\ \textcolor{preprocessor}{\#define\ SL47\ \ 5}}
+\DoxyCodeLine{00120\ }
+\DoxyCodeLine{00121\ \textcolor{preprocessor}{\#define\ WL48\ \ 1}}
+\DoxyCodeLine{00122\ \textcolor{preprocessor}{\#define\ SL48\ 11}}
+\DoxyCodeLine{00123\ \textcolor{preprocessor}{\#define\ WL49\ \ 9}}
+\DoxyCodeLine{00124\ \textcolor{preprocessor}{\#define\ SL49\ 12}}
+\DoxyCodeLine{00125\ \textcolor{preprocessor}{\#define\ WL50\ 11}}
+\DoxyCodeLine{00126\ \textcolor{preprocessor}{\#define\ SL50\ 14}}
+\DoxyCodeLine{00127\ \textcolor{preprocessor}{\#define\ WL51\ 10}}
+\DoxyCodeLine{00128\ \textcolor{preprocessor}{\#define\ SL51\ 15}}
+\DoxyCodeLine{00129\ \textcolor{preprocessor}{\#define\ WL52\ \ 0}}
+\DoxyCodeLine{00130\ \textcolor{preprocessor}{\#define\ SL52\ 14}}
+\DoxyCodeLine{00131\ \textcolor{preprocessor}{\#define\ WL53\ \ 8}}
+\DoxyCodeLine{00132\ \textcolor{preprocessor}{\#define\ SL53\ 15}}
+\DoxyCodeLine{00133\ \textcolor{preprocessor}{\#define\ WL54\ 12}}
+\DoxyCodeLine{00134\ \textcolor{preprocessor}{\#define\ SL54\ \ 9}}
+\DoxyCodeLine{00135\ \textcolor{preprocessor}{\#define\ WL55\ \ 4}}
+\DoxyCodeLine{00136\ \textcolor{preprocessor}{\#define\ SL55\ \ 8}}
+\DoxyCodeLine{00137\ \textcolor{preprocessor}{\#define\ WL56\ 13}}
+\DoxyCodeLine{00138\ \textcolor{preprocessor}{\#define\ SL56\ \ 9}}
+\DoxyCodeLine{00139\ \textcolor{preprocessor}{\#define\ WL57\ \ 3}}
+\DoxyCodeLine{00140\ \textcolor{preprocessor}{\#define\ SL57\ 14}}
+\DoxyCodeLine{00141\ \textcolor{preprocessor}{\#define\ WL58\ \ 7}}
+\DoxyCodeLine{00142\ \textcolor{preprocessor}{\#define\ SL58\ \ 5}}
+\DoxyCodeLine{00143\ \textcolor{preprocessor}{\#define\ WL59\ 15}}
+\DoxyCodeLine{00144\ \textcolor{preprocessor}{\#define\ SL59\ \ 6}}
+\DoxyCodeLine{00145\ \textcolor{preprocessor}{\#define\ WL60\ 14}}
+\DoxyCodeLine{00146\ \textcolor{preprocessor}{\#define\ SL60\ \ 8}}
+\DoxyCodeLine{00147\ \textcolor{preprocessor}{\#define\ WL61\ \ 5}}
+\DoxyCodeLine{00148\ \textcolor{preprocessor}{\#define\ SL61\ \ 6}}
+\DoxyCodeLine{00149\ \textcolor{preprocessor}{\#define\ WL62\ \ 6}}
+\DoxyCodeLine{00150\ \textcolor{preprocessor}{\#define\ SL62\ \ 5}}
+\DoxyCodeLine{00151\ \textcolor{preprocessor}{\#define\ WL63\ \ 2}}
+\DoxyCodeLine{00152\ \textcolor{preprocessor}{\#define\ SL63\ 12}}
+\DoxyCodeLine{00153\ }
+\DoxyCodeLine{00154\ \textcolor{preprocessor}{\#define\ WL64\ \ 4}}
+\DoxyCodeLine{00155\ \textcolor{preprocessor}{\#define\ SL64\ \ 9}}
+\DoxyCodeLine{00156\ \textcolor{preprocessor}{\#define\ WL65\ \ 0}}
+\DoxyCodeLine{00157\ \textcolor{preprocessor}{\#define\ SL65\ 15}}
+\DoxyCodeLine{00158\ \textcolor{preprocessor}{\#define\ WL66\ \ 5}}
+\DoxyCodeLine{00159\ \textcolor{preprocessor}{\#define\ SL66\ \ 5}}
+\DoxyCodeLine{00160\ \textcolor{preprocessor}{\#define\ WL67\ \ 9}}
+\DoxyCodeLine{00161\ \textcolor{preprocessor}{\#define\ SL67\ 11}}
+\DoxyCodeLine{00162\ \textcolor{preprocessor}{\#define\ WL68\ \ 7}}
+\DoxyCodeLine{00163\ \textcolor{preprocessor}{\#define\ SL68\ \ 6}}
+\DoxyCodeLine{00164\ \textcolor{preprocessor}{\#define\ WL69\ 12}}
+\DoxyCodeLine{00165\ \textcolor{preprocessor}{\#define\ SL69\ \ 8}}
+\DoxyCodeLine{00166\ \textcolor{preprocessor}{\#define\ WL70\ \ 2}}
+\DoxyCodeLine{00167\ \textcolor{preprocessor}{\#define\ SL70\ 13}}
+\DoxyCodeLine{00168\ \textcolor{preprocessor}{\#define\ WL71\ 10}}
+\DoxyCodeLine{00169\ \textcolor{preprocessor}{\#define\ SL71\ 12}}
+\DoxyCodeLine{00170\ \textcolor{preprocessor}{\#define\ WL72\ 14}}
+\DoxyCodeLine{00171\ \textcolor{preprocessor}{\#define\ SL72\ \ 5}}
+\DoxyCodeLine{00172\ \textcolor{preprocessor}{\#define\ WL73\ \ 1}}
+\DoxyCodeLine{00173\ \textcolor{preprocessor}{\#define\ SL73\ 12}}
+\DoxyCodeLine{00174\ \textcolor{preprocessor}{\#define\ WL74\ \ 3}}
+\DoxyCodeLine{00175\ \textcolor{preprocessor}{\#define\ SL74\ 13}}
+\DoxyCodeLine{00176\ \textcolor{preprocessor}{\#define\ WL75\ \ 8}}
+\DoxyCodeLine{00177\ \textcolor{preprocessor}{\#define\ SL75\ 14}}
+\DoxyCodeLine{00178\ \textcolor{preprocessor}{\#define\ WL76\ 11}}
+\DoxyCodeLine{00179\ \textcolor{preprocessor}{\#define\ SL76\ 11}}
+\DoxyCodeLine{00180\ \textcolor{preprocessor}{\#define\ WL77\ \ 6}}
+\DoxyCodeLine{00181\ \textcolor{preprocessor}{\#define\ SL77\ \ 8}}
+\DoxyCodeLine{00182\ \textcolor{preprocessor}{\#define\ WL78\ 15}}
+\DoxyCodeLine{00183\ \textcolor{preprocessor}{\#define\ SL78\ \ 5}}
+\DoxyCodeLine{00184\ \textcolor{preprocessor}{\#define\ WL79\ 13}}
+\DoxyCodeLine{00185\ \textcolor{preprocessor}{\#define\ SL79\ \ 6}}
+\DoxyCodeLine{00186\ }
+\DoxyCodeLine{00187\ \textcolor{preprocessor}{\#define\ WR00\ \ 5}}
+\DoxyCodeLine{00188\ \textcolor{preprocessor}{\#define\ SR00\ \ 8}}
+\DoxyCodeLine{00189\ \textcolor{preprocessor}{\#define\ WR01\ 14}}
+\DoxyCodeLine{00190\ \textcolor{preprocessor}{\#define\ SR01\ \ 9}}
+\DoxyCodeLine{00191\ \textcolor{preprocessor}{\#define\ WR02\ \ 7}}
+\DoxyCodeLine{00192\ \textcolor{preprocessor}{\#define\ SR02\ \ 9}}
+\DoxyCodeLine{00193\ \textcolor{preprocessor}{\#define\ WR03\ \ 0}}
+\DoxyCodeLine{00194\ \textcolor{preprocessor}{\#define\ SR03\ 11}}
+\DoxyCodeLine{00195\ \textcolor{preprocessor}{\#define\ WR04\ \ 9}}
+\DoxyCodeLine{00196\ \textcolor{preprocessor}{\#define\ SR04\ 13}}
+\DoxyCodeLine{00197\ \textcolor{preprocessor}{\#define\ WR05\ \ 2}}
+\DoxyCodeLine{00198\ \textcolor{preprocessor}{\#define\ SR05\ 15}}
+\DoxyCodeLine{00199\ \textcolor{preprocessor}{\#define\ WR06\ 11}}
+\DoxyCodeLine{00200\ \textcolor{preprocessor}{\#define\ SR06\ 15}}
+\DoxyCodeLine{00201\ \textcolor{preprocessor}{\#define\ WR07\ \ 4}}
+\DoxyCodeLine{00202\ \textcolor{preprocessor}{\#define\ SR07\ \ 5}}
+\DoxyCodeLine{00203\ \textcolor{preprocessor}{\#define\ WR08\ 13}}
+\DoxyCodeLine{00204\ \textcolor{preprocessor}{\#define\ SR08\ \ 7}}
+\DoxyCodeLine{00205\ \textcolor{preprocessor}{\#define\ WR09\ \ 6}}
+\DoxyCodeLine{00206\ \textcolor{preprocessor}{\#define\ SR09\ \ 7}}
+\DoxyCodeLine{00207\ \textcolor{preprocessor}{\#define\ WR10\ 15}}
+\DoxyCodeLine{00208\ \textcolor{preprocessor}{\#define\ SR10\ \ 8}}
+\DoxyCodeLine{00209\ \textcolor{preprocessor}{\#define\ WR11\ \ 8}}
+\DoxyCodeLine{00210\ \textcolor{preprocessor}{\#define\ SR11\ 11}}
+\DoxyCodeLine{00211\ \textcolor{preprocessor}{\#define\ WR12\ \ 1}}
+\DoxyCodeLine{00212\ \textcolor{preprocessor}{\#define\ SR12\ 14}}
+\DoxyCodeLine{00213\ \textcolor{preprocessor}{\#define\ WR13\ 10}}
+\DoxyCodeLine{00214\ \textcolor{preprocessor}{\#define\ SR13\ 14}}
+\DoxyCodeLine{00215\ \textcolor{preprocessor}{\#define\ WR14\ \ 3}}
+\DoxyCodeLine{00216\ \textcolor{preprocessor}{\#define\ SR14\ 12}}
+\DoxyCodeLine{00217\ \textcolor{preprocessor}{\#define\ WR15\ 12}}
+\DoxyCodeLine{00218\ \textcolor{preprocessor}{\#define\ SR15\ \ 6}}
+\DoxyCodeLine{00219\ }
+\DoxyCodeLine{00220\ \textcolor{preprocessor}{\#define\ WR16\ \ 6}}
+\DoxyCodeLine{00221\ \textcolor{preprocessor}{\#define\ SR16\ \ 9}}
+\DoxyCodeLine{00222\ \textcolor{preprocessor}{\#define\ WR17\ 11}}
+\DoxyCodeLine{00223\ \textcolor{preprocessor}{\#define\ SR17\ 13}}
+\DoxyCodeLine{00224\ \textcolor{preprocessor}{\#define\ WR18\ \ 3}}
+\DoxyCodeLine{00225\ \textcolor{preprocessor}{\#define\ SR18\ 15}}
+\DoxyCodeLine{00226\ \textcolor{preprocessor}{\#define\ WR19\ \ 7}}
+\DoxyCodeLine{00227\ \textcolor{preprocessor}{\#define\ SR19\ \ 7}}
+\DoxyCodeLine{00228\ \textcolor{preprocessor}{\#define\ WR20\ \ 0}}
+\DoxyCodeLine{00229\ \textcolor{preprocessor}{\#define\ SR20\ 12}}
+\DoxyCodeLine{00230\ \textcolor{preprocessor}{\#define\ WR21\ 13}}
+\DoxyCodeLine{00231\ \textcolor{preprocessor}{\#define\ SR21\ \ 8}}
+\DoxyCodeLine{00232\ \textcolor{preprocessor}{\#define\ WR22\ \ 5}}
+\DoxyCodeLine{00233\ \textcolor{preprocessor}{\#define\ SR22\ \ 9}}
+\DoxyCodeLine{00234\ \textcolor{preprocessor}{\#define\ WR23\ 10}}
+\DoxyCodeLine{00235\ \textcolor{preprocessor}{\#define\ SR23\ 11}}
+\DoxyCodeLine{00236\ \textcolor{preprocessor}{\#define\ WR24\ 14}}
+\DoxyCodeLine{00237\ \textcolor{preprocessor}{\#define\ SR24\ \ 7}}
+\DoxyCodeLine{00238\ \textcolor{preprocessor}{\#define\ WR25\ 15}}
+\DoxyCodeLine{00239\ \textcolor{preprocessor}{\#define\ SR25\ \ 7}}
+\DoxyCodeLine{00240\ \textcolor{preprocessor}{\#define\ WR26\ \ 8}}
+\DoxyCodeLine{00241\ \textcolor{preprocessor}{\#define\ SR26\ 12}}
+\DoxyCodeLine{00242\ \textcolor{preprocessor}{\#define\ WR27\ 12}}
+\DoxyCodeLine{00243\ \textcolor{preprocessor}{\#define\ SR27\ \ 7}}
+\DoxyCodeLine{00244\ \textcolor{preprocessor}{\#define\ WR28\ \ 4}}
+\DoxyCodeLine{00245\ \textcolor{preprocessor}{\#define\ SR28\ \ 6}}
+\DoxyCodeLine{00246\ \textcolor{preprocessor}{\#define\ WR29\ \ 9}}
+\DoxyCodeLine{00247\ \textcolor{preprocessor}{\#define\ SR29\ 15}}
+\DoxyCodeLine{00248\ \textcolor{preprocessor}{\#define\ WR30\ \ 1}}
+\DoxyCodeLine{00249\ \textcolor{preprocessor}{\#define\ SR30\ 13}}
+\DoxyCodeLine{00250\ \textcolor{preprocessor}{\#define\ WR31\ \ 2}}
+\DoxyCodeLine{00251\ \textcolor{preprocessor}{\#define\ SR31\ 11}}
+\DoxyCodeLine{00252\ }
+\DoxyCodeLine{00253\ \textcolor{preprocessor}{\#define\ WR32\ 15}}
+\DoxyCodeLine{00254\ \textcolor{preprocessor}{\#define\ SR32\ \ 9}}
+\DoxyCodeLine{00255\ \textcolor{preprocessor}{\#define\ WR33\ \ 5}}
+\DoxyCodeLine{00256\ \textcolor{preprocessor}{\#define\ SR33\ \ 7}}
+\DoxyCodeLine{00257\ \textcolor{preprocessor}{\#define\ WR34\ \ 1}}
+\DoxyCodeLine{00258\ \textcolor{preprocessor}{\#define\ SR34\ 15}}
+\DoxyCodeLine{00259\ \textcolor{preprocessor}{\#define\ WR35\ \ 3}}
+\DoxyCodeLine{00260\ \textcolor{preprocessor}{\#define\ SR35\ 11}}
+\DoxyCodeLine{00261\ \textcolor{preprocessor}{\#define\ WR36\ \ 7}}
+\DoxyCodeLine{00262\ \textcolor{preprocessor}{\#define\ SR36\ \ 8}}
+\DoxyCodeLine{00263\ \textcolor{preprocessor}{\#define\ WR37\ 14}}
+\DoxyCodeLine{00264\ \textcolor{preprocessor}{\#define\ SR37\ \ 6}}
+\DoxyCodeLine{00265\ \textcolor{preprocessor}{\#define\ WR38\ \ 6}}
+\DoxyCodeLine{00266\ \textcolor{preprocessor}{\#define\ SR38\ \ 6}}
+\DoxyCodeLine{00267\ \textcolor{preprocessor}{\#define\ WR39\ \ 9}}
+\DoxyCodeLine{00268\ \textcolor{preprocessor}{\#define\ SR39\ 14}}
+\DoxyCodeLine{00269\ \textcolor{preprocessor}{\#define\ WR40\ 11}}
+\DoxyCodeLine{00270\ \textcolor{preprocessor}{\#define\ SR40\ 12}}
+\DoxyCodeLine{00271\ \textcolor{preprocessor}{\#define\ WR41\ \ 8}}
+\DoxyCodeLine{00272\ \textcolor{preprocessor}{\#define\ SR41\ 13}}
+\DoxyCodeLine{00273\ \textcolor{preprocessor}{\#define\ WR42\ 12}}
+\DoxyCodeLine{00274\ \textcolor{preprocessor}{\#define\ SR42\ \ 5}}
+\DoxyCodeLine{00275\ \textcolor{preprocessor}{\#define\ WR43\ \ 2}}
+\DoxyCodeLine{00276\ \textcolor{preprocessor}{\#define\ SR43\ 14}}
+\DoxyCodeLine{00277\ \textcolor{preprocessor}{\#define\ WR44\ 10}}
+\DoxyCodeLine{00278\ \textcolor{preprocessor}{\#define\ SR44\ 13}}
+\DoxyCodeLine{00279\ \textcolor{preprocessor}{\#define\ WR45\ \ 0}}
+\DoxyCodeLine{00280\ \textcolor{preprocessor}{\#define\ SR45\ 13}}
+\DoxyCodeLine{00281\ \textcolor{preprocessor}{\#define\ WR46\ \ 4}}
+\DoxyCodeLine{00282\ \textcolor{preprocessor}{\#define\ SR46\ \ 7}}
+\DoxyCodeLine{00283\ \textcolor{preprocessor}{\#define\ WR47\ 13}}
+\DoxyCodeLine{00284\ \textcolor{preprocessor}{\#define\ SR47\ \ 5}}
+\DoxyCodeLine{00285\ }
+\DoxyCodeLine{00286\ \textcolor{preprocessor}{\#define\ WR48\ \ 8}}
+\DoxyCodeLine{00287\ \textcolor{preprocessor}{\#define\ SR48\ 15}}
+\DoxyCodeLine{00288\ \textcolor{preprocessor}{\#define\ WR49\ \ 6}}
+\DoxyCodeLine{00289\ \textcolor{preprocessor}{\#define\ SR49\ \ 5}}
+\DoxyCodeLine{00290\ \textcolor{preprocessor}{\#define\ WR50\ \ 4}}
+\DoxyCodeLine{00291\ \textcolor{preprocessor}{\#define\ SR50\ \ 8}}
+\DoxyCodeLine{00292\ \textcolor{preprocessor}{\#define\ WR51\ \ 1}}
+\DoxyCodeLine{00293\ \textcolor{preprocessor}{\#define\ SR51\ 11}}
+\DoxyCodeLine{00294\ \textcolor{preprocessor}{\#define\ WR52\ \ 3}}
+\DoxyCodeLine{00295\ \textcolor{preprocessor}{\#define\ SR52\ 14}}
+\DoxyCodeLine{00296\ \textcolor{preprocessor}{\#define\ WR53\ 11}}
+\DoxyCodeLine{00297\ \textcolor{preprocessor}{\#define\ SR53\ 14}}
+\DoxyCodeLine{00298\ \textcolor{preprocessor}{\#define\ WR54\ 15}}
+\DoxyCodeLine{00299\ \textcolor{preprocessor}{\#define\ SR54\ \ 6}}
+\DoxyCodeLine{00300\ \textcolor{preprocessor}{\#define\ WR55\ \ 0}}
+\DoxyCodeLine{00301\ \textcolor{preprocessor}{\#define\ SR55\ 14}}
+\DoxyCodeLine{00302\ \textcolor{preprocessor}{\#define\ WR56\ \ 5}}
+\DoxyCodeLine{00303\ \textcolor{preprocessor}{\#define\ SR56\ \ 6}}
+\DoxyCodeLine{00304\ \textcolor{preprocessor}{\#define\ WR57\ 12}}
+\DoxyCodeLine{00305\ \textcolor{preprocessor}{\#define\ SR57\ \ 9}}
+\DoxyCodeLine{00306\ \textcolor{preprocessor}{\#define\ WR58\ \ 2}}
+\DoxyCodeLine{00307\ \textcolor{preprocessor}{\#define\ SR58\ 12}}
+\DoxyCodeLine{00308\ \textcolor{preprocessor}{\#define\ WR59\ 13}}
+\DoxyCodeLine{00309\ \textcolor{preprocessor}{\#define\ SR59\ \ 9}}
+\DoxyCodeLine{00310\ \textcolor{preprocessor}{\#define\ WR60\ \ 9}}
+\DoxyCodeLine{00311\ \textcolor{preprocessor}{\#define\ SR60\ 12}}
+\DoxyCodeLine{00312\ \textcolor{preprocessor}{\#define\ WR61\ \ 7}}
+\DoxyCodeLine{00313\ \textcolor{preprocessor}{\#define\ SR61\ \ 5}}
+\DoxyCodeLine{00314\ \textcolor{preprocessor}{\#define\ WR62\ 10}}
+\DoxyCodeLine{00315\ \textcolor{preprocessor}{\#define\ SR62\ 15}}
+\DoxyCodeLine{00316\ \textcolor{preprocessor}{\#define\ WR63\ 14}}
+\DoxyCodeLine{00317\ \textcolor{preprocessor}{\#define\ SR63\ \ 8}}
+\DoxyCodeLine{00318\ }
+\DoxyCodeLine{00319\ \textcolor{preprocessor}{\#define\ WR64\ 12}}
+\DoxyCodeLine{00320\ \textcolor{preprocessor}{\#define\ SR64\ \ 8}}
+\DoxyCodeLine{00321\ \textcolor{preprocessor}{\#define\ WR65\ 15}}
+\DoxyCodeLine{00322\ \textcolor{preprocessor}{\#define\ SR65\ \ 5}}
+\DoxyCodeLine{00323\ \textcolor{preprocessor}{\#define\ WR66\ 10}}
+\DoxyCodeLine{00324\ \textcolor{preprocessor}{\#define\ SR66\ 12}}
+\DoxyCodeLine{00325\ \textcolor{preprocessor}{\#define\ WR67\ \ 4}}
+\DoxyCodeLine{00326\ \textcolor{preprocessor}{\#define\ SR67\ \ 9}}
+\DoxyCodeLine{00327\ \textcolor{preprocessor}{\#define\ WR68\ \ 1}}
+\DoxyCodeLine{00328\ \textcolor{preprocessor}{\#define\ SR68\ 12}}
+\DoxyCodeLine{00329\ \textcolor{preprocessor}{\#define\ WR69\ \ 5}}
+\DoxyCodeLine{00330\ \textcolor{preprocessor}{\#define\ SR69\ \ 5}}
+\DoxyCodeLine{00331\ \textcolor{preprocessor}{\#define\ WR70\ \ 8}}
+\DoxyCodeLine{00332\ \textcolor{preprocessor}{\#define\ SR70\ 14}}
+\DoxyCodeLine{00333\ \textcolor{preprocessor}{\#define\ WR71\ \ 7}}
+\DoxyCodeLine{00334\ \textcolor{preprocessor}{\#define\ SR71\ \ 6}}
+\DoxyCodeLine{00335\ \textcolor{preprocessor}{\#define\ WR72\ \ 6}}
+\DoxyCodeLine{00336\ \textcolor{preprocessor}{\#define\ SR72\ \ 8}}
+\DoxyCodeLine{00337\ \textcolor{preprocessor}{\#define\ WR73\ \ 2}}
+\DoxyCodeLine{00338\ \textcolor{preprocessor}{\#define\ SR73\ 13}}
+\DoxyCodeLine{00339\ \textcolor{preprocessor}{\#define\ WR74\ 13}}
+\DoxyCodeLine{00340\ \textcolor{preprocessor}{\#define\ SR74\ \ 6}}
+\DoxyCodeLine{00341\ \textcolor{preprocessor}{\#define\ WR75\ 14}}
+\DoxyCodeLine{00342\ \textcolor{preprocessor}{\#define\ SR75\ \ 5}}
+\DoxyCodeLine{00343\ \textcolor{preprocessor}{\#define\ WR76\ \ 0}}
+\DoxyCodeLine{00344\ \textcolor{preprocessor}{\#define\ SR76\ 15}}
+\DoxyCodeLine{00345\ \textcolor{preprocessor}{\#define\ WR77\ \ 3}}
+\DoxyCodeLine{00346\ \textcolor{preprocessor}{\#define\ SR77\ 13}}
+\DoxyCodeLine{00347\ \textcolor{preprocessor}{\#define\ WR78\ \ 9}}
+\DoxyCodeLine{00348\ \textcolor{preprocessor}{\#define\ SR78\ 11}}
+\DoxyCodeLine{00349\ \textcolor{preprocessor}{\#define\ WR79\ 11}}
+\DoxyCodeLine{00350\ \textcolor{preprocessor}{\#define\ SR79\ 11}}
+
+\end{DoxyCode}

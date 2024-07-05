@@ -1,0 +1,260 @@
+\doxysection{blake2\+\_\+mac\+\_\+impl.\+c}
+\hypertarget{blake2__mac__impl_8c_source}{}\label{blake2__mac__impl_8c_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/providers/implementations/macs/blake2\_mac\_impl.c@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/providers/implementations/macs/blake2\_mac\_impl.c}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2018-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <openssl/core\_dispatch.h>}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ <openssl/core\_names.h>}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ <openssl/params.h>}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ <openssl/proverr.h>}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#include\ "{}prov/blake2.h"{}}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#include\ "{}internal/cryptlib.h"{}}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#include\ "{}prov/implementations.h"{}}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#include\ "{}prov/providercommon.h"{}}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00021\ \textcolor{comment}{\ *\ Forward\ declaration\ of\ everything\ implemented\ here.\ \ This\ is\ not\ strictly}}
+\DoxyCodeLine{00022\ \textcolor{comment}{\ *\ necessary\ for\ the\ compiler,\ but\ provides\ an\ assurance\ that\ the\ signatures}}
+\DoxyCodeLine{00023\ \textcolor{comment}{\ *\ of\ the\ functions\ in\ the\ dispatch\ table\ are\ correct.}}
+\DoxyCodeLine{00024\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00025\ \textcolor{keyword}{static}\ OSSL\_FUNC\_mac\_newctx\_fn\ blake2\_mac\_new;}
+\DoxyCodeLine{00026\ \textcolor{keyword}{static}\ OSSL\_FUNC\_mac\_dupctx\_fn\ blake2\_mac\_dup;}
+\DoxyCodeLine{00027\ \textcolor{keyword}{static}\ OSSL\_FUNC\_mac\_freectx\_fn\ blake2\_mac\_free;}
+\DoxyCodeLine{00028\ \textcolor{keyword}{static}\ OSSL\_FUNC\_mac\_gettable\_ctx\_params\_fn\ blake2\_gettable\_ctx\_params;}
+\DoxyCodeLine{00029\ \textcolor{keyword}{static}\ OSSL\_FUNC\_mac\_get\_ctx\_params\_fn\ blake2\_get\_ctx\_params;}
+\DoxyCodeLine{00030\ \textcolor{keyword}{static}\ OSSL\_FUNC\_mac\_settable\_ctx\_params\_fn\ blake2\_mac\_settable\_ctx\_params;}
+\DoxyCodeLine{00031\ \textcolor{keyword}{static}\ OSSL\_FUNC\_mac\_set\_ctx\_params\_fn\ blake2\_mac\_set\_ctx\_params;}
+\DoxyCodeLine{00032\ \textcolor{keyword}{static}\ OSSL\_FUNC\_mac\_init\_fn\ blake2\_mac\_init;}
+\DoxyCodeLine{00033\ \textcolor{keyword}{static}\ OSSL\_FUNC\_mac\_update\_fn\ blake2\_mac\_update;}
+\DoxyCodeLine{00034\ \textcolor{keyword}{static}\ OSSL\_FUNC\_mac\_final\_fn\ blake2\_mac\_final;}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structblake2__mac__data__st}{blake2\_mac\_data\_st}}\ \{}
+\DoxyCodeLine{00037\ \ \ \ \ BLAKE2\_CTX\ ctx;}
+\DoxyCodeLine{00038\ \ \ \ \ BLAKE2\_PARAM\ params;}
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ key[BLAKE2\_KEYBYTES];}
+\DoxyCodeLine{00040\ \};}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ *blake2\_mac\_new(\textcolor{keywordtype}{void}\ *unused\_provctx)}
+\DoxyCodeLine{00043\ \{}
+\DoxyCodeLine{00044\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structblake2__mac__data__st}{blake2\_mac\_data\_st}}\ *macctx;}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \ \ \ \ \textcolor{keywordflow}{if}\ (!ossl\_prov\_is\_running())}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ NULL;}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \ \ \ \ macctx\ =\ OPENSSL\_zalloc(\textcolor{keyword}{sizeof}(*macctx));}
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{keywordflow}{if}\ (macctx\ !=\ NULL)\ \{}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ BLAKE2\_PARAM\_INIT(\&macctx-\/>params);}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ ctx\ initialization\ is\ deferred\ to\ BLAKE2b\_Init()\ */}}
+\DoxyCodeLine{00053\ \ \ \ \ \}}
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{keywordflow}{return}\ macctx;}
+\DoxyCodeLine{00055\ \}}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ *blake2\_mac\_dup(\textcolor{keywordtype}{void}\ *vsrc)}
+\DoxyCodeLine{00058\ \{}
+\DoxyCodeLine{00059\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structblake2__mac__data__st}{blake2\_mac\_data\_st}}\ *dst;}
+\DoxyCodeLine{00060\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structblake2__mac__data__st}{blake2\_mac\_data\_st}}\ *src\ =\ vsrc;}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \ \ \ \ \textcolor{keywordflow}{if}\ (!ossl\_prov\_is\_running())}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ NULL;}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ \ \ \ \ dst\ =\ OPENSSL\_zalloc(\textcolor{keyword}{sizeof}(*dst));}
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{keywordflow}{if}\ (dst\ ==\ NULL)}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ NULL;}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ \ \ \ \ *dst\ =\ *src;}
+\DoxyCodeLine{00070\ \ \ \ \ \textcolor{keywordflow}{return}\ dst;}
+\DoxyCodeLine{00071\ \}}
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00073\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ blake2\_mac\_free(\textcolor{keywordtype}{void}\ *vmacctx)}
+\DoxyCodeLine{00074\ \{}
+\DoxyCodeLine{00075\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structblake2__mac__data__st}{blake2\_mac\_data\_st}}\ *macctx\ =\ vmacctx;}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00077\ \ \ \ \ \textcolor{keywordflow}{if}\ (macctx\ !=\ NULL)\ \{}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ OPENSSL\_cleanse(macctx-\/>key,\ \textcolor{keyword}{sizeof}(macctx-\/>key));}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ OPENSSL\_free(macctx);}
+\DoxyCodeLine{00080\ \ \ \ \ \}}
+\DoxyCodeLine{00081\ \}}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00083\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{size\_t}\ blake2\_mac\_size(\textcolor{keywordtype}{void}\ *vmacctx)}
+\DoxyCodeLine{00084\ \{}
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structblake2__mac__data__st}{blake2\_mac\_data\_st}}\ *macctx\ =\ vmacctx;}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00087\ \ \ \ \ \textcolor{keywordflow}{return}\ macctx-\/>params.digest\_length;}
+\DoxyCodeLine{00088\ \}}
+\DoxyCodeLine{00089\ }
+\DoxyCodeLine{00090\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ blake2\_setkey(\textcolor{keyword}{struct}\ \mbox{\hyperlink{structblake2__mac__data__st}{blake2\_mac\_data\_st}}\ *macctx,}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *key,\ \textcolor{keywordtype}{size\_t}\ keylen)}
+\DoxyCodeLine{00092\ \{}
+\DoxyCodeLine{00093\ \ \ \ \ \textcolor{keywordflow}{if}\ (keylen\ >\ BLAKE2\_KEYBYTES\ ||\ keylen\ ==\ 0)\ \{}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ ERR\_raise(ERR\_LIB\_PROV,\ PROV\_R\_INVALID\_KEY\_LENGTH);}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00096\ \ \ \ \ \}}
+\DoxyCodeLine{00097\ \ \ \ \ memcpy(macctx-\/>key,\ key,\ keylen);}
+\DoxyCodeLine{00098\ \ \ \ \ \textcolor{comment}{/*\ Pad\ with\ zeroes\ at\ the\ end\ if\ required\ */}}
+\DoxyCodeLine{00099\ \ \ \ \ \textcolor{keywordflow}{if}\ (keylen\ <\ BLAKE2\_KEYBYTES)}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ memset(macctx-\/>key\ +\ keylen,\ 0,\ BLAKE2\_KEYBYTES\ -\/\ keylen);}
+\DoxyCodeLine{00101\ \ \ \ \ BLAKE2\_PARAM\_SET\_KEY\_LENGTH(\&macctx-\/>params,\ (uint8\_t)keylen);}
+\DoxyCodeLine{00102\ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00103\ \}}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00105\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ blake2\_mac\_init(\textcolor{keywordtype}{void}\ *vmacctx,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *key,}
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ keylen,\ \textcolor{keyword}{const}\ OSSL\_PARAM\ params[])}
+\DoxyCodeLine{00107\ \{}
+\DoxyCodeLine{00108\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structblake2__mac__data__st}{blake2\_mac\_data\_st}}\ *macctx\ =\ vmacctx;}
+\DoxyCodeLine{00109\ }
+\DoxyCodeLine{00110\ \ \ \ \ \textcolor{keywordflow}{if}\ (!ossl\_prov\_is\_running()\ ||\ !blake2\_mac\_set\_ctx\_params(macctx,\ params))}
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00112\ \ \ \ \ \textcolor{keywordflow}{if}\ (key\ !=\ NULL)\ \{}
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!blake2\_setkey(macctx,\ key,\ keylen))}
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00115\ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (macctx-\/>params.key\_length\ ==\ 0)\ \{}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Check\ key\ has\ been\ set\ */}}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ ERR\_raise(ERR\_LIB\_PROV,\ PROV\_R\_NO\_KEY\_SET);}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00119\ \ \ \ \ \}}
+\DoxyCodeLine{00120\ \ \ \ \ \textcolor{keywordflow}{return}\ BLAKE2\_INIT\_KEY(\&macctx-\/>ctx,\ \&macctx-\/>params,\ macctx-\/>key);}
+\DoxyCodeLine{00121\ \}}
+\DoxyCodeLine{00122\ }
+\DoxyCodeLine{00123\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ blake2\_mac\_update(\textcolor{keywordtype}{void}\ *vmacctx,}
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *data,\ \textcolor{keywordtype}{size\_t}\ datalen)}
+\DoxyCodeLine{00125\ \{}
+\DoxyCodeLine{00126\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structblake2__mac__data__st}{blake2\_mac\_data\_st}}\ *macctx\ =\ vmacctx;}
+\DoxyCodeLine{00127\ }
+\DoxyCodeLine{00128\ \ \ \ \ \textcolor{keywordflow}{if}\ (datalen\ ==\ 0)}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00130\ }
+\DoxyCodeLine{00131\ \ \ \ \ \textcolor{keywordflow}{return}\ BLAKE2\_UPDATE(\&macctx-\/>ctx,\ data,\ datalen);}
+\DoxyCodeLine{00132\ \}}
+\DoxyCodeLine{00133\ }
+\DoxyCodeLine{00134\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ blake2\_mac\_final(\textcolor{keywordtype}{void}\ *vmacctx,}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,\ \textcolor{keywordtype}{size\_t}\ *outl,}
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ outsize)}
+\DoxyCodeLine{00137\ \{}
+\DoxyCodeLine{00138\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structblake2__mac__data__st}{blake2\_mac\_data\_st}}\ *macctx\ =\ vmacctx;}
+\DoxyCodeLine{00139\ }
+\DoxyCodeLine{00140\ \ \ \ \ \textcolor{keywordflow}{if}\ (!ossl\_prov\_is\_running())}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00142\ }
+\DoxyCodeLine{00143\ \ \ \ \ *outl\ =\ blake2\_mac\_size(macctx);}
+\DoxyCodeLine{00144\ \ \ \ \ \textcolor{keywordflow}{return}\ BLAKE2\_FINAL(out,\ \&macctx-\/>ctx);}
+\DoxyCodeLine{00145\ \}}
+\DoxyCodeLine{00146\ }
+\DoxyCodeLine{00147\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ OSSL\_PARAM\ known\_gettable\_ctx\_params[]\ =\ \{}
+\DoxyCodeLine{00148\ \ \ \ \ OSSL\_PARAM\_size\_t(OSSL\_MAC\_PARAM\_SIZE,\ NULL),}
+\DoxyCodeLine{00149\ \ \ \ \ OSSL\_PARAM\_size\_t(OSSL\_MAC\_PARAM\_BLOCK\_SIZE,\ NULL),}
+\DoxyCodeLine{00150\ \ \ \ \ OSSL\_PARAM\_END}
+\DoxyCodeLine{00151\ \};}
+\DoxyCodeLine{00152\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ OSSL\_PARAM\ *blake2\_gettable\_ctx\_params(ossl\_unused\ \textcolor{keywordtype}{void}\ *ctx,}
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ossl\_unused\ \textcolor{keywordtype}{void}\ *provctx)}
+\DoxyCodeLine{00154\ \{}
+\DoxyCodeLine{00155\ \ \ \ \ \textcolor{keywordflow}{return}\ known\_gettable\_ctx\_params;}
+\DoxyCodeLine{00156\ \}}
+\DoxyCodeLine{00157\ }
+\DoxyCodeLine{00158\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ blake2\_get\_ctx\_params(\textcolor{keywordtype}{void}\ *vmacctx,\ OSSL\_PARAM\ params[])}
+\DoxyCodeLine{00159\ \{}
+\DoxyCodeLine{00160\ \ \ \ \ OSSL\_PARAM\ *p;}
+\DoxyCodeLine{00161\ }
+\DoxyCodeLine{00162\ \ \ \ \ \textcolor{keywordflow}{if}\ ((p\ =\ OSSL\_PARAM\_locate(params,\ OSSL\_MAC\_PARAM\_SIZE))\ !=\ NULL}
+\DoxyCodeLine{00163\ \ \ \ \ \ \ \ \ \ \ \ \ \&\&\ !OSSL\_PARAM\_set\_size\_t(p,\ blake2\_mac\_size(vmacctx)))}
+\DoxyCodeLine{00164\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00165\ }
+\DoxyCodeLine{00166\ \ \ \ \ \textcolor{keywordflow}{if}\ ((p\ =\ OSSL\_PARAM\_locate(params,\ OSSL\_MAC\_PARAM\_BLOCK\_SIZE))\ !=\ NULL}
+\DoxyCodeLine{00167\ \ \ \ \ \ \ \ \ \ \ \ \ \&\&\ !OSSL\_PARAM\_set\_size\_t(p,\ BLAKE2\_BLOCKBYTES))}
+\DoxyCodeLine{00168\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00169\ }
+\DoxyCodeLine{00170\ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00171\ \}}
+\DoxyCodeLine{00172\ }
+\DoxyCodeLine{00173\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ OSSL\_PARAM\ known\_settable\_ctx\_params[]\ =\ \{}
+\DoxyCodeLine{00174\ \ \ \ \ OSSL\_PARAM\_size\_t(OSSL\_MAC\_PARAM\_SIZE,\ NULL),}
+\DoxyCodeLine{00175\ \ \ \ \ OSSL\_PARAM\_octet\_string(OSSL\_MAC\_PARAM\_KEY,\ NULL,\ 0),}
+\DoxyCodeLine{00176\ \ \ \ \ OSSL\_PARAM\_octet\_string(OSSL\_MAC\_PARAM\_CUSTOM,\ NULL,\ 0),}
+\DoxyCodeLine{00177\ \ \ \ \ OSSL\_PARAM\_octet\_string(OSSL\_MAC\_PARAM\_SALT,\ NULL,\ 0),}
+\DoxyCodeLine{00178\ \ \ \ \ OSSL\_PARAM\_END}
+\DoxyCodeLine{00179\ \};}
+\DoxyCodeLine{00180\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ OSSL\_PARAM\ *blake2\_mac\_settable\_ctx\_params(}
+\DoxyCodeLine{00181\ \ \ \ \ \ \ \ \ \ \ \ \ ossl\_unused\ \textcolor{keywordtype}{void}\ *ctx,\ ossl\_unused\ \textcolor{keywordtype}{void}\ *p\_ctx)}
+\DoxyCodeLine{00182\ \{}
+\DoxyCodeLine{00183\ \ \ \ \ \textcolor{keywordflow}{return}\ known\_settable\_ctx\_params;}
+\DoxyCodeLine{00184\ \}}
+\DoxyCodeLine{00185\ }
+\DoxyCodeLine{00186\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00187\ \textcolor{comment}{\ *\ ALL\ parameters\ should\ be\ set\ before\ init().}}
+\DoxyCodeLine{00188\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00189\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ blake2\_mac\_set\_ctx\_params(\textcolor{keywordtype}{void}\ *vmacctx,\ \textcolor{keyword}{const}\ OSSL\_PARAM\ params[])}
+\DoxyCodeLine{00190\ \{}
+\DoxyCodeLine{00191\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structblake2__mac__data__st}{blake2\_mac\_data\_st}}\ *macctx\ =\ vmacctx;}
+\DoxyCodeLine{00192\ \ \ \ \ \textcolor{keyword}{const}\ OSSL\_PARAM\ *p;}
+\DoxyCodeLine{00193\ }
+\DoxyCodeLine{00194\ \ \ \ \ \textcolor{keywordflow}{if}\ (params\ ==\ NULL)}
+\DoxyCodeLine{00195\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00196\ }
+\DoxyCodeLine{00197\ \ \ \ \ \textcolor{keywordflow}{if}\ ((p\ =\ OSSL\_PARAM\_locate\_const(params,\ OSSL\_MAC\_PARAM\_SIZE))\ !=\ NULL)\ \{}
+\DoxyCodeLine{00198\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ size;}
+\DoxyCodeLine{00199\ }
+\DoxyCodeLine{00200\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!OSSL\_PARAM\_get\_size\_t(p,\ \&size)}
+\DoxyCodeLine{00201\ \ \ \ \ \ \ \ \ \ \ \ \ ||\ size\ <\ 1}
+\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ \ \ \ \ ||\ size\ >\ BLAKE2\_OUTBYTES)\ \{}
+\DoxyCodeLine{00203\ \ \ \ \ \ \ \ \ \ \ \ \ ERR\_raise(ERR\_LIB\_PROV,\ PROV\_R\_NOT\_XOF\_OR\_INVALID\_LENGTH);}
+\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00205\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ BLAKE2\_PARAM\_SET\_DIGEST\_LENGTH(\&macctx-\/>params,\ (uint8\_t)size);}
+\DoxyCodeLine{00207\ \ \ \ \ \}}
+\DoxyCodeLine{00208\ }
+\DoxyCodeLine{00209\ \ \ \ \ \textcolor{keywordflow}{if}\ ((p\ =\ OSSL\_PARAM\_locate\_const(params,\ OSSL\_MAC\_PARAM\_KEY))\ !=\ NULL}
+\DoxyCodeLine{00210\ \ \ \ \ \ \ \ \ \ \ \ \ \&\&\ !blake2\_setkey(macctx,\ p-\/>data,\ p-\/>data\_size))}
+\DoxyCodeLine{00211\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00212\ }
+\DoxyCodeLine{00213\ \ \ \ \ \textcolor{keywordflow}{if}\ ((p\ =\ OSSL\_PARAM\_locate\_const(params,\ OSSL\_MAC\_PARAM\_CUSTOM))}
+\DoxyCodeLine{00214\ \ \ \ \ \ \ \ \ !=\ NULL)\ \{}
+\DoxyCodeLine{00215\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00216\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ *\ The\ OSSL\_PARAM\ API\ doesn't\ provide\ direct\ pointer\ use,\ so\ we}}
+\DoxyCodeLine{00217\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ *\ must\ handle\ the\ OSSL\_PARAM\ structure\ ourselves\ here}}
+\DoxyCodeLine{00218\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00219\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (p-\/>data\_size\ >\ BLAKE2\_PERSONALBYTES)\ \{}
+\DoxyCodeLine{00220\ \ \ \ \ \ \ \ \ \ \ \ \ ERR\_raise(ERR\_LIB\_PROV,\ PROV\_R\_INVALID\_CUSTOM\_LENGTH);}
+\DoxyCodeLine{00221\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00222\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00223\ \ \ \ \ \ \ \ \ BLAKE2\_PARAM\_SET\_PERSONAL(\&macctx-\/>params,\ p-\/>data,\ p-\/>data\_size);}
+\DoxyCodeLine{00224\ \ \ \ \ \}}
+\DoxyCodeLine{00225\ }
+\DoxyCodeLine{00226\ \ \ \ \ \textcolor{keywordflow}{if}\ ((p\ =\ OSSL\_PARAM\_locate\_const(params,\ OSSL\_MAC\_PARAM\_SALT))\ !=\ NULL)\ \{}
+\DoxyCodeLine{00227\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00228\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ *\ The\ OSSL\_PARAM\ API\ doesn't\ provide\ direct\ pointer\ use,\ so\ we}}
+\DoxyCodeLine{00229\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ *\ must\ handle\ the\ OSSL\_PARAM\ structure\ ourselves\ here\ as\ well}}
+\DoxyCodeLine{00230\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00231\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (p-\/>data\_size\ >\ BLAKE2\_SALTBYTES)\ \{}
+\DoxyCodeLine{00232\ \ \ \ \ \ \ \ \ \ \ \ \ ERR\_raise(ERR\_LIB\_PROV,\ PROV\_R\_INVALID\_SALT\_LENGTH);}
+\DoxyCodeLine{00233\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00234\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00235\ \ \ \ \ \ \ \ \ BLAKE2\_PARAM\_SET\_SALT(\&macctx-\/>params,\ p-\/>data,\ p-\/>data\_size);}
+\DoxyCodeLine{00236\ \ \ \ \ \}}
+\DoxyCodeLine{00237\ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00238\ \}}
+\DoxyCodeLine{00239\ }
+\DoxyCodeLine{00240\ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ BLAKE2\_FUNCTIONS[]\ =\ \{}
+\DoxyCodeLine{00241\ \ \ \ \ \{\ OSSL\_FUNC\_MAC\_NEWCTX,\ (void\ (*)(void))blake2\_mac\_new\ \},}
+\DoxyCodeLine{00242\ \ \ \ \ \{\ OSSL\_FUNC\_MAC\_DUPCTX,\ (void\ (*)(void))blake2\_mac\_dup\ \},}
+\DoxyCodeLine{00243\ \ \ \ \ \{\ OSSL\_FUNC\_MAC\_FREECTX,\ (void\ (*)(void))blake2\_mac\_free\ \},}
+\DoxyCodeLine{00244\ \ \ \ \ \{\ OSSL\_FUNC\_MAC\_INIT,\ (void\ (*)(void))blake2\_mac\_init\ \},}
+\DoxyCodeLine{00245\ \ \ \ \ \{\ OSSL\_FUNC\_MAC\_UPDATE,\ (void\ (*)(void))blake2\_mac\_update\ \},}
+\DoxyCodeLine{00246\ \ \ \ \ \{\ OSSL\_FUNC\_MAC\_FINAL,\ (void\ (*)(void))blake2\_mac\_final\ \},}
+\DoxyCodeLine{00247\ \ \ \ \ \{\ OSSL\_FUNC\_MAC\_GETTABLE\_CTX\_PARAMS,}
+\DoxyCodeLine{00248\ \ \ \ \ \ \ (void\ (*)(void))blake2\_gettable\_ctx\_params\ \},}
+\DoxyCodeLine{00249\ \ \ \ \ \{\ OSSL\_FUNC\_MAC\_GET\_CTX\_PARAMS,\ (void\ (*)(void))blake2\_get\_ctx\_params\ \},}
+\DoxyCodeLine{00250\ \ \ \ \ \{\ OSSL\_FUNC\_MAC\_SETTABLE\_CTX\_PARAMS,}
+\DoxyCodeLine{00251\ \ \ \ \ \ \ (void\ (*)(void))blake2\_mac\_settable\_ctx\_params\ \},}
+\DoxyCodeLine{00252\ \ \ \ \ \{\ OSSL\_FUNC\_MAC\_SET\_CTX\_PARAMS,\ (void\ (*)(void))blake2\_mac\_set\_ctx\_params\ \},}
+\DoxyCodeLine{00253\ \ \ \ \ OSSL\_DISPATCH\_END}
+\DoxyCodeLine{00254\ \};}
+
+\end{DoxyCode}

@@ -1,0 +1,440 @@
+\doxysection{ktls.\+h}
+\hypertarget{ktls_8h_source}{}\label{ktls_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/ktls.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/ktls.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2018-\/2024\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#if\ defined(OPENSSL\_SYS\_LINUX)}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ ifndef\ OPENSSL\_NO\_KTLS}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#\ \ include\ <linux/version.h>}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#\ \ if\ LINUX\_VERSION\_CODE\ <\ KERNEL\_VERSION(4,\ 13,\ 0)}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ \ \ define\ OPENSSL\_NO\_KTLS}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#\ \ \ ifndef\ PEDANTIC}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#\ \ \ \ warning\ "{}KTLS\ requires\ Kernel\ Headers\ >=\ 4.13.0"{}}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#\ \ \ \ warning\ "{}Skipping\ Compilation\ of\ KTLS"{}}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#\ \ \ endif}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#\ \ endif}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#ifndef\ HEADER\_INTERNAL\_KTLS}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#\ define\ HEADER\_INTERNAL\_KTLS}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#\ pragma\ once}}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#\ ifndef\ OPENSSL\_NO\_KTLS}}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#\ \ if\ defined(\_\_FreeBSD\_\_)}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#\ \ \ include\ <sys/types.h>}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#\ \ \ include\ <sys/socket.h>}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#\ \ \ include\ <sys/ktls.h>}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#\ \ \ include\ <netinet/in.h>}}
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#\ \ \ include\ <netinet/tcp.h>}}
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#\ \ \ include\ <openssl/ssl3.h>}}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#\ \ \ ifndef\ TCP\_RXTLS\_ENABLE}}
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#\ \ \ \ define\ OPENSSL\_NO\_KTLS\_RX}}
+\DoxyCodeLine{00039\ \textcolor{preprocessor}{\#\ \ \ endif}}
+\DoxyCodeLine{00040\ \textcolor{preprocessor}{\#\ \ \ define\ OPENSSL\_KTLS\_AES\_GCM\_128}}
+\DoxyCodeLine{00041\ \textcolor{preprocessor}{\#\ \ \ define\ OPENSSL\_KTLS\_AES\_GCM\_256}}
+\DoxyCodeLine{00042\ \textcolor{preprocessor}{\#\ \ \ define\ OPENSSL\_KTLS\_TLS13}}
+\DoxyCodeLine{00043\ \textcolor{preprocessor}{\#\ \ \ ifdef\ TLS\_CHACHA20\_IV\_LEN}}
+\DoxyCodeLine{00044\ \textcolor{preprocessor}{\#\ \ \ \ ifndef\ OPENSSL\_NO\_CHACHA}}
+\DoxyCodeLine{00045\ \textcolor{preprocessor}{\#\ \ \ \ \ define\ OPENSSL\_KTLS\_CHACHA20\_POLY1305}}
+\DoxyCodeLine{00046\ \textcolor{preprocessor}{\#\ \ \ \ endif}}
+\DoxyCodeLine{00047\ \textcolor{preprocessor}{\#\ \ \ endif}}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }tls\_enable\ ktls\_crypto\_info\_t;}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00052\ \textcolor{comment}{\ *\ FreeBSD\ does\ not\ require\ any\ additional\ steps\ to\ enable\ KTLS\ before}}
+\DoxyCodeLine{00053\ \textcolor{comment}{\ *\ setting\ keys.}}
+\DoxyCodeLine{00054\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00055\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{int}\ ktls\_enable(\textcolor{keywordtype}{int}\ fd)}
+\DoxyCodeLine{00056\ \{}
+\DoxyCodeLine{00057\ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00058\ \}}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00061\ \textcolor{comment}{\ *\ The\ TCP\_TXTLS\_ENABLE\ socket\ option\ marks\ the\ outgoing\ socket\ buffer}}
+\DoxyCodeLine{00062\ \textcolor{comment}{\ *\ as\ using\ TLS.\ \ If\ successful,\ then\ data\ sent\ using\ this\ socket\ will}}
+\DoxyCodeLine{00063\ \textcolor{comment}{\ *\ be\ encrypted\ and\ encapsulated\ in\ TLS\ records\ using\ the\ tls\_en}}
+\DoxyCodeLine{00064\ \textcolor{comment}{\ *\ provided\ here.}}
+\DoxyCodeLine{00065\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00066\ \textcolor{comment}{\ *\ The\ TCP\_RXTLS\_ENABLE\ socket\ option\ marks\ the\ incoming\ socket\ buffer}}
+\DoxyCodeLine{00067\ \textcolor{comment}{\ *\ as\ using\ TLS.\ \ If\ successful,\ then\ data\ received\ for\ this\ socket\ will}}
+\DoxyCodeLine{00068\ \textcolor{comment}{\ *\ be\ authenticated\ and\ decrypted\ using\ the\ tls\_en\ provided\ here.}}
+\DoxyCodeLine{00069\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00070\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{int}\ ktls\_start(\textcolor{keywordtype}{int}\ fd,\ ktls\_crypto\_info\_t\ *tls\_en,\ \textcolor{keywordtype}{int}\ is\_tx)}
+\DoxyCodeLine{00071\ \{}
+\DoxyCodeLine{00072\ \ \ \ \ \textcolor{keywordflow}{if}\ (is\_tx)}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ setsockopt(fd,\ IPPROTO\_TCP,\ TCP\_TXTLS\_ENABLE,}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ tls\_en,\ \textcolor{keyword}{sizeof}(*tls\_en))\ ?\ 0\ :\ 1;}
+\DoxyCodeLine{00075\ \textcolor{preprocessor}{\#\ \ \ ifndef\ OPENSSL\_NO\_KTLS\_RX}}
+\DoxyCodeLine{00076\ \ \ \ \ \textcolor{keywordflow}{return}\ setsockopt(fd,\ IPPROTO\_TCP,\ TCP\_RXTLS\_ENABLE,\ tls\_en,}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{sizeof}(*tls\_en))\ ?\ 0\ :\ 1;}
+\DoxyCodeLine{00078\ \textcolor{preprocessor}{\#\ \ \ else}}
+\DoxyCodeLine{00079\ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00080\ \textcolor{preprocessor}{\#\ \ \ endif}}
+\DoxyCodeLine{00081\ \}}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00083\ \textcolor{comment}{/*\ Not\ supported\ on\ FreeBSD\ */}}
+\DoxyCodeLine{00084\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{int}\ ktls\_enable\_tx\_zerocopy\_sendfile(\textcolor{keywordtype}{int}\ fd)}
+\DoxyCodeLine{00085\ \{}
+\DoxyCodeLine{00086\ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00087\ \}}
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00089\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00090\ \textcolor{comment}{\ *\ Send\ a\ TLS\ record\ using\ the\ tls\_en\ provided\ in\ ktls\_start\ and\ use}}
+\DoxyCodeLine{00091\ \textcolor{comment}{\ *\ record\_type\ instead\ of\ the\ default\ SSL3\_RT\_APPLICATION\_DATA.}}
+\DoxyCodeLine{00092\ \textcolor{comment}{\ *\ When\ the\ socket\ is\ non-\/blocking,\ then\ this\ call\ either\ returns\ EAGAIN\ or}}
+\DoxyCodeLine{00093\ \textcolor{comment}{\ *\ the\ entire\ record\ is\ pushed\ to\ TCP.\ It\ is\ impossible\ to\ send\ a\ partial}}
+\DoxyCodeLine{00094\ \textcolor{comment}{\ *\ record\ using\ this\ control\ message.}}
+\DoxyCodeLine{00095\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00096\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{int}\ ktls\_send\_ctrl\_message(\textcolor{keywordtype}{int}\ fd,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ record\_type,}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *data,\ \textcolor{keywordtype}{size\_t}\ length)}
+\DoxyCodeLine{00098\ \{}
+\DoxyCodeLine{00099\ \ \ \ \ \textcolor{keyword}{struct\ }msghdr\ msg\ =\ \{\ 0\ \};}
+\DoxyCodeLine{00100\ \ \ \ \ \textcolor{keywordtype}{int}\ cmsg\_len\ =\ \textcolor{keyword}{sizeof}(record\_type);}
+\DoxyCodeLine{00101\ \ \ \ \ \textcolor{keyword}{struct\ }cmsghdr\ *cmsg;}
+\DoxyCodeLine{00102\ \ \ \ \ \textcolor{keywordtype}{char}\ buf[CMSG\_SPACE(cmsg\_len)];}
+\DoxyCodeLine{00103\ \ \ \ \ \textcolor{keyword}{struct\ }iovec\ msg\_iov;\ \ \ \textcolor{comment}{/*\ Vector\ of\ data\ to\ send/receive\ into\ */}}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00105\ \ \ \ \ msg.msg\_control\ =\ buf;}
+\DoxyCodeLine{00106\ \ \ \ \ msg.msg\_controllen\ =\ \textcolor{keyword}{sizeof}(buf);}
+\DoxyCodeLine{00107\ \ \ \ \ cmsg\ =\ CMSG\_FIRSTHDR(\&msg);}
+\DoxyCodeLine{00108\ \ \ \ \ cmsg-\/>cmsg\_level\ =\ IPPROTO\_TCP;}
+\DoxyCodeLine{00109\ \ \ \ \ cmsg-\/>cmsg\_type\ =\ TLS\_SET\_RECORD\_TYPE;}
+\DoxyCodeLine{00110\ \ \ \ \ cmsg-\/>cmsg\_len\ =\ CMSG\_LEN(cmsg\_len);}
+\DoxyCodeLine{00111\ \ \ \ \ *((\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *)CMSG\_DATA(cmsg))\ =\ record\_type;}
+\DoxyCodeLine{00112\ \ \ \ \ msg.msg\_controllen\ =\ cmsg-\/>cmsg\_len;}
+\DoxyCodeLine{00113\ }
+\DoxyCodeLine{00114\ \ \ \ \ msg\_iov.iov\_base\ =\ (\textcolor{keywordtype}{void}\ *)data;}
+\DoxyCodeLine{00115\ \ \ \ \ msg\_iov.iov\_len\ =\ length;}
+\DoxyCodeLine{00116\ \ \ \ \ msg.msg\_iov\ =\ \&msg\_iov;}
+\DoxyCodeLine{00117\ \ \ \ \ msg.msg\_iovlen\ =\ 1;}
+\DoxyCodeLine{00118\ }
+\DoxyCodeLine{00119\ \ \ \ \ \textcolor{keywordflow}{return}\ sendmsg(fd,\ \&msg,\ 0);}
+\DoxyCodeLine{00120\ \}}
+\DoxyCodeLine{00121\ }
+\DoxyCodeLine{00122\ \textcolor{preprocessor}{\#\ \ \ ifdef\ OPENSSL\_NO\_KTLS\_RX}}
+\DoxyCodeLine{00123\ }
+\DoxyCodeLine{00124\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{int}\ ktls\_read\_record(\textcolor{keywordtype}{int}\ fd,\ \textcolor{keywordtype}{void}\ *data,\ \textcolor{keywordtype}{size\_t}\ length)}
+\DoxyCodeLine{00125\ \{}
+\DoxyCodeLine{00126\ \ \ \ \ \textcolor{keywordflow}{return}\ -\/1;}
+\DoxyCodeLine{00127\ \}}
+\DoxyCodeLine{00128\ }
+\DoxyCodeLine{00129\ \textcolor{preprocessor}{\#\ \ \ else\ }\textcolor{comment}{/*\ !defined(OPENSSL\_NO\_KTLS\_RX)\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00130\ }
+\DoxyCodeLine{00131\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00132\ \textcolor{comment}{\ *\ Receive\ a\ TLS\ record\ using\ the\ tls\_en\ provided\ in\ ktls\_start.\ \ The}}
+\DoxyCodeLine{00133\ \textcolor{comment}{\ *\ kernel\ strips\ any\ explicit\ IV\ and\ authentication\ tag,\ but\ provides}}
+\DoxyCodeLine{00134\ \textcolor{comment}{\ *\ the\ TLS\ record\ header\ via\ a\ control\ message.\ \ If\ there\ is\ an\ error}}
+\DoxyCodeLine{00135\ \textcolor{comment}{\ *\ with\ the\ TLS\ record\ such\ as\ an\ invalid\ header,\ invalid\ padding,\ or}}
+\DoxyCodeLine{00136\ \textcolor{comment}{\ *\ authentication\ failure\ recvmsg()\ will\ fail\ with\ an\ error.}}
+\DoxyCodeLine{00137\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00138\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{int}\ ktls\_read\_record(\textcolor{keywordtype}{int}\ fd,\ \textcolor{keywordtype}{void}\ *data,\ \textcolor{keywordtype}{size\_t}\ length)}
+\DoxyCodeLine{00139\ \{}
+\DoxyCodeLine{00140\ \ \ \ \ \textcolor{keyword}{struct\ }msghdr\ msg\ =\ \{\ 0\ \};}
+\DoxyCodeLine{00141\ \ \ \ \ \textcolor{keywordtype}{int}\ cmsg\_len\ =\ \textcolor{keyword}{sizeof}(\textcolor{keyword}{struct\ }tls\_get\_record);}
+\DoxyCodeLine{00142\ \ \ \ \ \textcolor{keyword}{struct\ }tls\_get\_record\ *tgr;}
+\DoxyCodeLine{00143\ \ \ \ \ \textcolor{keyword}{struct\ }cmsghdr\ *cmsg;}
+\DoxyCodeLine{00144\ \ \ \ \ \textcolor{keywordtype}{char}\ buf[CMSG\_SPACE(cmsg\_len)];}
+\DoxyCodeLine{00145\ \ \ \ \ \textcolor{keyword}{struct\ }iovec\ msg\_iov;\ \ \ \textcolor{comment}{/*\ Vector\ of\ data\ to\ send/receive\ into\ */}}
+\DoxyCodeLine{00146\ \ \ \ \ \textcolor{keywordtype}{int}\ ret;}
+\DoxyCodeLine{00147\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *p\ =\ data;}
+\DoxyCodeLine{00148\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{size\_t}\ prepend\_length\ =\ SSL3\_RT\_HEADER\_LENGTH;}
+\DoxyCodeLine{00149\ }
+\DoxyCodeLine{00150\ \ \ \ \ \textcolor{keywordflow}{if}\ (length\ <=\ prepend\_length)\ \{}
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ errno\ =\ EINVAL;}
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ -\/1;}
+\DoxyCodeLine{00153\ \ \ \ \ \}}
+\DoxyCodeLine{00154\ }
+\DoxyCodeLine{00155\ \ \ \ \ msg.msg\_control\ =\ buf;}
+\DoxyCodeLine{00156\ \ \ \ \ msg.msg\_controllen\ =\ \textcolor{keyword}{sizeof}(buf);}
+\DoxyCodeLine{00157\ }
+\DoxyCodeLine{00158\ \ \ \ \ msg\_iov.iov\_base\ =\ p\ +\ prepend\_length;}
+\DoxyCodeLine{00159\ \ \ \ \ msg\_iov.iov\_len\ =\ length\ -\/\ prepend\_length;}
+\DoxyCodeLine{00160\ \ \ \ \ msg.msg\_iov\ =\ \&msg\_iov;}
+\DoxyCodeLine{00161\ \ \ \ \ msg.msg\_iovlen\ =\ 1;}
+\DoxyCodeLine{00162\ }
+\DoxyCodeLine{00163\ \ \ \ \ ret\ =\ recvmsg(fd,\ \&msg,\ 0);}
+\DoxyCodeLine{00164\ \ \ \ \ \textcolor{keywordflow}{if}\ (ret\ <=\ 0)}
+\DoxyCodeLine{00165\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ ret;}
+\DoxyCodeLine{00166\ }
+\DoxyCodeLine{00167\ \ \ \ \ \textcolor{keywordflow}{if}\ ((msg.msg\_flags\ \&\ (MSG\_EOR\ |\ MSG\_CTRUNC))\ !=\ MSG\_EOR)\ \{}
+\DoxyCodeLine{00168\ \ \ \ \ \ \ \ \ errno\ =\ EMSGSIZE;}
+\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ -\/1;}
+\DoxyCodeLine{00170\ \ \ \ \ \}}
+\DoxyCodeLine{00171\ }
+\DoxyCodeLine{00172\ \ \ \ \ \textcolor{keywordflow}{if}\ (msg.msg\_controllen\ ==\ 0)\ \{}
+\DoxyCodeLine{00173\ \ \ \ \ \ \ \ \ errno\ =\ EBADMSG;}
+\DoxyCodeLine{00174\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ -\/1;}
+\DoxyCodeLine{00175\ \ \ \ \ \}}
+\DoxyCodeLine{00176\ }
+\DoxyCodeLine{00177\ \ \ \ \ cmsg\ =\ CMSG\_FIRSTHDR(\&msg);}
+\DoxyCodeLine{00178\ \ \ \ \ \textcolor{keywordflow}{if}\ (cmsg-\/>cmsg\_level\ !=\ IPPROTO\_TCP\ ||\ cmsg-\/>cmsg\_type\ !=\ TLS\_GET\_RECORD}
+\DoxyCodeLine{00179\ \ \ \ \ \ \ \ \ ||\ cmsg-\/>cmsg\_len\ !=\ CMSG\_LEN(cmsg\_len))\ \{}
+\DoxyCodeLine{00180\ \ \ \ \ \ \ \ \ errno\ =\ EBADMSG;}
+\DoxyCodeLine{00181\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ -\/1;}
+\DoxyCodeLine{00182\ \ \ \ \ \}}
+\DoxyCodeLine{00183\ }
+\DoxyCodeLine{00184\ \ \ \ \ tgr\ =\ (\textcolor{keyword}{struct\ }tls\_get\_record\ *)CMSG\_DATA(cmsg);}
+\DoxyCodeLine{00185\ \ \ \ \ p[0]\ =\ tgr-\/>tls\_type;}
+\DoxyCodeLine{00186\ \ \ \ \ p[1]\ =\ tgr-\/>tls\_vmajor;}
+\DoxyCodeLine{00187\ \ \ \ \ p[2]\ =\ tgr-\/>tls\_vminor;}
+\DoxyCodeLine{00188\ \ \ \ \ *(uint16\_t\ *)(p\ +\ 3)\ =\ htons(ret);}
+\DoxyCodeLine{00189\ }
+\DoxyCodeLine{00190\ \ \ \ \ \textcolor{keywordflow}{return}\ ret\ +\ prepend\_length;}
+\DoxyCodeLine{00191\ \}}
+\DoxyCodeLine{00192\ }
+\DoxyCodeLine{00193\ \textcolor{preprocessor}{\#\ \ \ endif\ }\textcolor{comment}{/*\ OPENSSL\_NO\_KTLS\_RX\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00194\ }
+\DoxyCodeLine{00195\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00196\ \textcolor{comment}{\ *\ KTLS\ enables\ the\ sendfile\ system\ call\ to\ send\ data\ from\ a\ file\ over}}
+\DoxyCodeLine{00197\ \textcolor{comment}{\ *\ TLS.}}
+\DoxyCodeLine{00198\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00199\ \textcolor{keyword}{static}\ ossl\_inline\ ossl\_ssize\_t\ ktls\_sendfile(\textcolor{keywordtype}{int}\ s,\ \textcolor{keywordtype}{int}\ fd,\ off\_t\ off,}
+\DoxyCodeLine{00200\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ size,\ \textcolor{keywordtype}{int}\ flags)}
+\DoxyCodeLine{00201\ \{}
+\DoxyCodeLine{00202\ \ \ \ \ off\_t\ sbytes\ =\ 0;}
+\DoxyCodeLine{00203\ \ \ \ \ \textcolor{keywordtype}{int}\ ret;}
+\DoxyCodeLine{00204\ }
+\DoxyCodeLine{00205\ \ \ \ \ ret\ =\ sendfile(fd,\ s,\ off,\ size,\ NULL,\ \&sbytes,\ flags);}
+\DoxyCodeLine{00206\ \ \ \ \ \textcolor{keywordflow}{if}\ (ret\ ==\ -\/1\ \&\&\ sbytes\ ==\ 0)}
+\DoxyCodeLine{00207\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ -\/1;}
+\DoxyCodeLine{00208\ \ \ \ \ \textcolor{keywordflow}{return}\ sbytes;}
+\DoxyCodeLine{00209\ \}}
+\DoxyCodeLine{00210\ }
+\DoxyCodeLine{00211\ \textcolor{preprocessor}{\#\ \ endif\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{/*\ \_\_FreeBSD\_\_\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00212\ }
+\DoxyCodeLine{00213\ \textcolor{preprocessor}{\#\ \ if\ defined(OPENSSL\_SYS\_LINUX)}}
+\DoxyCodeLine{00214\ }
+\DoxyCodeLine{00215\ \textcolor{preprocessor}{\#\ \ \ include\ <linux/tls.h>}}
+\DoxyCodeLine{00216\ \textcolor{preprocessor}{\#\ \ \ if\ LINUX\_VERSION\_CODE\ <\ KERNEL\_VERSION(4,\ 17,\ 0)}}
+\DoxyCodeLine{00217\ \textcolor{preprocessor}{\#\ \ \ \ define\ OPENSSL\_NO\_KTLS\_RX}}
+\DoxyCodeLine{00218\ \textcolor{preprocessor}{\#\ \ \ \ ifndef\ PEDANTIC}}
+\DoxyCodeLine{00219\ \textcolor{preprocessor}{\#\ \ \ \ \ warning\ "{}KTLS\ requires\ Kernel\ Headers\ >=\ 4.17.0\ for\ receiving"{}}}
+\DoxyCodeLine{00220\ \textcolor{preprocessor}{\#\ \ \ \ \ warning\ "{}Skipping\ Compilation\ of\ KTLS\ receive\ data\ path"{}}}
+\DoxyCodeLine{00221\ \textcolor{preprocessor}{\#\ \ \ \ endif}}
+\DoxyCodeLine{00222\ \textcolor{preprocessor}{\#\ \ \ endif}}
+\DoxyCodeLine{00223\ \textcolor{preprocessor}{\#\ \ \ if\ LINUX\_VERSION\_CODE\ <\ KERNEL\_VERSION(5,\ 19,\ 0)}}
+\DoxyCodeLine{00224\ \textcolor{preprocessor}{\#\ \ \ \ define\ OPENSSL\_NO\_KTLS\_ZC\_TX}}
+\DoxyCodeLine{00225\ \textcolor{preprocessor}{\#\ \ \ \ ifndef\ PEDANTIC}}
+\DoxyCodeLine{00226\ \textcolor{preprocessor}{\#\ \ \ \ \ warning\ "{}KTLS\ requires\ Kernel\ Headers\ >=\ 5.19.0\ for\ zerocopy\ sendfile"{}}}
+\DoxyCodeLine{00227\ \textcolor{preprocessor}{\#\ \ \ \ \ warning\ "{}Skipping\ Compilation\ of\ KTLS\ zerocopy\ sendfile"{}}}
+\DoxyCodeLine{00228\ \textcolor{preprocessor}{\#\ \ \ \ endif}}
+\DoxyCodeLine{00229\ \textcolor{preprocessor}{\#\ \ \ endif}}
+\DoxyCodeLine{00230\ \textcolor{preprocessor}{\#\ \ \ define\ OPENSSL\_KTLS\_AES\_GCM\_128}}
+\DoxyCodeLine{00231\ \textcolor{preprocessor}{\#\ \ \ if\ LINUX\_VERSION\_CODE\ >=\ KERNEL\_VERSION(5,\ 1,\ 0)}}
+\DoxyCodeLine{00232\ \textcolor{preprocessor}{\#\ \ \ \ define\ OPENSSL\_KTLS\_AES\_GCM\_256}}
+\DoxyCodeLine{00233\ \textcolor{preprocessor}{\#\ \ \ \ define\ OPENSSL\_KTLS\_TLS13}}
+\DoxyCodeLine{00234\ \textcolor{preprocessor}{\#\ \ \ \ if\ LINUX\_VERSION\_CODE\ >=\ KERNEL\_VERSION(5,\ 2,\ 0)}}
+\DoxyCodeLine{00235\ \textcolor{preprocessor}{\#\ \ \ \ \ define\ OPENSSL\_KTLS\_AES\_CCM\_128}}
+\DoxyCodeLine{00236\ \textcolor{preprocessor}{\#\ \ \ \ \ if\ LINUX\_VERSION\_CODE\ >=\ KERNEL\_VERSION(5,\ 11,\ 0)}}
+\DoxyCodeLine{00237\ \textcolor{preprocessor}{\#\ \ \ \ \ \ ifndef\ OPENSSL\_NO\_CHACHA}}
+\DoxyCodeLine{00238\ \textcolor{preprocessor}{\#\ \ \ \ \ \ \ define\ OPENSSL\_KTLS\_CHACHA20\_POLY1305}}
+\DoxyCodeLine{00239\ \textcolor{preprocessor}{\#\ \ \ \ \ \ endif}}
+\DoxyCodeLine{00240\ \textcolor{preprocessor}{\#\ \ \ \ \ endif}}
+\DoxyCodeLine{00241\ \textcolor{preprocessor}{\#\ \ \ \ endif}}
+\DoxyCodeLine{00242\ \textcolor{preprocessor}{\#\ \ \ endif}}
+\DoxyCodeLine{00243\ }
+\DoxyCodeLine{00244\ \textcolor{preprocessor}{\#\ \ \ include\ <sys/sendfile.h>}}
+\DoxyCodeLine{00245\ \textcolor{preprocessor}{\#\ \ \ include\ <netinet/tcp.h>}}
+\DoxyCodeLine{00246\ \textcolor{preprocessor}{\#\ \ \ include\ <linux/socket.h>}}
+\DoxyCodeLine{00247\ \textcolor{preprocessor}{\#\ \ \ include\ <openssl/ssl3.h>}}
+\DoxyCodeLine{00248\ \textcolor{preprocessor}{\#\ \ \ include\ <openssl/tls1.h>}}
+\DoxyCodeLine{00249\ \textcolor{preprocessor}{\#\ \ \ include\ <openssl/evp.h>}}
+\DoxyCodeLine{00250\ }
+\DoxyCodeLine{00251\ \textcolor{preprocessor}{\#\ \ \ ifndef\ SOL\_TLS}}
+\DoxyCodeLine{00252\ \textcolor{preprocessor}{\#\ \ \ \ define\ SOL\_TLS\ 282}}
+\DoxyCodeLine{00253\ \textcolor{preprocessor}{\#\ \ \ endif}}
+\DoxyCodeLine{00254\ }
+\DoxyCodeLine{00255\ \textcolor{preprocessor}{\#\ \ \ ifndef\ TCP\_ULP}}
+\DoxyCodeLine{00256\ \textcolor{preprocessor}{\#\ \ \ \ define\ TCP\_ULP\ 31}}
+\DoxyCodeLine{00257\ \textcolor{preprocessor}{\#\ \ \ endif}}
+\DoxyCodeLine{00258\ }
+\DoxyCodeLine{00259\ \textcolor{preprocessor}{\#\ \ \ ifndef\ TLS\_RX}}
+\DoxyCodeLine{00260\ \textcolor{preprocessor}{\#\ \ \ \ define\ TLS\_RX\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 2}}
+\DoxyCodeLine{00261\ \textcolor{preprocessor}{\#\ \ \ endif}}
+\DoxyCodeLine{00262\ }
+\DoxyCodeLine{00263\ \textcolor{keyword}{struct\ }tls\_crypto\_info\_all\ \{}
+\DoxyCodeLine{00264\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00265\ \textcolor{preprocessor}{\#\ \ \ ifdef\ OPENSSL\_KTLS\_AES\_GCM\_128}}
+\DoxyCodeLine{00266\ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }tls12\_crypto\_info\_aes\_gcm\_128\ gcm128;}
+\DoxyCodeLine{00267\ \textcolor{preprocessor}{\#\ \ \ endif}}
+\DoxyCodeLine{00268\ \textcolor{preprocessor}{\#\ \ \ ifdef\ OPENSSL\_KTLS\_AES\_GCM\_256}}
+\DoxyCodeLine{00269\ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }tls12\_crypto\_info\_aes\_gcm\_256\ gcm256;}
+\DoxyCodeLine{00270\ \textcolor{preprocessor}{\#\ \ \ endif}}
+\DoxyCodeLine{00271\ \textcolor{preprocessor}{\#\ \ \ ifdef\ OPENSSL\_KTLS\_AES\_CCM\_128}}
+\DoxyCodeLine{00272\ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }tls12\_crypto\_info\_aes\_ccm\_128\ ccm128;}
+\DoxyCodeLine{00273\ \textcolor{preprocessor}{\#\ \ \ endif}}
+\DoxyCodeLine{00274\ \textcolor{preprocessor}{\#\ \ \ ifdef\ OPENSSL\_KTLS\_CHACHA20\_POLY1305}}
+\DoxyCodeLine{00275\ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }tls12\_crypto\_info\_chacha20\_poly1305\ chacha20poly1305;}
+\DoxyCodeLine{00276\ \textcolor{preprocessor}{\#\ \ \ endif}}
+\DoxyCodeLine{00277\ \ \ \ \ \};}
+\DoxyCodeLine{00278\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ tls\_crypto\_info\_len;}
+\DoxyCodeLine{00279\ \};}
+\DoxyCodeLine{00280\ }
+\DoxyCodeLine{00281\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }tls\_crypto\_info\_all\ ktls\_crypto\_info\_t;}
+\DoxyCodeLine{00282\ }
+\DoxyCodeLine{00283\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00284\ \textcolor{comment}{\ *\ When\ successful,\ this\ socket\ option\ doesn't\ change\ the\ behaviour\ of\ the}}
+\DoxyCodeLine{00285\ \textcolor{comment}{\ *\ TCP\ socket,\ except\ changing\ the\ TCP\ setsockopt\ handler\ to\ enable\ the}}
+\DoxyCodeLine{00286\ \textcolor{comment}{\ *\ processing\ of\ SOL\_TLS\ socket\ options.\ All\ other\ functionality\ remains\ the}}
+\DoxyCodeLine{00287\ \textcolor{comment}{\ *\ same.}}
+\DoxyCodeLine{00288\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00289\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{int}\ ktls\_enable(\textcolor{keywordtype}{int}\ fd)}
+\DoxyCodeLine{00290\ \{}
+\DoxyCodeLine{00291\ \ \ \ \ \textcolor{keywordflow}{return}\ setsockopt(fd,\ SOL\_TCP,\ TCP\_ULP,\ \textcolor{stringliteral}{"{}tls"{}},\ \textcolor{keyword}{sizeof}(\textcolor{stringliteral}{"{}tls"{}}))\ ?\ 0\ :\ 1;}
+\DoxyCodeLine{00292\ \}}
+\DoxyCodeLine{00293\ }
+\DoxyCodeLine{00294\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00295\ \textcolor{comment}{\ *\ The\ TLS\_TX\ socket\ option\ changes\ the\ send/sendmsg\ handlers\ of\ the\ TCP\ socket.}}
+\DoxyCodeLine{00296\ \textcolor{comment}{\ *\ If\ successful,\ then\ data\ sent\ using\ this\ socket\ will\ be\ encrypted\ and}}
+\DoxyCodeLine{00297\ \textcolor{comment}{\ *\ encapsulated\ in\ TLS\ records\ using\ the\ crypto\_info\ provided\ here.}}
+\DoxyCodeLine{00298\ \textcolor{comment}{\ *\ The\ TLS\_RX\ socket\ option\ changes\ the\ recv/recvmsg\ handlers\ of\ the\ TCP\ socket.}}
+\DoxyCodeLine{00299\ \textcolor{comment}{\ *\ If\ successful,\ then\ data\ received\ using\ this\ socket\ will\ be\ decrypted,}}
+\DoxyCodeLine{00300\ \textcolor{comment}{\ *\ authenticated\ and\ decapsulated\ using\ the\ crypto\_info\ provided\ here.}}
+\DoxyCodeLine{00301\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00302\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{int}\ ktls\_start(\textcolor{keywordtype}{int}\ fd,\ ktls\_crypto\_info\_t\ *crypto\_info,}
+\DoxyCodeLine{00303\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ is\_tx)}
+\DoxyCodeLine{00304\ \{}
+\DoxyCodeLine{00305\ \ \ \ \ \textcolor{keywordflow}{return}\ setsockopt(fd,\ SOL\_TLS,\ is\_tx\ ?\ TLS\_TX\ :\ TLS\_RX,}
+\DoxyCodeLine{00306\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ crypto\_info,\ crypto\_info-\/>tls\_crypto\_info\_len)\ ?\ 0\ :\ 1;}
+\DoxyCodeLine{00307\ \}}
+\DoxyCodeLine{00308\ }
+\DoxyCodeLine{00309\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{int}\ ktls\_enable\_tx\_zerocopy\_sendfile(\textcolor{keywordtype}{int}\ fd)}
+\DoxyCodeLine{00310\ \{}
+\DoxyCodeLine{00311\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_KTLS\_ZC\_TX}}
+\DoxyCodeLine{00312\ \ \ \ \ \textcolor{keywordtype}{int}\ enable\ =\ 1;}
+\DoxyCodeLine{00313\ }
+\DoxyCodeLine{00314\ \ \ \ \ \textcolor{keywordflow}{return}\ setsockopt(fd,\ SOL\_TLS,\ TLS\_TX\_ZEROCOPY\_RO,}
+\DoxyCodeLine{00315\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \&enable,\ \textcolor{keyword}{sizeof}(enable))\ ?\ 0\ :\ 1;}
+\DoxyCodeLine{00316\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00317\ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00318\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00319\ \}}
+\DoxyCodeLine{00320\ }
+\DoxyCodeLine{00321\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00322\ \textcolor{comment}{\ *\ Send\ a\ TLS\ record\ using\ the\ crypto\_info\ provided\ in\ ktls\_start\ and\ use}}
+\DoxyCodeLine{00323\ \textcolor{comment}{\ *\ record\_type\ instead\ of\ the\ default\ SSL3\_RT\_APPLICATION\_DATA.}}
+\DoxyCodeLine{00324\ \textcolor{comment}{\ *\ When\ the\ socket\ is\ non-\/blocking,\ then\ this\ call\ either\ returns\ EAGAIN\ or}}
+\DoxyCodeLine{00325\ \textcolor{comment}{\ *\ the\ entire\ record\ is\ pushed\ to\ TCP.\ It\ is\ impossible\ to\ send\ a\ partial}}
+\DoxyCodeLine{00326\ \textcolor{comment}{\ *\ record\ using\ this\ control\ message.}}
+\DoxyCodeLine{00327\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00328\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{int}\ ktls\_send\_ctrl\_message(\textcolor{keywordtype}{int}\ fd,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ record\_type,}
+\DoxyCodeLine{00329\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *data,\ \textcolor{keywordtype}{size\_t}\ length)}
+\DoxyCodeLine{00330\ \{}
+\DoxyCodeLine{00331\ \ \ \ \ \textcolor{keyword}{struct\ }msghdr\ msg;}
+\DoxyCodeLine{00332\ \ \ \ \ \textcolor{keywordtype}{int}\ cmsg\_len\ =\ \textcolor{keyword}{sizeof}(record\_type);}
+\DoxyCodeLine{00333\ \ \ \ \ \textcolor{keyword}{struct\ }cmsghdr\ *cmsg;}
+\DoxyCodeLine{00334\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00335\ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }cmsghdr\ hdr;}
+\DoxyCodeLine{00336\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{char}\ buf[CMSG\_SPACE(\textcolor{keyword}{sizeof}(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}))];}
+\DoxyCodeLine{00337\ \ \ \ \ \}\ cmsgbuf;}
+\DoxyCodeLine{00338\ \ \ \ \ \textcolor{keyword}{struct\ }iovec\ msg\_iov;\ \ \ \ \ \ \ \textcolor{comment}{/*\ Vector\ of\ data\ to\ send/receive\ into\ */}}
+\DoxyCodeLine{00339\ }
+\DoxyCodeLine{00340\ \ \ \ \ memset(\&msg,\ 0,\ \textcolor{keyword}{sizeof}(msg));}
+\DoxyCodeLine{00341\ \ \ \ \ msg.msg\_control\ =\ cmsgbuf.buf;}
+\DoxyCodeLine{00342\ \ \ \ \ msg.msg\_controllen\ =\ \textcolor{keyword}{sizeof}(cmsgbuf.buf);}
+\DoxyCodeLine{00343\ \ \ \ \ cmsg\ =\ CMSG\_FIRSTHDR(\&msg);}
+\DoxyCodeLine{00344\ \ \ \ \ cmsg-\/>cmsg\_level\ =\ SOL\_TLS;}
+\DoxyCodeLine{00345\ \ \ \ \ cmsg-\/>cmsg\_type\ =\ TLS\_SET\_RECORD\_TYPE;}
+\DoxyCodeLine{00346\ \ \ \ \ cmsg-\/>cmsg\_len\ =\ CMSG\_LEN(cmsg\_len);}
+\DoxyCodeLine{00347\ \ \ \ \ *((\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *)CMSG\_DATA(cmsg))\ =\ record\_type;}
+\DoxyCodeLine{00348\ \ \ \ \ msg.msg\_controllen\ =\ cmsg-\/>cmsg\_len;}
+\DoxyCodeLine{00349\ }
+\DoxyCodeLine{00350\ \ \ \ \ msg\_iov.iov\_base\ =\ (\textcolor{keywordtype}{void}\ *)data;}
+\DoxyCodeLine{00351\ \ \ \ \ msg\_iov.iov\_len\ =\ length;}
+\DoxyCodeLine{00352\ \ \ \ \ msg.msg\_iov\ =\ \&msg\_iov;}
+\DoxyCodeLine{00353\ \ \ \ \ msg.msg\_iovlen\ =\ 1;}
+\DoxyCodeLine{00354\ }
+\DoxyCodeLine{00355\ \ \ \ \ \textcolor{keywordflow}{return}\ sendmsg(fd,\ \&msg,\ 0);}
+\DoxyCodeLine{00356\ \}}
+\DoxyCodeLine{00357\ }
+\DoxyCodeLine{00358\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00359\ \textcolor{comment}{\ *\ KTLS\ enables\ the\ sendfile\ system\ call\ to\ send\ data\ from\ a\ file\ over\ TLS.}}
+\DoxyCodeLine{00360\ \textcolor{comment}{\ *\ @flags\ are\ ignored\ on\ Linux.\ (placeholder\ for\ FreeBSD\ sendfile)}}
+\DoxyCodeLine{00361\ \textcolor{comment}{\ *\ */}}
+\DoxyCodeLine{00362\ \textcolor{keyword}{static}\ ossl\_inline\ ossl\_ssize\_t\ ktls\_sendfile(\textcolor{keywordtype}{int}\ s,\ \textcolor{keywordtype}{int}\ fd,\ off\_t\ off,\ \textcolor{keywordtype}{size\_t}\ size,\ \textcolor{keywordtype}{int}\ flags)}
+\DoxyCodeLine{00363\ \{}
+\DoxyCodeLine{00364\ \ \ \ \ \textcolor{keywordflow}{return}\ sendfile(s,\ fd,\ \&off,\ size);}
+\DoxyCodeLine{00365\ \}}
+\DoxyCodeLine{00366\ }
+\DoxyCodeLine{00367\ \textcolor{preprocessor}{\#\ \ \ ifdef\ OPENSSL\_NO\_KTLS\_RX}}
+\DoxyCodeLine{00368\ }
+\DoxyCodeLine{00369\ }
+\DoxyCodeLine{00370\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{int}\ ktls\_read\_record(\textcolor{keywordtype}{int}\ fd,\ \textcolor{keywordtype}{void}\ *data,\ \textcolor{keywordtype}{size\_t}\ length)}
+\DoxyCodeLine{00371\ \{}
+\DoxyCodeLine{00372\ \ \ \ \ \textcolor{keywordflow}{return}\ -\/1;}
+\DoxyCodeLine{00373\ \}}
+\DoxyCodeLine{00374\ }
+\DoxyCodeLine{00375\ \textcolor{preprocessor}{\#\ \ \ else\ }\textcolor{comment}{/*\ !defined(OPENSSL\_NO\_KTLS\_RX)\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00376\ }
+\DoxyCodeLine{00377\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00378\ \textcolor{comment}{\ *\ Receive\ a\ TLS\ record\ using\ the\ crypto\_info\ provided\ in\ ktls\_start.}}
+\DoxyCodeLine{00379\ \textcolor{comment}{\ *\ The\ kernel\ strips\ the\ TLS\ record\ header,\ IV\ and\ authentication\ tag,}}
+\DoxyCodeLine{00380\ \textcolor{comment}{\ *\ returning\ only\ the\ plaintext\ data\ or\ an\ error\ on\ failure.}}
+\DoxyCodeLine{00381\ \textcolor{comment}{\ *\ We\ add\ the\ TLS\ record\ header\ here\ to\ satisfy\ routines\ in\ rec\_layer\_s3.c}}
+\DoxyCodeLine{00382\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00383\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{int}\ ktls\_read\_record(\textcolor{keywordtype}{int}\ fd,\ \textcolor{keywordtype}{void}\ *data,\ \textcolor{keywordtype}{size\_t}\ length)}
+\DoxyCodeLine{00384\ \{}
+\DoxyCodeLine{00385\ \ \ \ \ \textcolor{keyword}{struct\ }msghdr\ msg;}
+\DoxyCodeLine{00386\ \ \ \ \ \textcolor{keyword}{struct\ }cmsghdr\ *cmsg;}
+\DoxyCodeLine{00387\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00388\ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }cmsghdr\ hdr;}
+\DoxyCodeLine{00389\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{char}\ buf[CMSG\_SPACE(\textcolor{keyword}{sizeof}(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}))];}
+\DoxyCodeLine{00390\ \ \ \ \ \}\ cmsgbuf;}
+\DoxyCodeLine{00391\ \ \ \ \ \textcolor{keyword}{struct\ }iovec\ msg\_iov;}
+\DoxyCodeLine{00392\ \ \ \ \ \textcolor{keywordtype}{int}\ ret;}
+\DoxyCodeLine{00393\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *p\ =\ data;}
+\DoxyCodeLine{00394\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{size\_t}\ prepend\_length\ =\ SSL3\_RT\_HEADER\_LENGTH;}
+\DoxyCodeLine{00395\ }
+\DoxyCodeLine{00396\ \ \ \ \ \textcolor{keywordflow}{if}\ (length\ <\ prepend\_length\ +\ EVP\_GCM\_TLS\_TAG\_LEN)\ \{}
+\DoxyCodeLine{00397\ \ \ \ \ \ \ \ \ errno\ =\ EINVAL;}
+\DoxyCodeLine{00398\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ -\/1;}
+\DoxyCodeLine{00399\ \ \ \ \ \}}
+\DoxyCodeLine{00400\ }
+\DoxyCodeLine{00401\ \ \ \ \ memset(\&msg,\ 0,\ \textcolor{keyword}{sizeof}(msg));}
+\DoxyCodeLine{00402\ \ \ \ \ msg.msg\_control\ =\ cmsgbuf.buf;}
+\DoxyCodeLine{00403\ \ \ \ \ msg.msg\_controllen\ =\ \textcolor{keyword}{sizeof}(cmsgbuf.buf);}
+\DoxyCodeLine{00404\ }
+\DoxyCodeLine{00405\ \ \ \ \ msg\_iov.iov\_base\ =\ p\ +\ prepend\_length;}
+\DoxyCodeLine{00406\ \ \ \ \ msg\_iov.iov\_len\ =\ length\ -\/\ prepend\_length\ -\/\ EVP\_GCM\_TLS\_TAG\_LEN;}
+\DoxyCodeLine{00407\ \ \ \ \ msg.msg\_iov\ =\ \&msg\_iov;}
+\DoxyCodeLine{00408\ \ \ \ \ msg.msg\_iovlen\ =\ 1;}
+\DoxyCodeLine{00409\ }
+\DoxyCodeLine{00410\ \ \ \ \ ret\ =\ recvmsg(fd,\ \&msg,\ 0);}
+\DoxyCodeLine{00411\ \ \ \ \ \textcolor{keywordflow}{if}\ (ret\ <\ 0)}
+\DoxyCodeLine{00412\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ ret;}
+\DoxyCodeLine{00413\ }
+\DoxyCodeLine{00414\ \ \ \ \ \textcolor{keywordflow}{if}\ (msg.msg\_controllen\ >\ 0)\ \{}
+\DoxyCodeLine{00415\ \ \ \ \ \ \ \ \ cmsg\ =\ CMSG\_FIRSTHDR(\&msg);}
+\DoxyCodeLine{00416\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (cmsg-\/>cmsg\_type\ ==\ TLS\_GET\_RECORD\_TYPE)\ \{}
+\DoxyCodeLine{00417\ \ \ \ \ \ \ \ \ \ \ \ \ p[0]\ =\ *((\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *)CMSG\_DATA(cmsg));}
+\DoxyCodeLine{00418\ \ \ \ \ \ \ \ \ \ \ \ \ p[1]\ =\ TLS1\_2\_VERSION\_MAJOR;}
+\DoxyCodeLine{00419\ \ \ \ \ \ \ \ \ \ \ \ \ p[2]\ =\ TLS1\_2\_VERSION\_MINOR;}
+\DoxyCodeLine{00420\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ returned\ length\ is\ limited\ to\ msg\_iov.iov\_len\ above\ */}}
+\DoxyCodeLine{00421\ \ \ \ \ \ \ \ \ \ \ \ \ p[3]\ =\ (ret\ >>\ 8)\ \&\ 0xff;}
+\DoxyCodeLine{00422\ \ \ \ \ \ \ \ \ \ \ \ \ p[4]\ =\ ret\ \&\ 0xff;}
+\DoxyCodeLine{00423\ \ \ \ \ \ \ \ \ \ \ \ \ ret\ +=\ prepend\_length;}
+\DoxyCodeLine{00424\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00425\ \ \ \ \ \}}
+\DoxyCodeLine{00426\ }
+\DoxyCodeLine{00427\ \ \ \ \ \textcolor{keywordflow}{return}\ ret;}
+\DoxyCodeLine{00428\ \}}
+\DoxyCodeLine{00429\ }
+\DoxyCodeLine{00430\ \textcolor{preprocessor}{\#\ \ \ endif\ }\textcolor{comment}{/*\ OPENSSL\_NO\_KTLS\_RX\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00431\ }
+\DoxyCodeLine{00432\ \textcolor{preprocessor}{\#\ \ endif\ }\textcolor{comment}{/*\ OPENSSL\_SYS\_LINUX\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00433\ \textcolor{preprocessor}{\#\ endif\ }\textcolor{comment}{/*\ OPENSSL\_NO\_KTLS\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00434\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ HEADER\_INTERNAL\_KTLS\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

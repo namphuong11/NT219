@@ -1,0 +1,96 @@
+\chapter{Passing Algorithm\+Identifier parameters to operations}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2passing-algorithmidentifier-parameters}{}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2passing-algorithmidentifier-parameters}\index{Passing AlgorithmIdentifier parameters to operations@{Passing AlgorithmIdentifier parameters to operations}}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2passing-algorithmidentifier-parameters_autotoc_md230}{}\doxysection{\texorpdfstring{Quick background}{Quick background}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2passing-algorithmidentifier-parameters_autotoc_md230}
+We currently only support passing the Algorithm\+Identifier ({\ttfamily X509\+\_\+\+ALGOR}) parameter field to symmetric cipher provider implementations.
+
+We do support passing them to legacy implementations of other types of operation algorithms as well, but it\textquotesingle{}s done in a way that can\textquotesingle{}t be supported with providers, because it involves sharing specific structures between libcrypto and the backend implementation.
+
+For a longer background and explanation, see Background / tl;dr at the end of this design.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2passing-algorithmidentifier-parameters_autotoc_md231}{}\doxysection{\texorpdfstring{Establish an OSSL\+\_\+\+PARAM key that any algorithms may become aware of}{Establish an OSSL\+\_\+\+PARAM key that any algorithms may become aware of}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2passing-algorithmidentifier-parameters_autotoc_md231}
+We already have a parameter key, but it\textquotesingle{}s currently only specified for {\ttfamily EVP\+\_\+\+CIPHER}, in support of {\ttfamily EVP\+\_\+\+CIPHER\+\_\+param\+\_\+to\+\_\+asn1()} and {\ttfamily EVP\+\_\+\+CIPHER\+\_\+asn1\+\_\+to\+\_\+param()}.
+
+"{}alg\+\_\+id\+\_\+param"{}, also known as the macro {\ttfamily OSSL\+\_\+\+CIPHER\+\_\+\+PARAM\+\_\+\+ALGORITHM\+\_\+\+ID\+\_\+\+PARAMS}
+
+This parameter can be used in the exact same manner with other operations, with the value of the Algorithm\+Identifier parameter as an octet string, to be interpreted by the implementations in whatever way they see fit.
+
+Applications can choose to add these in an {\ttfamily OSSL\+\_\+\+PARAM} array, to be passed with the multitude of initialization functions that take such an array, or using specific operation {\ttfamily OSSL\+\_\+\+PARAM} setters and getters (such as {\ttfamily EVP\+\_\+\+PKEY\+\_\+\+CTX\+\_\+set\+\_\+params}), or using other available convenience functions (see below).
+
+This parameter will have to be documented in the following files\+:
+
+
+\begin{DoxyItemize}
+\item {\ttfamily doc/man7/provider-\/asym\+\_\+cipher.\+pod}
+\item {\ttfamily doc/man7/provider-\/cipher.\+pod}
+\item {\ttfamily doc/man7/provider-\/digest.\+pod}
+\item {\ttfamily doc/man7/provider-\/kdf.\+pod}
+\item {\ttfamily doc/man7/provider-\/kem.\+pod}
+\item {\ttfamily doc/man7/provider-\/keyexch.\+pod}
+\item {\ttfamily doc/man7/provider-\/mac.\+pod}
+\item {\ttfamily doc/man7/provider-\/signature.\+pod}
+\end{DoxyItemize}
+
+That should cover all algorithms that are, or should be possible to fetch by Algorithm\+Identifier.\+algorithm, and for which there\textquotesingle{}s potentially a relevant Algorithm\+Identifier.\+parameters field.
+
+We may arguably want to consider {\ttfamily doc/man7/provider-\/keymgmt.\+pod} too, but an Algorithm\+Identifier that\textquotesingle{}s attached directly to a key is usually part of a Priv\+Key\+Info or Subject\+Public\+Key\+Info structure, and those are handled by encoders and decoders as those see fit, and there\textquotesingle{}s no tangible reason why that would have to change.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2passing-algorithmidentifier-parameters_autotoc_md232}{}\doxysection{\texorpdfstring{Public convenience API}{Public convenience API}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2passing-algorithmidentifier-parameters_autotoc_md232}
+For convenience, the following set of functions would be added to pass the Algorithm\+Identifier parameter data to diverse operations, or to retrieve such parameter data from them.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\ C}
+\DoxyCodeLine{/*}
+\DoxyCodeLine{\ *\ These\ two\ would\ essentially\ be\ aliases\ for\ EVP\_CIPHER\_param\_to\_asn1()}
+\DoxyCodeLine{\ *\ and\ EVP\_CIPHER\_asn1\_to\_param().}
+\DoxyCodeLine{\ */}
+\DoxyCodeLine{EVP\_CIPHER\_CTX\_set\_algor\_param(EVP\_PKEY\_CTX\ *ctx,\ X509\_ALGOR\ *alg);}
+\DoxyCodeLine{EVP\_CIPHER\_CTX\_get\_algor\_param(EVP\_PKEY\_CTX\ *ctx,\ X509\_ALGOR\ *alg);}
+\DoxyCodeLine{}
+\DoxyCodeLine{EVP\_MD\_CTX\_set\_algor\_param(EVP\_PKEY\_CTX\ *ctx,\ X509\_ALGOR\ *alg);}
+\DoxyCodeLine{EVP\_MD\_CTX\_get\_algor\_param(EVP\_PKEY\_CTX\ *ctx,\ X509\_ALGOR\ *alg);}
+\DoxyCodeLine{}
+\DoxyCodeLine{EVP\_MAC\_CTX\_set\_algor\_param(EVP\_PKEY\_CTX\ *ctx,\ X509\_ALGOR\ *alg);}
+\DoxyCodeLine{EVP\_MAC\_CTX\_get\_algor\_param(EVP\_PKEY\_CTX\ *ctx,\ X509\_ALGOR\ *alg);}
+\DoxyCodeLine{}
+\DoxyCodeLine{EVP\_KDF\_CTX\_set\_algor\_param(EVP\_PKEY\_CTX\ *ctx,\ X509\_ALGOR\ *alg);}
+\DoxyCodeLine{EVP\_KDF\_CTX\_get\_algor\_param(EVP\_PKEY\_CTX\ *ctx,\ X509\_ALGOR\ *alg);}
+\DoxyCodeLine{}
+\DoxyCodeLine{EVP\_PKEY\_CTX\_set\_algor\_param(EVP\_PKEY\_CTX\ *ctx,\ X509\_ALGOR\ *alg);}
+\DoxyCodeLine{EVP\_PKEY\_CTX\_get\_algor\_param(EVP\_PKEY\_CTX\ *ctx,\ X509\_ALGOR\ *alg);}
+
+\end{DoxyCode}
+
+
+Note that all might not need to be added immediately, depending on if they are considered useful or not. For future proofing, however, they should probably all be added.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2passing-algorithmidentifier-parameters_autotoc_md233}{}\doxysection{\texorpdfstring{Requirements on the providers}{Requirements on the providers}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2passing-algorithmidentifier-parameters_autotoc_md233}
+Providers that implement ciphers or any operation that uses asymmetric keys will have to implement support for passing Algorithm\+Identifier parameter data, and will have to process that data in whatever manner that\textquotesingle{}s necessary to meet the standards for that operation.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2passing-algorithmidentifier-parameters_autotoc_md234}{}\doxysection{\texorpdfstring{Fallback strategies}{Fallback strategies}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2passing-algorithmidentifier-parameters_autotoc_md234}
+There are no possible fallback strategies, which is fine, considering that current provider functionality doesn\textquotesingle{}t support passing Algorithm\+Identifier parameter data at all (except for {\ttfamily EVP\+\_\+\+CIPHER}), and therefore do not work at all when such parameter data needs to be passed.
+
+\DoxyHorRuler{0}
+
+
+\DoxyHorRuler{0}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2passing-algorithmidentifier-parameters_autotoc_md237}{}\doxysection{\texorpdfstring{Background / tl;dr}{Background / tl;dr}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2passing-algorithmidentifier-parameters_autotoc_md237}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2passing-algorithmidentifier-parameters_autotoc_md238}{}\doxysubsection{\texorpdfstring{Algorithm\+Idenfier parameter and how it\textquotesingle{}s used}{Algorithm\+Idenfier parameter and how it\textquotesingle{}s used}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2passing-algorithmidentifier-parameters_autotoc_md238}
+Open\+SSL has historically done a few tricks to not have to pass Algorithm\+Idenfier parameter data to the backend implementations of cryptographic operations\+:
+
+
+\begin{DoxyItemize}
+\item In some cases, they were passed as part of the lower level key structure (for example, the {\ttfamily RSA} structure can also carry RSA-\/\+PSS parameters).
+\item In the {\ttfamily EVP\+\_\+\+CIPHER} case, there is functionality to pass the parameter data specifically.
+\item For asymmetric key operations, PKCS\#7 and CMS support was added as {\ttfamily EVP\+\_\+\+PKEY} ctrls.
+\end{DoxyItemize}
+
+With providers, some of that support was retained, but not others. Most crucially, the {\ttfamily EVP\+\_\+\+PKEY} ctrls for PKCS\#7 and CMS were not retained, because the way they were implemented violated the principle that provider implementations {\itshape MUST NOT} share complex Open\+SSL specific structures with libcrypto.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2passing-algorithmidentifier-parameters_autotoc_md239}{}\doxysubsection{\texorpdfstring{Usage examples}{Usage examples}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2passing-algorithmidentifier-parameters_autotoc_md239}
+Quite a lot of the available examples today revolve around CMS, with a number of RFCs that specify what parameters should be passed with certain operations / algorithms. This list is not exhaustive, the reader is encouraged to research further usages.
+
+
+\begin{DoxyItemize}
+\item \href{https://www.rfc-editor.org/rfc/rfc3370\#section-3.1}{\texttt{ DSA}} signatures typically have the domain parameters {\itshape p}, {\itshape q} and {\itshape g}.
+\item \href{https://www.rfc-editor.org/rfc/rfc3370\#section-4.3.2}{\texttt{ RC2 key wrap}}
+\item \href{https://www.rfc-editor.org/rfc/rfc3370\#section-4.4.1}{\texttt{ PBKDF2}}
+\item \href{https://www.rfc-editor.org/rfc/rfc3370\#section-5.1}{\texttt{ 3DES-\/\+CBC}}
+\item \href{https://www.rfc-editor.org/rfc/rfc3370\#section-5.2}{\texttt{ RC2-\/\+CBC}}
+\item \href{https://www.rfc-editor.org/rfc/rfc4490.html\#section-5.1}{\texttt{ GOST 28147-\/89}}
+\item \href{https://www.rfc-editor.org/rfc/rfc8017\#appendix-A.2.1}{\texttt{ RSA-\/\+OAEP}}
+\item \href{https://www.rfc-editor.org/rfc/rfc8017\#appendix-A.2.3}{\texttt{ RSA-\/\+PSS}}
+\item \href{https://www.rfc-editor.org/rfc/rfc6210.html}{\texttt{ XOR-\/\+MD5}} is experimental, but it does demonstrate the possibility of a parametrized hash algorithm.
+\end{DoxyItemize}
+
+Some of it can be claimed to already have support in Open\+SSL. However, this is with old libcrypto code that has special knowledge of the algorithms that are involved. 

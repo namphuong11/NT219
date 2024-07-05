@@ -1,0 +1,303 @@
+\doxysection{quic\+\_\+ackm.\+h}
+\hypertarget{quic__ackm_8h_source}{}\label{quic__ackm_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/quic\_ackm.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/quic\_ackm.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2022-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#ifndef\ OSSL\_QUIC\_ACKM\_H}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#\ define\ OSSL\_QUIC\_ACKM\_H}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#\ include\ "{}internal/quic\_statm.h"{}}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#\ include\ "{}internal/quic\_cc.h"{}}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ include\ "{}internal/quic\_types.h"{}}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#\ include\ "{}internal/quic\_wire.h"{}}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#\ include\ "{}internal/time.h"{}}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#\ include\ "{}internal/list.h"{}}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#\ ifndef\ OPENSSL\_NO\_QUIC}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__ackm__st}{ossl\_ackm\_st}}\ \mbox{\hyperlink{structossl__ackm__st}{OSSL\_ACKM}};}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \mbox{\hyperlink{structossl__ackm__st}{OSSL\_ACKM}}\ *ossl\_ackm\_new(\mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ (*now)(\textcolor{keywordtype}{void}\ *arg),}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *now\_arg,}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structossl__statm__st}{OSSL\_STATM}}\ *statm,}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structossl__cc__method__st}{OSSL\_CC\_METHOD}}\ *cc\_method,}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OSSL\_CC\_DATA\ *cc\_data);}
+\DoxyCodeLine{00028\ \textcolor{keywordtype}{void}\ ossl\_ackm\_free(\mbox{\hyperlink{structossl__ackm__st}{OSSL\_ACKM}}\ *ackm);}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \textcolor{keywordtype}{void}\ ossl\_ackm\_set\_loss\_detection\_deadline\_callback(\mbox{\hyperlink{structossl__ackm__st}{OSSL\_ACKM}}\ *ackm,}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ (*fn)(\mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ deadline,}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *arg),}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *arg);}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \textcolor{keywordtype}{void}\ ossl\_ackm\_set\_ack\_deadline\_callback(\mbox{\hyperlink{structossl__ackm__st}{OSSL\_ACKM}}\ *ackm,}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ (*fn)(\mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ deadline,}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ pkt\_space,}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *arg),}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *arg);}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00042\ \textcolor{comment}{\ *\ Configures\ the\ RX-\/side\ maximum\ ACK\ delay.\ This\ is\ the\ maximum\ amount\ of\ time}}
+\DoxyCodeLine{00043\ \textcolor{comment}{\ *\ the\ peer\ is\ allowed\ to\ delay\ sending\ an\ ACK\ frame\ after\ receiving\ an}}
+\DoxyCodeLine{00044\ \textcolor{comment}{\ *\ ACK-\/eliciting\ packet.\ The\ peer\ communicates\ this\ value\ via\ a\ transport}}
+\DoxyCodeLine{00045\ \textcolor{comment}{\ *\ parameter\ and\ it\ must\ be\ provided\ to\ the\ ACKM.}}
+\DoxyCodeLine{00046\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00047\ \textcolor{keywordtype}{void}\ ossl\_ackm\_set\_rx\_max\_ack\_delay(\mbox{\hyperlink{structossl__ackm__st}{OSSL\_ACKM}}\ *ackm,\ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ rx\_max\_ack\_delay);}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00050\ \textcolor{comment}{\ *\ Configures\ the\ TX-\/side\ maximum\ ACK\ delay.\ This\ is\ the\ maximum\ amount\ of\ time}}
+\DoxyCodeLine{00051\ \textcolor{comment}{\ *\ we\ are\ allowed\ to\ delay\ sending\ an\ ACK\ frame\ after\ receiving\ an\ ACK-\/eliciting}}
+\DoxyCodeLine{00052\ \textcolor{comment}{\ *\ packet.\ Note\ that\ this\ cannot\ be\ changed\ after\ a\ connection\ is\ established\ as}}
+\DoxyCodeLine{00053\ \textcolor{comment}{\ *\ it\ must\ be\ accurately\ reported\ in\ the\ transport\ parameters\ we\ send\ to\ our}}
+\DoxyCodeLine{00054\ \textcolor{comment}{\ *\ peer.}}
+\DoxyCodeLine{00055\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00056\ \textcolor{keywordtype}{void}\ ossl\_ackm\_set\_tx\_max\_ack\_delay(\mbox{\hyperlink{structossl__ackm__st}{OSSL\_ACKM}}\ *ackm,\ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ tx\_max\_ack\_delay);}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__ackm__tx__pkt__st}{ossl\_ackm\_tx\_pkt\_st}}\ \mbox{\hyperlink{structossl__ackm__tx__pkt__st}{OSSL\_ACKM\_TX\_PKT}};}
+\DoxyCodeLine{00059\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__ackm__tx__pkt__st}{ossl\_ackm\_tx\_pkt\_st}}\ \{}
+\DoxyCodeLine{00060\ \ \ \ \ \textcolor{comment}{/*\ The\ packet\ number\ of\ the\ transmitted\ packet.\ */}}
+\DoxyCodeLine{00061\ \ \ \ \ QUIC\_PN\ pkt\_num;}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{comment}{/*\ The\ number\ of\ bytes\ in\ the\ packet\ which\ was\ sent.\ */}}
+\DoxyCodeLine{00064\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ num\_bytes;}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{comment}{/*\ The\ time\ at\ which\ the\ packet\ was\ sent.\ */}}
+\DoxyCodeLine{00067\ \ \ \ \ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ time;}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00070\ \textcolor{comment}{\ \ \ \ \ *\ If\ the\ packet\ being\ described\ by\ this\ structure\ contains\ an\ ACK\ frame,}}
+\DoxyCodeLine{00071\ \textcolor{comment}{\ \ \ \ \ *\ this\ must\ be\ set\ to\ the\ largest\ PN\ ACK'd\ by\ that\ frame.}}
+\DoxyCodeLine{00072\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00073\ \textcolor{comment}{\ \ \ \ \ *\ Otherwise,\ it\ should\ be\ set\ to\ QUIC\_PN\_INVALID.}}
+\DoxyCodeLine{00074\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00075\ \textcolor{comment}{\ \ \ \ \ *\ This\ is\ necessary\ to\ bound\ the\ number\ of\ PNs\ we\ have\ to\ keep\ track\ of\ on}}
+\DoxyCodeLine{00076\ \textcolor{comment}{\ \ \ \ \ *\ the\ RX\ side\ (RFC\ 9000\ s.\ 13.2.4).\ It\ allows\ older\ PN\ tracking\ information}}
+\DoxyCodeLine{00077\ \textcolor{comment}{\ \ \ \ \ *\ on\ the\ RX\ side\ to\ be\ discarded.}}
+\DoxyCodeLine{00078\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00079\ \ \ \ \ QUIC\_PN\ largest\_acked;}
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00081\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00082\ \textcolor{comment}{\ \ \ \ \ *\ One\ of\ the\ QUIC\_PN\_SPACE\_*\ values.\ This\ qualifies\ the\ pkt\_num\ field}}
+\DoxyCodeLine{00083\ \textcolor{comment}{\ \ \ \ \ *\ into\ a\ packet\ number\ space.}}
+\DoxyCodeLine{00084\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ pkt\_space\ :2;}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00087\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00088\ \textcolor{comment}{\ \ \ \ \ *\ 1\ if\ the\ packet\ is\ in\ flight.\ A\ packet\ is\ considered\ 'in\ flight'\ if\ it\ is}}
+\DoxyCodeLine{00089\ \textcolor{comment}{\ \ \ \ \ *\ counted\ for\ purposes\ of\ congestion\ control\ and\ 'bytes\ in\ flight'\ counts.}}
+\DoxyCodeLine{00090\ \textcolor{comment}{\ \ \ \ \ *\ Most\ packets\ are\ considered\ in\ flight.\ The\ only\ circumstance\ where\ a}}
+\DoxyCodeLine{00091\ \textcolor{comment}{\ \ \ \ \ *\ numbered\ packet\ is\ not\ considered\ in\ flight\ is\ if\ it\ contains\ only\ ACK}}
+\DoxyCodeLine{00092\ \textcolor{comment}{\ \ \ \ \ *\ frames\ (not\ even\ PADDING\ frames),\ as\ these\ frames\ can\ bypass\ CC.}}
+\DoxyCodeLine{00093\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00094\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ is\_inflight\ :1;}
+\DoxyCodeLine{00095\ }
+\DoxyCodeLine{00096\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00097\ \textcolor{comment}{\ \ \ \ \ *\ 1\ if\ the\ packet\ has\ one\ or\ more\ ACK-\/eliciting\ frames.}}
+\DoxyCodeLine{00098\ \textcolor{comment}{\ \ \ \ \ *\ Note\ that\ if\ this\ is\ set,\ is\_inflight\ must\ be\ set.}}
+\DoxyCodeLine{00099\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00100\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ is\_ack\_eliciting\ :1;}
+\DoxyCodeLine{00101\ }
+\DoxyCodeLine{00102\ \ \ \ \ \textcolor{comment}{/*\ 1\ if\ the\ packet\ is\ a\ PTO\ probe.\ */}}
+\DoxyCodeLine{00103\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ is\_pto\_probe\ :1;}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00105\ \ \ \ \ \textcolor{comment}{/*\ 1\ if\ the\ packet\ is\ an\ MTU\ probe.\ */}}
+\DoxyCodeLine{00106\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ is\_mtu\_probe\ :1;}
+\DoxyCodeLine{00107\ }
+\DoxyCodeLine{00108\ \ \ \ \ \textcolor{comment}{/*\ Callback\ called\ if\ frames\ in\ this\ packet\ are\ lost.\ arg\ is\ cb\_arg.\ */}}
+\DoxyCodeLine{00109\ \ \ \ \ void\ (*on\_lost)(\textcolor{keywordtype}{void}\ *arg);}
+\DoxyCodeLine{00110\ \ \ \ \ \textcolor{comment}{/*\ Callback\ called\ if\ frames\ in\ this\ packet\ are\ acked.\ arg\ is\ cb\_arg.\ */}}
+\DoxyCodeLine{00111\ \ \ \ \ void\ (*on\_acked)(\textcolor{keywordtype}{void}\ *arg);}
+\DoxyCodeLine{00112\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00113\ \textcolor{comment}{\ \ \ \ \ *\ Callback\ called\ if\ frames\ in\ this\ packet\ are\ neither\ acked\ nor\ lost.\ arg}}
+\DoxyCodeLine{00114\ \textcolor{comment}{\ \ \ \ \ *\ is\ cb\_arg.}}
+\DoxyCodeLine{00115\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00116\ \ \ \ \ void\ (*on\_discarded)(\textcolor{keywordtype}{void}\ *arg);}
+\DoxyCodeLine{00117\ \ \ \ \ \textcolor{keywordtype}{void}\ \ *cb\_arg;}
+\DoxyCodeLine{00118\ }
+\DoxyCodeLine{00119\ \ \ \ \ \textcolor{comment}{/*\ }}
+\DoxyCodeLine{00120\ \textcolor{comment}{\ \ \ \ \ *\ (Internal\ use\ fields;\ must\ be\ zero-\/initialized.)}}
+\DoxyCodeLine{00121\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00122\ \textcolor{comment}{\ \ \ \ \ *\ Keep\ a\ TX\ history\ list,\ anext\ is\ used\ to\ manifest}}
+\DoxyCodeLine{00123\ \textcolor{comment}{\ \ \ \ \ *\ a\ singly-\/linked\ list\ of\ newly-\/acknowledged\ packets,\ and\ lnext\ is\ used\ to}}
+\DoxyCodeLine{00124\ \textcolor{comment}{\ \ \ \ \ *\ manifest\ a\ singly-\/linked\ list\ of\ newly\ lost\ packets.}}
+\DoxyCodeLine{00125\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00126\ \ \ \ \ OSSL\_LIST\_MEMBER(tx\_history,\ \mbox{\hyperlink{structossl__ackm__tx__pkt__st}{OSSL\_ACKM\_TX\_PKT}});}
+\DoxyCodeLine{00127\ }
+\DoxyCodeLine{00128\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__ackm__tx__pkt__st}{ossl\_ackm\_tx\_pkt\_st}}\ *anext;}
+\DoxyCodeLine{00129\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__ackm__tx__pkt__st}{ossl\_ackm\_tx\_pkt\_st}}\ *lnext;}
+\DoxyCodeLine{00130\ \};}
+\DoxyCodeLine{00131\ }
+\DoxyCodeLine{00132\ \textcolor{keywordtype}{int}\ ossl\_ackm\_on\_tx\_packet(\mbox{\hyperlink{structossl__ackm__st}{OSSL\_ACKM}}\ *ackm,\ \mbox{\hyperlink{structossl__ackm__tx__pkt__st}{OSSL\_ACKM\_TX\_PKT}}\ *pkt);}
+\DoxyCodeLine{00133\ \textcolor{keywordtype}{int}\ ossl\_ackm\_on\_rx\_datagram(\mbox{\hyperlink{structossl__ackm__st}{OSSL\_ACKM}}\ *ackm,\ \textcolor{keywordtype}{size\_t}\ num\_bytes);}
+\DoxyCodeLine{00134\ }
+\DoxyCodeLine{00135\ \textcolor{preprocessor}{\#\ \ define\ OSSL\_ACKM\_ECN\_NONE\ \ \ \ \ \ 0}}
+\DoxyCodeLine{00136\ \textcolor{preprocessor}{\#\ \ define\ OSSL\_ACKM\_ECN\_ECT1\ \ \ \ \ \ 1}}
+\DoxyCodeLine{00137\ \textcolor{preprocessor}{\#\ \ define\ OSSL\_ACKM\_ECN\_ECT0\ \ \ \ \ \ 2}}
+\DoxyCodeLine{00138\ \textcolor{preprocessor}{\#\ \ define\ OSSL\_ACKM\_ECN\_ECNCE\ \ \ \ \ 3}}
+\DoxyCodeLine{00139\ }
+\DoxyCodeLine{00140\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__ackm__rx__pkt__st}{ossl\_ackm\_rx\_pkt\_st}}\ \{}
+\DoxyCodeLine{00141\ \ \ \ \ \textcolor{comment}{/*\ The\ packet\ number\ of\ the\ received\ packet.\ */}}
+\DoxyCodeLine{00142\ \ \ \ \ QUIC\_PN\ pkt\_num;}
+\DoxyCodeLine{00143\ }
+\DoxyCodeLine{00144\ \ \ \ \ \textcolor{comment}{/*\ The\ time\ at\ which\ the\ packet\ was\ received.\ */}}
+\DoxyCodeLine{00145\ \ \ \ \ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ time;}
+\DoxyCodeLine{00146\ }
+\DoxyCodeLine{00147\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00148\ \textcolor{comment}{\ \ \ \ \ *\ One\ of\ the\ QUIC\_PN\_SPACE\_*\ values.\ This\ qualifies\ the\ pkt\_num\ field}}
+\DoxyCodeLine{00149\ \textcolor{comment}{\ \ \ \ \ *\ into\ a\ packet\ number\ space.}}
+\DoxyCodeLine{00150\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00151\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ pkt\_space\ :2;}
+\DoxyCodeLine{00152\ }
+\DoxyCodeLine{00153\ \ \ \ \ \textcolor{comment}{/*\ 1\ if\ the\ packet\ has\ one\ or\ more\ ACK-\/eliciting\ frames.\ */}}
+\DoxyCodeLine{00154\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ is\_ack\_eliciting\ :1;}
+\DoxyCodeLine{00155\ }
+\DoxyCodeLine{00156\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00157\ \textcolor{comment}{\ \ \ \ \ *\ One\ of\ the\ OSSL\_ACKM\_ECN\_*\ values.\ This\ is\ the\ ECN\ labelling\ applied\ to}}
+\DoxyCodeLine{00158\ \textcolor{comment}{\ \ \ \ \ *\ the\ received\ packet.\ If\ unknown,\ use\ OSSL\_ACKM\_ECN\_NONE.}}
+\DoxyCodeLine{00159\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00160\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ ecn\ :2;}
+\DoxyCodeLine{00161\ \}\ \mbox{\hyperlink{structossl__ackm__rx__pkt__st}{OSSL\_ACKM\_RX\_PKT}};}
+\DoxyCodeLine{00162\ }
+\DoxyCodeLine{00163\ \textcolor{keywordtype}{int}\ ossl\_ackm\_on\_rx\_packet(\mbox{\hyperlink{structossl__ackm__st}{OSSL\_ACKM}}\ *ackm,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structossl__ackm__rx__pkt__st}{OSSL\_ACKM\_RX\_PKT}}\ *pkt);}
+\DoxyCodeLine{00164\ }
+\DoxyCodeLine{00165\ \textcolor{keywordtype}{int}\ ossl\_ackm\_on\_rx\_ack\_frame(\mbox{\hyperlink{structossl__ackm__st}{OSSL\_ACKM}}\ *ackm,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structossl__quic__frame__ack__st}{OSSL\_QUIC\_FRAME\_ACK}}\ *ack,}
+\DoxyCodeLine{00166\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ pkt\_space,\ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ rx\_time);}
+\DoxyCodeLine{00167\ }
+\DoxyCodeLine{00168\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00169\ \textcolor{comment}{\ *\ Discards\ a\ PN\ space.\ This\ must\ be\ called\ for\ a\ PN\ space\ before\ freeing\ the}}
+\DoxyCodeLine{00170\ \textcolor{comment}{\ *\ ACKM\ if\ you\ want\ in-\/flight\ packets\ to\ have\ their\ discarded\ callbacks\ called.}}
+\DoxyCodeLine{00171\ \textcolor{comment}{\ *\ This\ should\ never\ be\ called\ in\ ordinary\ QUIC\ usage\ for\ the\ Application\ Data}}
+\DoxyCodeLine{00172\ \textcolor{comment}{\ *\ PN\ space,\ but\ it\ may\ be\ called\ for\ the\ Application\ Data\ PN\ space\ prior\ to}}
+\DoxyCodeLine{00173\ \textcolor{comment}{\ *\ freeing\ the\ ACKM\ to\ simplify\ teardown\ implementations.}}
+\DoxyCodeLine{00174\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00175\ \textcolor{keywordtype}{int}\ ossl\_ackm\_on\_pkt\_space\_discarded(\mbox{\hyperlink{structossl__ackm__st}{OSSL\_ACKM}}\ *ackm,\ \textcolor{keywordtype}{int}\ pkt\_space);}
+\DoxyCodeLine{00176\ }
+\DoxyCodeLine{00177\ \textcolor{keywordtype}{int}\ ossl\_ackm\_on\_handshake\_confirmed(\mbox{\hyperlink{structossl__ackm__st}{OSSL\_ACKM}}\ *ackm);}
+\DoxyCodeLine{00178\ \textcolor{keywordtype}{int}\ ossl\_ackm\_on\_timeout(\mbox{\hyperlink{structossl__ackm__st}{OSSL\_ACKM}}\ *ackm);}
+\DoxyCodeLine{00179\ }
+\DoxyCodeLine{00180\ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ ossl\_ackm\_get\_loss\_detection\_deadline(\mbox{\hyperlink{structossl__ackm__st}{OSSL\_ACKM}}\ *ackm);}
+\DoxyCodeLine{00181\ }
+\DoxyCodeLine{00182\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00183\ \textcolor{comment}{\ *\ Generates\ an\ ACK\ frame,\ regardless\ of\ whether\ the\ ACK\ manager\ thinks}}
+\DoxyCodeLine{00184\ \textcolor{comment}{\ *\ one\ should\ currently\ be\ sent.}}
+\DoxyCodeLine{00185\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00186\ \textcolor{comment}{\ *\ This\ clears\ the\ flag\ returned\ by\ ossl\_ackm\_is\_ack\_desired\ and\ the\ deadline}}
+\DoxyCodeLine{00187\ \textcolor{comment}{\ *\ returned\ by\ ossl\_ackm\_get\_ack\_deadline.}}
+\DoxyCodeLine{00188\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00189\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structossl__quic__frame__ack__st}{OSSL\_QUIC\_FRAME\_ACK}}\ *ossl\_ackm\_get\_ack\_frame(\mbox{\hyperlink{structossl__ackm__st}{OSSL\_ACKM}}\ *ackm,}
+\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ pkt\_space);}
+\DoxyCodeLine{00191\ }
+\DoxyCodeLine{00192\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00193\ \textcolor{comment}{\ *\ Returns\ the\ deadline\ after\ which\ an\ ACK\ frame\ should\ be\ generated\ by\ calling}}
+\DoxyCodeLine{00194\ \textcolor{comment}{\ *\ ossl\_ackm\_get\_ack\_frame,\ or\ OSSL\_TIME\_INFINITY\ if\ no\ deadline\ is\ currently}}
+\DoxyCodeLine{00195\ \textcolor{comment}{\ *\ applicable.\ If\ the\ deadline\ has\ already\ passed,\ this\ function\ may\ return\ that}}
+\DoxyCodeLine{00196\ \textcolor{comment}{\ *\ deadline,\ or\ may\ return\ OSSL\_TIME\_ZERO.}}
+\DoxyCodeLine{00197\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00198\ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ ossl\_ackm\_get\_ack\_deadline(\mbox{\hyperlink{structossl__ackm__st}{OSSL\_ACKM}}\ *ackm,\ \textcolor{keywordtype}{int}\ pkt\_space);}
+\DoxyCodeLine{00199\ }
+\DoxyCodeLine{00200\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00201\ \textcolor{comment}{\ *\ Returns\ 1\ if\ the\ ACK\ manager\ thinks\ an\ ACK\ frame\ ought\ to\ be\ generated\ and}}
+\DoxyCodeLine{00202\ \textcolor{comment}{\ *\ sent\ at\ this\ time.\ ossl\_ackm\_get\_ack\_frame\ will\ always\ provide\ an\ ACK\ frame}}
+\DoxyCodeLine{00203\ \textcolor{comment}{\ *\ whether\ or\ not\ this\ returns\ 1,\ so\ it\ is\ suggested\ that\ you\ call\ this\ function}}
+\DoxyCodeLine{00204\ \textcolor{comment}{\ *\ first\ to\ determine\ whether\ you\ need\ to\ generate\ an\ ACK\ frame.}}
+\DoxyCodeLine{00205\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00206\ \textcolor{comment}{\ *\ The\ return\ value\ of\ this\ function\ can\ change\ based\ on\ calls\ to}}
+\DoxyCodeLine{00207\ \textcolor{comment}{\ *\ ossl\_ackm\_on\_rx\_packet\ and\ based\ on\ the\ passage\ of\ time\ (see}}
+\DoxyCodeLine{00208\ \textcolor{comment}{\ *\ ossl\_ackm\_get\_ack\_deadline).}}
+\DoxyCodeLine{00209\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00210\ \textcolor{keywordtype}{int}\ ossl\_ackm\_is\_ack\_desired(\mbox{\hyperlink{structossl__ackm__st}{OSSL\_ACKM}}\ *ackm,\ \textcolor{keywordtype}{int}\ pkt\_space);}
+\DoxyCodeLine{00211\ }
+\DoxyCodeLine{00212\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00213\ \textcolor{comment}{\ *\ Returns\ 1\ if\ the\ given\ RX\ PN\ is\ 'processable'.\ A\ processable\ PN\ is\ one\ that}}
+\DoxyCodeLine{00214\ \textcolor{comment}{\ *\ is\ not\ either}}
+\DoxyCodeLine{00215\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00216\ \textcolor{comment}{\ *\ \ \ -\/\ duplicate,\ meaning\ that\ we\ have\ already\ been\ passed\ such\ a\ PN\ in\ a\ call}}
+\DoxyCodeLine{00217\ \textcolor{comment}{\ *\ \ \ \ \ to\ ossl\_ackm\_on\_rx\_packet;\ or}}
+\DoxyCodeLine{00218\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00219\ \textcolor{comment}{\ *\ \ \ -\/\ written\ off,\ meaning\ that\ the\ PN\ is\ so\ old\ we\ have\ stopped\ tracking\ state}}
+\DoxyCodeLine{00220\ \textcolor{comment}{\ *\ \ \ \ \ for\ it\ (meaning\ that\ we\ cannot\ tell\ whether\ it\ is\ a\ duplicate\ and\ cannot}}
+\DoxyCodeLine{00221\ \textcolor{comment}{\ *\ \ \ \ \ process\ it\ safely).}}
+\DoxyCodeLine{00222\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00223\ \textcolor{comment}{\ *\ This\ should\ be\ called\ for\ a\ packet\ before\ attempting\ to\ process\ its\ contents.}}
+\DoxyCodeLine{00224\ \textcolor{comment}{\ *\ Failure\ to\ do\ so\ may\ result\ in\ processing\ a\ duplicated\ packet\ in\ violation\ of}}
+\DoxyCodeLine{00225\ \textcolor{comment}{\ *\ the\ RFC.}}
+\DoxyCodeLine{00226\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00227\ \textcolor{comment}{\ *\ The\ return\ value\ of\ this\ function\ transitions\ from\ 1\ to\ 0\ for\ a\ given\ PN\ once}}
+\DoxyCodeLine{00228\ \textcolor{comment}{\ *\ that\ PN\ is\ passed\ to\ ossl\_ackm\_on\_rx\_packet,\ thus\ this\ function\ must\ be\ used}}
+\DoxyCodeLine{00229\ \textcolor{comment}{\ *\ before\ calling\ ossl\_ackm\_on\_rx\_packet.}}
+\DoxyCodeLine{00230\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00231\ \textcolor{keywordtype}{int}\ ossl\_ackm\_is\_rx\_pn\_processable(\mbox{\hyperlink{structossl__ackm__st}{OSSL\_ACKM}}\ *ackm,\ QUIC\_PN\ pn,\ \textcolor{keywordtype}{int}\ pkt\_space);}
+\DoxyCodeLine{00232\ }
+\DoxyCodeLine{00233\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__ackm__probe__info__st}{ossl\_ackm\_probe\_info\_st}}\ \{}
+\DoxyCodeLine{00234\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00235\ \textcolor{comment}{\ \ \ \ \ *\ The\ following\ two\ probe\ request\ types\ are\ used\ only\ for\ anti-\/deadlock}}
+\DoxyCodeLine{00236\ \textcolor{comment}{\ \ \ \ \ *\ purposes\ in\ relation\ to\ the\ anti-\/amplification\ logic,\ by\ generating}}
+\DoxyCodeLine{00237\ \textcolor{comment}{\ \ \ \ \ *\ packets\ to\ buy\ ourselves\ more\ anti-\/amplification\ credit\ with\ the\ server}}
+\DoxyCodeLine{00238\ \textcolor{comment}{\ \ \ \ \ *\ until\ a\ client\ address\ is\ verified.\ Note\ that\ like\ all\ Initial\ packets,}}
+\DoxyCodeLine{00239\ \textcolor{comment}{\ \ \ \ \ *\ any\ Initial\ probes\ are\ padded.}}
+\DoxyCodeLine{00240\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00241\ \textcolor{comment}{\ \ \ \ \ *\ Note:\ The\ ACKM\ will\ only\ ever\ increase\ these\ by\ one\ at\ a\ time,}}
+\DoxyCodeLine{00242\ \textcolor{comment}{\ \ \ \ \ *\ as\ only\ one\ probe\ packet\ should\ be\ generated\ for\ these\ cases.}}
+\DoxyCodeLine{00243\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00244\ \ \ \ \ uint32\_t\ anti\_deadlock\_initial,\ anti\_deadlock\_handshake;}
+\DoxyCodeLine{00245\ }
+\DoxyCodeLine{00246\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00247\ \textcolor{comment}{\ \ \ \ \ *\ Send\ an\ ACK-\/eliciting\ packet\ for\ each\ count\ here.}}
+\DoxyCodeLine{00248\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00249\ \textcolor{comment}{\ \ \ \ \ *\ Note:\ The\ ACKM\ may\ increase\ this\ by\ either\ one\ or\ two\ for\ each\ probe}}
+\DoxyCodeLine{00250\ \textcolor{comment}{\ \ \ \ \ *\ request,\ depending\ on\ how\ many\ probe\ packets\ it\ thinks\ should\ be}}
+\DoxyCodeLine{00251\ \textcolor{comment}{\ \ \ \ \ *\ generated.}}
+\DoxyCodeLine{00252\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00253\ \ \ \ \ uint32\_t\ pto[QUIC\_PN\_SPACE\_NUM];}
+\DoxyCodeLine{00254\ \}\ \mbox{\hyperlink{structossl__ackm__probe__info__st}{OSSL\_ACKM\_PROBE\_INFO}};}
+\DoxyCodeLine{00255\ }
+\DoxyCodeLine{00256\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00257\ \textcolor{comment}{\ *\ Returns\ a\ pointer\ to\ a\ structure\ counting\ any\ pending\ probe\ requests\ which}}
+\DoxyCodeLine{00258\ \textcolor{comment}{\ *\ have\ been\ generated\ by\ the\ ACKM.\ The\ fields\ in\ the\ structure\ are\ incremented}}
+\DoxyCodeLine{00259\ \textcolor{comment}{\ *\ by\ one\ every\ time\ the\ ACKM\ wants\ another\ probe\ of\ the\ given\ type\ to\ be\ sent.}}
+\DoxyCodeLine{00260\ \textcolor{comment}{\ *\ If\ the\ ACKM\ thinks\ two\ packets\ should\ be\ generated\ for\ a\ probe,\ it\ will}}
+\DoxyCodeLine{00261\ \textcolor{comment}{\ *\ increment\ the\ field\ twice.}}
+\DoxyCodeLine{00262\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00263\ \textcolor{comment}{\ *\ It\ is\ permissible\ for\ the\ caller\ to\ decrement\ or\ zero\ these\ fields\ to\ keep}}
+\DoxyCodeLine{00264\ \textcolor{comment}{\ *\ track\ of\ when\ it\ has\ generated\ a\ probe\ as\ asked.\ The\ returned\ structure}}
+\DoxyCodeLine{00265\ \textcolor{comment}{\ *\ has\ the\ same\ lifetime\ as\ the\ ACKM.}}
+\DoxyCodeLine{00266\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00267\ \textcolor{comment}{\ *\ This\ function\ should\ be\ called\ after\ calling\ e.g.\ ossl\_ackm\_on\_timeout}}
+\DoxyCodeLine{00268\ \textcolor{comment}{\ *\ to\ determine\ if\ any\ probe\ requests\ have\ been\ generated.}}
+\DoxyCodeLine{00269\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00270\ \mbox{\hyperlink{structossl__ackm__probe__info__st}{OSSL\_ACKM\_PROBE\_INFO}}\ *ossl\_ackm\_get0\_probe\_request(\mbox{\hyperlink{structossl__ackm__st}{OSSL\_ACKM}}\ *ackm);}
+\DoxyCodeLine{00271\ }
+\DoxyCodeLine{00272\ \textcolor{keywordtype}{int}\ ossl\_ackm\_get\_largest\_unacked(\mbox{\hyperlink{structossl__ackm__st}{OSSL\_ACKM}}\ *ackm,\ \textcolor{keywordtype}{int}\ pkt\_space,\ QUIC\_PN\ *pn);}
+\DoxyCodeLine{00273\ }
+\DoxyCodeLine{00274\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00275\ \textcolor{comment}{\ *\ Forces\ the\ ACKM\ to\ consider\ a\ packet\ with\ the\ given\ PN\ in\ the\ given\ PN\ space}}
+\DoxyCodeLine{00276\ \textcolor{comment}{\ *\ as\ having\ been\ pseudo-\/lost.\ The\ main\ reason\ to\ use\ this\ is\ during\ a\ Retry,\ to}}
+\DoxyCodeLine{00277\ \textcolor{comment}{\ *\ force\ any\ resources\ sent\ in\ the\ first\ Initial\ packet\ to\ be\ resent.}}
+\DoxyCodeLine{00278\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00279\ \textcolor{comment}{\ *\ The\ lost\ callback\ is\ called\ for\ the\ packet,\ but\ the\ packet\ is\ NOT\ considered}}
+\DoxyCodeLine{00280\ \textcolor{comment}{\ *\ lost\ for\ congestion\ control\ purposes.\ Thus\ this\ is\ not\ exactly\ the\ same\ as\ a}}
+\DoxyCodeLine{00281\ \textcolor{comment}{\ *\ true\ loss\ situation.}}
+\DoxyCodeLine{00282\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00283\ \textcolor{keywordtype}{int}\ ossl\_ackm\_mark\_packet\_pseudo\_lost(\mbox{\hyperlink{structossl__ackm__st}{OSSL\_ACKM}}\ *ackm,}
+\DoxyCodeLine{00284\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ pkt\_space,\ QUIC\_PN\ pn);}
+\DoxyCodeLine{00285\ }
+\DoxyCodeLine{00286\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00287\ \textcolor{comment}{\ *\ Returns\ the\ PTO\ duration\ as\ currently\ calculated.\ This\ is\ a\ quantity\ of\ time.}}
+\DoxyCodeLine{00288\ \textcolor{comment}{\ *\ This\ duration\ is\ used\ in\ various\ parts\ of\ QUIC\ besides\ the\ ACKM.}}
+\DoxyCodeLine{00289\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00290\ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ ossl\_ackm\_get\_pto\_duration(\mbox{\hyperlink{structossl__ackm__st}{OSSL\_ACKM}}\ *ackm);}
+\DoxyCodeLine{00291\ }
+\DoxyCodeLine{00292\ \textcolor{comment}{/*\ Returns\ the\ largest\ acked\ PN\ in\ the\ given\ PN\ space.\ */}}
+\DoxyCodeLine{00293\ QUIC\_PN\ ossl\_ackm\_get\_largest\_acked(\mbox{\hyperlink{structossl__ackm__st}{OSSL\_ACKM}}\ *ackm,\ \textcolor{keywordtype}{int}\ pkt\_space);}
+\DoxyCodeLine{00294\ }
+\DoxyCodeLine{00295\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00296\ }
+\DoxyCodeLine{00297\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

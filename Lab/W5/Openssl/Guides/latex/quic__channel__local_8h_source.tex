@@ -1,0 +1,483 @@
+\doxysection{quic\+\_\+channel\+\_\+local.\+h}
+\hypertarget{quic__channel__local_8h_source}{}\label{quic__channel__local_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/ssl/quic/quic\_channel\_local.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/ssl/quic/quic\_channel\_local.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ OSSL\_QUIC\_CHANNEL\_LOCAL\_H}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#\ define\ OSSL\_QUIC\_CHANNEL\_LOCAL\_H}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#\ include\ "{}internal/quic\_channel.h"{}}}
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#\ ifndef\ OPENSSL\_NO\_QUIC}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#\ \ include\ <openssl/lhash.h>}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#\ \ include\ "{}internal/list.h"{}}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structquic__srt__elem__st}{quic\_srt\_elem\_st}}\ \mbox{\hyperlink{structquic__srt__elem__st}{QUIC\_SRT\_ELEM}};}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structquic__srt__elem__st}{quic\_srt\_elem\_st}}\ \{}
+\DoxyCodeLine{00015\ \ \ \ \ OSSL\_LIST\_MEMBER(stateless\_reset\_tokens,\ \mbox{\hyperlink{structquic__srt__elem__st}{QUIC\_SRT\_ELEM}});}
+\DoxyCodeLine{00016\ \ \ \ \ \mbox{\hyperlink{struct_q_u_i_c___s_t_a_t_e_l_e_s_s___r_e_s_e_t___t_o_k_e_n}{QUIC\_STATELESS\_RESET\_TOKEN}}\ token;}
+\DoxyCodeLine{00017\ \ \ \ \ uint64\_t\ seq\_num;}
+\DoxyCodeLine{00018\ \};}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ DEFINE\_LIST\_OF(stateless\_reset\_tokens,\ \mbox{\hyperlink{structquic__srt__elem__st}{QUIC\_SRT\_ELEM}});}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00023\ \textcolor{comment}{\ *\ QUIC\ Channel\ Structure}}
+\DoxyCodeLine{00024\ \textcolor{comment}{\ *\ ======================}}
+\DoxyCodeLine{00025\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00026\ \textcolor{comment}{\ *\ QUIC\ channel\ internals.\ It\ is\ intended\ that\ only\ the\ QUIC\_CHANNEL}}
+\DoxyCodeLine{00027\ \textcolor{comment}{\ *\ implementation\ and\ the\ RX\ depacketiser\ be\ allowed\ to\ access\ this\ structure}}
+\DoxyCodeLine{00028\ \textcolor{comment}{\ *\ directly.\ As\ the\ RX\ depacketiser\ has\ no\ state\ of\ its\ own\ and\ computes\ over\ a}}
+\DoxyCodeLine{00029\ \textcolor{comment}{\ *\ QUIC\_CHANNEL\ structure,\ it\ can\ be\ viewed\ as\ an\ extension\ of\ the\ QUIC\_CHANNEL}}
+\DoxyCodeLine{00030\ \textcolor{comment}{\ *\ implementation.\ While\ the\ RX\ depacketiser\ could\ be\ provided\ with\ adequate}}
+\DoxyCodeLine{00031\ \textcolor{comment}{\ *\ accessors\ to\ do\ what\ it\ needs,\ this\ would\ weaken\ the\ abstraction\ provided\ by}}
+\DoxyCodeLine{00032\ \textcolor{comment}{\ *\ the\ QUIC\_CHANNEL\ to\ other\ components;\ moreover\ the\ coupling\ of\ the\ RX}}
+\DoxyCodeLine{00033\ \textcolor{comment}{\ *\ depacketiser\ to\ QUIC\_CHANNEL\ internals\ is\ too\ deep\ and\ bespoke\ to\ make\ this}}
+\DoxyCodeLine{00034\ \textcolor{comment}{\ *\ desirable.}}
+\DoxyCodeLine{00035\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00036\ \textcolor{comment}{\ *\ Other\ components\ should\ not\ include\ this\ header.}}
+\DoxyCodeLine{00037\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00038\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structquic__channel__st}{quic\_channel\_st}}\ \{}
+\DoxyCodeLine{00039\ \ \ \ \ OSSL\_LIB\_CTX\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *libctx;}
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *propq;}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00043\ \textcolor{comment}{\ \ \ \ \ *\ Master\ synchronisation\ mutex\ used\ for\ thread\ assisted\ mode}}
+\DoxyCodeLine{00044\ \textcolor{comment}{\ \ \ \ \ *\ synchronisation.\ We\ don't\ own\ this;\ the\ instantiator\ of\ the\ channel}}
+\DoxyCodeLine{00045\ \textcolor{comment}{\ \ \ \ \ *\ passes\ it\ to\ us\ and\ is\ responsible\ for\ freeing\ it\ after\ channel}}
+\DoxyCodeLine{00046\ \textcolor{comment}{\ \ \ \ \ *\ destruction.}}
+\DoxyCodeLine{00047\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00048\ \ \ \ \ CRYPTO\_MUTEX\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *mutex;}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00051\ \textcolor{comment}{\ \ \ \ \ *\ Callback\ used\ to\ get\ the\ current\ time.}}
+\DoxyCodeLine{00052\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00053\ \ \ \ \ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (*now\_cb)(\textcolor{keywordtype}{void}\ *arg);}
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{keywordtype}{void}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *now\_cb\_arg;}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00057\ \textcolor{comment}{\ \ \ \ \ *\ The\ associated\ TLS\ 1.3\ connection\ data.\ Used\ to\ provide\ the\ handshake}}
+\DoxyCodeLine{00058\ \textcolor{comment}{\ \ \ \ \ *\ layer;\ its\ 'network'\ side\ is\ plugged\ into\ the\ crypto\ stream\ for\ each\ EL}}
+\DoxyCodeLine{00059\ \textcolor{comment}{\ \ \ \ \ *\ (other\ than\ the\ 0-\/RTT\ EL).}}
+\DoxyCodeLine{00060\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00061\ \ \ \ \ \mbox{\hyperlink{structquic__tls__st}{QUIC\_TLS}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *qtls;}
+\DoxyCodeLine{00062\ \ \ \ \ SSL\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *tls;}
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00064\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00065\ \textcolor{comment}{\ \ \ \ \ *\ The\ transport\ parameter\ block\ we\ will\ send\ or\ have\ sent.}}
+\DoxyCodeLine{00066\ \textcolor{comment}{\ \ \ \ \ *\ Freed\ after\ sending\ or\ when\ connection\ is\ freed.}}
+\DoxyCodeLine{00067\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *local\_transport\_params;}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ \ \ \ \ \textcolor{comment}{/*\ Asynchronous\ I/O\ reactor.\ */}}
+\DoxyCodeLine{00071\ \ \ \ \ \mbox{\hyperlink{structquic__reactor__st}{QUIC\_REACTOR}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rtor;}
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00073\ \ \ \ \ \textcolor{comment}{/*\ Our\ current\ L4\ peer\ address,\ if\ any.\ */}}
+\DoxyCodeLine{00074\ \ \ \ \ BIO\_ADDR\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cur\_peer\_addr;}
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00076\ \ \ \ \ \textcolor{comment}{/*\ Network-\/side\ read\ and\ write\ BIOs.\ */}}
+\DoxyCodeLine{00077\ \ \ \ \ BIO\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *net\_rbio,\ *net\_wbio;}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00080\ \textcolor{comment}{\ \ \ \ \ *\ Subcomponents\ of\ the\ connection.\ All\ of\ these\ components\ are\ instantiated}}
+\DoxyCodeLine{00081\ \textcolor{comment}{\ \ \ \ \ *\ and\ owned\ by\ us.}}
+\DoxyCodeLine{00082\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00083\ \ \ \ \ \mbox{\hyperlink{structossl__quic__tx__packetiser__st}{OSSL\_QUIC\_TX\_PACKETISER}}\ \ \ \ \ \ \ \ \ *txp;}
+\DoxyCodeLine{00084\ \ \ \ \ \mbox{\hyperlink{structquic__txpim__st}{QUIC\_TXPIM}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *txpim;}
+\DoxyCodeLine{00085\ \ \ \ \ \mbox{\hyperlink{structquic__cfq__st}{QUIC\_CFQ}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *cfq;}
+\DoxyCodeLine{00086\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00087\ \textcolor{comment}{\ \ \ \ \ *\ Connection\ level\ FC.\ The\ stream\_count\ RXFCs\ is\ used\ to\ manage}}
+\DoxyCodeLine{00088\ \textcolor{comment}{\ \ \ \ \ *\ MAX\_STREAMS\ signalling.}}
+\DoxyCodeLine{00089\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00090\ \ \ \ \ \mbox{\hyperlink{structquic__txfc__st}{QUIC\_TXFC}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ conn\_txfc;}
+\DoxyCodeLine{00091\ \ \ \ \ \mbox{\hyperlink{structquic__rxfc__st}{QUIC\_RXFC}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ conn\_rxfc,\ crypto\_rxfc[QUIC\_PN\_SPACE\_NUM];}
+\DoxyCodeLine{00092\ \ \ \ \ \mbox{\hyperlink{structquic__rxfc__st}{QUIC\_RXFC}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ max\_streams\_bidi\_rxfc,\ max\_streams\_uni\_rxfc;}
+\DoxyCodeLine{00093\ \ \ \ \ \mbox{\hyperlink{structquic__stream__map__st}{QUIC\_STREAM\_MAP}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ qsm;}
+\DoxyCodeLine{00094\ \ \ \ \ \mbox{\hyperlink{structossl__statm__st}{OSSL\_STATM}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ statm;}
+\DoxyCodeLine{00095\ \ \ \ \ OSSL\_CC\_DATA\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *cc\_data;}
+\DoxyCodeLine{00096\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structossl__cc__method__st}{OSSL\_CC\_METHOD}}\ \ \ \ \ \ \ \ \ \ \ \ *cc\_method;}
+\DoxyCodeLine{00097\ \ \ \ \ \mbox{\hyperlink{structossl__ackm__st}{OSSL\_ACKM}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *ackm;}
+\DoxyCodeLine{00098\ }
+\DoxyCodeLine{00099\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00100\ \textcolor{comment}{\ \ \ \ \ *\ RX\ demuxer.\ We\ register\ incoming\ DCIDs\ with\ this.\ Since\ we\ currently\ only}}
+\DoxyCodeLine{00101\ \textcolor{comment}{\ \ \ \ \ *\ support\ client\ operation\ and\ use\ one\ L4\ port\ per\ connection,\ we\ own\ the}}
+\DoxyCodeLine{00102\ \textcolor{comment}{\ \ \ \ \ *\ demuxer\ and\ register\ a\ single\ zero-\/length\ DCID\ with\ it.}}
+\DoxyCodeLine{00103\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00104\ \ \ \ \ \mbox{\hyperlink{structquic__demux__st}{QUIC\_DEMUX}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *demux;}
+\DoxyCodeLine{00105\ }
+\DoxyCodeLine{00106\ \ \ \ \ \textcolor{comment}{/*\ Record\ layers\ in\ the\ TX\ and\ RX\ directions,\ plus\ the\ RX\ demuxer.\ */}}
+\DoxyCodeLine{00107\ \ \ \ \ \mbox{\hyperlink{structossl__qtx__st}{OSSL\_QTX}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *qtx;}
+\DoxyCodeLine{00108\ \ \ \ \ \mbox{\hyperlink{structossl__qrx__st}{OSSL\_QRX}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *qrx;}
+\DoxyCodeLine{00109\ }
+\DoxyCodeLine{00110\ \ \ \ \ \textcolor{comment}{/*\ Message\ callback\ related\ arguments\ */}}
+\DoxyCodeLine{00111\ \ \ \ \ ossl\_msg\_cb\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ msg\_callback;}
+\DoxyCodeLine{00112\ \ \ \ \ \textcolor{keywordtype}{void}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *msg\_callback\_arg;}
+\DoxyCodeLine{00113\ \ \ \ \ SSL\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *msg\_callback\_ssl;}
+\DoxyCodeLine{00114\ }
+\DoxyCodeLine{00115\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00116\ \textcolor{comment}{\ \ \ \ \ *\ Send\ and\ receive\ parts\ of\ the\ crypto\ streams.}}
+\DoxyCodeLine{00117\ \textcolor{comment}{\ \ \ \ \ *\ crypto\_send[QUIC\_PN\_SPACE\_APP]\ is\ the\ 1-\/RTT\ crypto\ stream.\ There\ is\ no}}
+\DoxyCodeLine{00118\ \textcolor{comment}{\ \ \ \ \ *\ 0-\/RTT\ crypto\ stream.}}
+\DoxyCodeLine{00119\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00120\ \ \ \ \ \mbox{\hyperlink{structquic__sstream__st}{QUIC\_SSTREAM}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *crypto\_send[QUIC\_PN\_SPACE\_NUM];}
+\DoxyCodeLine{00121\ \ \ \ \ \mbox{\hyperlink{structquic__rstream__st}{QUIC\_RSTREAM}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *crypto\_recv[QUIC\_PN\_SPACE\_NUM];}
+\DoxyCodeLine{00122\ }
+\DoxyCodeLine{00123\ \ \ \ \ \textcolor{comment}{/*\ Internal\ state.\ */}}
+\DoxyCodeLine{00124\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00125\ \textcolor{comment}{\ \ \ \ \ *\ Client:\ The\ DCID\ used\ in\ the\ first\ Initial\ packet\ we\ transmit\ as\ a\ client.}}
+\DoxyCodeLine{00126\ \textcolor{comment}{\ \ \ \ \ *\ Server:\ The\ DCID\ used\ in\ the\ first\ Initial\ packet\ the\ client\ transmitted.}}
+\DoxyCodeLine{00127\ \textcolor{comment}{\ \ \ \ \ *\ Randomly\ generated\ and\ required\ by\ RFC\ to\ be\ at\ least\ 8\ bytes.}}
+\DoxyCodeLine{00128\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00129\ \ \ \ \ \mbox{\hyperlink{structquic__conn__id__st}{QUIC\_CONN\_ID}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ init\_dcid;}
+\DoxyCodeLine{00130\ }
+\DoxyCodeLine{00131\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00132\ \textcolor{comment}{\ \ \ \ \ *\ Client:\ The\ SCID\ found\ in\ the\ first\ Initial\ packet\ from\ the\ server.}}
+\DoxyCodeLine{00133\ \textcolor{comment}{\ \ \ \ \ *\ Not\ valid\ for\ servers.}}
+\DoxyCodeLine{00134\ \textcolor{comment}{\ \ \ \ \ *\ Valid\ if\ have\_received\_enc\_pkt\ is\ set.}}
+\DoxyCodeLine{00135\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00136\ \ \ \ \ \mbox{\hyperlink{structquic__conn__id__st}{QUIC\_CONN\_ID}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ init\_scid;}
+\DoxyCodeLine{00137\ }
+\DoxyCodeLine{00138\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00139\ \textcolor{comment}{\ \ \ \ \ *\ Client\ only:\ The\ SCID\ found\ in\ an\ incoming\ Retry\ packet\ we\ handled.}}
+\DoxyCodeLine{00140\ \textcolor{comment}{\ \ \ \ \ *\ Not\ valid\ for\ servers.}}
+\DoxyCodeLine{00141\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00142\ \ \ \ \ \mbox{\hyperlink{structquic__conn__id__st}{QUIC\_CONN\_ID}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ retry\_scid;}
+\DoxyCodeLine{00143\ }
+\DoxyCodeLine{00144\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00145\ \textcolor{comment}{\ \ \ \ \ *\ The\ DCID\ we\ currently\ use\ to\ talk\ to\ the\ peer\ and\ its\ sequence\ num.}}
+\DoxyCodeLine{00146\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00147\ \textcolor{comment}{\ \ \ \ \ *\ TODO(QUIC\ FUTURE)\ consider\ removing\ the\ second\ two,\ both\ are\ contained\ in}}
+\DoxyCodeLine{00148\ \textcolor{comment}{\ \ \ \ \ *\ srt\_list\_seq\ (defined\ below).}}
+\DoxyCodeLine{00149\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00150\ \textcolor{comment}{\ \ \ \ \ *\ cur\_remote\_seq\_num\ is\ same\ as\ the\ sequence\ number\ in\ the\ last\ element.}}
+\DoxyCodeLine{00151\ \textcolor{comment}{\ \ \ \ \ *\ cur\_retire\_prior\_to\ corresponds\ to\ the\ sequence\ number\ in\ first\ element.}}
+\DoxyCodeLine{00152\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00153\ \textcolor{comment}{\ \ \ \ \ *\ Leaving\ them\ here\ avoids\ null\ checking\ etc}}
+\DoxyCodeLine{00154\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00155\ \ \ \ \ \mbox{\hyperlink{structquic__conn__id__st}{QUIC\_CONN\_ID}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cur\_remote\_dcid;}
+\DoxyCodeLine{00156\ \ \ \ \ uint64\_t\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cur\_remote\_seq\_num;}
+\DoxyCodeLine{00157\ \ \ \ \ uint64\_t\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cur\_retire\_prior\_to;}
+\DoxyCodeLine{00158\ }
+\DoxyCodeLine{00159\ \ \ \ \ \textcolor{comment}{/*\ Server\ only:\ The\ DCID\ we\ currently\ expect\ the\ peer\ to\ use\ to\ talk\ to\ us.\ */}}
+\DoxyCodeLine{00160\ \ \ \ \ \mbox{\hyperlink{structquic__conn__id__st}{QUIC\_CONN\_ID}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cur\_local\_cid;}
+\DoxyCodeLine{00161\ }
+\DoxyCodeLine{00162\ \ \ \ \ \textcolor{comment}{/*\ Hash\ of\ stateless\ reset\ tokens\ keyed\ on\ the\ token\ */}}
+\DoxyCodeLine{00163\ \ \ \ \ LHASH\_OF(\mbox{\hyperlink{structquic__srt__elem__st}{QUIC\_SRT\_ELEM}})\ \ \ \ \ \ \ \ *srt\_hash\_tok;}
+\DoxyCodeLine{00164\ }
+\DoxyCodeLine{00165\ \ \ \ \ \textcolor{comment}{/*\ List\ of\ the\ stateless\ reset\ tokens\ ordered\ by\ sequence\ number\ */}}
+\DoxyCodeLine{00166\ \ \ \ \ OSSL\_LIST(stateless\_reset\_tokens)\ srt\_list\_seq;}
+\DoxyCodeLine{00167\ }
+\DoxyCodeLine{00168\ \ \ \ \ \textcolor{comment}{/*\ Transport\ parameter\ values\ we\ send\ to\ our\ peer.\ */}}
+\DoxyCodeLine{00169\ \ \ \ \ uint64\_t\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ tx\_init\_max\_stream\_data\_bidi\_local;}
+\DoxyCodeLine{00170\ \ \ \ \ uint64\_t\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ tx\_init\_max\_stream\_data\_bidi\_remote;}
+\DoxyCodeLine{00171\ \ \ \ \ uint64\_t\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ tx\_init\_max\_stream\_data\_uni;}
+\DoxyCodeLine{00172\ \ \ \ \ uint64\_t\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ tx\_max\_ack\_delay;\ \textcolor{comment}{/*\ ms\ */}}
+\DoxyCodeLine{00173\ }
+\DoxyCodeLine{00174\ \ \ \ \ \textcolor{comment}{/*\ Transport\ parameter\ values\ received\ from\ server.\ */}}
+\DoxyCodeLine{00175\ \ \ \ \ uint64\_t\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rx\_init\_max\_stream\_data\_bidi\_local;}
+\DoxyCodeLine{00176\ \ \ \ \ uint64\_t\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rx\_init\_max\_stream\_data\_bidi\_remote;}
+\DoxyCodeLine{00177\ \ \ \ \ uint64\_t\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rx\_init\_max\_stream\_data\_uni;}
+\DoxyCodeLine{00178\ \ \ \ \ uint64\_t\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rx\_max\_ack\_delay;\ \textcolor{comment}{/*\ ms\ */}}
+\DoxyCodeLine{00179\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rx\_ack\_delay\_exp;}
+\DoxyCodeLine{00180\ }
+\DoxyCodeLine{00181\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00182\ \textcolor{comment}{\ \ \ \ \ *\ Temporary\ staging\ area\ to\ store\ information\ about\ the\ incoming\ packet\ we}}
+\DoxyCodeLine{00183\ \textcolor{comment}{\ \ \ \ \ *\ are\ currently\ processing.}}
+\DoxyCodeLine{00184\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00185\ \ \ \ \ \mbox{\hyperlink{structossl__qrx__pkt__st}{OSSL\_QRX\_PKT}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *qrx\_pkt;}
+\DoxyCodeLine{00186\ }
+\DoxyCodeLine{00187\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00188\ \textcolor{comment}{\ \ \ \ \ *\ Current\ limit\ on\ number\ of\ streams\ we\ may\ create.\ Set\ by\ transport}}
+\DoxyCodeLine{00189\ \textcolor{comment}{\ \ \ \ \ *\ parameters\ initially\ and\ then\ by\ MAX\_STREAMS\ frames.}}
+\DoxyCodeLine{00190\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00191\ \ \ \ \ uint64\_t\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ max\_local\_streams\_bidi;}
+\DoxyCodeLine{00192\ \ \ \ \ uint64\_t\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ max\_local\_streams\_uni;}
+\DoxyCodeLine{00193\ }
+\DoxyCodeLine{00194\ \ \ \ \ \textcolor{comment}{/*\ The\ negotiated\ maximum\ idle\ timeout\ in\ milliseconds.\ */}}
+\DoxyCodeLine{00195\ \ \ \ \ uint64\_t\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ max\_idle\_timeout;}
+\DoxyCodeLine{00196\ }
+\DoxyCodeLine{00197\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00198\ \textcolor{comment}{\ \ \ \ \ *\ Maximum\ payload\ size\ in\ bytes\ for\ datagrams\ sent\ to\ our\ peer,\ as}}
+\DoxyCodeLine{00199\ \textcolor{comment}{\ \ \ \ \ *\ negotiated\ by\ transport\ parameters.}}
+\DoxyCodeLine{00200\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00201\ \ \ \ \ uint64\_t\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rx\_max\_udp\_payload\_size;}
+\DoxyCodeLine{00202\ \ \ \ \ \textcolor{comment}{/*\ Maximum\ active\ CID\ limit,\ as\ negotiated\ by\ transport\ parameters.\ */}}
+\DoxyCodeLine{00203\ \ \ \ \ uint64\_t\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rx\_active\_conn\_id\_limit;}
+\DoxyCodeLine{00204\ }
+\DoxyCodeLine{00205\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00206\ \textcolor{comment}{\ \ \ \ \ *\ Used\ to\ allocate\ stream\ IDs.\ This\ is\ a\ stream\ ordinal,\ i.e.,\ a\ stream\ ID}}
+\DoxyCodeLine{00207\ \textcolor{comment}{\ \ \ \ \ *\ without\ the\ low\ two\ bits\ designating\ type\ and\ initiator.\ Shift\ and\ or\ in}}
+\DoxyCodeLine{00208\ \textcolor{comment}{\ \ \ \ \ *\ the\ type\ bits\ to\ convert\ to\ a\ stream\ ID.}}
+\DoxyCodeLine{00209\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00210\ \ \ \ \ uint64\_t\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ next\_local\_stream\_ordinal\_bidi;}
+\DoxyCodeLine{00211\ \ \ \ \ uint64\_t\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ next\_local\_stream\_ordinal\_uni;}
+\DoxyCodeLine{00212\ }
+\DoxyCodeLine{00213\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00214\ \textcolor{comment}{\ \ \ \ \ *\ Used\ to\ track\ which\ stream\ ordinals\ within\ a\ given\ stream\ type\ have\ been}}
+\DoxyCodeLine{00215\ \textcolor{comment}{\ \ \ \ \ *\ used\ by\ the\ remote\ peer.\ This\ is\ an\ optimisation\ used\ to\ determine}}
+\DoxyCodeLine{00216\ \textcolor{comment}{\ \ \ \ \ *\ which\ streams\ should\ be\ implicitly\ created\ due\ to\ usage\ of\ a\ higher}}
+\DoxyCodeLine{00217\ \textcolor{comment}{\ \ \ \ \ *\ stream\ ordinal.}}
+\DoxyCodeLine{00218\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00219\ \ \ \ \ uint64\_t\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ next\_remote\_stream\_ordinal\_bidi;}
+\DoxyCodeLine{00220\ \ \ \ \ uint64\_t\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ next\_remote\_stream\_ordinal\_uni;}
+\DoxyCodeLine{00221\ }
+\DoxyCodeLine{00222\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00223\ \textcolor{comment}{\ \ \ \ \ *\ Application\ error\ code\ to\ be\ used\ for\ STOP\_SENDING/RESET\_STREAM\ frames}}
+\DoxyCodeLine{00224\ \textcolor{comment}{\ \ \ \ \ *\ used\ to\ autoreject\ incoming\ streams.}}
+\DoxyCodeLine{00225\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00226\ \ \ \ \ uint64\_t\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ incoming\_stream\_auto\_reject\_aec;}
+\DoxyCodeLine{00227\ }
+\DoxyCodeLine{00228\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00229\ \textcolor{comment}{\ \ \ \ \ *\ Override\ packet\ count\ threshold\ at\ which\ we\ do\ a\ spontaneous\ TXKU.}}
+\DoxyCodeLine{00230\ \textcolor{comment}{\ \ \ \ \ *\ Usually\ UINT64\_MAX\ in\ which\ case\ a\ suitable\ value\ is\ chosen\ based\ on\ AEAD}}
+\DoxyCodeLine{00231\ \textcolor{comment}{\ \ \ \ \ *\ limit\ advice\ from\ the\ QRL\ utility\ functions.\ This\ is\ intended\ for\ testing}}
+\DoxyCodeLine{00232\ \textcolor{comment}{\ \ \ \ \ *\ use\ only.\ Usually\ set\ to\ UINT64\_MAX.}}
+\DoxyCodeLine{00233\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00234\ \ \ \ \ uint64\_t\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ txku\_threshold\_override;}
+\DoxyCodeLine{00235\ }
+\DoxyCodeLine{00236\ \ \ \ \ \textcolor{comment}{/*\ Diagnostic\ counters\ for\ testing\ purposes\ only.\ May\ roll\ over.\ */}}
+\DoxyCodeLine{00237\ \ \ \ \ uint16\_t\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ diag\_num\_rx\_ack;\ \textcolor{comment}{/*\ Number\ of\ ACK\ frames\ received\ */}}
+\DoxyCodeLine{00238\ }
+\DoxyCodeLine{00239\ \ \ \ \ \textcolor{comment}{/*\ Valid\ if\ we\ are\ in\ the\ TERMINATING\ or\ TERMINATED\ states.\ */}}
+\DoxyCodeLine{00240\ \ \ \ \ \mbox{\hyperlink{structquic__terminate__cause__st}{QUIC\_TERMINATE\_CAUSE}}\ \ \ \ \ \ \ \ \ \ \ \ terminate\_cause;}
+\DoxyCodeLine{00241\ }
+\DoxyCodeLine{00242\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00243\ \textcolor{comment}{\ \ \ \ \ *\ Deadline\ at\ which\ we\ move\ to\ TERMINATING\ state.\ Valid\ if\ in\ the}}
+\DoxyCodeLine{00244\ \textcolor{comment}{\ \ \ \ \ *\ TERMINATING\ state.}}
+\DoxyCodeLine{00245\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00246\ \ \ \ \ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ terminate\_deadline;}
+\DoxyCodeLine{00247\ }
+\DoxyCodeLine{00248\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00249\ \textcolor{comment}{\ \ \ \ \ *\ Deadline\ at\ which\ connection\ dies\ due\ to\ idle\ timeout\ if\ no\ further}}
+\DoxyCodeLine{00250\ \textcolor{comment}{\ \ \ \ \ *\ events\ occur.}}
+\DoxyCodeLine{00251\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00252\ \ \ \ \ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ idle\_deadline;}
+\DoxyCodeLine{00253\ }
+\DoxyCodeLine{00254\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00255\ \textcolor{comment}{\ \ \ \ \ *\ Deadline\ at\ which\ we\ should\ send\ an\ ACK-\/eliciting\ packet\ to\ ensure}}
+\DoxyCodeLine{00256\ \textcolor{comment}{\ \ \ \ \ *\ idle\ timeout\ does\ not\ occur.}}
+\DoxyCodeLine{00257\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00258\ \ \ \ \ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ping\_deadline;}
+\DoxyCodeLine{00259\ }
+\DoxyCodeLine{00260\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00261\ \textcolor{comment}{\ \ \ \ \ *\ The\ deadline\ at\ which\ the\ period\ in\ which\ it\ is\ RECOMMENDED\ that\ we\ not}}
+\DoxyCodeLine{00262\ \textcolor{comment}{\ \ \ \ \ *\ initiate\ any\ spontaneous\ TXKU\ ends.\ This\ is\ zero\ if\ no\ such\ deadline}}
+\DoxyCodeLine{00263\ \textcolor{comment}{\ \ \ \ \ *\ applies.}}
+\DoxyCodeLine{00264\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00265\ \ \ \ \ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ txku\_cooldown\_deadline;}
+\DoxyCodeLine{00266\ }
+\DoxyCodeLine{00267\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00268\ \textcolor{comment}{\ \ \ \ \ *\ The\ deadline\ at\ which\ we\ take\ the\ QRX\ out\ of\ UPDATING\ and\ back\ to\ NORMAL.}}
+\DoxyCodeLine{00269\ \textcolor{comment}{\ \ \ \ \ *\ Valid\ if\ rxku\_in\_progress\ in\ 1.}}
+\DoxyCodeLine{00270\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00271\ \ \ \ \ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rxku\_update\_end\_deadline;}
+\DoxyCodeLine{00272\ }
+\DoxyCodeLine{00273\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00274\ \textcolor{comment}{\ \ \ \ \ *\ The\ first\ (application\ space)\ PN\ sent\ with\ a\ new\ key\ phase.\ Valid\ if\ the}}
+\DoxyCodeLine{00275\ \textcolor{comment}{\ \ \ \ \ *\ QTX\ key\ epoch\ is\ greater\ than\ 0.\ Once\ a\ packet\ we\ sent\ with\ a\ PN\ p\ (p\ >=}}
+\DoxyCodeLine{00276\ \textcolor{comment}{\ \ \ \ \ *\ txku\_pn)\ is\ ACKed,\ the\ TXKU\ is\ considered\ completed\ and\ txku\_in\_progress}}
+\DoxyCodeLine{00277\ \textcolor{comment}{\ \ \ \ \ *\ becomes\ 0.\ For\ sanity's\ sake,\ such\ a\ PN\ p\ should\ also\ be\ <=\ the\ highest}}
+\DoxyCodeLine{00278\ \textcolor{comment}{\ \ \ \ \ *\ PN\ we\ have\ ever\ sent,\ of\ course.}}
+\DoxyCodeLine{00279\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00280\ \ \ \ \ QUIC\_PN\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ txku\_pn;}
+\DoxyCodeLine{00281\ }
+\DoxyCodeLine{00282\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00283\ \textcolor{comment}{\ \ \ \ \ *\ The\ (application\ space)\ PN\ which\ triggered\ RXKU\ detection.\ Valid\ if}}
+\DoxyCodeLine{00284\ \textcolor{comment}{\ \ \ \ \ *\ rxku\_pending\_confirm.}}
+\DoxyCodeLine{00285\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00286\ \ \ \ \ QUIC\_PN\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rxku\_trigger\_pn;}
+\DoxyCodeLine{00287\ }
+\DoxyCodeLine{00288\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00289\ \textcolor{comment}{\ \ \ \ \ *\ State\ tracking.\ QUIC\ connection-\/level\ state\ is\ best\ represented\ based\ on}}
+\DoxyCodeLine{00290\ \textcolor{comment}{\ \ \ \ \ *\ whether\ various\ things\ have\ happened\ yet\ or\ not,\ rather\ than\ as\ an}}
+\DoxyCodeLine{00291\ \textcolor{comment}{\ \ \ \ \ *\ explicit\ FSM.\ We\ do\ have\ a\ coarse\ state\ variable\ which\ tracks\ the\ basic}}
+\DoxyCodeLine{00292\ \textcolor{comment}{\ \ \ \ \ *\ state\ of\ the\ connection's\ lifecycle,\ but\ more\ fine-\/grained\ conditions\ of}}
+\DoxyCodeLine{00293\ \textcolor{comment}{\ \ \ \ \ *\ the\ Active\ state\ are\ tracked\ via\ flags\ below.\ For\ more\ details,\ see}}
+\DoxyCodeLine{00294\ \textcolor{comment}{\ \ \ \ \ *\ doc/designs/quic-\/design/connection-\/state-\/machine.md.\ We\ are\ in\ the\ Open}}
+\DoxyCodeLine{00295\ \textcolor{comment}{\ \ \ \ \ *\ state\ if\ the\ state\ is\ QUIC\_CHANNEL\_STATE\_ACTIVE\ and\ handshake\_confirmed\ is}}
+\DoxyCodeLine{00296\ \textcolor{comment}{\ \ \ \ \ *\ set.}}
+\DoxyCodeLine{00297\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00298\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ state\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ 3;}
+\DoxyCodeLine{00299\ }
+\DoxyCodeLine{00300\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00301\ \textcolor{comment}{\ \ \ \ \ *\ Have\ we\ received\ at\ least\ one\ encrypted\ packet\ from\ the\ peer?}}
+\DoxyCodeLine{00302\ \textcolor{comment}{\ \ \ \ \ *\ (If\ so,\ Retry\ and\ Version\ Negotiation\ messages\ should\ no\ longer}}
+\DoxyCodeLine{00303\ \textcolor{comment}{\ \ \ \ \ *\ \ be\ received\ and\ should\ be\ ignored\ if\ they\ do\ occur.)}}
+\DoxyCodeLine{00304\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00305\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ have\_received\_enc\_pkt\ \ \ :\ 1;}
+\DoxyCodeLine{00306\ }
+\DoxyCodeLine{00307\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00308\ \textcolor{comment}{\ \ \ \ \ *\ Have\ we\ successfully\ processed\ any\ packet,\ including\ a\ Version}}
+\DoxyCodeLine{00309\ \textcolor{comment}{\ \ \ \ \ *\ Negotiation\ packet?\ If\ so,\ further\ Version\ Negotiation\ packets\ should\ be}}
+\DoxyCodeLine{00310\ \textcolor{comment}{\ \ \ \ \ *\ ignored.}}
+\DoxyCodeLine{00311\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00312\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ have\_processed\_any\_pkt\ \ :\ 1;}
+\DoxyCodeLine{00313\ }
+\DoxyCodeLine{00314\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00315\ \textcolor{comment}{\ \ \ \ \ *\ Have\ we\ sent\ literally\ any\ packet\ yet?\ If\ not,\ there\ is\ no\ point\ polling}}
+\DoxyCodeLine{00316\ \textcolor{comment}{\ \ \ \ \ *\ RX.}}
+\DoxyCodeLine{00317\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00318\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ have\_sent\_any\_pkt\ \ \ \ \ \ \ :\ 1;}
+\DoxyCodeLine{00319\ }
+\DoxyCodeLine{00320\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00321\ \textcolor{comment}{\ \ \ \ \ *\ Are\ we\ currently\ doing\ proactive\ version\ negotiation?}}
+\DoxyCodeLine{00322\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00323\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ doing\_proactive\_ver\_neg\ :\ 1;}
+\DoxyCodeLine{00324\ }
+\DoxyCodeLine{00325\ \ \ \ \ \textcolor{comment}{/*\ We\ have\ received\ transport\ parameters\ from\ the\ peer.\ */}}
+\DoxyCodeLine{00326\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ got\_remote\_transport\_params\ \ \ \ :\ 1;}
+\DoxyCodeLine{00327\ }
+\DoxyCodeLine{00328\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00329\ \textcolor{comment}{\ \ \ \ \ *\ This\ monotonically\ transitions\ to\ 1\ once\ the\ TLS\ state\ machine\ is}}
+\DoxyCodeLine{00330\ \textcolor{comment}{\ \ \ \ \ *\ 'complete',\ meaning\ that\ it\ has\ both\ sent\ a\ Finished\ and\ successfully}}
+\DoxyCodeLine{00331\ \textcolor{comment}{\ \ \ \ \ *\ verified\ the\ peer's\ Finished\ (see\ RFC\ 9001\ s.\ 4.1.1).\ Note\ that\ it}}
+\DoxyCodeLine{00332\ \textcolor{comment}{\ \ \ \ \ *\ does\ not\ transition\ to\ 1\ at\ both\ peers\ simultaneously.}}
+\DoxyCodeLine{00333\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00334\ \textcolor{comment}{\ \ \ \ \ *\ Handshake\ completion\ is\ not\ the\ same\ as\ handshake\ confirmation\ (see}}
+\DoxyCodeLine{00335\ \textcolor{comment}{\ \ \ \ \ *\ below).}}
+\DoxyCodeLine{00336\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00337\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ handshake\_complete\ \ \ \ \ \ :\ 1;}
+\DoxyCodeLine{00338\ }
+\DoxyCodeLine{00339\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00340\ \textcolor{comment}{\ \ \ \ \ *\ This\ monotonically\ transitions\ to\ 1\ once\ the\ handshake\ is\ confirmed.}}
+\DoxyCodeLine{00341\ \textcolor{comment}{\ \ \ \ \ *\ This\ happens\ on\ the\ client\ when\ we\ receive\ a\ HANDSHAKE\_DONE\ frame.}}
+\DoxyCodeLine{00342\ \textcolor{comment}{\ \ \ \ \ *\ At\ our\ option,\ we\ may\ also\ take\ acknowledgement\ of\ any\ 1-\/RTT\ packet}}
+\DoxyCodeLine{00343\ \textcolor{comment}{\ \ \ \ \ *\ we\ sent\ as\ a\ handshake\ confirmation.}}
+\DoxyCodeLine{00344\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00345\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ handshake\_confirmed\ \ \ \ \ :\ 1;}
+\DoxyCodeLine{00346\ }
+\DoxyCodeLine{00347\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00348\ \textcolor{comment}{\ \ \ \ \ *\ We\ are\ sending\ Initial\ packets\ based\ on\ a\ Retry.\ This\ means\ we\ definitely}}
+\DoxyCodeLine{00349\ \textcolor{comment}{\ \ \ \ \ *\ should\ not\ receive\ another\ Retry,\ and\ if\ we\ do\ it\ is\ an\ error.}}
+\DoxyCodeLine{00350\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00351\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ doing\_retry\ \ \ \ \ \ \ \ \ \ \ \ \ :\ 1;}
+\DoxyCodeLine{00352\ }
+\DoxyCodeLine{00353\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00354\ \textcolor{comment}{\ \ \ \ \ *\ We\ don't\ store\ the\ current\ EL\ here;\ the\ TXP\ asks\ the\ QTX\ which\ ELs}}
+\DoxyCodeLine{00355\ \textcolor{comment}{\ \ \ \ \ *\ are\ provisioned\ to\ determine\ which\ ELs\ to\ use.}}
+\DoxyCodeLine{00356\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00357\ }
+\DoxyCodeLine{00358\ \ \ \ \ \textcolor{comment}{/*\ Have\ statm,\ qsm\ been\ initialised?\ Used\ to\ track\ cleanup.\ */}}
+\DoxyCodeLine{00359\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ have\_statm\ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ 1;}
+\DoxyCodeLine{00360\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ have\_qsm\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ 1;}
+\DoxyCodeLine{00361\ }
+\DoxyCodeLine{00362\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00363\ \textcolor{comment}{\ \ \ \ \ *\ Preferred\ ELs\ for\ transmission\ and\ reception.\ This\ is\ not\ strictly\ needed}}
+\DoxyCodeLine{00364\ \textcolor{comment}{\ \ \ \ \ *\ as\ it\ can\ be\ inferred\ from\ what\ keys\ we\ have\ provisioned,\ but\ makes}}
+\DoxyCodeLine{00365\ \textcolor{comment}{\ \ \ \ \ *\ determining\ the\ current\ EL\ simpler\ and\ faster.\ A\ separate\ EL\ for}}
+\DoxyCodeLine{00366\ \textcolor{comment}{\ \ \ \ \ *\ transmission\ and\ reception\ is\ not\ strictly\ necessary\ but\ makes\ things}}
+\DoxyCodeLine{00367\ \textcolor{comment}{\ \ \ \ \ *\ easier\ for\ interoperation\ with\ the\ handshake\ layer,\ which\ likes\ to\ invoke}}
+\DoxyCodeLine{00368\ \textcolor{comment}{\ \ \ \ \ *\ the\ yield\ secret\ callback\ at\ different\ times\ for\ TX\ and\ RX.}}
+\DoxyCodeLine{00369\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00370\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ tx\_enc\_level\ \ \ \ \ \ \ \ \ \ \ \ :\ 3;}
+\DoxyCodeLine{00371\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rx\_enc\_level\ \ \ \ \ \ \ \ \ \ \ \ :\ 3;}
+\DoxyCodeLine{00372\ }
+\DoxyCodeLine{00373\ \ \ \ \ \textcolor{comment}{/*\ If\ bit\ n\ is\ set,\ EL\ n\ has\ been\ discarded.\ */}}
+\DoxyCodeLine{00374\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ el\_discarded\ \ \ \ \ \ \ \ \ \ \ \ :\ 4;}
+\DoxyCodeLine{00375\ }
+\DoxyCodeLine{00376\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00377\ \textcolor{comment}{\ \ \ \ \ *\ While\ in\ TERMINATING\ -\/\ CLOSING,\ set\ when\ we\ should\ generate\ a\ connection}}
+\DoxyCodeLine{00378\ \textcolor{comment}{\ \ \ \ \ *\ close\ frame.}}
+\DoxyCodeLine{00379\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00380\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ conn\_close\_queued\ \ \ \ \ \ \ :\ 1;}
+\DoxyCodeLine{00381\ }
+\DoxyCodeLine{00382\ \ \ \ \ \textcolor{comment}{/*\ Are\ we\ in\ server\ mode?\ Never\ changes\ after\ instantiation.\ */}}
+\DoxyCodeLine{00383\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ is\_server\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ 1;}
+\DoxyCodeLine{00384\ }
+\DoxyCodeLine{00385\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00386\ \textcolor{comment}{\ \ \ \ \ *\ Set\ temporarily\ when\ the\ handshake\ layer\ has\ given\ us\ a\ new\ RX\ secret.}}
+\DoxyCodeLine{00387\ \textcolor{comment}{\ \ \ \ \ *\ Used\ to\ determine\ if\ we\ need\ to\ check\ our\ RX\ queues\ again.}}
+\DoxyCodeLine{00388\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00389\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ have\_new\_rx\_secret\ \ \ \ \ \ :\ 1;}
+\DoxyCodeLine{00390\ }
+\DoxyCodeLine{00391\ \ \ \ \ \textcolor{comment}{/*\ Have\ we\ ever\ called\ QUIC\_TLS\ yet\ during\ RX\ processing?\ */}}
+\DoxyCodeLine{00392\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ did\_tls\_tick\ \ \ \ \ \ \ \ \ \ \ \ :\ 1;}
+\DoxyCodeLine{00393\ \ \ \ \ \textcolor{comment}{/*\ Has\ any\ CRYPTO\ frame\ been\ processed\ during\ this\ tick?\ */}}
+\DoxyCodeLine{00394\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ did\_crypto\_frame\ \ \ \ \ \ \ \ :\ 1;}
+\DoxyCodeLine{00395\ }
+\DoxyCodeLine{00396\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00397\ \textcolor{comment}{\ \ \ \ \ *\ Have\ we\ sent\ an\ ack-\/eliciting\ packet\ since\ the\ last\ successful\ packet}}
+\DoxyCodeLine{00398\ \textcolor{comment}{\ \ \ \ \ *\ reception?\ Used\ to\ determine\ when\ to\ bump\ idle\ timer\ (see\ RFC\ 9000\ s.}}
+\DoxyCodeLine{00399\ \textcolor{comment}{\ \ \ \ \ *\ 10.1).}}
+\DoxyCodeLine{00400\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00401\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ have\_sent\_ack\_eliciting\_since\_rx\ \ \ \ :\ 1;}
+\DoxyCodeLine{00402\ }
+\DoxyCodeLine{00403\ \ \ \ \ \textcolor{comment}{/*\ Should\ incoming\ streams\ automatically\ be\ rejected?\ */}}
+\DoxyCodeLine{00404\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ incoming\_stream\_auto\_reject\ \ \ \ \ \ \ \ \ :\ 1;}
+\DoxyCodeLine{00405\ }
+\DoxyCodeLine{00406\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00407\ \textcolor{comment}{\ \ \ \ \ *\ 1\ if\ a\ key\ update\ sequence\ was\ locally\ initiated,\ meaning\ we\ sent\ the}}
+\DoxyCodeLine{00408\ \textcolor{comment}{\ \ \ \ \ *\ TXKU\ first\ and\ the\ resultant\ RXKU\ shouldn't\ result\ in\ our\ triggering}}
+\DoxyCodeLine{00409\ \textcolor{comment}{\ \ \ \ \ *\ another\ TXKU.\ 0\ if\ a\ key\ update\ sequence\ was\ initiated\ by\ the\ peer,}}
+\DoxyCodeLine{00410\ \textcolor{comment}{\ \ \ \ \ *\ meaning\ we\ detect\ a\ RXKU\ first\ and\ have\ to\ generate\ a\ TXKU\ in\ response.}}
+\DoxyCodeLine{00411\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00412\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ku\_locally\_initiated\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ 1;}
+\DoxyCodeLine{00413\ }
+\DoxyCodeLine{00414\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00415\ \textcolor{comment}{\ \ \ \ \ *\ 1\ if\ we\ have\ triggered\ TXKU\ (whether\ spontaneous\ or\ solicited)\ but\ are}}
+\DoxyCodeLine{00416\ \textcolor{comment}{\ \ \ \ \ *\ waiting\ for\ any\ PN\ using\ that\ new\ KP\ to\ be\ ACKed.\ While\ this\ is\ set,\ we}}
+\DoxyCodeLine{00417\ \textcolor{comment}{\ \ \ \ \ *\ are\ not\ allowed\ to\ trigger\ spontaneous\ TXKU\ (but\ solicited\ TXKU\ is}}
+\DoxyCodeLine{00418\ \textcolor{comment}{\ \ \ \ \ *\ potentially\ still\ possible).}}
+\DoxyCodeLine{00419\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00420\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ txku\_in\_progress\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ 1;}
+\DoxyCodeLine{00421\ }
+\DoxyCodeLine{00422\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00423\ \textcolor{comment}{\ \ \ \ \ *\ We\ have\ received\ an\ RXKU\ event\ and\ currently\ are\ going\ through}}
+\DoxyCodeLine{00424\ \textcolor{comment}{\ \ \ \ \ *\ UPDATING/COOLDOWN\ on\ the\ QRX.\ COOLDOWN\ is\ currently\ not\ used.\ Since\ RXKU}}
+\DoxyCodeLine{00425\ \textcolor{comment}{\ \ \ \ \ *\ cannot\ be\ detected\ in\ this\ state,\ this\ doesn't\ cause\ a\ protocol\ error\ or}}
+\DoxyCodeLine{00426\ \textcolor{comment}{\ \ \ \ \ *\ anything\ similar\ if\ a\ peer\ tries\ TXKU\ in\ this\ state.\ That\ traffic\ would}}
+\DoxyCodeLine{00427\ \textcolor{comment}{\ \ \ \ \ *\ simply\ be\ dropped.\ It's\ only\ used\ to\ track\ that\ our\ UPDATING\ timer\ is}}
+\DoxyCodeLine{00428\ \textcolor{comment}{\ \ \ \ \ *\ active\ so\ we\ know\ when\ to\ take\ the\ QRX\ out\ of\ UPDATING\ and\ back\ to}}
+\DoxyCodeLine{00429\ \textcolor{comment}{\ \ \ \ \ *\ NORMAL.}}
+\DoxyCodeLine{00430\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00431\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rxku\_in\_progress\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ 1;}
+\DoxyCodeLine{00432\ }
+\DoxyCodeLine{00433\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00434\ \textcolor{comment}{\ \ \ \ \ *\ We\ have\ received\ an\ RXKU\ but\ have\ yet\ to\ send\ an\ ACK\ for\ it,\ which\ means}}
+\DoxyCodeLine{00435\ \textcolor{comment}{\ \ \ \ \ *\ no\ further\ RXKUs\ are\ allowed\ yet.\ Note\ that\ we\ cannot\ detect\ further}}
+\DoxyCodeLine{00436\ \textcolor{comment}{\ \ \ \ \ *\ RXKUs\ anyway\ while\ the\ QRX\ remains\ in\ the\ UPDATING/COOLDOWN\ states,\ so}}
+\DoxyCodeLine{00437\ \textcolor{comment}{\ \ \ \ \ *\ this\ restriction\ comes\ into\ play\ if\ we\ take\ more\ than\ PTO\ time\ to\ send}}
+\DoxyCodeLine{00438\ \textcolor{comment}{\ \ \ \ \ *\ an\ ACK\ for\ it\ (not\ likely).}}
+\DoxyCodeLine{00439\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00440\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rxku\_pending\_confirm\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ 1;}
+\DoxyCodeLine{00441\ }
+\DoxyCodeLine{00442\ \ \ \ \ \textcolor{comment}{/*\ Temporary\ variable\ indicating\ rxku\_pending\_confirm\ is\ to\ become\ 0.\ */}}
+\DoxyCodeLine{00443\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rxku\_pending\_confirm\_done\ \ \ \ \ \ \ \ \ \ \ :\ 1;}
+\DoxyCodeLine{00444\ }
+\DoxyCodeLine{00445\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00446\ \textcolor{comment}{\ \ \ \ \ *\ If\ set,\ RXKU\ is\ expected\ (because\ we\ initiated\ a\ spontaneous\ TXKU).}}
+\DoxyCodeLine{00447\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00448\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rxku\_expected\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ 1;}
+\DoxyCodeLine{00449\ }
+\DoxyCodeLine{00450\ \ \ \ \ \textcolor{comment}{/*\ Permanent\ net\ error\ encountered\ */}}
+\DoxyCodeLine{00451\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ net\_error\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ 1;}
+\DoxyCodeLine{00452\ }
+\DoxyCodeLine{00453\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00454\ \textcolor{comment}{\ \ \ \ \ *\ Protocol\ error\ encountered.\ Note\ that\ you\ should\ refer\ to\ the\ state\ field}}
+\DoxyCodeLine{00455\ \textcolor{comment}{\ \ \ \ \ *\ rather\ than\ this.\ This\ is\ only\ used\ so\ we\ can\ ignore\ protocol\ errors}}
+\DoxyCodeLine{00456\ \textcolor{comment}{\ \ \ \ \ *\ after\ the\ first\ protocol\ error,\ but\ still\ record\ the\ first\ protocol\ error}}
+\DoxyCodeLine{00457\ \textcolor{comment}{\ \ \ \ \ *\ if\ it\ happens\ during\ the\ TERMINATING\ state.}}
+\DoxyCodeLine{00458\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00459\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ protocol\_error\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ 1;}
+\DoxyCodeLine{00460\ }
+\DoxyCodeLine{00461\ \ \ \ \ \textcolor{comment}{/*\ Inhibit\ tick\ for\ testing\ purposes?\ */}}
+\DoxyCodeLine{00462\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ inhibit\_tick\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ 1;}
+\DoxyCodeLine{00463\ }
+\DoxyCodeLine{00464\ \ \ \ \ \textcolor{comment}{/*\ Are\ we\ using\ addressed\ mode?\ */}}
+\DoxyCodeLine{00465\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ addressed\_mode\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ 1;}
+\DoxyCodeLine{00466\ }
+\DoxyCodeLine{00467\ \ \ \ \ \textcolor{comment}{/*\ Saved\ error\ stack\ in\ case\ permanent\ error\ was\ encountered\ */}}
+\DoxyCodeLine{00468\ \ \ \ \ ERR\_STATE\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *err\_state;}
+\DoxyCodeLine{00469\ }
+\DoxyCodeLine{00470\ \ \ \ \ \textcolor{comment}{/*\ Scratch\ area\ for\ use\ by\ RXDP\ to\ store\ decoded\ ACK\ ranges.\ */}}
+\DoxyCodeLine{00471\ \ \ \ \ \mbox{\hyperlink{structossl__quic__ack__range__st}{OSSL\_QUIC\_ACK\_RANGE}}\ \ \ \ \ \ \ \ \ \ \ \ \ *ack\_range\_scratch;}
+\DoxyCodeLine{00472\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ num\_ack\_range\_scratch;}
+\DoxyCodeLine{00473\ \};}
+\DoxyCodeLine{00474\ }
+\DoxyCodeLine{00475\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00476\ }
+\DoxyCodeLine{00477\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

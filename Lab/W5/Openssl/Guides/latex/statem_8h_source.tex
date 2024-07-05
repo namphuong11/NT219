@@ -1,0 +1,177 @@
+\doxysection{statem.\+h}
+\hypertarget{statem_8h_source}{}\label{statem_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/statem.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/statem.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2015-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#ifndef\ OSSL\_INTERNAL\_STATEM\_H}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#\ define\ OSSL\_INTERNAL\_STATEM\_H}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{comment}{/*****************************************************************************}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ *\ These\ enums\ should\ be\ considered\ PRIVATE\ to\ the\ state\ machine.\ No\ \ \ \ \ \ \ \ \ *}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ *\ non-\/state\ machine\ code\ should\ need\ to\ use\ these\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ *****************************************************************************/}}
+\DoxyCodeLine{00018\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ *\ Valid\ return\ codes\ used\ for\ functions\ performing\ work\ prior\ to\ or\ after}}
+\DoxyCodeLine{00020\ \textcolor{comment}{\ *\ sending\ or\ receiving\ a\ message}}
+\DoxyCodeLine{00021\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00022\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}\ \{}
+\DoxyCodeLine{00023\ \ \ \ \ \textcolor{comment}{/*\ Something\ went\ wrong\ */}}
+\DoxyCodeLine{00024\ \ \ \ \ WORK\_ERROR,}
+\DoxyCodeLine{00025\ \ \ \ \ \textcolor{comment}{/*\ We're\ done\ working\ and\ there\ shouldn't\ be\ anything\ else\ to\ do\ after\ */}}
+\DoxyCodeLine{00026\ \ \ \ \ WORK\_FINISHED\_STOP,}
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{comment}{/*\ We're\ done\ working\ move\ onto\ the\ next\ thing\ */}}
+\DoxyCodeLine{00028\ \ \ \ \ WORK\_FINISHED\_CONTINUE,}
+\DoxyCodeLine{00029\ \ \ \ \ \textcolor{comment}{/*\ We're\ working\ on\ phase\ A\ */}}
+\DoxyCodeLine{00030\ \ \ \ \ WORK\_MORE\_A,}
+\DoxyCodeLine{00031\ \ \ \ \ \textcolor{comment}{/*\ We're\ working\ on\ phase\ B\ */}}
+\DoxyCodeLine{00032\ \ \ \ \ WORK\_MORE\_B,}
+\DoxyCodeLine{00033\ \ \ \ \ \textcolor{comment}{/*\ We're\ working\ on\ phase\ C\ */}}
+\DoxyCodeLine{00034\ \ \ \ \ WORK\_MORE\_C}
+\DoxyCodeLine{00035\ \}\ WORK\_STATE;}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \textcolor{comment}{/*\ Write\ transition\ return\ codes\ */}}
+\DoxyCodeLine{00038\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}\ \{}
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{comment}{/*\ Something\ went\ wrong\ */}}
+\DoxyCodeLine{00040\ \ \ \ \ WRITE\_TRAN\_ERROR,}
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{comment}{/*\ A\ transition\ was\ successfully\ completed\ and\ we\ should\ continue\ */}}
+\DoxyCodeLine{00042\ \ \ \ \ WRITE\_TRAN\_CONTINUE,}
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{comment}{/*\ There\ is\ no\ more\ write\ work\ to\ be\ done\ */}}
+\DoxyCodeLine{00044\ \ \ \ \ WRITE\_TRAN\_FINISHED}
+\DoxyCodeLine{00045\ \}\ WRITE\_TRAN;}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \textcolor{comment}{/*\ Message\ flow\ states\ */}}
+\DoxyCodeLine{00048\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}\ \{}
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{comment}{/*\ No\ handshake\ in\ progress\ */}}
+\DoxyCodeLine{00050\ \ \ \ \ MSG\_FLOW\_UNINITED,}
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{comment}{/*\ A\ permanent\ error\ with\ this\ connection\ */}}
+\DoxyCodeLine{00052\ \ \ \ \ MSG\_FLOW\_ERROR,}
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{comment}{/*\ We\ are\ reading\ messages\ */}}
+\DoxyCodeLine{00054\ \ \ \ \ MSG\_FLOW\_READING,}
+\DoxyCodeLine{00055\ \ \ \ \ \textcolor{comment}{/*\ We\ are\ writing\ messages\ */}}
+\DoxyCodeLine{00056\ \ \ \ \ MSG\_FLOW\_WRITING,}
+\DoxyCodeLine{00057\ \ \ \ \ \textcolor{comment}{/*\ Handshake\ has\ finished\ */}}
+\DoxyCodeLine{00058\ \ \ \ \ MSG\_FLOW\_FINISHED}
+\DoxyCodeLine{00059\ \}\ MSG\_FLOW\_STATE;}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ \textcolor{comment}{/*\ Read\ states\ */}}
+\DoxyCodeLine{00062\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}\ \{}
+\DoxyCodeLine{00063\ \ \ \ \ READ\_STATE\_HEADER,}
+\DoxyCodeLine{00064\ \ \ \ \ READ\_STATE\_BODY,}
+\DoxyCodeLine{00065\ \ \ \ \ READ\_STATE\_POST\_PROCESS}
+\DoxyCodeLine{00066\ \}\ READ\_STATE;}
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00068\ \textcolor{comment}{/*\ Write\ states\ */}}
+\DoxyCodeLine{00069\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}\ \{}
+\DoxyCodeLine{00070\ \ \ \ \ WRITE\_STATE\_TRANSITION,}
+\DoxyCodeLine{00071\ \ \ \ \ WRITE\_STATE\_PRE\_WORK,}
+\DoxyCodeLine{00072\ \ \ \ \ WRITE\_STATE\_SEND,}
+\DoxyCodeLine{00073\ \ \ \ \ WRITE\_STATE\_POST\_WORK}
+\DoxyCodeLine{00074\ \}\ WRITE\_STATE;}
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00076\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}\ \{}
+\DoxyCodeLine{00077\ \ \ \ \ CON\_FUNC\_ERROR\ =\ 0,}
+\DoxyCodeLine{00078\ \ \ \ \ CON\_FUNC\_SUCCESS,}
+\DoxyCodeLine{00079\ \ \ \ \ CON\_FUNC\_DONT\_SEND}
+\DoxyCodeLine{00080\ \}\ CON\_FUNC\_RETURN;}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00082\ \textcolor{keyword}{typedef}\ int\ (*ossl\_statem\_mutate\_handshake\_cb)(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *msgin,}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ inlen,}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **msgout,}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ *outlen,}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *arg);}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00088\ \textcolor{keyword}{typedef}\ void\ (*ossl\_statem\_finish\_mutate\_handshake\_cb)(\textcolor{keywordtype}{void}\ *arg);}
+\DoxyCodeLine{00089\ }
+\DoxyCodeLine{00090\ \textcolor{comment}{/*****************************************************************************}}
+\DoxyCodeLine{00091\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *}}
+\DoxyCodeLine{00092\ \textcolor{comment}{\ *\ This\ structure\ should\ be\ considered\ "{}opaque"{}\ to\ anything\ outside\ of\ the\ \ \ *}}
+\DoxyCodeLine{00093\ \textcolor{comment}{\ *\ state\ machine.\ No\ non-\/state\ machine\ code\ should\ be\ accessing\ the\ members\ \ *}}
+\DoxyCodeLine{00094\ \textcolor{comment}{\ *\ of\ this\ structure.\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *}}
+\DoxyCodeLine{00095\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *}}
+\DoxyCodeLine{00096\ \textcolor{comment}{\ *****************************************************************************/}}
+\DoxyCodeLine{00097\ }
+\DoxyCodeLine{00098\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__statem__st}{ossl\_statem\_st}}\ \{}
+\DoxyCodeLine{00099\ \ \ \ \ MSG\_FLOW\_STATE\ state;}
+\DoxyCodeLine{00100\ \ \ \ \ WRITE\_STATE\ write\_state;}
+\DoxyCodeLine{00101\ \ \ \ \ WORK\_STATE\ write\_state\_work;}
+\DoxyCodeLine{00102\ \ \ \ \ READ\_STATE\ read\_state;}
+\DoxyCodeLine{00103\ \ \ \ \ WORK\_STATE\ read\_state\_work;}
+\DoxyCodeLine{00104\ \ \ \ \ OSSL\_HANDSHAKE\_STATE\ hand\_state;}
+\DoxyCodeLine{00105\ \ \ \ \ \textcolor{comment}{/*\ The\ handshake\ state\ requested\ by\ an\ API\ call\ (e.g.\ HelloRequest)\ */}}
+\DoxyCodeLine{00106\ \ \ \ \ OSSL\_HANDSHAKE\_STATE\ request\_state;}
+\DoxyCodeLine{00107\ \ \ \ \ \textcolor{keywordtype}{int}\ in\_init;}
+\DoxyCodeLine{00108\ \ \ \ \ \textcolor{keywordtype}{int}\ read\_state\_first\_init;}
+\DoxyCodeLine{00109\ \ \ \ \ \textcolor{comment}{/*\ true\ when\ we\ are\ actually\ in\ SSL\_accept()\ or\ SSL\_connect()\ */}}
+\DoxyCodeLine{00110\ \ \ \ \ \textcolor{keywordtype}{int}\ in\_handshake;}
+\DoxyCodeLine{00111\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00112\ \textcolor{comment}{\ \ \ \ \ *\ True\ when\ are\ processing\ a\ "{}real"{}\ handshake\ that\ needs\ cleaning\ up\ (not}}
+\DoxyCodeLine{00113\ \textcolor{comment}{\ \ \ \ \ *\ just\ a\ HelloRequest\ or\ similar).}}
+\DoxyCodeLine{00114\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00115\ \ \ \ \ \textcolor{keywordtype}{int}\ cleanuphand;}
+\DoxyCodeLine{00116\ \ \ \ \ \textcolor{comment}{/*\ Should\ we\ skip\ the\ CertificateVerify\ message?\ */}}
+\DoxyCodeLine{00117\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ no\_cert\_verify;}
+\DoxyCodeLine{00118\ \ \ \ \ \textcolor{keywordtype}{int}\ use\_timer;}
+\DoxyCodeLine{00119\ }
+\DoxyCodeLine{00120\ \ \ \ \ \textcolor{comment}{/*\ Test\ harness\ message\ mutator\ callbacks\ */}}
+\DoxyCodeLine{00121\ \ \ \ \ ossl\_statem\_mutate\_handshake\_cb\ mutate\_handshake\_cb;}
+\DoxyCodeLine{00122\ \ \ \ \ ossl\_statem\_finish\_mutate\_handshake\_cb\ finish\_mutate\_handshake\_cb;}
+\DoxyCodeLine{00123\ \ \ \ \ \textcolor{keywordtype}{void}\ *mutatearg;}
+\DoxyCodeLine{00124\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ write\_in\_progress\ :\ 1;}
+\DoxyCodeLine{00125\ \};}
+\DoxyCodeLine{00126\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__statem__st}{ossl\_statem\_st}}\ \mbox{\hyperlink{structossl__statem__st}{OSSL\_STATEM}};}
+\DoxyCodeLine{00127\ }
+\DoxyCodeLine{00128\ \textcolor{comment}{/*****************************************************************************}}
+\DoxyCodeLine{00129\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *}}
+\DoxyCodeLine{00130\ \textcolor{comment}{\ *\ The\ following\ macros/functions\ represent\ the\ libssl\ internal\ API\ to\ the\ \ \ *}}
+\DoxyCodeLine{00131\ \textcolor{comment}{\ *\ state\ machine.\ Any\ libssl\ code\ may\ call\ these\ functions/macros\ \ \ \ \ \ \ \ \ \ \ \ *}}
+\DoxyCodeLine{00132\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *}}
+\DoxyCodeLine{00133\ \textcolor{comment}{\ *****************************************************************************/}}
+\DoxyCodeLine{00134\ }
+\DoxyCodeLine{00135\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structssl__connection__st}{ssl\_connection\_st}}\ \mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}};}
+\DoxyCodeLine{00136\ }
+\DoxyCodeLine{00137\ \_\_owur\ \textcolor{keywordtype}{int}\ ossl\_statem\_accept(SSL\ *s);}
+\DoxyCodeLine{00138\ \_\_owur\ \textcolor{keywordtype}{int}\ ossl\_statem\_connect(SSL\ *s);}
+\DoxyCodeLine{00139\ OSSL\_HANDSHAKE\_STATE\ ossl\_statem\_get\_state(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s);}
+\DoxyCodeLine{00140\ \textcolor{keywordtype}{void}\ ossl\_statem\_clear(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s);}
+\DoxyCodeLine{00141\ \textcolor{keywordtype}{void}\ ossl\_statem\_set\_renegotiate(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s);}
+\DoxyCodeLine{00142\ \textcolor{keywordtype}{void}\ ossl\_statem\_send\_fatal(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \textcolor{keywordtype}{int}\ al);}
+\DoxyCodeLine{00143\ \textcolor{keywordtype}{void}\ ossl\_statem\_fatal(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \textcolor{keywordtype}{int}\ al,\ \textcolor{keywordtype}{int}\ reason,}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *fmt,\ ...);}
+\DoxyCodeLine{00145\ \textcolor{preprocessor}{\#\ define\ SSLfatal\_alert(s,\ al)\ ossl\_statem\_send\_fatal((s),\ (al))}}
+\DoxyCodeLine{00146\ \textcolor{preprocessor}{\#\ define\ SSLfatal(s,\ al,\ r)\ SSLfatal\_data((s),\ (al),\ (r),\ NULL)}}
+\DoxyCodeLine{00147\ \textcolor{preprocessor}{\#\ define\ SSLfatal\_data\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00148\ \textcolor{preprocessor}{\ \ \ \ (ERR\_new(),\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00149\ \textcolor{preprocessor}{\ \ \ \ \ ERR\_set\_debug(OPENSSL\_FILE,\ OPENSSL\_LINE,\ OPENSSL\_FUNC),\ \ \ \(\backslash\)}}
+\DoxyCodeLine{00150\ \textcolor{preprocessor}{\ \ \ \ \ ossl\_statem\_fatal)}}
+\DoxyCodeLine{00151\ }
+\DoxyCodeLine{00152\ \textcolor{keywordtype}{int}\ ossl\_statem\_in\_error(\textcolor{keyword}{const}\ \mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s);}
+\DoxyCodeLine{00153\ \textcolor{keywordtype}{void}\ ossl\_statem\_set\_in\_init(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \textcolor{keywordtype}{int}\ init);}
+\DoxyCodeLine{00154\ \textcolor{keywordtype}{int}\ ossl\_statem\_get\_in\_handshake(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s);}
+\DoxyCodeLine{00155\ \textcolor{keywordtype}{void}\ ossl\_statem\_set\_in\_handshake(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \textcolor{keywordtype}{int}\ inhand);}
+\DoxyCodeLine{00156\ \_\_owur\ \textcolor{keywordtype}{int}\ ossl\_statem\_skip\_early\_data(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s);}
+\DoxyCodeLine{00157\ \textcolor{keywordtype}{void}\ ossl\_statem\_check\_finish\_init(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s,\ \textcolor{keywordtype}{int}\ send);}
+\DoxyCodeLine{00158\ \textcolor{keywordtype}{void}\ ossl\_statem\_set\_hello\_verify\_done(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s);}
+\DoxyCodeLine{00159\ \_\_owur\ \textcolor{keywordtype}{int}\ ossl\_statem\_app\_data\_allowed(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s);}
+\DoxyCodeLine{00160\ \_\_owur\ \textcolor{keywordtype}{int}\ ossl\_statem\_export\_allowed(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s);}
+\DoxyCodeLine{00161\ \_\_owur\ \textcolor{keywordtype}{int}\ ossl\_statem\_export\_early\_allowed(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s);}
+\DoxyCodeLine{00162\ }
+\DoxyCodeLine{00163\ \textcolor{comment}{/*\ Flush\ the\ write\ BIO\ */}}
+\DoxyCodeLine{00164\ \textcolor{keywordtype}{int}\ statem\_flush(\mbox{\hyperlink{structssl__connection__st}{SSL\_CONNECTION}}\ *s);}
+\DoxyCodeLine{00165\ }
+\DoxyCodeLine{00166\ \textcolor{keywordtype}{int}\ ossl\_statem\_set\_mutator(SSL\ *s,}
+\DoxyCodeLine{00167\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ossl\_statem\_mutate\_handshake\_cb\ mutate\_handshake\_cb,}
+\DoxyCodeLine{00168\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ossl\_statem\_finish\_mutate\_handshake\_cb\ finish\_mutate\_handshake\_cb,}
+\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *mutatearg);}
+\DoxyCodeLine{00170\ }
+\DoxyCodeLine{00171\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

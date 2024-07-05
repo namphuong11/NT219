@@ -1,0 +1,41 @@
+\doxysection{ossl\+\_\+provider\+\_\+st Struct Reference}
+\hypertarget{structossl__provider__st}{}\label{structossl__provider__st}\index{ossl\_provider\_st@{ossl\_provider\_st}}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{structossl__provider__st_a29b7f9812b1826947280d5381ac76923}\label{structossl__provider__st_a29b7f9812b1826947280d5381ac76923} 
+unsigned int {\bfseries flag\+\_\+initialized}\+:1
+\item 
+\Hypertarget{structossl__provider__st_a8246dbfac988cd65548e1ff3caae3ea9}\label{structossl__provider__st_a8246dbfac988cd65548e1ff3caae3ea9} 
+unsigned int {\bfseries flag\+\_\+activated}\+:1
+\item 
+\Hypertarget{structossl__provider__st_ae955c0ee97713135e7ba43eff03a68ca}\label{structossl__provider__st_ae955c0ee97713135e7ba43eff03a68ca} 
+CRYPTO\+\_\+\+RWLOCK \texorpdfstring{$\ast$}{*} {\bfseries flag\+\_\+lock}
+\item 
+\Hypertarget{structossl__provider__st_a59f1b6b6a06ee66330492f540d9c31f6}\label{structossl__provider__st_a59f1b6b6a06ee66330492f540d9c31f6} 
+\mbox{\hyperlink{struct_c_r_y_p_t_o___r_e_f___c_o_u_n_t}{CRYPTO\+\_\+\+REF\+\_\+\+COUNT}} {\bfseries refcnt}
+\item 
+\Hypertarget{structossl__provider__st_a533920cbaa0577e7af13aff9b3cab09a}\label{structossl__provider__st_a533920cbaa0577e7af13aff9b3cab09a} 
+CRYPTO\+\_\+\+RWLOCK \texorpdfstring{$\ast$}{*} {\bfseries activatecnt\+\_\+lock}
+\item 
+\Hypertarget{structossl__provider__st_aa0a90414cb866583a6e916544d2090ab}\label{structossl__provider__st_aa0a90414cb866583a6e916544d2090ab} 
+int {\bfseries activatecnt}
+\item 
+\Hypertarget{structossl__provider__st_a780e11b965a209c53327c1cdc10e2f9b}\label{structossl__provider__st_a780e11b965a209c53327c1cdc10e2f9b} 
+char \texorpdfstring{$\ast$}{*} {\bfseries name}
+\item 
+\Hypertarget{structossl__provider__st_aa274f525ba6b3d1456aaff4d8cedb7f1}\label{structossl__provider__st_aa274f525ba6b3d1456aaff4d8cedb7f1} 
+char \texorpdfstring{$\ast$}{*} {\bfseries path}
+\item 
+\Hypertarget{structossl__provider__st_abfdb5937304e0871c2b07a2c9dd05884}\label{structossl__provider__st_abfdb5937304e0871c2b07a2c9dd05884} 
+\mbox{\hyperlink{structdso__st}{DSO}} \texorpdfstring{$\ast$}{*}OSSL\+\_\+provider\+\_\+init\+\_\+fn \texorpdfstring{$\ast$}{*} {\bfseries init\+\_\+function}
+\item 
+\Hypertarget{structossl__provider__st_a92532131b9a76daf1382e17a829cb13e}\label{structossl__provider__st_a92532131b9a76daf1382e17a829cb13e} 
+int {\bfseries x}
+\end{DoxyCompactItemize}
+
+
+The documentation for this struct was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/namph/\+Downloads/openssl/openssl-\/3.\+2.\+1/crypto/provider\+\_\+core.\+c\item 
+C\+:/\+Users/namph/\+Downloads/openssl/openssl-\/3.\+2.\+1/test/property\+\_\+test.\+c\end{DoxyCompactItemize}

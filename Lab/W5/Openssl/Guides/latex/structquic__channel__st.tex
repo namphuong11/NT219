@@ -1,0 +1,331 @@
+\doxysection{quic\+\_\+channel\+\_\+st Struct Reference}
+\hypertarget{structquic__channel__st}{}\label{structquic__channel__st}\index{quic\_channel\_st@{quic\_channel\_st}}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{structquic__channel__st_a610ad2c01653bf643cdd0df849852174}\label{structquic__channel__st_a610ad2c01653bf643cdd0df849852174} 
+{\bfseries LHASH\+\_\+\+OF} (\mbox{\hyperlink{structquic__srt__elem__st}{QUIC\+\_\+\+SRT\+\_\+\+ELEM}}) \texorpdfstring{$\ast$}{*}srt\+\_\+hash\+\_\+tok
+\item 
+\Hypertarget{structquic__channel__st_aaf13bf4257077decbae98db5d46e4356}\label{structquic__channel__st_aaf13bf4257077decbae98db5d46e4356} 
+{\bfseries OSSL\+\_\+\+LIST} (stateless\+\_\+reset\+\_\+tokens) srt\+\_\+list\+\_\+seq
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{structquic__channel__st_ad20d242de59c6eac993131330288bca9}\label{structquic__channel__st_ad20d242de59c6eac993131330288bca9} 
+OSSL\+\_\+\+LIB\+\_\+\+CTX \texorpdfstring{$\ast$}{*} {\bfseries libctx}
+\item 
+\Hypertarget{structquic__channel__st_a63db7d1bcb25c5246839fb22f18fd990}\label{structquic__channel__st_a63db7d1bcb25c5246839fb22f18fd990} 
+const char \texorpdfstring{$\ast$}{*} {\bfseries propq}
+\item 
+\Hypertarget{structquic__channel__st_aa44312345d9039e2c1a8f4f9e7eedc21}\label{structquic__channel__st_aa44312345d9039e2c1a8f4f9e7eedc21} 
+CRYPTO\+\_\+\+MUTEX \texorpdfstring{$\ast$}{*} {\bfseries mutex}
+\item 
+\Hypertarget{structquic__channel__st_ac34c504a8d640d5160da87faf5f3422f}\label{structquic__channel__st_ac34c504a8d640d5160da87faf5f3422f} 
+\mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\+\_\+\+TIME}}(\texorpdfstring{$\ast$}{*} {\bfseries now\+\_\+cb} )(void \texorpdfstring{$\ast$}{*}arg)
+\item 
+\Hypertarget{structquic__channel__st_a303eecd75770bd39ad5925d80dc55df1}\label{structquic__channel__st_a303eecd75770bd39ad5925d80dc55df1} 
+void \texorpdfstring{$\ast$}{*} {\bfseries now\+\_\+cb\+\_\+arg}
+\item 
+\Hypertarget{structquic__channel__st_a260740ebf4e81be5969778a0de6bf91a}\label{structquic__channel__st_a260740ebf4e81be5969778a0de6bf91a} 
+\mbox{\hyperlink{structquic__tls__st}{QUIC\+\_\+\+TLS}} \texorpdfstring{$\ast$}{*} {\bfseries qtls}
+\item 
+\Hypertarget{structquic__channel__st_adab27898b86dbd1d56307b49330d0c35}\label{structquic__channel__st_adab27898b86dbd1d56307b49330d0c35} 
+SSL \texorpdfstring{$\ast$}{*} {\bfseries tls}
+\item 
+\Hypertarget{structquic__channel__st_ad17d92a2a630dd71c531c095657e7d6f}\label{structquic__channel__st_ad17d92a2a630dd71c531c095657e7d6f} 
+unsigned char \texorpdfstring{$\ast$}{*} {\bfseries local\+\_\+transport\+\_\+params}
+\item 
+\Hypertarget{structquic__channel__st_a9c7dae6112f2b2e3fe4ec35c824cd3bf}\label{structquic__channel__st_a9c7dae6112f2b2e3fe4ec35c824cd3bf} 
+\mbox{\hyperlink{structquic__reactor__st}{QUIC\+\_\+\+REACTOR}} {\bfseries rtor}
+\item 
+\Hypertarget{structquic__channel__st_a613bd7f1c04b2901ce91a762211218ce}\label{structquic__channel__st_a613bd7f1c04b2901ce91a762211218ce} 
+BIO\+\_\+\+ADDR {\bfseries cur\+\_\+peer\+\_\+addr}
+\item 
+\Hypertarget{structquic__channel__st_aa3bb44c380325019a3999763613d373e}\label{structquic__channel__st_aa3bb44c380325019a3999763613d373e} 
+BIO \texorpdfstring{$\ast$}{*} {\bfseries net\+\_\+rbio}
+\item 
+\Hypertarget{structquic__channel__st_a50aae2b2fe7d95775572f2f049770073}\label{structquic__channel__st_a50aae2b2fe7d95775572f2f049770073} 
+BIO \texorpdfstring{$\ast$}{*} {\bfseries net\+\_\+wbio}
+\item 
+\Hypertarget{structquic__channel__st_a37bfbd70798a46193c88f76e874d3194}\label{structquic__channel__st_a37bfbd70798a46193c88f76e874d3194} 
+\mbox{\hyperlink{structossl__quic__tx__packetiser__st}{OSSL\+\_\+\+QUIC\+\_\+\+TX\+\_\+\+PACKETISER}} \texorpdfstring{$\ast$}{*} {\bfseries txp}
+\item 
+\Hypertarget{structquic__channel__st_ad3ffcce5724beef4a02859e15a272a98}\label{structquic__channel__st_ad3ffcce5724beef4a02859e15a272a98} 
+\mbox{\hyperlink{structquic__txpim__st}{QUIC\+\_\+\+TXPIM}} \texorpdfstring{$\ast$}{*} {\bfseries txpim}
+\item 
+\Hypertarget{structquic__channel__st_a9bc52849f69a3f7ed1f6dcd116ff8d53}\label{structquic__channel__st_a9bc52849f69a3f7ed1f6dcd116ff8d53} 
+\mbox{\hyperlink{structquic__cfq__st}{QUIC\+\_\+\+CFQ}} \texorpdfstring{$\ast$}{*} {\bfseries cfq}
+\item 
+\Hypertarget{structquic__channel__st_a63c7bc93a9ea892aefb731f99f5e549f}\label{structquic__channel__st_a63c7bc93a9ea892aefb731f99f5e549f} 
+\mbox{\hyperlink{structquic__txfc__st}{QUIC\+\_\+\+TXFC}} {\bfseries conn\+\_\+txfc}
+\item 
+\Hypertarget{structquic__channel__st_a96643743a388d3a1da1fa05b8ce1026d}\label{structquic__channel__st_a96643743a388d3a1da1fa05b8ce1026d} 
+\mbox{\hyperlink{structquic__rxfc__st}{QUIC\+\_\+\+RXFC}} {\bfseries conn\+\_\+rxfc}
+\item 
+\Hypertarget{structquic__channel__st_aa155865b83121a7b6326d38060eae181}\label{structquic__channel__st_aa155865b83121a7b6326d38060eae181} 
+\mbox{\hyperlink{structquic__rxfc__st}{QUIC\+\_\+\+RXFC}} {\bfseries crypto\+\_\+rxfc} \mbox{[}QUIC\+\_\+\+PN\+\_\+\+SPACE\+\_\+\+NUM\mbox{]}
+\item 
+\Hypertarget{structquic__channel__st_a180d3c7dcda70a9c8a04e65d62a0b30a}\label{structquic__channel__st_a180d3c7dcda70a9c8a04e65d62a0b30a} 
+\mbox{\hyperlink{structquic__rxfc__st}{QUIC\+\_\+\+RXFC}} {\bfseries max\+\_\+streams\+\_\+bidi\+\_\+rxfc}
+\item 
+\Hypertarget{structquic__channel__st_a6fa2974f0c8bbf84c4547824b1170032}\label{structquic__channel__st_a6fa2974f0c8bbf84c4547824b1170032} 
+\mbox{\hyperlink{structquic__rxfc__st}{QUIC\+\_\+\+RXFC}} {\bfseries max\+\_\+streams\+\_\+uni\+\_\+rxfc}
+\item 
+\Hypertarget{structquic__channel__st_ae509f3094883039847102f102419a314}\label{structquic__channel__st_ae509f3094883039847102f102419a314} 
+\mbox{\hyperlink{structquic__stream__map__st}{QUIC\+\_\+\+STREAM\+\_\+\+MAP}} {\bfseries qsm}
+\item 
+\Hypertarget{structquic__channel__st_abe14e46ffb0261b19718bc338a6095a5}\label{structquic__channel__st_abe14e46ffb0261b19718bc338a6095a5} 
+\mbox{\hyperlink{structossl__statm__st}{OSSL\+\_\+\+STATM}} {\bfseries statm}
+\item 
+\Hypertarget{structquic__channel__st_ae29356a47260515a90e697d39a187dd3}\label{structquic__channel__st_ae29356a47260515a90e697d39a187dd3} 
+OSSL\+\_\+\+CC\+\_\+\+DATA \texorpdfstring{$\ast$}{*} {\bfseries cc\+\_\+data}
+\item 
+\Hypertarget{structquic__channel__st_ab658eaeae3d5b11d7b07a3bed300f831}\label{structquic__channel__st_ab658eaeae3d5b11d7b07a3bed300f831} 
+const \mbox{\hyperlink{structossl__cc__method__st}{OSSL\+\_\+\+CC\+\_\+\+METHOD}} \texorpdfstring{$\ast$}{*} {\bfseries cc\+\_\+method}
+\item 
+\Hypertarget{structquic__channel__st_aa995cf9b483ed0a0512120a3658f3d0f}\label{structquic__channel__st_aa995cf9b483ed0a0512120a3658f3d0f} 
+\mbox{\hyperlink{structossl__ackm__st}{OSSL\+\_\+\+ACKM}} \texorpdfstring{$\ast$}{*} {\bfseries ackm}
+\item 
+\Hypertarget{structquic__channel__st_a0386fe9b703bd7299b8ee8d25da172c9}\label{structquic__channel__st_a0386fe9b703bd7299b8ee8d25da172c9} 
+\mbox{\hyperlink{structquic__demux__st}{QUIC\+\_\+\+DEMUX}} \texorpdfstring{$\ast$}{*} {\bfseries demux}
+\item 
+\Hypertarget{structquic__channel__st_adb6c381c2f7ba26d7330acbabfc8c76e}\label{structquic__channel__st_adb6c381c2f7ba26d7330acbabfc8c76e} 
+\mbox{\hyperlink{structossl__qtx__st}{OSSL\+\_\+\+QTX}} \texorpdfstring{$\ast$}{*} {\bfseries qtx}
+\item 
+\Hypertarget{structquic__channel__st_ae8d82dbff8e493a1efa54ef6dcbda572}\label{structquic__channel__st_ae8d82dbff8e493a1efa54ef6dcbda572} 
+\mbox{\hyperlink{structossl__qrx__st}{OSSL\+\_\+\+QRX}} \texorpdfstring{$\ast$}{*} {\bfseries qrx}
+\item 
+\Hypertarget{structquic__channel__st_a2c2ec37eea6cb0fc2ada299fecd542b5}\label{structquic__channel__st_a2c2ec37eea6cb0fc2ada299fecd542b5} 
+ossl\+\_\+msg\+\_\+cb {\bfseries msg\+\_\+callback}
+\item 
+\Hypertarget{structquic__channel__st_ac374e8ef9a0fd71276277a982d876d72}\label{structquic__channel__st_ac374e8ef9a0fd71276277a982d876d72} 
+void \texorpdfstring{$\ast$}{*} {\bfseries msg\+\_\+callback\+\_\+arg}
+\item 
+\Hypertarget{structquic__channel__st_a8f6c154d13ecdc5b924a1fb7f9179854}\label{structquic__channel__st_a8f6c154d13ecdc5b924a1fb7f9179854} 
+SSL \texorpdfstring{$\ast$}{*} {\bfseries msg\+\_\+callback\+\_\+ssl}
+\item 
+\Hypertarget{structquic__channel__st_a79a21478a1f3ecfc30b69f3d2418e955}\label{structquic__channel__st_a79a21478a1f3ecfc30b69f3d2418e955} 
+\mbox{\hyperlink{structquic__sstream__st}{QUIC\+\_\+\+SSTREAM}} \texorpdfstring{$\ast$}{*} {\bfseries crypto\+\_\+send} \mbox{[}QUIC\+\_\+\+PN\+\_\+\+SPACE\+\_\+\+NUM\mbox{]}
+\item 
+\Hypertarget{structquic__channel__st_a8863a896f42d64451b62a3be6887c177}\label{structquic__channel__st_a8863a896f42d64451b62a3be6887c177} 
+\mbox{\hyperlink{structquic__rstream__st}{QUIC\+\_\+\+RSTREAM}} \texorpdfstring{$\ast$}{*} {\bfseries crypto\+\_\+recv} \mbox{[}QUIC\+\_\+\+PN\+\_\+\+SPACE\+\_\+\+NUM\mbox{]}
+\item 
+\Hypertarget{structquic__channel__st_a0372c2378983ef0f90f432f276ae79c4}\label{structquic__channel__st_a0372c2378983ef0f90f432f276ae79c4} 
+\mbox{\hyperlink{structquic__conn__id__st}{QUIC\+\_\+\+CONN\+\_\+\+ID}} {\bfseries init\+\_\+dcid}
+\item 
+\Hypertarget{structquic__channel__st_a507daba994f5188b47ccf36060a032a2}\label{structquic__channel__st_a507daba994f5188b47ccf36060a032a2} 
+\mbox{\hyperlink{structquic__conn__id__st}{QUIC\+\_\+\+CONN\+\_\+\+ID}} {\bfseries init\+\_\+scid}
+\item 
+\Hypertarget{structquic__channel__st_a37f27a7565167c14c667ad2fb7b59c3f}\label{structquic__channel__st_a37f27a7565167c14c667ad2fb7b59c3f} 
+\mbox{\hyperlink{structquic__conn__id__st}{QUIC\+\_\+\+CONN\+\_\+\+ID}} {\bfseries retry\+\_\+scid}
+\item 
+\Hypertarget{structquic__channel__st_a1659fdda736bc24276a6774307278d49}\label{structquic__channel__st_a1659fdda736bc24276a6774307278d49} 
+\mbox{\hyperlink{structquic__conn__id__st}{QUIC\+\_\+\+CONN\+\_\+\+ID}} {\bfseries cur\+\_\+remote\+\_\+dcid}
+\item 
+\Hypertarget{structquic__channel__st_ac33c4fc8840b97e7c62df3ecba0d994e}\label{structquic__channel__st_ac33c4fc8840b97e7c62df3ecba0d994e} 
+uint64\+\_\+t {\bfseries cur\+\_\+remote\+\_\+seq\+\_\+num}
+\item 
+\Hypertarget{structquic__channel__st_ab1018783f8f37e7c8ba80f5a6dad628e}\label{structquic__channel__st_ab1018783f8f37e7c8ba80f5a6dad628e} 
+uint64\+\_\+t {\bfseries cur\+\_\+retire\+\_\+prior\+\_\+to}
+\item 
+\Hypertarget{structquic__channel__st_ab586c97aa8a892ee4094ba1f7bd011e8}\label{structquic__channel__st_ab586c97aa8a892ee4094ba1f7bd011e8} 
+\mbox{\hyperlink{structquic__conn__id__st}{QUIC\+\_\+\+CONN\+\_\+\+ID}} {\bfseries cur\+\_\+local\+\_\+cid}
+\item 
+\Hypertarget{structquic__channel__st_adc8a7a9cb5fb210db111989ffecfce8a}\label{structquic__channel__st_adc8a7a9cb5fb210db111989ffecfce8a} 
+uint64\+\_\+t {\bfseries tx\+\_\+init\+\_\+max\+\_\+stream\+\_\+data\+\_\+bidi\+\_\+local}
+\item 
+\Hypertarget{structquic__channel__st_af8c610fe8be4d677309f63fe1745769a}\label{structquic__channel__st_af8c610fe8be4d677309f63fe1745769a} 
+uint64\+\_\+t {\bfseries tx\+\_\+init\+\_\+max\+\_\+stream\+\_\+data\+\_\+bidi\+\_\+remote}
+\item 
+\Hypertarget{structquic__channel__st_ab4ccf7722d4aa81f7c02c3a4a0fcaa4c}\label{structquic__channel__st_ab4ccf7722d4aa81f7c02c3a4a0fcaa4c} 
+uint64\+\_\+t {\bfseries tx\+\_\+init\+\_\+max\+\_\+stream\+\_\+data\+\_\+uni}
+\item 
+\Hypertarget{structquic__channel__st_a62c4369763882b9d61a23ba2a60268f0}\label{structquic__channel__st_a62c4369763882b9d61a23ba2a60268f0} 
+uint64\+\_\+t {\bfseries tx\+\_\+max\+\_\+ack\+\_\+delay}
+\item 
+\Hypertarget{structquic__channel__st_aba8d099a084a6b5bfd6a4d1047c77b78}\label{structquic__channel__st_aba8d099a084a6b5bfd6a4d1047c77b78} 
+uint64\+\_\+t {\bfseries rx\+\_\+init\+\_\+max\+\_\+stream\+\_\+data\+\_\+bidi\+\_\+local}
+\item 
+\Hypertarget{structquic__channel__st_a1a1dd0bd5f8b6fcf6cbb99378912e7df}\label{structquic__channel__st_a1a1dd0bd5f8b6fcf6cbb99378912e7df} 
+uint64\+\_\+t {\bfseries rx\+\_\+init\+\_\+max\+\_\+stream\+\_\+data\+\_\+bidi\+\_\+remote}
+\item 
+\Hypertarget{structquic__channel__st_ae100a2e12b23fb2049e944d9730e5e23}\label{structquic__channel__st_ae100a2e12b23fb2049e944d9730e5e23} 
+uint64\+\_\+t {\bfseries rx\+\_\+init\+\_\+max\+\_\+stream\+\_\+data\+\_\+uni}
+\item 
+\Hypertarget{structquic__channel__st_a84a345c011c6258fc5c2e299a098d412}\label{structquic__channel__st_a84a345c011c6258fc5c2e299a098d412} 
+uint64\+\_\+t {\bfseries rx\+\_\+max\+\_\+ack\+\_\+delay}
+\item 
+\Hypertarget{structquic__channel__st_a1ad7eebb3237ce9f84911e50132c5508}\label{structquic__channel__st_a1ad7eebb3237ce9f84911e50132c5508} 
+unsigned char {\bfseries rx\+\_\+ack\+\_\+delay\+\_\+exp}
+\item 
+\Hypertarget{structquic__channel__st_acdfcbd6225400eda007f5eab34c9e7b1}\label{structquic__channel__st_acdfcbd6225400eda007f5eab34c9e7b1} 
+\mbox{\hyperlink{structossl__qrx__pkt__st}{OSSL\+\_\+\+QRX\+\_\+\+PKT}} \texorpdfstring{$\ast$}{*} {\bfseries qrx\+\_\+pkt}
+\item 
+\Hypertarget{structquic__channel__st_a843227a0c01c1f7e002719a490789a06}\label{structquic__channel__st_a843227a0c01c1f7e002719a490789a06} 
+uint64\+\_\+t {\bfseries max\+\_\+local\+\_\+streams\+\_\+bidi}
+\item 
+\Hypertarget{structquic__channel__st_aae9fa13ec4da93f84c7e235c7e239295}\label{structquic__channel__st_aae9fa13ec4da93f84c7e235c7e239295} 
+uint64\+\_\+t {\bfseries max\+\_\+local\+\_\+streams\+\_\+uni}
+\item 
+\Hypertarget{structquic__channel__st_a6eeaccda4075d1f4c3e1f95aae429e49}\label{structquic__channel__st_a6eeaccda4075d1f4c3e1f95aae429e49} 
+uint64\+\_\+t {\bfseries max\+\_\+idle\+\_\+timeout}
+\item 
+\Hypertarget{structquic__channel__st_a9679bb41932ac7414bb95fd539518546}\label{structquic__channel__st_a9679bb41932ac7414bb95fd539518546} 
+uint64\+\_\+t {\bfseries rx\+\_\+max\+\_\+udp\+\_\+payload\+\_\+size}
+\item 
+\Hypertarget{structquic__channel__st_a09006959ab6e253e9aea850abbfbb5ea}\label{structquic__channel__st_a09006959ab6e253e9aea850abbfbb5ea} 
+uint64\+\_\+t {\bfseries rx\+\_\+active\+\_\+conn\+\_\+id\+\_\+limit}
+\item 
+\Hypertarget{structquic__channel__st_a933643d63aaf0ea5307cb2682f26ce97}\label{structquic__channel__st_a933643d63aaf0ea5307cb2682f26ce97} 
+uint64\+\_\+t {\bfseries next\+\_\+local\+\_\+stream\+\_\+ordinal\+\_\+bidi}
+\item 
+\Hypertarget{structquic__channel__st_aac09c86dbfe975c1cba87aa60422f2f6}\label{structquic__channel__st_aac09c86dbfe975c1cba87aa60422f2f6} 
+uint64\+\_\+t {\bfseries next\+\_\+local\+\_\+stream\+\_\+ordinal\+\_\+uni}
+\item 
+\Hypertarget{structquic__channel__st_a71ff14d68df9ea50f142b625d2e10078}\label{structquic__channel__st_a71ff14d68df9ea50f142b625d2e10078} 
+uint64\+\_\+t {\bfseries next\+\_\+remote\+\_\+stream\+\_\+ordinal\+\_\+bidi}
+\item 
+\Hypertarget{structquic__channel__st_af92700e48003907d90a7088278d5354c}\label{structquic__channel__st_af92700e48003907d90a7088278d5354c} 
+uint64\+\_\+t {\bfseries next\+\_\+remote\+\_\+stream\+\_\+ordinal\+\_\+uni}
+\item 
+\Hypertarget{structquic__channel__st_abf65cc4914d8e500bb6da08b27f6087e}\label{structquic__channel__st_abf65cc4914d8e500bb6da08b27f6087e} 
+uint64\+\_\+t {\bfseries incoming\+\_\+stream\+\_\+auto\+\_\+reject\+\_\+aec}
+\item 
+\Hypertarget{structquic__channel__st_aaa32fa81d4cd07de2e33b27c10c9a099}\label{structquic__channel__st_aaa32fa81d4cd07de2e33b27c10c9a099} 
+uint64\+\_\+t {\bfseries txku\+\_\+threshold\+\_\+override}
+\item 
+\Hypertarget{structquic__channel__st_a2b7e35402e3f47fcd055918306c6885c}\label{structquic__channel__st_a2b7e35402e3f47fcd055918306c6885c} 
+uint16\+\_\+t {\bfseries diag\+\_\+num\+\_\+rx\+\_\+ack}
+\item 
+\Hypertarget{structquic__channel__st_a584db352675bc55db2422076ffce43b8}\label{structquic__channel__st_a584db352675bc55db2422076ffce43b8} 
+\mbox{\hyperlink{structquic__terminate__cause__st}{QUIC\+\_\+\+TERMINATE\+\_\+\+CAUSE}} {\bfseries terminate\+\_\+cause}
+\item 
+\Hypertarget{structquic__channel__st_a3e242d20c77596e0afe481d7da617094}\label{structquic__channel__st_a3e242d20c77596e0afe481d7da617094} 
+\mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\+\_\+\+TIME}} {\bfseries terminate\+\_\+deadline}
+\item 
+\Hypertarget{structquic__channel__st_ab37cf12246dda5ecaa94bcee2ce38943}\label{structquic__channel__st_ab37cf12246dda5ecaa94bcee2ce38943} 
+\mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\+\_\+\+TIME}} {\bfseries idle\+\_\+deadline}
+\item 
+\Hypertarget{structquic__channel__st_a1ebe775c2ba6c11e7bbbb29285f5f408}\label{structquic__channel__st_a1ebe775c2ba6c11e7bbbb29285f5f408} 
+\mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\+\_\+\+TIME}} {\bfseries ping\+\_\+deadline}
+\item 
+\Hypertarget{structquic__channel__st_a9d7bfd03d4c07d697cd55cb473480a35}\label{structquic__channel__st_a9d7bfd03d4c07d697cd55cb473480a35} 
+\mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\+\_\+\+TIME}} {\bfseries txku\+\_\+cooldown\+\_\+deadline}
+\item 
+\Hypertarget{structquic__channel__st_a8622d54f802d06a51515331763dd9d9a}\label{structquic__channel__st_a8622d54f802d06a51515331763dd9d9a} 
+\mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\+\_\+\+TIME}} {\bfseries rxku\+\_\+update\+\_\+end\+\_\+deadline}
+\item 
+\Hypertarget{structquic__channel__st_a3585f21fb69ca11f605267babcaace7a}\label{structquic__channel__st_a3585f21fb69ca11f605267babcaace7a} 
+QUIC\+\_\+\+PN {\bfseries txku\+\_\+pn}
+\item 
+\Hypertarget{structquic__channel__st_a29929dc29cc1e68871fe0347b7dda36d}\label{structquic__channel__st_a29929dc29cc1e68871fe0347b7dda36d} 
+QUIC\+\_\+\+PN {\bfseries rxku\+\_\+trigger\+\_\+pn}
+\item 
+\Hypertarget{structquic__channel__st_a37f7aa3c4f5d581fb62d68a340bbe250}\label{structquic__channel__st_a37f7aa3c4f5d581fb62d68a340bbe250} 
+unsigned int {\bfseries state}\+: 3
+\item 
+\Hypertarget{structquic__channel__st_af6d65e56179685ef934e17eacbb473fe}\label{structquic__channel__st_af6d65e56179685ef934e17eacbb473fe} 
+unsigned int {\bfseries have\+\_\+received\+\_\+enc\+\_\+pkt}\+: 1
+\item 
+\Hypertarget{structquic__channel__st_acdc7a2cec828eb823a5a803e5bf87d9e}\label{structquic__channel__st_acdc7a2cec828eb823a5a803e5bf87d9e} 
+unsigned int {\bfseries have\+\_\+processed\+\_\+any\+\_\+pkt}\+: 1
+\item 
+\Hypertarget{structquic__channel__st_a8bdb108ce34d5706a1fb8a7bc3d40488}\label{structquic__channel__st_a8bdb108ce34d5706a1fb8a7bc3d40488} 
+unsigned int {\bfseries have\+\_\+sent\+\_\+any\+\_\+pkt}\+: 1
+\item 
+\Hypertarget{structquic__channel__st_a9858fed740086719eb367bb5faa2bf70}\label{structquic__channel__st_a9858fed740086719eb367bb5faa2bf70} 
+unsigned int {\bfseries doing\+\_\+proactive\+\_\+ver\+\_\+neg}\+: 1
+\item 
+\Hypertarget{structquic__channel__st_a2a9261d90273373ea2e9e04a130e6f17}\label{structquic__channel__st_a2a9261d90273373ea2e9e04a130e6f17} 
+unsigned int {\bfseries got\+\_\+remote\+\_\+transport\+\_\+params}\+: 1
+\item 
+\Hypertarget{structquic__channel__st_a47488e49b9150757f3e211b1104b1b7a}\label{structquic__channel__st_a47488e49b9150757f3e211b1104b1b7a} 
+unsigned int {\bfseries handshake\+\_\+complete}\+: 1
+\item 
+\Hypertarget{structquic__channel__st_ad505a6f76f4990438fc6eadad8666306}\label{structquic__channel__st_ad505a6f76f4990438fc6eadad8666306} 
+unsigned int {\bfseries handshake\+\_\+confirmed}\+: 1
+\item 
+\Hypertarget{structquic__channel__st_a869fd8f58ecb85f437b4211482dd0851}\label{structquic__channel__st_a869fd8f58ecb85f437b4211482dd0851} 
+unsigned int {\bfseries doing\+\_\+retry}\+: 1
+\item 
+\Hypertarget{structquic__channel__st_a20a64d72b5540ad39ccfae41a3470873}\label{structquic__channel__st_a20a64d72b5540ad39ccfae41a3470873} 
+unsigned int {\bfseries have\+\_\+statm}\+: 1
+\item 
+\Hypertarget{structquic__channel__st_a47d658705c93b99201c661d7bdfddc41}\label{structquic__channel__st_a47d658705c93b99201c661d7bdfddc41} 
+unsigned int {\bfseries have\+\_\+qsm}\+: 1
+\item 
+\Hypertarget{structquic__channel__st_ac7036cac2fd143ee4926db61467a2c12}\label{structquic__channel__st_ac7036cac2fd143ee4926db61467a2c12} 
+unsigned int {\bfseries tx\+\_\+enc\+\_\+level}\+: 3
+\item 
+\Hypertarget{structquic__channel__st_a083f3740e09c772c67faab3e5c4c49b1}\label{structquic__channel__st_a083f3740e09c772c67faab3e5c4c49b1} 
+unsigned int {\bfseries rx\+\_\+enc\+\_\+level}\+: 3
+\item 
+\Hypertarget{structquic__channel__st_a74428bd4345f4344c72abae234c1d5ff}\label{structquic__channel__st_a74428bd4345f4344c72abae234c1d5ff} 
+unsigned int {\bfseries el\+\_\+discarded}\+: 4
+\item 
+\Hypertarget{structquic__channel__st_a1ff4908d890878bbaffd3a29b4075f96}\label{structquic__channel__st_a1ff4908d890878bbaffd3a29b4075f96} 
+unsigned int {\bfseries conn\+\_\+close\+\_\+queued}\+: 1
+\item 
+\Hypertarget{structquic__channel__st_aefc5f579d2eb43226d4ab2f7512b799a}\label{structquic__channel__st_aefc5f579d2eb43226d4ab2f7512b799a} 
+unsigned int {\bfseries is\+\_\+server}\+: 1
+\item 
+\Hypertarget{structquic__channel__st_a52f1d1bbf214cd0c1938c66aff139263}\label{structquic__channel__st_a52f1d1bbf214cd0c1938c66aff139263} 
+unsigned int {\bfseries have\+\_\+new\+\_\+rx\+\_\+secret}\+: 1
+\item 
+\Hypertarget{structquic__channel__st_adf8d1376082b5ad4570ff3c73990f181}\label{structquic__channel__st_adf8d1376082b5ad4570ff3c73990f181} 
+unsigned int {\bfseries did\+\_\+tls\+\_\+tick}\+: 1
+\item 
+\Hypertarget{structquic__channel__st_a48415a02cb6321205e96c57c2fc32493}\label{structquic__channel__st_a48415a02cb6321205e96c57c2fc32493} 
+unsigned int {\bfseries did\+\_\+crypto\+\_\+frame}\+: 1
+\item 
+\Hypertarget{structquic__channel__st_ad5ed4990a131293e769edb86314092cd}\label{structquic__channel__st_ad5ed4990a131293e769edb86314092cd} 
+unsigned int {\bfseries have\+\_\+sent\+\_\+ack\+\_\+eliciting\+\_\+since\+\_\+rx}\+: 1
+\item 
+\Hypertarget{structquic__channel__st_ab162214a287e466ff31eeaa41137b86a}\label{structquic__channel__st_ab162214a287e466ff31eeaa41137b86a} 
+unsigned int {\bfseries incoming\+\_\+stream\+\_\+auto\+\_\+reject}\+: 1
+\item 
+\Hypertarget{structquic__channel__st_aa9758a44bbd21d87f399d148df9e5047}\label{structquic__channel__st_aa9758a44bbd21d87f399d148df9e5047} 
+unsigned int {\bfseries ku\+\_\+locally\+\_\+initiated}\+: 1
+\item 
+\Hypertarget{structquic__channel__st_a43cc46a103cd09a1ae9a319f096634db}\label{structquic__channel__st_a43cc46a103cd09a1ae9a319f096634db} 
+unsigned int {\bfseries txku\+\_\+in\+\_\+progress}\+: 1
+\item 
+\Hypertarget{structquic__channel__st_afa874e1602782c093088bb3f6a6619ce}\label{structquic__channel__st_afa874e1602782c093088bb3f6a6619ce} 
+unsigned int {\bfseries rxku\+\_\+in\+\_\+progress}\+: 1
+\item 
+\Hypertarget{structquic__channel__st_ab29d22a77e37d063eb24bc4df7323dde}\label{structquic__channel__st_ab29d22a77e37d063eb24bc4df7323dde} 
+unsigned int {\bfseries rxku\+\_\+pending\+\_\+confirm}\+: 1
+\item 
+\Hypertarget{structquic__channel__st_a52fa7deb566537af3ad1dba3069d94f9}\label{structquic__channel__st_a52fa7deb566537af3ad1dba3069d94f9} 
+unsigned int {\bfseries rxku\+\_\+pending\+\_\+confirm\+\_\+done}\+: 1
+\item 
+\Hypertarget{structquic__channel__st_ae03987ff9bf7990309eac61b3aeec719}\label{structquic__channel__st_ae03987ff9bf7990309eac61b3aeec719} 
+unsigned int {\bfseries rxku\+\_\+expected}\+: 1
+\item 
+\Hypertarget{structquic__channel__st_aa69d0e545613a4a88c4dd2fa843a6f24}\label{structquic__channel__st_aa69d0e545613a4a88c4dd2fa843a6f24} 
+unsigned int {\bfseries net\+\_\+error}\+: 1
+\item 
+\Hypertarget{structquic__channel__st_a117ab5ee4d04eccd69ddb9ba3f20591b}\label{structquic__channel__st_a117ab5ee4d04eccd69ddb9ba3f20591b} 
+unsigned int {\bfseries protocol\+\_\+error}\+: 1
+\item 
+\Hypertarget{structquic__channel__st_aeaeb0e0d453805ad671e9c6bf9a2950d}\label{structquic__channel__st_aeaeb0e0d453805ad671e9c6bf9a2950d} 
+unsigned int {\bfseries inhibit\+\_\+tick}\+: 1
+\item 
+\Hypertarget{structquic__channel__st_aed8e8a931013beee8c81985f1ee11bd8}\label{structquic__channel__st_aed8e8a931013beee8c81985f1ee11bd8} 
+unsigned int {\bfseries addressed\+\_\+mode}\+: 1
+\item 
+\Hypertarget{structquic__channel__st_ac34c3f5317c184cde6e18550c3d6e3f0}\label{structquic__channel__st_ac34c3f5317c184cde6e18550c3d6e3f0} 
+ERR\+\_\+\+STATE \texorpdfstring{$\ast$}{*} {\bfseries err\+\_\+state}
+\item 
+\Hypertarget{structquic__channel__st_a43cad42300008211401faab4888369a3}\label{structquic__channel__st_a43cad42300008211401faab4888369a3} 
+\mbox{\hyperlink{structossl__quic__ack__range__st}{OSSL\+\_\+\+QUIC\+\_\+\+ACK\+\_\+\+RANGE}} \texorpdfstring{$\ast$}{*} {\bfseries ack\+\_\+range\+\_\+scratch}
+\item 
+\Hypertarget{structquic__channel__st_aca873d529db43f62049c2af712538c21}\label{structquic__channel__st_aca873d529db43f62049c2af712538c21} 
+size\+\_\+t {\bfseries num\+\_\+ack\+\_\+range\+\_\+scratch}
+\end{DoxyCompactItemize}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/namph/\+Downloads/openssl/openssl-\/3.\+2.\+1/ssl/quic/quic\+\_\+channel\+\_\+local.\+h\end{DoxyCompactItemize}

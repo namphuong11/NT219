@@ -1,0 +1,512 @@
+\doxysection{cms\+\_\+local.\+h}
+\hypertarget{cms__local_8h_source}{}\label{cms__local_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/cms/cms\_local.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/cms/cms\_local.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2008-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_CRYPTO\_CMS\_LOCAL\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_CRYPTO\_CMS\_LOCAL\_H}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#\ include\ <openssl/x509.h>}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ *\ Cryptographic\ message\ syntax\ (CMS)\ structures:\ taken\ from\ RFC3852}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{comment}{/*\ Forward\ references\ */}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_c_m_s___issuer_and_serial_number__st}{CMS\_IssuerAndSerialNumber\_st}}\ \mbox{\hyperlink{struct_c_m_s___issuer_and_serial_number__st}{CMS\_IssuerAndSerialNumber}};}
+\DoxyCodeLine{00022\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_c_m_s___encapsulated_content_info__st}{CMS\_EncapsulatedContentInfo\_st}}\ \mbox{\hyperlink{struct_c_m_s___encapsulated_content_info__st}{CMS\_EncapsulatedContentInfo}};}
+\DoxyCodeLine{00023\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_c_m_s___signer_identifier__st}{CMS\_SignerIdentifier\_st}}\ \mbox{\hyperlink{struct_c_m_s___signer_identifier__st}{CMS\_SignerIdentifier}};}
+\DoxyCodeLine{00024\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_c_m_s___other_revocation_info_format__st}{CMS\_OtherRevocationInfoFormat\_st}}\ \mbox{\hyperlink{struct_c_m_s___other_revocation_info_format__st}{CMS\_OtherRevocationInfoFormat}};}
+\DoxyCodeLine{00025\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_c_m_s___originator_info__st}{CMS\_OriginatorInfo\_st}}\ \mbox{\hyperlink{struct_c_m_s___originator_info__st}{CMS\_OriginatorInfo}};}
+\DoxyCodeLine{00026\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_c_m_s___encrypted_content_info__st}{CMS\_EncryptedContentInfo\_st}}\ \mbox{\hyperlink{struct_c_m_s___encrypted_content_info__st}{CMS\_EncryptedContentInfo}};}
+\DoxyCodeLine{00027\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_c_m_s___digested_data__st}{CMS\_DigestedData\_st}}\ \mbox{\hyperlink{struct_c_m_s___digested_data__st}{CMS\_DigestedData}};}
+\DoxyCodeLine{00028\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_c_m_s___encrypted_data__st}{CMS\_EncryptedData\_st}}\ \mbox{\hyperlink{struct_c_m_s___encrypted_data__st}{CMS\_EncryptedData}};}
+\DoxyCodeLine{00029\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_c_m_s___authenticated_data__st}{CMS\_AuthenticatedData\_st}}\ \mbox{\hyperlink{struct_c_m_s___authenticated_data__st}{CMS\_AuthenticatedData}};}
+\DoxyCodeLine{00030\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_c_m_s___auth_enveloped_data__st}{CMS\_AuthEnvelopedData\_st}}\ \mbox{\hyperlink{struct_c_m_s___auth_enveloped_data__st}{CMS\_AuthEnvelopedData}};}
+\DoxyCodeLine{00031\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_c_m_s___compressed_data__st}{CMS\_CompressedData\_st}}\ \mbox{\hyperlink{struct_c_m_s___compressed_data__st}{CMS\_CompressedData}};}
+\DoxyCodeLine{00032\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_c_m_s___other_certificate_format__st}{CMS\_OtherCertificateFormat\_st}}\ \mbox{\hyperlink{struct_c_m_s___other_certificate_format__st}{CMS\_OtherCertificateFormat}};}
+\DoxyCodeLine{00033\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_c_m_s___key_trans_recipient_info__st}{CMS\_KeyTransRecipientInfo\_st}}\ \mbox{\hyperlink{struct_c_m_s___key_trans_recipient_info__st}{CMS\_KeyTransRecipientInfo}};}
+\DoxyCodeLine{00034\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_c_m_s___originator_public_key__st}{CMS\_OriginatorPublicKey\_st}}\ \mbox{\hyperlink{struct_c_m_s___originator_public_key__st}{CMS\_OriginatorPublicKey}};}
+\DoxyCodeLine{00035\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_c_m_s___originator_identifier_or_key__st}{CMS\_OriginatorIdentifierOrKey\_st}}\ \mbox{\hyperlink{struct_c_m_s___originator_identifier_or_key__st}{CMS\_OriginatorIdentifierOrKey}};}
+\DoxyCodeLine{00036\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_c_m_s___key_agree_recipient_info__st}{CMS\_KeyAgreeRecipientInfo\_st}}\ \mbox{\hyperlink{struct_c_m_s___key_agree_recipient_info__st}{CMS\_KeyAgreeRecipientInfo}};}
+\DoxyCodeLine{00037\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_c_m_s___recipient_key_identifier__st}{CMS\_RecipientKeyIdentifier\_st}}\ \mbox{\hyperlink{struct_c_m_s___recipient_key_identifier__st}{CMS\_RecipientKeyIdentifier}};}
+\DoxyCodeLine{00038\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_c_m_s___key_agree_recipient_identifier__st}{CMS\_KeyAgreeRecipientIdentifier\_st}}}
+\DoxyCodeLine{00039\ \ \ \ \ \mbox{\hyperlink{struct_c_m_s___key_agree_recipient_identifier__st}{CMS\_KeyAgreeRecipientIdentifier}};}
+\DoxyCodeLine{00040\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_c_m_s___k_e_k_identifier__st}{CMS\_KEKIdentifier\_st}}\ \mbox{\hyperlink{struct_c_m_s___k_e_k_identifier__st}{CMS\_KEKIdentifier}};}
+\DoxyCodeLine{00041\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_c_m_s___k_e_k_recipient_info__st}{CMS\_KEKRecipientInfo\_st}}\ \mbox{\hyperlink{struct_c_m_s___k_e_k_recipient_info__st}{CMS\_KEKRecipientInfo}};}
+\DoxyCodeLine{00042\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_c_m_s___password_recipient_info__st}{CMS\_PasswordRecipientInfo\_st}}\ \mbox{\hyperlink{struct_c_m_s___password_recipient_info__st}{CMS\_PasswordRecipientInfo}};}
+\DoxyCodeLine{00043\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_c_m_s___other_recipient_info__st}{CMS\_OtherRecipientInfo\_st}}\ \mbox{\hyperlink{struct_c_m_s___other_recipient_info__st}{CMS\_OtherRecipientInfo}};}
+\DoxyCodeLine{00044\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_c_m_s___receipts_from__st}{CMS\_ReceiptsFrom\_st}}\ \mbox{\hyperlink{struct_c_m_s___receipts_from__st}{CMS\_ReceiptsFrom}};}
+\DoxyCodeLine{00045\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_c_m_s___c_t_x__st}{CMS\_CTX\_st}}\ \mbox{\hyperlink{struct_c_m_s___c_t_x__st}{CMS\_CTX}};}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_c_m_s___c_t_x__st}{CMS\_CTX\_st}}\ \{}
+\DoxyCodeLine{00048\ \ \ \ \ OSSL\_LIB\_CTX\ *libctx;}
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{keywordtype}{char}\ *propq;}
+\DoxyCodeLine{00050\ \};}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_c_m_s___content_info__st}{CMS\_ContentInfo\_st}}\ \{}
+\DoxyCodeLine{00053\ \ \ \ \ ASN1\_OBJECT\ *contentType;}
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ ASN1\_OCTET\_STRING\ *data;}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ CMS\_SignedData\ *signedData;}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ CMS\_EnvelopedData\ *envelopedData;}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_c_m_s___digested_data__st}{CMS\_DigestedData}}\ *digestedData;}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_c_m_s___encrypted_data__st}{CMS\_EncryptedData}}\ *encryptedData;}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_c_m_s___auth_enveloped_data__st}{CMS\_AuthEnvelopedData}}\ *authEnvelopedData;}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_c_m_s___authenticated_data__st}{CMS\_AuthenticatedData}}\ *authenticatedData;}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_c_m_s___compressed_data__st}{CMS\_CompressedData}}\ *compressedData;}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ ASN1\_TYPE\ *other;}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Other\ types\ ...\ */}}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *otherData;}
+\DoxyCodeLine{00066\ \ \ \ \ \}\ d;}
+\DoxyCodeLine{00067\ \ \ \ \ \mbox{\hyperlink{struct_c_m_s___c_t_x__st}{CMS\_CTX}}\ ctx;}
+\DoxyCodeLine{00068\ \};}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ DEFINE\_STACK\_OF(\mbox{\hyperlink{struct_c_m_s___certificate_choices}{CMS\_CertificateChoices}})}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00072\ struct\ \mbox{\hyperlink{struct_c_m_s___signed_data__st}{CMS\_SignedData\_st}}\ \{}
+\DoxyCodeLine{00073\ \ \ \ \ int32\_t\ version;}
+\DoxyCodeLine{00074\ \ \ \ \ STACK\_OF(X509\_ALGOR)\ *digestAlgorithms;}
+\DoxyCodeLine{00075\ \ \ \ \ \mbox{\hyperlink{struct_c_m_s___encapsulated_content_info__st}{CMS\_EncapsulatedContentInfo}}\ *encapContentInfo;}
+\DoxyCodeLine{00076\ \ \ \ \ STACK\_OF(\mbox{\hyperlink{struct_c_m_s___certificate_choices}{CMS\_CertificateChoices}})\ *certificates;}
+\DoxyCodeLine{00077\ \ \ \ \ STACK\_OF(CMS\_RevocationInfoChoice)\ *crls;}
+\DoxyCodeLine{00078\ \ \ \ \ STACK\_OF(CMS\_SignerInfo)\ *signerInfos;}
+\DoxyCodeLine{00079\ \};}
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00081\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_c_m_s___encapsulated_content_info__st}{CMS\_EncapsulatedContentInfo\_st}}\ \{}
+\DoxyCodeLine{00082\ \ \ \ \ ASN1\_OBJECT\ *eContentType;}
+\DoxyCodeLine{00083\ \ \ \ \ ASN1\_OCTET\_STRING\ *eContent;}
+\DoxyCodeLine{00084\ \ \ \ \ \textcolor{comment}{/*\ Set\ to\ 1\ if\ incomplete\ structure\ only\ part\ set\ up\ */}}
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{keywordtype}{int}\ partial;}
+\DoxyCodeLine{00086\ \};}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00088\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_c_m_s___signer_info__st}{CMS\_SignerInfo\_st}}\ \{}
+\DoxyCodeLine{00089\ \ \ \ \ int32\_t\ version;}
+\DoxyCodeLine{00090\ \ \ \ \ \mbox{\hyperlink{struct_c_m_s___signer_identifier__st}{CMS\_SignerIdentifier}}\ *sid;}
+\DoxyCodeLine{00091\ \ \ \ \ X509\_ALGOR\ *digestAlgorithm;}
+\DoxyCodeLine{00092\ \ \ \ \ STACK\_OF(X509\_ATTRIBUTE)\ *signedAttrs;}
+\DoxyCodeLine{00093\ \ \ \ \ X509\_ALGOR\ *signatureAlgorithm;}
+\DoxyCodeLine{00094\ \ \ \ \ ASN1\_OCTET\_STRING\ *signature;}
+\DoxyCodeLine{00095\ \ \ \ \ STACK\_OF(X509\_ATTRIBUTE)\ *unsignedAttrs;}
+\DoxyCodeLine{00096\ \ \ \ \ \textcolor{comment}{/*\ Signing\ certificate\ and\ key\ */}}
+\DoxyCodeLine{00097\ \ \ \ \ X509\ *signer;}
+\DoxyCodeLine{00098\ \ \ \ \ EVP\_PKEY\ *pkey;}
+\DoxyCodeLine{00099\ \ \ \ \ \textcolor{comment}{/*\ Digest\ and\ public\ key\ context\ for\ alternative\ parameters\ */}}
+\DoxyCodeLine{00100\ \ \ \ \ EVP\_MD\_CTX\ *mctx;}
+\DoxyCodeLine{00101\ \ \ \ \ EVP\_PKEY\_CTX\ *pctx;}
+\DoxyCodeLine{00102\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{struct_c_m_s___c_t_x__st}{CMS\_CTX}}\ *cms\_ctx;}
+\DoxyCodeLine{00103\ \};}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00105\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_c_m_s___signer_identifier__st}{CMS\_SignerIdentifier\_st}}\ \{}
+\DoxyCodeLine{00106\ \ \ \ \ \textcolor{keywordtype}{int}\ type;}
+\DoxyCodeLine{00107\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_c_m_s___issuer_and_serial_number__st}{CMS\_IssuerAndSerialNumber}}\ *issuerAndSerialNumber;}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ ASN1\_OCTET\_STRING\ *subjectKeyIdentifier;}
+\DoxyCodeLine{00110\ \ \ \ \ \}\ d;}
+\DoxyCodeLine{00111\ \};}
+\DoxyCodeLine{00112\ }
+\DoxyCodeLine{00113\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_c_m_s___enveloped_data__st}{CMS\_EnvelopedData\_st}}\ \{}
+\DoxyCodeLine{00114\ \ \ \ \ int32\_t\ version;}
+\DoxyCodeLine{00115\ \ \ \ \ \mbox{\hyperlink{struct_c_m_s___originator_info__st}{CMS\_OriginatorInfo}}\ *originatorInfo;}
+\DoxyCodeLine{00116\ \ \ \ \ STACK\_OF(CMS\_RecipientInfo)\ *recipientInfos;}
+\DoxyCodeLine{00117\ \ \ \ \ \mbox{\hyperlink{struct_c_m_s___encrypted_content_info__st}{CMS\_EncryptedContentInfo}}\ *encryptedContentInfo;}
+\DoxyCodeLine{00118\ \ \ \ \ STACK\_OF(X509\_ATTRIBUTE)\ *unprotectedAttrs;}
+\DoxyCodeLine{00119\ \};}
+\DoxyCodeLine{00120\ }
+\DoxyCodeLine{00121\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_c_m_s___originator_info__st}{CMS\_OriginatorInfo\_st}}\ \{}
+\DoxyCodeLine{00122\ \ \ \ \ STACK\_OF(\mbox{\hyperlink{struct_c_m_s___certificate_choices}{CMS\_CertificateChoices}})\ *certificates;}
+\DoxyCodeLine{00123\ \ \ \ \ STACK\_OF(CMS\_RevocationInfoChoice)\ *crls;}
+\DoxyCodeLine{00124\ \};}
+\DoxyCodeLine{00125\ }
+\DoxyCodeLine{00126\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_c_m_s___encrypted_content_info__st}{CMS\_EncryptedContentInfo\_st}}\ \{}
+\DoxyCodeLine{00127\ \ \ \ \ ASN1\_OBJECT\ *contentType;}
+\DoxyCodeLine{00128\ \ \ \ \ X509\_ALGOR\ *contentEncryptionAlgorithm;}
+\DoxyCodeLine{00129\ \ \ \ \ ASN1\_OCTET\_STRING\ *encryptedContent;}
+\DoxyCodeLine{00130\ \ \ \ \ \textcolor{comment}{/*\ Content\ encryption\ algorithm,\ key\ and\ tag\ */}}
+\DoxyCodeLine{00131\ \ \ \ \ \textcolor{keyword}{const}\ EVP\_CIPHER\ *cipher;}
+\DoxyCodeLine{00132\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *key;}
+\DoxyCodeLine{00133\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ keylen;}
+\DoxyCodeLine{00134\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *tag;}
+\DoxyCodeLine{00135\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ taglen;}
+\DoxyCodeLine{00136\ \ \ \ \ \textcolor{comment}{/*\ Set\ to\ 1\ if\ we\ are\ debugging\ decrypt\ and\ don't\ fake\ keys\ for\ MMA\ */}}
+\DoxyCodeLine{00137\ \ \ \ \ \textcolor{keywordtype}{int}\ debug;}
+\DoxyCodeLine{00138\ \ \ \ \ \textcolor{comment}{/*\ Set\ to\ 1\ if\ we\ have\ no\ cert\ and\ need\ extra\ safety\ measures\ for\ MMA\ */}}
+\DoxyCodeLine{00139\ \ \ \ \ \textcolor{keywordtype}{int}\ havenocert;}
+\DoxyCodeLine{00140\ \};}
+\DoxyCodeLine{00141\ }
+\DoxyCodeLine{00142\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_c_m_s___recipient_info__st}{CMS\_RecipientInfo\_st}}\ \{}
+\DoxyCodeLine{00143\ \ \ \ \ \textcolor{keywordtype}{int}\ type;}
+\DoxyCodeLine{00144\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_c_m_s___key_trans_recipient_info__st}{CMS\_KeyTransRecipientInfo}}\ *ktri;}
+\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_c_m_s___key_agree_recipient_info__st}{CMS\_KeyAgreeRecipientInfo}}\ *kari;}
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_c_m_s___k_e_k_recipient_info__st}{CMS\_KEKRecipientInfo}}\ *kekri;}
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_c_m_s___password_recipient_info__st}{CMS\_PasswordRecipientInfo}}\ *pwri;}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_c_m_s___other_recipient_info__st}{CMS\_OtherRecipientInfo}}\ *ori;}
+\DoxyCodeLine{00150\ \ \ \ \ \}\ d;}
+\DoxyCodeLine{00151\ \};}
+\DoxyCodeLine{00152\ }
+\DoxyCodeLine{00153\ \textcolor{keyword}{typedef}\ \mbox{\hyperlink{struct_c_m_s___signer_identifier__st}{CMS\_SignerIdentifier}}\ \mbox{\hyperlink{struct_c_m_s___signer_identifier__st}{CMS\_RecipientIdentifier}};}
+\DoxyCodeLine{00154\ }
+\DoxyCodeLine{00155\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_c_m_s___key_trans_recipient_info__st}{CMS\_KeyTransRecipientInfo\_st}}\ \{}
+\DoxyCodeLine{00156\ \ \ \ \ int32\_t\ version;}
+\DoxyCodeLine{00157\ \ \ \ \ \mbox{\hyperlink{struct_c_m_s___signer_identifier__st}{CMS\_RecipientIdentifier}}\ *rid;}
+\DoxyCodeLine{00158\ \ \ \ \ X509\_ALGOR\ *keyEncryptionAlgorithm;}
+\DoxyCodeLine{00159\ \ \ \ \ ASN1\_OCTET\_STRING\ *encryptedKey;}
+\DoxyCodeLine{00160\ \ \ \ \ \textcolor{comment}{/*\ Recipient\ Key\ and\ cert\ */}}
+\DoxyCodeLine{00161\ \ \ \ \ X509\ *recip;}
+\DoxyCodeLine{00162\ \ \ \ \ EVP\_PKEY\ *pkey;}
+\DoxyCodeLine{00163\ \ \ \ \ \textcolor{comment}{/*\ Public\ key\ context\ for\ this\ operation\ */}}
+\DoxyCodeLine{00164\ \ \ \ \ EVP\_PKEY\_CTX\ *pctx;}
+\DoxyCodeLine{00165\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{struct_c_m_s___c_t_x__st}{CMS\_CTX}}\ *cms\_ctx;}
+\DoxyCodeLine{00166\ \};}
+\DoxyCodeLine{00167\ }
+\DoxyCodeLine{00168\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_c_m_s___key_agree_recipient_info__st}{CMS\_KeyAgreeRecipientInfo\_st}}\ \{}
+\DoxyCodeLine{00169\ \ \ \ \ int32\_t\ version;}
+\DoxyCodeLine{00170\ \ \ \ \ \mbox{\hyperlink{struct_c_m_s___originator_identifier_or_key__st}{CMS\_OriginatorIdentifierOrKey}}\ *originator;}
+\DoxyCodeLine{00171\ \ \ \ \ ASN1\_OCTET\_STRING\ *ukm;}
+\DoxyCodeLine{00172\ \ \ \ \ X509\_ALGOR\ *keyEncryptionAlgorithm;}
+\DoxyCodeLine{00173\ \ \ \ \ STACK\_OF(CMS\_RecipientEncryptedKey)\ *recipientEncryptedKeys;}
+\DoxyCodeLine{00174\ \ \ \ \ \textcolor{comment}{/*\ Public\ key\ context\ associated\ with\ current\ operation\ */}}
+\DoxyCodeLine{00175\ \ \ \ \ EVP\_PKEY\_CTX\ *pctx;}
+\DoxyCodeLine{00176\ \ \ \ \ \textcolor{comment}{/*\ Cipher\ context\ for\ CEK\ wrapping\ */}}
+\DoxyCodeLine{00177\ \ \ \ \ EVP\_CIPHER\_CTX\ *ctx;}
+\DoxyCodeLine{00178\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{struct_c_m_s___c_t_x__st}{CMS\_CTX}}\ *cms\_ctx;}
+\DoxyCodeLine{00179\ \};}
+\DoxyCodeLine{00180\ }
+\DoxyCodeLine{00181\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_c_m_s___originator_identifier_or_key__st}{CMS\_OriginatorIdentifierOrKey\_st}}\ \{}
+\DoxyCodeLine{00182\ \ \ \ \ \textcolor{keywordtype}{int}\ type;}
+\DoxyCodeLine{00183\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00184\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_c_m_s___issuer_and_serial_number__st}{CMS\_IssuerAndSerialNumber}}\ *issuerAndSerialNumber;}
+\DoxyCodeLine{00185\ \ \ \ \ \ \ \ \ ASN1\_OCTET\_STRING\ *subjectKeyIdentifier;}
+\DoxyCodeLine{00186\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_c_m_s___originator_public_key__st}{CMS\_OriginatorPublicKey}}\ *originatorKey;}
+\DoxyCodeLine{00187\ \ \ \ \ \}\ d;}
+\DoxyCodeLine{00188\ \};}
+\DoxyCodeLine{00189\ }
+\DoxyCodeLine{00190\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_c_m_s___originator_public_key__st}{CMS\_OriginatorPublicKey\_st}}\ \{}
+\DoxyCodeLine{00191\ \ \ \ \ X509\_ALGOR\ *algorithm;}
+\DoxyCodeLine{00192\ \ \ \ \ ASN1\_BIT\_STRING\ *publicKey;}
+\DoxyCodeLine{00193\ \};}
+\DoxyCodeLine{00194\ }
+\DoxyCodeLine{00195\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_c_m_s___recipient_encrypted_key__st}{CMS\_RecipientEncryptedKey\_st}}\ \{}
+\DoxyCodeLine{00196\ \ \ \ \ \mbox{\hyperlink{struct_c_m_s___key_agree_recipient_identifier__st}{CMS\_KeyAgreeRecipientIdentifier}}\ *rid;}
+\DoxyCodeLine{00197\ \ \ \ \ ASN1\_OCTET\_STRING\ *encryptedKey;}
+\DoxyCodeLine{00198\ \ \ \ \ \textcolor{comment}{/*\ Public\ key\ associated\ with\ this\ recipient\ */}}
+\DoxyCodeLine{00199\ \ \ \ \ EVP\_PKEY\ *pkey;}
+\DoxyCodeLine{00200\ \};}
+\DoxyCodeLine{00201\ }
+\DoxyCodeLine{00202\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_c_m_s___key_agree_recipient_identifier__st}{CMS\_KeyAgreeRecipientIdentifier\_st}}\ \{}
+\DoxyCodeLine{00203\ \ \ \ \ \textcolor{keywordtype}{int}\ type;}
+\DoxyCodeLine{00204\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00205\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_c_m_s___issuer_and_serial_number__st}{CMS\_IssuerAndSerialNumber}}\ *issuerAndSerialNumber;}
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_c_m_s___recipient_key_identifier__st}{CMS\_RecipientKeyIdentifier}}\ *rKeyId;}
+\DoxyCodeLine{00207\ \ \ \ \ \}\ d;}
+\DoxyCodeLine{00208\ \};}
+\DoxyCodeLine{00209\ }
+\DoxyCodeLine{00210\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_c_m_s___recipient_key_identifier__st}{CMS\_RecipientKeyIdentifier\_st}}\ \{}
+\DoxyCodeLine{00211\ \ \ \ \ ASN1\_OCTET\_STRING\ *subjectKeyIdentifier;}
+\DoxyCodeLine{00212\ \ \ \ \ ASN1\_GENERALIZEDTIME\ *date;}
+\DoxyCodeLine{00213\ \ \ \ \ CMS\_OtherKeyAttribute\ *other;}
+\DoxyCodeLine{00214\ \};}
+\DoxyCodeLine{00215\ }
+\DoxyCodeLine{00216\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_c_m_s___k_e_k_recipient_info__st}{CMS\_KEKRecipientInfo\_st}}\ \{}
+\DoxyCodeLine{00217\ \ \ \ \ int32\_t\ version;}
+\DoxyCodeLine{00218\ \ \ \ \ \mbox{\hyperlink{struct_c_m_s___k_e_k_identifier__st}{CMS\_KEKIdentifier}}\ *kekid;}
+\DoxyCodeLine{00219\ \ \ \ \ X509\_ALGOR\ *keyEncryptionAlgorithm;}
+\DoxyCodeLine{00220\ \ \ \ \ ASN1\_OCTET\_STRING\ *encryptedKey;}
+\DoxyCodeLine{00221\ \ \ \ \ \textcolor{comment}{/*\ Extra\ info:\ symmetric\ key\ to\ use\ */}}
+\DoxyCodeLine{00222\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *key;}
+\DoxyCodeLine{00223\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ keylen;}
+\DoxyCodeLine{00224\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{struct_c_m_s___c_t_x__st}{CMS\_CTX}}\ *cms\_ctx;}
+\DoxyCodeLine{00225\ \};}
+\DoxyCodeLine{00226\ }
+\DoxyCodeLine{00227\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_c_m_s___k_e_k_identifier__st}{CMS\_KEKIdentifier\_st}}\ \{}
+\DoxyCodeLine{00228\ \ \ \ \ ASN1\_OCTET\_STRING\ *keyIdentifier;}
+\DoxyCodeLine{00229\ \ \ \ \ ASN1\_GENERALIZEDTIME\ *date;}
+\DoxyCodeLine{00230\ \ \ \ \ CMS\_OtherKeyAttribute\ *other;}
+\DoxyCodeLine{00231\ \};}
+\DoxyCodeLine{00232\ }
+\DoxyCodeLine{00233\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_c_m_s___password_recipient_info__st}{CMS\_PasswordRecipientInfo\_st}}\ \{}
+\DoxyCodeLine{00234\ \ \ \ \ int32\_t\ version;}
+\DoxyCodeLine{00235\ \ \ \ \ X509\_ALGOR\ *keyDerivationAlgorithm;}
+\DoxyCodeLine{00236\ \ \ \ \ X509\_ALGOR\ *keyEncryptionAlgorithm;}
+\DoxyCodeLine{00237\ \ \ \ \ ASN1\_OCTET\_STRING\ *encryptedKey;}
+\DoxyCodeLine{00238\ \ \ \ \ \textcolor{comment}{/*\ Extra\ info:\ password\ to\ use\ */}}
+\DoxyCodeLine{00239\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *pass;}
+\DoxyCodeLine{00240\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ passlen;}
+\DoxyCodeLine{00241\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{struct_c_m_s___c_t_x__st}{CMS\_CTX}}\ *cms\_ctx;}
+\DoxyCodeLine{00242\ \};}
+\DoxyCodeLine{00243\ }
+\DoxyCodeLine{00244\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_c_m_s___other_recipient_info__st}{CMS\_OtherRecipientInfo\_st}}\ \{}
+\DoxyCodeLine{00245\ \ \ \ \ ASN1\_OBJECT\ *oriType;}
+\DoxyCodeLine{00246\ \ \ \ \ ASN1\_TYPE\ *oriValue;}
+\DoxyCodeLine{00247\ \};}
+\DoxyCodeLine{00248\ }
+\DoxyCodeLine{00249\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_c_m_s___digested_data__st}{CMS\_DigestedData\_st}}\ \{}
+\DoxyCodeLine{00250\ \ \ \ \ int32\_t\ version;}
+\DoxyCodeLine{00251\ \ \ \ \ X509\_ALGOR\ *digestAlgorithm;}
+\DoxyCodeLine{00252\ \ \ \ \ \mbox{\hyperlink{struct_c_m_s___encapsulated_content_info__st}{CMS\_EncapsulatedContentInfo}}\ *encapContentInfo;}
+\DoxyCodeLine{00253\ \ \ \ \ ASN1\_OCTET\_STRING\ *digest;}
+\DoxyCodeLine{00254\ \};}
+\DoxyCodeLine{00255\ }
+\DoxyCodeLine{00256\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_c_m_s___encrypted_data__st}{CMS\_EncryptedData\_st}}\ \{}
+\DoxyCodeLine{00257\ \ \ \ \ int32\_t\ version;}
+\DoxyCodeLine{00258\ \ \ \ \ \mbox{\hyperlink{struct_c_m_s___encrypted_content_info__st}{CMS\_EncryptedContentInfo}}\ *encryptedContentInfo;}
+\DoxyCodeLine{00259\ \ \ \ \ STACK\_OF(X509\_ATTRIBUTE)\ *unprotectedAttrs;}
+\DoxyCodeLine{00260\ \};}
+\DoxyCodeLine{00261\ }
+\DoxyCodeLine{00262\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_c_m_s___authenticated_data__st}{CMS\_AuthenticatedData\_st}}\ \{}
+\DoxyCodeLine{00263\ \ \ \ \ int32\_t\ version;}
+\DoxyCodeLine{00264\ \ \ \ \ \mbox{\hyperlink{struct_c_m_s___originator_info__st}{CMS\_OriginatorInfo}}\ *originatorInfo;}
+\DoxyCodeLine{00265\ \ \ \ \ STACK\_OF(CMS\_RecipientInfo)\ *recipientInfos;}
+\DoxyCodeLine{00266\ \ \ \ \ X509\_ALGOR\ *macAlgorithm;}
+\DoxyCodeLine{00267\ \ \ \ \ X509\_ALGOR\ *digestAlgorithm;}
+\DoxyCodeLine{00268\ \ \ \ \ \mbox{\hyperlink{struct_c_m_s___encapsulated_content_info__st}{CMS\_EncapsulatedContentInfo}}\ *encapContentInfo;}
+\DoxyCodeLine{00269\ \ \ \ \ STACK\_OF(X509\_ATTRIBUTE)\ *authAttrs;}
+\DoxyCodeLine{00270\ \ \ \ \ ASN1\_OCTET\_STRING\ *mac;}
+\DoxyCodeLine{00271\ \ \ \ \ STACK\_OF(X509\_ATTRIBUTE)\ *unauthAttrs;}
+\DoxyCodeLine{00272\ \};}
+\DoxyCodeLine{00273\ }
+\DoxyCodeLine{00274\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_c_m_s___auth_enveloped_data__st}{CMS\_AuthEnvelopedData\_st}}\ \{}
+\DoxyCodeLine{00275\ \ \ \ \ int32\_t\ version;}
+\DoxyCodeLine{00276\ \ \ \ \ \mbox{\hyperlink{struct_c_m_s___originator_info__st}{CMS\_OriginatorInfo}}\ *originatorInfo;}
+\DoxyCodeLine{00277\ \ \ \ \ STACK\_OF(CMS\_RecipientInfo)\ *recipientInfos;}
+\DoxyCodeLine{00278\ \ \ \ \ \mbox{\hyperlink{struct_c_m_s___encrypted_content_info__st}{CMS\_EncryptedContentInfo}}\ *authEncryptedContentInfo;}
+\DoxyCodeLine{00279\ \ \ \ \ STACK\_OF(X509\_ATTRIBUTE)\ *authAttrs;}
+\DoxyCodeLine{00280\ \ \ \ \ ASN1\_OCTET\_STRING\ *mac;}
+\DoxyCodeLine{00281\ \ \ \ \ STACK\_OF(X509\_ATTRIBUTE)\ *unauthAttrs;}
+\DoxyCodeLine{00282\ \};}
+\DoxyCodeLine{00283\ }
+\DoxyCodeLine{00284\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_c_m_s___compressed_data__st}{CMS\_CompressedData\_st}}\ \{}
+\DoxyCodeLine{00285\ \ \ \ \ int32\_t\ version;}
+\DoxyCodeLine{00286\ \ \ \ \ X509\_ALGOR\ *compressionAlgorithm;}
+\DoxyCodeLine{00287\ \ \ \ \ STACK\_OF(CMS\_RecipientInfo)\ *recipientInfos;}
+\DoxyCodeLine{00288\ \ \ \ \ \mbox{\hyperlink{struct_c_m_s___encapsulated_content_info__st}{CMS\_EncapsulatedContentInfo}}\ *encapContentInfo;}
+\DoxyCodeLine{00289\ \};}
+\DoxyCodeLine{00290\ }
+\DoxyCodeLine{00291\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_c_m_s___revocation_info_choice__st}{CMS\_RevocationInfoChoice\_st}}\ \{}
+\DoxyCodeLine{00292\ \ \ \ \ \textcolor{keywordtype}{int}\ type;}
+\DoxyCodeLine{00293\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00294\ \ \ \ \ \ \ \ \ X509\_CRL\ *crl;}
+\DoxyCodeLine{00295\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_c_m_s___other_revocation_info_format__st}{CMS\_OtherRevocationInfoFormat}}\ *other;}
+\DoxyCodeLine{00296\ \ \ \ \ \}\ d;}
+\DoxyCodeLine{00297\ \};}
+\DoxyCodeLine{00298\ }
+\DoxyCodeLine{00299\ \textcolor{preprocessor}{\#\ define\ CMS\_REVCHOICE\_CRL\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 0}}
+\DoxyCodeLine{00300\ \textcolor{preprocessor}{\#\ define\ CMS\_REVCHOICE\_OTHER\ \ \ \ \ \ \ \ \ \ \ \ \ 1}}
+\DoxyCodeLine{00301\ }
+\DoxyCodeLine{00302\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_c_m_s___other_revocation_info_format__st}{CMS\_OtherRevocationInfoFormat\_st}}\ \{}
+\DoxyCodeLine{00303\ \ \ \ \ ASN1\_OBJECT\ *otherRevInfoFormat;}
+\DoxyCodeLine{00304\ \ \ \ \ ASN1\_TYPE\ *otherRevInfo;}
+\DoxyCodeLine{00305\ \};}
+\DoxyCodeLine{00306\ }
+\DoxyCodeLine{00307\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_c_m_s___certificate_choices}{CMS\_CertificateChoices}}\ \{}
+\DoxyCodeLine{00308\ \ \ \ \ \textcolor{keywordtype}{int}\ type;}
+\DoxyCodeLine{00309\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00310\ \ \ \ \ \ \ \ \ X509\ *certificate;}
+\DoxyCodeLine{00311\ \ \ \ \ \ \ \ \ ASN1\_STRING\ *extendedCertificate;\ \textcolor{comment}{/*\ Obsolete\ */}}
+\DoxyCodeLine{00312\ \ \ \ \ \ \ \ \ ASN1\_STRING\ *v1AttrCert;\ \textcolor{comment}{/*\ Left\ encoded\ for\ now\ */}}
+\DoxyCodeLine{00313\ \ \ \ \ \ \ \ \ ASN1\_STRING\ *v2AttrCert;\ \textcolor{comment}{/*\ Left\ encoded\ for\ now\ */}}
+\DoxyCodeLine{00314\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_c_m_s___other_certificate_format__st}{CMS\_OtherCertificateFormat}}\ *other;}
+\DoxyCodeLine{00315\ \ \ \ \ \}\ d;}
+\DoxyCodeLine{00316\ \};}
+\DoxyCodeLine{00317\ }
+\DoxyCodeLine{00318\ \textcolor{preprocessor}{\#\ define\ CMS\_CERTCHOICE\_CERT\ \ \ \ \ \ \ \ \ \ \ \ \ 0}}
+\DoxyCodeLine{00319\ \textcolor{preprocessor}{\#\ define\ CMS\_CERTCHOICE\_EXCERT\ \ \ \ \ \ \ \ \ \ \ 1}}
+\DoxyCodeLine{00320\ \textcolor{preprocessor}{\#\ define\ CMS\_CERTCHOICE\_V1ACERT\ \ \ \ \ \ \ \ \ \ 2}}
+\DoxyCodeLine{00321\ \textcolor{preprocessor}{\#\ define\ CMS\_CERTCHOICE\_V2ACERT\ \ \ \ \ \ \ \ \ \ 3}}
+\DoxyCodeLine{00322\ \textcolor{preprocessor}{\#\ define\ CMS\_CERTCHOICE\_OTHER\ \ \ \ \ \ \ \ \ \ \ \ 4}}
+\DoxyCodeLine{00323\ }
+\DoxyCodeLine{00324\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_c_m_s___other_certificate_format__st}{CMS\_OtherCertificateFormat\_st}}\ \{}
+\DoxyCodeLine{00325\ \ \ \ \ ASN1\_OBJECT\ *otherCertFormat;}
+\DoxyCodeLine{00326\ \ \ \ \ ASN1\_TYPE\ *otherCert;}
+\DoxyCodeLine{00327\ \};}
+\DoxyCodeLine{00328\ }
+\DoxyCodeLine{00329\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00330\ \textcolor{comment}{\ *\ This\ is\ also\ defined\ in\ pkcs7.h\ but\ we\ duplicate\ it\ to\ allow\ the\ CMS\ code}}
+\DoxyCodeLine{00331\ \textcolor{comment}{\ *\ to\ be\ independent\ of\ PKCS\#7}}
+\DoxyCodeLine{00332\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00333\ }
+\DoxyCodeLine{00334\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_c_m_s___issuer_and_serial_number__st}{CMS\_IssuerAndSerialNumber\_st}}\ \{}
+\DoxyCodeLine{00335\ \ \ \ \ X509\_NAME\ *issuer;}
+\DoxyCodeLine{00336\ \ \ \ \ ASN1\_INTEGER\ *serialNumber;}
+\DoxyCodeLine{00337\ \};}
+\DoxyCodeLine{00338\ }
+\DoxyCodeLine{00339\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_c_m_s___other_key_attribute__st}{CMS\_OtherKeyAttribute\_st}}\ \{}
+\DoxyCodeLine{00340\ \ \ \ \ ASN1\_OBJECT\ *keyAttrId;}
+\DoxyCodeLine{00341\ \ \ \ \ ASN1\_TYPE\ *keyAttr;}
+\DoxyCodeLine{00342\ \};}
+\DoxyCodeLine{00343\ }
+\DoxyCodeLine{00344\ \textcolor{comment}{/*\ ESS\ structures\ */}}
+\DoxyCodeLine{00345\ }
+\DoxyCodeLine{00346\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_c_m_s___receipt_request__st}{CMS\_ReceiptRequest\_st}}\ \{}
+\DoxyCodeLine{00347\ \ \ \ \ ASN1\_OCTET\_STRING\ *signedContentIdentifier;}
+\DoxyCodeLine{00348\ \ \ \ \ \mbox{\hyperlink{struct_c_m_s___receipts_from__st}{CMS\_ReceiptsFrom}}\ *receiptsFrom;}
+\DoxyCodeLine{00349\ \ \ \ \ STACK\_OF(GENERAL\_NAMES)\ *receiptsTo;}
+\DoxyCodeLine{00350\ \};}
+\DoxyCodeLine{00351\ }
+\DoxyCodeLine{00352\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_c_m_s___receipts_from__st}{CMS\_ReceiptsFrom\_st}}\ \{}
+\DoxyCodeLine{00353\ \ \ \ \ \textcolor{keywordtype}{int}\ type;}
+\DoxyCodeLine{00354\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00355\ \ \ \ \ \ \ \ \ int32\_t\ allOrFirstTier;}
+\DoxyCodeLine{00356\ \ \ \ \ \ \ \ \ STACK\_OF(GENERAL\_NAMES)\ *receiptList;}
+\DoxyCodeLine{00357\ \ \ \ \ \}\ d;}
+\DoxyCodeLine{00358\ \};}
+\DoxyCodeLine{00359\ }
+\DoxyCodeLine{00360\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_c_m_s___receipt__st}{CMS\_Receipt\_st}}\ \{}
+\DoxyCodeLine{00361\ \ \ \ \ int32\_t\ version;}
+\DoxyCodeLine{00362\ \ \ \ \ ASN1\_OBJECT\ *contentType;}
+\DoxyCodeLine{00363\ \ \ \ \ ASN1\_OCTET\_STRING\ *signedContentIdentifier;}
+\DoxyCodeLine{00364\ \ \ \ \ ASN1\_OCTET\_STRING\ *originatorSignatureValue;}
+\DoxyCodeLine{00365\ \};}
+\DoxyCodeLine{00366\ }
+\DoxyCodeLine{00367\ DECLARE\_ASN1\_FUNCTIONS(CMS\_ContentInfo)}
+\DoxyCodeLine{00368\ DECLARE\_ASN1\_ITEM(CMS\_SignerInfo)}
+\DoxyCodeLine{00369\ DECLARE\_ASN1\_ITEM(\mbox{\hyperlink{struct_c_m_s___issuer_and_serial_number__st}{CMS\_IssuerAndSerialNumber}})}
+\DoxyCodeLine{00370\ DECLARE\_ASN1\_ITEM(CMS\_Attributes\_Sign)}
+\DoxyCodeLine{00371\ DECLARE\_ASN1\_ITEM(CMS\_Attributes\_Verify)}
+\DoxyCodeLine{00372\ DECLARE\_ASN1\_ITEM(CMS\_RecipientInfo)}
+\DoxyCodeLine{00373\ DECLARE\_ASN1\_ITEM(\mbox{\hyperlink{struct_c_m_s___password_recipient_info__st}{CMS\_PasswordRecipientInfo}})}
+\DoxyCodeLine{00374\ DECLARE\_ASN1\_ALLOC\_FUNCTIONS(\mbox{\hyperlink{struct_c_m_s___issuer_and_serial_number__st}{CMS\_IssuerAndSerialNumber}})}
+\DoxyCodeLine{00375\ }
+\DoxyCodeLine{00376\ \textcolor{preprocessor}{\#\ define\ CMS\_SIGNERINFO\_ISSUER\_SERIAL\ \ \ \ 0}}
+\DoxyCodeLine{00377\ \textcolor{preprocessor}{\#\ define\ CMS\_SIGNERINFO\_KEYIDENTIFIER\ \ \ \ 1}}
+\DoxyCodeLine{00378\ }
+\DoxyCodeLine{00379\ \textcolor{preprocessor}{\#\ define\ CMS\_RECIPINFO\_ISSUER\_SERIAL\ \ \ \ \ 0}}
+\DoxyCodeLine{00380\ \textcolor{preprocessor}{\#\ define\ CMS\_RECIPINFO\_KEYIDENTIFIER\ \ \ \ \ 1}}
+\DoxyCodeLine{00381\ }
+\DoxyCodeLine{00382\ \textcolor{preprocessor}{\#\ define\ CMS\_REK\_ISSUER\_SERIAL\ \ \ \ \ \ \ \ \ \ \ 0}}
+\DoxyCodeLine{00383\ \textcolor{preprocessor}{\#\ define\ CMS\_REK\_KEYIDENTIFIER\ \ \ \ \ \ \ \ \ \ \ 1}}
+\DoxyCodeLine{00384\ }
+\DoxyCodeLine{00385\ \textcolor{preprocessor}{\#\ define\ CMS\_OIK\_ISSUER\_SERIAL\ \ \ \ \ \ \ \ \ \ \ 0}}
+\DoxyCodeLine{00386\ \textcolor{preprocessor}{\#\ define\ CMS\_OIK\_KEYIDENTIFIER\ \ \ \ \ \ \ \ \ \ \ 1}}
+\DoxyCodeLine{00387\ \textcolor{preprocessor}{\#\ define\ CMS\_OIK\_PUBKEY\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 2}}
+\DoxyCodeLine{00388\ }
+\DoxyCodeLine{00389\ BIO\ *ossl\_cms\_content\_bio(CMS\_ContentInfo\ *cms);}
+\DoxyCodeLine{00390\ \textcolor{keyword}{const}\ \mbox{\hyperlink{struct_c_m_s___c_t_x__st}{CMS\_CTX}}\ *ossl\_cms\_get0\_cmsctx(\textcolor{keyword}{const}\ CMS\_ContentInfo\ *cms);}
+\DoxyCodeLine{00391\ OSSL\_LIB\_CTX\ *ossl\_cms\_ctx\_get0\_libctx(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_c_m_s___c_t_x__st}{CMS\_CTX}}\ *ctx);}
+\DoxyCodeLine{00392\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *ossl\_cms\_ctx\_get0\_propq(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_c_m_s___c_t_x__st}{CMS\_CTX}}\ *ctx);}
+\DoxyCodeLine{00393\ \textcolor{keywordtype}{void}\ ossl\_cms\_resolve\_libctx(CMS\_ContentInfo\ *ci);}
+\DoxyCodeLine{00394\ }
+\DoxyCodeLine{00395\ CMS\_ContentInfo\ *ossl\_cms\_Data\_create(OSSL\_LIB\_CTX\ *ctx,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *propq);}
+\DoxyCodeLine{00396\ \textcolor{keywordtype}{int}\ ossl\_cms\_DataFinal(CMS\_ContentInfo\ *cms,\ BIO\ *cmsbio,}
+\DoxyCodeLine{00397\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *precomp\_md,}
+\DoxyCodeLine{00398\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ precomp\_mdlen);}
+\DoxyCodeLine{00399\ }
+\DoxyCodeLine{00400\ CMS\_ContentInfo\ *ossl\_cms\_DigestedData\_create(\textcolor{keyword}{const}\ EVP\_MD\ *md,}
+\DoxyCodeLine{00401\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OSSL\_LIB\_CTX\ *libctx,}
+\DoxyCodeLine{00402\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *propq);}
+\DoxyCodeLine{00403\ BIO\ *ossl\_cms\_DigestedData\_init\_bio(\textcolor{keyword}{const}\ CMS\_ContentInfo\ *cms);}
+\DoxyCodeLine{00404\ \textcolor{keywordtype}{int}\ ossl\_cms\_DigestedData\_do\_final(\textcolor{keyword}{const}\ CMS\_ContentInfo\ *cms,}
+\DoxyCodeLine{00405\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BIO\ *chain,\ \textcolor{keywordtype}{int}\ verify);}
+\DoxyCodeLine{00406\ }
+\DoxyCodeLine{00407\ BIO\ *ossl\_cms\_SignedData\_init\_bio(CMS\_ContentInfo\ *cms);}
+\DoxyCodeLine{00408\ \textcolor{keywordtype}{int}\ ossl\_cms\_SignedData\_final(CMS\_ContentInfo\ *cms,\ BIO\ *chain,}
+\DoxyCodeLine{00409\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *precomp\_md,}
+\DoxyCodeLine{00410\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ precomp\_mdlen);}
+\DoxyCodeLine{00411\ \textcolor{keywordtype}{int}\ ossl\_cms\_set1\_SignerIdentifier(\mbox{\hyperlink{struct_c_m_s___signer_identifier__st}{CMS\_SignerIdentifier}}\ *sid,\ X509\ *cert,}
+\DoxyCodeLine{00412\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ type,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{struct_c_m_s___c_t_x__st}{CMS\_CTX}}\ *ctx);}
+\DoxyCodeLine{00413\ \textcolor{keywordtype}{int}\ ossl\_cms\_SignerIdentifier\_get0\_signer\_id(\mbox{\hyperlink{struct_c_m_s___signer_identifier__st}{CMS\_SignerIdentifier}}\ *sid,}
+\DoxyCodeLine{00414\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ASN1\_OCTET\_STRING\ **keyid,}
+\DoxyCodeLine{00415\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\_NAME\ **issuer,}
+\DoxyCodeLine{00416\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ASN1\_INTEGER\ **sno);}
+\DoxyCodeLine{00417\ \textcolor{keywordtype}{int}\ ossl\_cms\_SignerIdentifier\_cert\_cmp(\mbox{\hyperlink{struct_c_m_s___signer_identifier__st}{CMS\_SignerIdentifier}}\ *sid,\ X509\ *cert);}
+\DoxyCodeLine{00418\ }
+\DoxyCodeLine{00419\ CMS\_ContentInfo\ *ossl\_cms\_CompressedData\_create(\textcolor{keywordtype}{int}\ comp\_nid,}
+\DoxyCodeLine{00420\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OSSL\_LIB\_CTX\ *libctx,}
+\DoxyCodeLine{00421\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *propq);}
+\DoxyCodeLine{00422\ BIO\ *ossl\_cms\_CompressedData\_init\_bio(\textcolor{keyword}{const}\ CMS\_ContentInfo\ *cms);}
+\DoxyCodeLine{00423\ }
+\DoxyCodeLine{00424\ BIO\ *ossl\_cms\_DigestAlgorithm\_init\_bio(X509\_ALGOR\ *digestAlgorithm,}
+\DoxyCodeLine{00425\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{struct_c_m_s___c_t_x__st}{CMS\_CTX}}\ *ctx);}
+\DoxyCodeLine{00426\ \textcolor{keywordtype}{int}\ ossl\_cms\_DigestAlgorithm\_find\_ctx(EVP\_MD\_CTX\ *mctx,\ BIO\ *chain,}
+\DoxyCodeLine{00427\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\_ALGOR\ *mdalg);}
+\DoxyCodeLine{00428\ }
+\DoxyCodeLine{00429\ \textcolor{keywordtype}{int}\ ossl\_cms\_ias\_cert\_cmp(\mbox{\hyperlink{struct_c_m_s___issuer_and_serial_number__st}{CMS\_IssuerAndSerialNumber}}\ *ias,\ X509\ *cert);}
+\DoxyCodeLine{00430\ \textcolor{keywordtype}{int}\ ossl\_cms\_keyid\_cert\_cmp(ASN1\_OCTET\_STRING\ *keyid,\ X509\ *cert);}
+\DoxyCodeLine{00431\ \textcolor{keywordtype}{int}\ ossl\_cms\_set1\_ias(\mbox{\hyperlink{struct_c_m_s___issuer_and_serial_number__st}{CMS\_IssuerAndSerialNumber}}\ **pias,\ X509\ *cert);}
+\DoxyCodeLine{00432\ \textcolor{keywordtype}{int}\ ossl\_cms\_set1\_keyid(ASN1\_OCTET\_STRING\ **pkeyid,\ X509\ *cert);}
+\DoxyCodeLine{00433\ }
+\DoxyCodeLine{00434\ BIO\ *ossl\_cms\_EncryptedContent\_init\_bio(\mbox{\hyperlink{struct_c_m_s___encrypted_content_info__st}{CMS\_EncryptedContentInfo}}\ *ec,}
+\DoxyCodeLine{00435\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{struct_c_m_s___c_t_x__st}{CMS\_CTX}}\ *ctx);}
+\DoxyCodeLine{00436\ BIO\ *ossl\_cms\_EncryptedData\_init\_bio(\textcolor{keyword}{const}\ CMS\_ContentInfo\ *cms);}
+\DoxyCodeLine{00437\ \textcolor{keywordtype}{int}\ ossl\_cms\_EncryptedContent\_init(\mbox{\hyperlink{struct_c_m_s___encrypted_content_info__st}{CMS\_EncryptedContentInfo}}\ *ec,}
+\DoxyCodeLine{00438\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ EVP\_CIPHER\ *cipher,}
+\DoxyCodeLine{00439\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *key,\ \textcolor{keywordtype}{size\_t}\ keylen,}
+\DoxyCodeLine{00440\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{struct_c_m_s___c_t_x__st}{CMS\_CTX}}\ *ctx);}
+\DoxyCodeLine{00441\ }
+\DoxyCodeLine{00442\ \textcolor{keywordtype}{int}\ ossl\_cms\_Receipt\_verify(CMS\_ContentInfo\ *cms,\ CMS\_ContentInfo\ *req\_cms);}
+\DoxyCodeLine{00443\ \textcolor{keywordtype}{int}\ ossl\_cms\_msgSigDigest\_add1(CMS\_SignerInfo\ *dest,\ CMS\_SignerInfo\ *src);}
+\DoxyCodeLine{00444\ ASN1\_OCTET\_STRING\ *ossl\_cms\_encode\_Receipt(CMS\_SignerInfo\ *si);}
+\DoxyCodeLine{00445\ }
+\DoxyCodeLine{00446\ BIO\ *ossl\_cms\_EnvelopedData\_init\_bio(CMS\_ContentInfo\ *cms);}
+\DoxyCodeLine{00447\ \textcolor{keywordtype}{int}\ ossl\_cms\_EnvelopedData\_final(CMS\_ContentInfo\ *cms,\ BIO\ *chain);}
+\DoxyCodeLine{00448\ BIO\ *ossl\_cms\_AuthEnvelopedData\_init\_bio(CMS\_ContentInfo\ *cms);}
+\DoxyCodeLine{00449\ \textcolor{keywordtype}{int}\ ossl\_cms\_AuthEnvelopedData\_final(CMS\_ContentInfo\ *cms,\ BIO\ *cmsbio);}
+\DoxyCodeLine{00450\ \textcolor{keywordtype}{void}\ ossl\_cms\_env\_enc\_content\_free(\textcolor{keyword}{const}\ CMS\_ContentInfo\ *cinf);}
+\DoxyCodeLine{00451\ CMS\_EnvelopedData\ *ossl\_cms\_get0\_enveloped(CMS\_ContentInfo\ *cms);}
+\DoxyCodeLine{00452\ \mbox{\hyperlink{struct_c_m_s___auth_enveloped_data__st}{CMS\_AuthEnvelopedData}}\ *ossl\_cms\_get0\_auth\_enveloped(CMS\_ContentInfo\ *cms);}
+\DoxyCodeLine{00453\ \mbox{\hyperlink{struct_c_m_s___encrypted_content_info__st}{CMS\_EncryptedContentInfo}}\ *ossl\_cms\_get0\_env\_enc\_content(\textcolor{keyword}{const}\ CMS\_ContentInfo\ *cms);}
+\DoxyCodeLine{00454\ }
+\DoxyCodeLine{00455\ \textcolor{comment}{/*\ RecipientInfo\ routines\ */}}
+\DoxyCodeLine{00456\ \textcolor{keywordtype}{int}\ ossl\_cms\_env\_asn1\_ctrl(CMS\_RecipientInfo\ *ri,\ \textcolor{keywordtype}{int}\ cmd);}
+\DoxyCodeLine{00457\ \textcolor{keywordtype}{int}\ ossl\_cms\_pkey\_get\_ri\_type(EVP\_PKEY\ *pk);}
+\DoxyCodeLine{00458\ \textcolor{keywordtype}{int}\ ossl\_cms\_pkey\_is\_ri\_type\_supported(EVP\_PKEY\ *pk,\ \textcolor{keywordtype}{int}\ ri\_type);}
+\DoxyCodeLine{00459\ }
+\DoxyCodeLine{00460\ \textcolor{keywordtype}{void}\ ossl\_cms\_RecipientInfos\_set\_cmsctx(CMS\_ContentInfo\ *cms);}
+\DoxyCodeLine{00461\ }
+\DoxyCodeLine{00462\ \textcolor{comment}{/*\ KARI\ routines\ */}}
+\DoxyCodeLine{00463\ \textcolor{keywordtype}{int}\ ossl\_cms\_RecipientInfo\_kari\_init(CMS\_RecipientInfo\ *ri,\ X509\ *recip,}
+\DoxyCodeLine{00464\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ EVP\_PKEY\ *recipPubKey,\ X509\ *originator,}
+\DoxyCodeLine{00465\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ EVP\_PKEY\ *originatorPrivKey,}
+\DoxyCodeLine{00466\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ flags,}
+\DoxyCodeLine{00467\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{struct_c_m_s___c_t_x__st}{CMS\_CTX}}\ *ctx);}
+\DoxyCodeLine{00468\ \textcolor{keywordtype}{int}\ ossl\_cms\_RecipientInfo\_kari\_encrypt(\textcolor{keyword}{const}\ CMS\_ContentInfo\ *cms,}
+\DoxyCodeLine{00469\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ CMS\_RecipientInfo\ *ri);}
+\DoxyCodeLine{00470\ }
+\DoxyCodeLine{00471\ \textcolor{comment}{/*\ PWRI\ routines\ */}}
+\DoxyCodeLine{00472\ \textcolor{keywordtype}{int}\ ossl\_cms\_RecipientInfo\_pwri\_crypt(\textcolor{keyword}{const}\ CMS\_ContentInfo\ *cms,}
+\DoxyCodeLine{00473\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ CMS\_RecipientInfo\ *ri,\ \textcolor{keywordtype}{int}\ en\_de);}
+\DoxyCodeLine{00474\ \textcolor{comment}{/*\ SignerInfo\ routines\ */}}
+\DoxyCodeLine{00475\ \textcolor{keywordtype}{int}\ ossl\_cms\_si\_check\_attributes(\textcolor{keyword}{const}\ CMS\_SignerInfo\ *si);}
+\DoxyCodeLine{00476\ \textcolor{keywordtype}{void}\ ossl\_cms\_SignerInfos\_set\_cmsctx(CMS\_ContentInfo\ *cms);}
+\DoxyCodeLine{00477\ }
+\DoxyCodeLine{00478\ }
+\DoxyCodeLine{00479\ \textcolor{comment}{/*\ ESS\ routines\ */}}
+\DoxyCodeLine{00480\ \textcolor{keywordtype}{int}\ ossl\_cms\_check\_signing\_certs(\textcolor{keyword}{const}\ CMS\_SignerInfo\ *si,}
+\DoxyCodeLine{00481\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ STACK\_OF(X509)\ *chain);}
+\DoxyCodeLine{00482\ }
+\DoxyCodeLine{00483\ \textcolor{keywordtype}{int}\ ossl\_cms\_dh\_envelope(CMS\_RecipientInfo\ *ri,\ \textcolor{keywordtype}{int}\ decrypt);}
+\DoxyCodeLine{00484\ \textcolor{keywordtype}{int}\ ossl\_cms\_ecdh\_envelope(CMS\_RecipientInfo\ *ri,\ \textcolor{keywordtype}{int}\ decrypt);}
+\DoxyCodeLine{00485\ \textcolor{keywordtype}{int}\ ossl\_cms\_rsa\_envelope(CMS\_RecipientInfo\ *ri,\ \textcolor{keywordtype}{int}\ decrypt);}
+\DoxyCodeLine{00486\ \textcolor{keywordtype}{int}\ ossl\_cms\_rsa\_sign(CMS\_SignerInfo\ *si,\ \textcolor{keywordtype}{int}\ verify);}
+\DoxyCodeLine{00487\ }
+\DoxyCodeLine{00488\ DECLARE\_ASN1\_ITEM(\mbox{\hyperlink{struct_c_m_s___certificate_choices}{CMS\_CertificateChoices}})}
+\DoxyCodeLine{00489\ DECLARE\_ASN1\_ITEM(\mbox{\hyperlink{struct_c_m_s___digested_data__st}{CMS\_DigestedData}})}
+\DoxyCodeLine{00490\ DECLARE\_ASN1\_ITEM(\mbox{\hyperlink{struct_c_m_s___encrypted_data__st}{CMS\_EncryptedData}})}
+\DoxyCodeLine{00491\ DECLARE\_ASN1\_ITEM(CMS\_EnvelopedData)}
+\DoxyCodeLine{00492\ DECLARE\_ASN1\_ITEM(\mbox{\hyperlink{struct_c_m_s___auth_enveloped_data__st}{CMS\_AuthEnvelopedData}})}
+\DoxyCodeLine{00493\ DECLARE\_ASN1\_ITEM(\mbox{\hyperlink{struct_c_m_s___k_e_k_recipient_info__st}{CMS\_KEKRecipientInfo}})}
+\DoxyCodeLine{00494\ DECLARE\_ASN1\_ITEM(\mbox{\hyperlink{struct_c_m_s___key_agree_recipient_info__st}{CMS\_KeyAgreeRecipientInfo}})}
+\DoxyCodeLine{00495\ DECLARE\_ASN1\_ITEM(\mbox{\hyperlink{struct_c_m_s___key_trans_recipient_info__st}{CMS\_KeyTransRecipientInfo}})}
+\DoxyCodeLine{00496\ DECLARE\_ASN1\_ITEM(\mbox{\hyperlink{struct_c_m_s___originator_public_key__st}{CMS\_OriginatorPublicKey}})}
+\DoxyCodeLine{00497\ DECLARE\_ASN1\_ITEM(CMS\_OtherKeyAttribute)}
+\DoxyCodeLine{00498\ DECLARE\_ASN1\_ITEM(CMS\_Receipt)}
+\DoxyCodeLine{00499\ DECLARE\_ASN1\_ITEM(CMS\_ReceiptRequest)}
+\DoxyCodeLine{00500\ DECLARE\_ASN1\_ITEM(CMS\_RecipientEncryptedKey)}
+\DoxyCodeLine{00501\ DECLARE\_ASN1\_ITEM(\mbox{\hyperlink{struct_c_m_s___recipient_key_identifier__st}{CMS\_RecipientKeyIdentifier}})}
+\DoxyCodeLine{00502\ DECLARE\_ASN1\_ITEM(CMS\_RevocationInfoChoice)}
+\DoxyCodeLine{00503\ DECLARE\_ASN1\_ITEM(CMS\_SignedData)}
+\DoxyCodeLine{00504\ DECLARE\_ASN1\_ITEM(\mbox{\hyperlink{struct_c_m_s___compressed_data__st}{CMS\_CompressedData}})}
+\DoxyCodeLine{00505\ }
+\DoxyCodeLine{00506\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

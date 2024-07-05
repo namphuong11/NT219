@@ -1,0 +1,112 @@
+\doxysection{ec.\+h}
+\hypertarget{crypto_2ec_8h_source}{}\label{crypto_2ec_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/crypto/ec.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/crypto/ec.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2018-\/2021\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{comment}{/*\ Internal\ EC\ functions\ for\ other\ submodules:\ not\ for\ application\ use\ */}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#ifndef\ OSSL\_CRYPTO\_EC\_H}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#\ define\ OSSL\_CRYPTO\_EC\_H}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ pragma\ once}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#\ include\ <openssl/opensslconf.h>}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#\ include\ <openssl/evp.h>}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{keywordtype}{int}\ ossl\_ec\_curve\_name2nid(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *name);}
+\DoxyCodeLine{00020\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *ossl\_ec\_curve\_nid2nist\_int(\textcolor{keywordtype}{int}\ nid);}
+\DoxyCodeLine{00021\ \textcolor{keywordtype}{int}\ ossl\_ec\_curve\_nist2nid\_int(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *name);}
+\DoxyCodeLine{00022\ \textcolor{keywordtype}{int}\ evp\_pkey\_ctx\_set\_ec\_param\_enc\_prov(EVP\_PKEY\_CTX\ *ctx,\ \textcolor{keywordtype}{int}\ param\_enc);}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#\ ifndef\ OPENSSL\_NO\_EC}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#\ \ include\ <openssl/core.h>}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#\ \ include\ <openssl/ec.h>}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#\ \ include\ "{}crypto/types.h"{}}}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00030\ \textcolor{comment}{\ *\ Computes\ the\ multiplicative\ inverse\ of\ x\ in\ the\ range}}
+\DoxyCodeLine{00031\ \textcolor{comment}{\ *\ [1,EC\_GROUP::order),\ where\ EC\_GROUP::order\ is\ the\ cardinality\ of\ the}}
+\DoxyCodeLine{00032\ \textcolor{comment}{\ *\ subgroup\ generated\ by\ the\ generator\ G:}}
+\DoxyCodeLine{00033\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00034\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ res\ :=\ x\string^(-\/1)\ (mod\ EC\_GROUP::order).}}
+\DoxyCodeLine{00035\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00036\ \textcolor{comment}{\ *\ This\ function\ expects\ the\ following\ two\ conditions\ to\ hold:}}
+\DoxyCodeLine{00037\ \textcolor{comment}{\ *\ \ -\/\ the\ EC\_GROUP\ order\ is\ prime,\ and}}
+\DoxyCodeLine{00038\ \textcolor{comment}{\ *\ \ -\/\ x\ is\ included\ in\ the\ range\ [1,\ EC\_GROUP::order).}}
+\DoxyCodeLine{00039\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00040\ \textcolor{comment}{\ *\ This\ function\ returns\ 1\ on\ success,\ 0\ on\ error.}}
+\DoxyCodeLine{00041\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00042\ \textcolor{comment}{\ *\ If\ the\ EC\_GROUP\ order\ is\ even,\ this\ function\ explicitly\ returns\ 0\ as}}
+\DoxyCodeLine{00043\ \textcolor{comment}{\ *\ an\ error.}}
+\DoxyCodeLine{00044\ \textcolor{comment}{\ *\ In\ case\ any\ of\ the\ two\ conditions\ stated\ above\ is\ not\ satisfied,}}
+\DoxyCodeLine{00045\ \textcolor{comment}{\ *\ the\ correctness\ of\ its\ output\ is\ not\ guaranteed,\ even\ if\ the\ return}}
+\DoxyCodeLine{00046\ \textcolor{comment}{\ *\ value\ could\ still\ be\ 1\ (as\ primality\ testing\ and\ a\ conditional\ modular}}
+\DoxyCodeLine{00047\ \textcolor{comment}{\ *\ reduction\ round\ on\ the\ input\ can\ be\ omitted\ by\ the\ underlying}}
+\DoxyCodeLine{00048\ \textcolor{comment}{\ *\ implementations\ for\ better\ SCA\ properties\ on\ regular\ input\ values).}}
+\DoxyCodeLine{00049\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00050\ \_\_owur\ \textcolor{keywordtype}{int}\ ossl\_ec\_group\_do\_inverse\_ord(\textcolor{keyword}{const}\ EC\_GROUP\ *group,\ BIGNUM\ *res,}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *x,\ BN\_CTX\ *ctx);}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00054\ \textcolor{comment}{\ *\ ECDH\ Key\ Derivation\ Function\ as\ defined\ in\ ANSI\ X9.63}}
+\DoxyCodeLine{00055\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00056\ \textcolor{keywordtype}{int}\ ossl\_ecdh\_kdf\_X9\_63(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,\ \textcolor{keywordtype}{size\_t}\ outlen,}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *Z,\ \textcolor{keywordtype}{size\_t}\ Zlen,}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *sinfo,\ \textcolor{keywordtype}{size\_t}\ sinfolen,}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ EVP\_MD\ *md,\ OSSL\_LIB\_CTX\ *libctx,}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *propq);}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \textcolor{keywordtype}{int}\ ossl\_ec\_key\_public\_check(\textcolor{keyword}{const}\ EC\_KEY\ *eckey,\ BN\_CTX\ *ctx);}
+\DoxyCodeLine{00063\ \textcolor{keywordtype}{int}\ ossl\_ec\_key\_public\_check\_quick(\textcolor{keyword}{const}\ EC\_KEY\ *eckey,\ BN\_CTX\ *ctx);}
+\DoxyCodeLine{00064\ \textcolor{keywordtype}{int}\ ossl\_ec\_key\_private\_check(\textcolor{keyword}{const}\ EC\_KEY\ *eckey);}
+\DoxyCodeLine{00065\ \textcolor{keywordtype}{int}\ ossl\_ec\_key\_pairwise\_check(\textcolor{keyword}{const}\ EC\_KEY\ *eckey,\ BN\_CTX\ *ctx);}
+\DoxyCodeLine{00066\ OSSL\_LIB\_CTX\ *ossl\_ec\_key\_get\_libctx(\textcolor{keyword}{const}\ EC\_KEY\ *eckey);}
+\DoxyCodeLine{00067\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *ossl\_ec\_key\_get0\_propq(\textcolor{keyword}{const}\ EC\_KEY\ *eckey);}
+\DoxyCodeLine{00068\ \textcolor{keywordtype}{void}\ ossl\_ec\_key\_set0\_libctx(EC\_KEY\ *key,\ OSSL\_LIB\_CTX\ *libctx);}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ \textcolor{comment}{/*\ Backend\ support\ */}}
+\DoxyCodeLine{00071\ \textcolor{keywordtype}{int}\ ossl\_ec\_group\_todata(\textcolor{keyword}{const}\ EC\_GROUP\ *group,\ OSSL\_PARAM\_BLD\ *tmpl,}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OSSL\_PARAM\ params[],\ OSSL\_LIB\_CTX\ *libctx,}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *propq,}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BN\_CTX\ *bnctx,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **genbuf);}
+\DoxyCodeLine{00075\ \textcolor{keywordtype}{int}\ ossl\_ec\_group\_fromdata(EC\_KEY\ *ec,\ \textcolor{keyword}{const}\ OSSL\_PARAM\ params[]);}
+\DoxyCodeLine{00076\ \textcolor{keywordtype}{int}\ ossl\_ec\_group\_set\_params(EC\_GROUP\ *group,\ \textcolor{keyword}{const}\ OSSL\_PARAM\ params[]);}
+\DoxyCodeLine{00077\ \textcolor{keywordtype}{int}\ ossl\_ec\_key\_fromdata(EC\_KEY\ *ecx,\ \textcolor{keyword}{const}\ OSSL\_PARAM\ params[],}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ include\_private);}
+\DoxyCodeLine{00079\ \textcolor{keywordtype}{int}\ ossl\_ec\_key\_otherparams\_fromdata(EC\_KEY\ *ec,\ \textcolor{keyword}{const}\ OSSL\_PARAM\ params[]);}
+\DoxyCodeLine{00080\ \textcolor{keywordtype}{int}\ ossl\_ec\_key\_is\_foreign(\textcolor{keyword}{const}\ EC\_KEY\ *ec);}
+\DoxyCodeLine{00081\ EC\_KEY\ *ossl\_ec\_key\_dup(\textcolor{keyword}{const}\ EC\_KEY\ *key,\ \textcolor{keywordtype}{int}\ selection);}
+\DoxyCodeLine{00082\ \textcolor{keywordtype}{int}\ ossl\_x509\_algor\_is\_sm2(\textcolor{keyword}{const}\ X509\_ALGOR\ *palg);}
+\DoxyCodeLine{00083\ EC\_KEY\ *ossl\_ec\_key\_param\_from\_x509\_algor(\textcolor{keyword}{const}\ X509\_ALGOR\ *palg,}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OSSL\_LIB\_CTX\ *libctx,}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *propq);}
+\DoxyCodeLine{00086\ EC\_KEY\ *ossl\_ec\_key\_from\_pkcs8(\textcolor{keyword}{const}\ PKCS8\_PRIV\_KEY\_INFO\ *p8inf,}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OSSL\_LIB\_CTX\ *libctx,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *propq);}
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00089\ \textcolor{keywordtype}{int}\ ossl\_ec\_set\_ecdh\_cofactor\_mode(EC\_KEY\ *ec,\ \textcolor{keywordtype}{int}\ mode);}
+\DoxyCodeLine{00090\ \textcolor{keywordtype}{int}\ ossl\_ec\_encoding\_name2id(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *name);}
+\DoxyCodeLine{00091\ \textcolor{keywordtype}{int}\ ossl\_ec\_encoding\_param2id(\textcolor{keyword}{const}\ OSSL\_PARAM\ *p,\ \textcolor{keywordtype}{int}\ *\textcolor{keywordtype}{id});}
+\DoxyCodeLine{00092\ \textcolor{keywordtype}{int}\ ossl\_ec\_pt\_format\_name2id(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *name);}
+\DoxyCodeLine{00093\ \textcolor{keywordtype}{int}\ ossl\_ec\_pt\_format\_param2id(\textcolor{keyword}{const}\ OSSL\_PARAM\ *p,\ \textcolor{keywordtype}{int}\ *\textcolor{keywordtype}{id});}
+\DoxyCodeLine{00094\ \textcolor{keywordtype}{char}\ *ossl\_ec\_pt\_format\_id2name(\textcolor{keywordtype}{int}\ \textcolor{keywordtype}{id});}
+\DoxyCodeLine{00095\ }
+\DoxyCodeLine{00096\ \textcolor{keywordtype}{char}\ *ossl\_ec\_check\_group\_type\_id2name(\textcolor{keywordtype}{int}\ flags);}
+\DoxyCodeLine{00097\ \textcolor{keywordtype}{int}\ ossl\_ec\_set\_check\_group\_type\_from\_name(EC\_KEY\ *ec,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *name);}
+\DoxyCodeLine{00098\ \textcolor{keywordtype}{int}\ ossl\_ec\_generate\_key\_dhkem(EC\_KEY\ *eckey,}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *ikm,\ \textcolor{keywordtype}{size\_t}\ ikmlen);}
+\DoxyCodeLine{00100\ \textcolor{keywordtype}{int}\ ossl\_ecdsa\_deterministic\_sign(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *dgst,\ \textcolor{keywordtype}{int}\ dlen,}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *sig,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ *siglen,}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ EC\_KEY\ *eckey,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ nonce\_type,}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *digestname,}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OSSL\_LIB\_CTX\ *libctx,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *propq);}
+\DoxyCodeLine{00105\ \textcolor{preprocessor}{\#\ endif\ }\textcolor{comment}{/*\ OPENSSL\_NO\_EC\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00106\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

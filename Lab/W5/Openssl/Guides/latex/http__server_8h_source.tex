@@ -1,0 +1,115 @@
+\doxysection{http\+\_\+server.\+h}
+\hypertarget{http__server_8h_source}{}\label{http__server_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/apps/include/http\_server.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/apps/include/http\_server.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 1995-\/2022\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_HTTP\_SERVER\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_HTTP\_SERVER\_H}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#\ include\ "{}apps.h"{}}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ include\ "{}log.h"{}}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#\ ifndef\ HAVE\_FORK}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#\ \ if\ defined(OPENSSL\_SYS\_VMS)\ ||\ defined(OPENSSL\_SYS\_WINDOWS)}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#\ \ \ define\ HAVE\_FORK\ 0}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#\ \ else}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#\ \ \ define\ HAVE\_FORK\ 1}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#\ \ endif}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#\ if\ HAVE\_FORK}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#\ \ undef\ NO\_FORK}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#\ else}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#\ \ define\ NO\_FORK}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#\ if\ !defined(NO\_FORK)\ \&\&\ !defined(OPENSSL\_NO\_SOCK)\ \(\backslash\)}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\ \ \ \ \&\&\ !defined(OPENSSL\_NO\_POSIX\_IO)}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#\ \ define\ HTTP\_DAEMON}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#\ \ include\ <sys/types.h>}}
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#\ \ include\ <sys/wait.h>}}
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#\ \ include\ <signal.h>}}
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#\ \ define\ MAXERRLEN\ 1000\ }\textcolor{comment}{/*\ limit\ error\ text\ sent\ to\ syslog\ to\ 1000\ bytes\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \textcolor{preprocessor}{\#\ ifndef\ OPENSSL\_NO\_SOCK}}
+\DoxyCodeLine{00040\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00041\ \textcolor{comment}{\ *\ Initialize\ an\ HTTP\ server,\ setting\ up\ its\ listening\ BIO}}
+\DoxyCodeLine{00042\ \textcolor{comment}{\ *\ prog:\ the\ name\ of\ the\ current\ app}}
+\DoxyCodeLine{00043\ \textcolor{comment}{\ *\ port:\ the\ port\ to\ listen\ on}}
+\DoxyCodeLine{00044\ \textcolor{comment}{\ *\ verbosity:\ the\ level\ of\ verbosity\ to\ use,\ or\ -\/1\ for\ default:\ LOG\_INFO}}
+\DoxyCodeLine{00045\ \textcolor{comment}{\ *\ returns\ a\ BIO\ for\ accepting\ requests,\ NULL\ on\ error}}
+\DoxyCodeLine{00046\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00047\ BIO\ *http\_server\_init(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *prog,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *port,\ \textcolor{keywordtype}{int}\ verbosity);}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00050\ \textcolor{comment}{\ *\ Accept\ an\ ASN.1-\/formatted\ HTTP\ request}}
+\DoxyCodeLine{00051\ \textcolor{comment}{\ *\ it:\ the\ expected\ request\ ASN.1\ type}}
+\DoxyCodeLine{00052\ \textcolor{comment}{\ *\ preq:\ pointer\ to\ variable\ where\ to\ place\ the\ parsed\ request}}
+\DoxyCodeLine{00053\ \textcolor{comment}{\ *\ ppath:\ pointer\ to\ variable\ where\ to\ place\ the\ request\ path,\ or\ NULL}}
+\DoxyCodeLine{00054\ \textcolor{comment}{\ *\ pcbio:\ pointer\ to\ variable\ where\ to\ place\ the\ BIO\ for\ sending\ the\ response\ to}}
+\DoxyCodeLine{00055\ \textcolor{comment}{\ *\ acbio:\ the\ listening\ bio\ (typically\ as\ returned\ by\ http\_server\_init\_bio())}}
+\DoxyCodeLine{00056\ \textcolor{comment}{\ *\ found\_keep\_alive:\ for\ returning\ flag\ if\ client\ requests\ persistent\ connection}}
+\DoxyCodeLine{00057\ \textcolor{comment}{\ *\ prog:\ the\ name\ of\ the\ current\ app,\ for\ diagnostics\ only}}
+\DoxyCodeLine{00058\ \textcolor{comment}{\ *\ accept\_get:\ whether\ to\ accept\ GET\ requests\ (in\ addition\ to\ POST\ requests)}}
+\DoxyCodeLine{00059\ \textcolor{comment}{\ *\ timeout:\ connection\ timeout\ (in\ seconds),\ or\ 0\ for\ none/infinite}}
+\DoxyCodeLine{00060\ \textcolor{comment}{\ *\ returns\ 0\ in\ case\ caller\ should\ retry,\ then\ *preq\ ==\ *ppath\ ==\ *pcbio\ ==\ NULL}}
+\DoxyCodeLine{00061\ \textcolor{comment}{\ *\ returns\ -\/1\ on\ fatal\ error;\ also\ then\ holds\ *preq\ ==\ *ppath\ ==\ *pcbio\ ==\ NULL}}
+\DoxyCodeLine{00062\ \textcolor{comment}{\ *\ returns\ 1\ otherwise.\ In\ this\ case\ it\ is\ guaranteed\ that\ *pcbio\ !=\ NULL\ while}}
+\DoxyCodeLine{00063\ \textcolor{comment}{\ *\ *ppath\ ==\ NULL\ and\ *preq\ ==\ NULL\ if\ and\ only\ if\ the\ request\ is\ invalid,}}
+\DoxyCodeLine{00064\ \textcolor{comment}{\ *\ On\ return\ value\ 1\ the\ caller\ is\ responsible\ for\ sending\ an\ HTTP\ response,}}
+\DoxyCodeLine{00065\ \textcolor{comment}{\ *\ using\ http\_server\_send\_asn1\_resp()\ or\ http\_server\_send\_status().}}
+\DoxyCodeLine{00066\ \textcolor{comment}{\ *\ The\ caller\ must\ free\ any\ non-\/NULL\ *preq,\ *ppath,\ and\ *pcbio\ pointers.}}
+\DoxyCodeLine{00067\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00068\ \textcolor{keywordtype}{int}\ http\_server\_get\_asn1\_req(\textcolor{keyword}{const}\ ASN1\_ITEM\ *it,\ ASN1\_VALUE\ **preq,}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{char}\ **ppath,\ BIO\ **pcbio,\ BIO\ *acbio,}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ *found\_keep\_alive,}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *prog,\ \textcolor{keywordtype}{int}\ accept\_get,\ \textcolor{keywordtype}{int}\ timeout);}
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00073\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00074\ \textcolor{comment}{\ *\ Send\ an\ ASN.1-\/formatted\ HTTP\ response}}
+\DoxyCodeLine{00075\ \textcolor{comment}{\ *\ prog:\ the\ name\ of\ the\ current\ app,\ for\ diagnostics\ only}}
+\DoxyCodeLine{00076\ \textcolor{comment}{\ *\ cbio:\ destination\ BIO\ (typically\ as\ returned\ by\ http\_server\_get\_asn1\_req())}}
+\DoxyCodeLine{00077\ \textcolor{comment}{\ *\ \ \ \ \ \ \ note:\ cbio\ should\ not\ do\ an\ encoding\ that\ changes\ the\ output\ length}}
+\DoxyCodeLine{00078\ \textcolor{comment}{\ *\ keep\_alive:\ grant\ persistent\ connection}}
+\DoxyCodeLine{00079\ \textcolor{comment}{\ *\ content\_type:\ string\ identifying\ the\ type\ of\ the\ response}}
+\DoxyCodeLine{00080\ \textcolor{comment}{\ *\ it:\ the\ response\ ASN.1\ type}}
+\DoxyCodeLine{00081\ \textcolor{comment}{\ *\ resp:\ the\ response\ to\ send}}
+\DoxyCodeLine{00082\ \textcolor{comment}{\ *\ returns\ 1\ on\ success,\ 0\ on\ failure}}
+\DoxyCodeLine{00083\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00084\ \textcolor{keywordtype}{int}\ http\_server\_send\_asn1\_resp(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *prog,\ BIO\ *cbio,\ \textcolor{keywordtype}{int}\ keep\_alive,}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *content\_type,}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ ASN1\_ITEM\ *it,\ \textcolor{keyword}{const}\ ASN1\_VALUE\ *resp);}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00088\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00089\ \textcolor{comment}{\ *\ Send\ a\ trivial\ HTTP\ response,\ typically\ to\ report\ an\ error\ or\ OK}}
+\DoxyCodeLine{00090\ \textcolor{comment}{\ *\ prog:\ the\ name\ of\ the\ current\ app,\ for\ diagnostics\ only}}
+\DoxyCodeLine{00091\ \textcolor{comment}{\ *\ cbio:\ destination\ BIO\ (typically\ as\ returned\ by\ http\_server\_get\_asn1\_req())}}
+\DoxyCodeLine{00092\ \textcolor{comment}{\ *\ status:\ the\ status\ code\ to\ send}}
+\DoxyCodeLine{00093\ \textcolor{comment}{\ *\ reason:\ the\ corresponding\ human-\/readable\ string}}
+\DoxyCodeLine{00094\ \textcolor{comment}{\ *\ returns\ 1\ on\ success,\ 0\ on\ failure}}
+\DoxyCodeLine{00095\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00096\ \textcolor{keywordtype}{int}\ http\_server\_send\_status(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *prog,\ BIO\ *cbio,}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ status,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *reason);}
+\DoxyCodeLine{00098\ }
+\DoxyCodeLine{00099\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00100\ }
+\DoxyCodeLine{00101\ \textcolor{preprocessor}{\#\ ifdef\ HTTP\_DAEMON}}
+\DoxyCodeLine{00102\ \textcolor{keyword}{extern}\ \textcolor{keywordtype}{int}\ n\_responders;}
+\DoxyCodeLine{00103\ \textcolor{keyword}{extern}\ \textcolor{keywordtype}{int}\ acfd;}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00105\ \textcolor{keywordtype}{void}\ socket\_timeout(\textcolor{keywordtype}{int}\ signum);}
+\DoxyCodeLine{00106\ \textcolor{keywordtype}{void}\ spawn\_loop(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *prog);}
+\DoxyCodeLine{00107\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00108\ }
+\DoxyCodeLine{00109\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

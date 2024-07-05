@@ -1,0 +1,120 @@
+\doxysection{sm3\+\_\+local.\+h}
+\hypertarget{sm3__local_8h_source}{}\label{sm3__local_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/sm3/sm3\_local.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/sm3/sm3\_local.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2017-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *\ Copyright\ 2017\ Ribose\ Inc.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Ported\ from\ Ribose\ contributions\ from\ Botan.}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ <string.h>}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ "{}internal/sm3.h"{}}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#define\ DATA\_ORDER\_IS\_BIG\_ENDIAN}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ HASH\_LONG\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ SM3\_WORD}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#define\ HASH\_CTX\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ SM3\_CTX}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#define\ HASH\_CBLOCK\ \ \ \ \ \ \ \ \ \ \ \ \ SM3\_CBLOCK}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#define\ HASH\_UPDATE\ \ \ \ \ \ \ \ \ \ \ \ \ ossl\_sm3\_update}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#define\ HASH\_TRANSFORM\ \ \ \ \ \ \ \ \ \ ossl\_sm3\_transform}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#define\ HASH\_FINAL\ \ \ \ \ \ \ \ \ \ \ \ \ \ ossl\_sm3\_final}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#define\ HASH\_MAKE\_STRING(c,\ s)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\ \ \ \ \ \ do\ \{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ unsigned\ long\ ll;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ ll=(c)-\/>A;\ (void)HOST\_l2c(ll,\ (s));\ \(\backslash\)}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ ll=(c)-\/>B;\ (void)HOST\_l2c(ll,\ (s));\ \(\backslash\)}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ ll=(c)-\/>C;\ (void)HOST\_l2c(ll,\ (s));\ \(\backslash\)}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ ll=(c)-\/>D;\ (void)HOST\_l2c(ll,\ (s));\ \(\backslash\)}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ ll=(c)-\/>E;\ (void)HOST\_l2c(ll,\ (s));\ \(\backslash\)}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ ll=(c)-\/>F;\ (void)HOST\_l2c(ll,\ (s));\ \(\backslash\)}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ ll=(c)-\/>G;\ (void)HOST\_l2c(ll,\ (s));\ \(\backslash\)}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ ll=(c)-\/>H;\ (void)HOST\_l2c(ll,\ (s));\ \(\backslash\)}}
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\ \ \ \ \ \ \}\ while\ (0)}}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#if\ defined(OPENSSL\_SM3\_ASM)}}
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#\ if\ defined(\_\_aarch64\_\_)\ ||\ defined(\_M\_ARM64)}}
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#\ \ include\ "{}crypto/arm\_arch.h"{}}}
+\DoxyCodeLine{00039\ \textcolor{preprocessor}{\#\ \ define\ HWSM3\_CAPABLE\ (OPENSSL\_armcap\_P\ \&\ ARMV8\_SM3)}}
+\DoxyCodeLine{00040\ \textcolor{keywordtype}{void}\ ossl\_hwsm3\_block\_data\_order(\mbox{\hyperlink{struct_s_m3state__st}{SM3\_CTX}}\ *c,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *p,\ \textcolor{keywordtype}{size\_t}\ num);}
+\DoxyCodeLine{00041\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00042\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ \textcolor{preprocessor}{\#if\ defined(HWSM3\_CAPABLE)}}
+\DoxyCodeLine{00045\ \textcolor{preprocessor}{\#\ define\ HASH\_BLOCK\_DATA\_ORDER\ (HWSM3\_CAPABLE\ ?\ ossl\_hwsm3\_block\_data\_order\ \(\backslash\)}}
+\DoxyCodeLine{00046\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ ossl\_sm3\_block\_data\_order)}}
+\DoxyCodeLine{00047\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00048\ \textcolor{preprocessor}{\#\ define\ HASH\_BLOCK\_DATA\_ORDER\ \ \ ossl\_sm3\_block\_data\_order}}
+\DoxyCodeLine{00049\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \textcolor{keywordtype}{void}\ ossl\_sm3\_block\_data\_order(\mbox{\hyperlink{struct_s_m3state__st}{SM3\_CTX}}\ *c,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *p,\ \textcolor{keywordtype}{size\_t}\ num);}
+\DoxyCodeLine{00052\ \textcolor{keywordtype}{void}\ ossl\_sm3\_transform(\mbox{\hyperlink{struct_s_m3state__st}{SM3\_CTX}}\ *c,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *data);}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \textcolor{preprocessor}{\#include\ "{}crypto/md32\_common.h"{}}}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \textcolor{preprocessor}{\#ifndef\ PEDANTIC}}
+\DoxyCodeLine{00057\ \textcolor{preprocessor}{\#\ if\ defined(\_\_GNUC\_\_)\ \&\&\ \_\_GNUC\_\_>=2\ \&\&\ \(\backslash\)}}
+\DoxyCodeLine{00058\ \textcolor{preprocessor}{\ \ \ \ \ !defined(OPENSSL\_NO\_ASM)\ \&\&\ !defined(OPENSSL\_NO\_INLINE\_ASM)}}
+\DoxyCodeLine{00059\ \textcolor{preprocessor}{\#\ \ if\ defined(\_\_riscv\_zksh)}}
+\DoxyCodeLine{00060\ \textcolor{preprocessor}{\#\ \ \ define\ P0(x)\ (\{\ MD32\_REG\_T\ ret;\ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00061\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ asm\ ("{}sm3p0\ \%0,\ \%1"{}\ \(\backslash\)}}
+\DoxyCodeLine{00062\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ "{}=r"{}(ret)\ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00063\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ "{}r"{}(x));\ ret;\ \ \ \ \ \})}}
+\DoxyCodeLine{00064\ \textcolor{preprocessor}{\#\ \ \ define\ P1(x)\ (\{\ MD32\_REG\_T\ ret;\ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00065\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ asm\ ("{}sm3p1\ \%0,\ \%1"{}\ \(\backslash\)}}
+\DoxyCodeLine{00066\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ "{}=r"{}(ret)\ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00067\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ "{}r"{}(x));\ ret;\ \ \ \ \ \})}}
+\DoxyCodeLine{00068\ \textcolor{preprocessor}{\#\ \ endif}}
+\DoxyCodeLine{00069\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00070\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00072\ \textcolor{preprocessor}{\#ifndef\ P0}}
+\DoxyCodeLine{00073\ \textcolor{preprocessor}{\#\ define\ P0(X)\ (X\ \string^\ ROTATE(X,\ 9)\ \string^\ ROTATE(X,\ 17))}}
+\DoxyCodeLine{00074\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00075\ \textcolor{preprocessor}{\#ifndef\ P1}}
+\DoxyCodeLine{00076\ \textcolor{preprocessor}{\#\ define\ P1(X)\ (X\ \string^\ ROTATE(X,\ 15)\ \string^\ ROTATE(X,\ 23))}}
+\DoxyCodeLine{00077\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \textcolor{preprocessor}{\#define\ FF0(X,Y,Z)\ (X\ \string^\ Y\ \string^\ Z)}}
+\DoxyCodeLine{00080\ \textcolor{preprocessor}{\#define\ GG0(X,Y,Z)\ (X\ \string^\ Y\ \string^\ Z)}}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00082\ \textcolor{preprocessor}{\#define\ FF1(X,Y,Z)\ ((X\ \&\ Y)\ |\ ((X\ |\ Y)\ \&\ Z))}}
+\DoxyCodeLine{00083\ \textcolor{preprocessor}{\#define\ GG1(X,Y,Z)\ ((Z\ \string^\ (X\ \&\ (Y\ \string^\ Z))))}}
+\DoxyCodeLine{00084\ }
+\DoxyCodeLine{00085\ \textcolor{preprocessor}{\#define\ EXPAND(W0,W7,W13,W3,W10)\ \(\backslash\)}}
+\DoxyCodeLine{00086\ \textcolor{preprocessor}{\ \ \ (P1(W0\ \string^\ W7\ \string^\ ROTATE(W13,\ 15))\ \string^\ ROTATE(W3,\ 7)\ \string^\ W10)}}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00088\ \textcolor{preprocessor}{\#define\ RND(A,\ B,\ C,\ D,\ E,\ F,\ G,\ H,\ TJ,\ Wi,\ Wj,\ FF,\ GG)\ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00089\ \textcolor{preprocessor}{\ \ \ \ \ do\ \{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00090\ \textcolor{preprocessor}{\ \ \ \ \ \ \ const\ SM3\_WORD\ A12\ =\ ROTATE(A,\ 12);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00091\ \textcolor{preprocessor}{\ \ \ \ \ \ \ const\ SM3\_WORD\ A12\_SM\ =\ A12\ +\ E\ +\ TJ;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00092\ \textcolor{preprocessor}{\ \ \ \ \ \ \ const\ SM3\_WORD\ SS1\ =\ ROTATE(A12\_SM,\ 7);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00093\ \textcolor{preprocessor}{\ \ \ \ \ \ \ const\ SM3\_WORD\ TT1\ =\ FF(A,\ B,\ C)\ +\ D\ +\ (SS1\ \string^\ A12)\ +\ (Wj);\ \(\backslash\)}}
+\DoxyCodeLine{00094\ \textcolor{preprocessor}{\ \ \ \ \ \ \ const\ SM3\_WORD\ TT2\ =\ GG(E,\ F,\ G)\ +\ H\ +\ SS1\ +\ Wi;\ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00095\ \textcolor{preprocessor}{\ \ \ \ \ \ \ B\ =\ ROTATE(B,\ 9);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00096\ \textcolor{preprocessor}{\ \ \ \ \ \ \ D\ =\ TT1;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00097\ \textcolor{preprocessor}{\ \ \ \ \ \ \ F\ =\ ROTATE(F,\ 19);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00098\ \textcolor{preprocessor}{\ \ \ \ \ \ \ H\ =\ P0(TT2);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00099\ \textcolor{preprocessor}{\ \ \ \ \ \}\ while(0)}}
+\DoxyCodeLine{00100\ }
+\DoxyCodeLine{00101\ \textcolor{preprocessor}{\#define\ R1(A,B,C,D,E,F,G,H,TJ,Wi,Wj)\ \(\backslash\)}}
+\DoxyCodeLine{00102\ \textcolor{preprocessor}{\ \ \ RND(A,B,C,D,E,F,G,H,TJ,Wi,Wj,FF0,GG0)}}
+\DoxyCodeLine{00103\ }
+\DoxyCodeLine{00104\ \textcolor{preprocessor}{\#define\ R2(A,B,C,D,E,F,G,H,TJ,Wi,Wj)\ \(\backslash\)}}
+\DoxyCodeLine{00105\ \textcolor{preprocessor}{\ \ \ RND(A,B,C,D,E,F,G,H,TJ,Wi,Wj,FF1,GG1)}}
+\DoxyCodeLine{00106\ }
+\DoxyCodeLine{00107\ \textcolor{preprocessor}{\#define\ SM3\_A\ 0x7380166fUL}}
+\DoxyCodeLine{00108\ \textcolor{preprocessor}{\#define\ SM3\_B\ 0x4914b2b9UL}}
+\DoxyCodeLine{00109\ \textcolor{preprocessor}{\#define\ SM3\_C\ 0x172442d7UL}}
+\DoxyCodeLine{00110\ \textcolor{preprocessor}{\#define\ SM3\_D\ 0xda8a0600UL}}
+\DoxyCodeLine{00111\ \textcolor{preprocessor}{\#define\ SM3\_E\ 0xa96f30bcUL}}
+\DoxyCodeLine{00112\ \textcolor{preprocessor}{\#define\ SM3\_F\ 0x163138aaUL}}
+\DoxyCodeLine{00113\ \textcolor{preprocessor}{\#define\ SM3\_G\ 0xe38dee4dUL}}
+\DoxyCodeLine{00114\ \textcolor{preprocessor}{\#define\ SM3\_H\ 0xb0fb0e4eUL}}
+
+\end{DoxyCode}

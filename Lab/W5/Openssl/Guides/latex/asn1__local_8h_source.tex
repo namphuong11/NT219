@@ -1,0 +1,102 @@
+\doxysection{asn1\+\_\+local.\+h}
+\hypertarget{asn1__local_8h_source}{}\label{asn1__local_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/asn1/asn1\_local.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/asn1/asn1\_local.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2005-\/2021\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{comment}{/*\ Internal\ ASN1\ structures\ and\ functions:\ not\ for\ application\ use\ */}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ "{}crypto/asn1.h"{}}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{const}\ ASN1\_VALUE\ const\_ASN1\_VALUE;}
+\DoxyCodeLine{00015\ SKM\_DEFINE\_STACK\_OF(const\_ASN1\_VALUE,\ \textcolor{keyword}{const}\ ASN1\_VALUE,\ ASN1\_VALUE)}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{keywordtype}{int}\ ossl\_asn1\_time\_to\_tm(\textcolor{keyword}{struct}\ tm\ *tm,\ \textcolor{keyword}{const}\ ASN1\_TIME\ *d);}
+\DoxyCodeLine{00018\ \textcolor{keywordtype}{int}\ ossl\_asn1\_utctime\_to\_tm(\textcolor{keyword}{struct}\ tm\ *tm,\ \textcolor{keyword}{const}\ ASN1\_UTCTIME\ *d);}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{comment}{/*\ ASN1\ scan\ context\ structure\ */}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structasn1__sctx__st}{asn1\_sctx\_st}}\ \{}
+\DoxyCodeLine{00023\ \ \ \ \ \textcolor{comment}{/*\ The\ ASN1\_ITEM\ associated\ with\ this\ field\ */}}
+\DoxyCodeLine{00024\ \ \ \ \ \textcolor{keyword}{const}\ ASN1\_ITEM\ *it;}
+\DoxyCodeLine{00025\ \ \ \ \ \textcolor{comment}{/*\ If\ ASN1\_TEMPLATE\ associated\ with\ this\ field\ */}}
+\DoxyCodeLine{00026\ \ \ \ \ \textcolor{keyword}{const}\ ASN1\_TEMPLATE\ *tt;}
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{comment}{/*\ Various\ flags\ associated\ with\ field\ and\ context\ */}}
+\DoxyCodeLine{00028\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ flags;}
+\DoxyCodeLine{00029\ \ \ \ \ \textcolor{comment}{/*\ If\ SEQUENCE\ OF\ or\ SET\ OF,\ field\ index\ */}}
+\DoxyCodeLine{00030\ \ \ \ \ \textcolor{keywordtype}{int}\ skidx;}
+\DoxyCodeLine{00031\ \ \ \ \ \textcolor{comment}{/*\ ASN1\ depth\ of\ field\ */}}
+\DoxyCodeLine{00032\ \ \ \ \ \textcolor{keywordtype}{int}\ depth;}
+\DoxyCodeLine{00033\ \ \ \ \ \textcolor{comment}{/*\ Structure\ and\ field\ name\ */}}
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *sname,\ *fname;}
+\DoxyCodeLine{00035\ \ \ \ \ \textcolor{comment}{/*\ If\ a\ primitive\ type\ the\ type\ of\ underlying\ field\ */}}
+\DoxyCodeLine{00036\ \ \ \ \ \textcolor{keywordtype}{int}\ prim\_type;}
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{comment}{/*\ The\ field\ value\ itself\ */}}
+\DoxyCodeLine{00038\ \ \ \ \ ASN1\_VALUE\ **field;}
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{comment}{/*\ Callback\ to\ pass\ information\ to\ */}}
+\DoxyCodeLine{00040\ \ \ \ \ int\ (*scan\_cb)\ (ASN1\_SCTX\ *ctx);}
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{comment}{/*\ Context\ specific\ application\ data\ */}}
+\DoxyCodeLine{00042\ \ \ \ \ \textcolor{keywordtype}{void}\ *app\_data;}
+\DoxyCodeLine{00043\ \}\ \textcolor{comment}{/*\ ASN1\_SCTX\ */}\ ;}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structmime__param__st}{mime\_param\_st}}\ \mbox{\hyperlink{structmime__param__st}{MIME\_PARAM}};}
+\DoxyCodeLine{00046\ DEFINE\_STACK\_OF(\mbox{\hyperlink{structmime__param__st}{MIME\_PARAM}})}
+\DoxyCodeLine{00047\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structmime__header__st}{mime\_header\_st}}\ \mbox{\hyperlink{structmime__header__st}{MIME\_HEADER}};}
+\DoxyCodeLine{00048\ DEFINE\_STACK\_OF(\mbox{\hyperlink{structmime__header__st}{MIME\_HEADER}})}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \textcolor{keywordtype}{void}\ ossl\_asn1\_string\_embed\_free(ASN1\_STRING\ *a,\ \textcolor{keywordtype}{int}\ embed);}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ \textcolor{keywordtype}{int}\ ossl\_asn1\_get\_choice\_selector(ASN1\_VALUE\ **pval,\ \textcolor{keyword}{const}\ ASN1\_ITEM\ *it);}
+\DoxyCodeLine{00053\ \textcolor{keywordtype}{int}\ ossl\_asn1\_get\_choice\_selector\_const(\textcolor{keyword}{const}\ ASN1\_VALUE\ **pval,}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ ASN1\_ITEM\ *it);}
+\DoxyCodeLine{00055\ \textcolor{keywordtype}{int}\ ossl\_asn1\_set\_choice\_selector(ASN1\_VALUE\ **pval,\ \textcolor{keywordtype}{int}\ value,}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ ASN1\_ITEM\ *it);}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ ASN1\_VALUE\ **ossl\_asn1\_get\_field\_ptr(ASN1\_VALUE\ **pval,\ \textcolor{keyword}{const}\ ASN1\_TEMPLATE\ *tt);}
+\DoxyCodeLine{00059\ \textcolor{keyword}{const}\ ASN1\_VALUE\ **ossl\_asn1\_get\_const\_field\_ptr(\textcolor{keyword}{const}\ ASN1\_VALUE\ **pval,}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ ASN1\_TEMPLATE\ *tt);}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \textcolor{keyword}{const}\ ASN1\_TEMPLATE\ *ossl\_asn1\_do\_adb(\textcolor{keyword}{const}\ ASN1\_VALUE\ *val,}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ ASN1\_TEMPLATE\ *tt,}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ nullerr);}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \textcolor{keywordtype}{int}\ ossl\_asn1\_do\_lock(ASN1\_VALUE\ **pval,\ \textcolor{keywordtype}{int}\ op,\ \textcolor{keyword}{const}\ ASN1\_ITEM\ *it);}
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00068\ \textcolor{keywordtype}{void}\ ossl\_asn1\_enc\_init(ASN1\_VALUE\ **pval,\ \textcolor{keyword}{const}\ ASN1\_ITEM\ *it);}
+\DoxyCodeLine{00069\ \textcolor{keywordtype}{void}\ ossl\_asn1\_enc\_free(ASN1\_VALUE\ **pval,\ \textcolor{keyword}{const}\ ASN1\_ITEM\ *it);}
+\DoxyCodeLine{00070\ \textcolor{keywordtype}{int}\ ossl\_asn1\_enc\_restore(\textcolor{keywordtype}{int}\ *len,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **out,\ \textcolor{keyword}{const}\ ASN1\_VALUE\ **pval,}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ ASN1\_ITEM\ *it);}
+\DoxyCodeLine{00072\ \textcolor{keywordtype}{int}\ ossl\_asn1\_enc\_save(ASN1\_VALUE\ **pval,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,\ \textcolor{keywordtype}{int}\ inlen,}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ ASN1\_ITEM\ *it);}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00075\ \textcolor{keywordtype}{void}\ ossl\_asn1\_item\_embed\_free(ASN1\_VALUE\ **pval,\ \textcolor{keyword}{const}\ ASN1\_ITEM\ *it,\ \textcolor{keywordtype}{int}\ embed);}
+\DoxyCodeLine{00076\ \textcolor{keywordtype}{void}\ ossl\_asn1\_primitive\_free(ASN1\_VALUE\ **pval,\ \textcolor{keyword}{const}\ ASN1\_ITEM\ *it,\ \textcolor{keywordtype}{int}\ embed);}
+\DoxyCodeLine{00077\ \textcolor{keywordtype}{void}\ ossl\_asn1\_template\_free(ASN1\_VALUE\ **pval,\ \textcolor{keyword}{const}\ ASN1\_TEMPLATE\ *tt);}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ ASN1\_OBJECT\ *ossl\_c2i\_ASN1\_OBJECT(ASN1\_OBJECT\ **a,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **pp,}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{long}\ length);}
+\DoxyCodeLine{00081\ \textcolor{keywordtype}{int}\ ossl\_i2c\_ASN1\_BIT\_STRING(ASN1\_BIT\_STRING\ *a,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **pp);}
+\DoxyCodeLine{00082\ ASN1\_BIT\_STRING\ *ossl\_c2i\_ASN1\_BIT\_STRING(ASN1\_BIT\_STRING\ **a,}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **pp,\ \textcolor{keywordtype}{long}\ length);}
+\DoxyCodeLine{00084\ \textcolor{keywordtype}{int}\ ossl\_i2c\_ASN1\_INTEGER(ASN1\_INTEGER\ *a,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **pp);}
+\DoxyCodeLine{00085\ ASN1\_INTEGER\ *ossl\_c2i\_ASN1\_INTEGER(ASN1\_INTEGER\ **a,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **pp,}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{long}\ length);}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00088\ \textcolor{comment}{/*\ Internal\ functions\ used\ by\ x\_int64.c\ */}}
+\DoxyCodeLine{00089\ \textcolor{keywordtype}{int}\ ossl\_c2i\_uint64\_int(uint64\_t\ *ret,\ \textcolor{keywordtype}{int}\ *neg,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **pp,}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{long}\ len);}
+\DoxyCodeLine{00091\ \textcolor{keywordtype}{int}\ ossl\_i2c\_uint64\_int(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *p,\ uint64\_t\ r,\ \textcolor{keywordtype}{int}\ neg);}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ ASN1\_TIME\ *ossl\_asn1\_time\_from\_tm(ASN1\_TIME\ *s,\ \textcolor{keyword}{struct}\ tm\ *ts,\ \textcolor{keywordtype}{int}\ type);}
+\DoxyCodeLine{00094\ }
+\DoxyCodeLine{00095\ \textcolor{keywordtype}{int}\ ossl\_asn1\_item\_ex\_new\_intern(ASN1\_VALUE\ **pval,\ \textcolor{keyword}{const}\ ASN1\_ITEM\ *it,}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OSSL\_LIB\_CTX\ *libctx,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *propq);}
+
+\end{DoxyCode}

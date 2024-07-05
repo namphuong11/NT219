@@ -1,0 +1,104 @@
+\doxysection{prov\+\_\+cipher\+\_\+ctx\+\_\+st Struct Reference}
+\hypertarget{structprov__cipher__ctx__st}{}\label{structprov__cipher__ctx__st}\index{prov\_cipher\_ctx\_st@{prov\_cipher\_ctx\_st}}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{structprov__cipher__ctx__st_a528297390507118403f3a1d49070a6ee}\label{structprov__cipher__ctx__st_a528297390507118403f3a1d49070a6ee} 
+unsigned char {\bfseries oiv} \mbox{[}GENERIC\+\_\+\+BLOCK\+\_\+\+SIZE\mbox{]}
+\item 
+\Hypertarget{structprov__cipher__ctx__st_ae1b7441611559df56f5fcff74e86bb08}\label{structprov__cipher__ctx__st_ae1b7441611559df56f5fcff74e86bb08} 
+unsigned char {\bfseries buf} \mbox{[}GENERIC\+\_\+\+BLOCK\+\_\+\+SIZE\mbox{]}
+\item 
+\Hypertarget{structprov__cipher__ctx__st_aec6b3c7efc7184b5cc7f7ac352b6ceff}\label{structprov__cipher__ctx__st_aec6b3c7efc7184b5cc7f7ac352b6ceff} 
+unsigned char {\bfseries iv} \mbox{[}GENERIC\+\_\+\+BLOCK\+\_\+\+SIZE\mbox{]}
+\item 
+\Hypertarget{structprov__cipher__ctx__st_a86625f5d2d7b9daacf22051d4a4f0e0c}\label{structprov__cipher__ctx__st_a86625f5d2d7b9daacf22051d4a4f0e0c} 
+block128\+\_\+f {\bfseries block}
+\item 
+\Hypertarget{structprov__cipher__ctx__st_a65efdb7abeeb3d65b1dfb71f6647d2be}\label{structprov__cipher__ctx__st_a65efdb7abeeb3d65b1dfb71f6647d2be} 
+\begin{tabbing}
+xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=\kill
+union \{\\
+\>cbc128\_f {\bfseries cbc}\\
+\>ctr128\_f {\bfseries ctr}\\
+\>ecb128\_f {\bfseries ecb}\\
+\} {\bfseries stream}\\
+
+\end{tabbing}\item 
+\Hypertarget{structprov__cipher__ctx__st_a3c05768710434e0f942dc3b20679f4b3}\label{structprov__cipher__ctx__st_a3c05768710434e0f942dc3b20679f4b3} 
+unsigned int {\bfseries mode}
+\item 
+\Hypertarget{structprov__cipher__ctx__st_a64044caa0f9e6e2258091486da4a4db9}\label{structprov__cipher__ctx__st_a64044caa0f9e6e2258091486da4a4db9} 
+size\+\_\+t {\bfseries keylen}
+\item 
+\Hypertarget{structprov__cipher__ctx__st_a318277b3043eb15a790aca9e958c73bb}\label{structprov__cipher__ctx__st_a318277b3043eb15a790aca9e958c73bb} 
+size\+\_\+t {\bfseries ivlen}
+\item 
+\Hypertarget{structprov__cipher__ctx__st_ab33f055a858b6f12263dc22f9bdab5b2}\label{structprov__cipher__ctx__st_ab33f055a858b6f12263dc22f9bdab5b2} 
+size\+\_\+t {\bfseries blocksize}
+\item 
+\Hypertarget{structprov__cipher__ctx__st_a716a8f6626b8d597d6b5c31f2a7a8daf}\label{structprov__cipher__ctx__st_a716a8f6626b8d597d6b5c31f2a7a8daf} 
+size\+\_\+t {\bfseries bufsz}
+\item 
+\Hypertarget{structprov__cipher__ctx__st_a7c5d91c7dc75aae6f9d7af0f45783746}\label{structprov__cipher__ctx__st_a7c5d91c7dc75aae6f9d7af0f45783746} 
+unsigned int {\bfseries cts\+\_\+mode}
+\item 
+\Hypertarget{structprov__cipher__ctx__st_a521bae68547685046d22e8daee9e0c5c}\label{structprov__cipher__ctx__st_a521bae68547685046d22e8daee9e0c5c} 
+unsigned int {\bfseries pad}\+: 1
+\item 
+\Hypertarget{structprov__cipher__ctx__st_a53eb10dce7c997e5cca776a4355458be}\label{structprov__cipher__ctx__st_a53eb10dce7c997e5cca776a4355458be} 
+unsigned int {\bfseries enc}\+: 1
+\item 
+\Hypertarget{structprov__cipher__ctx__st_a0b912fe7edb8de5e7e37aef37e295ebe}\label{structprov__cipher__ctx__st_a0b912fe7edb8de5e7e37aef37e295ebe} 
+unsigned int {\bfseries iv\+\_\+set}\+: 1
+\item 
+\Hypertarget{structprov__cipher__ctx__st_af6334e2e8bf78895adc9c14cb4f54b8a}\label{structprov__cipher__ctx__st_af6334e2e8bf78895adc9c14cb4f54b8a} 
+unsigned int {\bfseries key\+\_\+set}\+: 1
+\item 
+\Hypertarget{structprov__cipher__ctx__st_a013260b0d04457161d407a2ae39b48e2}\label{structprov__cipher__ctx__st_a013260b0d04457161d407a2ae39b48e2} 
+unsigned int {\bfseries updated}\+: 1
+\item 
+\Hypertarget{structprov__cipher__ctx__st_a36ebeda8a5ba2ba5bdacb9088751e43f}\label{structprov__cipher__ctx__st_a36ebeda8a5ba2ba5bdacb9088751e43f} 
+unsigned int {\bfseries variable\+\_\+keylength}\+: 1
+\item 
+\Hypertarget{structprov__cipher__ctx__st_a479c399204e8ec1b539558b45882d724}\label{structprov__cipher__ctx__st_a479c399204e8ec1b539558b45882d724} 
+unsigned int {\bfseries inverse\+\_\+cipher}\+: 1
+\item 
+\Hypertarget{structprov__cipher__ctx__st_a91e206512d977c9e0753b22d041f7884}\label{structprov__cipher__ctx__st_a91e206512d977c9e0753b22d041f7884} 
+unsigned int {\bfseries use\+\_\+bits}\+: 1
+\item 
+\Hypertarget{structprov__cipher__ctx__st_a7517f70ff384d774c471464f482020be}\label{structprov__cipher__ctx__st_a7517f70ff384d774c471464f482020be} 
+unsigned int {\bfseries tlsversion}
+\item 
+\Hypertarget{structprov__cipher__ctx__st_ae7ae8155c6a1139db060258c6b563ff2}\label{structprov__cipher__ctx__st_ae7ae8155c6a1139db060258c6b563ff2} 
+unsigned char \texorpdfstring{$\ast$}{*} {\bfseries tlsmac}
+\item 
+\Hypertarget{structprov__cipher__ctx__st_a0266fb47be3a61c35d9bf661d4f03e4e}\label{structprov__cipher__ctx__st_a0266fb47be3a61c35d9bf661d4f03e4e} 
+int {\bfseries alloced}
+\item 
+\Hypertarget{structprov__cipher__ctx__st_a50717fa6b2df3b2dad4e4a0d6e0742e5}\label{structprov__cipher__ctx__st_a50717fa6b2df3b2dad4e4a0d6e0742e5} 
+size\+\_\+t {\bfseries tlsmacsize}
+\item 
+\Hypertarget{structprov__cipher__ctx__st_afcec5fcb3c3d37f58d9fab57bb92e9d5}\label{structprov__cipher__ctx__st_afcec5fcb3c3d37f58d9fab57bb92e9d5} 
+int {\bfseries removetlspad}
+\item 
+\Hypertarget{structprov__cipher__ctx__st_a1e6c645725b3577343c9304c32f4dfc7}\label{structprov__cipher__ctx__st_a1e6c645725b3577343c9304c32f4dfc7} 
+size\+\_\+t {\bfseries removetlsfixed}
+\item 
+\Hypertarget{structprov__cipher__ctx__st_a4c26b2ff8248c084839b6c85d18f5938}\label{structprov__cipher__ctx__st_a4c26b2ff8248c084839b6c85d18f5938} 
+unsigned int {\bfseries num}
+\item 
+\Hypertarget{structprov__cipher__ctx__st_a234a7baf8ec8718b8f0436307444c1c5}\label{structprov__cipher__ctx__st_a234a7baf8ec8718b8f0436307444c1c5} 
+const \mbox{\hyperlink{structprov__cipher__hw__st}{PROV\+\_\+\+CIPHER\+\_\+\+HW}} \texorpdfstring{$\ast$}{*} {\bfseries hw}
+\item 
+\Hypertarget{structprov__cipher__ctx__st_a2c892727df643062ed2ca9aa0fcf3937}\label{structprov__cipher__ctx__st_a2c892727df643062ed2ca9aa0fcf3937} 
+const void \texorpdfstring{$\ast$}{*} {\bfseries ks}
+\item 
+\Hypertarget{structprov__cipher__ctx__st_a395d00e5d749402f35e1287db01e4391}\label{structprov__cipher__ctx__st_a395d00e5d749402f35e1287db01e4391} 
+OSSL\+\_\+\+LIB\+\_\+\+CTX \texorpdfstring{$\ast$}{*} {\bfseries libctx}
+\end{DoxyCompactItemize}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/namph/\+Downloads/openssl/openssl-\/3.\+2.\+1/providers/implementations/include/prov/ciphercommon.\+h\end{DoxyCompactItemize}

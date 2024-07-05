@@ -1,0 +1,60 @@
+\doxysection{sha3.\+h}
+\hypertarget{sha3_8h_source}{}\label{sha3_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/sha3.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/sha3.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2019-\/2021\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{comment}{/*\ This\ header\ can\ move\ into\ provider\ when\ legacy\ support\ is\ removed\ */}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#ifndef\ OSSL\_INTERNAL\_SHA3\_H}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#\ define\ OSSL\_INTERNAL\_SHA3\_H}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#\ pragma\ once}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#\ include\ <openssl/e\_os2.h>}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#\ include\ <stddef.h>}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#\ define\ KECCAK1600\_WIDTH\ 1600}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#\ define\ SHA3\_MDSIZE(bitlen)\ \ \ \ (bitlen\ /\ 8)}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#\ define\ KMAC\_MDSIZE(bitlen)\ \ \ \ 2\ *\ (bitlen\ /\ 8)}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#\ define\ SHA3\_BLOCKSIZE(bitlen)\ (KECCAK1600\_WIDTH\ -\/\ bitlen\ *\ 2)\ /\ 8}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structkeccak__st}{keccak\_st}}\ \mbox{\hyperlink{structkeccak__st}{KECCAK1600\_CTX}};}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{keyword}{typedef}\ size\_t\ (sha3\_absorb\_fn)(\textcolor{keywordtype}{void}\ *vctx,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *inp,\ \textcolor{keywordtype}{size\_t}\ len);}
+\DoxyCodeLine{00026\ \textcolor{keyword}{typedef}\ int\ (sha3\_final\_fn)(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *md,\ \textcolor{keywordtype}{void}\ *vctx);}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structprov__sha3__meth__st}{prov\_sha3\_meth\_st}}}
+\DoxyCodeLine{00029\ \{}
+\DoxyCodeLine{00030\ \ \ \ \ sha3\_absorb\_fn\ *absorb;}
+\DoxyCodeLine{00031\ \ \ \ \ sha3\_final\_fn\ *\textcolor{keyword}{final};}
+\DoxyCodeLine{00032\ \}\ \mbox{\hyperlink{structprov__sha3__meth__st}{PROV\_SHA3\_METHOD}};}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structkeccak__st}{keccak\_st}}\ \{}
+\DoxyCodeLine{00035\ \ \ \ \ uint64\_t\ A[5][5];}
+\DoxyCodeLine{00036\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ block\_size;\ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ cached\ ctx-\/>digest-\/>block\_size\ */}}
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ md\_size;\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ output\ length,\ variable\ in\ XOF\ */}}
+\DoxyCodeLine{00038\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ bufsz;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ used\ bytes\ in\ below\ buffer\ */}}
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ buf[KECCAK1600\_WIDTH\ /\ 8\ -\/\ 32];}
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ pad;}
+\DoxyCodeLine{00041\ \ \ \ \ \mbox{\hyperlink{structprov__sha3__meth__st}{PROV\_SHA3\_METHOD}}\ meth;}
+\DoxyCodeLine{00042\ \};}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ \textcolor{keywordtype}{void}\ ossl\_sha3\_reset(\mbox{\hyperlink{structkeccak__st}{KECCAK1600\_CTX}}\ *ctx);}
+\DoxyCodeLine{00045\ \textcolor{keywordtype}{int}\ ossl\_sha3\_init(\mbox{\hyperlink{structkeccak__st}{KECCAK1600\_CTX}}\ *ctx,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ pad,\ \textcolor{keywordtype}{size\_t}\ bitlen);}
+\DoxyCodeLine{00046\ \textcolor{keywordtype}{int}\ ossl\_keccak\_kmac\_init(\mbox{\hyperlink{structkeccak__st}{KECCAK1600\_CTX}}\ *ctx,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ pad,}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ bitlen);}
+\DoxyCodeLine{00048\ \textcolor{keywordtype}{int}\ ossl\_sha3\_update(\mbox{\hyperlink{structkeccak__st}{KECCAK1600\_CTX}}\ *ctx,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *\_inp,\ \textcolor{keywordtype}{size\_t}\ len);}
+\DoxyCodeLine{00049\ \textcolor{keywordtype}{int}\ ossl\_sha3\_final(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *md,\ \mbox{\hyperlink{structkeccak__st}{KECCAK1600\_CTX}}\ *ctx);}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \textcolor{keywordtype}{size\_t}\ SHA3\_absorb(uint64\_t\ A[5][5],\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *inp,\ \textcolor{keywordtype}{size\_t}\ len,}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ r);}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ OSSL\_INTERNAL\_SHA3\_H\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

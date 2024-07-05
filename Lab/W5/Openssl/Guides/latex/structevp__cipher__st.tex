@@ -1,0 +1,109 @@
+\doxysection{evp\+\_\+cipher\+\_\+st Struct Reference}
+\hypertarget{structevp__cipher__st}{}\label{structevp__cipher__st}\index{evp\_cipher\_st@{evp\_cipher\_st}}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{structevp__cipher__st_a3e92a36ebcc6d193fa91f0edf7aa5561}\label{structevp__cipher__st_a3e92a36ebcc6d193fa91f0edf7aa5561} 
+int {\bfseries nid}
+\item 
+\Hypertarget{structevp__cipher__st_a63036565998126ddd20ba6b1b901df28}\label{structevp__cipher__st_a63036565998126ddd20ba6b1b901df28} 
+int {\bfseries block\+\_\+size}
+\item 
+\Hypertarget{structevp__cipher__st_a6f3df99c0808facaf1a5bb730cbd0b22}\label{structevp__cipher__st_a6f3df99c0808facaf1a5bb730cbd0b22} 
+int {\bfseries key\+\_\+len}
+\item 
+\Hypertarget{structevp__cipher__st_add3e3ebb7252cd8326a98d309877a134}\label{structevp__cipher__st_add3e3ebb7252cd8326a98d309877a134} 
+int {\bfseries iv\+\_\+len}
+\item 
+\Hypertarget{structevp__cipher__st_a84a16719073d93e98517a6b38c47ba3f}\label{structevp__cipher__st_a84a16719073d93e98517a6b38c47ba3f} 
+unsigned long {\bfseries flags}
+\item 
+\Hypertarget{structevp__cipher__st_aeec4040aa88274b5472138547a22b5b9}\label{structevp__cipher__st_aeec4040aa88274b5472138547a22b5b9} 
+int {\bfseries origin}
+\item 
+\Hypertarget{structevp__cipher__st_a1459fa00f4ae13d2f6ede957ec33165c}\label{structevp__cipher__st_a1459fa00f4ae13d2f6ede957ec33165c} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries init} )(EVP\+\_\+\+CIPHER\+\_\+\+CTX \texorpdfstring{$\ast$}{*}ctx, const unsigned char \texorpdfstring{$\ast$}{*}key, const unsigned char \texorpdfstring{$\ast$}{*}iv, int enc)
+\item 
+\Hypertarget{structevp__cipher__st_aa61fb3ac50f7917d1c00475f537d8328}\label{structevp__cipher__st_aa61fb3ac50f7917d1c00475f537d8328} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries do\+\_\+cipher} )(EVP\+\_\+\+CIPHER\+\_\+\+CTX \texorpdfstring{$\ast$}{*}ctx, unsigned char \texorpdfstring{$\ast$}{*}out, const unsigned char \texorpdfstring{$\ast$}{*}in, size\+\_\+t inl)
+\item 
+\Hypertarget{structevp__cipher__st_ab5d28076841224e07599d579fb7c0d28}\label{structevp__cipher__st_ab5d28076841224e07599d579fb7c0d28} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries cleanup} )(EVP\+\_\+\+CIPHER\+\_\+\+CTX \texorpdfstring{$\ast$}{*})
+\item 
+\Hypertarget{structevp__cipher__st_a856751b3bf79b35b6178f574dea3d1bc}\label{structevp__cipher__st_a856751b3bf79b35b6178f574dea3d1bc} 
+int {\bfseries ctx\+\_\+size}
+\item 
+\Hypertarget{structevp__cipher__st_aca59cfca681fefba705b0c58f9956e9b}\label{structevp__cipher__st_aca59cfca681fefba705b0c58f9956e9b} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries set\+\_\+asn1\+\_\+parameters} )(EVP\+\_\+\+CIPHER\+\_\+\+CTX \texorpdfstring{$\ast$}{*}, ASN1\+\_\+\+TYPE \texorpdfstring{$\ast$}{*})
+\item 
+\Hypertarget{structevp__cipher__st_a438856068bda2e643c3e1a713d77ad66}\label{structevp__cipher__st_a438856068bda2e643c3e1a713d77ad66} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries get\+\_\+asn1\+\_\+parameters} )(EVP\+\_\+\+CIPHER\+\_\+\+CTX \texorpdfstring{$\ast$}{*}, ASN1\+\_\+\+TYPE \texorpdfstring{$\ast$}{*})
+\item 
+\Hypertarget{structevp__cipher__st_a7f3ad30b0b90b5740b831b9e7aa43cbe}\label{structevp__cipher__st_a7f3ad30b0b90b5740b831b9e7aa43cbe} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries ctrl} )(EVP\+\_\+\+CIPHER\+\_\+\+CTX \texorpdfstring{$\ast$}{*}, int type, int arg, void \texorpdfstring{$\ast$}{*}ptr)
+\item 
+\Hypertarget{structevp__cipher__st_a11371711dc0f64bacf01b3ad72cf90f3}\label{structevp__cipher__st_a11371711dc0f64bacf01b3ad72cf90f3} 
+void \texorpdfstring{$\ast$}{*} {\bfseries app\+\_\+data}
+\item 
+\Hypertarget{structevp__cipher__st_a8a1d896fa4f1bbe970449b4ee90b3d35}\label{structevp__cipher__st_a8a1d896fa4f1bbe970449b4ee90b3d35} 
+int {\bfseries name\+\_\+id}
+\item 
+\Hypertarget{structevp__cipher__st_a8feeb494fe583319f6cba508f0a0a819}\label{structevp__cipher__st_a8feeb494fe583319f6cba508f0a0a819} 
+char \texorpdfstring{$\ast$}{*} {\bfseries type\+\_\+name}
+\item 
+\Hypertarget{structevp__cipher__st_a81532523f0c46ee751e02219757c83c3}\label{structevp__cipher__st_a81532523f0c46ee751e02219757c83c3} 
+const char \texorpdfstring{$\ast$}{*} {\bfseries description}
+\item 
+\Hypertarget{structevp__cipher__st_a6d169966bd0561f35c30d07993e9e683}\label{structevp__cipher__st_a6d169966bd0561f35c30d07993e9e683} 
+OSSL\+\_\+\+PROVIDER \texorpdfstring{$\ast$}{*} {\bfseries prov}
+\item 
+\Hypertarget{structevp__cipher__st_add5536db4bed138bd53b3b647369b659}\label{structevp__cipher__st_add5536db4bed138bd53b3b647369b659} 
+\mbox{\hyperlink{struct_c_r_y_p_t_o___r_e_f___c_o_u_n_t}{CRYPTO\+\_\+\+REF\+\_\+\+COUNT}} {\bfseries refcnt}
+\item 
+\Hypertarget{structevp__cipher__st_a18e464e3c474bdb612c6b5b44e8c1355}\label{structevp__cipher__st_a18e464e3c474bdb612c6b5b44e8c1355} 
+OSSL\+\_\+\+FUNC\+\_\+cipher\+\_\+newctx\+\_\+fn \texorpdfstring{$\ast$}{*} {\bfseries newctx}
+\item 
+\Hypertarget{structevp__cipher__st_ae061e840cbc81418c6efd152a3a4fbdf}\label{structevp__cipher__st_ae061e840cbc81418c6efd152a3a4fbdf} 
+OSSL\+\_\+\+FUNC\+\_\+cipher\+\_\+encrypt\+\_\+init\+\_\+fn \texorpdfstring{$\ast$}{*} {\bfseries einit}
+\item 
+\Hypertarget{structevp__cipher__st_a2e8a996be7ab9e7c05a97e1249b7135d}\label{structevp__cipher__st_a2e8a996be7ab9e7c05a97e1249b7135d} 
+OSSL\+\_\+\+FUNC\+\_\+cipher\+\_\+decrypt\+\_\+init\+\_\+fn \texorpdfstring{$\ast$}{*} {\bfseries dinit}
+\item 
+\Hypertarget{structevp__cipher__st_aa82317f6679ff77924ddfe69bc5c31c0}\label{structevp__cipher__st_aa82317f6679ff77924ddfe69bc5c31c0} 
+OSSL\+\_\+\+FUNC\+\_\+cipher\+\_\+update\+\_\+fn \texorpdfstring{$\ast$}{*} {\bfseries cupdate}
+\item 
+\Hypertarget{structevp__cipher__st_aa950225db8e2602bf68cb3cc1825e8aa}\label{structevp__cipher__st_aa950225db8e2602bf68cb3cc1825e8aa} 
+OSSL\+\_\+\+FUNC\+\_\+cipher\+\_\+final\+\_\+fn \texorpdfstring{$\ast$}{*} {\bfseries cfinal}
+\item 
+\Hypertarget{structevp__cipher__st_a98dce3709dd08eed5addd26d74675d13}\label{structevp__cipher__st_a98dce3709dd08eed5addd26d74675d13} 
+OSSL\+\_\+\+FUNC\+\_\+cipher\+\_\+cipher\+\_\+fn \texorpdfstring{$\ast$}{*} {\bfseries ccipher}
+\item 
+\Hypertarget{structevp__cipher__st_ae718b07d893d76dc1987a6dea3f56c84}\label{structevp__cipher__st_ae718b07d893d76dc1987a6dea3f56c84} 
+OSSL\+\_\+\+FUNC\+\_\+cipher\+\_\+freectx\+\_\+fn \texorpdfstring{$\ast$}{*} {\bfseries freectx}
+\item 
+\Hypertarget{structevp__cipher__st_abbfe0839921076c3066a92a4e3495de5}\label{structevp__cipher__st_abbfe0839921076c3066a92a4e3495de5} 
+OSSL\+\_\+\+FUNC\+\_\+cipher\+\_\+dupctx\+\_\+fn \texorpdfstring{$\ast$}{*} {\bfseries dupctx}
+\item 
+\Hypertarget{structevp__cipher__st_aa4a161aebbbf6da4217f7e3df4621f28}\label{structevp__cipher__st_aa4a161aebbbf6da4217f7e3df4621f28} 
+OSSL\+\_\+\+FUNC\+\_\+cipher\+\_\+get\+\_\+params\+\_\+fn \texorpdfstring{$\ast$}{*} {\bfseries get\+\_\+params}
+\item 
+\Hypertarget{structevp__cipher__st_a3aeae8a2fc2149d05710147ed7f49b43}\label{structevp__cipher__st_a3aeae8a2fc2149d05710147ed7f49b43} 
+OSSL\+\_\+\+FUNC\+\_\+cipher\+\_\+get\+\_\+ctx\+\_\+params\+\_\+fn \texorpdfstring{$\ast$}{*} {\bfseries get\+\_\+ctx\+\_\+params}
+\item 
+\Hypertarget{structevp__cipher__st_a0d91191f20e9b1447c51e99948abf6f5}\label{structevp__cipher__st_a0d91191f20e9b1447c51e99948abf6f5} 
+OSSL\+\_\+\+FUNC\+\_\+cipher\+\_\+set\+\_\+ctx\+\_\+params\+\_\+fn \texorpdfstring{$\ast$}{*} {\bfseries set\+\_\+ctx\+\_\+params}
+\item 
+\Hypertarget{structevp__cipher__st_a2dee80c4b18839c5dc9587f8e3d5a79d}\label{structevp__cipher__st_a2dee80c4b18839c5dc9587f8e3d5a79d} 
+OSSL\+\_\+\+FUNC\+\_\+cipher\+\_\+gettable\+\_\+params\+\_\+fn \texorpdfstring{$\ast$}{*} {\bfseries gettable\+\_\+params}
+\item 
+\Hypertarget{structevp__cipher__st_a53f2b946842b5ae8fa8d66141ae5d452}\label{structevp__cipher__st_a53f2b946842b5ae8fa8d66141ae5d452} 
+OSSL\+\_\+\+FUNC\+\_\+cipher\+\_\+gettable\+\_\+ctx\+\_\+params\+\_\+fn \texorpdfstring{$\ast$}{*} {\bfseries gettable\+\_\+ctx\+\_\+params}
+\item 
+\Hypertarget{structevp__cipher__st_ad13db93cb3b54cb1eb39009e50735d83}\label{structevp__cipher__st_ad13db93cb3b54cb1eb39009e50735d83} 
+OSSL\+\_\+\+FUNC\+\_\+cipher\+\_\+settable\+\_\+ctx\+\_\+params\+\_\+fn \texorpdfstring{$\ast$}{*} {\bfseries settable\+\_\+ctx\+\_\+params}
+\end{DoxyCompactItemize}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/namph/\+Downloads/openssl/openssl-\/3.\+2.\+1/include/crypto/evp.\+h\end{DoxyCompactItemize}

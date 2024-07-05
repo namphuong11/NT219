@@ -1,0 +1,194 @@
+\doxysection{quic\+\_\+reactor.\+h}
+\hypertarget{quic__reactor_8h_source}{}\label{quic__reactor_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/quic\_reactor.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/quic\_reactor.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2022-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#ifndef\ OSSL\_QUIC\_REACTOR\_H}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#\ define\ OSSL\_QUIC\_REACTOR\_H}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#\ include\ "{}internal/time.h"{}}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#\ include\ "{}internal/sockets.h"{}}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ include\ <openssl/bio.h>}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#\ ifndef\ OPENSSL\_NO\_QUIC}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ *\ Core\ I/O\ Reactor\ Framework}}
+\DoxyCodeLine{00020\ \textcolor{comment}{\ *\ ==========================}}
+\DoxyCodeLine{00021\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00022\ \textcolor{comment}{\ *\ Manages\ use\ of\ async\ network\ I/O\ which\ the\ QUIC\ stack\ is\ built\ on.\ The\ core}}
+\DoxyCodeLine{00023\ \textcolor{comment}{\ *\ mechanic\ looks\ like\ this:}}
+\DoxyCodeLine{00024\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00025\ \textcolor{comment}{\ *\ \ \ -\/\ There\ is\ a\ pollable\ FD\ for\ both\ the\ read\ and\ write\ side\ respectively.}}
+\DoxyCodeLine{00026\ \textcolor{comment}{\ *\ \ \ \ \ Readability\ and\ writeability\ of\ these\ FDs\ respectively\ determines\ when}}
+\DoxyCodeLine{00027\ \textcolor{comment}{\ *\ \ \ \ \ network\ I/O\ is\ available.}}
+\DoxyCodeLine{00028\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00029\ \textcolor{comment}{\ *\ \ \ -\/\ The\ reactor\ can\ export\ these\ FDs\ to\ the\ user,\ as\ well\ as\ flags\ indicating}}
+\DoxyCodeLine{00030\ \textcolor{comment}{\ *\ \ \ \ \ whether\ the\ user\ should\ listen\ for\ readability,\ writeability,\ or\ neither.}}
+\DoxyCodeLine{00031\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00032\ \textcolor{comment}{\ *\ \ \ -\/\ The\ reactor\ can\ export\ a\ timeout\ indication\ to\ the\ user,\ indicating\ when}}
+\DoxyCodeLine{00033\ \textcolor{comment}{\ *\ \ \ \ \ the\ reactor\ should\ be\ called\ (via\ libssl\ APIs)\ regardless\ of\ whether}}
+\DoxyCodeLine{00034\ \textcolor{comment}{\ *\ \ \ \ \ the\ network\ socket\ has\ become\ ready.}}
+\DoxyCodeLine{00035\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00036\ \textcolor{comment}{\ *\ The\ reactor\ is\ based\ around\ a\ tick\ callback\ which\ is\ essentially\ the\ mutator}}
+\DoxyCodeLine{00037\ \textcolor{comment}{\ *\ function.\ The\ mutator\ attempts\ to\ do\ whatever\ it\ can,\ attempting\ to\ perform}}
+\DoxyCodeLine{00038\ \textcolor{comment}{\ *\ network\ I/O\ to\ the\ extent\ currently\ feasible.\ When\ done,\ the\ mutator\ returns}}
+\DoxyCodeLine{00039\ \textcolor{comment}{\ *\ information\ to\ the\ reactor\ indicating\ when\ it\ should\ be\ woken\ up\ again:}}
+\DoxyCodeLine{00040\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00041\ \textcolor{comment}{\ *\ \ \ -\/\ Should\ it\ be\ woken\ up\ when\ network\ RX\ is\ possible?}}
+\DoxyCodeLine{00042\ \textcolor{comment}{\ *\ \ \ -\/\ Should\ it\ be\ woken\ up\ when\ network\ TX\ is\ possible?}}
+\DoxyCodeLine{00043\ \textcolor{comment}{\ *\ \ \ -\/\ Should\ it\ be\ woken\ up\ no\ later\ than\ some\ deadline\ X?}}
+\DoxyCodeLine{00044\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00045\ \textcolor{comment}{\ *\ The\ intention\ is\ that\ ALL\ I/O-\/related\ SSL\_*\ functions\ with\ side\ effects\ (e.g.}}
+\DoxyCodeLine{00046\ \textcolor{comment}{\ *\ SSL\_read/SSL\_write)\ consist\ of\ three\ phases:}}
+\DoxyCodeLine{00047\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00048\ \textcolor{comment}{\ *\ \ \ -\/\ Optionally\ mutate\ the\ QUIC\ machine's\ state.}}
+\DoxyCodeLine{00049\ \textcolor{comment}{\ *\ \ \ -\/\ Optionally\ tick\ the\ QUIC\ reactor.}}
+\DoxyCodeLine{00050\ \textcolor{comment}{\ *\ \ \ -\/\ Optionally\ mutate\ the\ QUIC\ machine's\ state.}}
+\DoxyCodeLine{00051\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00052\ \textcolor{comment}{\ *\ For\ example,\ SSL\_write\ is\ a\ mutation\ (appending\ to\ a\ stream\ buffer)\ followed}}
+\DoxyCodeLine{00053\ \textcolor{comment}{\ *\ by\ an\ optional\ tick\ (generally\ expected\ as\ we\ may\ want\ to\ send\ the\ data}}
+\DoxyCodeLine{00054\ \textcolor{comment}{\ *\ immediately,\ though\ not\ strictly\ needed\ if\ transmission\ is\ being\ deferred\ due}}
+\DoxyCodeLine{00055\ \textcolor{comment}{\ *\ to\ Nagle's\ algorithm,\ etc.).}}
+\DoxyCodeLine{00056\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00057\ \textcolor{comment}{\ *\ SSL\_read\ is\ also\ a\ mutation\ and\ in\ principle\ does\ not\ need\ to\ tick\ the}}
+\DoxyCodeLine{00058\ \textcolor{comment}{\ *\ reactor,\ but\ it\ generally\ will\ anyway\ to\ ensure\ that\ the\ reactor\ is\ regularly}}
+\DoxyCodeLine{00059\ \textcolor{comment}{\ *\ ticked\ by\ an\ application\ which\ is\ only\ reading\ and\ not\ writing.}}
+\DoxyCodeLine{00060\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00061\ \textcolor{comment}{\ *\ If\ the\ SSL\ object\ is\ being\ used\ in\ blocking\ mode,\ SSL\_read\ may\ need\ to\ block}}
+\DoxyCodeLine{00062\ \textcolor{comment}{\ *\ if\ no\ data\ is\ available\ yet,\ and\ SSL\_write\ may\ need\ to\ block\ if\ buffers}}
+\DoxyCodeLine{00063\ \textcolor{comment}{\ *\ are\ full.}}
+\DoxyCodeLine{00064\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00065\ \textcolor{comment}{\ *\ The\ internals\ of\ the\ QUIC\ I/O\ engine\ always\ use\ asynchronous\ I/O.\ If\ the}}
+\DoxyCodeLine{00066\ \textcolor{comment}{\ *\ application\ desires\ blocking\ semantics,\ we\ handle\ this\ by\ adding\ a\ blocking}}
+\DoxyCodeLine{00067\ \textcolor{comment}{\ *\ adaptation\ layer\ on\ top\ of\ our\ internal\ asynchronous\ I/O\ API\ as\ exposed\ by}}
+\DoxyCodeLine{00068\ \textcolor{comment}{\ *\ the\ reactor\ interface.}}
+\DoxyCodeLine{00069\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00070\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structquic__tick__result__st}{quic\_tick\_result\_st}}\ \{}
+\DoxyCodeLine{00071\ \ \ \ \ \textcolor{keywordtype}{char}\ \ \ \ \ \ \ \ net\_read\_desired;}
+\DoxyCodeLine{00072\ \ \ \ \ \textcolor{keywordtype}{char}\ \ \ \ \ \ \ \ net\_write\_desired;}
+\DoxyCodeLine{00073\ \ \ \ \ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ \ \ tick\_deadline;}
+\DoxyCodeLine{00074\ \}\ \mbox{\hyperlink{structquic__tick__result__st}{QUIC\_TICK\_RESULT}};}
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00076\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structquic__reactor__st}{quic\_reactor\_st}}\ \{}
+\DoxyCodeLine{00077\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00078\ \textcolor{comment}{\ \ \ \ \ *\ BIO\ poll\ descriptors\ which\ can\ be\ polled.\ poll\_r\ is\ a\ poll\ descriptor}}
+\DoxyCodeLine{00079\ \textcolor{comment}{\ \ \ \ \ *\ which\ becomes\ readable\ when\ the\ QUIC\ state\ machine\ can\ potentially\ do}}
+\DoxyCodeLine{00080\ \textcolor{comment}{\ \ \ \ \ *\ work,\ and\ poll\_w\ is\ a\ poll\ descriptor\ which\ becomes\ writable\ when\ the}}
+\DoxyCodeLine{00081\ \textcolor{comment}{\ \ \ \ \ *\ QUIC\ state\ machine\ can\ potentially\ do\ work.\ Generally,\ either\ of\ these}}
+\DoxyCodeLine{00082\ \textcolor{comment}{\ \ \ \ \ *\ conditions\ means\ that\ SSL\_tick()\ should\ be\ called,\ or\ another\ SSL}}
+\DoxyCodeLine{00083\ \textcolor{comment}{\ \ \ \ \ *\ function\ which\ implicitly\ calls\ SSL\_tick()\ (e.g.\ SSL\_read/SSL\_write()).}}
+\DoxyCodeLine{00084\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00085\ \ \ \ \ BIO\_POLL\_DESCRIPTOR\ poll\_r,\ poll\_w;}
+\DoxyCodeLine{00086\ \ \ \ \ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ tick\_deadline;\ \textcolor{comment}{/*\ ossl\_time\_infinite()\ if\ none\ currently\ applicable\ */}}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00088\ \ \ \ \ void\ (*tick\_cb)(\mbox{\hyperlink{structquic__tick__result__st}{QUIC\_TICK\_RESULT}}\ *res,\ \textcolor{keywordtype}{void}\ *arg,\ uint32\_t\ flags);}
+\DoxyCodeLine{00089\ \ \ \ \ \textcolor{keywordtype}{void}\ *tick\_cb\_arg;}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00092\ \textcolor{comment}{\ \ \ \ \ *\ These\ are\ true\ if\ we\ would\ like\ to\ know\ when\ we\ can\ read\ or\ write\ from}}
+\DoxyCodeLine{00093\ \textcolor{comment}{\ \ \ \ \ *\ the\ network\ respectively.}}
+\DoxyCodeLine{00094\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00095\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ net\_read\_desired\ \ \ :\ 1;}
+\DoxyCodeLine{00096\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ net\_write\_desired\ \ :\ 1;}
+\DoxyCodeLine{00097\ }
+\DoxyCodeLine{00098\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00099\ \textcolor{comment}{\ \ \ \ \ *\ Are\ the\ read\ and\ write\ poll\ descriptors\ we\ are\ currently\ configured\ with}}
+\DoxyCodeLine{00100\ \textcolor{comment}{\ \ \ \ \ *\ things\ we\ can\ actually\ poll?}}
+\DoxyCodeLine{00101\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00102\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ can\_poll\_r\ :\ 1;}
+\DoxyCodeLine{00103\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ can\_poll\_w\ :\ 1;}
+\DoxyCodeLine{00104\ \}\ \mbox{\hyperlink{structquic__reactor__st}{QUIC\_REACTOR}};}
+\DoxyCodeLine{00105\ }
+\DoxyCodeLine{00106\ \textcolor{keywordtype}{void}\ ossl\_quic\_reactor\_init(\mbox{\hyperlink{structquic__reactor__st}{QUIC\_REACTOR}}\ *rtor,}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ (*tick\_cb)(\mbox{\hyperlink{structquic__tick__result__st}{QUIC\_TICK\_RESULT}}\ *res,\ \textcolor{keywordtype}{void}\ *arg,}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ flags),}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *tick\_cb\_arg,}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ initial\_tick\_deadline);}
+\DoxyCodeLine{00111\ }
+\DoxyCodeLine{00112\ \textcolor{keywordtype}{void}\ ossl\_quic\_reactor\_set\_poll\_r(\mbox{\hyperlink{structquic__reactor__st}{QUIC\_REACTOR}}\ *rtor,}
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIO\_POLL\_DESCRIPTOR\ *r);}
+\DoxyCodeLine{00114\ }
+\DoxyCodeLine{00115\ \textcolor{keywordtype}{void}\ ossl\_quic\_reactor\_set\_poll\_w(\mbox{\hyperlink{structquic__reactor__st}{QUIC\_REACTOR}}\ *rtor,}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIO\_POLL\_DESCRIPTOR\ *w);}
+\DoxyCodeLine{00117\ }
+\DoxyCodeLine{00118\ \textcolor{keyword}{const}\ BIO\_POLL\_DESCRIPTOR\ *ossl\_quic\_reactor\_get\_poll\_r(\textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__reactor__st}{QUIC\_REACTOR}}\ *rtor);}
+\DoxyCodeLine{00119\ \textcolor{keyword}{const}\ BIO\_POLL\_DESCRIPTOR\ *ossl\_quic\_reactor\_get\_poll\_w(\textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__reactor__st}{QUIC\_REACTOR}}\ *rtor);}
+\DoxyCodeLine{00120\ }
+\DoxyCodeLine{00121\ \textcolor{keywordtype}{int}\ ossl\_quic\_reactor\_can\_poll\_r(\textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__reactor__st}{QUIC\_REACTOR}}\ *rtor);}
+\DoxyCodeLine{00122\ \textcolor{keywordtype}{int}\ ossl\_quic\_reactor\_can\_poll\_w(\textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__reactor__st}{QUIC\_REACTOR}}\ *rtor);}
+\DoxyCodeLine{00123\ }
+\DoxyCodeLine{00124\ \textcolor{keywordtype}{int}\ ossl\_quic\_reactor\_can\_support\_poll\_descriptor(\textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__reactor__st}{QUIC\_REACTOR}}\ *rtor,}
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIO\_POLL\_DESCRIPTOR\ *d);}
+\DoxyCodeLine{00126\ }
+\DoxyCodeLine{00127\ \textcolor{keywordtype}{int}\ ossl\_quic\_reactor\_net\_read\_desired(\mbox{\hyperlink{structquic__reactor__st}{QUIC\_REACTOR}}\ *rtor);}
+\DoxyCodeLine{00128\ \textcolor{keywordtype}{int}\ ossl\_quic\_reactor\_net\_write\_desired(\mbox{\hyperlink{structquic__reactor__st}{QUIC\_REACTOR}}\ *rtor);}
+\DoxyCodeLine{00129\ }
+\DoxyCodeLine{00130\ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ ossl\_quic\_reactor\_get\_tick\_deadline(\mbox{\hyperlink{structquic__reactor__st}{QUIC\_REACTOR}}\ *rtor);}
+\DoxyCodeLine{00131\ }
+\DoxyCodeLine{00132\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00133\ \textcolor{comment}{\ *\ Do\ whatever\ work\ can\ be\ done,\ and\ as\ much\ work\ as\ can\ be\ done.\ This\ involves}}
+\DoxyCodeLine{00134\ \textcolor{comment}{\ *\ e.g.\ seeing\ if\ we\ can\ read\ anything\ from\ the\ network\ (if\ we\ want\ to),\ seeing}}
+\DoxyCodeLine{00135\ \textcolor{comment}{\ *\ if\ we\ can\ write\ anything\ to\ the\ network\ (if\ we\ want\ to),\ etc.}}
+\DoxyCodeLine{00136\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00137\ \textcolor{comment}{\ *\ If\ the\ CHANNEL\_ONLY\ flag\ is\ set,\ this\ indicates\ that\ we\ should\ only}}
+\DoxyCodeLine{00138\ \textcolor{comment}{\ *\ touch\ state\ which\ is\ synchronised\ by\ the\ channel\ mutex.}}
+\DoxyCodeLine{00139\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00140\ \textcolor{preprocessor}{\#define\ QUIC\_REACTOR\_TICK\_FLAG\_CHANNEL\_ONLY\ \ (1U\ <<\ 0)}}
+\DoxyCodeLine{00141\ }
+\DoxyCodeLine{00142\ \textcolor{keywordtype}{int}\ ossl\_quic\_reactor\_tick(\mbox{\hyperlink{structquic__reactor__st}{QUIC\_REACTOR}}\ *rtor,\ uint32\_t\ flags);}
+\DoxyCodeLine{00143\ }
+\DoxyCodeLine{00144\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00145\ \textcolor{comment}{\ *\ Blocking\ I/O\ Adaptation\ Layer}}
+\DoxyCodeLine{00146\ \textcolor{comment}{\ *\ =============================}}
+\DoxyCodeLine{00147\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00148\ \textcolor{comment}{\ *\ The\ blocking\ I/O\ adaptation\ layer\ implements\ blocking\ I/O\ on\ top\ of\ our}}
+\DoxyCodeLine{00149\ \textcolor{comment}{\ *\ asynchronous\ core.}}
+\DoxyCodeLine{00150\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00151\ \textcolor{comment}{\ *\ The\ core\ mechanism\ is\ block\_until\_pred(),\ which\ does\ not\ return\ until\ pred()}}
+\DoxyCodeLine{00152\ \textcolor{comment}{\ *\ returns\ a\ value\ other\ than\ 0.\ The\ blocker\ uses\ OS\ I/O\ synchronisation}}
+\DoxyCodeLine{00153\ \textcolor{comment}{\ *\ primitives\ (e.g.\ poll(2))\ and\ ticks\ the\ reactor\ until\ the\ predicate\ is}}
+\DoxyCodeLine{00154\ \textcolor{comment}{\ *\ satisfied.\ The\ blocker\ is\ not\ required\ to\ call\ pred()\ more\ than\ once\ between}}
+\DoxyCodeLine{00155\ \textcolor{comment}{\ *\ tick\ calls.}}
+\DoxyCodeLine{00156\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00157\ \textcolor{comment}{\ *\ When\ pred\ returns\ a\ non-\/zero\ value,\ that\ value\ is\ returned\ by\ this\ function.}}
+\DoxyCodeLine{00158\ \textcolor{comment}{\ *\ This\ can\ be\ used\ to\ allow\ pred()\ to\ indicate\ error\ conditions\ and\ short}}
+\DoxyCodeLine{00159\ \textcolor{comment}{\ *\ circuit\ the\ blocking\ process.}}
+\DoxyCodeLine{00160\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00161\ \textcolor{comment}{\ *\ A\ return\ value\ of\ -\/1\ is\ reserved\ for\ network\ polling\ errors.\ Therefore\ this}}
+\DoxyCodeLine{00162\ \textcolor{comment}{\ *\ return\ value\ should\ not\ be\ used\ by\ pred()\ if\ ambiguity\ is\ not\ desired.\ Note}}
+\DoxyCodeLine{00163\ \textcolor{comment}{\ *\ that\ the\ predicate\ function\ can\ always\ arrange\ its\ own\ output\ mechanism,\ for}}
+\DoxyCodeLine{00164\ \textcolor{comment}{\ *\ example\ by\ passing\ a\ structure\ of\ its\ own\ as\ the\ argument.}}
+\DoxyCodeLine{00165\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00166\ \textcolor{comment}{\ *\ If\ the\ SKIP\_FIRST\_TICK\ flag\ is\ set,\ the\ first\ call\ to\ reactor\_tick()\ before}}
+\DoxyCodeLine{00167\ \textcolor{comment}{\ *\ the\ first\ call\ to\ pred()\ is\ skipped.\ This\ is\ useful\ if\ it\ is\ known\ that}}
+\DoxyCodeLine{00168\ \textcolor{comment}{\ *\ ticking\ the\ reactor\ again\ will\ not\ be\ useful\ (e.g.\ because\ it\ has\ already}}
+\DoxyCodeLine{00169\ \textcolor{comment}{\ *\ been\ done).}}
+\DoxyCodeLine{00170\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00171\ \textcolor{comment}{\ *\ This\ function\ assumes\ a\ write\ lock\ is\ held\ for\ the\ entire\ QUIC\_CHANNEL.\ If}}
+\DoxyCodeLine{00172\ \textcolor{comment}{\ *\ mutex\ is\ non-\/NULL,\ it\ must\ be\ a\ lock\ currently\ held\ for\ write;\ it\ will\ be}}
+\DoxyCodeLine{00173\ \textcolor{comment}{\ *\ unlocked\ during\ any\ sleep,\ and\ then\ relocked\ for\ write\ afterwards.}}
+\DoxyCodeLine{00174\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00175\ \textcolor{comment}{\ *\ Precondition:\ \ \ mutex\ is\ NULL\ or\ is\ held\ for\ write\ (unchecked)}}
+\DoxyCodeLine{00176\ \textcolor{comment}{\ *\ Postcondition:\ \ mutex\ is\ NULL\ or\ is\ held\ for\ write\ (unless}}
+\DoxyCodeLine{00177\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ CRYPTO\_THREAD\_write\_lock\ fails)}}
+\DoxyCodeLine{00178\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00179\ \textcolor{preprocessor}{\#define\ SKIP\_FIRST\_TICK\ \ \ \ \ (1U\ <<\ 0)}}
+\DoxyCodeLine{00180\ }
+\DoxyCodeLine{00181\ \textcolor{keywordtype}{int}\ ossl\_quic\_reactor\_block\_until\_pred(\mbox{\hyperlink{structquic__reactor__st}{QUIC\_REACTOR}}\ *rtor,}
+\DoxyCodeLine{00182\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ (*pred)(\textcolor{keywordtype}{void}\ *arg),\ \textcolor{keywordtype}{void}\ *pred\_arg,}
+\DoxyCodeLine{00183\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ flags,}
+\DoxyCodeLine{00184\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ CRYPTO\_RWLOCK\ *mutex);}
+\DoxyCodeLine{00185\ }
+\DoxyCodeLine{00186\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00187\ }
+\DoxyCodeLine{00188\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

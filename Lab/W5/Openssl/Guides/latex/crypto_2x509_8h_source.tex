@@ -1,0 +1,397 @@
+\doxysection{x509.\+h}
+\hypertarget{crypto_2x509_8h_source}{}\label{crypto_2x509_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/crypto/x509.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/crypto/x509.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2015-\/2024\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_CRYPTO\_X509\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_CRYPTO\_X509\_H}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#\ pragma\ once}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ include\ "{}internal/refcount.h"{}}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#\ include\ <openssl/asn1.h>}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#\ include\ <openssl/x509.h>}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#\ include\ <openssl/conf.h>}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#\ include\ "{}crypto/types.h"{}}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{comment}{/*\ Internal\ X509\ structures\ and\ functions:\ not\ for\ application\ use\ */}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{comment}{/*\ Note:\ unless\ otherwise\ stated\ a\ field\ pointer\ is\ mandatory\ and\ should}}
+\DoxyCodeLine{00023\ \textcolor{comment}{\ *\ never\ be\ set\ to\ NULL:\ the\ ASN.1\ code\ and\ accessors\ rely\ on\ mandatory}}
+\DoxyCodeLine{00024\ \textcolor{comment}{\ *\ fields\ never\ being\ NULL.}}
+\DoxyCodeLine{00025\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00028\ \textcolor{comment}{\ *\ name\ entry\ structure,\ equivalent\ to\ AttributeTypeAndValue\ defined}}
+\DoxyCodeLine{00029\ \textcolor{comment}{\ *\ in\ RFC5280\ et\ al.}}
+\DoxyCodeLine{00030\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00031\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_x509__name__entry__st}{X509\_name\_entry\_st}}\ \{}
+\DoxyCodeLine{00032\ \ \ \ \ ASN1\_OBJECT\ *object;\ \ \ \ \ \ \ \ \textcolor{comment}{/*\ AttributeType\ */}}
+\DoxyCodeLine{00033\ \ \ \ \ ASN1\_STRING\ *value;\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ AttributeValue\ */}}
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{keywordtype}{int}\ set;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ index\ of\ RDNSequence\ for\ this\ entry\ */}}
+\DoxyCodeLine{00035\ \ \ \ \ \textcolor{keywordtype}{int}\ size;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ temp\ variable\ */}}
+\DoxyCodeLine{00036\ \};}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \textcolor{comment}{/*\ Name\ from\ RFC\ 5280.\ */}}
+\DoxyCodeLine{00039\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_x509__name__st}{X509\_name\_st}}\ \{}
+\DoxyCodeLine{00040\ \ \ \ \ STACK\_OF(X509\_NAME\_ENTRY)\ *entries;\ \textcolor{comment}{/*\ DN\ components\ */}}
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{keywordtype}{int}\ modified;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ true\ if\ 'bytes'\ needs\ to\ be\ built\ */}}
+\DoxyCodeLine{00042\ \ \ \ \ BUF\_MEM\ *bytes;\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ cached\ encoding:\ cannot\ be\ NULL\ */}}
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{comment}{/*\ canonical\ encoding\ used\ for\ rapid\ Name\ comparison\ */}}
+\DoxyCodeLine{00044\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *canon\_enc;}
+\DoxyCodeLine{00045\ \ \ \ \ \textcolor{keywordtype}{int}\ canon\_enclen;}
+\DoxyCodeLine{00046\ \}\ \textcolor{comment}{/*\ X509\_NAME\ */}\ ;}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \textcolor{comment}{/*\ Signature\ info\ structure\ */}}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structx509__sig__info__st}{x509\_sig\_info\_st}}\ \{}
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{comment}{/*\ NID\ of\ message\ digest\ */}}
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{keywordtype}{int}\ mdnid;}
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{comment}{/*\ NID\ of\ public\ key\ algorithm\ */}}
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{keywordtype}{int}\ pknid;}
+\DoxyCodeLine{00055\ \ \ \ \ \textcolor{comment}{/*\ Security\ bits\ */}}
+\DoxyCodeLine{00056\ \ \ \ \ \textcolor{keywordtype}{int}\ secbits;}
+\DoxyCodeLine{00057\ \ \ \ \ \textcolor{comment}{/*\ Various\ flags\ */}}
+\DoxyCodeLine{00058\ \ \ \ \ uint32\_t\ flags;}
+\DoxyCodeLine{00059\ \};}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ \textcolor{comment}{/*\ PKCS\#10\ certificate\ request\ */}}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00063\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_x509__req__info__st}{X509\_req\_info\_st}}\ \{}
+\DoxyCodeLine{00064\ \ \ \ \ ASN1\_ENCODING\ enc;\ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ cached\ encoding\ of\ signed\ part\ */}}
+\DoxyCodeLine{00065\ \ \ \ \ ASN1\_INTEGER\ *version;\ \ \ \ \ \ \textcolor{comment}{/*\ version,\ defaults\ to\ v1(0)\ so\ can\ be\ NULL\ */}}
+\DoxyCodeLine{00066\ \ \ \ \ X509\_NAME\ *subject;\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ certificate\ request\ DN\ */}}
+\DoxyCodeLine{00067\ \ \ \ \ X509\_PUBKEY\ *\mbox{\hyperlink{structpubkey}{pubkey}};\ \ \ \ \ \ \ \ \textcolor{comment}{/*\ public\ key\ of\ request\ */}}
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00069\ \textcolor{comment}{\ \ \ \ \ *\ Zero\ or\ more\ attributes.}}
+\DoxyCodeLine{00070\ \textcolor{comment}{\ \ \ \ \ *\ NB:\ although\ attributes\ is\ a\ mandatory\ field\ some\ broken}}
+\DoxyCodeLine{00071\ \textcolor{comment}{\ \ \ \ \ *\ encodings\ omit\ it\ so\ this\ may\ be\ NULL\ in\ that\ case.}}
+\DoxyCodeLine{00072\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00073\ \ \ \ \ STACK\_OF(X509\_ATTRIBUTE)\ *attributes;}
+\DoxyCodeLine{00074\ \};}
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00076\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_x509__req__st}{X509\_req\_st}}\ \{}
+\DoxyCodeLine{00077\ \ \ \ \ X509\_REQ\_INFO\ req\_info;\ \ \ \ \ \textcolor{comment}{/*\ signed\ certificate\ request\ data\ */}}
+\DoxyCodeLine{00078\ \ \ \ \ X509\_ALGOR\ sig\_alg;\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ signature\ algorithm\ */}}
+\DoxyCodeLine{00079\ \ \ \ \ ASN1\_BIT\_STRING\ *signature;\ \textcolor{comment}{/*\ signature\ */}}
+\DoxyCodeLine{00080\ \ \ \ \ \mbox{\hyperlink{struct_c_r_y_p_t_o___r_e_f___c_o_u_n_t}{CRYPTO\_REF\_COUNT}}\ references;}
+\DoxyCodeLine{00081\ \ \ \ \ CRYPTO\_RWLOCK\ *lock;}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00083\ \ \ \ \ \textcolor{comment}{/*\ Set\ on\ live\ certificates\ for\ authentication\ purposes\ */}}
+\DoxyCodeLine{00084\ \ \ \ \ ASN1\_OCTET\_STRING\ *distinguishing\_id;}
+\DoxyCodeLine{00085\ \ \ \ \ OSSL\_LIB\_CTX\ *libctx;}
+\DoxyCodeLine{00086\ \ \ \ \ \textcolor{keywordtype}{char}\ *propq;}
+\DoxyCodeLine{00087\ \};}
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00089\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_x509__crl__info__st}{X509\_crl\_info\_st}}\ \{}
+\DoxyCodeLine{00090\ \ \ \ \ ASN1\_INTEGER\ *version;\ \ \ \ \ \ \textcolor{comment}{/*\ version:\ defaults\ to\ v1(0)\ so\ may\ be\ NULL\ */}}
+\DoxyCodeLine{00091\ \ \ \ \ X509\_ALGOR\ sig\_alg;\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ signature\ algorithm\ */}}
+\DoxyCodeLine{00092\ \ \ \ \ X509\_NAME\ *issuer;\ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ CRL\ issuer\ name\ */}}
+\DoxyCodeLine{00093\ \ \ \ \ ASN1\_TIME\ *lastUpdate;\ \ \ \ \ \ \textcolor{comment}{/*\ lastUpdate\ field\ */}}
+\DoxyCodeLine{00094\ \ \ \ \ ASN1\_TIME\ *nextUpdate;\ \ \ \ \ \ \textcolor{comment}{/*\ nextUpdate\ field:\ optional\ */}}
+\DoxyCodeLine{00095\ \ \ \ \ STACK\_OF(X509\_REVOKED)\ *revoked;\ \ \ \ \ \ \ \ \textcolor{comment}{/*\ revoked\ entries:\ optional\ */}}
+\DoxyCodeLine{00096\ \ \ \ \ STACK\_OF(X509\_EXTENSION)\ *extensions;\ \ \ \textcolor{comment}{/*\ extensions:\ optional\ */}}
+\DoxyCodeLine{00097\ \ \ \ \ ASN1\_ENCODING\ enc;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ encoding\ of\ signed\ portion\ of\ CRL\ */}}
+\DoxyCodeLine{00098\ \};}
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00100\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_x509__crl__st}{X509\_crl\_st}}\ \{}
+\DoxyCodeLine{00101\ \ \ \ \ X509\_CRL\_INFO\ crl;\ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ signed\ CRL\ data\ */}}
+\DoxyCodeLine{00102\ \ \ \ \ X509\_ALGOR\ sig\_alg;\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ CRL\ signature\ algorithm\ */}}
+\DoxyCodeLine{00103\ \ \ \ \ ASN1\_BIT\_STRING\ signature;\ \ \textcolor{comment}{/*\ CRL\ signature\ */}}
+\DoxyCodeLine{00104\ \ \ \ \ \mbox{\hyperlink{struct_c_r_y_p_t_o___r_e_f___c_o_u_n_t}{CRYPTO\_REF\_COUNT}}\ references;}
+\DoxyCodeLine{00105\ \ \ \ \ \textcolor{keywordtype}{int}\ flags;}
+\DoxyCodeLine{00106\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00107\ \textcolor{comment}{\ \ \ \ \ *\ Cached\ copies\ of\ decoded\ extension\ values,\ since\ extensions}}
+\DoxyCodeLine{00108\ \textcolor{comment}{\ \ \ \ \ *\ are\ optional\ any\ of\ these\ can\ be\ NULL.}}
+\DoxyCodeLine{00109\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00110\ \ \ \ \ AUTHORITY\_KEYID\ *akid;}
+\DoxyCodeLine{00111\ \ \ \ \ ISSUING\_DIST\_POINT\ *idp;}
+\DoxyCodeLine{00112\ \ \ \ \ \textcolor{comment}{/*\ Convenient\ breakdown\ of\ IDP\ */}}
+\DoxyCodeLine{00113\ \ \ \ \ \textcolor{keywordtype}{int}\ idp\_flags;}
+\DoxyCodeLine{00114\ \ \ \ \ \textcolor{keywordtype}{int}\ idp\_reasons;}
+\DoxyCodeLine{00115\ \ \ \ \ \textcolor{comment}{/*\ CRL\ and\ base\ CRL\ numbers\ for\ delta\ processing\ */}}
+\DoxyCodeLine{00116\ \ \ \ \ ASN1\_INTEGER\ *crl\_number;}
+\DoxyCodeLine{00117\ \ \ \ \ ASN1\_INTEGER\ *base\_crl\_number;}
+\DoxyCodeLine{00118\ \ \ \ \ STACK\_OF(GENERAL\_NAMES)\ *issuers;}
+\DoxyCodeLine{00119\ \ \ \ \ \textcolor{comment}{/*\ hash\ of\ CRL\ */}}
+\DoxyCodeLine{00120\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ sha1\_hash[SHA\_DIGEST\_LENGTH];}
+\DoxyCodeLine{00121\ \ \ \ \ \textcolor{comment}{/*\ alternative\ method\ to\ handle\ this\ CRL\ */}}
+\DoxyCodeLine{00122\ \ \ \ \ \textcolor{keyword}{const}\ X509\_CRL\_METHOD\ *meth;}
+\DoxyCodeLine{00123\ \ \ \ \ \textcolor{keywordtype}{void}\ *meth\_data;}
+\DoxyCodeLine{00124\ \ \ \ \ CRYPTO\_RWLOCK\ *lock;}
+\DoxyCodeLine{00125\ }
+\DoxyCodeLine{00126\ \ \ \ \ OSSL\_LIB\_CTX\ *libctx;}
+\DoxyCodeLine{00127\ \ \ \ \ \textcolor{keywordtype}{char}\ *propq;}
+\DoxyCodeLine{00128\ \};}
+\DoxyCodeLine{00129\ }
+\DoxyCodeLine{00130\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structx509__revoked__st}{x509\_revoked\_st}}\ \{}
+\DoxyCodeLine{00131\ \ \ \ \ ASN1\_INTEGER\ serialNumber;\ \textcolor{comment}{/*\ revoked\ entry\ serial\ number\ */}}
+\DoxyCodeLine{00132\ \ \ \ \ ASN1\_TIME\ *revocationDate;\ \ \textcolor{comment}{/*\ revocation\ date\ */}}
+\DoxyCodeLine{00133\ \ \ \ \ STACK\_OF(X509\_EXTENSION)\ *extensions;\ \ \ \textcolor{comment}{/*\ CRL\ entry\ extensions:\ optional\ */}}
+\DoxyCodeLine{00134\ \ \ \ \ \textcolor{comment}{/*\ decoded\ value\ of\ CRLissuer\ extension:\ set\ if\ indirect\ CRL\ */}}
+\DoxyCodeLine{00135\ \ \ \ \ STACK\_OF(GENERAL\_NAME)\ *issuer;}
+\DoxyCodeLine{00136\ \ \ \ \ \textcolor{comment}{/*\ revocation\ reason:\ set\ to\ CRL\_REASON\_NONE\ if\ reason\ extension\ absent\ */}}
+\DoxyCodeLine{00137\ \ \ \ \ \textcolor{keywordtype}{int}\ reason;}
+\DoxyCodeLine{00138\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00139\ \textcolor{comment}{\ \ \ \ \ *\ CRL\ entries\ are\ reordered\ for\ faster\ lookup\ of\ serial\ numbers.\ This}}
+\DoxyCodeLine{00140\ \textcolor{comment}{\ \ \ \ \ *\ field\ contains\ the\ original\ load\ sequence\ for\ this\ entry.}}
+\DoxyCodeLine{00141\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00142\ \ \ \ \ \textcolor{keywordtype}{int}\ sequence;}
+\DoxyCodeLine{00143\ \};}
+\DoxyCodeLine{00144\ }
+\DoxyCodeLine{00145\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00146\ \textcolor{comment}{\ *\ This\ stuff\ is\ certificate\ "{}auxiliary\ info"{}:\ it\ contains\ details\ which\ are}}
+\DoxyCodeLine{00147\ \textcolor{comment}{\ *\ useful\ in\ certificate\ stores\ and\ databases.\ When\ used\ this\ is\ tagged\ onto}}
+\DoxyCodeLine{00148\ \textcolor{comment}{\ *\ the\ end\ of\ the\ certificate\ itself.\ OpenSSL\ specific\ structure\ not\ defined}}
+\DoxyCodeLine{00149\ \textcolor{comment}{\ *\ in\ any\ RFC.}}
+\DoxyCodeLine{00150\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00151\ }
+\DoxyCodeLine{00152\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structx509__cert__aux__st}{x509\_cert\_aux\_st}}\ \{}
+\DoxyCodeLine{00153\ \ \ \ \ STACK\_OF(ASN1\_OBJECT)\ *trust;\ \textcolor{comment}{/*\ trusted\ uses\ */}}
+\DoxyCodeLine{00154\ \ \ \ \ STACK\_OF(ASN1\_OBJECT)\ *reject;\ \textcolor{comment}{/*\ rejected\ uses\ */}}
+\DoxyCodeLine{00155\ \ \ \ \ ASN1\_UTF8STRING\ *alias;\ \ \ \ \ \textcolor{comment}{/*\ "{}friendly\ name"{}\ */}}
+\DoxyCodeLine{00156\ \ \ \ \ ASN1\_OCTET\_STRING\ *keyid;\ \ \ \textcolor{comment}{/*\ key\ id\ of\ private\ key\ */}}
+\DoxyCodeLine{00157\ \ \ \ \ STACK\_OF(X509\_ALGOR)\ *other;\ \textcolor{comment}{/*\ other\ unspecified\ info\ */}}
+\DoxyCodeLine{00158\ \};}
+\DoxyCodeLine{00159\ }
+\DoxyCodeLine{00160\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structx509__cinf__st}{x509\_cinf\_st}}\ \{}
+\DoxyCodeLine{00161\ \ \ \ \ ASN1\_INTEGER\ *version;\ \ \ \ \ \ \textcolor{comment}{/*\ [\ 0\ ]\ default\ of\ v1\ */}}
+\DoxyCodeLine{00162\ \ \ \ \ ASN1\_INTEGER\ serialNumber;}
+\DoxyCodeLine{00163\ \ \ \ \ X509\_ALGOR\ signature;}
+\DoxyCodeLine{00164\ \ \ \ \ X509\_NAME\ *issuer;}
+\DoxyCodeLine{00165\ \ \ \ \ X509\_VAL\ validity;}
+\DoxyCodeLine{00166\ \ \ \ \ X509\_NAME\ *subject;}
+\DoxyCodeLine{00167\ \ \ \ \ X509\_PUBKEY\ *key;}
+\DoxyCodeLine{00168\ \ \ \ \ ASN1\_BIT\_STRING\ *issuerUID;\ \textcolor{comment}{/*\ [\ 1\ ]\ optional\ in\ v2\ */}}
+\DoxyCodeLine{00169\ \ \ \ \ ASN1\_BIT\_STRING\ *subjectUID;\ \textcolor{comment}{/*\ [\ 2\ ]\ optional\ in\ v2\ */}}
+\DoxyCodeLine{00170\ \ \ \ \ STACK\_OF(X509\_EXTENSION)\ *extensions;\ \textcolor{comment}{/*\ [\ 3\ ]\ optional\ in\ v3\ */}}
+\DoxyCodeLine{00171\ \ \ \ \ ASN1\_ENCODING\ enc;}
+\DoxyCodeLine{00172\ \};}
+\DoxyCodeLine{00173\ }
+\DoxyCodeLine{00174\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structx509__st}{x509\_st}}\ \{}
+\DoxyCodeLine{00175\ \ \ \ \ X509\_CINF\ cert\_info;}
+\DoxyCodeLine{00176\ \ \ \ \ X509\_ALGOR\ sig\_alg;}
+\DoxyCodeLine{00177\ \ \ \ \ ASN1\_BIT\_STRING\ signature;}
+\DoxyCodeLine{00178\ \ \ \ \ X509\_SIG\_INFO\ siginf;}
+\DoxyCodeLine{00179\ \ \ \ \ \mbox{\hyperlink{struct_c_r_y_p_t_o___r_e_f___c_o_u_n_t}{CRYPTO\_REF\_COUNT}}\ references;}
+\DoxyCodeLine{00180\ \ \ \ \ CRYPTO\_EX\_DATA\ ex\_data;}
+\DoxyCodeLine{00181\ \ \ \ \ \textcolor{comment}{/*\ These\ contain\ copies\ of\ various\ extension\ values\ */}}
+\DoxyCodeLine{00182\ \ \ \ \ \textcolor{keywordtype}{long}\ ex\_pathlen;}
+\DoxyCodeLine{00183\ \ \ \ \ \textcolor{keywordtype}{long}\ ex\_pcpathlen;}
+\DoxyCodeLine{00184\ \ \ \ \ uint32\_t\ ex\_flags;}
+\DoxyCodeLine{00185\ \ \ \ \ uint32\_t\ ex\_kusage;}
+\DoxyCodeLine{00186\ \ \ \ \ uint32\_t\ ex\_xkusage;}
+\DoxyCodeLine{00187\ \ \ \ \ uint32\_t\ ex\_nscert;}
+\DoxyCodeLine{00188\ \ \ \ \ ASN1\_OCTET\_STRING\ *skid;}
+\DoxyCodeLine{00189\ \ \ \ \ AUTHORITY\_KEYID\ *akid;}
+\DoxyCodeLine{00190\ \ \ \ \ X509\_POLICY\_CACHE\ *policy\_cache;}
+\DoxyCodeLine{00191\ \ \ \ \ STACK\_OF(DIST\_POINT)\ *crldp;}
+\DoxyCodeLine{00192\ \ \ \ \ STACK\_OF(GENERAL\_NAME)\ *altname;}
+\DoxyCodeLine{00193\ \ \ \ \ NAME\_CONSTRAINTS\ *nc;}
+\DoxyCodeLine{00194\ \textcolor{preprocessor}{\#\ ifndef\ OPENSSL\_NO\_RFC3779}}
+\DoxyCodeLine{00195\ \ \ \ \ STACK\_OF(IPAddressFamily)\ *rfc3779\_addr;}
+\DoxyCodeLine{00196\ \ \ \ \ \textcolor{keyword}{struct\ }ASIdentifiers\_st\ *rfc3779\_asid;}
+\DoxyCodeLine{00197\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00198\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ sha1\_hash[SHA\_DIGEST\_LENGTH];}
+\DoxyCodeLine{00199\ \ \ \ \ X509\_CERT\_AUX\ *aux;}
+\DoxyCodeLine{00200\ \ \ \ \ CRYPTO\_RWLOCK\ *lock;}
+\DoxyCodeLine{00201\ \ \ \ \ \textcolor{keyword}{volatile}\ \textcolor{keywordtype}{int}\ ex\_cached;}
+\DoxyCodeLine{00202\ }
+\DoxyCodeLine{00203\ \ \ \ \ \textcolor{comment}{/*\ Set\ on\ live\ certificates\ for\ authentication\ purposes\ */}}
+\DoxyCodeLine{00204\ \ \ \ \ ASN1\_OCTET\_STRING\ *distinguishing\_id;}
+\DoxyCodeLine{00205\ }
+\DoxyCodeLine{00206\ \ \ \ \ OSSL\_LIB\_CTX\ *libctx;}
+\DoxyCodeLine{00207\ \ \ \ \ \textcolor{keywordtype}{char}\ *propq;}
+\DoxyCodeLine{00208\ \}\ \textcolor{comment}{/*\ X509\ */}\ ;}
+\DoxyCodeLine{00209\ }
+\DoxyCodeLine{00210\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00211\ \textcolor{comment}{\ *\ This\ is\ a\ used\ when\ verifying\ cert\ chains.\ \ Since\ the\ gathering\ of\ the}}
+\DoxyCodeLine{00212\ \textcolor{comment}{\ *\ cert\ chain\ can\ take\ some\ time\ (and\ have\ to\ be\ 'retried',\ this\ needs\ to\ be}}
+\DoxyCodeLine{00213\ \textcolor{comment}{\ *\ kept\ and\ passed\ around.}}
+\DoxyCodeLine{00214\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00215\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structx509__store__ctx__st}{x509\_store\_ctx\_st}}\ \{\ \ \ \ \ \ \textcolor{comment}{/*\ X509\_STORE\_CTX\ */}}
+\DoxyCodeLine{00216\ \ \ \ \ X509\_STORE\ *store;}
+\DoxyCodeLine{00217\ \ \ \ \ \textcolor{comment}{/*\ The\ following\ are\ set\ by\ the\ caller\ */}}
+\DoxyCodeLine{00218\ \ \ \ \ \textcolor{comment}{/*\ The\ cert\ to\ check\ */}}
+\DoxyCodeLine{00219\ \ \ \ \ X509\ *cert;}
+\DoxyCodeLine{00220\ \ \ \ \ \textcolor{comment}{/*\ chain\ of\ X509s\ -\/\ untrusted\ -\/\ passed\ in\ */}}
+\DoxyCodeLine{00221\ \ \ \ \ STACK\_OF(X509)\ *untrusted;}
+\DoxyCodeLine{00222\ \ \ \ \ \textcolor{comment}{/*\ set\ of\ CRLs\ passed\ in\ */}}
+\DoxyCodeLine{00223\ \ \ \ \ STACK\_OF(X509\_CRL)\ *crls;}
+\DoxyCodeLine{00224\ \ \ \ \ X509\_VERIFY\_PARAM\ *param;}
+\DoxyCodeLine{00225\ \ \ \ \ \textcolor{comment}{/*\ Other\ info\ for\ use\ with\ get\_issuer()\ */}}
+\DoxyCodeLine{00226\ \ \ \ \ \textcolor{keywordtype}{void}\ *other\_ctx;}
+\DoxyCodeLine{00227\ \ \ \ \ \textcolor{comment}{/*\ Callbacks\ for\ various\ operations\ */}}
+\DoxyCodeLine{00228\ \ \ \ \ \textcolor{comment}{/*\ called\ to\ verify\ a\ certificate\ */}}
+\DoxyCodeLine{00229\ \ \ \ \ int\ (*verify)\ (X509\_STORE\_CTX\ *ctx);}
+\DoxyCodeLine{00230\ \ \ \ \ \textcolor{comment}{/*\ error\ callback\ */}}
+\DoxyCodeLine{00231\ \ \ \ \ int\ (*verify\_cb)\ (\textcolor{keywordtype}{int}\ ok,\ X509\_STORE\_CTX\ *ctx);}
+\DoxyCodeLine{00232\ \ \ \ \ \textcolor{comment}{/*\ get\ issuers\ cert\ from\ ctx\ */}}
+\DoxyCodeLine{00233\ \ \ \ \ int\ (*get\_issuer)\ (X509\ **issuer,\ X509\_STORE\_CTX\ *ctx,\ X509\ *x);}
+\DoxyCodeLine{00234\ \ \ \ \ \textcolor{comment}{/*\ check\ issued\ */}}
+\DoxyCodeLine{00235\ \ \ \ \ int\ (*check\_issued)\ (X509\_STORE\_CTX\ *ctx,\ X509\ *x,\ X509\ *issuer);}
+\DoxyCodeLine{00236\ \ \ \ \ \textcolor{comment}{/*\ Check\ revocation\ status\ of\ chain\ */}}
+\DoxyCodeLine{00237\ \ \ \ \ int\ (*check\_revocation)\ (X509\_STORE\_CTX\ *ctx);}
+\DoxyCodeLine{00238\ \ \ \ \ \textcolor{comment}{/*\ retrieve\ CRL\ */}}
+\DoxyCodeLine{00239\ \ \ \ \ int\ (*get\_crl)\ (X509\_STORE\_CTX\ *ctx,\ X509\_CRL\ **crl,\ X509\ *x);}
+\DoxyCodeLine{00240\ \ \ \ \ \textcolor{comment}{/*\ Check\ CRL\ validity\ */}}
+\DoxyCodeLine{00241\ \ \ \ \ int\ (*check\_crl)\ (X509\_STORE\_CTX\ *ctx,\ X509\_CRL\ *crl);}
+\DoxyCodeLine{00242\ \ \ \ \ \textcolor{comment}{/*\ Check\ certificate\ against\ CRL\ */}}
+\DoxyCodeLine{00243\ \ \ \ \ int\ (*cert\_crl)\ (X509\_STORE\_CTX\ *ctx,\ X509\_CRL\ *crl,\ X509\ *x);}
+\DoxyCodeLine{00244\ \ \ \ \ \textcolor{comment}{/*\ Check\ policy\ status\ of\ the\ chain\ */}}
+\DoxyCodeLine{00245\ \ \ \ \ int\ (*check\_policy)\ (X509\_STORE\_CTX\ *ctx);}
+\DoxyCodeLine{00246\ \ \ \ \ STACK\_OF(X509)\ *(*lookup\_certs)\ (X509\_STORE\_CTX\ *ctx,}
+\DoxyCodeLine{00247\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ X509\_NAME\ *nm);}
+\DoxyCodeLine{00248\ \ \ \ \ \textcolor{comment}{/*\ cannot\ constify\ 'ctx'\ param\ due\ to\ lookup\_certs\_sk()\ in\ x509\_vfy.c\ */}}
+\DoxyCodeLine{00249\ \ \ \ \ STACK\_OF(X509\_CRL)\ *(*lookup\_crls)\ (\textcolor{keyword}{const}\ X509\_STORE\_CTX\ *ctx,}
+\DoxyCodeLine{00250\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ X509\_NAME\ *nm);}
+\DoxyCodeLine{00251\ \ \ \ \ int\ (*cleanup)\ (X509\_STORE\_CTX\ *ctx);}
+\DoxyCodeLine{00252\ \ \ \ \ \textcolor{comment}{/*\ The\ following\ is\ built\ up\ */}}
+\DoxyCodeLine{00253\ \ \ \ \ \textcolor{comment}{/*\ if\ 0,\ rebuild\ chain\ */}}
+\DoxyCodeLine{00254\ \ \ \ \ \textcolor{keywordtype}{int}\ valid;}
+\DoxyCodeLine{00255\ \ \ \ \ \textcolor{comment}{/*\ number\ of\ untrusted\ certs\ */}}
+\DoxyCodeLine{00256\ \ \ \ \ \textcolor{keywordtype}{int}\ num\_untrusted;}
+\DoxyCodeLine{00257\ \ \ \ \ \textcolor{comment}{/*\ chain\ of\ X509s\ -\/\ built\ up\ and\ trusted\ */}}
+\DoxyCodeLine{00258\ \ \ \ \ STACK\_OF(X509)\ *chain;}
+\DoxyCodeLine{00259\ \ \ \ \ \textcolor{comment}{/*\ Valid\ policy\ tree\ */}}
+\DoxyCodeLine{00260\ \ \ \ \ X509\_POLICY\_TREE\ *tree;}
+\DoxyCodeLine{00261\ \ \ \ \ \textcolor{comment}{/*\ Require\ explicit\ policy\ value\ */}}
+\DoxyCodeLine{00262\ \ \ \ \ \textcolor{keywordtype}{int}\ explicit\_policy;}
+\DoxyCodeLine{00263\ \ \ \ \ \textcolor{comment}{/*\ When\ something\ goes\ wrong,\ this\ is\ why\ */}}
+\DoxyCodeLine{00264\ \ \ \ \ \textcolor{keywordtype}{int}\ error\_depth;}
+\DoxyCodeLine{00265\ \ \ \ \ \textcolor{keywordtype}{int}\ error;}
+\DoxyCodeLine{00266\ \ \ \ \ X509\ *current\_cert;}
+\DoxyCodeLine{00267\ \ \ \ \ \textcolor{comment}{/*\ cert\ currently\ being\ tested\ as\ valid\ issuer\ */}}
+\DoxyCodeLine{00268\ \ \ \ \ X509\ *current\_issuer;}
+\DoxyCodeLine{00269\ \ \ \ \ \textcolor{comment}{/*\ current\ CRL\ */}}
+\DoxyCodeLine{00270\ \ \ \ \ X509\_CRL\ *current\_crl;}
+\DoxyCodeLine{00271\ \ \ \ \ \textcolor{comment}{/*\ score\ of\ current\ CRL\ */}}
+\DoxyCodeLine{00272\ \ \ \ \ \textcolor{keywordtype}{int}\ current\_crl\_score;}
+\DoxyCodeLine{00273\ \ \ \ \ \textcolor{comment}{/*\ Reason\ mask\ */}}
+\DoxyCodeLine{00274\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ current\_reasons;}
+\DoxyCodeLine{00275\ \ \ \ \ \textcolor{comment}{/*\ For\ CRL\ path\ validation:\ parent\ context\ */}}
+\DoxyCodeLine{00276\ \ \ \ \ X509\_STORE\_CTX\ *parent;}
+\DoxyCodeLine{00277\ \ \ \ \ CRYPTO\_EX\_DATA\ ex\_data;}
+\DoxyCodeLine{00278\ \ \ \ \ SSL\_DANE\ *dane;}
+\DoxyCodeLine{00279\ \ \ \ \ \textcolor{comment}{/*\ signed\ via\ bare\ TA\ public\ key,\ rather\ than\ CA\ certificate\ */}}
+\DoxyCodeLine{00280\ \ \ \ \ \textcolor{keywordtype}{int}\ bare\_ta\_signed;}
+\DoxyCodeLine{00281\ \ \ \ \ \textcolor{comment}{/*\ Raw\ Public\ Key\ */}}
+\DoxyCodeLine{00282\ \ \ \ \ EVP\_PKEY\ *rpk;}
+\DoxyCodeLine{00283\ }
+\DoxyCodeLine{00284\ \ \ \ \ OSSL\_LIB\_CTX\ *libctx;}
+\DoxyCodeLine{00285\ \ \ \ \ \textcolor{keywordtype}{char}\ *propq;}
+\DoxyCodeLine{00286\ \};}
+\DoxyCodeLine{00287\ }
+\DoxyCodeLine{00288\ \textcolor{comment}{/*\ PKCS\#8\ private\ key\ info\ structure\ */}}
+\DoxyCodeLine{00289\ }
+\DoxyCodeLine{00290\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structpkcs8__priv__key__info__st}{pkcs8\_priv\_key\_info\_st}}\ \{}
+\DoxyCodeLine{00291\ \ \ \ \ ASN1\_INTEGER\ *version;}
+\DoxyCodeLine{00292\ \ \ \ \ X509\_ALGOR\ *pkeyalg;}
+\DoxyCodeLine{00293\ \ \ \ \ ASN1\_OCTET\_STRING\ *pkey;}
+\DoxyCodeLine{00294\ \ \ \ \ STACK\_OF(X509\_ATTRIBUTE)\ *attributes;}
+\DoxyCodeLine{00295\ \};}
+\DoxyCodeLine{00296\ }
+\DoxyCodeLine{00297\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_x509__sig__st}{X509\_sig\_st}}\ \{}
+\DoxyCodeLine{00298\ \ \ \ \ X509\_ALGOR\ *algor;}
+\DoxyCodeLine{00299\ \ \ \ \ ASN1\_OCTET\_STRING\ *digest;}
+\DoxyCodeLine{00300\ \};}
+\DoxyCodeLine{00301\ }
+\DoxyCodeLine{00302\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structx509__object__st}{x509\_object\_st}}\ \{}
+\DoxyCodeLine{00303\ \ \ \ \ \textcolor{comment}{/*\ one\ of\ the\ above\ types\ */}}
+\DoxyCodeLine{00304\ \ \ \ \ X509\_LOOKUP\_TYPE\ type;}
+\DoxyCodeLine{00305\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00306\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{char}\ *ptr;}
+\DoxyCodeLine{00307\ \ \ \ \ \ \ \ \ X509\ *x509;}
+\DoxyCodeLine{00308\ \ \ \ \ \ \ \ \ X509\_CRL\ *crl;}
+\DoxyCodeLine{00309\ \ \ \ \ \ \ \ \ EVP\_PKEY\ *pkey;}
+\DoxyCodeLine{00310\ \ \ \ \ \}\ data;}
+\DoxyCodeLine{00311\ \};}
+\DoxyCodeLine{00312\ }
+\DoxyCodeLine{00313\ \textcolor{keywordtype}{int}\ ossl\_a2i\_ipadd(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *ipout,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *ipasc);}
+\DoxyCodeLine{00314\ \textcolor{keywordtype}{int}\ ossl\_x509\_set1\_time(\textcolor{keywordtype}{int}\ *modified,\ ASN1\_TIME\ **ptm,\ \textcolor{keyword}{const}\ ASN1\_TIME\ *tm);}
+\DoxyCodeLine{00315\ \textcolor{keywordtype}{int}\ ossl\_x509\_print\_ex\_brief(BIO\ *bio,\ X509\ *cert,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ neg\_cflags);}
+\DoxyCodeLine{00316\ \textcolor{keywordtype}{int}\ ossl\_x509v3\_cache\_extensions(X509\ *x);}
+\DoxyCodeLine{00317\ \textcolor{keywordtype}{int}\ ossl\_x509\_init\_sig\_info(X509\ *x);}
+\DoxyCodeLine{00318\ }
+\DoxyCodeLine{00319\ \textcolor{keywordtype}{int}\ ossl\_x509\_set0\_libctx(X509\ *x,\ OSSL\_LIB\_CTX\ *libctx,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *propq);}
+\DoxyCodeLine{00320\ \textcolor{keywordtype}{int}\ ossl\_x509\_crl\_set0\_libctx(X509\_CRL\ *x,\ OSSL\_LIB\_CTX\ *libctx,}
+\DoxyCodeLine{00321\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *propq);}
+\DoxyCodeLine{00322\ \textcolor{keywordtype}{int}\ ossl\_x509\_req\_set0\_libctx(X509\_REQ\ *x,\ OSSL\_LIB\_CTX\ *libctx,}
+\DoxyCodeLine{00323\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *propq);}
+\DoxyCodeLine{00324\ \textcolor{keywordtype}{int}\ ossl\_asn1\_item\_digest\_ex(\textcolor{keyword}{const}\ ASN1\_ITEM\ *it,\ \textcolor{keyword}{const}\ EVP\_MD\ *type,}
+\DoxyCodeLine{00325\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *data,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *md,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ *len,}
+\DoxyCodeLine{00326\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OSSL\_LIB\_CTX\ *libctx,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *propq);}
+\DoxyCodeLine{00327\ \textcolor{keywordtype}{int}\ ossl\_x509\_add\_cert\_new(STACK\_OF(X509)\ **sk,\ X509\ *cert,\ \textcolor{keywordtype}{int}\ flags);}
+\DoxyCodeLine{00328\ \textcolor{keywordtype}{int}\ ossl\_x509\_add\_certs\_new(STACK\_OF(X509)\ **p\_sk,\ STACK\_OF(X509)\ *certs,}
+\DoxyCodeLine{00329\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ flags);}
+\DoxyCodeLine{00330\ }
+\DoxyCodeLine{00331\ STACK\_OF(X509\_ATTRIBUTE)\ *ossl\_x509at\_dup(\textcolor{keyword}{const}\ STACK\_OF(X509\_ATTRIBUTE)\ *x);}
+\DoxyCodeLine{00332\ }
+\DoxyCodeLine{00333\ \textcolor{keywordtype}{int}\ ossl\_x509\_PUBKEY\_get0\_libctx(OSSL\_LIB\_CTX\ **plibctx,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ **ppropq,}
+\DoxyCodeLine{00334\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ X509\_PUBKEY\ *key);}
+\DoxyCodeLine{00335\ \textcolor{comment}{/*\ Calculate\ default\ key\ identifier\ according\ to\ RFC\ 5280\ section\ 4.2.1.2\ (1)\ */}}
+\DoxyCodeLine{00336\ ASN1\_OCTET\_STRING\ *ossl\_x509\_pubkey\_hash(X509\_PUBKEY\ *\mbox{\hyperlink{structpubkey}{pubkey}});}
+\DoxyCodeLine{00337\ }
+\DoxyCodeLine{00338\ X509\_PUBKEY\ *ossl\_d2i\_X509\_PUBKEY\_INTERNAL(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **pp,}
+\DoxyCodeLine{00339\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{long}\ len,\ OSSL\_LIB\_CTX\ *libctx,}
+\DoxyCodeLine{00340\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *propq);}
+\DoxyCodeLine{00341\ \textcolor{keywordtype}{void}\ ossl\_X509\_PUBKEY\_INTERNAL\_free(X509\_PUBKEY\ *xpub);}
+\DoxyCodeLine{00342\ }
+\DoxyCodeLine{00343\ RSA\ *ossl\_d2i\_RSA\_PSS\_PUBKEY(RSA\ **a,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **pp,\ \textcolor{keywordtype}{long}\ length);}
+\DoxyCodeLine{00344\ \textcolor{keywordtype}{int}\ ossl\_i2d\_RSA\_PSS\_PUBKEY(\textcolor{keyword}{const}\ RSA\ *a,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **pp);}
+\DoxyCodeLine{00345\ \textcolor{preprocessor}{\#\ ifndef\ OPENSSL\_NO\_DSA}}
+\DoxyCodeLine{00346\ DSA\ *ossl\_d2i\_DSA\_PUBKEY(DSA\ **a,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **pp,\ \textcolor{keywordtype}{long}\ length);}
+\DoxyCodeLine{00347\ \textcolor{preprocessor}{\#\ endif\ }\textcolor{comment}{/*\ OPENSSL\_NO\_DSA\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00348\ \textcolor{preprocessor}{\#\ ifndef\ OPENSSL\_NO\_DH}}
+\DoxyCodeLine{00349\ DH\ *ossl\_d2i\_DH\_PUBKEY(DH\ **a,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **pp,\ \textcolor{keywordtype}{long}\ length);}
+\DoxyCodeLine{00350\ \textcolor{keywordtype}{int}\ ossl\_i2d\_DH\_PUBKEY(\textcolor{keyword}{const}\ DH\ *a,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **pp);}
+\DoxyCodeLine{00351\ DH\ *ossl\_d2i\_DHx\_PUBKEY(DH\ **a,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **pp,\ \textcolor{keywordtype}{long}\ length);}
+\DoxyCodeLine{00352\ \textcolor{keywordtype}{int}\ ossl\_i2d\_DHx\_PUBKEY(\textcolor{keyword}{const}\ DH\ *a,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **pp);}
+\DoxyCodeLine{00353\ \textcolor{preprocessor}{\#\ endif\ }\textcolor{comment}{/*\ OPENSSL\_NO\_DH\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00354\ \textcolor{preprocessor}{\#\ ifndef\ OPENSSL\_NO\_EC}}
+\DoxyCodeLine{00355\ \mbox{\hyperlink{structecx__key__st}{ECX\_KEY}}\ *ossl\_d2i\_ED25519\_PUBKEY(\mbox{\hyperlink{structecx__key__st}{ECX\_KEY}}\ **a,}
+\DoxyCodeLine{00356\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **pp,\ \textcolor{keywordtype}{long}\ length);}
+\DoxyCodeLine{00357\ \textcolor{keywordtype}{int}\ ossl\_i2d\_ED25519\_PUBKEY(\textcolor{keyword}{const}\ \mbox{\hyperlink{structecx__key__st}{ECX\_KEY}}\ *a,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **pp);}
+\DoxyCodeLine{00358\ \mbox{\hyperlink{structecx__key__st}{ECX\_KEY}}\ *ossl\_d2i\_ED448\_PUBKEY(\mbox{\hyperlink{structecx__key__st}{ECX\_KEY}}\ **a,}
+\DoxyCodeLine{00359\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **pp,\ \textcolor{keywordtype}{long}\ length);}
+\DoxyCodeLine{00360\ \textcolor{keywordtype}{int}\ ossl\_i2d\_ED448\_PUBKEY(\textcolor{keyword}{const}\ \mbox{\hyperlink{structecx__key__st}{ECX\_KEY}}\ *a,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **pp);}
+\DoxyCodeLine{00361\ \mbox{\hyperlink{structecx__key__st}{ECX\_KEY}}\ *ossl\_d2i\_X25519\_PUBKEY(\mbox{\hyperlink{structecx__key__st}{ECX\_KEY}}\ **a,}
+\DoxyCodeLine{00362\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **pp,\ \textcolor{keywordtype}{long}\ length);}
+\DoxyCodeLine{00363\ \textcolor{keywordtype}{int}\ ossl\_i2d\_X25519\_PUBKEY(\textcolor{keyword}{const}\ \mbox{\hyperlink{structecx__key__st}{ECX\_KEY}}\ *a,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **pp);}
+\DoxyCodeLine{00364\ \mbox{\hyperlink{structecx__key__st}{ECX\_KEY}}\ *ossl\_d2i\_X448\_PUBKEY(\mbox{\hyperlink{structecx__key__st}{ECX\_KEY}}\ **a,}
+\DoxyCodeLine{00365\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **pp,\ \textcolor{keywordtype}{long}\ length);}
+\DoxyCodeLine{00366\ \textcolor{keywordtype}{int}\ ossl\_i2d\_X448\_PUBKEY(\textcolor{keyword}{const}\ \mbox{\hyperlink{structecx__key__st}{ECX\_KEY}}\ *a,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **pp);}
+\DoxyCodeLine{00367\ \textcolor{preprocessor}{\#\ endif\ }\textcolor{comment}{/*\ OPENSSL\_NO\_EC\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00368\ EVP\_PKEY\ *ossl\_d2i\_PUBKEY\_legacy(EVP\_PKEY\ **a,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **pp,}
+\DoxyCodeLine{00369\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{long}\ length);}
+\DoxyCodeLine{00370\ \textcolor{keywordtype}{int}\ ossl\_x509\_check\_private\_key(\textcolor{keyword}{const}\ EVP\_PKEY\ *k,\ \textcolor{keyword}{const}\ EVP\_PKEY\ *pkey);}
+\DoxyCodeLine{00371\ }
+\DoxyCodeLine{00372\ \textcolor{keywordtype}{int}\ x509v3\_add\_len\_value\_uchar(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *name,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *value,}
+\DoxyCodeLine{00373\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ vallen,\ STACK\_OF(CONF\_VALUE)\ **extlist);}
+\DoxyCodeLine{00374\ \textcolor{comment}{/*\ Attribute\ addition\ functions\ not\ checking\ for\ duplicate\ attributes\ */}}
+\DoxyCodeLine{00375\ STACK\_OF(X509\_ATTRIBUTE)\ *ossl\_x509at\_add1\_attr(STACK\_OF(X509\_ATTRIBUTE)\ **x,}
+\DoxyCodeLine{00376\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\_ATTRIBUTE\ *attr);}
+\DoxyCodeLine{00377\ STACK\_OF(X509\_ATTRIBUTE)\ *ossl\_x509at\_add1\_attr\_by\_OBJ(STACK\_OF(X509\_ATTRIBUTE)\ **x,}
+\DoxyCodeLine{00378\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ ASN1\_OBJECT\ *obj,}
+\DoxyCodeLine{00379\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ type,}
+\DoxyCodeLine{00380\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *bytes,}
+\DoxyCodeLine{00381\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ len);}
+\DoxyCodeLine{00382\ STACK\_OF(X509\_ATTRIBUTE)\ *ossl\_x509at\_add1\_attr\_by\_NID(STACK\_OF(X509\_ATTRIBUTE)\ **x,}
+\DoxyCodeLine{00383\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ nid,\ \textcolor{keywordtype}{int}\ type,}
+\DoxyCodeLine{00384\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *bytes,}
+\DoxyCodeLine{00385\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ len);}
+\DoxyCodeLine{00386\ STACK\_OF(X509\_ATTRIBUTE)\ *ossl\_x509at\_add1\_attr\_by\_txt(STACK\_OF(X509\_ATTRIBUTE)\ **x,}
+\DoxyCodeLine{00387\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *attrname,}
+\DoxyCodeLine{00388\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ type,}
+\DoxyCodeLine{00389\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *bytes,}
+\DoxyCodeLine{00390\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ len);}
+\DoxyCodeLine{00391\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{/*\ OSSL\_CRYPTO\_X509\_H\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

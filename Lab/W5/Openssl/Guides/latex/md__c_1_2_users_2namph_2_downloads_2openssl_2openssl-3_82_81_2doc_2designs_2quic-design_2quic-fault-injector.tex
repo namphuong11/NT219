@@ -1,0 +1,452 @@
+\chapter{QUIC Fault Injector}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-fault-injector}{}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-fault-injector}\index{QUIC Fault Injector@{QUIC Fault Injector}}
+The Open\+SSL QUIC implementation receives QUIC packets from the network layer and processes them accordingly. It will need to behave appropriately in the event of a misbehaving peer, i.\+e. one which is sending protocol elements (e.\+g. datagrams, packets, frames, etc) that are not in accordance with the specifications or Open\+SSL\textquotesingle{}s expectations.
+
+The QUIC Fault Injector is a component within the Open\+SSL test framework that can be used to simulate misbehaving peers and confirm that Open\+SSL QUIC implementation behaves in the expected manner in the event of such misbehaviour.
+
+Typically an individual test will inject one particular misbehaviour (i.\+e. a fault) into an otherwise normal QUIC connection. Therefore the fault injector will have to be capable of creating fully normal QUIC protocol elements, but also offer the flexibility for a test to modify those normal protocol elements as required for the specific test circumstances. The Open\+SSL QUIC implementation in libssl does not offer the capability to send faults since it is designed to be RFC compliant.
+
+The QUIC Fault Injector will be external to libssl (it will be in the test framework) but it will reuse the standards compliant QUIC implementation in libssl and will make use of 3 integration points to inject faults. 2 of these integration points will use new callbacks added to libssl. The final integration point does not require any changes to libssl to work.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-fault-injector_autotoc_md383}{}\doxysection{\texorpdfstring{QUIC Integration Points}{QUIC Integration Points}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-fault-injector_autotoc_md383}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-fault-injector_autotoc_md384}{}\doxysubsection{\texorpdfstring{TLS Handshake}{TLS Handshake}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-fault-injector_autotoc_md384}
+Fault Injector based tests may need to inject faults directly into the TLS handshake data (i.\+e. the contents of CRYPTO frames). However such faults may need to be done in handshake messages that would normally be encrypted. Additionally the contents of handshake messages are hashed and each peer confirms that the other peer has the same calculated hash value as part of the "{}\+Finished"{} message exchange -\/ so any modifications would be rejected and the handshake would fail.
+
+An example test might be to confirm that an Open\+SSL QUIC client behaves correctly in the case that the server provides incorrectly formatted transport parameters. These transport parameters are sent from the server in the Encrypted\+Extensions message. That message is encrypted and so cannot be modified by a "{}man-\/in-\/the-\/middle"{}.
+
+To support this integration point two new callbacks will be introduced to libssl that enables modification of handshake data prior to it being encrypted and hashed. These callbacks will be internal only (i.\+e. not part of the public API) and so only usable by the Fault Injector.
+
+The new libssl callbacks will be as follows\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\ C}
+\DoxyCodeLine{typedef\ int\ (*ossl\_statem\_mutate\_handshake\_cb)(const\ unsigned\ char\ *msgin,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ size\_t\ inlen,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ unsigned\ char\ **msgout,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ size\_t\ *outlen,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ void\ *arg);}
+\DoxyCodeLine{}
+\DoxyCodeLine{typedef\ void\ (*ossl\_statem\_finish\_mutate\_handshake\_cb)(void\ *arg);}
+\DoxyCodeLine{}
+\DoxyCodeLine{int\ ossl\_statem\_set\_mutator(SSL\ *s,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ossl\_statem\_mutate\_handshake\_cb\ mutate\_handshake\_cb,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ossl\_statem\_finish\_mutate\_handshake\_cb\ finish\_mutate\_handshake\_cb,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ void\ *mutatearg);}
+
+\end{DoxyCode}
+
+
+The two callbacks are set via a single internal function call {\ttfamily ossl\+\_\+statem\+\_\+set\+\_\+mutator}. The mutator callback {\ttfamily mutate\+\_\+handshake\+\_\+cb} will be called after each handshake message has been constructed and is ready to send, but before it has been passed through the handshake hashing code. It will be passed a pointer to the constructed handshake message in {\ttfamily msgin} along with its associated length in {\ttfamily inlen}. The mutator will construct a replacement handshake message (typically by copying the input message and modifying it) and store it in a newly allocated buffer. A pointer to the new buffer will be passed back in {\ttfamily \texorpdfstring{$\ast$}{*}msgout} and its length will be stored in {\ttfamily \texorpdfstring{$\ast$}{*}outlen}. Optionally the mutator can choose to not mutate by simply creating a new buffer with a copy of the data in it. A return value of 1 indicates that the callback completed successfully. A return value of 0 indicates a fatal error.
+
+Once libssl has finished using the mutated buffer it will call the {\ttfamily finish\+\_\+mutate\+\_\+handshake\+\_\+cb} callback which can then release the buffer and perform any other cleanup as required.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-fault-injector_autotoc_md385}{}\doxysubsection{\texorpdfstring{QUIC Pre-\/\+Encryption Packets}{QUIC Pre-\/\+Encryption Packets}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-fault-injector_autotoc_md385}
+QUIC Packets are the primary mechanism for exchanging protocol data within QUIC. Multiple packets may be held within a single datagram, and each packet may itself contain multiple frames. A packet gets protected via an AEAD encryption algorithm prior to it being sent. Fault Injector based tests may need to inject faults into these packets prior to them being encrypted.
+
+An example test might insert an unrecognised frame type into a QUIC packet to confirm that an Open\+SSL QUIC client handles it appropriately (e.\+g. by raising a protocol error).
+
+The above functionality will be supported by the following two new callbacks which will provide the ability to mutate packets before they are encrypted and sent. As for the TLS callbacks these will be internal only and not part of the public API.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\ C}
+\DoxyCodeLine{typedef\ int\ (*ossl\_mutate\_packet\_cb)(const\ QUIC\_PKT\_HDR\ *hdrin,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ const\ OSSL\_QTX\_IOVEC\ *iovecin,\ size\_t\ numin,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ QUIC\_PKT\_HDR\ **hdrout,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ const\ OSSL\_QTX\_IOVEC\ **iovecout,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ size\_t\ *numout,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ void\ *arg);}
+\DoxyCodeLine{}
+\DoxyCodeLine{typedef\ void\ (*ossl\_finish\_mutate\_cb)(void\ *arg);}
+\DoxyCodeLine{}
+\DoxyCodeLine{void\ ossl\_qtx\_set\_mutator(OSSL\_QTX\ *qtx,\ ossl\_mutate\_packet\_cb\ mutatecb,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ossl\_finish\_mutate\_cb\ finishmutatecb,\ void\ *mutatearg);}
+
+\end{DoxyCode}
+
+
+A single new function call will set both callbacks. The {\ttfamily mutatecb} callback will be invoked after each packet has been constructed but before protection has been applied to it. The header for the packet will be pointed to by {\ttfamily hdrin} and the payload will be in an iovec array pointed to by {\ttfamily iovecin} and containing {\ttfamily numin} iovecs. The {\ttfamily mutatecb} callback is expected to allocate a new header structure and return it in {\ttfamily \texorpdfstring{$\ast$}{*}hdrout} and a new set of iovecs to be stored in {\ttfamily \texorpdfstring{$\ast$}{*}iovecout}. The number of iovecs need not be the same as the input. The number of iovecs in the output array is stored in {\ttfamily \texorpdfstring{$\ast$}{*}numout}. Optionally the callback can choose to not mutate by simply creating new iovecs/headers with a copy of the data in it. A return value of 1 indicates that the callback completed successfully. A return value of 0 indicates a fatal error.
+
+Once the Open\+SSL QUIC implementation has finished using the mutated buffers the {\ttfamily finishmutatecb} callback is called. This is expected to free any resources and buffers that were allocated as part of the {\ttfamily mutatecb} call.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-fault-injector_autotoc_md386}{}\doxysubsection{\texorpdfstring{QUIC Datagrams}{QUIC Datagrams}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-fault-injector_autotoc_md386}
+Encrypted QUIC packets are sent in datagrams. There may be more than one QUIC packet in a single datagram. Fault Injector based tests may need to inject faults directly into these datagrams.
+
+An example test might modify an encrypted packet to confirm that the AEAD decryption process rejects it.
+
+In order to provide this functionality the QUIC Fault Injector will insert itself as a man-\/in-\/the-\/middle between the client and server. A BIO\+\_\+s\+\_\+dgram\+\_\+pair() will be used with one of the pair being used on the client end and the other being associated with the Fault Injector. Similarly a second BIO\+\_\+s\+\_\+dgram\+\_\+pair() will be created with one used on the server and other used with the Fault Injector.
+
+With this setup the Fault Injector will act as a proxy and simply pass datagrams sent from the client on to the server, and vice versa. Where a test requires a modification to be made, that will occur prior to the datagram being sent on.
+
+This will all be implemented using public BIO APIs without requiring any additional internal libssl callbacks.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-fault-injector_autotoc_md387}{}\doxysection{\texorpdfstring{Fault Injector API}{Fault Injector API}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-fault-injector_autotoc_md387}
+The Fault Injector will utilise the callbacks described above in order to supply a more test friendly API to test authors.
+
+This API will primarily take the form of a set of event listener callbacks. A test will be able to "{}listen"{} for a specific event occurring and be informed about it when it does. Examples of events might include\+:
+
+
+\begin{DoxyItemize}
+\item An Encrypted\+Extensions handshake message being sent
+\item An ACK frame being sent
+\item A Datagram being sent
+\end{DoxyItemize}
+
+Each listener will be provided with additional data about the specific event. For example a listener that is listening for an Encrypted\+Extensions message will be provided with the parsed contents of that message in an easy to use structure. Additional helper functions will be provided to make changes to the message (such as to resize it).
+
+Initially listeners will only be able to listen for events on the server side. This is because, in MVP, it will be the client side that is under test -\/ so the faults need to be injected into protocol elements sent from the server. Post MVP this will be extended in order to be able to test the server. It may be that we need to do this during MVP in order to be able to observe protocol elements sent from the client without modifying them (i.\+e. in order to confirm that the client is behaving as we expect). This will be added if required as we develop the tests.
+
+It is expected that the Fault Injector API will expand over time as new listeners and helper functions are added to support specific test scenarios. The initial API will provide a basic set of listeners and helper functions in order to provide the basis for future work.
+
+The following outlines an illustrative set of functions that will initially be provided. A number of {\ttfamily TODO(\+QUIC TESTING)} comments are inserted to explain how we might expand the API over time\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\ C}
+\DoxyCodeLine{/*\ Type\ to\ represent\ the\ Fault\ Injector\ */}
+\DoxyCodeLine{typedef\ struct\ ossl\_quic\_fault\ OSSL\_QUIC\_FAULT;}
+\DoxyCodeLine{}
+\DoxyCodeLine{/*}
+\DoxyCodeLine{\ *\ Structure\ representing\ a\ parsed\ EncryptedExtension\ message.\ Listeners\ can}
+\DoxyCodeLine{\ *\ make\ changes\ to\ the\ contents\ of\ structure\ objects\ as\ required\ and\ the\ fault}
+\DoxyCodeLine{\ *\ injector\ will\ reconstruct\ the\ message\ to\ be\ sent\ on}
+\DoxyCodeLine{\ */}
+\DoxyCodeLine{typedef\ struct\ ossl\_qf\_encrypted\_extensions\ \{}
+\DoxyCodeLine{\ \ \ \ /*\ EncryptedExtension\ messages\ just\ have\ an\ extensions\ block\ */}
+\DoxyCodeLine{\ \ \ \ unsigned\ char\ *extensions;}
+\DoxyCodeLine{\ \ \ \ size\_t\ extensionslen;}
+\DoxyCodeLine{\}\ OSSL\_QF\_ENCRYPTED\_EXTENSIONS;}
+\DoxyCodeLine{}
+\DoxyCodeLine{/*}
+\DoxyCodeLine{\ *\ Given\ an\ SSL\_CTX\ for\ the\ client\ and\ filenames\ for\ the\ server\ certificate\ and}
+\DoxyCodeLine{\ *\ keyfile,\ create\ a\ server\ and\ client\ instances\ as\ well\ as\ a\ fault\ injector}
+\DoxyCodeLine{\ *\ instance.\ |block|\ indicates\ whether\ we\ are\ using\ blocking\ mode\ or\ not.}
+\DoxyCodeLine{\ */}
+\DoxyCodeLine{int\ qtest\_create\_quic\_objects(OSSL\_LIB\_CTX\ *libctx,\ SSL\_CTX\ *clientctx,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ SSL\_CTX\ *serverctx,\ char\ *certfile,\ char\ *keyfile,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ int\ block,\ QUIC\_TSERVER\ **qtserv,\ SSL\ **cssl,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OSSL\_QUIC\_FAULT\ **fault,\ BIO\ **tracebio);}
+\DoxyCodeLine{}
+\DoxyCodeLine{/*}
+\DoxyCodeLine{\ *\ Free\ up\ a\ Fault\ Injector\ instance}
+\DoxyCodeLine{\ */}
+\DoxyCodeLine{void\ ossl\_quic\_fault\_free(OSSL\_QUIC\_FAULT\ *fault);}
+\DoxyCodeLine{}
+\DoxyCodeLine{/*}
+\DoxyCodeLine{\ *\ Run\ the\ TLS\ handshake\ to\ create\ a\ QUIC\ connection\ between\ the\ client\ and}
+\DoxyCodeLine{\ *\ server.}
+\DoxyCodeLine{\ */}
+\DoxyCodeLine{int\ qtest\_create\_quic\_connection(QUIC\_TSERVER\ *qtserv,\ SSL\ *clientssl);}
+\DoxyCodeLine{}
+\DoxyCodeLine{/*}
+\DoxyCodeLine{\ *\ Same\ as\ qtest\_create\_quic\_connection\ but\ will\ stop\ (successfully)\ if\ the}
+\DoxyCodeLine{\ *\ clientssl\ indicates\ SSL\_ERROR\_WANT\_XXX\ as\ specified\ by\ |wanterr|}
+\DoxyCodeLine{\ */}
+\DoxyCodeLine{int\ qtest\_create\_quic\_connection\_ex(QUIC\_TSERVER\ *qtserv,\ SSL\ *clientssl,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ int\ wanterr);}
+\DoxyCodeLine{}
+\DoxyCodeLine{/*}
+\DoxyCodeLine{\ *\ Confirm\ that\ the\ server\ has\ received\ the\ given\ transport\ error\ code.}
+\DoxyCodeLine{\ */}
+\DoxyCodeLine{int\ qtest\_check\_server\_transport\_err(QUIC\_TSERVER\ *qtserv,\ uint64\_t\ code);}
+\DoxyCodeLine{}
+\DoxyCodeLine{/*}
+\DoxyCodeLine{\ *\ Confirm\ the\ server\ has\ received\ a\ protocol\ error.\ Equivalent\ to\ calling}
+\DoxyCodeLine{\ *\ qtest\_check\_server\_transport\_err\ with\ a\ code\ of\ QUIC\_ERR\_PROTOCOL\_VIOLATION}
+\DoxyCodeLine{\ */}
+\DoxyCodeLine{int\ qtest\_check\_server\_protocol\_err(QUIC\_TSERVER\ *qtserv);}
+\DoxyCodeLine{}
+\DoxyCodeLine{/*}
+\DoxyCodeLine{\ *\ Enable\ tests\ to\ listen\ for\ pre-\/encryption\ QUIC\ packets\ being\ sent}
+\DoxyCodeLine{\ */}
+\DoxyCodeLine{typedef\ int\ (*ossl\_quic\_fault\_on\_packet\_plain\_cb)(OSSL\_QUIC\_FAULT\ *fault,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ QUIC\_PKT\_HDR\ *hdr,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ unsigned\ char\ *buf,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ size\_t\ len,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ void\ *cbarg);}
+\DoxyCodeLine{}
+\DoxyCodeLine{int\ ossl\_quic\_fault\_set\_packet\_plain\_listener(OSSL\_QUIC\_FAULT\ *fault,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ossl\_quic\_fault\_on\_packet\_plain\_cb\ pplaincb,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ void\ *pplaincbarg);}
+\DoxyCodeLine{}
+\DoxyCodeLine{}
+\DoxyCodeLine{/*}
+\DoxyCodeLine{\ *\ Helper\ function\ to\ be\ called\ from\ a\ packet\_plain\_listener\ callback\ if\ it}
+\DoxyCodeLine{\ *\ wants\ to\ resize\ the\ packet\ (either\ to\ add\ new\ data\ to\ it,\ or\ to\ truncate\ it).}
+\DoxyCodeLine{\ *\ The\ buf\ provided\ to\ packet\_plain\_listener\ is\ over\ allocated,\ so\ this\ just}
+\DoxyCodeLine{\ *\ changes\ the\ logical\ size\ and\ never\ changes\ the\ actual\ address\ of\ the\ buf.}
+\DoxyCodeLine{\ *\ This\ will\ fail\ if\ a\ large\ resize\ is\ attempted\ that\ exceeds\ the\ over}
+\DoxyCodeLine{\ *\ allocation.}
+\DoxyCodeLine{\ */}
+\DoxyCodeLine{int\ ossl\_quic\_fault\_resize\_plain\_packet(OSSL\_QUIC\_FAULT\ *fault,\ size\_t\ newlen);}
+\DoxyCodeLine{}
+\DoxyCodeLine{/*}
+\DoxyCodeLine{\ *\ Prepend\ frame\ data\ into\ a\ packet.\ To\ be\ called\ from\ a\ packet\_plain\_listener}
+\DoxyCodeLine{\ *\ callback}
+\DoxyCodeLine{\ */}
+\DoxyCodeLine{int\ ossl\_quic\_fault\_prepend\_frame(OSSL\_QUIC\_FAULT\ *fault,\ unsigned\ char\ *frame,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ size\_t\ frame\_len);}
+\DoxyCodeLine{}
+\DoxyCodeLine{/*}
+\DoxyCodeLine{\ *\ The\ general\ handshake\ message\ listener\ is\ sent\ the\ entire\ handshake\ message}
+\DoxyCodeLine{\ *\ data\ block,\ including\ the\ handshake\ header\ itself}
+\DoxyCodeLine{\ */}
+\DoxyCodeLine{typedef\ int\ (*ossl\_quic\_fault\_on\_handshake\_cb)(OSSL\_QUIC\_FAULT\ *fault,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ unsigned\ char\ *msg,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ size\_t\ msglen,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ void\ *handshakecbarg);}
+\DoxyCodeLine{}
+\DoxyCodeLine{int\ ossl\_quic\_fault\_set\_handshake\_listener(OSSL\_QUIC\_FAULT\ *fault,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ossl\_quic\_fault\_on\_handshake\_cb\ handshakecb,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ void\ *handshakecbarg);}
+\DoxyCodeLine{}
+\DoxyCodeLine{/*}
+\DoxyCodeLine{\ *\ Helper\ function\ to\ be\ called\ from\ a\ handshake\_listener\ callback\ if\ it\ wants}
+\DoxyCodeLine{\ *\ to\ resize\ the\ handshake\ message\ (either\ to\ add\ new\ data\ to\ it,\ or\ to\ truncate}
+\DoxyCodeLine{\ *\ it).\ newlen\ must\ include\ the\ length\ of\ the\ handshake\ message\ header.\ The}
+\DoxyCodeLine{\ *\ handshake\ message\ buffer\ is\ over\ allocated,\ so\ this\ just\ changes\ the\ logical}
+\DoxyCodeLine{\ *\ size\ and\ never\ changes\ the\ actual\ address\ of\ the\ buf.}
+\DoxyCodeLine{\ *\ This\ will\ fail\ if\ a\ large\ resize\ is\ attempted\ that\ exceeds\ the\ over}
+\DoxyCodeLine{\ *\ allocation.}
+\DoxyCodeLine{\ */}
+\DoxyCodeLine{int\ ossl\_quic\_fault\_resize\_handshake(OSSL\_QUIC\_FAULT\ *fault,\ size\_t\ newlen);}
+\DoxyCodeLine{}
+\DoxyCodeLine{/*}
+\DoxyCodeLine{\ *\ TODO(QUIC\ TESTING):\ Add\ listeners\ for\ specific\ types\ of\ frame\ here.\ E.g.}
+\DoxyCodeLine{\ *\ we\ might\ expect\ to\ see\ an\ "{}ACK"{}\ frame\ listener\ which\ will\ be\ passed}
+\DoxyCodeLine{\ *\ pre-\/parsed\ ack\ data\ that\ can\ be\ modified\ as\ required.}
+\DoxyCodeLine{\ */}
+\DoxyCodeLine{}
+\DoxyCodeLine{/*}
+\DoxyCodeLine{\ *\ Handshake\ message\ specific\ listeners.\ Unlike\ the\ general\ handshake\ message}
+\DoxyCodeLine{\ *\ listener\ these\ messages\ are\ pre-\/parsed\ and\ supplied\ with\ message\ specific}
+\DoxyCodeLine{\ *\ data\ and\ exclude\ the\ handshake\ header.}
+\DoxyCodeLine{\ */}
+\DoxyCodeLine{typedef\ int\ (*ossl\_quic\_fault\_on\_enc\_ext\_cb)(OSSL\_QUIC\_FAULT\ *fault,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OSSL\_QF\_ENCRYPTED\_EXTENSIONS\ *ee,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ size\_t\ eelen,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ void\ *encextcbarg);}
+\DoxyCodeLine{}
+\DoxyCodeLine{int\ ossl\_quic\_fault\_set\_hand\_enc\_ext\_listener(OSSL\_QUIC\_FAULT\ *fault,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ossl\_quic\_fault\_on\_enc\_ext\_cb\ encextcb,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ void\ *encextcbarg);}
+\DoxyCodeLine{}
+\DoxyCodeLine{/*\ TODO(QUIC\ TESTING):\ Add\ listeners\ for\ other\ types\ of\ handshake\ message\ here\ */}
+\DoxyCodeLine{}
+\DoxyCodeLine{}
+\DoxyCodeLine{/*}
+\DoxyCodeLine{\ *\ Helper\ function\ to\ be\ called\ from\ message\ specific\ listener\ callbacks.\ newlen}
+\DoxyCodeLine{\ *\ is\ the\ new\ length\ of\ the\ specific\ message\ excluding\ the\ handshake\ message}
+\DoxyCodeLine{\ *\ header.\ \ The\ buffers\ provided\ to\ the\ message\ specific\ listeners\ are\ over}
+\DoxyCodeLine{\ *\ allocated,\ so\ this\ just\ changes\ the\ logical\ size\ and\ never\ changes\ the\ actual}
+\DoxyCodeLine{\ *\ address\ of\ the\ buffer.\ This\ will\ fail\ if\ a\ large\ resize\ is\ attempted\ that}
+\DoxyCodeLine{\ *\ exceeds\ the\ over\ allocation.}
+\DoxyCodeLine{\ */}
+\DoxyCodeLine{int\ ossl\_quic\_fault\_resize\_message(OSSL\_QUIC\_FAULT\ *fault,\ size\_t\ newlen);}
+\DoxyCodeLine{}
+\DoxyCodeLine{/*}
+\DoxyCodeLine{\ *\ Helper\ function\ to\ delete\ an\ extension\ from\ an\ extension\ block.\ |exttype|\ is}
+\DoxyCodeLine{\ *\ the\ type\ of\ the\ extension\ to\ be\ deleted.\ |ext|\ points\ to\ the\ extension\ block.}
+\DoxyCodeLine{\ *\ On\ entry\ |*extlen|\ contains\ the\ length\ of\ the\ extension\ block.\ It\ is\ updated}
+\DoxyCodeLine{\ *\ with\ the\ new\ length\ on\ exit.}
+\DoxyCodeLine{\ */}
+\DoxyCodeLine{int\ ossl\_quic\_fault\_delete\_extension(OSSL\_QUIC\_FAULT\ *fault,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ unsigned\ int\ exttype,\ unsigned\ char\ *ext,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ size\_t\ *extlen);}
+\DoxyCodeLine{}
+\DoxyCodeLine{/*}
+\DoxyCodeLine{\ *\ TODO(QUIC\ TESTING):\ Add\ additional\ helper\ functions\ for\ querying\ extensions}
+\DoxyCodeLine{\ *\ here\ (e.g.\ finding\ or\ adding\ them).\ We\ could\ also\ provide\ a\ "{}listener"{}\ API}
+\DoxyCodeLine{\ *\ for\ listening\ for\ specific\ extension\ types.}
+\DoxyCodeLine{\ */}
+\DoxyCodeLine{}
+\DoxyCodeLine{/*}
+\DoxyCodeLine{\ *\ Enable\ tests\ to\ listen\ for\ post-\/encryption\ QUIC\ packets\ being\ sent}
+\DoxyCodeLine{\ */}
+\DoxyCodeLine{typedef\ int\ (*ossl\_quic\_fault\_on\_packet\_cipher\_cb)(OSSL\_QUIC\_FAULT\ *fault,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ /*\ The\ parsed\ packet\ header\ */}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ QUIC\_PKT\_HDR\ *hdr,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ /*\ The\ packet\ payload\ data\ */}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ unsigned\ char\ *buf,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ /*\ Length\ of\ the\ payload\ */}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ size\_t\ len,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ void\ *cbarg);}
+\DoxyCodeLine{}
+\DoxyCodeLine{int\ ossl\_quic\_fault\_set\_packet\_cipher\_listener(OSSL\_QUIC\_FAULT\ *fault,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ossl\_quic\_fault\_on\_packet\_cipher\_cb\ pciphercb,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ void\ *picphercbarg);}
+\DoxyCodeLine{}
+\DoxyCodeLine{/*}
+\DoxyCodeLine{\ *\ Enable\ tests\ to\ listen\ for\ datagrams\ being\ sent}
+\DoxyCodeLine{\ */}
+\DoxyCodeLine{typedef\ int\ (*ossl\_quic\_fault\_on\_datagram\_cb)(OSSL\_QUIC\_FAULT\ *fault,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BIO\_MSG\ *m,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ size\_t\ stride,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ void\ *cbarg);}
+\DoxyCodeLine{}
+\DoxyCodeLine{int\ ossl\_quic\_fault\_set\_datagram\_listener(OSSL\_QUIC\_FAULT\ *fault,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ossl\_quic\_fault\_on\_datagram\_cb\ datagramcb,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ void\ *datagramcbarg);}
+\DoxyCodeLine{}
+\DoxyCodeLine{/*}
+\DoxyCodeLine{\ *\ To\ be\ called\ from\ a\ datagram\_listener\ callback.\ The\ datagram\ buffer\ is\ over}
+\DoxyCodeLine{\ *\ allocated,\ so\ this\ just\ changes\ the\ logical\ size\ and\ never\ changes\ the\ actual}
+\DoxyCodeLine{\ *\ address\ of\ the\ buffer.\ This\ will\ fail\ if\ a\ large\ resize\ is\ attempted\ that}
+\DoxyCodeLine{\ *\ exceeds\ the\ over\ allocation.}
+\DoxyCodeLine{\ */}
+\DoxyCodeLine{int\ ossl\_quic\_fault\_resize\_datagram(OSSL\_QUIC\_FAULT\ *fault,\ size\_t\ newlen);}
+
+\end{DoxyCode}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-fault-injector_autotoc_md388}{}\doxysection{\texorpdfstring{Example Tests}{Example Tests}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-fault-injector_autotoc_md388}
+This section provides some example tests to illustrate how the Fault Injector might be used to create tests.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-fault-injector_autotoc_md389}{}\doxysubsection{\texorpdfstring{Unknown Frame Test}{Unknown Frame Test}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-fault-injector_autotoc_md389}
+An example test showing a server sending a frame of an unknown type to the client\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\ C}
+\DoxyCodeLine{/*}
+\DoxyCodeLine{\ *\ Test\ that\ adding\ an\ unknown\ frame\ type\ is\ handled\ correctly}
+\DoxyCodeLine{\ */}
+\DoxyCodeLine{static\ int\ add\_unknown\_frame\_cb(OSSL\_QUIC\_FAULT\ *fault,\ QUIC\_PKT\_HDR\ *hdr,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ unsigned\ char\ *buf,\ size\_t\ len,\ void\ *cbarg)}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{\ \ \ \ static\ size\_t\ done\ =\ 0;}
+\DoxyCodeLine{\ \ \ \ /*}
+\DoxyCodeLine{\ \ \ \ \ *\ There\ are\ no\ "{}reserved"{}\ frame\ types\ which\ are\ definitately\ safe\ for\ us}
+\DoxyCodeLine{\ \ \ \ \ *\ to\ use\ for\ testing\ purposes\ -\/\ but\ we\ just\ use\ the\ highest\ possible}
+\DoxyCodeLine{\ \ \ \ \ *\ value\ (8\ byte\ length\ integer)\ and\ with\ no\ payload\ bytes}
+\DoxyCodeLine{\ \ \ \ \ */}
+\DoxyCodeLine{\ \ \ \ unsigned\ char\ unknown\_frame[]\ =\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ 0xff,\ 0xff,\ 0xff,\ 0xff,\ 0xff,\ 0xff,\ 0xff,\ 0xff}
+\DoxyCodeLine{\ \ \ \ \};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ /*\ We\ only\ ever\ add\ the\ unknown\ frame\ to\ one\ packet\ */}
+\DoxyCodeLine{\ \ \ \ if\ (done++)}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ return\ 1;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ return\ ossl\_quic\_fault\_prepend\_frame(fault,\ unknown\_frame,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sizeof(unknown\_frame));}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{static\ int\ test\_unknown\_frame(void)}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{\ \ \ \ int\ testresult\ =\ 0,\ ret;}
+\DoxyCodeLine{\ \ \ \ SSL\_CTX\ *cctx\ =\ SSL\_CTX\_new(OSSL\_QUIC\_client\_method());}
+\DoxyCodeLine{\ \ \ \ QUIC\_TSERVER\ *qtserv\ =\ NULL;}
+\DoxyCodeLine{\ \ \ \ SSL\ *cssl\ =\ NULL;}
+\DoxyCodeLine{\ \ \ \ char\ *msg\ =\ "{}Hello\ World!"{};}
+\DoxyCodeLine{\ \ \ \ size\_t\ msglen\ =\ strlen(msg);}
+\DoxyCodeLine{\ \ \ \ unsigned\ char\ buf[80];}
+\DoxyCodeLine{\ \ \ \ size\_t\ byteswritten;}
+\DoxyCodeLine{\ \ \ \ OSSL\_QUIC\_FAULT\ *fault\ =\ NULL;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ if\ (!TEST\_ptr(cctx))}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ goto\ err;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ if\ (!TEST\_true(qtest\_create\_quic\_objects(NULL,\ cctx,\ NULL,\ cert,\ privkey,\ 0,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \&qtserv,\ \&cssl,\ \&fault,\ NULL)))}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ goto\ err;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ if\ (!TEST\_true(qtest\_create\_quic\_connection(qtserv,\ cssl)))}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ goto\ err;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ /*}
+\DoxyCodeLine{\ \ \ \ \ *\ Write\ a\ message\ from\ the\ server\ to\ the\ client\ and\ add\ an\ unknown\ frame}
+\DoxyCodeLine{\ \ \ \ \ *\ type}
+\DoxyCodeLine{\ \ \ \ \ */}
+\DoxyCodeLine{\ \ \ \ if\ (!TEST\_true(ossl\_quic\_fault\_set\_packet\_plain\_listener(fault,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ add\_unknown\_frame\_cb,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ NULL)))}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ goto\ err;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ if\ (!TEST\_true(ossl\_quic\_tserver\_write(qtserv,\ (unsigned\ char\ *)msg,\ msglen,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \&byteswritten)))}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ goto\ err;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ if\ (!TEST\_size\_t\_eq(msglen,\ byteswritten))}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ goto\ err;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ ossl\_quic\_tserver\_tick(qtserv);}
+\DoxyCodeLine{\ \ \ \ if\ (!TEST\_true(SSL\_tick(cssl)))}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ goto\ err;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ if\ (!TEST\_int\_le(ret\ =\ SSL\_read(cssl,\ buf,\ sizeof(buf)),\ 0))}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ goto\ err;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ if\ (!TEST\_int\_eq(SSL\_get\_error(cssl,\ ret),\ SSL\_ERROR\_SSL))}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ goto\ err;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ if\ (!TEST\_int\_eq(ERR\_GET\_REASON(ERR\_peek\_error()),}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ SSL\_R\_UNKNOWN\_FRAME\_TYPE\_RECEIVED))}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ goto\ err;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ if\ (!TEST\_true(qtest\_check\_server\_protocol\_err(qtserv)))}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ goto\ err;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ testresult\ =\ 1;}
+\DoxyCodeLine{\ err:}
+\DoxyCodeLine{\ \ \ \ ossl\_quic\_fault\_free(fault);}
+\DoxyCodeLine{\ \ \ \ SSL\_free(cssl);}
+\DoxyCodeLine{\ \ \ \ ossl\_quic\_tserver\_free(qtserv);}
+\DoxyCodeLine{\ \ \ \ SSL\_CTX\_free(cctx);}
+\DoxyCodeLine{\ \ \ \ return\ testresult;}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-fault-injector_autotoc_md390}{}\doxysubsection{\texorpdfstring{No Transport Parameters test}{No Transport Parameters test}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-fault-injector_autotoc_md390}
+An example test showing the case where a server does not supply any transport parameters in the TLS handshake\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\ C}
+\DoxyCodeLine{/*}
+\DoxyCodeLine{\ *\ Test\ that\ a\ server\ that\ fails\ to\ provide\ transport\ params\ cannot\ be}
+\DoxyCodeLine{\ *\ connected\ to.}
+\DoxyCodeLine{\ */}
+\DoxyCodeLine{static\ int\ drop\_transport\_params\_cb(OSSL\_QUIC\_FAULT\ *fault,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OSSL\_QF\_ENCRYPTED\_EXTENSIONS\ *ee,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ size\_t\ eelen,\ void\ *encextcbarg)}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{\ \ \ \ if\ (!ossl\_quic\_fault\_delete\_extension(fault,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ TLSEXT\_TYPE\_quic\_transport\_parameters,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ee-\/>extensions,\ \&ee-\/>extensionslen))}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ return\ 0;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ return\ 1;}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{static\ int\ test\_no\_transport\_params(void)}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{\ \ \ \ int\ testresult\ =\ 0;}
+\DoxyCodeLine{\ \ \ \ SSL\_CTX\ *cctx\ =\ SSL\_CTX\_new(OSSL\_QUIC\_client\_method());}
+\DoxyCodeLine{\ \ \ \ QUIC\_TSERVER\ *qtserv\ =\ NULL;}
+\DoxyCodeLine{\ \ \ \ SSL\ *cssl\ =\ NULL;}
+\DoxyCodeLine{\ \ \ \ OSSL\_QUIC\_FAULT\ *fault\ =\ NULL;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ if\ (!TEST\_ptr(cctx))}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ goto\ err;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ if\ (!TEST\_true(qtest\_create\_quic\_objects(NULL,\ cctx,\ NULL,\ cert,\ privkey,\ 0,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \&qtserv,\ \&cssl,\ \&fault,\ NULL)))}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ goto\ err;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ if\ (!TEST\_true(ossl\_quic\_fault\_set\_hand\_enc\_ext\_listener(fault,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ drop\_transport\_params\_cb,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ NULL)))}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ goto\ err;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ /*}
+\DoxyCodeLine{\ \ \ \ \ *\ We\ expect\ the\ connection\ to\ fail\ because\ the\ server\ failed\ to\ provide}
+\DoxyCodeLine{\ \ \ \ \ *\ transport\ parameters}
+\DoxyCodeLine{\ \ \ \ \ */}
+\DoxyCodeLine{\ \ \ \ if\ (!TEST\_false(qtest\_create\_quic\_connection(qtserv,\ cssl)))}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ goto\ err;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ if\ (!TEST\_true(qtest\_check\_server\_protocol\_err(qtserv)))}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ goto\ err;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ testresult\ =\ 1;}
+\DoxyCodeLine{\ err:}
+\DoxyCodeLine{\ \ \ \ ossl\_quic\_fault\_free(fault);}
+\DoxyCodeLine{\ \ \ \ SSL\_free(cssl);}
+\DoxyCodeLine{\ \ \ \ ossl\_quic\_tserver\_free(qtserv);}
+\DoxyCodeLine{\ \ \ \ SSL\_CTX\_free(cctx);}
+\DoxyCodeLine{\ \ \ \ return\ testresult;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+ 

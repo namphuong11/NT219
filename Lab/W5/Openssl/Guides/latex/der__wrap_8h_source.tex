@@ -1,0 +1,52 @@
+\doxysection{der\+\_\+wrap.\+h}
+\hypertarget{der__wrap_8h_source}{}\label{der__wrap_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/providers/common/include/prov/der\_wrap.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/providers/common/include/prov/der\_wrap.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ WARNING:\ do\ not\ edit!}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *\ Generated\ by\ makefile\ from\ providers\(\backslash\)common\(\backslash\)include\(\backslash\)prov\(\backslash\)der\_wrap.h.in}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ Copyright\ 2020-\/2021\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ "{}internal/der.h"{}}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{comment}{/*\ Well\ known\ OIDs\ precompiled\ */}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ *\ id-\/alg-\/CMS3DESwrap\ OBJECT\ IDENTIFIER\ ::=\ \{}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ *\ \ \ \ \ iso(1)\ member-\/body(2)\ us(840)\ rsadsi(113549)\ pkcs(1)\ pkcs-\/9(9)\ smime(16)\ alg(3)\ 6}}
+\DoxyCodeLine{00020\ \textcolor{comment}{\ *\ \}}}
+\DoxyCodeLine{00021\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#define\ DER\_OID\_V\_id\_alg\_CMS3DESwrap\ DER\_P\_OBJECT,\ 11,\ 0x2A,\ 0x86,\ 0x48,\ 0x86,\ 0xF7,\ 0x0D,\ 0x01,\ 0x09,\ 0x10,\ 0x03,\ 0x06}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#define\ DER\_OID\_SZ\_id\_alg\_CMS3DESwrap\ 13}}
+\DoxyCodeLine{00024\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ossl\_der\_oid\_id\_alg\_CMS3DESwrap[DER\_OID\_SZ\_id\_alg\_CMS3DESwrap];}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00027\ \textcolor{comment}{\ *\ id-\/aes128-\/wrap\ OBJECT\ IDENTIFIER\ ::=\ \{\ aes\ 5\ \}}}
+\DoxyCodeLine{00028\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#define\ DER\_OID\_V\_id\_aes128\_wrap\ DER\_P\_OBJECT,\ 9,\ 0x60,\ 0x86,\ 0x48,\ 0x01,\ 0x65,\ 0x03,\ 0x04,\ 0x01,\ 0x05}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#define\ DER\_OID\_SZ\_id\_aes128\_wrap\ 11}}
+\DoxyCodeLine{00031\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ossl\_der\_oid\_id\_aes128\_wrap[DER\_OID\_SZ\_id\_aes128\_wrap];}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00034\ \textcolor{comment}{\ *\ id-\/aes192-\/wrap\ OBJECT\ IDENTIFIER\ ::=\ \{\ aes\ 25\ \}}}
+\DoxyCodeLine{00035\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#define\ DER\_OID\_V\_id\_aes192\_wrap\ DER\_P\_OBJECT,\ 9,\ 0x60,\ 0x86,\ 0x48,\ 0x01,\ 0x65,\ 0x03,\ 0x04,\ 0x01,\ 0x19}}
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#define\ DER\_OID\_SZ\_id\_aes192\_wrap\ 11}}
+\DoxyCodeLine{00038\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ossl\_der\_oid\_id\_aes192\_wrap[DER\_OID\_SZ\_id\_aes192\_wrap];}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00041\ \textcolor{comment}{\ *\ id-\/aes256-\/wrap\ OBJECT\ IDENTIFIER\ ::=\ \{\ aes\ 45\ \}}}
+\DoxyCodeLine{00042\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00043\ \textcolor{preprocessor}{\#define\ DER\_OID\_V\_id\_aes256\_wrap\ DER\_P\_OBJECT,\ 9,\ 0x60,\ 0x86,\ 0x48,\ 0x01,\ 0x65,\ 0x03,\ 0x04,\ 0x01,\ 0x2D}}
+\DoxyCodeLine{00044\ \textcolor{preprocessor}{\#define\ DER\_OID\_SZ\_id\_aes256\_wrap\ 11}}
+\DoxyCodeLine{00045\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ossl\_der\_oid\_id\_aes256\_wrap[DER\_OID\_SZ\_id\_aes256\_wrap];}
+\DoxyCodeLine{00046\ }
+
+\end{DoxyCode}

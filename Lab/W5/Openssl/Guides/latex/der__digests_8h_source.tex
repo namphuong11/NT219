@@ -1,0 +1,166 @@
+\doxysection{der\+\_\+digests.\+h}
+\hypertarget{der__digests_8h_source}{}\label{der__digests_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/providers/common/include/prov/der\_digests.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/providers/common/include/prov/der\_digests.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ WARNING:\ do\ not\ edit!}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *\ Generated\ by\ makefile\ from\ providers\(\backslash\)common\(\backslash\)include\(\backslash\)prov\(\backslash\)der\_digests.h.in}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ Copyright\ 2020-\/2021\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ "{}internal/der.h"{}}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{comment}{/*\ Well\ known\ OIDs\ precompiled\ */}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ *\ sigAlgs\ OBJECT\ IDENTIFIER\ ::=\ \{\ nistAlgorithms\ 3\ \}}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#define\ DER\_OID\_V\_sigAlgs\ DER\_P\_OBJECT,\ 8,\ 0x60,\ 0x86,\ 0x48,\ 0x01,\ 0x65,\ 0x03,\ 0x04,\ 0x03}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#define\ DER\_OID\_SZ\_sigAlgs\ 10}}
+\DoxyCodeLine{00022\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ossl\_der\_oid\_sigAlgs[DER\_OID\_SZ\_sigAlgs];}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00025\ \textcolor{comment}{\ *\ id-\/sha1\ \ OBJECT\ IDENTIFIER\ \ ::=\ \ \{\ iso(1)}}
+\DoxyCodeLine{00026\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ identified-\/organization(3)\ oiw(14)}}
+\DoxyCodeLine{00027\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ secsig(3)\ algorithms(2)\ 26\ \}}}
+\DoxyCodeLine{00028\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#define\ DER\_OID\_V\_id\_sha1\ DER\_P\_OBJECT,\ 5,\ 0x2B,\ 0x0E,\ 0x03,\ 0x02,\ 0x1A}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#define\ DER\_OID\_SZ\_id\_sha1\ 7}}
+\DoxyCodeLine{00031\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ossl\_der\_oid\_id\_sha1[DER\_OID\_SZ\_id\_sha1];}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00034\ \textcolor{comment}{\ *\ id-\/md2\ \ OBJECT\ IDENTIFIER\ ::=\ \{}}
+\DoxyCodeLine{00035\ \textcolor{comment}{\ *\ \ \ iso(1)\ member-\/body(2)\ us(840)\ rsadsi(113549)\ digestAlgorithm(2)\ 2\ \}}}
+\DoxyCodeLine{00036\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#define\ DER\_OID\_V\_id\_md2\ DER\_P\_OBJECT,\ 8,\ 0x2A,\ 0x86,\ 0x48,\ 0x86,\ 0xF7,\ 0x0D,\ 0x02,\ 0x02}}
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#define\ DER\_OID\_SZ\_id\_md2\ 10}}
+\DoxyCodeLine{00039\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ossl\_der\_oid\_id\_md2[DER\_OID\_SZ\_id\_md2];}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00042\ \textcolor{comment}{\ *\ id-\/md5\ \ OBJECT\ IDENTIFIER\ ::=\ \{}}
+\DoxyCodeLine{00043\ \textcolor{comment}{\ *\ \ \ iso(1)\ member-\/body(2)\ us(840)\ rsadsi(113549)\ digestAlgorithm(2)\ 5\ \}}}
+\DoxyCodeLine{00044\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00045\ \textcolor{preprocessor}{\#define\ DER\_OID\_V\_id\_md5\ DER\_P\_OBJECT,\ 8,\ 0x2A,\ 0x86,\ 0x48,\ 0x86,\ 0xF7,\ 0x0D,\ 0x02,\ 0x05}}
+\DoxyCodeLine{00046\ \textcolor{preprocessor}{\#define\ DER\_OID\_SZ\_id\_md5\ 10}}
+\DoxyCodeLine{00047\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ossl\_der\_oid\_id\_md5[DER\_OID\_SZ\_id\_md5];}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00050\ \textcolor{comment}{\ *\ id-\/sha256\ OBJECT\ IDENTIFIER\ ::=\ \{\ hashAlgs\ 1\ \}}}
+\DoxyCodeLine{00051\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00052\ \textcolor{preprocessor}{\#define\ DER\_OID\_V\_id\_sha256\ DER\_P\_OBJECT,\ 9,\ 0x60,\ 0x86,\ 0x48,\ 0x01,\ 0x65,\ 0x03,\ 0x04,\ 0x02,\ 0x01}}
+\DoxyCodeLine{00053\ \textcolor{preprocessor}{\#define\ DER\_OID\_SZ\_id\_sha256\ 11}}
+\DoxyCodeLine{00054\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ossl\_der\_oid\_id\_sha256[DER\_OID\_SZ\_id\_sha256];}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00057\ \textcolor{comment}{\ *\ id-\/sha384\ OBJECT\ IDENTIFIER\ ::=\ \{\ hashAlgs\ 2\ \}}}
+\DoxyCodeLine{00058\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00059\ \textcolor{preprocessor}{\#define\ DER\_OID\_V\_id\_sha384\ DER\_P\_OBJECT,\ 9,\ 0x60,\ 0x86,\ 0x48,\ 0x01,\ 0x65,\ 0x03,\ 0x04,\ 0x02,\ 0x02}}
+\DoxyCodeLine{00060\ \textcolor{preprocessor}{\#define\ DER\_OID\_SZ\_id\_sha384\ 11}}
+\DoxyCodeLine{00061\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ossl\_der\_oid\_id\_sha384[DER\_OID\_SZ\_id\_sha384];}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00063\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00064\ \textcolor{comment}{\ *\ id-\/sha512\ OBJECT\ IDENTIFIER\ ::=\ \{\ hashAlgs\ 3\ \}}}
+\DoxyCodeLine{00065\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00066\ \textcolor{preprocessor}{\#define\ DER\_OID\_V\_id\_sha512\ DER\_P\_OBJECT,\ 9,\ 0x60,\ 0x86,\ 0x48,\ 0x01,\ 0x65,\ 0x03,\ 0x04,\ 0x02,\ 0x03}}
+\DoxyCodeLine{00067\ \textcolor{preprocessor}{\#define\ DER\_OID\_SZ\_id\_sha512\ 11}}
+\DoxyCodeLine{00068\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ossl\_der\_oid\_id\_sha512[DER\_OID\_SZ\_id\_sha512];}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00071\ \textcolor{comment}{\ *\ id-\/sha224\ OBJECT\ IDENTIFIER\ ::=\ \{\ hashAlgs\ 4\ \}}}
+\DoxyCodeLine{00072\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00073\ \textcolor{preprocessor}{\#define\ DER\_OID\_V\_id\_sha224\ DER\_P\_OBJECT,\ 9,\ 0x60,\ 0x86,\ 0x48,\ 0x01,\ 0x65,\ 0x03,\ 0x04,\ 0x02,\ 0x04}}
+\DoxyCodeLine{00074\ \textcolor{preprocessor}{\#define\ DER\_OID\_SZ\_id\_sha224\ 11}}
+\DoxyCodeLine{00075\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ossl\_der\_oid\_id\_sha224[DER\_OID\_SZ\_id\_sha224];}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00077\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00078\ \textcolor{comment}{\ *\ id-\/sha512-\/224\ OBJECT\ IDENTIFIER\ ::=\ \{\ hashAlgs\ 5\ \}}}
+\DoxyCodeLine{00079\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00080\ \textcolor{preprocessor}{\#define\ DER\_OID\_V\_id\_sha512\_224\ DER\_P\_OBJECT,\ 9,\ 0x60,\ 0x86,\ 0x48,\ 0x01,\ 0x65,\ 0x03,\ 0x04,\ 0x02,\ 0x05}}
+\DoxyCodeLine{00081\ \textcolor{preprocessor}{\#define\ DER\_OID\_SZ\_id\_sha512\_224\ 11}}
+\DoxyCodeLine{00082\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ossl\_der\_oid\_id\_sha512\_224[DER\_OID\_SZ\_id\_sha512\_224];}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00085\ \textcolor{comment}{\ *\ id-\/sha512-\/256\ OBJECT\ IDENTIFIER\ ::=\ \{\ hashAlgs\ 6\ \}}}
+\DoxyCodeLine{00086\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00087\ \textcolor{preprocessor}{\#define\ DER\_OID\_V\_id\_sha512\_256\ DER\_P\_OBJECT,\ 9,\ 0x60,\ 0x86,\ 0x48,\ 0x01,\ 0x65,\ 0x03,\ 0x04,\ 0x02,\ 0x06}}
+\DoxyCodeLine{00088\ \textcolor{preprocessor}{\#define\ DER\_OID\_SZ\_id\_sha512\_256\ 11}}
+\DoxyCodeLine{00089\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ossl\_der\_oid\_id\_sha512\_256[DER\_OID\_SZ\_id\_sha512\_256];}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00092\ \textcolor{comment}{\ *\ id-\/sha3-\/224\ OBJECT\ IDENTIFIER\ ::=\ \{\ hashAlgs\ 7\ \}}}
+\DoxyCodeLine{00093\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00094\ \textcolor{preprocessor}{\#define\ DER\_OID\_V\_id\_sha3\_224\ DER\_P\_OBJECT,\ 9,\ 0x60,\ 0x86,\ 0x48,\ 0x01,\ 0x65,\ 0x03,\ 0x04,\ 0x02,\ 0x07}}
+\DoxyCodeLine{00095\ \textcolor{preprocessor}{\#define\ DER\_OID\_SZ\_id\_sha3\_224\ 11}}
+\DoxyCodeLine{00096\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ossl\_der\_oid\_id\_sha3\_224[DER\_OID\_SZ\_id\_sha3\_224];}
+\DoxyCodeLine{00097\ }
+\DoxyCodeLine{00098\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00099\ \textcolor{comment}{\ *\ id-\/sha3-\/256\ OBJECT\ IDENTIFIER\ ::=\ \{\ hashAlgs\ 8\ \}}}
+\DoxyCodeLine{00100\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00101\ \textcolor{preprocessor}{\#define\ DER\_OID\_V\_id\_sha3\_256\ DER\_P\_OBJECT,\ 9,\ 0x60,\ 0x86,\ 0x48,\ 0x01,\ 0x65,\ 0x03,\ 0x04,\ 0x02,\ 0x08}}
+\DoxyCodeLine{00102\ \textcolor{preprocessor}{\#define\ DER\_OID\_SZ\_id\_sha3\_256\ 11}}
+\DoxyCodeLine{00103\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ossl\_der\_oid\_id\_sha3\_256[DER\_OID\_SZ\_id\_sha3\_256];}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00105\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00106\ \textcolor{comment}{\ *\ id-\/sha3-\/384\ OBJECT\ IDENTIFIER\ ::=\ \{\ hashAlgs\ 9\ \}}}
+\DoxyCodeLine{00107\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00108\ \textcolor{preprocessor}{\#define\ DER\_OID\_V\_id\_sha3\_384\ DER\_P\_OBJECT,\ 9,\ 0x60,\ 0x86,\ 0x48,\ 0x01,\ 0x65,\ 0x03,\ 0x04,\ 0x02,\ 0x09}}
+\DoxyCodeLine{00109\ \textcolor{preprocessor}{\#define\ DER\_OID\_SZ\_id\_sha3\_384\ 11}}
+\DoxyCodeLine{00110\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ossl\_der\_oid\_id\_sha3\_384[DER\_OID\_SZ\_id\_sha3\_384];}
+\DoxyCodeLine{00111\ }
+\DoxyCodeLine{00112\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00113\ \textcolor{comment}{\ *\ id-\/sha3-\/512\ OBJECT\ IDENTIFIER\ ::=\ \{\ hashAlgs\ 10\ \}}}
+\DoxyCodeLine{00114\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00115\ \textcolor{preprocessor}{\#define\ DER\_OID\_V\_id\_sha3\_512\ DER\_P\_OBJECT,\ 9,\ 0x60,\ 0x86,\ 0x48,\ 0x01,\ 0x65,\ 0x03,\ 0x04,\ 0x02,\ 0x0A}}
+\DoxyCodeLine{00116\ \textcolor{preprocessor}{\#define\ DER\_OID\_SZ\_id\_sha3\_512\ 11}}
+\DoxyCodeLine{00117\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ossl\_der\_oid\_id\_sha3\_512[DER\_OID\_SZ\_id\_sha3\_512];}
+\DoxyCodeLine{00118\ }
+\DoxyCodeLine{00119\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00120\ \textcolor{comment}{\ *\ id-\/shake128\ OBJECT\ IDENTIFIER\ ::=\ \{\ hashAlgs\ 11\ \}}}
+\DoxyCodeLine{00121\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00122\ \textcolor{preprocessor}{\#define\ DER\_OID\_V\_id\_shake128\ DER\_P\_OBJECT,\ 9,\ 0x60,\ 0x86,\ 0x48,\ 0x01,\ 0x65,\ 0x03,\ 0x04,\ 0x02,\ 0x0B}}
+\DoxyCodeLine{00123\ \textcolor{preprocessor}{\#define\ DER\_OID\_SZ\_id\_shake128\ 11}}
+\DoxyCodeLine{00124\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ossl\_der\_oid\_id\_shake128[DER\_OID\_SZ\_id\_shake128];}
+\DoxyCodeLine{00125\ }
+\DoxyCodeLine{00126\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00127\ \textcolor{comment}{\ *\ id-\/shake256\ OBJECT\ IDENTIFIER\ ::=\ \{\ hashAlgs\ 12\ \}}}
+\DoxyCodeLine{00128\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00129\ \textcolor{preprocessor}{\#define\ DER\_OID\_V\_id\_shake256\ DER\_P\_OBJECT,\ 9,\ 0x60,\ 0x86,\ 0x48,\ 0x01,\ 0x65,\ 0x03,\ 0x04,\ 0x02,\ 0x0C}}
+\DoxyCodeLine{00130\ \textcolor{preprocessor}{\#define\ DER\_OID\_SZ\_id\_shake256\ 11}}
+\DoxyCodeLine{00131\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ossl\_der\_oid\_id\_shake256[DER\_OID\_SZ\_id\_shake256];}
+\DoxyCodeLine{00132\ }
+\DoxyCodeLine{00133\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00134\ \textcolor{comment}{\ *\ id-\/shake128-\/len\ OBJECT\ IDENTIFIER\ ::=\ \{\ hashAlgs\ 17\ \}}}
+\DoxyCodeLine{00135\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00136\ \textcolor{preprocessor}{\#define\ DER\_OID\_V\_id\_shake128\_len\ DER\_P\_OBJECT,\ 9,\ 0x60,\ 0x86,\ 0x48,\ 0x01,\ 0x65,\ 0x03,\ 0x04,\ 0x02,\ 0x11}}
+\DoxyCodeLine{00137\ \textcolor{preprocessor}{\#define\ DER\_OID\_SZ\_id\_shake128\_len\ 11}}
+\DoxyCodeLine{00138\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ossl\_der\_oid\_id\_shake128\_len[DER\_OID\_SZ\_id\_shake128\_len];}
+\DoxyCodeLine{00139\ }
+\DoxyCodeLine{00140\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00141\ \textcolor{comment}{\ *\ id-\/shake256-\/len\ OBJECT\ IDENTIFIER\ ::=\ \{\ hashAlgs\ 18\ \}}}
+\DoxyCodeLine{00142\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00143\ \textcolor{preprocessor}{\#define\ DER\_OID\_V\_id\_shake256\_len\ DER\_P\_OBJECT,\ 9,\ 0x60,\ 0x86,\ 0x48,\ 0x01,\ 0x65,\ 0x03,\ 0x04,\ 0x02,\ 0x12}}
+\DoxyCodeLine{00144\ \textcolor{preprocessor}{\#define\ DER\_OID\_SZ\_id\_shake256\_len\ 11}}
+\DoxyCodeLine{00145\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ossl\_der\_oid\_id\_shake256\_len[DER\_OID\_SZ\_id\_shake256\_len];}
+\DoxyCodeLine{00146\ }
+\DoxyCodeLine{00147\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00148\ \textcolor{comment}{\ *\ id-\/KMACWithSHAKE128\ OBJECT\ IDENTIFIER\ ::=\{hashAlgs\ 19\}}}
+\DoxyCodeLine{00149\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00150\ \textcolor{preprocessor}{\#define\ DER\_OID\_V\_id\_KMACWithSHAKE128\ DER\_P\_OBJECT,\ 9,\ 0x60,\ 0x86,\ 0x48,\ 0x01,\ 0x65,\ 0x03,\ 0x04,\ 0x02,\ 0x13}}
+\DoxyCodeLine{00151\ \textcolor{preprocessor}{\#define\ DER\_OID\_SZ\_id\_KMACWithSHAKE128\ 11}}
+\DoxyCodeLine{00152\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ossl\_der\_oid\_id\_KMACWithSHAKE128[DER\_OID\_SZ\_id\_KMACWithSHAKE128];}
+\DoxyCodeLine{00153\ }
+\DoxyCodeLine{00154\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00155\ \textcolor{comment}{\ *\ id-\/KMACWithSHAKE256\ OBJECT\ IDENTIFIER\ ::=\{\ hashAlgs\ 20\}}}
+\DoxyCodeLine{00156\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00157\ \textcolor{preprocessor}{\#define\ DER\_OID\_V\_id\_KMACWithSHAKE256\ DER\_P\_OBJECT,\ 9,\ 0x60,\ 0x86,\ 0x48,\ 0x01,\ 0x65,\ 0x03,\ 0x04,\ 0x02,\ 0x14}}
+\DoxyCodeLine{00158\ \textcolor{preprocessor}{\#define\ DER\_OID\_SZ\_id\_KMACWithSHAKE256\ 11}}
+\DoxyCodeLine{00159\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ossl\_der\_oid\_id\_KMACWithSHAKE256[DER\_OID\_SZ\_id\_KMACWithSHAKE256];}
+\DoxyCodeLine{00160\ }
+
+\end{DoxyCode}

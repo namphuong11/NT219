@@ -1,0 +1,281 @@
+\doxysection{encoders.\+inc}
+\hypertarget{encoders_8inc_source}{}\label{encoders_8inc_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/providers/encoders.inc@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/providers/encoders.inc}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2020-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ ENCODER\_PROVIDER}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ error\ Macro\ ENCODER\_PROVIDER\ undefined}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#define\ ENCODER\_STRUCTURE\_type\_specific\_keypair\ \ \ \ \ \ \ \ \ "{}type-\/specific"{}}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#define\ ENCODER\_STRUCTURE\_type\_specific\_params\ \ \ \ \ \ \ \ \ \ "{}type-\/specific"{}}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#define\ ENCODER\_STRUCTURE\_type\_specific\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ "{}type-\/specific"{}}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ ENCODER\_STRUCTURE\_type\_specific\_no\_pub\ \ \ \ \ \ \ \ \ \ "{}type-\/specific"{}}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#define\ ENCODER\_STRUCTURE\_EncryptedPrivateKeyInfo\ \ \ \ \ \ \ "{}EncryptedPrivateKeyInfo"{}}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#define\ ENCODER\_STRUCTURE\_PrivateKeyInfo\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ "{}PrivateKeyInfo"{}}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#define\ ENCODER\_STRUCTURE\_SubjectPublicKeyInfo\ \ \ \ \ \ \ \ \ \ "{}SubjectPublicKeyInfo"{}}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#define\ ENCODER\_STRUCTURE\_DH\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ "{}dh"{}}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#define\ ENCODER\_STRUCTURE\_DHX\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ "{}dhx"{}}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#define\ ENCODER\_STRUCTURE\_DSA\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ "{}dsa"{}}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#define\ ENCODER\_STRUCTURE\_EC\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ "{}ec"{}}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#define\ ENCODER\_STRUCTURE\_RSA\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ "{}rsa"{}}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#define\ ENCODER\_STRUCTURE\_PKCS1\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ "{}pkcs1"{}}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#define\ ENCODER\_STRUCTURE\_PKCS3\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ "{}pkcs3"{}}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#define\ ENCODER\_STRUCTURE\_X9\_42\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ "{}X9.42"{}}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#define\ ENCODER\_STRUCTURE\_X9\_62\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ "{}X9.62"{}}}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \textcolor{comment}{/*\ Arguments\ are\ prefixed\ with\ '\_'\ to\ avoid\ build\ breaks\ on\ certain\ platforms\ */}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#define\ ENCODER\_TEXT(\_name,\ \_sym,\ \_fips)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\ \ \ \ \{\ \_name,\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\ \ \ \ \ \ "{}provider="{}\ ENCODER\_PROVIDER\ "{},fips="{}\ \#\_fips\ "{},output=text"{},\ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\ \ \ \ \ \ (ossl\_\#\#\_sym\#\#\_to\_text\_encoder\_functions)\ \}}}
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#define\ ENCODER(\_name,\ \_sym,\ \_fips,\ \_output)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\ \ \ \ \{\ \_name,\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\ \ \ \ \ \ "{}provider="{}\ ENCODER\_PROVIDER\ "{},fips="{}\ \#\_fips\ "{},output="{}\ \#\_output,\ \(\backslash\)}}
+\DoxyCodeLine{00039\ \textcolor{preprocessor}{\ \ \ \ \ \ (ossl\_\#\#\_sym\#\#\_to\_\#\#\_output\#\#\_encoder\_functions)\ \}}}
+\DoxyCodeLine{00040\ \textcolor{preprocessor}{\#define\ ENCODER\_w\_structure(\_name,\ \_sym,\ \_fips,\ \_output,\ \_structure)\ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00041\ \textcolor{preprocessor}{\ \ \ \ \{\ \_name,\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00042\ \textcolor{preprocessor}{\ \ \ \ \ \ "{}provider="{}\ ENCODER\_PROVIDER\ "{},fips="{}\ \#\_fips\ "{},output="{}\ \#\_output\ \ \(\backslash\)}}
+\DoxyCodeLine{00043\ \textcolor{preprocessor}{\ \ \ \ \ \ "{},structure="{}\ ENCODER\_STRUCTURE\_\#\#\_structure,\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00044\ \textcolor{preprocessor}{\ \ \ \ \ \ (ossl\_\#\#\_sym\#\#\_to\_\#\#\_structure\#\#\_\#\#\_output\#\#\_encoder\_functions)\ \}}}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00047\ \textcolor{comment}{\ *\ Entries\ for\ human\ text\ "{}encoders"{}}}
+\DoxyCodeLine{00048\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00049\ ENCODER\_TEXT(\textcolor{stringliteral}{"{}RSA"{}},\ rsa,\ yes),}
+\DoxyCodeLine{00050\ ENCODER\_TEXT(\textcolor{stringliteral}{"{}RSA-\/PSS"{}},\ rsapss,\ yes),}
+\DoxyCodeLine{00051\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_DH}}
+\DoxyCodeLine{00052\ ENCODER\_TEXT(\textcolor{stringliteral}{"{}DH"{}},\ dh,\ yes),}
+\DoxyCodeLine{00053\ ENCODER\_TEXT(\textcolor{stringliteral}{"{}DHX"{}},\ dhx,\ yes),}
+\DoxyCodeLine{00054\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00055\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_DSA}}
+\DoxyCodeLine{00056\ ENCODER\_TEXT(\textcolor{stringliteral}{"{}DSA"{}},\ dsa,\ yes),}
+\DoxyCodeLine{00057\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00058\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_EC}}
+\DoxyCodeLine{00059\ ENCODER\_TEXT(\textcolor{stringliteral}{"{}EC"{}},\ ec,\ yes),}
+\DoxyCodeLine{00060\ \textcolor{preprocessor}{\#\ ifndef\ OPENSSL\_NO\_ECX}}
+\DoxyCodeLine{00061\ ENCODER\_TEXT(\textcolor{stringliteral}{"{}ED25519"{}},\ ed25519,\ yes),}
+\DoxyCodeLine{00062\ ENCODER\_TEXT(\textcolor{stringliteral}{"{}ED448"{}},\ ed448,\ yes),}
+\DoxyCodeLine{00063\ ENCODER\_TEXT(\textcolor{stringliteral}{"{}X25519"{}},\ x25519,\ yes),}
+\DoxyCodeLine{00064\ ENCODER\_TEXT(\textcolor{stringliteral}{"{}X448"{}},\ x448,\ yes),}
+\DoxyCodeLine{00065\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00066\ \textcolor{preprocessor}{\#\ ifndef\ OPENSSL\_NO\_SM2}}
+\DoxyCodeLine{00067\ ENCODER\_TEXT(\textcolor{stringliteral}{"{}SM2"{}},\ sm2,\ no),}
+\DoxyCodeLine{00068\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00069\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00071\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00072\ \textcolor{comment}{\ *\ Entries\ for\ key\ type\ specific\ output\ formats.\ \ The\ structure\ name\ on\ these}}
+\DoxyCodeLine{00073\ \textcolor{comment}{\ *\ is\ the\ same\ as\ the\ key\ type\ name.\ \ This\ allows\ us\ to\ say\ something\ like:}}
+\DoxyCodeLine{00074\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00075\ \textcolor{comment}{\ *\ To\ replace\ i2d\_\{TYPE\}PrivateKey(),\ i2d\_\{TYPE\}PublicKey()\ and}}
+\DoxyCodeLine{00076\ \textcolor{comment}{\ *\ i2d\_\{TYPE\}Params(),\ use\ OSSL\_ENCODER\ functions\ with\ an\ OSSL\_ENCODER\_CTX}}
+\DoxyCodeLine{00077\ \textcolor{comment}{\ *\ created\ like\ this:}}
+\DoxyCodeLine{00078\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00079\ \textcolor{comment}{\ *\ OSSL\_ENCODER\_CTX\ *ctx\ =}}
+\DoxyCodeLine{00080\ \textcolor{comment}{\ *\ \ \ \ \ OSSL\_ENCODER\_CTX\_new\_for\_pkey(pkey,\ selection,\ "{}DER"{},\ "{}type-\/specific"{},}}
+\DoxyCodeLine{00081\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ NULL,\ NULL);}}
+\DoxyCodeLine{00082\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00083\ \textcolor{comment}{\ *\ To\ replace\ PEM\_write\_bio\_\{TYPE\}PrivateKey(),\ PEM\_write\_bio\_\{TYPE\}PublicKey()}}
+\DoxyCodeLine{00084\ \textcolor{comment}{\ *\ and\ PEM\_write\_bio\_\{TYPE\}Params(),\ use\ OSSL\_ENCODER\ functions\ with\ an}}
+\DoxyCodeLine{00085\ \textcolor{comment}{\ *\ OSSL\_ENCODER\_CTX\ created\ like\ this:}}
+\DoxyCodeLine{00086\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00087\ \textcolor{comment}{\ *\ OSSL\_ENCODER\_CTX\ *ctx\ =}}
+\DoxyCodeLine{00088\ \textcolor{comment}{\ *\ \ \ \ \ OSSL\_ENCODER\_CTX\_new\_for\_pkey(pkey,\ selection,\ "{}PEM"{},\ "{}type-\/specific"{},}}
+\DoxyCodeLine{00089\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ NULL,\ NULL);}}
+\DoxyCodeLine{00090\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00091\ \textcolor{comment}{\ *\ We\ only\ implement\ those\ for\ which\ there\ are\ current\ i2d\_\ and\ PEM\_write\_bio}}
+\DoxyCodeLine{00092\ \textcolor{comment}{\ *\ implementations.}}
+\DoxyCodeLine{00093\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00094\ }
+\DoxyCodeLine{00095\ \textcolor{comment}{/*\ The\ RSA\ encoders\ only\ support\ private\ key\ and\ public\ key\ output\ */}}
+\DoxyCodeLine{00096\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}RSA"{}},\ rsa,\ yes,\ der,\ type\_specific\_keypair),}
+\DoxyCodeLine{00097\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}RSA"{}},\ rsa,\ yes,\ pem,\ type\_specific\_keypair),}
+\DoxyCodeLine{00098\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_DH}}
+\DoxyCodeLine{00099\ \textcolor{comment}{/*\ DH\ and\ X9.42\ DH\ only\ support\ key\ parameters\ output.\ */}}
+\DoxyCodeLine{00100\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}DH"{}},\ dh,\ yes,\ der,\ type\_specific\_params),}
+\DoxyCodeLine{00101\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}DH"{}},\ dh,\ yes,\ pem,\ type\_specific\_params),}
+\DoxyCodeLine{00102\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}DHX"{}},\ dhx,\ yes,\ der,\ type\_specific\_params),}
+\DoxyCodeLine{00103\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}DHX"{}},\ dhx,\ yes,\ pem,\ type\_specific\_params),}
+\DoxyCodeLine{00104\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00105\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_DSA}}
+\DoxyCodeLine{00106\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}DSA"{}},\ dsa,\ yes,\ der,\ type\_specific),}
+\DoxyCodeLine{00107\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}DSA"{}},\ dsa,\ yes,\ pem,\ type\_specific),}
+\DoxyCodeLine{00108\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00109\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_EC}}
+\DoxyCodeLine{00110\ \textcolor{comment}{/*\ EC\ only\ supports\ keypair\ and\ parameters\ DER\ and\ PEM\ output.\ */}}
+\DoxyCodeLine{00111\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}EC"{}},\ ec,\ yes,\ der,\ type\_specific\_no\_pub),}
+\DoxyCodeLine{00112\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}EC"{}},\ ec,\ yes,\ pem,\ type\_specific\_no\_pub),}
+\DoxyCodeLine{00113\ \textcolor{comment}{/*\ EC\ supports\ blob\ output\ for\ the\ public\ key\ */}}
+\DoxyCodeLine{00114\ ENCODER(\textcolor{stringliteral}{"{}EC"{}},\ ec,\ yes,\ blob),}
+\DoxyCodeLine{00115\ \textcolor{preprocessor}{\#\ ifndef\ OPENSSL\_NO\_SM2}}
+\DoxyCodeLine{00116\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}SM2"{}},\ sm2,\ no,\ der,\ type\_specific\_no\_pub),}
+\DoxyCodeLine{00117\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}SM2"{}},\ sm2,\ no,\ pem,\ type\_specific\_no\_pub),}
+\DoxyCodeLine{00118\ ENCODER(\textcolor{stringliteral}{"{}SM2"{}},\ sm2,\ no,\ blob),}
+\DoxyCodeLine{00119\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00120\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00121\ }
+\DoxyCodeLine{00122\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00123\ \textcolor{comment}{\ *\ Entries\ for\ the\ output\ formats\ MSBLOB\ and\ PVK}}
+\DoxyCodeLine{00124\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00125\ ENCODER(\textcolor{stringliteral}{"{}RSA"{}},\ rsa,\ yes,\ msblob),}
+\DoxyCodeLine{00126\ ENCODER(\textcolor{stringliteral}{"{}RSA"{}},\ rsa,\ yes,\ pvk),}
+\DoxyCodeLine{00127\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_DSA}}
+\DoxyCodeLine{00128\ ENCODER(\textcolor{stringliteral}{"{}DSA"{}},\ dsa,\ yes,\ msblob),}
+\DoxyCodeLine{00129\ ENCODER(\textcolor{stringliteral}{"{}DSA"{}},\ dsa,\ yes,\ pvk),}
+\DoxyCodeLine{00130\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00131\ }
+\DoxyCodeLine{00132\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00133\ \textcolor{comment}{\ *\ Entries\ for\ encrypted\ PKCS\#8\ (EncryptedPrivateKeyInfo),\ unencrypted\ PKCS\#8}}
+\DoxyCodeLine{00134\ \textcolor{comment}{\ *\ (PrivateKeyInfo)\ and\ SubjectPublicKeyInfo.\ \ The\ "{}der"{}\ ones\ are\ added}}
+\DoxyCodeLine{00135\ \textcolor{comment}{\ *\ convenience\ for\ any\ user\ that\ wants\ to\ use\ OSSL\_ENCODER\ directly.}}
+\DoxyCodeLine{00136\ \textcolor{comment}{\ *\ The\ "{}pem"{}\ ones\ also\ support\ PEM\_write\_bio\_PrivateKey()\ and}}
+\DoxyCodeLine{00137\ \textcolor{comment}{\ *\ PEM\_write\_bio\_PUBKEY().}}
+\DoxyCodeLine{00138\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00139\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}RSA"{}},\ rsa,\ yes,\ der,\ EncryptedPrivateKeyInfo),}
+\DoxyCodeLine{00140\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}RSA"{}},\ rsa,\ yes,\ pem,\ EncryptedPrivateKeyInfo),}
+\DoxyCodeLine{00141\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}RSA"{}},\ rsa,\ yes,\ der,\ PrivateKeyInfo),}
+\DoxyCodeLine{00142\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}RSA"{}},\ rsa,\ yes,\ pem,\ PrivateKeyInfo),}
+\DoxyCodeLine{00143\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}RSA"{}},\ rsa,\ yes,\ der,\ SubjectPublicKeyInfo),}
+\DoxyCodeLine{00144\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}RSA"{}},\ rsa,\ yes,\ pem,\ SubjectPublicKeyInfo),}
+\DoxyCodeLine{00145\ }
+\DoxyCodeLine{00146\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}RSA-\/PSS"{}},\ rsapss,\ yes,\ der,\ EncryptedPrivateKeyInfo),}
+\DoxyCodeLine{00147\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}RSA-\/PSS"{}},\ rsapss,\ yes,\ pem,\ EncryptedPrivateKeyInfo),}
+\DoxyCodeLine{00148\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}RSA-\/PSS"{}},\ rsapss,\ yes,\ der,\ PrivateKeyInfo),}
+\DoxyCodeLine{00149\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}RSA-\/PSS"{}},\ rsapss,\ yes,\ pem,\ PrivateKeyInfo),}
+\DoxyCodeLine{00150\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}RSA-\/PSS"{}},\ rsapss,\ yes,\ der,\ SubjectPublicKeyInfo),}
+\DoxyCodeLine{00151\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}RSA-\/PSS"{}},\ rsapss,\ yes,\ pem,\ SubjectPublicKeyInfo),}
+\DoxyCodeLine{00152\ }
+\DoxyCodeLine{00153\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_DH}}
+\DoxyCodeLine{00154\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}DH"{}},\ dh,\ yes,\ der,\ EncryptedPrivateKeyInfo),}
+\DoxyCodeLine{00155\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}DH"{}},\ dh,\ yes,\ pem,\ EncryptedPrivateKeyInfo),}
+\DoxyCodeLine{00156\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}DH"{}},\ dh,\ yes,\ der,\ PrivateKeyInfo),}
+\DoxyCodeLine{00157\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}DH"{}},\ dh,\ yes,\ pem,\ PrivateKeyInfo),}
+\DoxyCodeLine{00158\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}DH"{}},\ dh,\ yes,\ der,\ SubjectPublicKeyInfo),}
+\DoxyCodeLine{00159\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}DH"{}},\ dh,\ yes,\ pem,\ SubjectPublicKeyInfo),}
+\DoxyCodeLine{00160\ }
+\DoxyCodeLine{00161\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}DHX"{}},\ dhx,\ yes,\ der,\ EncryptedPrivateKeyInfo),}
+\DoxyCodeLine{00162\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}DHX"{}},\ dhx,\ yes,\ pem,\ EncryptedPrivateKeyInfo),}
+\DoxyCodeLine{00163\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}DHX"{}},\ dhx,\ yes,\ der,\ PrivateKeyInfo),}
+\DoxyCodeLine{00164\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}DHX"{}},\ dhx,\ yes,\ pem,\ PrivateKeyInfo),}
+\DoxyCodeLine{00165\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}DHX"{}},\ dhx,\ yes,\ der,\ SubjectPublicKeyInfo),}
+\DoxyCodeLine{00166\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}DHX"{}},\ dhx,\ yes,\ pem,\ SubjectPublicKeyInfo),}
+\DoxyCodeLine{00167\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00168\ }
+\DoxyCodeLine{00169\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_DSA}}
+\DoxyCodeLine{00170\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}DSA"{}},\ dsa,\ yes,\ der,\ EncryptedPrivateKeyInfo),}
+\DoxyCodeLine{00171\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}DSA"{}},\ dsa,\ yes,\ pem,\ EncryptedPrivateKeyInfo),}
+\DoxyCodeLine{00172\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}DSA"{}},\ dsa,\ yes,\ der,\ PrivateKeyInfo),}
+\DoxyCodeLine{00173\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}DSA"{}},\ dsa,\ yes,\ pem,\ PrivateKeyInfo),}
+\DoxyCodeLine{00174\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}DSA"{}},\ dsa,\ yes,\ der,\ SubjectPublicKeyInfo),}
+\DoxyCodeLine{00175\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}DSA"{}},\ dsa,\ yes,\ pem,\ SubjectPublicKeyInfo),}
+\DoxyCodeLine{00176\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00177\ }
+\DoxyCodeLine{00178\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_EC}}
+\DoxyCodeLine{00179\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}EC"{}},\ ec,\ yes,\ der,\ EncryptedPrivateKeyInfo),}
+\DoxyCodeLine{00180\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}EC"{}},\ ec,\ yes,\ pem,\ EncryptedPrivateKeyInfo),}
+\DoxyCodeLine{00181\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}EC"{}},\ ec,\ yes,\ der,\ PrivateKeyInfo),}
+\DoxyCodeLine{00182\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}EC"{}},\ ec,\ yes,\ pem,\ PrivateKeyInfo),}
+\DoxyCodeLine{00183\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}EC"{}},\ ec,\ yes,\ der,\ SubjectPublicKeyInfo),}
+\DoxyCodeLine{00184\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}EC"{}},\ ec,\ yes,\ pem,\ SubjectPublicKeyInfo),}
+\DoxyCodeLine{00185\ }
+\DoxyCodeLine{00186\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_ECX}}
+\DoxyCodeLine{00187\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}X25519"{}},\ x25519,\ yes,\ der,\ EncryptedPrivateKeyInfo),}
+\DoxyCodeLine{00188\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}X25519"{}},\ x25519,\ yes,\ pem,\ EncryptedPrivateKeyInfo),}
+\DoxyCodeLine{00189\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}X25519"{}},\ x25519,\ yes,\ der,\ PrivateKeyInfo),}
+\DoxyCodeLine{00190\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}X25519"{}},\ x25519,\ yes,\ pem,\ PrivateKeyInfo),}
+\DoxyCodeLine{00191\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}X25519"{}},\ x25519,\ yes,\ der,\ SubjectPublicKeyInfo),}
+\DoxyCodeLine{00192\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}X25519"{}},\ x25519,\ yes,\ pem,\ SubjectPublicKeyInfo),}
+\DoxyCodeLine{00193\ }
+\DoxyCodeLine{00194\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}X448"{}},\ x448,\ yes,\ der,\ EncryptedPrivateKeyInfo),}
+\DoxyCodeLine{00195\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}X448"{}},\ x448,\ yes,\ pem,\ EncryptedPrivateKeyInfo),}
+\DoxyCodeLine{00196\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}X448"{}},\ x448,\ yes,\ der,\ PrivateKeyInfo),}
+\DoxyCodeLine{00197\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}X448"{}},\ x448,\ yes,\ pem,\ PrivateKeyInfo),}
+\DoxyCodeLine{00198\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}X448"{}},\ x448,\ yes,\ der,\ SubjectPublicKeyInfo),}
+\DoxyCodeLine{00199\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}X448"{}},\ x448,\ yes,\ pem,\ SubjectPublicKeyInfo),}
+\DoxyCodeLine{00200\ }
+\DoxyCodeLine{00201\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}ED25519"{}},\ ed25519,\ yes,\ der,\ EncryptedPrivateKeyInfo),}
+\DoxyCodeLine{00202\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}ED25519"{}},\ ed25519,\ yes,\ pem,\ EncryptedPrivateKeyInfo),}
+\DoxyCodeLine{00203\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}ED25519"{}},\ ed25519,\ yes,\ der,\ PrivateKeyInfo),}
+\DoxyCodeLine{00204\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}ED25519"{}},\ ed25519,\ yes,\ pem,\ PrivateKeyInfo),}
+\DoxyCodeLine{00205\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}ED25519"{}},\ ed25519,\ yes,\ der,\ SubjectPublicKeyInfo),}
+\DoxyCodeLine{00206\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}ED25519"{}},\ ed25519,\ yes,\ pem,\ SubjectPublicKeyInfo),}
+\DoxyCodeLine{00207\ }
+\DoxyCodeLine{00208\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}ED448"{}},\ ed448,\ yes,\ der,\ EncryptedPrivateKeyInfo),}
+\DoxyCodeLine{00209\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}ED448"{}},\ ed448,\ yes,\ pem,\ EncryptedPrivateKeyInfo),}
+\DoxyCodeLine{00210\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}ED448"{}},\ ed448,\ yes,\ der,\ PrivateKeyInfo),}
+\DoxyCodeLine{00211\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}ED448"{}},\ ed448,\ yes,\ pem,\ PrivateKeyInfo),}
+\DoxyCodeLine{00212\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}ED448"{}},\ ed448,\ yes,\ der,\ SubjectPublicKeyInfo),}
+\DoxyCodeLine{00213\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}ED448"{}},\ ed448,\ yes,\ pem,\ SubjectPublicKeyInfo),}
+\DoxyCodeLine{00214\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00215\ }
+\DoxyCodeLine{00216\ \textcolor{preprocessor}{\#\ ifndef\ OPENSSL\_NO\_SM2}}
+\DoxyCodeLine{00217\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}SM2"{}},\ sm2,\ no,\ der,\ EncryptedPrivateKeyInfo),}
+\DoxyCodeLine{00218\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}SM2"{}},\ sm2,\ no,\ pem,\ EncryptedPrivateKeyInfo),}
+\DoxyCodeLine{00219\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}SM2"{}},\ sm2,\ no,\ der,\ PrivateKeyInfo),}
+\DoxyCodeLine{00220\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}SM2"{}},\ sm2,\ no,\ pem,\ PrivateKeyInfo),}
+\DoxyCodeLine{00221\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}SM2"{}},\ sm2,\ no,\ der,\ SubjectPublicKeyInfo),}
+\DoxyCodeLine{00222\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}SM2"{}},\ sm2,\ no,\ pem,\ SubjectPublicKeyInfo),}
+\DoxyCodeLine{00223\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00224\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00225\ }
+\DoxyCodeLine{00226\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00227\ \textcolor{comment}{\ *\ Entries\ for\ key\ type\ specific\ output\ formats.\ \ These\ are\ exactly\ the}}
+\DoxyCodeLine{00228\ \textcolor{comment}{\ *\ same\ as\ the\ type\ specific\ above,\ except\ that\ they\ use\ the\ key\ type}}
+\DoxyCodeLine{00229\ \textcolor{comment}{\ *\ name\ as\ structure\ name\ instead\ of\ "{}type-\/specific"{},\ in\ the\ call\ on}}
+\DoxyCodeLine{00230\ \textcolor{comment}{\ *\ OSSL\_ENCODER\_CTX\_new\_for\_pkey().}}
+\DoxyCodeLine{00231\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00232\ }
+\DoxyCodeLine{00233\ \textcolor{comment}{/*\ The\ RSA\ encoders\ only\ support\ private\ key\ and\ public\ key\ output\ */}}
+\DoxyCodeLine{00234\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}RSA"{}},\ rsa,\ yes,\ der,\ RSA),}
+\DoxyCodeLine{00235\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}RSA"{}},\ rsa,\ yes,\ pem,\ RSA),}
+\DoxyCodeLine{00236\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_DH}}
+\DoxyCodeLine{00237\ \textcolor{comment}{/*\ DH\ and\ X9.42\ DH\ only\ support\ key\ parameters\ output.\ */}}
+\DoxyCodeLine{00238\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}DH"{}},\ dh,\ yes,\ der,\ DH),}
+\DoxyCodeLine{00239\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}DH"{}},\ dh,\ yes,\ pem,\ DH),}
+\DoxyCodeLine{00240\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}DHX"{}},\ dhx,\ yes,\ der,\ DHX),}
+\DoxyCodeLine{00241\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}DHX"{}},\ dhx,\ yes,\ pem,\ DHX),}
+\DoxyCodeLine{00242\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00243\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_DSA}}
+\DoxyCodeLine{00244\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}DSA"{}},\ dsa,\ yes,\ der,\ DSA),}
+\DoxyCodeLine{00245\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}DSA"{}},\ dsa,\ yes,\ pem,\ DSA),}
+\DoxyCodeLine{00246\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00247\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_EC}}
+\DoxyCodeLine{00248\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}EC"{}},\ ec,\ yes,\ der,\ EC),}
+\DoxyCodeLine{00249\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}EC"{}},\ ec,\ yes,\ pem,\ EC),}
+\DoxyCodeLine{00250\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00251\ }
+\DoxyCodeLine{00252\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00253\ \textcolor{comment}{\ *\ Additional\ entries\ with\ structure\ names\ being\ the\ standard\ name.}}
+\DoxyCodeLine{00254\ \textcolor{comment}{\ *\ This\ is\ entirely\ for\ the\ convenience\ of\ the\ user\ that\ wants\ to\ use}}
+\DoxyCodeLine{00255\ \textcolor{comment}{\ *\ OSSL\_ENCODER\ directly\ with\ names\ they\ may\ fancy.\ \ These\ do\ not\ impact}}
+\DoxyCodeLine{00256\ \textcolor{comment}{\ *\ on\ libcrypto\ functionality\ in\ any\ way.}}
+\DoxyCodeLine{00257\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00258\ \textcolor{comment}{/*\ PKCS\#1\ is\ a\ well\ known\ for\ plain\ RSA\ keys,\ so\ we\ add\ that\ too\ */}}
+\DoxyCodeLine{00259\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}RSA"{}},\ rsa,\ yes,\ der,\ PKCS1),}
+\DoxyCodeLine{00260\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}RSA"{}},\ rsa,\ yes,\ pem,\ PKCS1),}
+\DoxyCodeLine{00261\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}RSA-\/PSS"{}},\ rsapss,\ yes,\ der,\ PKCS1),}
+\DoxyCodeLine{00262\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}RSA-\/PSS"{}},\ rsapss,\ yes,\ pem,\ PKCS1),}
+\DoxyCodeLine{00263\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_DH}}
+\DoxyCodeLine{00264\ \textcolor{comment}{/*\ PKCS\#3\ defines\ the\ format\ for\ DH\ parameters\ */}}
+\DoxyCodeLine{00265\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}DH"{}},\ dh,\ yes,\ der,\ PKCS3),}
+\DoxyCodeLine{00266\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}DH"{}},\ dh,\ yes,\ pem,\ PKCS3),}
+\DoxyCodeLine{00267\ \textcolor{comment}{/*\ X9.42\ defines\ the\ format\ for\ DHX\ parameters\ */}}
+\DoxyCodeLine{00268\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}DHX"{}},\ dhx,\ yes,\ der,\ X9\_42),}
+\DoxyCodeLine{00269\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}DHX"{}},\ dhx,\ yes,\ pem,\ X9\_42),}
+\DoxyCodeLine{00270\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00271\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_EC}}
+\DoxyCodeLine{00272\ \textcolor{comment}{/*\ RFC\ 5915\ defines\ the\ format\ for\ EC\ keys\ and\ parameters\ */}}
+\DoxyCodeLine{00273\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}EC"{}},\ ec,\ yes,\ der,\ X9\_62),}
+\DoxyCodeLine{00274\ ENCODER\_w\_structure(\textcolor{stringliteral}{"{}EC"{}},\ ec,\ yes,\ pem,\ X9\_62),}
+\DoxyCodeLine{00275\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

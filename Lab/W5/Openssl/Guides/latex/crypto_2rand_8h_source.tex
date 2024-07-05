@@ -1,0 +1,160 @@
+\doxysection{rand.\+h}
+\hypertarget{crypto_2rand_8h_source}{}\label{crypto_2rand_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/crypto/rand.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/crypto/rand.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2016-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{});}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ *\ you\ may\ not\ use\ this\ file\ except\ in\ compliance\ with\ the\ License.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ *\ You\ may\ obtain\ a\ copy\ of\ the\ License\ at}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ *\ or\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution.}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#ifndef\ OSSL\_CRYPTO\_RAND\_H}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#\ define\ OSSL\_CRYPTO\_RAND\_H}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#\ pragma\ once}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#\ include\ <openssl/rand.h>}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#\ include\ "{}crypto/rand\_pool.h"{}}}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#\ if\ defined(\_\_APPLE\_\_)\ \&\&\ !defined(OPENSSL\_NO\_APPLE\_CRYPTO\_RANDOM)}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#\ \ include\ <Availability.h>}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#\ \ if\ (defined(\_\_MAC\_OS\_X\_VERSION\_MIN\_REQUIRED)\ \&\&\ \_\_MAC\_OS\_X\_VERSION\_MIN\_REQUIRED\ >=\ 101200)\ ||\ \(\backslash\)}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\ \ \ \ \ (defined(\_\_IPHONE\_OS\_VERSION\_MIN\_REQUIRED)\ \&\&\ \_\_IPHONE\_OS\_VERSION\_MIN\_REQUIRED\ >=\ 80000)}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#\ \ \ define\ OPENSSL\_APPLE\_CRYPTO\_RANDOM\ 1}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#\ \ \ include\ <CommonCrypto/CommonCryptoError.h>}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#\ \ \ include\ <CommonCrypto/CommonRandom.h>}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#\ \ endif}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00036\ \textcolor{comment}{\ *\ Defines\ related\ to\ seed\ sources}}
+\DoxyCodeLine{00037\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#ifndef\ DEVRANDOM}}
+\DoxyCodeLine{00039\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00040\ \textcolor{comment}{\ *\ set\ this\ to\ a\ comma-\/separated\ list\ of\ 'random'\ device\ files\ to\ try\ out.\ By}}
+\DoxyCodeLine{00041\ \textcolor{comment}{\ *\ default,\ we\ will\ try\ to\ read\ at\ least\ one\ of\ these\ files}}
+\DoxyCodeLine{00042\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00043\ \textcolor{preprocessor}{\#\ define\ DEVRANDOM\ "{}/dev/urandom"{},\ "{}/dev/random"{},\ "{}/dev/hwrng"{},\ "{}/dev/srandom"{}}}
+\DoxyCodeLine{00044\ \textcolor{preprocessor}{\#\ if\ defined(\_\_linux)\ \&\&\ !defined(\_\_ANDROID\_\_)}}
+\DoxyCodeLine{00045\ \textcolor{preprocessor}{\#\ \ ifndef\ DEVRANDOM\_WAIT}}
+\DoxyCodeLine{00046\ \textcolor{preprocessor}{\#\ \ \ define\ DEVRANDOM\_WAIT\ \ \ "{}/dev/random"{}}}
+\DoxyCodeLine{00047\ \textcolor{preprocessor}{\#\ \ endif}}
+\DoxyCodeLine{00048\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00049\ \textcolor{comment}{\ *\ Linux\ kernels\ 4.8\ and\ later\ changes\ how\ their\ random\ device\ works\ and\ there}}
+\DoxyCodeLine{00050\ \textcolor{comment}{\ *\ is\ no\ reliable\ way\ to\ tell\ that\ /dev/urandom\ has\ been\ seeded\ -\/-\/\ getentropy(2)}}
+\DoxyCodeLine{00051\ \textcolor{comment}{\ *\ should\ be\ used\ instead.}}
+\DoxyCodeLine{00052\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00053\ \textcolor{preprocessor}{\#\ \ ifndef\ DEVRANDOM\_SAFE\_KERNEL}}
+\DoxyCodeLine{00054\ \textcolor{preprocessor}{\#\ \ \ define\ DEVRANDOM\_SAFE\_KERNEL\ \ \ \ \ \ \ \ 4,\ 8}}
+\DoxyCodeLine{00055\ \textcolor{preprocessor}{\#\ \ endif}}
+\DoxyCodeLine{00056\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00057\ \textcolor{comment}{\ *\ Some\ operating\ systems\ do\ not\ permit\ select(2)\ on\ their\ random\ devices,}}
+\DoxyCodeLine{00058\ \textcolor{comment}{\ *\ defining\ this\ to\ zero\ will\ force\ the\ use\ of\ read(2)\ to\ extract\ one\ byte}}
+\DoxyCodeLine{00059\ \textcolor{comment}{\ *\ from\ /dev/random.}}
+\DoxyCodeLine{00060\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00061\ \textcolor{preprocessor}{\#\ \ ifndef\ DEVRANDM\_WAIT\_USE\_SELECT}}
+\DoxyCodeLine{00062\ \textcolor{preprocessor}{\#\ \ \ define\ DEVRANDM\_WAIT\_USE\_SELECT\ \ \ \ \ 1}}
+\DoxyCodeLine{00063\ \textcolor{preprocessor}{\#\ \ endif}}
+\DoxyCodeLine{00064\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00065\ \textcolor{comment}{\ *\ Define\ the\ shared\ memory\ identifier\ used\ to\ indicate\ if\ the\ operating}}
+\DoxyCodeLine{00066\ \textcolor{comment}{\ *\ system\ has\ properly\ seeded\ the\ DEVRANDOM\ source.}}
+\DoxyCodeLine{00067\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00068\ \textcolor{preprocessor}{\#\ \ ifndef\ OPENSSL\_RAND\_SEED\_DEVRANDOM\_SHM\_ID}}
+\DoxyCodeLine{00069\ \textcolor{preprocessor}{\#\ \ \ define\ OPENSSL\_RAND\_SEED\_DEVRANDOM\_SHM\_ID\ 114}}
+\DoxyCodeLine{00070\ \textcolor{preprocessor}{\#\ \ endif}}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00072\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00073\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00075\ \textcolor{preprocessor}{\#if\ !defined(OPENSSL\_NO\_EGD)\ \&\&\ !defined(DEVRANDOM\_EGD)}}
+\DoxyCodeLine{00076\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00077\ \textcolor{comment}{\ *\ set\ this\ to\ a\ comma-\/separated\ list\ of\ 'egd'\ sockets\ to\ try\ out.\ These}}
+\DoxyCodeLine{00078\ \textcolor{comment}{\ *\ sockets\ will\ be\ tried\ in\ the\ order\ listed\ in\ case\ accessing\ the\ device}}
+\DoxyCodeLine{00079\ \textcolor{comment}{\ *\ files\ listed\ in\ DEVRANDOM\ did\ not\ return\ enough\ randomness.}}
+\DoxyCodeLine{00080\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00081\ \textcolor{preprocessor}{\#\ define\ DEVRANDOM\_EGD\ "{}/var/run/egd-\/pool"{},\ "{}/dev/egd-\/pool"{},\ "{}/etc/egd-\/pool"{},\ "{}/etc/entropy"{}}}
+\DoxyCodeLine{00082\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \textcolor{keywordtype}{void}\ ossl\_rand\_cleanup\_int(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00085\ }
+\DoxyCodeLine{00086\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00087\ \textcolor{comment}{\ *\ Initialise\ the\ random\ pool\ reseeding\ sources.}}
+\DoxyCodeLine{00088\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00089\ \textcolor{comment}{\ *\ Returns\ 1\ on\ success\ and\ 0\ on\ failure.}}
+\DoxyCodeLine{00090\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00091\ \textcolor{keywordtype}{int}\ ossl\_rand\_pool\_init(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00094\ \textcolor{comment}{\ *\ Finalise\ the\ random\ pool\ reseeding\ sources.}}
+\DoxyCodeLine{00095\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00096\ \textcolor{keywordtype}{void}\ ossl\_rand\_pool\_cleanup(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00097\ }
+\DoxyCodeLine{00098\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00099\ \textcolor{comment}{\ *\ Control\ the\ random\ pool\ use\ of\ open\ file\ descriptors.}}
+\DoxyCodeLine{00100\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00101\ \textcolor{keywordtype}{void}\ ossl\_rand\_pool\_keep\_random\_devices\_open(\textcolor{keywordtype}{int}\ keep);}
+\DoxyCodeLine{00102\ }
+\DoxyCodeLine{00103\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00104\ \textcolor{comment}{\ *\ Configuration}}
+\DoxyCodeLine{00105\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00106\ \textcolor{keywordtype}{void}\ ossl\_random\_add\_conf\_module(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00107\ }
+\DoxyCodeLine{00108\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00109\ \textcolor{comment}{\ *\ Get\ and\ cleanup\ random\ seed\ material.}}
+\DoxyCodeLine{00110\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00111\ \textcolor{keywordtype}{size\_t}\ ossl\_rand\_get\_entropy(OSSL\_LIB\_CTX\ *ctx,}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **pout,\ \textcolor{keywordtype}{int}\ entropy,}
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ min\_len,\ \textcolor{keywordtype}{size\_t}\ max\_len);}
+\DoxyCodeLine{00114\ \textcolor{keywordtype}{size\_t}\ ossl\_rand\_get\_user\_entropy(OSSL\_LIB\_CTX\ *ctx,}
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **pout,\ \textcolor{keywordtype}{int}\ entropy,}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ min\_len,\ \textcolor{keywordtype}{size\_t}\ max\_len);}
+\DoxyCodeLine{00117\ \textcolor{keywordtype}{void}\ ossl\_rand\_cleanup\_entropy(OSSL\_LIB\_CTX\ *ctx,}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *buf,\ \textcolor{keywordtype}{size\_t}\ len);}
+\DoxyCodeLine{00119\ \textcolor{keywordtype}{void}\ ossl\_rand\_cleanup\_user\_entropy(OSSL\_LIB\_CTX\ *ctx,}
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *buf,\ \textcolor{keywordtype}{size\_t}\ len);}
+\DoxyCodeLine{00121\ \textcolor{keywordtype}{size\_t}\ ossl\_rand\_get\_nonce(OSSL\_LIB\_CTX\ *ctx,}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **pout,\ \textcolor{keywordtype}{size\_t}\ min\_len,\ \textcolor{keywordtype}{size\_t}\ max\_len,}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *salt,\ \textcolor{keywordtype}{size\_t}\ salt\_len);}
+\DoxyCodeLine{00124\ \textcolor{keywordtype}{size\_t}\ ossl\_rand\_get\_user\_nonce(OSSL\_LIB\_CTX\ *ctx,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **pout,}
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ min\_len,\ \textcolor{keywordtype}{size\_t}\ max\_len,}
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *salt,\ \textcolor{keywordtype}{size\_t}\ salt\_len);}
+\DoxyCodeLine{00127\ \textcolor{keywordtype}{void}\ ossl\_rand\_cleanup\_nonce(OSSL\_LIB\_CTX\ *ctx,}
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *buf,\ \textcolor{keywordtype}{size\_t}\ len);}
+\DoxyCodeLine{00129\ \textcolor{keywordtype}{void}\ ossl\_rand\_cleanup\_user\_nonce(OSSL\_LIB\_CTX\ *ctx,}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *buf,\ \textcolor{keywordtype}{size\_t}\ len);}
+\DoxyCodeLine{00131\ }
+\DoxyCodeLine{00132\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00133\ \textcolor{comment}{\ *\ Get\ seeding\ material\ from\ the\ operating\ system\ sources.}}
+\DoxyCodeLine{00134\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00135\ \textcolor{keywordtype}{size\_t}\ ossl\_pool\_acquire\_entropy(\mbox{\hyperlink{structrand__pool__st}{RAND\_POOL}}\ *pool);}
+\DoxyCodeLine{00136\ \textcolor{keywordtype}{int}\ ossl\_pool\_add\_nonce\_data(\mbox{\hyperlink{structrand__pool__st}{RAND\_POOL}}\ *pool);}
+\DoxyCodeLine{00137\ }
+\DoxyCodeLine{00138\ \textcolor{preprocessor}{\#\ ifdef\ FIPS\_MODULE}}
+\DoxyCodeLine{00139\ EVP\_RAND\_CTX\ *ossl\_rand\_get0\_private\_noncreating(OSSL\_LIB\_CTX\ *ctx);}
+\DoxyCodeLine{00140\ \textcolor{preprocessor}{\#\ else}}
+\DoxyCodeLine{00141\ EVP\_RAND\_CTX\ *ossl\_rand\_get0\_seed\_noncreating(OSSL\_LIB\_CTX\ *ctx);}
+\DoxyCodeLine{00142\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00143\ }
+\DoxyCodeLine{00144\ \textcolor{comment}{/*\ Generate\ a\ uniformly\ distributed\ random\ integer\ in\ the\ interval\ [0,\ upper)\ */}}
+\DoxyCodeLine{00145\ uint32\_t\ ossl\_rand\_uniform\_uint32(OSSL\_LIB\_CTX\ *ctx,\ uint32\_t\ upper,\ \textcolor{keywordtype}{int}\ *err);}
+\DoxyCodeLine{00146\ }
+\DoxyCodeLine{00147\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00148\ \textcolor{comment}{\ *\ Generate\ a\ uniformly\ distributed\ random\ integer\ in\ the\ interval}}
+\DoxyCodeLine{00149\ \textcolor{comment}{\ *\ [lower,\ upper).}}
+\DoxyCodeLine{00150\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00151\ uint32\_t\ ossl\_rand\_range\_uint32(OSSL\_LIB\_CTX\ *ctx,\ uint32\_t\ lower,\ uint32\_t\ upper,}
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ *err);}
+\DoxyCodeLine{00153\ }
+\DoxyCodeLine{00154\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

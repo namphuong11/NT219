@@ -1,0 +1,64 @@
+\doxysection{vms\+\_\+rms.\+h}
+\hypertarget{vms__rms_8h_source}{}\label{vms__rms_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/vms\_rms.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/vms\_rms.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2011-\/2016\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifdef\ NAML\$C\_MAXRSS}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#\ define\ CC\_RMS\_NAMX\ cc\$rms\_naml}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#\ define\ FAB\_NAMX\ fab\$l\_naml}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ define\ FAB\_OR\_NAML(\ fab,\ naml)\ naml}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#\ define\ FAB\_OR\_NAML\_DNA\ naml\$l\_long\_defname}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#\ define\ FAB\_OR\_NAML\_DNS\ naml\$l\_long\_defname\_size}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#\ define\ FAB\_OR\_NAML\_FNA\ naml\$l\_long\_filename}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#\ define\ FAB\_OR\_NAML\_FNS\ naml\$l\_long\_filename\_size}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#\ define\ NAMX\_ESA\ naml\$l\_long\_expand}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#\ define\ NAMX\_ESL\ naml\$l\_long\_expand\_size}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#\ define\ NAMX\_ESS\ naml\$l\_long\_expand\_alloc}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#\ define\ NAMX\_NOP\ naml\$b\_nop}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#\ define\ SET\_NAMX\_NO\_SHORT\_UPCASE(\ nam)\ nam.naml\$v\_no\_short\_upcase\ =\ 1}}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#\ if\ \_\_INITIAL\_POINTER\_SIZE\ ==\ 64}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#\ \ define\ NAMX\_DNA\_FNA\_SET(fab)\ fab.fab\$l\_dna\ =\ (\_\_char\_ptr32)\ -\/1;\ \(\backslash\)}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\ \ \ fab.fab\$l\_fna\ =\ (\_\_char\_ptr32)\ -\/1;}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#\ else\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{/*\ \_\_INITIAL\_POINTER\_SIZE\ ==\ 64\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#\ \ define\ NAMX\_DNA\_FNA\_SET(fab)\ fab.fab\$l\_dna\ =\ (char\ *)\ -\/1;\ \(\backslash\)}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\ \ \ fab.fab\$l\_fna\ =\ (char\ *)\ -\/1;}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#\ endif\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{/*\ \_\_INITIAL\_POINTER\_SIZE\ ==\ 64\ [else]\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#\ define\ NAMX\_MAXRSS\ NAML\$C\_MAXRSS}}
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#\ define\ NAMX\_STRUCT\ NAML}}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#else\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{/*\ def\ NAML\$C\_MAXRSS\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#\ define\ CC\_RMS\_NAMX\ cc\$rms\_nam}}
+\DoxyCodeLine{00039\ \textcolor{preprocessor}{\#\ define\ FAB\_NAMX\ fab\$l\_nam}}
+\DoxyCodeLine{00040\ \textcolor{preprocessor}{\#\ define\ FAB\_OR\_NAML(\ fab,\ naml)\ fab}}
+\DoxyCodeLine{00041\ \textcolor{preprocessor}{\#\ define\ FAB\_OR\_NAML\_DNA\ fab\$l\_dna}}
+\DoxyCodeLine{00042\ \textcolor{preprocessor}{\#\ define\ FAB\_OR\_NAML\_DNS\ fab\$b\_dns}}
+\DoxyCodeLine{00043\ \textcolor{preprocessor}{\#\ define\ FAB\_OR\_NAML\_FNA\ fab\$l\_fna}}
+\DoxyCodeLine{00044\ \textcolor{preprocessor}{\#\ define\ FAB\_OR\_NAML\_FNS\ fab\$b\_fns}}
+\DoxyCodeLine{00045\ \textcolor{preprocessor}{\#\ define\ NAMX\_ESA\ nam\$l\_esa}}
+\DoxyCodeLine{00046\ \textcolor{preprocessor}{\#\ define\ NAMX\_ESL\ nam\$b\_esl}}
+\DoxyCodeLine{00047\ \textcolor{preprocessor}{\#\ define\ NAMX\_ESS\ nam\$b\_ess}}
+\DoxyCodeLine{00048\ \textcolor{preprocessor}{\#\ define\ NAMX\_NOP\ nam\$b\_nop}}
+\DoxyCodeLine{00049\ \textcolor{preprocessor}{\#\ define\ NAMX\_DNA\_FNA\_SET(fab)}}
+\DoxyCodeLine{00050\ \textcolor{preprocessor}{\#\ define\ NAMX\_MAXRSS\ NAM\$C\_MAXRSS}}
+\DoxyCodeLine{00051\ \textcolor{preprocessor}{\#\ define\ NAMX\_STRUCT\ NAM}}
+\DoxyCodeLine{00052\ \textcolor{preprocessor}{\#\ ifdef\ NAM\$M\_NO\_SHORT\_UPCASE}}
+\DoxyCodeLine{00053\ \textcolor{preprocessor}{\#\ \ define\ SET\_NAMX\_NO\_SHORT\_UPCASE(\ nam)\ naml.naml\$v\_no\_short\_upcase\ =\ 1}}
+\DoxyCodeLine{00054\ \textcolor{preprocessor}{\#\ else\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{/*\ def\ NAM\$M\_NO\_SHORT\_UPCASE\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00055\ \textcolor{preprocessor}{\#\ \ define\ SET\_NAMX\_NO\_SHORT\_UPCASE(\ nam)}}
+\DoxyCodeLine{00056\ \textcolor{preprocessor}{\#\ endif\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{/*\ def\ NAM\$M\_NO\_SHORT\_UPCASE\ [else]\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \textcolor{preprocessor}{\#endif\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{/*\ def\ NAML\$C\_MAXRSS\ [else]\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

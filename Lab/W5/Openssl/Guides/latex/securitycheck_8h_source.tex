@@ -1,0 +1,37 @@
+\doxysection{securitycheck.\+h}
+\hypertarget{securitycheck_8h_source}{}\label{securitycheck_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/providers/common/include/prov/securitycheck.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/providers/common/include/prov/securitycheck.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2019-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ "{}crypto/types.h"{}}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{comment}{/*\ Functions\ that\ are\ common\ */}}
+\DoxyCodeLine{00013\ \textcolor{keywordtype}{int}\ ossl\_rsa\_check\_key(OSSL\_LIB\_CTX\ *ctx,\ \textcolor{keyword}{const}\ RSA\ *rsa,\ \textcolor{keywordtype}{int}\ operation);}
+\DoxyCodeLine{00014\ \textcolor{keywordtype}{int}\ ossl\_ec\_check\_key(OSSL\_LIB\_CTX\ *ctx,\ \textcolor{keyword}{const}\ EC\_KEY\ *ec,\ \textcolor{keywordtype}{int}\ protect);}
+\DoxyCodeLine{00015\ \textcolor{keywordtype}{int}\ ossl\_dsa\_check\_key(OSSL\_LIB\_CTX\ *ctx,\ \textcolor{keyword}{const}\ DSA\ *dsa,\ \textcolor{keywordtype}{int}\ sign);}
+\DoxyCodeLine{00016\ \textcolor{keywordtype}{int}\ ossl\_dh\_check\_key(OSSL\_LIB\_CTX\ *ctx,\ \textcolor{keyword}{const}\ DH\ *dh);}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{keywordtype}{int}\ ossl\_digest\_is\_allowed(OSSL\_LIB\_CTX\ *ctx,\ \textcolor{keyword}{const}\ EVP\_MD\ *md);}
+\DoxyCodeLine{00019\ \textcolor{comment}{/*\ With\ security\ check\ enabled\ it\ can\ return\ -\/1\ to\ indicate\ disallowed\ md\ */}}
+\DoxyCodeLine{00020\ \textcolor{keywordtype}{int}\ ossl\_digest\_get\_approved\_nid\_with\_sha1(OSSL\_LIB\_CTX\ *ctx,\ \textcolor{keyword}{const}\ EVP\_MD\ *md,}
+\DoxyCodeLine{00021\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ sha1\_allowed);}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{comment}{/*\ Functions\ that\ are\ common\ */}}
+\DoxyCodeLine{00024\ \textcolor{keywordtype}{int}\ ossl\_digest\_md\_to\_nid(\textcolor{keyword}{const}\ EVP\_MD\ *md,\ \textcolor{keyword}{const}\ OSSL\_ITEM\ *it,\ \textcolor{keywordtype}{size\_t}\ it\_len);}
+\DoxyCodeLine{00025\ \textcolor{keywordtype}{int}\ ossl\_digest\_get\_approved\_nid(\textcolor{keyword}{const}\ EVP\_MD\ *md);}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \textcolor{comment}{/*\ Functions\ that\ have\ different\ implementations\ for\ the\ FIPS\_MODULE\ */}}
+\DoxyCodeLine{00028\ \textcolor{keywordtype}{int}\ ossl\_digest\_rsa\_sign\_get\_md\_nid(OSSL\_LIB\_CTX\ *ctx,\ \textcolor{keyword}{const}\ EVP\_MD\ *md,}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ sha1\_allowed);}
+\DoxyCodeLine{00030\ \textcolor{keywordtype}{int}\ ossl\_securitycheck\_enabled(OSSL\_LIB\_CTX\ *libctx);}
+\DoxyCodeLine{00031\ \textcolor{keywordtype}{int}\ ossl\_tls1\_prf\_ems\_check\_enabled(OSSL\_LIB\_CTX\ *libctx);}
+
+\end{DoxyCode}

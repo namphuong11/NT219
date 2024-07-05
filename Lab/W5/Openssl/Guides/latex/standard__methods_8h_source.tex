@@ -1,0 +1,51 @@
+\doxysection{standard\+\_\+methods.\+h}
+\hypertarget{standard__methods_8h_source}{}\label{standard__methods_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/asn1/standard\_methods.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/asn1/standard\_methods.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2006-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ *\ This\ table\ MUST\ be\ kept\ in\ ascending\ order\ of\ the\ NID\ each\ method}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ *\ represents\ (corresponding\ to\ the\ pkey\_id\ field)\ as\ OBJ\_bsearch}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ *\ is\ used\ to\ search\ it.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00015\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ EVP\_PKEY\_ASN1\_METHOD\ *standard\_methods[]\ =\ \{}
+\DoxyCodeLine{00016\ \ \ \ \ \&ossl\_rsa\_asn1\_meths[0],}
+\DoxyCodeLine{00017\ \ \ \ \ \&ossl\_rsa\_asn1\_meths[1],}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_DH}}
+\DoxyCodeLine{00019\ \ \ \ \ \&ossl\_dh\_asn1\_meth,}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_DSA}}
+\DoxyCodeLine{00022\ \ \ \ \ \&ossl\_dsa\_asn1\_meths[0],}
+\DoxyCodeLine{00023\ \ \ \ \ \&ossl\_dsa\_asn1\_meths[1],}
+\DoxyCodeLine{00024\ \ \ \ \ \&ossl\_dsa\_asn1\_meths[2],}
+\DoxyCodeLine{00025\ \ \ \ \ \&ossl\_dsa\_asn1\_meths[3],}
+\DoxyCodeLine{00026\ \ \ \ \ \&ossl\_dsa\_asn1\_meths[4],}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_EC}}
+\DoxyCodeLine{00029\ \ \ \ \ \&ossl\_eckey\_asn1\_meth,}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00031\ \ \ \ \ \&ossl\_rsa\_pss\_asn1\_meth,}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_DH}}
+\DoxyCodeLine{00033\ \ \ \ \ \&ossl\_dhx\_asn1\_meth,}
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_ECX}}
+\DoxyCodeLine{00036\ \ \ \ \ \&ossl\_ecx25519\_asn1\_meth,}
+\DoxyCodeLine{00037\ \ \ \ \ \&ossl\_ecx448\_asn1\_meth,}
+\DoxyCodeLine{00038\ \ \ \ \ \&ossl\_ed25519\_asn1\_meth,}
+\DoxyCodeLine{00039\ \ \ \ \ \&ossl\_ed448\_asn1\_meth,}
+\DoxyCodeLine{00040\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00041\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_SM2}}
+\DoxyCodeLine{00042\ \ \ \ \ \&ossl\_sm2\_asn1\_meth,}
+\DoxyCodeLine{00043\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00044\ \};}
+\DoxyCodeLine{00045\ }
+
+\end{DoxyCode}

@@ -1,0 +1,112 @@
+\doxysection{quic\+\_\+tls.\+h}
+\hypertarget{quic__tls_8h_source}{}\label{quic__tls_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/quic\_tls.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/quic\_tls.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2022-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_QUIC\_TLS\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_QUIC\_TLS\_H}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#\ include\ <openssl/ssl.h>}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ include\ "{}internal/quic\_stream.h"{}}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structquic__tls__st}{quic\_tls\_st}}\ \mbox{\hyperlink{structquic__tls__st}{QUIC\_TLS}};}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structquic__tls__args__st}{quic\_tls\_args\_st}}\ \{}
+\DoxyCodeLine{00020\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00021\ \textcolor{comment}{\ \ \ \ \ *\ The\ "{}inner"{}\ SSL\ object\ for\ the\ QUIC\ Connection.\ Contains\ an}}
+\DoxyCodeLine{00022\ \textcolor{comment}{\ \ \ \ \ *\ SSL\_CONNECTION}}
+\DoxyCodeLine{00023\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00024\ \ \ \ \ SSL\ *s;}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00027\ \textcolor{comment}{\ \ \ \ \ *\ Called\ to\ send\ data\ on\ the\ crypto\ stream.\ We\ use\ a\ callback\ rather\ than}}
+\DoxyCodeLine{00028\ \textcolor{comment}{\ \ \ \ \ *\ passing\ the\ crypto\ stream\ QUIC\_SSTREAM\ directly\ because\ this\ lets\ the\ CSM}}
+\DoxyCodeLine{00029\ \textcolor{comment}{\ \ \ \ \ *\ dynamically\ select\ the\ correct\ outgoing\ crypto\ stream\ based\ on\ the}}
+\DoxyCodeLine{00030\ \textcolor{comment}{\ \ \ \ \ *\ current\ EL.}}
+\DoxyCodeLine{00031\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00032\ \ \ \ \ int\ (*crypto\_send\_cb)(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *buf,\ \textcolor{keywordtype}{size\_t}\ buf\_len,}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ *consumed,\ \textcolor{keywordtype}{void}\ *arg);}
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{keywordtype}{void}\ *crypto\_send\_cb\_arg;}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00037\ \textcolor{comment}{\ \ \ \ \ *\ Call\ to\ receive\ crypto\ stream\ data.\ A\ pointer\ to\ the\ underlying\ buffer}}
+\DoxyCodeLine{00038\ \textcolor{comment}{\ \ \ \ \ *\ is\ provided,\ and\ subsequently\ released\ to\ avoid\ unnecessary\ copying\ of}}
+\DoxyCodeLine{00039\ \textcolor{comment}{\ \ \ \ \ *\ data.}}
+\DoxyCodeLine{00040\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00041\ \ \ \ \ int\ (*crypto\_recv\_rcd\_cb)(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **buf,\ \textcolor{keywordtype}{size\_t}\ *bytes\_read,}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *arg);}
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{keywordtype}{void}\ *crypto\_recv\_rcd\_cb\_arg;}
+\DoxyCodeLine{00044\ \ \ \ \ int\ (*crypto\_release\_rcd\_cb)(\textcolor{keywordtype}{size\_t}\ bytes\_read,\ \textcolor{keywordtype}{void}\ *arg);}
+\DoxyCodeLine{00045\ \ \ \ \ \textcolor{keywordtype}{void}\ *crypto\_release\_rcd\_cb\_arg;}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \ \ \ \ \textcolor{comment}{/*\ Called\ when\ a\ traffic\ secret\ is\ available\ for\ a\ given\ encryption\ level.\ */}}
+\DoxyCodeLine{00049\ \ \ \ \ int\ (*yield\_secret\_cb)(uint32\_t\ enc\_level,\ \textcolor{keywordtype}{int}\ direction\ \textcolor{comment}{/*\ 0=RX,\ 1=TX\ */},}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ suite\_id,\ EVP\_MD\ *md,}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *secret,\ \textcolor{keywordtype}{size\_t}\ secret\_len,}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *arg);}
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{keywordtype}{void}\ *yield\_secret\_cb\_arg;}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00056\ \textcolor{comment}{\ \ \ \ \ *\ Called\ when\ we\ receive\ transport\ parameters\ from\ the\ peer.}}
+\DoxyCodeLine{00057\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00058\ \textcolor{comment}{\ \ \ \ \ *\ Note:\ These\ parameters\ are\ not\ authenticated\ until\ the\ handshake\ is}}
+\DoxyCodeLine{00059\ \textcolor{comment}{\ \ \ \ \ *\ marked\ as\ completed.}}
+\DoxyCodeLine{00060\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00061\ \ \ \ \ int\ (*got\_transport\_params\_cb)(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *params,}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ params\_len,}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *arg);}
+\DoxyCodeLine{00064\ \ \ \ \ \textcolor{keywordtype}{void}\ *got\_transport\_params\_cb\_arg;}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00067\ \textcolor{comment}{\ \ \ \ \ *\ Called\ when\ the\ handshake\ has\ been\ completed\ as\ far\ as\ the\ handshake}}
+\DoxyCodeLine{00068\ \textcolor{comment}{\ \ \ \ \ *\ protocol\ is\ concerned,\ meaning\ that\ the\ connection\ has\ been}}
+\DoxyCodeLine{00069\ \textcolor{comment}{\ \ \ \ \ *\ authenticated.}}
+\DoxyCodeLine{00070\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00071\ \ \ \ \ int\ (*handshake\_complete\_cb)(\textcolor{keywordtype}{void}\ *arg);}
+\DoxyCodeLine{00072\ \ \ \ \ \textcolor{keywordtype}{void}\ *handshake\_complete\_cb\_arg;}
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00074\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00075\ \textcolor{comment}{\ \ \ \ \ *\ Called\ when\ something\ has\ gone\ wrong\ with\ the\ connection\ as\ far\ as\ the}}
+\DoxyCodeLine{00076\ \textcolor{comment}{\ \ \ \ \ *\ handshake\ layer\ is\ concerned,\ meaning\ that\ it\ should\ be\ immediately\ torn}}
+\DoxyCodeLine{00077\ \textcolor{comment}{\ \ \ \ \ *\ down.\ Note\ that\ this\ may\ happen\ at\ any\ time,\ including\ after\ a\ connection}}
+\DoxyCodeLine{00078\ \textcolor{comment}{\ \ \ \ \ *\ has\ been\ fully\ established.}}
+\DoxyCodeLine{00079\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00080\ \ \ \ \ int\ (*alert\_cb)(\textcolor{keywordtype}{void}\ *arg,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ alert\_code);}
+\DoxyCodeLine{00081\ \ \ \ \ \textcolor{keywordtype}{void}\ *alert\_cb\_arg;}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00083\ \ \ \ \ \textcolor{comment}{/*\ Set\ to\ 1\ if\ we\ are\ running\ in\ the\ server\ role.\ */}}
+\DoxyCodeLine{00084\ \ \ \ \ \textcolor{keywordtype}{int}\ is\_server;}
+\DoxyCodeLine{00085\ \}\ \mbox{\hyperlink{structquic__tls__args__st}{QUIC\_TLS\_ARGS}};}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00087\ \mbox{\hyperlink{structquic__tls__st}{QUIC\_TLS}}\ *ossl\_quic\_tls\_new(\textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__tls__args__st}{QUIC\_TLS\_ARGS}}\ *args);}
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00089\ \textcolor{keywordtype}{void}\ ossl\_quic\_tls\_free(\mbox{\hyperlink{structquic__tls__st}{QUIC\_TLS}}\ *qtls);}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ \textcolor{comment}{/*\ Advance\ the\ state\ machine\ */}}
+\DoxyCodeLine{00092\ \textcolor{keywordtype}{int}\ ossl\_quic\_tls\_tick(\mbox{\hyperlink{structquic__tls__st}{QUIC\_TLS}}\ *qtls);}
+\DoxyCodeLine{00093\ }
+\DoxyCodeLine{00094\ \textcolor{keywordtype}{int}\ ossl\_quic\_tls\_set\_transport\_params(\mbox{\hyperlink{structquic__tls__st}{QUIC\_TLS}}\ *qtls,}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *transport\_params,}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ transport\_params\_len);}
+\DoxyCodeLine{00097\ }
+\DoxyCodeLine{00098\ \textcolor{keywordtype}{int}\ ossl\_quic\_tls\_get\_error(\mbox{\hyperlink{structquic__tls__st}{QUIC\_TLS}}\ *qtls,}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ *error\_code,}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ **error\_msg,}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ERR\_STATE\ **error\_state);}
+\DoxyCodeLine{00102\ }
+\DoxyCodeLine{00103\ \textcolor{keywordtype}{int}\ ossl\_quic\_tls\_is\_cert\_request(\mbox{\hyperlink{structquic__tls__st}{QUIC\_TLS}}\ *qtls);}
+\DoxyCodeLine{00104\ \textcolor{keywordtype}{int}\ ossl\_quic\_tls\_has\_bad\_max\_early\_data(\mbox{\hyperlink{structquic__tls__st}{QUIC\_TLS}}\ *qtls);}
+\DoxyCodeLine{00105\ }
+\DoxyCodeLine{00106\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

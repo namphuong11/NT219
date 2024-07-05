@@ -1,0 +1,45 @@
+\doxysection{cryptlib.\+h}
+\hypertarget{crypto_2cryptlib_8h_source}{}\label{crypto_2cryptlib_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/crypto/cryptlib.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/crypto/cryptlib.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2016-\/2021\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_CRYPTO\_CRYPTLIB\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_CRYPTO\_CRYPTLIB\_H}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#\ pragma\ once}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ include\ <openssl/core.h>}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#\ include\ "{}internal/cryptlib.h"{}}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{comment}{/*\ This\ file\ is\ not\ scanned\ by\ mkdef.pl,\ whereas\ cryptlib.h\ is\ */}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{keywordtype}{int}\ ossl\_init\_thread\_start(\textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *index,\ \textcolor{keywordtype}{void}\ *arg,}
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OSSL\_thread\_stop\_handler\_fn\ handfn);}
+\DoxyCodeLine{00021\ \textcolor{keywordtype}{int}\ ossl\_init\_thread\_deregister(\textcolor{keywordtype}{void}\ *index);}
+\DoxyCodeLine{00022\ \textcolor{keywordtype}{int}\ ossl\_init\_thread(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00023\ \textcolor{keywordtype}{void}\ ossl\_cleanup\_thread(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00024\ \textcolor{keywordtype}{void}\ ossl\_ctx\_thread\_stop(OSSL\_LIB\_CTX\ *ctx);}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00027\ \textcolor{comment}{\ *\ OPENSSL\_INIT\ flags.\ The\ primary\ list\ of\ these\ is\ in\ crypto.h.\ Flags\ below}}
+\DoxyCodeLine{00028\ \textcolor{comment}{\ *\ are\ those\ omitted\ from\ crypto.h\ because\ they\ are\ "{}reserved\ for\ internal}}
+\DoxyCodeLine{00029\ \textcolor{comment}{\ *\ use"{}.}}
+\DoxyCodeLine{00030\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#\ define\ OPENSSL\_INIT\_BASE\_ONLY\ \ \ \ \ \ \ \ \ \ \ \ \ \ 0x00040000L}}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \textcolor{keywordtype}{void}\ ossl\_trace\_cleanup(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00034\ \textcolor{keywordtype}{void}\ ossl\_malloc\_setup\_failures(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \textcolor{keywordtype}{int}\ ossl\_crypto\_alloc\_ex\_data\_intern(\textcolor{keywordtype}{int}\ class\_index,\ \textcolor{keywordtype}{void}\ *obj,}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ CRYPTO\_EX\_DATA\ *ad,\ \textcolor{keywordtype}{int}\ idx);}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{/*\ OSSL\_CRYPTO\_CRYPTLIB\_H\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

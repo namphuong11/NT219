@@ -1,0 +1,52 @@
+\doxysection{cipher\+\_\+sm4\+\_\+xts.\+h}
+\hypertarget{cipher__sm4__xts_8h_source}{}\label{cipher__sm4__xts_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/providers/implementations/ciphers/cipher\_sm4\_xts.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/providers/implementations/ciphers/cipher\_sm4\_xts.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2022-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <crypto/sm4.h>}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ "{}prov/ciphercommon.h"{}}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ "{}crypto/sm4\_platform.h"{}}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ PROV\_CIPHER\_FUNC(\textcolor{keywordtype}{void},\ xts\_stream,}
+\DoxyCodeLine{00015\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,\ \textcolor{keywordtype}{size\_t}\ len,}
+\DoxyCodeLine{00016\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{struct_s_m4___k_e_y__st}{SM4\_KEY}}\ *key1,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{struct_s_m4___k_e_y__st}{SM4\_KEY}}\ *key2,}
+\DoxyCodeLine{00017\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ iv[16],\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ enc));}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structprov__sm4__xts__ctx__st}{prov\_sm4\_xts\_ctx\_st}}\ \{}
+\DoxyCodeLine{00020\ \ \ \ \ \textcolor{comment}{/*\ Must\ be\ first\ */}}
+\DoxyCodeLine{00021\ \ \ \ \ \mbox{\hyperlink{structprov__cipher__ctx__st}{PROV\_CIPHER\_CTX}}\ base;}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \ \ \ \ \textcolor{comment}{/*\ SM4\ key\ schedules\ to\ use\ */}}
+\DoxyCodeLine{00024\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ OSSL\_UNION\_ALIGN;}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_s_m4___k_e_y__st}{SM4\_KEY}}\ ks;}
+\DoxyCodeLine{00027\ \ \ \ \ \}\ ks1,\ ks2;}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \ \ \ \ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00030\ \textcolor{comment}{\ \ \ \ \ *\ XTS\ standard\ to\ use\ with\ SM4-\/XTS\ algorithm}}
+\DoxyCodeLine{00031\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00032\ \textcolor{comment}{\ \ \ \ \ *\ Must\ be\ 0\ or\ 1,}}
+\DoxyCodeLine{00033\ \textcolor{comment}{\ \ \ \ \ *\ 0\ for\ XTS\ mode\ specified\ by\ GB/T\ 17964-\/2021}}
+\DoxyCodeLine{00034\ \textcolor{comment}{\ \ \ \ \ *\ 1\ for\ XTS\ mode\ specified\ by\ IEEE\ Std\ 1619-\/2007}}
+\DoxyCodeLine{00035\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00036\ \ \ \ \ \textcolor{keywordtype}{int}\ xts\_standard;}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \ \ \ \ XTS128\_CONTEXT\ xts;}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{comment}{/*\ Stream\ function\ for\ XTS\ mode\ specified\ by\ GB/T\ 17964-\/2021\ */}}
+\DoxyCodeLine{00041\ \ \ \ \ OSSL\_xts\_stream\_fn\ stream\_gb;}
+\DoxyCodeLine{00042\ \ \ \ \ \textcolor{comment}{/*\ Stream\ function\ for\ XTS\ mode\ specified\ by\ IEEE\ Std\ 1619-\/2007\ */}}
+\DoxyCodeLine{00043\ \ \ \ \ OSSL\_xts\_stream\_fn\ stream;}
+\DoxyCodeLine{00044\ \}\ \mbox{\hyperlink{structprov__sm4__xts__ctx__st}{PROV\_SM4\_XTS\_CTX}};}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structprov__cipher__hw__st}{PROV\_CIPHER\_HW}}\ *ossl\_prov\_cipher\_hw\_sm4\_xts(\textcolor{keywordtype}{size\_t}\ keybits);}
+
+\end{DoxyCode}

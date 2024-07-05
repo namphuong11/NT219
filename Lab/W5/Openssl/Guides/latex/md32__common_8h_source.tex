@@ -1,0 +1,290 @@
+\doxysection{md32\+\_\+common.\+h}
+\hypertarget{md32__common_8h_source}{}\label{md32__common_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/crypto/md32\_common.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/crypto/md32\_common.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 1999-\/2022\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ *\ This\ is\ a\ generic\ 32\ bit\ "{}collector"{}\ for\ message\ digest\ algorithms.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ *\ Whenever\ needed\ it\ collects\ input\ character\ stream\ into\ chunks\ of}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ *\ 32\ bit\ values\ and\ invokes\ a\ block\ function\ that\ performs\ actual\ hash}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ *\ calculations.}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ *\ Porting\ guide.}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ *\ Obligatory\ macros:}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00020\ \textcolor{comment}{\ *\ DATA\_ORDER\_IS\_BIG\_ENDIAN\ or\ DATA\_ORDER\_IS\_LITTLE\_ENDIAN}}
+\DoxyCodeLine{00021\ \textcolor{comment}{\ *\ \ \ \ \ \ this\ macro\ defines\ byte\ order\ of\ input\ stream.}}
+\DoxyCodeLine{00022\ \textcolor{comment}{\ *\ HASH\_CBLOCK}}
+\DoxyCodeLine{00023\ \textcolor{comment}{\ *\ \ \ \ \ \ size\ of\ a\ unit\ chunk\ HASH\_BLOCK\ operates\ on.}}
+\DoxyCodeLine{00024\ \textcolor{comment}{\ *\ HASH\_LONG}}
+\DoxyCodeLine{00025\ \textcolor{comment}{\ *\ \ \ \ \ \ has\ to\ be\ at\ least\ 32\ bit\ wide.}}
+\DoxyCodeLine{00026\ \textcolor{comment}{\ *\ HASH\_CTX}}
+\DoxyCodeLine{00027\ \textcolor{comment}{\ *\ \ \ \ \ \ context\ structure\ that\ at\ least\ contains\ following}}
+\DoxyCodeLine{00028\ \textcolor{comment}{\ *\ \ \ \ \ \ members:}}
+\DoxyCodeLine{00029\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ typedef\ struct\ \{}}
+\DoxyCodeLine{00030\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ...}}
+\DoxyCodeLine{00031\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ HASH\_LONG\ \ \ \ \ \ \ Nl,Nh;}}
+\DoxyCodeLine{00032\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ either\ \{}}
+\DoxyCodeLine{00033\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ HASH\_LONG\ \ \ \ \ \ \ data[HASH\_LBLOCK];}}
+\DoxyCodeLine{00034\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ unsigned\ char\ \ \ data[HASH\_CBLOCK];}}
+\DoxyCodeLine{00035\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \};}}
+\DoxyCodeLine{00036\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ unsigned\ int\ \ \ \ num;}}
+\DoxyCodeLine{00037\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ...}}
+\DoxyCodeLine{00038\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}\ HASH\_CTX;}}
+\DoxyCodeLine{00039\ \textcolor{comment}{\ *\ \ \ \ \ \ data[]\ vector\ is\ expected\ to\ be\ zeroed\ upon\ first\ call\ to}}
+\DoxyCodeLine{00040\ \textcolor{comment}{\ *\ \ \ \ \ \ HASH\_UPDATE.}}
+\DoxyCodeLine{00041\ \textcolor{comment}{\ *\ HASH\_UPDATE}}
+\DoxyCodeLine{00042\ \textcolor{comment}{\ *\ \ \ \ \ \ name\ of\ "{}Update"{}\ function,\ implemented\ here.}}
+\DoxyCodeLine{00043\ \textcolor{comment}{\ *\ HASH\_TRANSFORM}}
+\DoxyCodeLine{00044\ \textcolor{comment}{\ *\ \ \ \ \ \ name\ of\ "{}Transform"{}\ function,\ implemented\ here.}}
+\DoxyCodeLine{00045\ \textcolor{comment}{\ *\ HASH\_FINAL}}
+\DoxyCodeLine{00046\ \textcolor{comment}{\ *\ \ \ \ \ \ name\ of\ "{}Final"{}\ function,\ implemented\ here.}}
+\DoxyCodeLine{00047\ \textcolor{comment}{\ *\ HASH\_BLOCK\_DATA\_ORDER}}
+\DoxyCodeLine{00048\ \textcolor{comment}{\ *\ \ \ \ \ \ name\ of\ "{}block"{}\ function\ capable\ of\ treating\ *unaligned*\ input}}
+\DoxyCodeLine{00049\ \textcolor{comment}{\ *\ \ \ \ \ \ message\ in\ original\ (data)\ byte\ order,\ implemented\ externally.}}
+\DoxyCodeLine{00050\ \textcolor{comment}{\ *\ HASH\_MAKE\_STRING}}
+\DoxyCodeLine{00051\ \textcolor{comment}{\ *\ \ \ \ \ \ macro\ converting\ context\ variables\ to\ an\ ASCII\ hash\ string.}}
+\DoxyCodeLine{00052\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00053\ \textcolor{comment}{\ *\ MD5\ example:}}
+\DoxyCodeLine{00054\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00055\ \textcolor{comment}{\ *\ \ \ \ \ \ \#define\ DATA\_ORDER\_IS\_LITTLE\_ENDIAN}}
+\DoxyCodeLine{00056\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00057\ \textcolor{comment}{\ *\ \ \ \ \ \ \#define\ HASH\_LONG\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ MD5\_LONG}}
+\DoxyCodeLine{00058\ \textcolor{comment}{\ *\ \ \ \ \ \ \#define\ HASH\_CTX\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ MD5\_CTX}}
+\DoxyCodeLine{00059\ \textcolor{comment}{\ *\ \ \ \ \ \ \#define\ HASH\_CBLOCK\ \ \ \ \ \ \ \ \ \ \ \ \ MD5\_CBLOCK}}
+\DoxyCodeLine{00060\ \textcolor{comment}{\ *\ \ \ \ \ \ \#define\ HASH\_UPDATE\ \ \ \ \ \ \ \ \ \ \ \ \ MD5\_Update}}
+\DoxyCodeLine{00061\ \textcolor{comment}{\ *\ \ \ \ \ \ \#define\ HASH\_TRANSFORM\ \ \ \ \ \ \ \ \ \ MD5\_Transform}}
+\DoxyCodeLine{00062\ \textcolor{comment}{\ *\ \ \ \ \ \ \#define\ HASH\_FINAL\ \ \ \ \ \ \ \ \ \ \ \ \ \ MD5\_Final}}
+\DoxyCodeLine{00063\ \textcolor{comment}{\ *\ \ \ \ \ \ \#define\ HASH\_BLOCK\_DATA\_ORDER\ \ \ md5\_block\_data\_order}}
+\DoxyCodeLine{00064\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \textcolor{preprocessor}{\#ifndef\ OSSL\_CRYPTO\_MD32\_COMMON\_H}}
+\DoxyCodeLine{00067\ \textcolor{preprocessor}{\#\ define\ OSSL\_CRYPTO\_MD32\_COMMON\_H}}
+\DoxyCodeLine{00068\ \textcolor{preprocessor}{\#\ pragma\ once}}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ \textcolor{preprocessor}{\#\ include\ <openssl/crypto.h>}}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00072\ \textcolor{preprocessor}{\#\ if\ !defined(DATA\_ORDER\_IS\_BIG\_ENDIAN)\ \&\&\ !defined(DATA\_ORDER\_IS\_LITTLE\_ENDIAN)}}
+\DoxyCodeLine{00073\ \textcolor{preprocessor}{\#\ \ error\ "{}DATA\_ORDER\ must\ be\ defined!"{}}}
+\DoxyCodeLine{00074\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00076\ \textcolor{preprocessor}{\#\ ifndef\ HASH\_CBLOCK}}
+\DoxyCodeLine{00077\ \textcolor{preprocessor}{\#\ \ error\ "{}HASH\_CBLOCK\ must\ be\ defined!"{}}}
+\DoxyCodeLine{00078\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00079\ \textcolor{preprocessor}{\#\ ifndef\ HASH\_LONG}}
+\DoxyCodeLine{00080\ \textcolor{preprocessor}{\#\ \ error\ "{}HASH\_LONG\ must\ be\ defined!"{}}}
+\DoxyCodeLine{00081\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00082\ \textcolor{preprocessor}{\#\ ifndef\ HASH\_CTX}}
+\DoxyCodeLine{00083\ \textcolor{preprocessor}{\#\ \ error\ "{}HASH\_CTX\ must\ be\ defined!"{}}}
+\DoxyCodeLine{00084\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00085\ }
+\DoxyCodeLine{00086\ \textcolor{preprocessor}{\#\ ifndef\ HASH\_UPDATE}}
+\DoxyCodeLine{00087\ \textcolor{preprocessor}{\#\ \ error\ "{}HASH\_UPDATE\ must\ be\ defined!"{}}}
+\DoxyCodeLine{00088\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00089\ \textcolor{preprocessor}{\#\ ifndef\ HASH\_TRANSFORM}}
+\DoxyCodeLine{00090\ \textcolor{preprocessor}{\#\ \ error\ "{}HASH\_TRANSFORM\ must\ be\ defined!"{}}}
+\DoxyCodeLine{00091\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00092\ \textcolor{preprocessor}{\#\ ifndef\ HASH\_FINAL}}
+\DoxyCodeLine{00093\ \textcolor{preprocessor}{\#\ \ error\ "{}HASH\_FINAL\ must\ be\ defined!"{}}}
+\DoxyCodeLine{00094\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00095\ }
+\DoxyCodeLine{00096\ \textcolor{preprocessor}{\#\ ifndef\ HASH\_BLOCK\_DATA\_ORDER}}
+\DoxyCodeLine{00097\ \textcolor{preprocessor}{\#\ \ error\ "{}HASH\_BLOCK\_DATA\_ORDER\ must\ be\ defined!"{}}}
+\DoxyCodeLine{00098\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00100\ \textcolor{preprocessor}{\#\ define\ ROTATE(a,n)\ \ \ \ \ (((a)<<(n))|(((a)\&0xffffffff)>>(32-\/(n))))}}
+\DoxyCodeLine{00101\ }
+\DoxyCodeLine{00102\ \textcolor{preprocessor}{\#ifndef\ PEDANTIC}}
+\DoxyCodeLine{00103\ \textcolor{preprocessor}{\#\ if\ defined(\_\_GNUC\_\_)\ \&\&\ \_\_GNUC\_\_>=2\ \&\&\ \(\backslash\)}}
+\DoxyCodeLine{00104\ \textcolor{preprocessor}{\ \ \ \ \ !defined(OPENSSL\_NO\_ASM)\ \&\&\ !defined(OPENSSL\_NO\_INLINE\_ASM)}}
+\DoxyCodeLine{00105\ \textcolor{preprocessor}{\#\ \ if\ defined(\_\_riscv\_zbb)\ ||\ defined(\_\_riscv\_zbkb)}}
+\DoxyCodeLine{00106\ \textcolor{preprocessor}{\#\ \ \ if\ \_\_riscv\_xlen\ ==\ 64}}
+\DoxyCodeLine{00107\ \textcolor{preprocessor}{\#\ \ \ undef\ ROTATE}}
+\DoxyCodeLine{00108\ \textcolor{preprocessor}{\#\ \ \ define\ ROTATE(x,\ n)\ (\{\ MD32\_REG\_T\ ret;\ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00109\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ asm\ ("{}roriw\ \%0,\ \%1,\ \%2"{}\ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00110\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ "{}=r"{}(ret)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00111\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ "{}r"{}(x),\ "{}i"{}(32\ -\/\ (n)));\ ret;\})}}
+\DoxyCodeLine{00112\ \textcolor{preprocessor}{\#\ \ \ endif}}
+\DoxyCodeLine{00113\ \textcolor{preprocessor}{\#\ \ \ if\ \_\_riscv\_xlen\ ==\ 32}}
+\DoxyCodeLine{00114\ \textcolor{preprocessor}{\#\ \ \ undef\ ROTATE}}
+\DoxyCodeLine{00115\ \textcolor{preprocessor}{\#\ \ \ define\ ROTATE(x,\ n)\ (\{\ MD32\_REG\_T\ ret;\ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00116\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ asm\ ("{}rori\ \%0,\ \%1,\ \%2"{}\ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00117\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ "{}=r"{}(ret)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00118\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ "{}r"{}(x),\ "{}i"{}(32\ -\/\ (n)));\ ret;\})}}
+\DoxyCodeLine{00119\ \textcolor{preprocessor}{\#\ \ \ endif}}
+\DoxyCodeLine{00120\ \textcolor{preprocessor}{\#\ \ endif}}
+\DoxyCodeLine{00121\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00122\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00123\ }
+\DoxyCodeLine{00124\ \textcolor{preprocessor}{\#\ if\ defined(DATA\_ORDER\_IS\_BIG\_ENDIAN)}}
+\DoxyCodeLine{00125\ }
+\DoxyCodeLine{00126\ \textcolor{preprocessor}{\#\ \ define\ HOST\_c2l(c,l)\ \ (l\ =(((unsigned\ long)(*((c)++)))<<24),\ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00127\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ l|=(((unsigned\ long)(*((c)++)))<<16),\ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00128\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ l|=(((unsigned\ long)(*((c)++)))<<\ 8),\ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00129\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ l|=(((unsigned\ long)(*((c)++)))\ \ \ \ )\ \ \ \ \ \ \ \ \ \ \ )}}
+\DoxyCodeLine{00130\ \textcolor{preprocessor}{\#\ \ define\ HOST\_l2c(l,c)\ \ (*((c)++)=(unsigned\ char)(((l)>>24)\&0xff),\ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00131\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *((c)++)=(unsigned\ char)(((l)>>16)\&0xff),\ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00132\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *((c)++)=(unsigned\ char)(((l)>>\ 8)\&0xff),\ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00133\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *((c)++)=(unsigned\ char)(((l)\ \ \ \ )\&0xff),\ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00134\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ l)}}
+\DoxyCodeLine{00135\ }
+\DoxyCodeLine{00136\ \textcolor{preprocessor}{\#\ elif\ defined(DATA\_ORDER\_IS\_LITTLE\_ENDIAN)}}
+\DoxyCodeLine{00137\ }
+\DoxyCodeLine{00138\ \textcolor{preprocessor}{\#\ \ define\ HOST\_c2l(c,l)\ \ (l\ =(((unsigned\ long)(*((c)++)))\ \ \ \ ),\ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00139\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ l|=(((unsigned\ long)(*((c)++)))<<\ 8),\ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00140\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ l|=(((unsigned\ long)(*((c)++)))<<16),\ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00141\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ l|=(((unsigned\ long)(*((c)++)))<<24)\ \ \ \ \ \ \ \ \ \ \ )}}
+\DoxyCodeLine{00142\ \textcolor{preprocessor}{\#\ \ define\ HOST\_l2c(l,c)\ \ (*((c)++)=(unsigned\ char)(((l)\ \ \ \ )\&0xff),\ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00143\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *((c)++)=(unsigned\ char)(((l)>>\ 8)\&0xff),\ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00144\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *((c)++)=(unsigned\ char)(((l)>>16)\&0xff),\ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00145\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *((c)++)=(unsigned\ char)(((l)>>24)\&0xff),\ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00146\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ l)}}
+\DoxyCodeLine{00147\ }
+\DoxyCodeLine{00148\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00149\ }
+\DoxyCodeLine{00150\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00151\ \textcolor{comment}{\ *\ Time\ for\ some\ action\ :-\/)}}
+\DoxyCodeLine{00152\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00153\ }
+\DoxyCodeLine{00154\ \textcolor{keywordtype}{int}\ HASH\_UPDATE(HASH\_CTX\ *c,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *data\_,\ \textcolor{keywordtype}{size\_t}\ len)}
+\DoxyCodeLine{00155\ \{}
+\DoxyCodeLine{00156\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *data\ =\ data\_;}
+\DoxyCodeLine{00157\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *p;}
+\DoxyCodeLine{00158\ \ \ \ \ HASH\_LONG\ l;}
+\DoxyCodeLine{00159\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ n;}
+\DoxyCodeLine{00160\ }
+\DoxyCodeLine{00161\ \ \ \ \ \textcolor{keywordflow}{if}\ (len\ ==\ 0)}
+\DoxyCodeLine{00162\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00163\ }
+\DoxyCodeLine{00164\ \ \ \ \ l\ =\ (c-\/>Nl\ +\ (((HASH\_LONG)\ len)\ <<\ 3))\ \&\ 0xffffffffUL;}
+\DoxyCodeLine{00165\ \ \ \ \ \textcolor{keywordflow}{if}\ (l\ <\ c-\/>Nl)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ overflow\ */}}
+\DoxyCodeLine{00166\ \ \ \ \ \ \ \ \ c-\/>Nh++;}
+\DoxyCodeLine{00167\ \ \ \ \ c-\/>Nh\ +=\ (HASH\_LONG)\ (len\ >>\ 29);\ \textcolor{comment}{/*\ might\ cause\ compiler\ warning\ on}}
+\DoxyCodeLine{00168\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *\ 16-\/bit\ */}}
+\DoxyCodeLine{00169\ \ \ \ \ c-\/>Nl\ =\ l;}
+\DoxyCodeLine{00170\ }
+\DoxyCodeLine{00171\ \ \ \ \ n\ =\ c-\/>num;}
+\DoxyCodeLine{00172\ \ \ \ \ \textcolor{keywordflow}{if}\ (n\ !=\ 0)\ \{}
+\DoxyCodeLine{00173\ \ \ \ \ \ \ \ \ p\ =\ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *)c-\/>data;}
+\DoxyCodeLine{00174\ }
+\DoxyCodeLine{00175\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (len\ >=\ HASH\_CBLOCK\ ||\ len\ +\ n\ >=\ HASH\_CBLOCK)\ \{}
+\DoxyCodeLine{00176\ \ \ \ \ \ \ \ \ \ \ \ \ memcpy(p\ +\ n,\ data,\ HASH\_CBLOCK\ -\/\ n);}
+\DoxyCodeLine{00177\ \ \ \ \ \ \ \ \ \ \ \ \ HASH\_BLOCK\_DATA\_ORDER(c,\ p,\ 1);}
+\DoxyCodeLine{00178\ \ \ \ \ \ \ \ \ \ \ \ \ n\ =\ HASH\_CBLOCK\ -\/\ n;}
+\DoxyCodeLine{00179\ \ \ \ \ \ \ \ \ \ \ \ \ data\ +=\ n;}
+\DoxyCodeLine{00180\ \ \ \ \ \ \ \ \ \ \ \ \ len\ -\/=\ n;}
+\DoxyCodeLine{00181\ \ \ \ \ \ \ \ \ \ \ \ \ c-\/>num\ =\ 0;}
+\DoxyCodeLine{00182\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00183\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ *\ We\ use\ memset\ rather\ than\ OPENSSL\_cleanse()\ here\ deliberately.}}
+\DoxyCodeLine{00184\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ *\ Using\ OPENSSL\_cleanse()\ here\ could\ be\ a\ performance\ issue.\ It}}
+\DoxyCodeLine{00185\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ *\ will\ get\ properly\ cleansed\ on\ finalisation\ so\ this\ isn't\ a}}
+\DoxyCodeLine{00186\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ *\ security\ problem.}}
+\DoxyCodeLine{00187\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00188\ \ \ \ \ \ \ \ \ \ \ \ \ memset(p,\ 0,\ HASH\_CBLOCK);\ \textcolor{comment}{/*\ keep\ it\ zeroed\ */}}
+\DoxyCodeLine{00189\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ \ \ \ \ memcpy(p\ +\ n,\ data,\ len);}
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ \ \ \ \ c-\/>num\ +=\ (\textcolor{keywordtype}{unsigned}\ int)len;}
+\DoxyCodeLine{00192\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00193\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00194\ \ \ \ \ \}}
+\DoxyCodeLine{00195\ }
+\DoxyCodeLine{00196\ \ \ \ \ n\ =\ len\ /\ HASH\_CBLOCK;}
+\DoxyCodeLine{00197\ \ \ \ \ \textcolor{keywordflow}{if}\ (n\ >\ 0)\ \{}
+\DoxyCodeLine{00198\ \ \ \ \ \ \ \ \ HASH\_BLOCK\_DATA\_ORDER(c,\ data,\ n);}
+\DoxyCodeLine{00199\ \ \ \ \ \ \ \ \ n\ *=\ HASH\_CBLOCK;}
+\DoxyCodeLine{00200\ \ \ \ \ \ \ \ \ data\ +=\ n;}
+\DoxyCodeLine{00201\ \ \ \ \ \ \ \ \ len\ -\/=\ n;}
+\DoxyCodeLine{00202\ \ \ \ \ \}}
+\DoxyCodeLine{00203\ }
+\DoxyCodeLine{00204\ \ \ \ \ \textcolor{keywordflow}{if}\ (len\ !=\ 0)\ \{}
+\DoxyCodeLine{00205\ \ \ \ \ \ \ \ \ p\ =\ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *)c-\/>data;}
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ c-\/>num\ =\ (\textcolor{keywordtype}{unsigned}\ int)len;}
+\DoxyCodeLine{00207\ \ \ \ \ \ \ \ \ memcpy(p,\ data,\ len);}
+\DoxyCodeLine{00208\ \ \ \ \ \}}
+\DoxyCodeLine{00209\ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00210\ \}}
+\DoxyCodeLine{00211\ }
+\DoxyCodeLine{00212\ \textcolor{keywordtype}{void}\ HASH\_TRANSFORM(HASH\_CTX\ *c,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *data)}
+\DoxyCodeLine{00213\ \{}
+\DoxyCodeLine{00214\ \ \ \ \ HASH\_BLOCK\_DATA\_ORDER(c,\ data,\ 1);}
+\DoxyCodeLine{00215\ \}}
+\DoxyCodeLine{00216\ }
+\DoxyCodeLine{00217\ \textcolor{keywordtype}{int}\ HASH\_FINAL(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *md,\ HASH\_CTX\ *c)}
+\DoxyCodeLine{00218\ \{}
+\DoxyCodeLine{00219\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *p\ =\ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *)c-\/>data;}
+\DoxyCodeLine{00220\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ n\ =\ c-\/>num;}
+\DoxyCodeLine{00221\ }
+\DoxyCodeLine{00222\ \ \ \ \ p[n]\ =\ 0x80;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ there\ is\ always\ room\ for\ one\ */}}
+\DoxyCodeLine{00223\ \ \ \ \ n++;}
+\DoxyCodeLine{00224\ }
+\DoxyCodeLine{00225\ \ \ \ \ \textcolor{keywordflow}{if}\ (n\ >\ (HASH\_CBLOCK\ -\/\ 8))\ \{}
+\DoxyCodeLine{00226\ \ \ \ \ \ \ \ \ memset(p\ +\ n,\ 0,\ HASH\_CBLOCK\ -\/\ n);}
+\DoxyCodeLine{00227\ \ \ \ \ \ \ \ \ n\ =\ 0;}
+\DoxyCodeLine{00228\ \ \ \ \ \ \ \ \ HASH\_BLOCK\_DATA\_ORDER(c,\ p,\ 1);}
+\DoxyCodeLine{00229\ \ \ \ \ \}}
+\DoxyCodeLine{00230\ \ \ \ \ memset(p\ +\ n,\ 0,\ HASH\_CBLOCK\ -\/\ 8\ -\/\ n);}
+\DoxyCodeLine{00231\ }
+\DoxyCodeLine{00232\ \ \ \ \ p\ +=\ HASH\_CBLOCK\ -\/\ 8;}
+\DoxyCodeLine{00233\ \textcolor{preprocessor}{\#\ if\ \ \ defined(DATA\_ORDER\_IS\_BIG\_ENDIAN)}}
+\DoxyCodeLine{00234\ \ \ \ \ (void)HOST\_l2c(c-\/>Nh,\ p);}
+\DoxyCodeLine{00235\ \ \ \ \ (void)HOST\_l2c(c-\/>Nl,\ p);}
+\DoxyCodeLine{00236\ \textcolor{preprocessor}{\#\ elif\ defined(DATA\_ORDER\_IS\_LITTLE\_ENDIAN)}}
+\DoxyCodeLine{00237\ \ \ \ \ (void)HOST\_l2c(c-\/>Nl,\ p);}
+\DoxyCodeLine{00238\ \ \ \ \ (void)HOST\_l2c(c-\/>Nh,\ p);}
+\DoxyCodeLine{00239\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00240\ \ \ \ \ p\ -\/=\ HASH\_CBLOCK;}
+\DoxyCodeLine{00241\ \ \ \ \ HASH\_BLOCK\_DATA\_ORDER(c,\ p,\ 1);}
+\DoxyCodeLine{00242\ \ \ \ \ c-\/>num\ =\ 0;}
+\DoxyCodeLine{00243\ \ \ \ \ OPENSSL\_cleanse(p,\ HASH\_CBLOCK);}
+\DoxyCodeLine{00244\ }
+\DoxyCodeLine{00245\ \textcolor{preprocessor}{\#\ ifndef\ HASH\_MAKE\_STRING}}
+\DoxyCodeLine{00246\ \textcolor{preprocessor}{\#\ \ error\ "{}HASH\_MAKE\_STRING\ must\ be\ defined!"{}}}
+\DoxyCodeLine{00247\ \textcolor{preprocessor}{\#\ else}}
+\DoxyCodeLine{00248\ \ \ \ \ HASH\_MAKE\_STRING(c,\ md);}
+\DoxyCodeLine{00249\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00250\ }
+\DoxyCodeLine{00251\ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00252\ \}}
+\DoxyCodeLine{00253\ }
+\DoxyCodeLine{00254\ \textcolor{preprocessor}{\#\ ifndef\ MD32\_REG\_T}}
+\DoxyCodeLine{00255\ \textcolor{preprocessor}{\#\ \ if\ defined(\_\_alpha)\ ||\ defined(\_\_sparcv9)\ ||\ defined(\_\_mips)}}
+\DoxyCodeLine{00256\ \textcolor{preprocessor}{\#\ \ \ define\ MD32\_REG\_T\ long}}
+\DoxyCodeLine{00257\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00258\ \textcolor{comment}{\ *\ This\ comment\ was\ originally\ written\ for\ MD5,\ which\ is\ why\ it}}
+\DoxyCodeLine{00259\ \textcolor{comment}{\ *\ discusses\ A-\/D.\ But\ it\ basically\ applies\ to\ all\ 32-\/bit\ digests,}}
+\DoxyCodeLine{00260\ \textcolor{comment}{\ *\ which\ is\ why\ it\ was\ moved\ to\ common\ header\ file.}}
+\DoxyCodeLine{00261\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00262\ \textcolor{comment}{\ *\ In\ case\ you\ wonder\ why\ A-\/D\ are\ declared\ as\ long\ and\ not}}
+\DoxyCodeLine{00263\ \textcolor{comment}{\ *\ as\ MD5\_LONG.\ Doing\ so\ results\ in\ slight\ performance}}
+\DoxyCodeLine{00264\ \textcolor{comment}{\ *\ boost\ on\ LP64\ architectures.\ The\ catch\ is\ we\ don't}}
+\DoxyCodeLine{00265\ \textcolor{comment}{\ *\ really\ care\ if\ 32\ MSBs\ of\ a\ 64-\/bit\ register\ get\ polluted}}
+\DoxyCodeLine{00266\ \textcolor{comment}{\ *\ with\ eventual\ overflows\ as\ we\ *save*\ only\ 32\ LSBs\ in}}
+\DoxyCodeLine{00267\ \textcolor{comment}{\ *\ *either*\ case.\ Now\ declaring\ 'em\ long\ excuses\ the\ compiler}}
+\DoxyCodeLine{00268\ \textcolor{comment}{\ *\ from\ keeping\ 32\ MSBs\ zeroed\ resulting\ in\ 13\%\ performance}}
+\DoxyCodeLine{00269\ \textcolor{comment}{\ *\ improvement\ under\ SPARC\ Solaris7/64\ and\ 5\%\ under\ AlphaLinux.}}
+\DoxyCodeLine{00270\ \textcolor{comment}{\ *\ Well,\ to\ be\ honest\ it\ should\ say\ that\ this\ *prevents*}}
+\DoxyCodeLine{00271\ \textcolor{comment}{\ *\ performance\ degradation.}}
+\DoxyCodeLine{00272\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00273\ \textcolor{preprocessor}{\#\ \ else}}
+\DoxyCodeLine{00274\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00275\ \textcolor{comment}{\ *\ Above\ is\ not\ absolute\ and\ there\ are\ LP64\ compilers\ that}}
+\DoxyCodeLine{00276\ \textcolor{comment}{\ *\ generate\ better\ code\ if\ MD32\_REG\_T\ is\ defined\ int.\ The\ above}}
+\DoxyCodeLine{00277\ \textcolor{comment}{\ *\ pre-\/processor\ condition\ reflects\ the\ circumstances\ under\ which}}
+\DoxyCodeLine{00278\ \textcolor{comment}{\ *\ the\ conclusion\ was\ made\ and\ is\ subject\ to\ further\ extension.}}
+\DoxyCodeLine{00279\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00280\ \textcolor{preprocessor}{\#\ \ \ define\ MD32\_REG\_T\ int}}
+\DoxyCodeLine{00281\ \textcolor{preprocessor}{\#\ \ endif}}
+\DoxyCodeLine{00282\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00283\ }
+\DoxyCodeLine{00284\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

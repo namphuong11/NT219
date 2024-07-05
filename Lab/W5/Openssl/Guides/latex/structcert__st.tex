@@ -1,0 +1,79 @@
+\doxysection{cert\+\_\+st Struct Reference}
+\hypertarget{structcert__st}{}\label{structcert__st}\index{cert\_st@{cert\_st}}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{structcert__st_aaa35af0490e02946cc5695f9d538d557}\label{structcert__st_aaa35af0490e02946cc5695f9d538d557} 
+\mbox{\hyperlink{structcert__pkey__st}{CERT\+\_\+\+PKEY}} \texorpdfstring{$\ast$}{*} {\bfseries key}
+\item 
+\Hypertarget{structcert__st_a00693bcdc2c438eb1cff653ce591688f}\label{structcert__st_a00693bcdc2c438eb1cff653ce591688f} 
+EVP\+\_\+\+PKEY \texorpdfstring{$\ast$}{*} {\bfseries dh\+\_\+tmp}
+\item 
+\Hypertarget{structcert__st_a4d79f3fb1e6f4bd0c74f728501623b47}\label{structcert__st_a4d79f3fb1e6f4bd0c74f728501623b47} 
+DH \texorpdfstring{$\ast$}{*}(\texorpdfstring{$\ast$}{*} {\bfseries dh\+\_\+tmp\+\_\+cb} )(SSL \texorpdfstring{$\ast$}{*}ssl, int is\+\_\+export, int keysize)
+\item 
+\Hypertarget{structcert__st_ad5219a8c47369fe00c823c14595da262}\label{structcert__st_ad5219a8c47369fe00c823c14595da262} 
+int {\bfseries dh\+\_\+tmp\+\_\+auto}
+\item 
+\Hypertarget{structcert__st_ae7a9793d8442d68176a9e048757af5c8}\label{structcert__st_ae7a9793d8442d68176a9e048757af5c8} 
+uint32\+\_\+t {\bfseries cert\+\_\+flags}
+\item 
+\Hypertarget{structcert__st_abe1553586836cfcc3c6e6e06650215d6}\label{structcert__st_abe1553586836cfcc3c6e6e06650215d6} 
+\mbox{\hyperlink{structcert__pkey__st}{CERT\+\_\+\+PKEY}} \texorpdfstring{$\ast$}{*} {\bfseries pkeys}
+\item 
+\Hypertarget{structcert__st_ad786816013551e9cb9155d8b3a40e6ce}\label{structcert__st_ad786816013551e9cb9155d8b3a40e6ce} 
+size\+\_\+t {\bfseries ssl\+\_\+pkey\+\_\+num}
+\item 
+\Hypertarget{structcert__st_a8e2b0db294a96d2ab647ad4fb671c84d}\label{structcert__st_a8e2b0db294a96d2ab647ad4fb671c84d} 
+uint8\+\_\+t \texorpdfstring{$\ast$}{*} {\bfseries ctype}
+\item 
+\Hypertarget{structcert__st_a5c79d338ebd2dc7d02af234ff933a6b2}\label{structcert__st_a5c79d338ebd2dc7d02af234ff933a6b2} 
+size\+\_\+t {\bfseries ctype\+\_\+len}
+\item 
+\Hypertarget{structcert__st_ae4c79efbbb52dcab86868e661dd45069}\label{structcert__st_ae4c79efbbb52dcab86868e661dd45069} 
+uint16\+\_\+t \texorpdfstring{$\ast$}{*} {\bfseries conf\+\_\+sigalgs}
+\item 
+\Hypertarget{structcert__st_ae96b63d55fc039cc8dbb9bb1afe0ecbe}\label{structcert__st_ae96b63d55fc039cc8dbb9bb1afe0ecbe} 
+size\+\_\+t {\bfseries conf\+\_\+sigalgslen}
+\item 
+\Hypertarget{structcert__st_a2788998c1705536bc9e40955b91f7e17}\label{structcert__st_a2788998c1705536bc9e40955b91f7e17} 
+uint16\+\_\+t \texorpdfstring{$\ast$}{*} {\bfseries client\+\_\+sigalgs}
+\item 
+\Hypertarget{structcert__st_a37b31ebff8d6dd47a393a84fe18ab565}\label{structcert__st_a37b31ebff8d6dd47a393a84fe18ab565} 
+size\+\_\+t {\bfseries client\+\_\+sigalgslen}
+\item 
+\Hypertarget{structcert__st_a6db6cc3faf9263b1a67f40b35fa43cfe}\label{structcert__st_a6db6cc3faf9263b1a67f40b35fa43cfe} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries cert\+\_\+cb} )(SSL \texorpdfstring{$\ast$}{*}ssl, void \texorpdfstring{$\ast$}{*}arg)
+\item 
+\Hypertarget{structcert__st_aa1d36dee9c7ed653a7dddb8aaabe113e}\label{structcert__st_aa1d36dee9c7ed653a7dddb8aaabe113e} 
+void \texorpdfstring{$\ast$}{*} {\bfseries cert\+\_\+cb\+\_\+arg}
+\item 
+\Hypertarget{structcert__st_ace8288491041a81018edcfeacf0a290c}\label{structcert__st_ace8288491041a81018edcfeacf0a290c} 
+X509\+\_\+\+STORE \texorpdfstring{$\ast$}{*} {\bfseries chain\+\_\+store}
+\item 
+\Hypertarget{structcert__st_a2be7c3fc2a60d6d0a416e0ed2d27d24a}\label{structcert__st_a2be7c3fc2a60d6d0a416e0ed2d27d24a} 
+X509\+\_\+\+STORE \texorpdfstring{$\ast$}{*} {\bfseries verify\+\_\+store}
+\item 
+\Hypertarget{structcert__st_af8d31d6e476ea803662c9e6de349d22f}\label{structcert__st_af8d31d6e476ea803662c9e6de349d22f} 
+\mbox{\hyperlink{structcustom__ext__methods}{custom\+\_\+ext\+\_\+methods}} {\bfseries custext}
+\item 
+\Hypertarget{structcert__st_a31eba0ecd10dfee55f5d76ed1003feb4}\label{structcert__st_a31eba0ecd10dfee55f5d76ed1003feb4} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries sec\+\_\+cb} )(const SSL \texorpdfstring{$\ast$}{*}s, const SSL\+\_\+\+CTX \texorpdfstring{$\ast$}{*}ctx, int op, int bits, int nid, void \texorpdfstring{$\ast$}{*}other, void \texorpdfstring{$\ast$}{*}ex)
+\item 
+\Hypertarget{structcert__st_a978710a05a8268db5c60124fc63ca83f}\label{structcert__st_a978710a05a8268db5c60124fc63ca83f} 
+int {\bfseries sec\+\_\+level}
+\item 
+\Hypertarget{structcert__st_a8e5b412f33eecf6c58843809fc7e467f}\label{structcert__st_a8e5b412f33eecf6c58843809fc7e467f} 
+void \texorpdfstring{$\ast$}{*} {\bfseries sec\+\_\+ex}
+\item 
+\Hypertarget{structcert__st_a11d3da3fe4b5ef201a594463b1f5b59f}\label{structcert__st_a11d3da3fe4b5ef201a594463b1f5b59f} 
+char \texorpdfstring{$\ast$}{*} {\bfseries psk\+\_\+identity\+\_\+hint}
+\item 
+\Hypertarget{structcert__st_a542f1f51187ad1adad122369c7f13eaa}\label{structcert__st_a542f1f51187ad1adad122369c7f13eaa} 
+\mbox{\hyperlink{struct_c_r_y_p_t_o___r_e_f___c_o_u_n_t}{CRYPTO\+\_\+\+REF\+\_\+\+COUNT}} {\bfseries references}
+\end{DoxyCompactItemize}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/namph/\+Downloads/openssl/openssl-\/3.\+2.\+1/ssl/ssl\+\_\+local.\+h\end{DoxyCompactItemize}

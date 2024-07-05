@@ -1,0 +1,49 @@
+\doxysection{CLIENTHELLO\+\_\+\+MSG Struct Reference}
+\hypertarget{struct_c_l_i_e_n_t_h_e_l_l_o___m_s_g}{}\label{struct_c_l_i_e_n_t_h_e_l_l_o___m_s_g}\index{CLIENTHELLO\_MSG@{CLIENTHELLO\_MSG}}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{struct_c_l_i_e_n_t_h_e_l_l_o___m_s_g_a270c382e4403d63fd86d36e2b3dc4fc9}\label{struct_c_l_i_e_n_t_h_e_l_l_o___m_s_g_a270c382e4403d63fd86d36e2b3dc4fc9} 
+unsigned int {\bfseries isv2}
+\item 
+\Hypertarget{struct_c_l_i_e_n_t_h_e_l_l_o___m_s_g_aaa5ee8704ea4d9d58f013ca6001e2126}\label{struct_c_l_i_e_n_t_h_e_l_l_o___m_s_g_aaa5ee8704ea4d9d58f013ca6001e2126} 
+unsigned int {\bfseries legacy\+\_\+version}
+\item 
+\Hypertarget{struct_c_l_i_e_n_t_h_e_l_l_o___m_s_g_a35af3a659a6fdadd78654c9dd74030e9}\label{struct_c_l_i_e_n_t_h_e_l_l_o___m_s_g_a35af3a659a6fdadd78654c9dd74030e9} 
+unsigned char {\bfseries random} \mbox{[}SSL3\+\_\+\+RANDOM\+\_\+\+SIZE\mbox{]}
+\item 
+\Hypertarget{struct_c_l_i_e_n_t_h_e_l_l_o___m_s_g_acc0fa4981eb3321391956c40c9c897a7}\label{struct_c_l_i_e_n_t_h_e_l_l_o___m_s_g_acc0fa4981eb3321391956c40c9c897a7} 
+size\+\_\+t {\bfseries session\+\_\+id\+\_\+len}
+\item 
+\Hypertarget{struct_c_l_i_e_n_t_h_e_l_l_o___m_s_g_a1c10dbe6c50a6ab7c52effd6054357e8}\label{struct_c_l_i_e_n_t_h_e_l_l_o___m_s_g_a1c10dbe6c50a6ab7c52effd6054357e8} 
+unsigned char {\bfseries session\+\_\+id} \mbox{[}SSL\+\_\+\+MAX\+\_\+\+SSL\+\_\+\+SESSION\+\_\+\+ID\+\_\+\+LENGTH\mbox{]}
+\item 
+\Hypertarget{struct_c_l_i_e_n_t_h_e_l_l_o___m_s_g_aee96e01e2cec0478c565846a8ea35a08}\label{struct_c_l_i_e_n_t_h_e_l_l_o___m_s_g_aee96e01e2cec0478c565846a8ea35a08} 
+size\+\_\+t {\bfseries dtls\+\_\+cookie\+\_\+len}
+\item 
+\Hypertarget{struct_c_l_i_e_n_t_h_e_l_l_o___m_s_g_a6c23234d6f4eaad79582179dca8525d4}\label{struct_c_l_i_e_n_t_h_e_l_l_o___m_s_g_a6c23234d6f4eaad79582179dca8525d4} 
+unsigned char {\bfseries dtls\+\_\+cookie} \mbox{[}DTLS1\+\_\+\+COOKIE\+\_\+\+LENGTH\mbox{]}
+\item 
+\Hypertarget{struct_c_l_i_e_n_t_h_e_l_l_o___m_s_g_a505f278979337e1a1c6252bce7bdca3b}\label{struct_c_l_i_e_n_t_h_e_l_l_o___m_s_g_a505f278979337e1a1c6252bce7bdca3b} 
+\mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}} {\bfseries ciphersuites}
+\item 
+\Hypertarget{struct_c_l_i_e_n_t_h_e_l_l_o___m_s_g_ad4c63121d1d9bd884351aaa508fd7ed9}\label{struct_c_l_i_e_n_t_h_e_l_l_o___m_s_g_ad4c63121d1d9bd884351aaa508fd7ed9} 
+size\+\_\+t {\bfseries compressions\+\_\+len}
+\item 
+\Hypertarget{struct_c_l_i_e_n_t_h_e_l_l_o___m_s_g_a9cc594b57bbee94546c713e4447e1398}\label{struct_c_l_i_e_n_t_h_e_l_l_o___m_s_g_a9cc594b57bbee94546c713e4447e1398} 
+unsigned char {\bfseries compressions} \mbox{[}MAX\+\_\+\+COMPRESSIONS\+\_\+\+SIZE\mbox{]}
+\item 
+\Hypertarget{struct_c_l_i_e_n_t_h_e_l_l_o___m_s_g_a5b76a16faeaffd94201b45d7b25fcc16}\label{struct_c_l_i_e_n_t_h_e_l_l_o___m_s_g_a5b76a16faeaffd94201b45d7b25fcc16} 
+\mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}} {\bfseries extensions}
+\item 
+\Hypertarget{struct_c_l_i_e_n_t_h_e_l_l_o___m_s_g_a86a7eb4d6fa2206b3f15458f6519a6de}\label{struct_c_l_i_e_n_t_h_e_l_l_o___m_s_g_a86a7eb4d6fa2206b3f15458f6519a6de} 
+size\+\_\+t {\bfseries pre\+\_\+proc\+\_\+exts\+\_\+len}
+\item 
+\Hypertarget{struct_c_l_i_e_n_t_h_e_l_l_o___m_s_g_ab85177f21572dfac07a82d95f92ceeb2}\label{struct_c_l_i_e_n_t_h_e_l_l_o___m_s_g_ab85177f21572dfac07a82d95f92ceeb2} 
+\mbox{\hyperlink{structraw__extension__st}{RAW\+\_\+\+EXTENSION}} \texorpdfstring{$\ast$}{*} {\bfseries pre\+\_\+proc\+\_\+exts}
+\end{DoxyCompactItemize}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/namph/\+Downloads/openssl/openssl-\/3.\+2.\+1/ssl/ssl\+\_\+local.\+h\end{DoxyCompactItemize}

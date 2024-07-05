@@ -1,0 +1,40 @@
+\chapter{Packet Demuxer}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2demuxer}{}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2demuxer}\index{Packet Demuxer@{Packet Demuxer}}
+This is a QUIC specific module that parses headers of incoming packets and decides what to do next.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2demuxer_autotoc_md255}{}\doxysection{\texorpdfstring{Demuxer requirements for MVP}{Demuxer requirements for MVP}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2demuxer_autotoc_md255}
+These are the requirements that were identified for MVP\+:
+
+
+\begin{DoxyItemize}
+\item multiple QUIC packets in an UDP packet handling as packet coalescing must be supported
+\item client must discard any packets that do not match existing connection ID
+\item client must discard any packets with version different from the one initially selected
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2demuxer_autotoc_md256}{}\doxysection{\texorpdfstring{Optional demuxer requirements}{Optional demuxer requirements}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2demuxer_autotoc_md256}
+These are optional features of the client side demuxer, not required for MVP but otherwise desirable\+:
+
+
+\begin{DoxyItemize}
+\item optionally trigger sending stateless reset packets if a received packet on the client is well-\/formed but does not belong to a known connection
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2demuxer_autotoc_md257}{}\doxysection{\texorpdfstring{Demuxer requirements for server}{Demuxer requirements for server}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2demuxer_autotoc_md257}
+Further requirements after MVP for server support\+:
+
+
+\begin{DoxyItemize}
+\item on the server side packets can create a new connection potentially
+\item server side packet handling for unsupported version packets\+:
+\begin{DoxyItemize}
+\item trigger sending version negotiation packets if the server receives a packet with an unsupported version and is large enough to initiate a new connection; limit the number of such packets with the same destination
+\item discard smaller packets with unsupported versions
+\end{DoxyItemize}
+\item packet handling on server for well-\/formed packets with supported versions but with unknown connection IDs\+:
+\begin{DoxyItemize}
+\item if the packet is a well-\/formed Initial packet, trigger the creation of a new connection
+\item if the packet is a well-\/formed 0RTT packet, mark the packet to be buffered for short period of time (as Initial packet might arrive late)
+\begin{DoxyItemize}
+\item this is optional -\/ enabled only if 0RTT support is enabled by the application
+\end{DoxyItemize}
+\item discard any other packet with unknown connection IDs
+\begin{DoxyItemize}
+\item optionally trigger sending stateless reset packets as above for client 
+\end{DoxyItemize}
+\end{DoxyItemize}
+\end{DoxyItemize}

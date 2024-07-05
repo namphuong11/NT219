@@ -1,0 +1,97 @@
+\doxysection{quic\+\_\+conn\+\_\+st Struct Reference}
+\hypertarget{structquic__conn__st}{}\label{structquic__conn__st}\index{quic\_conn\_st@{quic\_conn\_st}}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{structquic__conn__st_a0832e45fcfac9e363a29a951beeff803}\label{structquic__conn__st_a0832e45fcfac9e363a29a951beeff803} 
+struct \mbox{\hyperlink{structssl__st}{ssl\+\_\+st}} {\bfseries ssl}
+\item 
+\Hypertarget{structquic__conn__st_af63c9d34695cdcc6a5e78fce23de9f55}\label{structquic__conn__st_af63c9d34695cdcc6a5e78fce23de9f55} 
+SSL \texorpdfstring{$\ast$}{*} {\bfseries tls}
+\item 
+\Hypertarget{structquic__conn__st_ac01472ac01486fba016c98aae931ad56}\label{structquic__conn__st_ac01472ac01486fba016c98aae931ad56} 
+\mbox{\hyperlink{structquic__channel__st}{QUIC\+\_\+\+CHANNEL}} \texorpdfstring{$\ast$}{*} {\bfseries ch}
+\item 
+\Hypertarget{structquic__conn__st_afb8f72b91d94310d6553428d8b0d5556}\label{structquic__conn__st_afb8f72b91d94310d6553428d8b0d5556} 
+CRYPTO\+\_\+\+MUTEX \texorpdfstring{$\ast$}{*} {\bfseries mutex}
+\item 
+\Hypertarget{structquic__conn__st_adc43b715eebabce71aaafb27defaaaf1}\label{structquic__conn__st_adc43b715eebabce71aaafb27defaaaf1} 
+\mbox{\hyperlink{structquic__xso__st}{QUIC\+\_\+\+XSO}} \texorpdfstring{$\ast$}{*} {\bfseries default\+\_\+xso}
+\item 
+\Hypertarget{structquic__conn__st_a32dd7d32c1fea88a510f9f899208a008}\label{structquic__conn__st_a32dd7d32c1fea88a510f9f899208a008} 
+BIO \texorpdfstring{$\ast$}{*} {\bfseries net\+\_\+rbio}
+\item 
+\Hypertarget{structquic__conn__st_a3b4a93530980e3600d01fbb02ade5206}\label{structquic__conn__st_a3b4a93530980e3600d01fbb02ade5206} 
+BIO \texorpdfstring{$\ast$}{*} {\bfseries net\+\_\+wbio}
+\item 
+\Hypertarget{structquic__conn__st_a495c386ec7e6cfe429617f0d96565f1d}\label{structquic__conn__st_a495c386ec7e6cfe429617f0d96565f1d} 
+BIO\+\_\+\+ADDR {\bfseries init\+\_\+peer\+\_\+addr}
+\item 
+\Hypertarget{structquic__conn__st_ad85cb9d8c0f7138544f6a40716c79275}\label{structquic__conn__st_ad85cb9d8c0f7138544f6a40716c79275} 
+\mbox{\hyperlink{structquic__thread__assist__st}{QUIC\+\_\+\+THREAD\+\_\+\+ASSIST}} {\bfseries thread\+\_\+assist}
+\item 
+\Hypertarget{structquic__conn__st_a6e55c7c9c87b5b0c9e8622ac1233b89b}\label{structquic__conn__st_a6e55c7c9c87b5b0c9e8622ac1233b89b} 
+\mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\+\_\+\+TIME}}(\texorpdfstring{$\ast$}{*} {\bfseries override\+\_\+now\+\_\+cb} )(void \texorpdfstring{$\ast$}{*}arg)
+\item 
+\Hypertarget{structquic__conn__st_a5cc72f9e42866e9dfa70f87453dee602}\label{structquic__conn__st_a5cc72f9e42866e9dfa70f87453dee602} 
+void \texorpdfstring{$\ast$}{*} {\bfseries override\+\_\+now\+\_\+cb\+\_\+arg}
+\item 
+\Hypertarget{structquic__conn__st_a2245d96aaedb4d3860b6219a95bbdb37}\label{structquic__conn__st_a2245d96aaedb4d3860b6219a95bbdb37} 
+size\+\_\+t {\bfseries num\+\_\+xso}
+\item 
+\Hypertarget{structquic__conn__st_ad10f48121698fe7c40d5f4b68d9da7ae}\label{structquic__conn__st_ad10f48121698fe7c40d5f4b68d9da7ae} 
+unsigned int {\bfseries started}\+: 1
+\item 
+\Hypertarget{structquic__conn__st_ac6922ed2c5164ec988f7fc4a02a8d433}\label{structquic__conn__st_ac6922ed2c5164ec988f7fc4a02a8d433} 
+unsigned int {\bfseries as\+\_\+server}\+: 1
+\item 
+\Hypertarget{structquic__conn__st_ab8b397b3100bdaabaa485988c88d7f7e}\label{structquic__conn__st_ab8b397b3100bdaabaa485988c88d7f7e} 
+unsigned int {\bfseries as\+\_\+server\+\_\+state}\+: 1
+\item 
+\Hypertarget{structquic__conn__st_a9ef1d49a6bc184b8e522ef4cb9f2f7e9}\label{structquic__conn__st_a9ef1d49a6bc184b8e522ef4cb9f2f7e9} 
+unsigned int {\bfseries is\+\_\+thread\+\_\+assisted}\+: 1
+\item 
+\Hypertarget{structquic__conn__st_a8e53c453a45eb2370a2f617015004151}\label{structquic__conn__st_a8e53c453a45eb2370a2f617015004151} 
+unsigned int {\bfseries blocking}\+: 1
+\item 
+\Hypertarget{structquic__conn__st_ac22b765453ae9bee656be2a0d05d1950}\label{structquic__conn__st_ac22b765453ae9bee656be2a0d05d1950} 
+unsigned int {\bfseries desires\+\_\+blocking}\+: 1
+\item 
+\Hypertarget{structquic__conn__st_a5eaa74339683291b88e42d4b77ed8a4a}\label{structquic__conn__st_a5eaa74339683291b88e42d4b77ed8a4a} 
+unsigned int {\bfseries default\+\_\+xso\+\_\+created}\+: 1
+\item 
+\Hypertarget{structquic__conn__st_a778719197fb47669a021fe372d14b539}\label{structquic__conn__st_a778719197fb47669a021fe372d14b539} 
+unsigned int {\bfseries shutting\+\_\+down}\+: 1
+\item 
+\Hypertarget{structquic__conn__st_a46c10ed9a93baca0410b5a8fb363dc55}\label{structquic__conn__st_a46c10ed9a93baca0410b5a8fb363dc55} 
+unsigned int {\bfseries addressing\+\_\+probe\+\_\+done}\+: 1
+\item 
+\Hypertarget{structquic__conn__st_aa4519ca3b9f48b0f71e338c2d7594032}\label{structquic__conn__st_aa4519ca3b9f48b0f71e338c2d7594032} 
+unsigned int {\bfseries addressed\+\_\+mode\+\_\+w}\+: 1
+\item 
+\Hypertarget{structquic__conn__st_a82b6461091f2872aad8fc5324ecc6e27}\label{structquic__conn__st_a82b6461091f2872aad8fc5324ecc6e27} 
+unsigned int {\bfseries addressed\+\_\+mode\+\_\+r}\+: 1
+\item 
+\Hypertarget{structquic__conn__st_a10fd8f2511cc4fdf4fb0b6511f0e2076}\label{structquic__conn__st_a10fd8f2511cc4fdf4fb0b6511f0e2076} 
+uint32\+\_\+t {\bfseries default\+\_\+stream\+\_\+mode}
+\item 
+\Hypertarget{structquic__conn__st_aaf3d30d1cb9d3faa8c430e56651614be}\label{structquic__conn__st_aaf3d30d1cb9d3faa8c430e56651614be} 
+uint32\+\_\+t {\bfseries default\+\_\+ssl\+\_\+mode}
+\item 
+\Hypertarget{structquic__conn__st_abe2bfa5ab9aea735bf5e21a44688b49a}\label{structquic__conn__st_abe2bfa5ab9aea735bf5e21a44688b49a} 
+uint64\+\_\+t {\bfseries default\+\_\+ssl\+\_\+options}
+\item 
+\Hypertarget{structquic__conn__st_a106207fefeb0e7026d8447ee22260c90}\label{structquic__conn__st_a106207fefeb0e7026d8447ee22260c90} 
+int {\bfseries incoming\+\_\+stream\+\_\+policy}
+\item 
+\Hypertarget{structquic__conn__st_a15f9a9da46a825b14f3bbfb5642db775}\label{structquic__conn__st_a15f9a9da46a825b14f3bbfb5642db775} 
+uint64\+\_\+t {\bfseries incoming\+\_\+stream\+\_\+aec}
+\item 
+\Hypertarget{structquic__conn__st_a8e77dd3b1aa6a3422950833b2038e965}\label{structquic__conn__st_a8e77dd3b1aa6a3422950833b2038e965} 
+int {\bfseries last\+\_\+error}
+\end{DoxyCompactItemize}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/namph/\+Downloads/openssl/openssl-\/3.\+2.\+1/ssl/quic/quic\+\_\+local.\+h\end{DoxyCompactItemize}

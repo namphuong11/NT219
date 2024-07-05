@@ -1,0 +1,104 @@
+\doxysection{handshake.\+h}
+\hypertarget{handshake_8h_source}{}\label{handshake_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/test/helpers/handshake.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/test/helpers/handshake.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2016-\/2021\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_TEST\_HANDSHAKE\_HELPER\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#define\ OSSL\_TEST\_HANDSHAKE\_HELPER\_H}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ "{}ssl\_test\_ctx.h"{}}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structctx__data__st}{ctx\_data\_st}}\ \{}
+\DoxyCodeLine{00016\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *npn\_protocols;}
+\DoxyCodeLine{00017\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ npn\_protocols\_len;}
+\DoxyCodeLine{00018\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *alpn\_protocols;}
+\DoxyCodeLine{00019\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ alpn\_protocols\_len;}
+\DoxyCodeLine{00020\ \ \ \ \ \textcolor{keywordtype}{char}\ *srp\_user;}
+\DoxyCodeLine{00021\ \ \ \ \ \textcolor{keywordtype}{char}\ *srp\_password;}
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{keywordtype}{char}\ *session\_ticket\_app\_data;}
+\DoxyCodeLine{00023\ \}\ \mbox{\hyperlink{structctx__data__st}{CTX\_DATA}};}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structhandshake__result}{handshake\_result}}\ \{}
+\DoxyCodeLine{00026\ \ \ \ \ ssl\_test\_result\_t\ result;}
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{comment}{/*\ These\ alerts\ are\ in\ the\ 2-\/byte\ format\ returned\ by\ the\ info\_callback.\ */}}
+\DoxyCodeLine{00028\ \ \ \ \ \textcolor{comment}{/*\ (Latest)\ alert\ sent\ by\ the\ client;\ 0\ if\ no\ alert.\ */}}
+\DoxyCodeLine{00029\ \ \ \ \ \textcolor{keywordtype}{int}\ client\_alert\_sent;}
+\DoxyCodeLine{00030\ \ \ \ \ \textcolor{comment}{/*\ Number\ of\ fatal\ or\ close\_notify\ alerts\ sent.\ */}}
+\DoxyCodeLine{00031\ \ \ \ \ \textcolor{keywordtype}{int}\ client\_num\_fatal\_alerts\_sent;}
+\DoxyCodeLine{00032\ \ \ \ \ \textcolor{comment}{/*\ (Latest)\ alert\ received\ by\ the\ server;\ 0\ if\ no\ alert.\ */}}
+\DoxyCodeLine{00033\ \ \ \ \ \textcolor{keywordtype}{int}\ client\_alert\_received;}
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{comment}{/*\ (Latest)\ alert\ sent\ by\ the\ server;\ 0\ if\ no\ alert.\ */}}
+\DoxyCodeLine{00035\ \ \ \ \ \textcolor{keywordtype}{int}\ server\_alert\_sent;}
+\DoxyCodeLine{00036\ \ \ \ \ \textcolor{comment}{/*\ Number\ of\ fatal\ or\ close\_notify\ alerts\ sent.\ */}}
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{keywordtype}{int}\ server\_num\_fatal\_alerts\_sent;}
+\DoxyCodeLine{00038\ \ \ \ \ \textcolor{comment}{/*\ (Latest)\ alert\ received\ by\ the\ client;\ 0\ if\ no\ alert.\ */}}
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keywordtype}{int}\ server\_alert\_received;}
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{comment}{/*\ Negotiated\ protocol.\ On\ success,\ these\ should\ always\ match.\ */}}
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{keywordtype}{int}\ server\_protocol;}
+\DoxyCodeLine{00042\ \ \ \ \ \textcolor{keywordtype}{int}\ client\_protocol;}
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{comment}{/*\ Server\ connection\ */}}
+\DoxyCodeLine{00044\ \ \ \ \ ssl\_servername\_t\ servername;}
+\DoxyCodeLine{00045\ \ \ \ \ \textcolor{comment}{/*\ Session\ ticket\ status\ */}}
+\DoxyCodeLine{00046\ \ \ \ \ ssl\_session\_ticket\_t\ session\_ticket;}
+\DoxyCodeLine{00047\ \ \ \ \ \textcolor{keywordtype}{int}\ compression;}
+\DoxyCodeLine{00048\ \ \ \ \ \textcolor{comment}{/*\ Was\ this\ called\ on\ the\ second\ context?\ */}}
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{keywordtype}{int}\ session\_ticket\_do\_not\_call;}
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{keywordtype}{char}\ *client\_npn\_negotiated;}
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{keywordtype}{char}\ *server\_npn\_negotiated;}
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{keywordtype}{char}\ *client\_alpn\_negotiated;}
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{keywordtype}{char}\ *server\_alpn\_negotiated;}
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{comment}{/*\ Was\ the\ handshake\ resumed?\ */}}
+\DoxyCodeLine{00055\ \ \ \ \ \textcolor{keywordtype}{int}\ client\_resumed;}
+\DoxyCodeLine{00056\ \ \ \ \ \textcolor{keywordtype}{int}\ server\_resumed;}
+\DoxyCodeLine{00057\ \ \ \ \ \textcolor{comment}{/*\ Temporary\ key\ type\ */}}
+\DoxyCodeLine{00058\ \ \ \ \ \textcolor{keywordtype}{int}\ tmp\_key\_type;}
+\DoxyCodeLine{00059\ \ \ \ \ \textcolor{comment}{/*\ server\ certificate\ key\ type\ */}}
+\DoxyCodeLine{00060\ \ \ \ \ \textcolor{keywordtype}{int}\ server\_cert\_type;}
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{comment}{/*\ server\ signing\ hash\ */}}
+\DoxyCodeLine{00062\ \ \ \ \ \textcolor{keywordtype}{int}\ server\_sign\_hash;}
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{comment}{/*\ server\ signature\ type\ */}}
+\DoxyCodeLine{00064\ \ \ \ \ \textcolor{keywordtype}{int}\ server\_sign\_type;}
+\DoxyCodeLine{00065\ \ \ \ \ \textcolor{comment}{/*\ server\ CA\ names\ */}}
+\DoxyCodeLine{00066\ \ \ \ \ STACK\_OF(X509\_NAME)\ *server\_ca\_names;}
+\DoxyCodeLine{00067\ \ \ \ \ \textcolor{comment}{/*\ client\ certificate\ key\ type\ */}}
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{keywordtype}{int}\ client\_cert\_type;}
+\DoxyCodeLine{00069\ \ \ \ \ \textcolor{comment}{/*\ client\ signing\ hash\ */}}
+\DoxyCodeLine{00070\ \ \ \ \ \textcolor{keywordtype}{int}\ client\_sign\_hash;}
+\DoxyCodeLine{00071\ \ \ \ \ \textcolor{comment}{/*\ client\ signature\ type\ */}}
+\DoxyCodeLine{00072\ \ \ \ \ \textcolor{keywordtype}{int}\ client\_sign\_type;}
+\DoxyCodeLine{00073\ \ \ \ \ \textcolor{comment}{/*\ Client\ CA\ names\ */}}
+\DoxyCodeLine{00074\ \ \ \ \ STACK\_OF(X509\_NAME)\ *client\_ca\_names;}
+\DoxyCodeLine{00075\ \ \ \ \ \textcolor{comment}{/*\ Session\ id\ status\ */}}
+\DoxyCodeLine{00076\ \ \ \ \ ssl\_session\_id\_t\ session\_id;}
+\DoxyCodeLine{00077\ \ \ \ \ \textcolor{keywordtype}{char}\ *cipher;}
+\DoxyCodeLine{00078\ \ \ \ \ \textcolor{comment}{/*\ session\ ticket\ application\ data\ */}}
+\DoxyCodeLine{00079\ \ \ \ \ \textcolor{keywordtype}{char}\ *result\_session\_ticket\_app\_data;}
+\DoxyCodeLine{00080\ \}\ \mbox{\hyperlink{structhandshake__result}{HANDSHAKE\_RESULT}};}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00082\ \mbox{\hyperlink{structhandshake__result}{HANDSHAKE\_RESULT}}\ *HANDSHAKE\_RESULT\_new(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00083\ \textcolor{keywordtype}{void}\ HANDSHAKE\_RESULT\_free(\mbox{\hyperlink{structhandshake__result}{HANDSHAKE\_RESULT}}\ *result);}
+\DoxyCodeLine{00084\ }
+\DoxyCodeLine{00085\ \textcolor{comment}{/*\ Do\ a\ handshake\ and\ report\ some\ information\ about\ the\ result.\ */}}
+\DoxyCodeLine{00086\ \mbox{\hyperlink{structhandshake__result}{HANDSHAKE\_RESULT}}\ *do\_handshake(SSL\_CTX\ *server\_ctx,\ SSL\_CTX\ *server2\_ctx,}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ SSL\_CTX\ *client\_ctx,\ SSL\_CTX\ *resume\_server\_ctx,}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ SSL\_CTX\ *resume\_client\_ctx,}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{struct_s_s_l___t_e_s_t___c_t_x}{SSL\_TEST\_CTX}}\ *test\_ctx);}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ \textcolor{keywordtype}{int}\ configure\_handshake\_ctx\_for\_srp(SSL\_CTX\ *server\_ctx,\ SSL\_CTX\ *server2\_ctx,}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ SSL\_CTX\ *client\_ctx,}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{struct_s_s_l___t_e_s_t___e_x_t_r_a___c_o_n_f}{SSL\_TEST\_EXTRA\_CONF}}\ *extra,}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structctx__data__st}{CTX\_DATA}}\ *server\_ctx\_data,}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structctx__data__st}{CTX\_DATA}}\ *server2\_ctx\_data,}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structctx__data__st}{CTX\_DATA}}\ *client\_ctx\_data);}
+\DoxyCodeLine{00097\ }
+\DoxyCodeLine{00098\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{/*\ OSSL\_TEST\_HANDSHAKE\_HELPER\_H\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

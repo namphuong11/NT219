@@ -1,0 +1,57 @@
+\doxysection{param\+\_\+build\+\_\+set.\+h}
+\hypertarget{param__build__set_8h_source}{}\label{param__build__set_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/param\_build\_set.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/param\_build\_set.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2020-\/2022\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_INTERNAL\_PARAM\_BUILD\_SET\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_INTERNAL\_PARAM\_BUILD\_SET\_H}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#\ pragma\ once}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ include\ <openssl/safestack.h>}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#\ include\ <openssl/param\_build.h>}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#\ include\ "{}internal/cryptlib.h"{}}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00019\ \ \ \ \ OSSL\_UNION\_ALIGN;}
+\DoxyCodeLine{00020\ \}\ \mbox{\hyperlink{union_o_s_s_l___p_a_r_a_m___a_l_i_g_n_e_d___b_l_o_c_k}{OSSL\_PARAM\_ALIGNED\_BLOCK}};}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#\ define\ OSSL\_PARAM\_ALIGN\_SIZE\ \ sizeof(OSSL\_PARAM\_ALIGNED\_BLOCK)}}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{keywordtype}{size\_t}\ ossl\_param\_bytes\_to\_blocks(\textcolor{keywordtype}{size\_t}\ bytes);}
+\DoxyCodeLine{00025\ \textcolor{keywordtype}{void}\ ossl\_param\_set\_secure\_block(OSSL\_PARAM\ *last,\ \textcolor{keywordtype}{void}\ *secure\_buffer,}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ secure\_buffer\_sz);}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \textcolor{keywordtype}{int}\ ossl\_param\_build\_set\_int(OSSL\_PARAM\_BLD\ *bld,\ OSSL\_PARAM\ *p,}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *key,\ \textcolor{keywordtype}{int}\ num);}
+\DoxyCodeLine{00030\ \textcolor{keywordtype}{int}\ ossl\_param\_build\_set\_long(OSSL\_PARAM\_BLD\ *bld,\ OSSL\_PARAM\ *p,}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *key,\ \textcolor{keywordtype}{long}\ num);}
+\DoxyCodeLine{00032\ \textcolor{keywordtype}{int}\ ossl\_param\_build\_set\_utf8\_string(OSSL\_PARAM\_BLD\ *bld,\ OSSL\_PARAM\ *p,}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *key,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *buf);}
+\DoxyCodeLine{00034\ \textcolor{keywordtype}{int}\ ossl\_param\_build\_set\_octet\_string(OSSL\_PARAM\_BLD\ *bld,\ OSSL\_PARAM\ *p,}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *key,}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *data,}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ data\_len);}
+\DoxyCodeLine{00038\ \textcolor{keywordtype}{int}\ ossl\_param\_build\_set\_bn(OSSL\_PARAM\_BLD\ *bld,\ OSSL\_PARAM\ *p,}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *key,\ \textcolor{keyword}{const}\ BIGNUM\ *bn);}
+\DoxyCodeLine{00040\ \textcolor{keywordtype}{int}\ ossl\_param\_build\_set\_bn\_pad(OSSL\_PARAM\_BLD\ *bld,\ OSSL\_PARAM\ *p,}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *key,\ \textcolor{keyword}{const}\ BIGNUM\ *bn,\ \ \textcolor{keywordtype}{size\_t}\ sz);}
+\DoxyCodeLine{00042\ \textcolor{keywordtype}{int}\ ossl\_param\_build\_set\_signed\_bn(OSSL\_PARAM\_BLD\ *bld,\ OSSL\_PARAM\ *p,}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *key,\ \textcolor{keyword}{const}\ BIGNUM\ *bn);}
+\DoxyCodeLine{00044\ \textcolor{keywordtype}{int}\ ossl\_param\_build\_set\_signed\_bn\_pad(OSSL\_PARAM\_BLD\ *bld,\ OSSL\_PARAM\ *p,}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *key,\ \textcolor{keyword}{const}\ BIGNUM\ *bn,}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ sz);}
+\DoxyCodeLine{00047\ \textcolor{keywordtype}{int}\ ossl\_param\_build\_set\_multi\_key\_bn(OSSL\_PARAM\_BLD\ *bld,\ OSSL\_PARAM\ *p,}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *names[],}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ STACK\_OF(BIGNUM\_const)\ *stk);}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{/*\ OSSL\_INTERNAL\_PARAM\_BUILD\_SET\_H\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

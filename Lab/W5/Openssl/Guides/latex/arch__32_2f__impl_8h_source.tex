@@ -1,0 +1,66 @@
+\doxysection{f\+\_\+impl.\+h}
+\hypertarget{arch__32_2f__impl_8h_source}{}\label{arch__32_2f__impl_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/ec/curve448/arch\_32/f\_impl.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/ec/curve448/arch\_32/f\_impl.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2017-\/2018\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *\ Copyright\ 2014-\/2016\ Cryptography\ Research,\ Inc.}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ *\ Originally\ written\ by\ Mike\ Hamburg}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#ifndef\ OSSL\_CRYPTO\_EC\_CURVE448\_ARCH\_32\_F\_IMPL\_H}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ define\ OSSL\_CRYPTO\_EC\_CURVE448\_ARCH\_32\_F\_IMPL\_H}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#\ define\ GF\_HEADROOM\ 2}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#\ define\ LIMB(x)\ ((x)\ \&\ ((1\ <<\ 28)\ -\/\ 1)),\ ((x)\ >>\ 28)}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#\ define\ FIELD\_LITERAL(a,\ b,\ c,\ d,\ e,\ f,\ g,\ h)\ \(\backslash\)}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\ \ \ \ \{\{LIMB(a),\ LIMB(b),\ LIMB(c),\ LIMB(d),\ LIMB(e),\ LIMB(f),\ LIMB(g),\ LIMB(h)\}\}}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#\ define\ LIMB\_PLACE\_VALUE(i)\ 28}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{keywordtype}{void}\ gf\_add\_RAW(gf\ out,\ \textcolor{keyword}{const}\ gf\ a,\ \textcolor{keyword}{const}\ gf\ \mbox{\hyperlink{structb}{b}})}
+\DoxyCodeLine{00024\ \{}
+\DoxyCodeLine{00025\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ i;}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ NLIMBS;\ i++)}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ out-\/>limb[i]\ =\ a-\/>limb[i]\ +\ \mbox{\hyperlink{structb}{b}}-\/>limb[i];}
+\DoxyCodeLine{00029\ \}}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \textcolor{keywordtype}{void}\ gf\_sub\_RAW(gf\ out,\ \textcolor{keyword}{const}\ gf\ a,\ \textcolor{keyword}{const}\ gf\ \mbox{\hyperlink{structb}{b}})}
+\DoxyCodeLine{00032\ \{}
+\DoxyCodeLine{00033\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ i;}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ NLIMBS;\ i++)}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ out-\/>limb[i]\ =\ a-\/>limb[i]\ -\/\ \mbox{\hyperlink{structb}{b}}-\/>limb[i];}
+\DoxyCodeLine{00037\ \}}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \textcolor{keywordtype}{void}\ gf\_bias(gf\ a,\ \textcolor{keywordtype}{int}\ amt)}
+\DoxyCodeLine{00040\ \{}
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ i;}
+\DoxyCodeLine{00042\ \ \ \ \ uint32\_t\ co1\ =\ ((1\ <<\ 28)\ -\/\ 1)\ *\ amt,\ co2\ =\ co1\ -\/\ amt;}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ NLIMBS;\ i++)}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ a-\/>limb[i]\ +=\ (i\ ==\ NLIMBS\ /\ 2)\ ?\ co2\ :\ co1;}
+\DoxyCodeLine{00046\ \}}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \textcolor{keywordtype}{void}\ gf\_weak\_reduce(gf\ a)}
+\DoxyCodeLine{00049\ \{}
+\DoxyCodeLine{00050\ \ \ \ \ uint32\_t\ mask\ =\ (1\ <<\ 28)\ -\/\ 1;}
+\DoxyCodeLine{00051\ \ \ \ \ uint32\_t\ tmp\ =\ a-\/>limb[NLIMBS\ -\/\ 1]\ >>\ 28;}
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ i;}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \ \ \ \ a-\/>limb[NLIMBS\ /\ 2]\ +=\ tmp;}
+\DoxyCodeLine{00055\ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ NLIMBS\ -\/\ 1;\ i\ >\ 0;\ i-\/-\/)}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ a-\/>limb[i]\ =\ (a-\/>limb[i]\ \&\ mask)\ +\ (a-\/>limb[i\ -\/\ 1]\ >>\ 28);}
+\DoxyCodeLine{00057\ \ \ \ \ a-\/>limb[0]\ =\ (a-\/>limb[0]\ \&\ mask)\ +\ tmp;}
+\DoxyCodeLine{00058\ \}}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ \textcolor{preprocessor}{\#endif\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{/*\ OSSL\_CRYPTO\_EC\_CURVE448\_ARCH\_32\_F\_IMPL\_H\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

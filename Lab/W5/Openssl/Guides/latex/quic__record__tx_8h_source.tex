@@ -1,0 +1,389 @@
+\doxysection{quic\+\_\+record\+\_\+tx.\+h}
+\hypertarget{quic__record__tx_8h_source}{}\label{quic__record__tx_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/quic\_record\_tx.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/quic\_record\_tx.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2022-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_QUIC\_RECORD\_TX\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_QUIC\_RECORD\_TX\_H}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#\ include\ <openssl/ssl.h>}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ include\ "{}internal/quic\_wire\_pkt.h"{}}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#\ include\ "{}internal/quic\_types.h"{}}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#\ include\ "{}internal/quic\_record\_util.h"{}}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#\ ifndef\ OPENSSL\_NO\_QUIC}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00021\ \textcolor{comment}{\ *\ QUIC\ Record\ Layer\ -\/\ TX}}
+\DoxyCodeLine{00022\ \textcolor{comment}{\ *\ ======================}}
+\DoxyCodeLine{00023\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00024\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__qtx__iovec__st}{ossl\_qtx\_iovec\_st}}\ \{}
+\DoxyCodeLine{00025\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \ \ \ *buf;}
+\DoxyCodeLine{00026\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ buf\_len;}
+\DoxyCodeLine{00027\ \}\ \mbox{\hyperlink{structossl__qtx__iovec__st}{OSSL\_QTX\_IOVEC}};}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__qtx__st}{ossl\_qtx\_st}}\ \mbox{\hyperlink{structossl__qtx__st}{OSSL\_QTX}};}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \textcolor{keyword}{typedef}\ int\ (*ossl\_mutate\_packet\_cb)(\textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__pkt__hdr__st}{QUIC\_PKT\_HDR}}\ *hdrin,}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structossl__qtx__iovec__st}{OSSL\_QTX\_IOVEC}}\ *iovecin,\ \textcolor{keywordtype}{size\_t}\ numin,}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structquic__pkt__hdr__st}{QUIC\_PKT\_HDR}}\ **hdrout,}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structossl__qtx__iovec__st}{OSSL\_QTX\_IOVEC}}\ **iovecout,}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ *numout,}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *arg);}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \textcolor{keyword}{typedef}\ void\ (*ossl\_finish\_mutate\_cb)(\textcolor{keywordtype}{void}\ *arg);}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__qtx__args__st}{ossl\_qtx\_args\_st}}\ \{}
+\DoxyCodeLine{00041\ \ \ \ \ OSSL\_LIB\_CTX\ \ \ *libctx;}
+\DoxyCodeLine{00042\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ \ \ \ \ *propq;}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ \ \ \ \ \textcolor{comment}{/*\ BIO\ to\ transmit\ to.\ */}}
+\DoxyCodeLine{00045\ \ \ \ \ BIO\ \ \ \ \ \ \ \ \ \ \ \ *bio;}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \ \ \ \ \textcolor{comment}{/*\ Maximum\ datagram\ payload\ length\ (MDPL)\ for\ TX\ purposes.\ */}}
+\DoxyCodeLine{00048\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \ \ \ \ \ \ \ \ \ mdpl;}
+\DoxyCodeLine{00049\ \}\ \mbox{\hyperlink{structossl__qtx__args__st}{OSSL\_QTX\_ARGS}};}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \textcolor{comment}{/*\ Instantiates\ a\ new\ QTX.\ */}}
+\DoxyCodeLine{00052\ \mbox{\hyperlink{structossl__qtx__st}{OSSL\_QTX}}\ *ossl\_qtx\_new(\textcolor{keyword}{const}\ \mbox{\hyperlink{structossl__qtx__args__st}{OSSL\_QTX\_ARGS}}\ *args);}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \textcolor{comment}{/*\ Frees\ the\ QTX.\ */}}
+\DoxyCodeLine{00055\ \textcolor{keywordtype}{void}\ ossl\_qtx\_free(\mbox{\hyperlink{structossl__qtx__st}{OSSL\_QTX}}\ *qtx);}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \textcolor{comment}{/*\ Set\ mutator\ callbacks\ for\ test\ framework\ support\ */}}
+\DoxyCodeLine{00058\ \textcolor{keywordtype}{void}\ ossl\_qtx\_set\_mutator(\mbox{\hyperlink{structossl__qtx__st}{OSSL\_QTX}}\ *qtx,\ ossl\_mutate\_packet\_cb\ mutatecb,}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ossl\_finish\_mutate\_cb\ finishmutatecb,\ \textcolor{keywordtype}{void}\ *mutatearg);}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ \textcolor{comment}{/*\ Setters\ for\ the\ msg\_callback\ and\ the\ msg\_callback\_arg\ */}}
+\DoxyCodeLine{00062\ \textcolor{keywordtype}{void}\ ossl\_qtx\_set\_msg\_callback(\mbox{\hyperlink{structossl__qtx__st}{OSSL\_QTX}}\ *qtx,\ ossl\_msg\_cb\ msg\_callback,}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ SSL\ *msg\_callback\_ssl);}
+\DoxyCodeLine{00064\ \textcolor{keywordtype}{void}\ ossl\_qtx\_set\_msg\_callback\_arg(\mbox{\hyperlink{structossl__qtx__st}{OSSL\_QTX}}\ *qtx,\ \textcolor{keywordtype}{void}\ *msg\_callback\_arg);}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00067\ \textcolor{comment}{\ *\ Secret\ Management}}
+\DoxyCodeLine{00068\ \textcolor{comment}{\ *\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00069\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00071\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00072\ \textcolor{comment}{\ *\ Provides\ a\ secret\ to\ the\ QTX,\ which\ arises\ due\ to\ an\ encryption\ level\ change.}}
+\DoxyCodeLine{00073\ \textcolor{comment}{\ *\ enc\_level\ is\ a\ QUIC\_ENC\_LEVEL\_*\ value.}}
+\DoxyCodeLine{00074\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00075\ \textcolor{comment}{\ *\ This\ function\ can\ be\ used\ to\ initialise\ the\ INITIAL\ encryption\ level,\ but\ you}}
+\DoxyCodeLine{00076\ \textcolor{comment}{\ *\ should\ not\ do\ so\ directly;\ see\ the\ utility\ function}}
+\DoxyCodeLine{00077\ \textcolor{comment}{\ *\ ossl\_qrl\_provide\_initial\_secret()\ instead,\ which\ can\ initialise\ the\ INITIAL}}
+\DoxyCodeLine{00078\ \textcolor{comment}{\ *\ encryption\ level\ of\ a\ QRX\ and\ QTX\ simultaneously\ without\ duplicating\ certain}}
+\DoxyCodeLine{00079\ \textcolor{comment}{\ *\ key\ derivation\ steps.}}
+\DoxyCodeLine{00080\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00081\ \textcolor{comment}{\ *\ You\ must\ call\ this\ function\ for\ a\ given\ EL\ before\ transmitting\ packets\ at}}
+\DoxyCodeLine{00082\ \textcolor{comment}{\ *\ that\ EL\ using\ this\ QTX,\ otherwise\ ossl\_qtx\_write\_pkt\ will\ fail.}}
+\DoxyCodeLine{00083\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00084\ \textcolor{comment}{\ *\ suite\_id\ is\ a\ QRL\_SUITE\_*\ value\ which\ determines\ the\ AEAD\ function\ used\ for}}
+\DoxyCodeLine{00085\ \textcolor{comment}{\ *\ the\ QTX.}}
+\DoxyCodeLine{00086\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00087\ \textcolor{comment}{\ *\ The\ secret\ passed\ is\ used\ directly\ to\ derive\ the\ "{}quic\ key"{},\ "{}quic\ iv"{}\ and}}
+\DoxyCodeLine{00088\ \textcolor{comment}{\ *\ "{}quic\ hp"{}\ values.}}
+\DoxyCodeLine{00089\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00090\ \textcolor{comment}{\ *\ secret\_len\ is\ the\ length\ of\ the\ secret\ buffer\ in\ bytes.\ The\ buffer\ must\ be}}
+\DoxyCodeLine{00091\ \textcolor{comment}{\ *\ sized\ correctly\ to\ the\ chosen\ suite,\ else\ the\ function\ fails.}}
+\DoxyCodeLine{00092\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00093\ \textcolor{comment}{\ *\ This\ function\ can\ only\ be\ called\ once\ for\ a\ given\ EL,\ except\ for\ the\ INITIAL}}
+\DoxyCodeLine{00094\ \textcolor{comment}{\ *\ EL,\ as\ the\ INITIAL\ EL\ can\ need\ to\ be\ rekeyed\ if\ connection\ retry\ occurs.}}
+\DoxyCodeLine{00095\ \textcolor{comment}{\ *\ Subsequent\ calls\ for\ non-\/INITIAL\ ELs\ fail.\ Calls\ made\ after\ a\ corresponding}}
+\DoxyCodeLine{00096\ \textcolor{comment}{\ *\ call\ to\ ossl\_qtx\_discard\_enc\_level\ for\ a\ given\ EL\ also\ fail,\ including\ for}}
+\DoxyCodeLine{00097\ \textcolor{comment}{\ *\ the\ INITIAL\ EL.\ The\ secret\ for\ a\ non-\/INITIAL\ EL\ cannot\ be\ changed\ after\ it\ is}}
+\DoxyCodeLine{00098\ \textcolor{comment}{\ *\ set\ because\ QUIC\ has\ no\ facility\ for\ introducing\ additional\ key\ material}}
+\DoxyCodeLine{00099\ \textcolor{comment}{\ *\ after\ an\ EL\ is\ setup.\ (QUIC\ key\ updates\ generate\ new\ keys\ from\ existing\ key}}
+\DoxyCodeLine{00100\ \textcolor{comment}{\ *\ material\ and\ do\ not\ introduce\ new\ entropy\ into\ a\ connection's\ key\ material.)}}
+\DoxyCodeLine{00101\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00102\ \textcolor{comment}{\ *\ Returns\ 1\ on\ success\ or\ 0\ on\ failure.}}
+\DoxyCodeLine{00103\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00104\ \textcolor{keywordtype}{int}\ ossl\_qtx\_provide\_secret(\mbox{\hyperlink{structossl__qtx__st}{OSSL\_QTX}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ *qtx,}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ enc\_level,}
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ suite\_id,}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ EVP\_MD\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *md,}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \ \ *secret,}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ secret\_len);}
+\DoxyCodeLine{00110\ }
+\DoxyCodeLine{00111\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00112\ \textcolor{comment}{\ *\ Informs\ the\ QTX\ that\ it\ can\ now\ discard\ key\ material\ for\ a\ given\ EL.\ The\ QTX}}
+\DoxyCodeLine{00113\ \textcolor{comment}{\ *\ will\ no\ longer\ be\ able\ to\ generate\ packets\ at\ that\ EL.\ This\ function\ is}}
+\DoxyCodeLine{00114\ \textcolor{comment}{\ *\ idempotent\ and\ succeeds\ if\ the\ EL\ has\ already\ been\ discarded.}}
+\DoxyCodeLine{00115\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00116\ \textcolor{comment}{\ *\ Returns\ 1\ on\ success\ and\ 0\ on\ failure.}}
+\DoxyCodeLine{00117\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00118\ \textcolor{keywordtype}{int}\ ossl\_qtx\_discard\_enc\_level(\mbox{\hyperlink{structossl__qtx__st}{OSSL\_QTX}}\ *qtx,\ uint32\_t\ enc\_level);}
+\DoxyCodeLine{00119\ }
+\DoxyCodeLine{00120\ \textcolor{comment}{/*\ Returns\ 1\ if\ the\ given\ encryption\ level\ is\ provisioned.\ */}}
+\DoxyCodeLine{00121\ \textcolor{keywordtype}{int}\ ossl\_qtx\_is\_enc\_level\_provisioned(\mbox{\hyperlink{structossl__qtx__st}{OSSL\_QTX}}\ *qtx,\ uint32\_t\ enc\_level);}
+\DoxyCodeLine{00122\ }
+\DoxyCodeLine{00123\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00124\ \textcolor{comment}{\ *\ Given\ the\ value\ ciphertext\_len\ representing\ an\ encrypted\ packet\ payload}}
+\DoxyCodeLine{00125\ \textcolor{comment}{\ *\ length\ in\ bytes,\ determines\ how\ many\ plaintext\ bytes\ it\ will\ decrypt\ to.}}
+\DoxyCodeLine{00126\ \textcolor{comment}{\ *\ Returns\ 0\ if\ the\ specified\ EL\ is\ not\ provisioned\ or\ ciphertext\_len\ is\ too}}
+\DoxyCodeLine{00127\ \textcolor{comment}{\ *\ small.\ The\ result\ is\ written\ to\ *plaintext\_len.}}
+\DoxyCodeLine{00128\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00129\ \textcolor{keywordtype}{int}\ ossl\_qtx\_calculate\_plaintext\_payload\_len(\mbox{\hyperlink{structossl__qtx__st}{OSSL\_QTX}}\ *qtx,\ uint32\_t\ enc\_level,}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ ciphertext\_len,}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ *plaintext\_len);}
+\DoxyCodeLine{00132\ }
+\DoxyCodeLine{00133\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00134\ \textcolor{comment}{\ *\ Given\ the\ value\ plaintext\_len\ represented\ a\ plaintext\ packet\ payload\ length}}
+\DoxyCodeLine{00135\ \textcolor{comment}{\ *\ in\ bytes,\ determines\ how\ many\ ciphertext\ bytes\ it\ will\ encrypt\ to.\ The\ value}}
+\DoxyCodeLine{00136\ \textcolor{comment}{\ *\ output\ does\ not\ include\ packet\ headers.\ Returns\ 0\ if\ the\ specified\ EL\ is\ not}}
+\DoxyCodeLine{00137\ \textcolor{comment}{\ *\ provisioned.\ The\ result\ is\ written\ to\ *ciphertext\_len.}}
+\DoxyCodeLine{00138\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00139\ \textcolor{keywordtype}{int}\ ossl\_qtx\_calculate\_ciphertext\_payload\_len(\mbox{\hyperlink{structossl__qtx__st}{OSSL\_QTX}}\ *qtx,\ uint32\_t\ enc\_level,}
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ plaintext\_len,}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ *ciphertext\_len);}
+\DoxyCodeLine{00142\ }
+\DoxyCodeLine{00143\ uint32\_t\ ossl\_qrl\_get\_suite\_cipher\_tag\_len(uint32\_t\ suite\_id);}
+\DoxyCodeLine{00144\ }
+\DoxyCodeLine{00145\ }
+\DoxyCodeLine{00146\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00147\ \textcolor{comment}{\ *\ Packet\ Transmission}}
+\DoxyCodeLine{00148\ \textcolor{comment}{\ *\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00149\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00150\ }
+\DoxyCodeLine{00151\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__qtx__pkt__st}{ossl\_qtx\_pkt\_st}}\ \{}
+\DoxyCodeLine{00152\ \ \ \ \ \textcolor{comment}{/*\ Logical\ packet\ header\ to\ be\ serialized.\ */}}
+\DoxyCodeLine{00153\ \ \ \ \ \mbox{\hyperlink{structquic__pkt__hdr__st}{QUIC\_PKT\_HDR}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *hdr;}
+\DoxyCodeLine{00154\ }
+\DoxyCodeLine{00155\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00156\ \textcolor{comment}{\ \ \ \ \ *\ iovecs\ expressing\ the\ logical\ packet\ payload\ buffer.\ Zero-\/length\ entries}}
+\DoxyCodeLine{00157\ \textcolor{comment}{\ \ \ \ \ *\ are\ permitted.}}
+\DoxyCodeLine{00158\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00159\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structossl__qtx__iovec__st}{OSSL\_QTX\_IOVEC}}\ \ \ \ \ \ \ *iovec;}
+\DoxyCodeLine{00160\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ num\_iovec;}
+\DoxyCodeLine{00161\ }
+\DoxyCodeLine{00162\ \ \ \ \ \textcolor{comment}{/*\ Destination\ address.\ Will\ be\ passed\ through\ to\ the\ BIO\ if\ non-\/NULL.\ */}}
+\DoxyCodeLine{00163\ \ \ \ \ \textcolor{keyword}{const}\ BIO\_ADDR\ \ \ \ \ \ \ \ \ \ \ \ \ *peer;}
+\DoxyCodeLine{00164\ }
+\DoxyCodeLine{00165\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00166\ \textcolor{comment}{\ \ \ \ \ *\ Local\ address\ (optional).\ Specify\ as\ non-\/NULL\ only\ if\ TX\ BIO}}
+\DoxyCodeLine{00167\ \textcolor{comment}{\ \ \ \ \ *\ has\ local\ address\ support\ enabled.}}
+\DoxyCodeLine{00168\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00169\ \ \ \ \ \textcolor{keyword}{const}\ BIO\_ADDR\ \ \ \ \ \ \ \ \ \ \ \ \ *local;}
+\DoxyCodeLine{00170\ }
+\DoxyCodeLine{00171\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00172\ \textcolor{comment}{\ \ \ \ \ *\ Logical\ PN.\ Used\ for\ encryption.\ This\ will\ automatically\ be\ encoded\ to}}
+\DoxyCodeLine{00173\ \textcolor{comment}{\ \ \ \ \ *\ hdr-\/>pn,\ which\ need\ not\ be\ initialized.}}
+\DoxyCodeLine{00174\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00175\ \ \ \ \ QUIC\_PN\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pn;}
+\DoxyCodeLine{00176\ }
+\DoxyCodeLine{00177\ \ \ \ \ \textcolor{comment}{/*\ Packet\ flags.\ Zero\ or\ more\ OSSL\_QTX\_PKT\_FLAG\_*\ values.\ */}}
+\DoxyCodeLine{00178\ \ \ \ \ uint32\_t\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ flags;}
+\DoxyCodeLine{00179\ \}\ \mbox{\hyperlink{structossl__qtx__pkt__st}{OSSL\_QTX\_PKT}};}
+\DoxyCodeLine{00180\ }
+\DoxyCodeLine{00181\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00182\ \textcolor{comment}{\ *\ More\ packets\ will\ be\ written\ which\ should\ be\ coalesced\ into\ a\ single}}
+\DoxyCodeLine{00183\ \textcolor{comment}{\ *\ datagram;\ do\ not\ send\ this\ packet\ yet.\ To\ use\ this,\ set\ this\ flag\ for\ all}}
+\DoxyCodeLine{00184\ \textcolor{comment}{\ *\ packets\ but\ the\ final\ packet\ in\ a\ datagram,\ then\ send\ the\ final\ packet}}
+\DoxyCodeLine{00185\ \textcolor{comment}{\ *\ without\ this\ flag\ set.}}
+\DoxyCodeLine{00186\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00187\ \textcolor{comment}{\ *\ This\ flag\ is\ not\ a\ guarantee\ and\ the\ QTX\ may\ transmit\ immediately\ anyway\ if}}
+\DoxyCodeLine{00188\ \textcolor{comment}{\ *\ it\ is\ not\ possible\ to\ fit\ any\ more\ packets\ in\ the\ current\ datagram.}}
+\DoxyCodeLine{00189\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00190\ \textcolor{comment}{\ *\ If\ the\ caller\ change\ its\ mind\ and\ needs\ to\ cause\ a\ packet\ queued\ with}}
+\DoxyCodeLine{00191\ \textcolor{comment}{\ *\ COALESCE\ after\ having\ passed\ it\ to\ this\ function\ but\ without\ writing\ another}}
+\DoxyCodeLine{00192\ \textcolor{comment}{\ *\ packet,\ it\ should\ call\ ossl\_qtx\_flush\_pkt().}}
+\DoxyCodeLine{00193\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00194\ \textcolor{preprocessor}{\#define\ OSSL\_QTX\_PKT\_FLAG\_COALESCE\ \ \ \ \ \ \ (1U\ <<\ 0)}}
+\DoxyCodeLine{00195\ }
+\DoxyCodeLine{00196\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00197\ \textcolor{comment}{\ *\ Writes\ a\ packet.}}
+\DoxyCodeLine{00198\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00199\ \textcolor{comment}{\ *\ *pkt\ need\ be\ valid\ only\ for\ the\ duration\ of\ the\ call\ to\ this\ function.}}
+\DoxyCodeLine{00200\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00201\ \textcolor{comment}{\ *\ pkt-\/>hdr-\/>data\ and\ pkt-\/>hdr-\/>len\ are\ unused.\ The\ payload\ buffer\ is\ specified}}
+\DoxyCodeLine{00202\ \textcolor{comment}{\ *\ via\ an\ array\ of\ OSSL\_QTX\_IOVEC\ structures.\ The\ API\ is\ designed\ to\ support}}
+\DoxyCodeLine{00203\ \textcolor{comment}{\ *\ single-\/copy\ transmission;\ data\ is\ copied\ from\ the\ iovecs\ as\ it\ is\ encrypted}}
+\DoxyCodeLine{00204\ \textcolor{comment}{\ *\ into\ an\ internal\ staging\ buffer\ for\ transmission.}}
+\DoxyCodeLine{00205\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00206\ \textcolor{comment}{\ *\ The\ function\ may\ modify\ and\ clobber\ pkt-\/>hdr-\/>data,\ pkt-\/>hdr-\/>len,}}
+\DoxyCodeLine{00207\ \textcolor{comment}{\ *\ pkt-\/>hdr-\/>key\_phase\ and\ pkt-\/>hdr-\/>pn\ for\ its\ own\ internal\ use.\ No\ other}}
+\DoxyCodeLine{00208\ \textcolor{comment}{\ *\ fields\ of\ pkt\ or\ pkt-\/>hdr\ will\ be\ modified.}}
+\DoxyCodeLine{00209\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00210\ \textcolor{comment}{\ *\ It\ is\ the\ callers\ responsibility\ to\ determine\ how\ long\ the\ PN\ field\ in\ the}}
+\DoxyCodeLine{00211\ \textcolor{comment}{\ *\ encoded\ packet\ should\ be\ by\ setting\ pkt-\/>hdr-\/>pn\_len.\ This\ function\ takes}}
+\DoxyCodeLine{00212\ \textcolor{comment}{\ *\ care\ of\ the\ PN\ encoding.\ Set\ pkt-\/>pn\ to\ the\ desired\ PN.}}
+\DoxyCodeLine{00213\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00214\ \textcolor{comment}{\ *\ Note\ that\ 1-\/RTT\ packets\ do\ not\ have\ a\ DCID\ Length\ field,\ therefore\ the\ DCID}}
+\DoxyCodeLine{00215\ \textcolor{comment}{\ *\ length\ must\ be\ understood\ contextually.\ This\ function\ assumes\ the\ caller}}
+\DoxyCodeLine{00216\ \textcolor{comment}{\ *\ knows\ what\ it\ is\ doing\ and\ will\ serialize\ a\ DCID\ of\ whatever\ length\ is\ given.}}
+\DoxyCodeLine{00217\ \textcolor{comment}{\ *\ It\ is\ the\ caller's\ responsibility\ to\ ensure\ it\ uses\ a\ consistent\ DCID\ length}}
+\DoxyCodeLine{00218\ \textcolor{comment}{\ *\ for\ communication\ with\ any\ given\ set\ of\ remote\ peers.}}
+\DoxyCodeLine{00219\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00220\ \textcolor{comment}{\ *\ The\ packet\ is\ queued\ regardless\ of\ whether\ it\ is\ able\ to\ be\ sent\ immediately.}}
+\DoxyCodeLine{00221\ \textcolor{comment}{\ *\ This\ enables\ packets\ to\ be\ batched\ and\ sent\ at\ once\ on\ systems\ which\ support}}
+\DoxyCodeLine{00222\ \textcolor{comment}{\ *\ system\ calls\ to\ send\ multiple\ datagrams\ in\ a\ single\ system\ call\ (see}}
+\DoxyCodeLine{00223\ \textcolor{comment}{\ *\ BIO\_sendmmsg).\ To\ flush\ queued\ datagrams\ to\ the\ network,\ see}}
+\DoxyCodeLine{00224\ \textcolor{comment}{\ *\ ossl\_qtx\_flush\_net().}}
+\DoxyCodeLine{00225\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00226\ \textcolor{comment}{\ *\ Returns\ 1\ on\ success\ or\ 0\ on\ failure.}}
+\DoxyCodeLine{00227\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00228\ \textcolor{keywordtype}{int}\ ossl\_qtx\_write\_pkt(\mbox{\hyperlink{structossl__qtx__st}{OSSL\_QTX}}\ *qtx,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structossl__qtx__pkt__st}{OSSL\_QTX\_PKT}}\ *pkt);}
+\DoxyCodeLine{00229\ }
+\DoxyCodeLine{00230\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00231\ \textcolor{comment}{\ *\ Finish\ any\ incomplete\ datagrams\ for\ transmission\ which\ were\ flagged\ for}}
+\DoxyCodeLine{00232\ \textcolor{comment}{\ *\ coalescing.\ If\ there\ is\ no\ current\ coalescing\ datagram,\ this\ is\ a\ no-\/op.}}
+\DoxyCodeLine{00233\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00234\ \textcolor{keywordtype}{void}\ ossl\_qtx\_finish\_dgram(\mbox{\hyperlink{structossl__qtx__st}{OSSL\_QTX}}\ *qtx);}
+\DoxyCodeLine{00235\ }
+\DoxyCodeLine{00236\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00237\ \textcolor{comment}{\ *\ (Attempt\ to)\ flush\ any\ datagrams\ which\ are\ queued\ for\ transmission.\ Note\ that}}
+\DoxyCodeLine{00238\ \textcolor{comment}{\ *\ this\ does\ not\ cancel\ coalescing;\ call\ ossl\_qtx\_finish\_dgram()\ first\ if\ that}}
+\DoxyCodeLine{00239\ \textcolor{comment}{\ *\ is\ desired.\ The\ queue\ is\ drained\ into\ the\ OS's\ sockets\ as\ much\ as\ possible.}}
+\DoxyCodeLine{00240\ \textcolor{comment}{\ *\ To\ determine\ if\ there\ is\ still\ data\ to\ be\ sent\ after\ calling\ this\ function,}}
+\DoxyCodeLine{00241\ \textcolor{comment}{\ *\ use\ ossl\_qtx\_get\_queue\_len\_bytes().}}
+\DoxyCodeLine{00242\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00243\ \textcolor{comment}{\ *\ Returns\ one\ of\ the\ following\ values:}}
+\DoxyCodeLine{00244\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00245\ \textcolor{comment}{\ *\ \ \ QTX\_FLUSH\_NET\_RES\_OK}}
+\DoxyCodeLine{00246\ \textcolor{comment}{\ *\ \ \ \ \ \ Either\ no\ packets\ are\ currently\ queued\ for\ transmission,}}
+\DoxyCodeLine{00247\ \textcolor{comment}{\ *\ \ \ \ \ \ or\ at\ least\ one\ packet\ was\ successfully\ submitted.}}
+\DoxyCodeLine{00248\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00249\ \textcolor{comment}{\ *\ \ \ QTX\_FLUSH\_NET\_RES\_TRANSIENT\_FAIL}}
+\DoxyCodeLine{00250\ \textcolor{comment}{\ *\ \ \ \ \ \ The\ underlying\ network\ write\ BIO\ indicated\ a\ transient\ error}}
+\DoxyCodeLine{00251\ \textcolor{comment}{\ *\ \ \ \ \ \ (e.g.\ buffers\ full).}}
+\DoxyCodeLine{00252\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00253\ \textcolor{comment}{\ *\ \ \ QTX\_FLUSH\_NET\_RES\_PERMANENT\_FAIL}}
+\DoxyCodeLine{00254\ \textcolor{comment}{\ *\ \ \ \ \ \ Internal\ error\ (e.g.\ assertion\ or\ allocation\ error)}}
+\DoxyCodeLine{00255\ \textcolor{comment}{\ *\ \ \ \ \ \ or\ the\ underlying\ network\ write\ BIO\ indicated\ a\ non-\/transient}}
+\DoxyCodeLine{00256\ \textcolor{comment}{\ *\ \ \ \ \ \ error.}}
+\DoxyCodeLine{00257\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00258\ \textcolor{preprocessor}{\#define\ QTX\_FLUSH\_NET\_RES\_OK\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 1}}
+\DoxyCodeLine{00259\ \textcolor{preprocessor}{\#define\ QTX\_FLUSH\_NET\_RES\_TRANSIENT\_FAIL\ \ \ \ (-\/1)}}
+\DoxyCodeLine{00260\ \textcolor{preprocessor}{\#define\ QTX\_FLUSH\_NET\_RES\_PERMANENT\_FAIL\ \ \ \ (-\/2)}}
+\DoxyCodeLine{00261\ }
+\DoxyCodeLine{00262\ \textcolor{keywordtype}{int}\ ossl\_qtx\_flush\_net(\mbox{\hyperlink{structossl__qtx__st}{OSSL\_QTX}}\ *qtx);}
+\DoxyCodeLine{00263\ }
+\DoxyCodeLine{00264\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00265\ \textcolor{comment}{\ *\ Diagnostic\ function.\ If\ there\ is\ any\ datagram\ pending\ transmission,\ pops\ it}}
+\DoxyCodeLine{00266\ \textcolor{comment}{\ *\ and\ writes\ the\ details\ of\ the\ datagram\ as\ they\ would\ have\ been\ passed\ to}}
+\DoxyCodeLine{00267\ \textcolor{comment}{\ *\ *msg.\ Returns\ 1,\ or\ 0\ if\ there\ are\ no\ datagrams\ pending.\ For\ test\ use\ only.}}
+\DoxyCodeLine{00268\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00269\ \textcolor{keywordtype}{int}\ ossl\_qtx\_pop\_net(\mbox{\hyperlink{structossl__qtx__st}{OSSL\_QTX}}\ *qtx,\ BIO\_MSG\ *msg);}
+\DoxyCodeLine{00270\ }
+\DoxyCodeLine{00271\ \textcolor{comment}{/*\ Returns\ number\ of\ datagrams\ which\ are\ fully-\/formed\ but\ not\ yet\ sent.\ */}}
+\DoxyCodeLine{00272\ \textcolor{keywordtype}{size\_t}\ ossl\_qtx\_get\_queue\_len\_datagrams(\mbox{\hyperlink{structossl__qtx__st}{OSSL\_QTX}}\ *qtx);}
+\DoxyCodeLine{00273\ }
+\DoxyCodeLine{00274\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00275\ \textcolor{comment}{\ *\ Returns\ number\ of\ payload\ bytes\ across\ all\ datagrams\ which\ are\ fully-\/formed}}
+\DoxyCodeLine{00276\ \textcolor{comment}{\ *\ but\ not\ yet\ sent.\ Does\ not\ count\ any\ incomplete\ coalescing\ datagram.}}
+\DoxyCodeLine{00277\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00278\ \textcolor{keywordtype}{size\_t}\ ossl\_qtx\_get\_queue\_len\_bytes(\mbox{\hyperlink{structossl__qtx__st}{OSSL\_QTX}}\ *qtx);}
+\DoxyCodeLine{00279\ }
+\DoxyCodeLine{00280\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00281\ \textcolor{comment}{\ *\ Returns\ number\ of\ bytes\ in\ the\ current\ coalescing\ datagram,\ or\ 0\ if\ there\ is}}
+\DoxyCodeLine{00282\ \textcolor{comment}{\ *\ no\ current\ coalescing\ datagram.\ Returns\ 0\ after\ a\ call\ to}}
+\DoxyCodeLine{00283\ \textcolor{comment}{\ *\ ossl\_qtx\_finish\_dgram().}}
+\DoxyCodeLine{00284\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00285\ \textcolor{keywordtype}{size\_t}\ ossl\_qtx\_get\_cur\_dgram\_len\_bytes(\mbox{\hyperlink{structossl__qtx__st}{OSSL\_QTX}}\ *qtx);}
+\DoxyCodeLine{00286\ }
+\DoxyCodeLine{00287\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00288\ \textcolor{comment}{\ *\ Returns\ number\ of\ queued\ coalesced\ packets\ which\ have\ not\ been\ put\ into\ a}}
+\DoxyCodeLine{00289\ \textcolor{comment}{\ *\ datagram\ yet.\ If\ this\ is\ non-\/zero,\ ossl\_qtx\_flush\_pkt()\ needs\ to\ be\ called.}}
+\DoxyCodeLine{00290\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00291\ \textcolor{keywordtype}{size\_t}\ ossl\_qtx\_get\_unflushed\_pkt\_count(\mbox{\hyperlink{structossl__qtx__st}{OSSL\_QTX}}\ *qtx);}
+\DoxyCodeLine{00292\ }
+\DoxyCodeLine{00293\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00294\ \textcolor{comment}{\ *\ Change\ the\ BIO\ being\ used\ by\ the\ QTX.\ May\ be\ NULL\ if\ actual\ transmission\ is}}
+\DoxyCodeLine{00295\ \textcolor{comment}{\ *\ not\ currently\ required.\ Does\ not\ up-\/ref\ the\ BIO;\ the\ caller\ is\ responsible}}
+\DoxyCodeLine{00296\ \textcolor{comment}{\ *\ for\ ensuring\ the\ lifetime\ of\ the\ BIO\ exceeds\ the\ lifetime\ of\ the\ QTX.}}
+\DoxyCodeLine{00297\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00298\ \textcolor{keywordtype}{void}\ ossl\_qtx\_set\_bio(\mbox{\hyperlink{structossl__qtx__st}{OSSL\_QTX}}\ *qtx,\ BIO\ *bio);}
+\DoxyCodeLine{00299\ }
+\DoxyCodeLine{00300\ \textcolor{comment}{/*\ Changes\ the\ MDPL.\ */}}
+\DoxyCodeLine{00301\ \textcolor{keywordtype}{int}\ ossl\_qtx\_set\_mdpl(\mbox{\hyperlink{structossl__qtx__st}{OSSL\_QTX}}\ *qtx,\ \textcolor{keywordtype}{size\_t}\ mdpl);}
+\DoxyCodeLine{00302\ }
+\DoxyCodeLine{00303\ \textcolor{comment}{/*\ Retrieves\ the\ current\ MDPL.\ */}}
+\DoxyCodeLine{00304\ \textcolor{keywordtype}{size\_t}\ ossl\_qtx\_get\_mdpl(\mbox{\hyperlink{structossl__qtx__st}{OSSL\_QTX}}\ *qtx);}
+\DoxyCodeLine{00305\ }
+\DoxyCodeLine{00306\ }
+\DoxyCodeLine{00307\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00308\ \textcolor{comment}{\ *\ Key\ Update}}
+\DoxyCodeLine{00309\ \textcolor{comment}{\ *\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00310\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00311\ \textcolor{comment}{\ *\ For\ additional\ discussion\ of\ key\ update\ considerations,\ see\ QRX\ header\ file.}}
+\DoxyCodeLine{00312\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00313\ }
+\DoxyCodeLine{00314\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00315\ \textcolor{comment}{\ *\ Triggers\ a\ key\ update.\ The\ key\ update\ will\ be\ started\ by\ inverting\ the\ Key}}
+\DoxyCodeLine{00316\ \textcolor{comment}{\ *\ Phase\ bit\ of\ the\ next\ packet\ transmitted;\ no\ key\ update\ occurs\ until\ the\ next}}
+\DoxyCodeLine{00317\ \textcolor{comment}{\ *\ packet\ is\ transmitted.\ Thus,\ this\ function\ should\ generally\ be\ called}}
+\DoxyCodeLine{00318\ \textcolor{comment}{\ *\ immediately\ before\ queueing\ the\ next\ packet.}}
+\DoxyCodeLine{00319\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00320\ \textcolor{comment}{\ *\ There\ are\ substantial\ requirements\ imposed\ by\ RFC\ 9001\ on\ under\ what}}
+\DoxyCodeLine{00321\ \textcolor{comment}{\ *\ circumstances\ a\ key\ update\ can\ be\ initiated.\ The\ caller\ is\ responsible\ for}}
+\DoxyCodeLine{00322\ \textcolor{comment}{\ *\ meeting\ most\ of\ these\ requirements.\ For\ example,\ this\ function\ cannot\ be}}
+\DoxyCodeLine{00323\ \textcolor{comment}{\ *\ called\ too\ soon\ after\ a\ previous\ key\ update\ has\ occurred.\ Key\ updates\ also}}
+\DoxyCodeLine{00324\ \textcolor{comment}{\ *\ cannot\ be\ initiated\ until\ the\ 1-\/RTT\ encryption\ level\ is\ reached.}}
+\DoxyCodeLine{00325\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00326\ \textcolor{comment}{\ *\ As\ a\ sanity\ check,\ this\ function\ will\ fail\ and\ return\ 0\ if\ the\ non-\/1RTT}}
+\DoxyCodeLine{00327\ \textcolor{comment}{\ *\ encryption\ levels\ have\ not\ yet\ been\ dropped.}}
+\DoxyCodeLine{00328\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00329\ \textcolor{comment}{\ *\ The\ caller\ may\ decide\ itself\ to\ initiate\ a\ key\ update,\ but\ it\ also\ MUST}}
+\DoxyCodeLine{00330\ \textcolor{comment}{\ *\ initiate\ a\ key\ update\ where\ it\ detects\ that\ the\ peer\ has\ initiated\ a\ key}}
+\DoxyCodeLine{00331\ \textcolor{comment}{\ *\ update.\ The\ caller\ is\ responsible\ for\ initiating\ a\ TX\ key\ update\ by\ calling}}
+\DoxyCodeLine{00332\ \textcolor{comment}{\ *\ this\ function\ in\ this\ circumstance;\ thus,\ the\ caller\ is\ responsible\ for}}
+\DoxyCodeLine{00333\ \textcolor{comment}{\ *\ coupling\ the\ RX\ and\ TX\ QUIC\ record\ layers\ in\ this\ way.}}
+\DoxyCodeLine{00334\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00335\ \textcolor{keywordtype}{int}\ ossl\_qtx\_trigger\_key\_update(\mbox{\hyperlink{structossl__qtx__st}{OSSL\_QTX}}\ *qtx);}
+\DoxyCodeLine{00336\ }
+\DoxyCodeLine{00337\ }
+\DoxyCodeLine{00338\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00339\ \textcolor{comment}{\ *\ Key\ Expiration}}
+\DoxyCodeLine{00340\ \textcolor{comment}{\ *\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00341\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00342\ }
+\DoxyCodeLine{00343\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00344\ \textcolor{comment}{\ *\ Returns\ the\ number\ of\ packets\ which\ have\ been\ encrypted\ for\ transmission\ with}}
+\DoxyCodeLine{00345\ \textcolor{comment}{\ *\ the\ current\ set\ of\ TX\ keys\ (the\ current\ "{}TX\ key\ epoch"{}).\ Reset\ to\ zero\ after}}
+\DoxyCodeLine{00346\ \textcolor{comment}{\ *\ a\ key\ update\ and\ incremented\ for\ each\ packet\ queued.\ If\ enc\_level\ is\ not}}
+\DoxyCodeLine{00347\ \textcolor{comment}{\ *\ valid\ or\ relates\ to\ an\ EL\ which\ is\ not\ currently\ available,\ returns}}
+\DoxyCodeLine{00348\ \textcolor{comment}{\ *\ UINT64\_MAX.}}
+\DoxyCodeLine{00349\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00350\ uint64\_t\ ossl\_qtx\_get\_cur\_epoch\_pkt\_count(\mbox{\hyperlink{structossl__qtx__st}{OSSL\_QTX}}\ *qtx,\ uint32\_t\ enc\_level);}
+\DoxyCodeLine{00351\ }
+\DoxyCodeLine{00352\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00353\ \textcolor{comment}{\ *\ Returns\ the\ maximum\ number\ of\ packets\ which\ the\ record\ layer\ will\ permit\ to}}
+\DoxyCodeLine{00354\ \textcolor{comment}{\ *\ be\ encrypted\ using\ the\ current\ set\ of\ TX\ keys.\ If\ this\ limit\ is\ reached\ (that}}
+\DoxyCodeLine{00355\ \textcolor{comment}{\ *\ is,\ if\ the\ counter\ returned\ by\ ossl\_qrx\_tx\_get\_cur\_epoch\_pkt\_count()\ reaches}}
+\DoxyCodeLine{00356\ \textcolor{comment}{\ *\ this\ value),\ as\ a\ safety\ measure,\ the\ QTX\ will\ not\ permit\ any\ further\ packets}}
+\DoxyCodeLine{00357\ \textcolor{comment}{\ *\ to\ be\ queued.\ All\ calls\ to\ ossl\_qrx\_write\_pkt\ that\ try\ to\ send\ packets\ of\ a}}
+\DoxyCodeLine{00358\ \textcolor{comment}{\ *\ kind\ which\ need\ to\ be\ encrypted\ will\ fail.\ It\ is\ not\ possible\ to\ recover\ from}}
+\DoxyCodeLine{00359\ \textcolor{comment}{\ *\ this\ condition\ and\ the\ QTX\ must\ then\ be\ destroyed;\ therefore,\ callers\ should}}
+\DoxyCodeLine{00360\ \textcolor{comment}{\ *\ ensure\ they\ always\ trigger\ a\ key\ update\ well\ in\ advance\ of\ reaching\ this}}
+\DoxyCodeLine{00361\ \textcolor{comment}{\ *\ limit.}}
+\DoxyCodeLine{00362\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00363\ \textcolor{comment}{\ *\ The\ value\ returned\ by\ this\ function\ is\ based\ on\ the\ ciphersuite\ configured}}
+\DoxyCodeLine{00364\ \textcolor{comment}{\ *\ for\ the\ given\ encryption\ level.\ If\ keys\ have\ not\ been\ provisioned\ for\ the}}
+\DoxyCodeLine{00365\ \textcolor{comment}{\ *\ specified\ enc\_level\ or\ the\ enc\_level\ argument\ is\ invalid,\ this\ function}}
+\DoxyCodeLine{00366\ \textcolor{comment}{\ *\ returns\ UINT64\_MAX,\ which\ is\ not\ a\ valid\ value.\ Note\ that\ it\ is\ not\ possible}}
+\DoxyCodeLine{00367\ \textcolor{comment}{\ *\ to\ perform\ a\ key\ update\ at\ any\ encryption\ level\ other\ than\ 1-\/RTT,\ therefore}}
+\DoxyCodeLine{00368\ \textcolor{comment}{\ *\ if\ this\ limit\ is\ reached\ at\ earlier\ encryption\ levels\ (which\ should\ not\ be}}
+\DoxyCodeLine{00369\ \textcolor{comment}{\ *\ possible)\ the\ connection\ must\ be\ terminated.\ Since\ this\ condition\ precludes}}
+\DoxyCodeLine{00370\ \textcolor{comment}{\ *\ the\ transmission\ of\ further\ packets,\ the\ only\ possible\ signalling\ of\ such\ an}}
+\DoxyCodeLine{00371\ \textcolor{comment}{\ *\ error\ condition\ to\ a\ peer\ is\ a\ Stateless\ Reset\ packet.}}
+\DoxyCodeLine{00372\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00373\ uint64\_t\ ossl\_qtx\_get\_max\_epoch\_pkt\_count(\mbox{\hyperlink{structossl__qtx__st}{OSSL\_QTX}}\ *qtx,\ uint32\_t\ enc\_level);}
+\DoxyCodeLine{00374\ }
+\DoxyCodeLine{00375\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00376\ \textcolor{comment}{\ *\ Get\ the\ 1-\/RTT\ EL\ key\ epoch\ number\ for\ the\ QTX.\ This\ is\ intended\ for}}
+\DoxyCodeLine{00377\ \textcolor{comment}{\ *\ diagnostic\ purposes.\ Returns\ 0\ if\ 1-\/RTT\ EL\ is\ not\ provisioned\ yet.}}
+\DoxyCodeLine{00378\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00379\ uint64\_t\ ossl\_qtx\_get\_key\_epoch(\mbox{\hyperlink{structossl__qtx__st}{OSSL\_QTX}}\ *qtx);}
+\DoxyCodeLine{00380\ }
+\DoxyCodeLine{00381\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00382\ }
+\DoxyCodeLine{00383\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

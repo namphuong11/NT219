@@ -1,0 +1,39 @@
+\chapter{Notes on Valgrind}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_v_a_l_g_r_i_n_d}{}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_v_a_l_g_r_i_n_d}\index{Notes on Valgrind@{Notes on Valgrind}}
+Valgrind is a test harness that includes many tools such as memcheck, which is commonly used to check for memory leaks, etc. The default tool run by Valgrind is memcheck. There are other tools available, but this will focus on memcheck.
+
+Valgrind runs programs in a virtual machine, this means Open\+SSL unit tests run under Valgrind will take longer than normal.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_v_a_l_g_r_i_n_d_autotoc_md896}{}\doxysection{\texorpdfstring{Requirements}{Requirements}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_v_a_l_g_r_i_n_d_autotoc_md896}
+
+\begin{DoxyEnumerate}
+\item Platform supported by Valgrind See \href{http://valgrind.org/info/platforms.html}{\texttt{ http\+://valgrind.\+org/info/platforms.\+html}}
+\item Valgrind installed on the platform See \href{http://valgrind.org/downloads/current.html}{\texttt{ http\+://valgrind.\+org/downloads/current.\+html}}
+\item Open\+SSL compiled See \doxysectlink{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l}{INSTALL.md}{0}
+\end{DoxyEnumerate}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_v_a_l_g_r_i_n_d_autotoc_md897}{}\doxysection{\texorpdfstring{Running Tests}{Running Tests}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_v_a_l_g_r_i_n_d_autotoc_md897}
+Test behavior can be modified by adjusting environment variables.
+
+{\ttfamily EXE\+\_\+\+SHELL}
+
+This variable is used to specify the shell used to execute Open\+SSL test programs. The default wrapper ({\ttfamily util/wrap.\+pl}) initializes the environment to allow programs to find shared libraries. The variable can be modified to specify a different executable environment. \begin{DoxyVerb}EXE_SHELL=\
+"`/bin/pwd`/util/wrap.pl valgrind --error-exitcode=1 --leak-check=full -q"
+\end{DoxyVerb}
+ This will start up Valgrind with the default checker ({\ttfamily memcheck}). The {\ttfamily -\/-\/error-\/exitcode=1} option specifies that Valgrind should exit with an error code of 1 when memory leaks occur. The {\ttfamily -\/-\/leak-\/check=full} option specifies extensive memory checking. The {\ttfamily -\/q} option prints only error messages. Additional Valgrind options may be added to the {\ttfamily EXE\+\_\+\+SHELL} variable.
+
+{\ttfamily OPENSSL\+\_\+ia32cap}
+
+This variable controls the processor-\/specific code on Intel processors. By default, Open\+SSL will attempt to figure out the capabilities of a processor, and use it to its fullest capability. This variable can be used to control what capabilities Open\+SSL uses.
+
+As of valgrind-\/3.\+15.\+0 on Linux/x86\+\_\+64, instructions up to AVX2 are supported. Setting the following disables instructions beyond AVX2\+:
+
+{\ttfamily OPENSSL\+\_\+ia32cap="{}\+:0"{}}
+
+This variable may need to be set to something different based on the processor and Valgrind version you are running tests on. More information may be found in \href{doc/man3/OPENSSL_ia32cap.pod}{\texttt{ doc/man3/\+OPENSSL\+\_\+ia32cap.\+pod}}.
+
+Additional variables (such as {\ttfamily VERBOSE} and {\ttfamily TESTS}) are described in the file \doxysectlink{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2test_2_r_e_a_d_m_e}{test/\+README.md}{0}.
+
+Example command line\+: \begin{DoxyVerb}$ make test EXE_SHELL="`/bin/pwd`/util/wrap.pl valgrind --error-exitcode=1 \
+    --leak-check=full -q" OPENSSL_ia32cap=":0"
+\end{DoxyVerb}
+ If an error occurs, you can then run the specific test via the {\ttfamily TESTS} variable with the {\ttfamily VERBOSE} or {\ttfamily VF} or {\ttfamily VFP} options to gather additional information. \begin{DoxyVerb}$ make test VERBOSE=1 TESTS=test_test EXE_SHELL="`/bin/pwd`/util/wrap.pl \
+   valgrind --error-exitcode=1 --leak-check=full -q" OPENSSL_ia32cap=":0"
+\end{DoxyVerb}
+ 

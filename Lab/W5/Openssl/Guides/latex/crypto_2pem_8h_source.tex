@@ -1,0 +1,57 @@
+\doxysection{pem.\+h}
+\hypertarget{crypto_2pem_8h_source}{}\label{crypto_2pem_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/crypto/pem.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/crypto/pem.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2018-\/2022\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_INTERNAL\_PEM\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_INTERNAL\_PEM\_H}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#\ pragma\ once}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ include\ <openssl/pem.h>}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#\ include\ "{}crypto/types.h"{}}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{comment}{/*\ Found\ in\ crypto/pem/pvkfmt.c\ */}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{comment}{/*\ Maximum\ length\ of\ a\ blob\ after\ header\ */}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#\ define\ BLOB\_MAX\_LENGTH\ \ \ \ \ \ \ \ \ \ 102400}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{keywordtype}{int}\ ossl\_do\_blob\_header(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **in,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ length,}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ *pmagic,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ *pbitlen,}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ *pisdss,\ \textcolor{keywordtype}{int}\ *pispub);}
+\DoxyCodeLine{00025\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ ossl\_blob\_length(\textcolor{keywordtype}{unsigned}\ bitlen,\ \textcolor{keywordtype}{int}\ isdss,\ \textcolor{keywordtype}{int}\ ispub);}
+\DoxyCodeLine{00026\ \textcolor{keywordtype}{int}\ ossl\_do\_PVK\_header(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **in,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ length,}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ skip\_magic,}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ *psaltlen,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ *pkeylen);}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#\ ifndef\ OPENSSL\_NO\_DEPRECATED\_3\_0}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#\ \ ifndef\ OPENSSL\_NO\_DSA}}
+\DoxyCodeLine{00031\ DSA\ *ossl\_b2i\_DSA\_after\_header(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **in,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ bitlen,}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ ispub);}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#\ \ endif}}
+\DoxyCodeLine{00034\ RSA\ *ossl\_b2i\_RSA\_after\_header(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **in,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ bitlen,}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ ispub);}
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00037\ EVP\_PKEY\ *ossl\_b2i(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **in,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ length,\ \textcolor{keywordtype}{int}\ *ispub);}
+\DoxyCodeLine{00038\ EVP\_PKEY\ *ossl\_b2i\_bio(BIO\ *in,\ \textcolor{keywordtype}{int}\ *ispub);}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \textcolor{preprocessor}{\#\ ifndef\ OPENSSL\_NO\_DEPRECATED\_3\_0}}
+\DoxyCodeLine{00041\ \textcolor{preprocessor}{\#\ \ ifndef\ OPENSSL\_NO\_DSA}}
+\DoxyCodeLine{00042\ DSA\ *b2i\_DSA\_PVK\_bio(BIO\ *in,\ pem\_password\_cb\ *cb,\ \textcolor{keywordtype}{void}\ *u);}
+\DoxyCodeLine{00043\ DSA\ *b2i\_DSA\_PVK\_bio\_ex(BIO\ *in,\ pem\_password\_cb\ *cb,\ \textcolor{keywordtype}{void}\ *u,}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OSSL\_LIB\_CTX\ *libctx,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *propq);}
+\DoxyCodeLine{00045\ \textcolor{preprocessor}{\#\ \ endif}}
+\DoxyCodeLine{00046\ RSA\ *b2i\_RSA\_PVK\_bio(BIO\ *in,\ pem\_password\_cb\ *cb,\ \textcolor{keywordtype}{void}\ *u);}
+\DoxyCodeLine{00047\ RSA\ *b2i\_RSA\_PVK\_bio\_ex(BIO\ *in,\ pem\_password\_cb\ *cb,\ \textcolor{keywordtype}{void}\ *u,}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OSSL\_LIB\_CTX\ *libctx,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *propq);}
+\DoxyCodeLine{00049\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

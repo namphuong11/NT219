@@ -1,0 +1,33 @@
+\doxysection{CMS\+\_\+\+Content\+Info\+\_\+st Struct Reference}
+\hypertarget{struct_c_m_s___content_info__st}{}\label{struct_c_m_s___content_info__st}\index{CMS\_ContentInfo\_st@{CMS\_ContentInfo\_st}}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{struct_c_m_s___content_info__st_aae0b0e1c6da4732f18167de51c9eb9e5}\label{struct_c_m_s___content_info__st_aae0b0e1c6da4732f18167de51c9eb9e5} 
+ASN1\+\_\+\+OBJECT \texorpdfstring{$\ast$}{*} {\bfseries content\+Type}
+\item 
+\Hypertarget{struct_c_m_s___content_info__st_adae792b07f4aeafbac603a6fbc672d75}\label{struct_c_m_s___content_info__st_adae792b07f4aeafbac603a6fbc672d75} 
+\begin{tabbing}
+xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=\kill
+union \{\\
+\>ASN1\_OCTET\_STRING \texorpdfstring{$\ast$}{*} {\bfseries data}\\
+\>CMS\_SignedData \texorpdfstring{$\ast$}{*} {\bfseries signedData}\\
+\>CMS\_EnvelopedData \texorpdfstring{$\ast$}{*} {\bfseries envelopedData}\\
+\>\mbox{\hyperlink{struct_c_m_s___digested_data__st}{CMS\_DigestedData}} \texorpdfstring{$\ast$}{*} {\bfseries digestedData}\\
+\>\mbox{\hyperlink{struct_c_m_s___encrypted_data__st}{CMS\_EncryptedData}} \texorpdfstring{$\ast$}{*} {\bfseries encryptedData}\\
+\>\mbox{\hyperlink{struct_c_m_s___auth_enveloped_data__st}{CMS\_AuthEnvelopedData}} \texorpdfstring{$\ast$}{*} {\bfseries authEnvelopedData}\\
+\>\mbox{\hyperlink{struct_c_m_s___authenticated_data__st}{CMS\_AuthenticatedData}} \texorpdfstring{$\ast$}{*} {\bfseries authenticatedData}\\
+\>\mbox{\hyperlink{struct_c_m_s___compressed_data__st}{CMS\_CompressedData}} \texorpdfstring{$\ast$}{*} {\bfseries compressedData}\\
+\>ASN1\_TYPE \texorpdfstring{$\ast$}{*} {\bfseries other}\\
+\>void \texorpdfstring{$\ast$}{*} {\bfseries otherData}\\
+\} {\bfseries d}\\
+
+\end{tabbing}\item 
+\Hypertarget{struct_c_m_s___content_info__st_a97831de40846226b472c08e4b0d8b8c9}\label{struct_c_m_s___content_info__st_a97831de40846226b472c08e4b0d8b8c9} 
+\mbox{\hyperlink{struct_c_m_s___c_t_x__st}{CMS\+\_\+\+CTX}} {\bfseries ctx}
+\end{DoxyCompactItemize}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/namph/\+Downloads/openssl/openssl-\/3.\+2.\+1/crypto/cms/cms\+\_\+local.\+h\end{DoxyCompactItemize}

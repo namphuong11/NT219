@@ -1,0 +1,689 @@
+\doxysection{bn\+\_\+local.\+h}
+\hypertarget{bn__local_8h_source}{}\label{bn__local_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/bn/bn\_local.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/bn/bn\_local.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 1995-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_CRYPTO\_BN\_LOCAL\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_CRYPTO\_BN\_LOCAL\_H}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ *\ The\ EDK2\ build\ doesn't\ use\ bn\_conf.h;\ it\ sets\ THIRTY\_TWO\_BIT\ or}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ *\ SIXTY\_FOUR\_BIT\ in\ its\ own\ environment\ since\ it\ doesn't\ re-\/run\ our}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ *\ Configure\ script\ and\ needs\ to\ support\ both\ 32-\/bit\ and\ 64-\/bit.}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#\ include\ <openssl/opensslconf.h>}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#\ if\ !defined(OPENSSL\_SYS\_UEFI)}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#\ \ include\ "{}crypto/bn\_conf.h"{}}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#\ include\ "{}crypto/bn.h"{}}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#\ include\ "{}internal/cryptlib.h"{}}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#\ include\ "{}internal/numbers.h"{}}}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00029\ \textcolor{comment}{\ *\ These\ preprocessor\ symbols\ control\ various\ aspects\ of\ the\ bignum\ headers}}
+\DoxyCodeLine{00030\ \textcolor{comment}{\ *\ and\ library\ code.\ They're\ not\ defined\ by\ any\ "{}normal"{}\ configuration,\ as}}
+\DoxyCodeLine{00031\ \textcolor{comment}{\ *\ they\ are\ intended\ for\ development\ and\ testing\ purposes.\ NB:\ defining}}
+\DoxyCodeLine{00032\ \textcolor{comment}{\ *\ them\ can\ be\ useful\ for\ debugging\ application\ code\ as\ well\ as\ openssl}}
+\DoxyCodeLine{00033\ \textcolor{comment}{\ *\ itself.\ BN\_DEBUG\ -\/\ turn\ on\ various\ debugging\ alterations\ to\ the\ bignum}}
+\DoxyCodeLine{00034\ \textcolor{comment}{\ *\ code\ BN\_RAND\_DEBUG\ -\/\ uses\ random\ poisoning\ of\ unused\ words\ to\ trip\ up}}
+\DoxyCodeLine{00035\ \textcolor{comment}{\ *\ mismanagement\ of\ bignum\ internals.\ Enable\ BN\_RAND\_DEBUG\ is\ known\ to}}
+\DoxyCodeLine{00036\ \textcolor{comment}{\ *\ break\ some\ of\ the\ OpenSSL\ tests.}}
+\DoxyCodeLine{00037\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#\ if\ defined(BN\_RAND\_DEBUG)\ \&\&\ !defined(BN\_DEBUG)}}
+\DoxyCodeLine{00039\ \textcolor{preprocessor}{\#\ \ define\ BN\_DEBUG}}
+\DoxyCodeLine{00040\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00041\ \textcolor{preprocessor}{\#\ if\ defined(BN\_RAND\_DEBUG)}}
+\DoxyCodeLine{00042\ \textcolor{preprocessor}{\#\ \ include\ <openssl/rand.h>}}
+\DoxyCodeLine{00043\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00046\ \textcolor{comment}{\ *\ This\ should\ limit\ the\ stack\ usage\ due\ to\ alloca\ to\ about\ 4K.}}
+\DoxyCodeLine{00047\ \textcolor{comment}{\ *\ BN\_SOFT\_LIMIT\ is\ a\ soft\ limit\ equivalent\ to\ 2*OPENSSL\_RSA\_MAX\_MODULUS\_BITS.}}
+\DoxyCodeLine{00048\ \textcolor{comment}{\ *\ Beyond\ that\ size\ bn\_mul\_mont\ is\ no\ longer\ used,\ and\ the\ constant\ time}}
+\DoxyCodeLine{00049\ \textcolor{comment}{\ *\ assembler\ code\ is\ disabled,\ due\ to\ the\ blatant\ alloca\ and\ bn\_mul\_mont\ usage.}}
+\DoxyCodeLine{00050\ \textcolor{comment}{\ *\ Note\ that\ bn\_mul\_mont\ does\ an\ alloca\ that\ is\ hidden\ away\ in\ assembly.}}
+\DoxyCodeLine{00051\ \textcolor{comment}{\ *\ It\ is\ not\ recommended\ to\ do\ computations\ with\ numbers\ exceeding\ this\ limit,}}
+\DoxyCodeLine{00052\ \textcolor{comment}{\ *\ since\ the\ result\ will\ be\ highly\ version\ dependent:}}
+\DoxyCodeLine{00053\ \textcolor{comment}{\ *\ While\ the\ current\ OpenSSL\ version\ will\ use\ non-\/optimized,\ but\ safe\ code,}}
+\DoxyCodeLine{00054\ \textcolor{comment}{\ *\ previous\ versions\ will\ use\ optimized\ code,\ that\ may\ crash\ due\ to\ unexpected}}
+\DoxyCodeLine{00055\ \textcolor{comment}{\ *\ stack\ overflow,\ and\ future\ versions\ may\ very\ well\ turn\ this\ into\ a\ hard}}
+\DoxyCodeLine{00056\ \textcolor{comment}{\ *\ limit.}}
+\DoxyCodeLine{00057\ \textcolor{comment}{\ *\ Note\ however,\ that\ it\ is\ possible\ to\ override\ the\ size\ limit\ using}}
+\DoxyCodeLine{00058\ \textcolor{comment}{\ *\ "{}./config\ -\/DBN\_SOFT\_LIMIT=<limit>"{}\ if\ necessary,\ and\ the\ O/S\ specific}}
+\DoxyCodeLine{00059\ \textcolor{comment}{\ *\ stack\ limit\ is\ known\ and\ taken\ into\ consideration.}}
+\DoxyCodeLine{00060\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00061\ \textcolor{preprocessor}{\#\ ifndef\ BN\_SOFT\_LIMIT}}
+\DoxyCodeLine{00062\ \textcolor{preprocessor}{\#\ \ define\ BN\_SOFT\_LIMIT\ \ \ \ \ \ \ \ \ (4096\ /\ BN\_BYTES)}}
+\DoxyCodeLine{00063\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ \textcolor{preprocessor}{\#\ ifndef\ OPENSSL\_SMALL\_FOOTPRINT}}
+\DoxyCodeLine{00066\ \textcolor{preprocessor}{\#\ \ define\ BN\_MUL\_COMBA}}
+\DoxyCodeLine{00067\ \textcolor{preprocessor}{\#\ \ define\ BN\_SQR\_COMBA}}
+\DoxyCodeLine{00068\ \textcolor{preprocessor}{\#\ \ define\ BN\_RECURSION}}
+\DoxyCodeLine{00069\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00071\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00072\ \textcolor{comment}{\ *\ This\ next\ option\ uses\ the\ C\ libraries\ (2\ word)/(1\ word)\ function.\ If\ it\ is}}
+\DoxyCodeLine{00073\ \textcolor{comment}{\ *\ not\ defined,\ I\ use\ my\ C\ version\ (which\ is\ slower).\ The\ reason\ for\ this}}
+\DoxyCodeLine{00074\ \textcolor{comment}{\ *\ flag\ is\ that\ when\ the\ particular\ C\ compiler\ library\ routine\ is\ used,\ and}}
+\DoxyCodeLine{00075\ \textcolor{comment}{\ *\ the\ library\ is\ linked\ with\ a\ different\ compiler,\ the\ library\ is\ missing.}}
+\DoxyCodeLine{00076\ \textcolor{comment}{\ *\ This\ mostly\ happens\ when\ the\ library\ is\ built\ with\ gcc\ and\ then\ linked}}
+\DoxyCodeLine{00077\ \textcolor{comment}{\ *\ using\ normal\ cc.\ \ This\ would\ be\ a\ common\ occurrence\ because\ gcc\ normally}}
+\DoxyCodeLine{00078\ \textcolor{comment}{\ *\ produces\ code\ that\ is\ 2\ times\ faster\ than\ system\ compilers\ for\ the\ big}}
+\DoxyCodeLine{00079\ \textcolor{comment}{\ *\ number\ stuff.\ For\ machines\ with\ only\ one\ compiler\ (or\ shared\ libraries),}}
+\DoxyCodeLine{00080\ \textcolor{comment}{\ *\ this\ should\ be\ on.\ \ Again\ this\ in\ only\ really\ a\ problem\ on\ machines\ using}}
+\DoxyCodeLine{00081\ \textcolor{comment}{\ *\ "{}long\ long's"{},\ are\ 32bit,\ and\ are\ not\ using\ my\ assembler\ code.}}
+\DoxyCodeLine{00082\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00083\ \textcolor{preprocessor}{\#\ if\ defined(OPENSSL\_SYS\_MSDOS)\ ||\ defined(OPENSSL\_SYS\_WINDOWS)\ ||\ \(\backslash\)}}
+\DoxyCodeLine{00084\ \textcolor{preprocessor}{\ \ \ \ defined(OPENSSL\_SYS\_WIN32)\ ||\ defined(linux)}}
+\DoxyCodeLine{00085\ \textcolor{preprocessor}{\#\ \ define\ BN\_DIV2W}}
+\DoxyCodeLine{00086\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00088\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00089\ \textcolor{comment}{\ *\ 64-\/bit\ processor\ with\ LP64\ ABI}}
+\DoxyCodeLine{00090\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00091\ \textcolor{preprocessor}{\#\ ifdef\ SIXTY\_FOUR\_BIT\_LONG}}
+\DoxyCodeLine{00092\ \textcolor{preprocessor}{\#\ \ define\ BN\_ULLONG\ \ \ \ \ \ \ unsigned\ long\ long}}
+\DoxyCodeLine{00093\ \textcolor{preprocessor}{\#\ \ define\ BN\_BITS4\ \ \ \ \ \ \ \ 32}}
+\DoxyCodeLine{00094\ \textcolor{preprocessor}{\#\ \ define\ BN\_MASK2\ \ \ \ \ \ \ \ (0xffffffffffffffffL)}}
+\DoxyCodeLine{00095\ \textcolor{preprocessor}{\#\ \ define\ BN\_MASK2l\ \ \ \ \ \ \ (0xffffffffL)}}
+\DoxyCodeLine{00096\ \textcolor{preprocessor}{\#\ \ define\ BN\_MASK2h\ \ \ \ \ \ \ (0xffffffff00000000L)}}
+\DoxyCodeLine{00097\ \textcolor{preprocessor}{\#\ \ define\ BN\_MASK2h1\ \ \ \ \ \ (0xffffffff80000000L)}}
+\DoxyCodeLine{00098\ \textcolor{preprocessor}{\#\ \ define\ BN\_DEC\_CONV\ \ \ \ \ (10000000000000000000UL)}}
+\DoxyCodeLine{00099\ \textcolor{preprocessor}{\#\ \ define\ BN\_DEC\_NUM\ \ \ \ \ \ 19}}
+\DoxyCodeLine{00100\ \textcolor{preprocessor}{\#\ \ define\ BN\_DEC\_FMT1\ \ \ \ \ "{}\%lu"{}}}
+\DoxyCodeLine{00101\ \textcolor{preprocessor}{\#\ \ define\ BN\_DEC\_FMT2\ \ \ \ \ "{}\%019lu"{}}}
+\DoxyCodeLine{00102\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00103\ }
+\DoxyCodeLine{00104\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00105\ \textcolor{comment}{\ *\ 64-\/bit\ processor\ other\ than\ LP64\ ABI}}
+\DoxyCodeLine{00106\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00107\ \textcolor{preprocessor}{\#\ ifdef\ SIXTY\_FOUR\_BIT}}
+\DoxyCodeLine{00108\ \textcolor{preprocessor}{\#\ \ undef\ BN\_LLONG}}
+\DoxyCodeLine{00109\ \textcolor{preprocessor}{\#\ \ undef\ BN\_ULLONG}}
+\DoxyCodeLine{00110\ \textcolor{preprocessor}{\#\ \ define\ BN\_BITS4\ \ \ \ \ \ \ \ 32}}
+\DoxyCodeLine{00111\ \textcolor{preprocessor}{\#\ \ define\ BN\_MASK2\ \ \ \ \ \ \ \ (0xffffffffffffffffLL)}}
+\DoxyCodeLine{00112\ \textcolor{preprocessor}{\#\ \ define\ BN\_MASK2l\ \ \ \ \ \ \ (0xffffffffL)}}
+\DoxyCodeLine{00113\ \textcolor{preprocessor}{\#\ \ define\ BN\_MASK2h\ \ \ \ \ \ \ (0xffffffff00000000LL)}}
+\DoxyCodeLine{00114\ \textcolor{preprocessor}{\#\ \ define\ BN\_MASK2h1\ \ \ \ \ \ (0xffffffff80000000LL)}}
+\DoxyCodeLine{00115\ \textcolor{preprocessor}{\#\ \ define\ BN\_DEC\_CONV\ \ \ \ \ (10000000000000000000ULL)}}
+\DoxyCodeLine{00116\ \textcolor{preprocessor}{\#\ \ define\ BN\_DEC\_NUM\ \ \ \ \ \ 19}}
+\DoxyCodeLine{00117\ \textcolor{preprocessor}{\#\ \ define\ BN\_DEC\_FMT1\ \ \ \ \ "{}\%llu"{}}}
+\DoxyCodeLine{00118\ \textcolor{preprocessor}{\#\ \ define\ BN\_DEC\_FMT2\ \ \ \ \ "{}\%019llu"{}}}
+\DoxyCodeLine{00119\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00120\ }
+\DoxyCodeLine{00121\ \textcolor{preprocessor}{\#\ ifdef\ THIRTY\_TWO\_BIT}}
+\DoxyCodeLine{00122\ \textcolor{preprocessor}{\#\ \ ifdef\ BN\_LLONG}}
+\DoxyCodeLine{00123\ \textcolor{preprocessor}{\#\ \ \ if\ defined(\_WIN32)\ \&\&\ !defined(\_\_GNUC\_\_)}}
+\DoxyCodeLine{00124\ \textcolor{preprocessor}{\#\ \ \ \ define\ BN\_ULLONG\ \ \ \ \ unsigned\ \_\_int64}}
+\DoxyCodeLine{00125\ \textcolor{preprocessor}{\#\ \ \ else}}
+\DoxyCodeLine{00126\ \textcolor{preprocessor}{\#\ \ \ \ define\ BN\_ULLONG\ \ \ \ \ unsigned\ long\ long}}
+\DoxyCodeLine{00127\ \textcolor{preprocessor}{\#\ \ \ endif}}
+\DoxyCodeLine{00128\ \textcolor{preprocessor}{\#\ \ endif}}
+\DoxyCodeLine{00129\ \textcolor{preprocessor}{\#\ \ define\ BN\_BITS4\ \ \ \ \ \ \ \ 16}}
+\DoxyCodeLine{00130\ \textcolor{preprocessor}{\#\ \ define\ BN\_MASK2\ \ \ \ \ \ \ \ (0xffffffffL)}}
+\DoxyCodeLine{00131\ \textcolor{preprocessor}{\#\ \ define\ BN\_MASK2l\ \ \ \ \ \ \ (0xffff)}}
+\DoxyCodeLine{00132\ \textcolor{preprocessor}{\#\ \ define\ BN\_MASK2h1\ \ \ \ \ \ (0xffff8000L)}}
+\DoxyCodeLine{00133\ \textcolor{preprocessor}{\#\ \ define\ BN\_MASK2h\ \ \ \ \ \ \ (0xffff0000L)}}
+\DoxyCodeLine{00134\ \textcolor{preprocessor}{\#\ \ define\ BN\_DEC\_CONV\ \ \ \ \ (1000000000L)}}
+\DoxyCodeLine{00135\ \textcolor{preprocessor}{\#\ \ define\ BN\_DEC\_NUM\ \ \ \ \ \ 9}}
+\DoxyCodeLine{00136\ \textcolor{preprocessor}{\#\ \ define\ BN\_DEC\_FMT1\ \ \ \ \ "{}\%u"{}}}
+\DoxyCodeLine{00137\ \textcolor{preprocessor}{\#\ \ define\ BN\_DEC\_FMT2\ \ \ \ \ "{}\%09u"{}}}
+\DoxyCodeLine{00138\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00139\ }
+\DoxyCodeLine{00140\ }
+\DoxyCodeLine{00141\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00142\ \textcolor{comment}{\ *\ Bignum\ consistency\ macros}}
+\DoxyCodeLine{00143\ \textcolor{comment}{\ *\ There\ is\ one\ "{}API"{}\ macro,\ bn\_fix\_top(),\ for\ stripping\ leading\ zeroes\ from}}
+\DoxyCodeLine{00144\ \textcolor{comment}{\ *\ bignum\ data\ after\ direct\ manipulations\ on\ the\ data.\ There\ is\ also\ an}}
+\DoxyCodeLine{00145\ \textcolor{comment}{\ *\ "{}internal"{}\ macro,\ bn\_check\_top(),\ for\ verifying\ that\ there\ are\ no\ leading}}
+\DoxyCodeLine{00146\ \textcolor{comment}{\ *\ zeroes.\ Unfortunately,\ some\ auditing\ is\ required\ due\ to\ the\ fact\ that}}
+\DoxyCodeLine{00147\ \textcolor{comment}{\ *\ bn\_fix\_top()\ has\ become\ an\ overabused\ duct-\/tape\ because\ bignum\ data\ is}}
+\DoxyCodeLine{00148\ \textcolor{comment}{\ *\ occasionally\ passed\ around\ in\ an\ inconsistent\ state.\ So\ the\ following}}
+\DoxyCodeLine{00149\ \textcolor{comment}{\ *\ changes\ have\ been\ made\ to\ sort\ this\ out;}}
+\DoxyCodeLine{00150\ \textcolor{comment}{\ *\ -\/\ bn\_fix\_top()s\ implementation\ has\ been\ moved\ to\ bn\_correct\_top()}}
+\DoxyCodeLine{00151\ \textcolor{comment}{\ *\ -\/\ if\ BN\_DEBUG\ isn't\ defined,\ bn\_fix\_top()\ maps\ to\ bn\_correct\_top(),\ and}}
+\DoxyCodeLine{00152\ \textcolor{comment}{\ *\ \ \ bn\_check\_top()\ is\ as\ before.}}
+\DoxyCodeLine{00153\ \textcolor{comment}{\ *\ -\/\ if\ BN\_DEBUG\ *is*\ defined;}}
+\DoxyCodeLine{00154\ \textcolor{comment}{\ *\ \ \ -\/\ bn\_check\_top()\ tries\ to\ pollute\ unused\ words\ even\ if\ the\ bignum\ 'top'\ is}}
+\DoxyCodeLine{00155\ \textcolor{comment}{\ *\ \ \ \ \ consistent.\ (ed:\ only\ if\ BN\_RAND\_DEBUG\ is\ defined)}}
+\DoxyCodeLine{00156\ \textcolor{comment}{\ *\ \ \ -\/\ bn\_fix\_top()\ maps\ to\ bn\_check\_top()\ rather\ than\ "{}fixing"{}\ anything.}}
+\DoxyCodeLine{00157\ \textcolor{comment}{\ *\ The\ idea\ is\ to\ have\ debug\ builds\ flag\ up\ inconsistent\ bignums\ when\ they}}
+\DoxyCodeLine{00158\ \textcolor{comment}{\ *\ occur.\ If\ that\ occurs\ in\ a\ bn\_fix\_top(),\ we\ examine\ the\ code\ in\ question;\ if}}
+\DoxyCodeLine{00159\ \textcolor{comment}{\ *\ the\ use\ of\ bn\_fix\_top()\ was\ appropriate\ (ie.\ it\ follows\ directly\ after\ code}}
+\DoxyCodeLine{00160\ \textcolor{comment}{\ *\ that\ manipulates\ the\ bignum)\ it\ is\ converted\ to\ bn\_correct\_top(),\ and\ if\ it}}
+\DoxyCodeLine{00161\ \textcolor{comment}{\ *\ was\ not\ appropriate,\ we\ convert\ it\ permanently\ to\ bn\_check\_top()\ and\ track}}
+\DoxyCodeLine{00162\ \textcolor{comment}{\ *\ down\ the\ cause\ of\ the\ bug.\ Eventually,\ no\ internal\ code\ should\ be\ using\ the}}
+\DoxyCodeLine{00163\ \textcolor{comment}{\ *\ bn\_fix\_top()\ macro.\ External\ applications\ and\ libraries\ should\ try\ this\ with}}
+\DoxyCodeLine{00164\ \textcolor{comment}{\ *\ their\ own\ code\ too,\ both\ in\ terms\ of\ building\ against\ the\ openssl\ headers}}
+\DoxyCodeLine{00165\ \textcolor{comment}{\ *\ with\ BN\_DEBUG\ defined\ *and*\ linking\ with\ a\ version\ of\ OpenSSL\ built\ with\ it}}
+\DoxyCodeLine{00166\ \textcolor{comment}{\ *\ defined.\ This\ not\ only\ improves\ external\ code,\ it\ provides\ more\ test}}
+\DoxyCodeLine{00167\ \textcolor{comment}{\ *\ coverage\ for\ openssl's\ own\ code.}}
+\DoxyCodeLine{00168\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00169\ }
+\DoxyCodeLine{00170\ \textcolor{preprocessor}{\#\ ifdef\ BN\_DEBUG}}
+\DoxyCodeLine{00171\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00172\ \textcolor{comment}{\ *\ The\ new\ BN\_FLG\_FIXED\_TOP\ flag\ marks\ vectors\ that\ were\ not\ treated\ with}}
+\DoxyCodeLine{00173\ \textcolor{comment}{\ *\ bn\_correct\_top,\ in\ other\ words\ such\ vectors\ are\ permitted\ to\ have\ zeros}}
+\DoxyCodeLine{00174\ \textcolor{comment}{\ *\ in\ most\ significant\ limbs.\ Such\ vectors\ are\ used\ internally\ to\ achieve}}
+\DoxyCodeLine{00175\ \textcolor{comment}{\ *\ execution\ time\ invariance\ for\ critical\ operations\ with\ private\ keys.}}
+\DoxyCodeLine{00176\ \textcolor{comment}{\ *\ It's\ BN\_DEBUG-\/only\ flag,\ because\ user\ application\ is\ not\ supposed\ to}}
+\DoxyCodeLine{00177\ \textcolor{comment}{\ *\ observe\ it\ anyway.\ Moreover,\ optimizing\ compiler\ would\ actually\ remove}}
+\DoxyCodeLine{00178\ \textcolor{comment}{\ *\ all\ operations\ manipulating\ the\ bit\ in\ question\ in\ non-\/BN\_DEBUG\ build.}}
+\DoxyCodeLine{00179\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00180\ \textcolor{preprocessor}{\#\ \ define\ BN\_FLG\_FIXED\_TOP\ 0x10000}}
+\DoxyCodeLine{00181\ \textcolor{preprocessor}{\#\ \ ifdef\ BN\_RAND\_DEBUG}}
+\DoxyCodeLine{00182\ \textcolor{preprocessor}{\#\ \ \ define\ bn\_pollute(a)\ \(\backslash\)}}
+\DoxyCodeLine{00183\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ do\ \{\ \(\backslash\)}}
+\DoxyCodeLine{00184\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ const\ BIGNUM\ *\_bnum1\ =\ (a);\ \(\backslash\)}}
+\DoxyCodeLine{00185\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ if\ (\_bnum1-\/>top\ <\ \_bnum1-\/>dmax)\ \{\ \(\backslash\)}}
+\DoxyCodeLine{00186\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ unsigned\ char\ \_tmp\_char;\ \(\backslash\)}}
+\DoxyCodeLine{00187\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{/*\ We\ cast\ away\ const\ without\ the\ compiler\ knowing,\ any\ \(\backslash\)}}
+\DoxyCodeLine{00188\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *\ *genuinely*\ constant\ variables\ that\ aren't\ mutable\ \(\backslash\)}}
+\DoxyCodeLine{00189\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *\ wouldn't\ be\ constructed\ with\ top!=dmax.\ */}\textcolor{preprocessor}{\ \(\backslash\)}}
+\DoxyCodeLine{00190\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BN\_ULONG\ *\_not\_const;\ \(\backslash\)}}
+\DoxyCodeLine{00191\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ memcpy(\&\_not\_const,\ \&\_bnum1-\/>d,\ sizeof(\_not\_const));\ \(\backslash\)}}
+\DoxyCodeLine{00192\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (void)RAND\_bytes(\&\_tmp\_char,\ 1);\ }\textcolor{comment}{/*\ Debug\ only\ -\/\ safe\ to\ ignore\ error\ return\ */}\textcolor{preprocessor}{\(\backslash\)}}
+\DoxyCodeLine{00193\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ memset(\_not\_const\ +\ \_bnum1-\/>top,\ \_tmp\_char,\ \(\backslash\)}}
+\DoxyCodeLine{00194\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sizeof(*\_not\_const)\ *\ (\_bnum1-\/>dmax\ -\/\ \_bnum1-\/>top));\ \(\backslash\)}}
+\DoxyCodeLine{00195\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \}\ \(\backslash\)}}
+\DoxyCodeLine{00196\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \}\ while(0)}}
+\DoxyCodeLine{00197\ \textcolor{preprocessor}{\#\ \ else}}
+\DoxyCodeLine{00198\ \textcolor{preprocessor}{\#\ \ \ define\ bn\_pollute(a)}}
+\DoxyCodeLine{00199\ \textcolor{preprocessor}{\#\ \ endif}}
+\DoxyCodeLine{00200\ \textcolor{preprocessor}{\#\ \ define\ bn\_check\_top(a)\ \(\backslash\)}}
+\DoxyCodeLine{00201\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ do\ \{\ \(\backslash\)}}
+\DoxyCodeLine{00202\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ const\ BIGNUM\ *\_bnum2\ =\ (a);\ \(\backslash\)}}
+\DoxyCodeLine{00203\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ if\ (\_bnum2\ !=\ NULL)\ \{\ \(\backslash\)}}
+\DoxyCodeLine{00204\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ int\ \_top\ =\ \_bnum2-\/>top;\ \(\backslash\)}}
+\DoxyCodeLine{00205\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (void)ossl\_assert((\_top\ ==\ 0\ \&\&\ !\_bnum2-\/>neg)\ ||\ \(\backslash\)}}
+\DoxyCodeLine{00206\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (\_top\ \&\&\ ((\_bnum2-\/>flags\ \&\ BN\_FLG\_FIXED\_TOP)\ \(\backslash\)}}
+\DoxyCodeLine{00207\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ||\ \_bnum2-\/>d[\_top\ -\/\ 1]\ !=\ 0)));\ \(\backslash\)}}
+\DoxyCodeLine{00208\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ bn\_pollute(\_bnum2);\ \(\backslash\)}}
+\DoxyCodeLine{00209\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \(\backslash\)}}
+\DoxyCodeLine{00210\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \}\ while(0)}}
+\DoxyCodeLine{00211\ }
+\DoxyCodeLine{00212\ \textcolor{preprocessor}{\#\ \ define\ bn\_fix\_top(a)\ \ \ \ \ \ \ \ \ \ \ bn\_check\_top(a)}}
+\DoxyCodeLine{00213\ }
+\DoxyCodeLine{00214\ \textcolor{preprocessor}{\#\ \ define\ bn\_check\_size(bn,\ bits)\ bn\_wcheck\_size(bn,\ ((bits+BN\_BITS2-\/1))/BN\_BITS2)}}
+\DoxyCodeLine{00215\ \textcolor{preprocessor}{\#\ \ define\ bn\_wcheck\_size(bn,\ words)\ \(\backslash\)}}
+\DoxyCodeLine{00216\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ do\ \{\ \(\backslash\)}}
+\DoxyCodeLine{00217\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ const\ BIGNUM\ *\_bnum2\ =\ (bn);\ \(\backslash\)}}
+\DoxyCodeLine{00218\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ assert((words)\ <=\ (\_bnum2)-\/>dmax\ \&\&\ \(\backslash\)}}
+\DoxyCodeLine{00219\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (words)\ >=\ (\_bnum2)-\/>top);\ \(\backslash\)}}
+\DoxyCodeLine{00220\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{/*\ avoid\ unused\ variable\ warning\ with\ NDEBUG\ */}\textcolor{preprocessor}{\ \(\backslash\)}}
+\DoxyCodeLine{00221\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (void)(\_bnum2);\ \(\backslash\)}}
+\DoxyCodeLine{00222\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \}\ while(0)}}
+\DoxyCodeLine{00223\ }
+\DoxyCodeLine{00224\ \textcolor{preprocessor}{\#\ else\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{/*\ !BN\_DEBUG\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00225\ }
+\DoxyCodeLine{00226\ \textcolor{preprocessor}{\#\ \ define\ BN\_FLG\_FIXED\_TOP\ 0}}
+\DoxyCodeLine{00227\ \textcolor{preprocessor}{\#\ \ define\ bn\_pollute(a)}}
+\DoxyCodeLine{00228\ \textcolor{preprocessor}{\#\ \ define\ bn\_check\_top(a)}}
+\DoxyCodeLine{00229\ \textcolor{preprocessor}{\#\ \ define\ bn\_fix\_top(a)\ \ \ \ \ \ \ \ \ \ \ bn\_correct\_top(a)}}
+\DoxyCodeLine{00230\ \textcolor{preprocessor}{\#\ \ define\ bn\_check\_size(bn,\ bits)}}
+\DoxyCodeLine{00231\ \textcolor{preprocessor}{\#\ \ define\ bn\_wcheck\_size(bn,\ words)}}
+\DoxyCodeLine{00232\ }
+\DoxyCodeLine{00233\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00234\ }
+\DoxyCodeLine{00235\ BN\_ULONG\ bn\_mul\_add\_words(BN\_ULONG\ *rp,\ \textcolor{keyword}{const}\ BN\_ULONG\ *ap,\ \textcolor{keywordtype}{int}\ num,}
+\DoxyCodeLine{00236\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BN\_ULONG\ w);}
+\DoxyCodeLine{00237\ BN\_ULONG\ bn\_mul\_words(BN\_ULONG\ *rp,\ \textcolor{keyword}{const}\ BN\_ULONG\ *ap,\ \textcolor{keywordtype}{int}\ num,\ BN\_ULONG\ w);}
+\DoxyCodeLine{00238\ \textcolor{keywordtype}{void}\ bn\_sqr\_words(BN\_ULONG\ *rp,\ \textcolor{keyword}{const}\ BN\_ULONG\ *ap,\ \textcolor{keywordtype}{int}\ num);}
+\DoxyCodeLine{00239\ BN\_ULONG\ bn\_div\_words(BN\_ULONG\ h,\ BN\_ULONG\ l,\ BN\_ULONG\ d);}
+\DoxyCodeLine{00240\ BN\_ULONG\ bn\_add\_words(BN\_ULONG\ *rp,\ \textcolor{keyword}{const}\ BN\_ULONG\ *ap,\ \textcolor{keyword}{const}\ BN\_ULONG\ *bp,}
+\DoxyCodeLine{00241\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ num);}
+\DoxyCodeLine{00242\ BN\_ULONG\ bn\_sub\_words(BN\_ULONG\ *rp,\ \textcolor{keyword}{const}\ BN\_ULONG\ *ap,\ \textcolor{keyword}{const}\ BN\_ULONG\ *bp,}
+\DoxyCodeLine{00243\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ num);}
+\DoxyCodeLine{00244\ }
+\DoxyCodeLine{00245\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbignum__st}{bignum\_st}}\ \{}
+\DoxyCodeLine{00246\ \ \ \ \ BN\_ULONG\ *d;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00247\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *\ Pointer\ to\ an\ array\ of\ 'BN\_BITS2'\ bit}}
+\DoxyCodeLine{00248\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *\ chunks.\ These\ chunks\ are\ organised\ in}}
+\DoxyCodeLine{00249\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *\ a\ least\ significant\ chunk\ first\ order.}}
+\DoxyCodeLine{00250\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00251\ \ \ \ \ \textcolor{keywordtype}{int}\ top;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Index\ of\ last\ used\ d\ +1.\ */}}
+\DoxyCodeLine{00252\ \ \ \ \ \textcolor{comment}{/*\ The\ next\ are\ internal\ book\ keeping\ for\ bn\_expand.\ */}}
+\DoxyCodeLine{00253\ \ \ \ \ \textcolor{keywordtype}{int}\ dmax;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Size\ of\ the\ d\ array.\ */}}
+\DoxyCodeLine{00254\ \ \ \ \ \textcolor{keywordtype}{int}\ neg;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ one\ if\ the\ number\ is\ negative\ */}}
+\DoxyCodeLine{00255\ \ \ \ \ \textcolor{keywordtype}{int}\ flags;}
+\DoxyCodeLine{00256\ \};}
+\DoxyCodeLine{00257\ }
+\DoxyCodeLine{00258\ \textcolor{comment}{/*\ Used\ for\ montgomery\ multiplication\ */}}
+\DoxyCodeLine{00259\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbn__mont__ctx__st}{bn\_mont\_ctx\_st}}\ \{}
+\DoxyCodeLine{00260\ \ \ \ \ \textcolor{keywordtype}{int}\ ri;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ number\ of\ bits\ in\ R\ */}}
+\DoxyCodeLine{00261\ \ \ \ \ BIGNUM\ RR;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ used\ to\ convert\ to\ montgomery\ form,}}
+\DoxyCodeLine{00262\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ possibly\ zero-\/padded\ */}}
+\DoxyCodeLine{00263\ \ \ \ \ BIGNUM\ N;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ The\ modulus\ */}}
+\DoxyCodeLine{00264\ \ \ \ \ BIGNUM\ Ni;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ R*(1/R\ mod\ N)\ -\/\ N*Ni\ =\ 1\ (Ni\ is\ only}}
+\DoxyCodeLine{00265\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *\ stored\ for\ bignum\ algorithm)\ */}}
+\DoxyCodeLine{00266\ \ \ \ \ BN\_ULONG\ n0[2];\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ least\ significant\ word(s)\ of\ Ni;\ (type}}
+\DoxyCodeLine{00267\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *\ changed\ with\ 0.9.9,\ was\ "{}BN\_ULONG\ n0;"{}}}
+\DoxyCodeLine{00268\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *\ before)\ */}}
+\DoxyCodeLine{00269\ \ \ \ \ \textcolor{keywordtype}{int}\ flags;}
+\DoxyCodeLine{00270\ \};}
+\DoxyCodeLine{00271\ }
+\DoxyCodeLine{00272\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00273\ \textcolor{comment}{\ *\ Used\ for\ reciprocal\ division/mod\ functions\ It\ cannot\ be\ shared\ between}}
+\DoxyCodeLine{00274\ \textcolor{comment}{\ *\ threads}}
+\DoxyCodeLine{00275\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00276\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbn__recp__ctx__st}{bn\_recp\_ctx\_st}}\ \{}
+\DoxyCodeLine{00277\ \ \ \ \ BIGNUM\ N;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ the\ divisor\ */}}
+\DoxyCodeLine{00278\ \ \ \ \ BIGNUM\ Nr;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ the\ reciprocal\ */}}
+\DoxyCodeLine{00279\ \ \ \ \ \textcolor{keywordtype}{int}\ num\_bits;}
+\DoxyCodeLine{00280\ \ \ \ \ \textcolor{keywordtype}{int}\ shift;}
+\DoxyCodeLine{00281\ \ \ \ \ \textcolor{keywordtype}{int}\ flags;}
+\DoxyCodeLine{00282\ \};}
+\DoxyCodeLine{00283\ }
+\DoxyCodeLine{00284\ \textcolor{comment}{/*\ Used\ for\ slow\ "{}generation"{}\ functions.\ */}}
+\DoxyCodeLine{00285\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbn__gencb__st}{bn\_gencb\_st}}\ \{}
+\DoxyCodeLine{00286\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ ver;\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ To\ handle\ binary\ (in)compatibility\ */}}
+\DoxyCodeLine{00287\ \ \ \ \ \textcolor{keywordtype}{void}\ *arg;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ callback-\/specific\ data\ */}}
+\DoxyCodeLine{00288\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00289\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ if\ (ver==1)\ -\/\ handles\ old\ style\ callbacks\ */}}
+\DoxyCodeLine{00290\ \ \ \ \ \ \ \ \ void\ (*cb\_1)\ (int,\ int,\ \textcolor{keywordtype}{void}\ *);}
+\DoxyCodeLine{00291\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ if\ (ver==2)\ -\/\ new\ callback\ style\ */}}
+\DoxyCodeLine{00292\ \ \ \ \ \ \ \ \ int\ (*cb\_2)\ (int,\ int,\ BN\_GENCB\ *);}
+\DoxyCodeLine{00293\ \ \ \ \ \}\ cb;}
+\DoxyCodeLine{00294\ \};}
+\DoxyCodeLine{00295\ }
+\DoxyCodeLine{00296\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00297\ \textcolor{comment}{\ *\ BN\_window\_bits\_for\_exponent\_size\ -\/-\/\ macro\ for\ sliding\ window\ mod\_exp\ functions}}
+\DoxyCodeLine{00298\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00299\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00300\ \textcolor{comment}{\ *\ For\ window\ size\ 'w'\ (w\ >=\ 2)\ and\ a\ random\ 'b'\ bits\ exponent,}}
+\DoxyCodeLine{00301\ \textcolor{comment}{\ *\ the\ number\ of\ multiplications\ is\ a\ constant\ plus\ on\ average}}
+\DoxyCodeLine{00302\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00303\ \textcolor{comment}{\ *\ \ \ \ 2\string^(w-\/1)\ +\ (b-\/w)/(w+1);}}
+\DoxyCodeLine{00304\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00305\ \textcolor{comment}{\ *\ here\ \ 2\string^(w-\/1)\ \ is\ for\ precomputing\ the\ table\ (we\ actually\ need}}
+\DoxyCodeLine{00306\ \textcolor{comment}{\ *\ entries\ only\ for\ windows\ that\ have\ the\ lowest\ bit\ set),\ and}}
+\DoxyCodeLine{00307\ \textcolor{comment}{\ *\ (b-\/w)/(w+1)\ \ is\ an\ approximation\ for\ the\ expected\ number\ of}}
+\DoxyCodeLine{00308\ \textcolor{comment}{\ *\ w-\/bit\ windows,\ not\ counting\ the\ first\ one.}}
+\DoxyCodeLine{00309\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00310\ \textcolor{comment}{\ *\ Thus\ we\ should\ use}}
+\DoxyCodeLine{00311\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00312\ \textcolor{comment}{\ *\ \ \ \ w\ >=\ 6\ \ if\ \ \ \ \ \ \ \ b\ >\ 671}}
+\DoxyCodeLine{00313\ \textcolor{comment}{\ *\ \ \ \ \ w\ =\ 5\ \ if\ \ 671\ >\ b\ >\ 239}}
+\DoxyCodeLine{00314\ \textcolor{comment}{\ *\ \ \ \ \ w\ =\ 4\ \ if\ \ 239\ >\ b\ >\ \ 79}}
+\DoxyCodeLine{00315\ \textcolor{comment}{\ *\ \ \ \ \ w\ =\ 3\ \ if\ \ \ 79\ >\ b\ >\ \ 23}}
+\DoxyCodeLine{00316\ \textcolor{comment}{\ *\ \ \ \ w\ <=\ 2\ \ if\ \ \ 23\ >\ b}}
+\DoxyCodeLine{00317\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00318\ \textcolor{comment}{\ *\ (with\ draws\ in\ between).\ \ Very\ small\ exponents\ are\ often\ selected}}
+\DoxyCodeLine{00319\ \textcolor{comment}{\ *\ with\ low\ Hamming\ weight,\ so\ we\ use\ \ w\ =\ 1\ \ for\ b\ <=\ 23.}}
+\DoxyCodeLine{00320\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00321\ \textcolor{preprocessor}{\#\ define\ BN\_window\_bits\_for\_exponent\_size(b)\ \(\backslash\)}}
+\DoxyCodeLine{00322\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ((b)\ >\ 671\ ?\ 6\ :\ \(\backslash\)}}
+\DoxyCodeLine{00323\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (b)\ >\ 239\ ?\ 5\ :\ \(\backslash\)}}
+\DoxyCodeLine{00324\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (b)\ >\ \ 79\ ?\ 4\ :\ \(\backslash\)}}
+\DoxyCodeLine{00325\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (b)\ >\ \ 23\ ?\ 3\ :\ 1)}}
+\DoxyCodeLine{00326\ }
+\DoxyCodeLine{00327\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00328\ \textcolor{comment}{\ *\ BN\_mod\_exp\_mont\_consttime\ is\ based\ on\ the\ assumption\ that\ the\ L1\ data\ cache}}
+\DoxyCodeLine{00329\ \textcolor{comment}{\ *\ line\ width\ of\ the\ target\ processor\ is\ at\ least\ the\ following\ value.}}
+\DoxyCodeLine{00330\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00331\ \textcolor{preprocessor}{\#\ define\ MOD\_EXP\_CTIME\_MIN\_CACHE\_LINE\_WIDTH\ \ \ \ \ \ (\ 64\ )}}
+\DoxyCodeLine{00332\ \textcolor{preprocessor}{\#\ define\ MOD\_EXP\_CTIME\_MIN\_CACHE\_LINE\_MASK\ \ \ \ \ \ \ (MOD\_EXP\_CTIME\_MIN\_CACHE\_LINE\_WIDTH\ -\/\ 1)}}
+\DoxyCodeLine{00333\ }
+\DoxyCodeLine{00334\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00335\ \textcolor{comment}{\ *\ Window\ sizes\ optimized\ for\ fixed\ window\ size\ modular\ exponentiation}}
+\DoxyCodeLine{00336\ \textcolor{comment}{\ *\ algorithm\ (BN\_mod\_exp\_mont\_consttime).\ To\ achieve\ the\ security\ goals\ of}}
+\DoxyCodeLine{00337\ \textcolor{comment}{\ *\ BN\_mode\_exp\_mont\_consttime,\ the\ maximum\ size\ of\ the\ window\ must\ not\ exceed}}
+\DoxyCodeLine{00338\ \textcolor{comment}{\ *\ log\_2(MOD\_EXP\_CTIME\_MIN\_CACHE\_LINE\_WIDTH).\ Window\ size\ thresholds\ are}}
+\DoxyCodeLine{00339\ \textcolor{comment}{\ *\ defined\ for\ cache\ line\ sizes\ of\ 32\ and\ 64,\ cache\ line\ sizes\ where}}
+\DoxyCodeLine{00340\ \textcolor{comment}{\ *\ log\_2(32)=5\ and\ log\_2(64)=6\ respectively.\ A\ window\ size\ of\ 7\ should\ only\ be}}
+\DoxyCodeLine{00341\ \textcolor{comment}{\ *\ used\ on\ processors\ that\ have\ a\ 128\ byte\ or\ greater\ cache\ line\ size.}}
+\DoxyCodeLine{00342\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00343\ \textcolor{preprocessor}{\#\ if\ MOD\_EXP\_CTIME\_MIN\_CACHE\_LINE\_WIDTH\ ==\ 64}}
+\DoxyCodeLine{00344\ }
+\DoxyCodeLine{00345\ \textcolor{preprocessor}{\#\ \ define\ BN\_window\_bits\_for\_ctime\_exponent\_size(b)\ \(\backslash\)}}
+\DoxyCodeLine{00346\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ((b)\ >\ 937\ ?\ 6\ :\ \(\backslash\)}}
+\DoxyCodeLine{00347\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (b)\ >\ 306\ ?\ 5\ :\ \(\backslash\)}}
+\DoxyCodeLine{00348\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (b)\ >\ \ 89\ ?\ 4\ :\ \(\backslash\)}}
+\DoxyCodeLine{00349\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (b)\ >\ \ 22\ ?\ 3\ :\ 1)}}
+\DoxyCodeLine{00350\ \textcolor{preprocessor}{\#\ \ define\ BN\_MAX\_WINDOW\_BITS\_FOR\_CTIME\_EXPONENT\_SIZE\ \ \ \ (6)}}
+\DoxyCodeLine{00351\ }
+\DoxyCodeLine{00352\ \textcolor{preprocessor}{\#\ elif\ MOD\_EXP\_CTIME\_MIN\_CACHE\_LINE\_WIDTH\ ==\ 32}}
+\DoxyCodeLine{00353\ }
+\DoxyCodeLine{00354\ \textcolor{preprocessor}{\#\ \ define\ BN\_window\_bits\_for\_ctime\_exponent\_size(b)\ \(\backslash\)}}
+\DoxyCodeLine{00355\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ((b)\ >\ 306\ ?\ 5\ :\ \(\backslash\)}}
+\DoxyCodeLine{00356\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (b)\ >\ \ 89\ ?\ 4\ :\ \(\backslash\)}}
+\DoxyCodeLine{00357\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (b)\ >\ \ 22\ ?\ 3\ :\ 1)}}
+\DoxyCodeLine{00358\ \textcolor{preprocessor}{\#\ \ define\ BN\_MAX\_WINDOW\_BITS\_FOR\_CTIME\_EXPONENT\_SIZE\ \ \ \ (5)}}
+\DoxyCodeLine{00359\ }
+\DoxyCodeLine{00360\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00361\ }
+\DoxyCodeLine{00362\ \textcolor{comment}{/*\ Pentium\ pro\ 16,16,16,32,64\ */}}
+\DoxyCodeLine{00363\ \textcolor{comment}{/*\ Alpha\ \ \ \ \ \ \ 16,16,16,16.64\ */}}
+\DoxyCodeLine{00364\ \textcolor{preprocessor}{\#\ define\ BN\_MULL\_SIZE\_NORMAL\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (16)}\textcolor{comment}{/*\ 32\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00365\ \textcolor{preprocessor}{\#\ define\ BN\_MUL\_RECURSIVE\_SIZE\_NORMAL\ \ \ \ \ \ \ \ \ \ \ \ (16)}\textcolor{comment}{/*\ 32\ less\ than\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00366\ \textcolor{preprocessor}{\#\ define\ BN\_SQR\_RECURSIVE\_SIZE\_NORMAL\ \ \ \ \ \ \ \ \ \ \ \ (16)}\textcolor{comment}{/*\ 32\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00367\ \textcolor{preprocessor}{\#\ define\ BN\_MUL\_LOW\_RECURSIVE\_SIZE\_NORMAL\ \ \ \ \ \ \ \ (32)}\textcolor{comment}{/*\ 32\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00368\ \textcolor{preprocessor}{\#\ define\ BN\_MONT\_CTX\_SET\_SIZE\_WORD\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (64)}\textcolor{comment}{/*\ 32\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00369\ }
+\DoxyCodeLine{00370\ \textcolor{preprocessor}{\#\ if\ !defined(OPENSSL\_NO\_ASM)\ \&\&\ !defined(OPENSSL\_NO\_INLINE\_ASM)\ \&\&\ !defined(PEDANTIC)}}
+\DoxyCodeLine{00371\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00372\ \textcolor{comment}{\ *\ BN\_UMULT\_HIGH\ section.}}
+\DoxyCodeLine{00373\ \textcolor{comment}{\ *\ If\ the\ compiler\ doesn't\ support\ 2*N\ integer\ type,\ then\ you\ have\ to}}
+\DoxyCodeLine{00374\ \textcolor{comment}{\ *\ replace\ every\ N*N\ multiplication\ with\ 4\ (N/2)*(N/2)\ accompanied\ by\ some}}
+\DoxyCodeLine{00375\ \textcolor{comment}{\ *\ shifts\ and\ additions\ which\ unavoidably\ results\ in\ severe\ performance}}
+\DoxyCodeLine{00376\ \textcolor{comment}{\ *\ penalties.\ Of\ course\ provided\ that\ the\ hardware\ is\ capable\ of\ producing}}
+\DoxyCodeLine{00377\ \textcolor{comment}{\ *\ 2*N\ result...\ That's\ when\ you\ normally\ start\ considering\ assembler}}
+\DoxyCodeLine{00378\ \textcolor{comment}{\ *\ implementation.\ However!\ It\ should\ be\ pointed\ out\ that\ some\ CPUs\ (e.g.,}}
+\DoxyCodeLine{00379\ \textcolor{comment}{\ *\ PowerPC,\ Alpha,\ and\ IA-\/64)\ provide\ *separate*\ instruction\ calculating}}
+\DoxyCodeLine{00380\ \textcolor{comment}{\ *\ the\ upper\ half\ of\ the\ product\ placing\ the\ result\ into\ a\ general}}
+\DoxyCodeLine{00381\ \textcolor{comment}{\ *\ purpose\ register.\ Now\ *if*\ the\ compiler\ supports\ inline\ assembler,}}
+\DoxyCodeLine{00382\ \textcolor{comment}{\ *\ then\ it's\ not\ impossible\ to\ implement\ the\ "{}bignum"{}\ routines\ (and\ have}}
+\DoxyCodeLine{00383\ \textcolor{comment}{\ *\ the\ compiler\ optimize\ 'em)\ exhibiting\ "{}native"{}\ performance\ in\ C.\ That's}}
+\DoxyCodeLine{00384\ \textcolor{comment}{\ *\ what\ BN\_UMULT\_HIGH\ macro\ is\ about:-\/)\ Note\ that\ more\ recent\ compilers\ do}}
+\DoxyCodeLine{00385\ \textcolor{comment}{\ *\ support\ 2*64\ integer\ type,\ which\ is\ also\ used\ here.}}
+\DoxyCodeLine{00386\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00387\ \textcolor{preprocessor}{\#\ \ if\ defined(\_\_SIZEOF\_INT128\_\_)\ \&\&\ \_\_SIZEOF\_INT128\_\_==16\ \&\&\ \(\backslash\)}}
+\DoxyCodeLine{00388\ \textcolor{preprocessor}{\ \ \ \ \ \ (defined(SIXTY\_FOUR\_BIT)\ ||\ defined(SIXTY\_FOUR\_BIT\_LONG))}}
+\DoxyCodeLine{00389\ \textcolor{preprocessor}{\#\ \ \ define\ BN\_UMULT\_HIGH(a,b)\ \ \ \ \ \ \ \ \ \ (((uint128\_t)(a)*(b))>>64)}}
+\DoxyCodeLine{00390\ \textcolor{preprocessor}{\#\ \ \ define\ BN\_UMULT\_LOHI(low,high,a,b)\ (\{\ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00391\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ uint128\_t\ ret=(uint128\_t)(a)*(b);\ \ \ \(\backslash\)}}
+\DoxyCodeLine{00392\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ (high)=ret>>64;\ (low)=ret;\ \ \ \ \ \ \})}}
+\DoxyCodeLine{00393\ \textcolor{preprocessor}{\#\ \ elif\ defined(\_\_alpha)\ \&\&\ (defined(SIXTY\_FOUR\_BIT\_LONG)\ ||\ defined(SIXTY\_FOUR\_BIT))}}
+\DoxyCodeLine{00394\ \textcolor{preprocessor}{\#\ \ \ if\ defined(\_\_DECC)}}
+\DoxyCodeLine{00395\ \textcolor{preprocessor}{\#\ \ \ \ include\ <c\_asm.h>}}
+\DoxyCodeLine{00396\ \textcolor{preprocessor}{\#\ \ \ \ define\ BN\_UMULT\_HIGH(a,b)\ \ \ (BN\_ULONG)asm("{}umulh\ \%a0,\%a1,\%v0"{},(a),(b))}}
+\DoxyCodeLine{00397\ \textcolor{preprocessor}{\#\ \ \ elif\ defined(\_\_GNUC\_\_)\ \&\&\ \_\_GNUC\_\_>=2}}
+\DoxyCodeLine{00398\ \textcolor{preprocessor}{\#\ \ \ \ define\ BN\_UMULT\_HIGH(a,b)\ \ \ (\{\ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00399\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ register\ BN\_ULONG\ ret;\ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00400\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ asm\ ("{}umulh\ \ \ \ \ \%1,\%2,\%0"{}\ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00401\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ :\ "{}=r"{}(ret)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00402\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ :\ "{}r"{}(a),\ "{}r"{}(b));\ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00403\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ ret;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \})}}
+\DoxyCodeLine{00404\ \textcolor{preprocessor}{\#\ \ \ endif\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{/*\ compiler\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00405\ \textcolor{preprocessor}{\#\ \ elif\ defined(\_ARCH\_PPC64)\ \&\&\ defined(SIXTY\_FOUR\_BIT\_LONG)}}
+\DoxyCodeLine{00406\ \textcolor{preprocessor}{\#\ \ \ if\ defined(\_\_GNUC\_\_)\ \&\&\ \_\_GNUC\_\_>=2}}
+\DoxyCodeLine{00407\ \textcolor{preprocessor}{\#\ \ \ \ define\ BN\_UMULT\_HIGH(a,b)\ \ \ (\{\ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00408\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ register\ BN\_ULONG\ ret;\ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00409\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ asm\ ("{}mulhdu\ \ \ \ \%0,\%1,\%2"{}\ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00410\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ :\ "{}=r"{}(ret)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00411\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ :\ "{}r"{}(a),\ "{}r"{}(b));\ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00412\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ ret;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \})}}
+\DoxyCodeLine{00413\ \textcolor{preprocessor}{\#\ \ \ endif\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{/*\ compiler\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00414\ \textcolor{preprocessor}{\#\ \ elif\ (defined(\_\_x86\_64)\ ||\ defined(\_\_x86\_64\_\_))\ \&\&\ \(\backslash\)}}
+\DoxyCodeLine{00415\ \textcolor{preprocessor}{\ \ \ \ \ \ \ (defined(SIXTY\_FOUR\_BIT\_LONG)\ ||\ defined(SIXTY\_FOUR\_BIT))}}
+\DoxyCodeLine{00416\ \textcolor{preprocessor}{\#\ \ \ if\ defined(\_\_GNUC\_\_)\ \&\&\ \_\_GNUC\_\_>=2}}
+\DoxyCodeLine{00417\ \textcolor{preprocessor}{\#\ \ \ \ define\ BN\_UMULT\_HIGH(a,b)\ \ \ (\{\ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00418\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ register\ BN\_ULONG\ ret,discard;\ \ \(\backslash\)}}
+\DoxyCodeLine{00419\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ asm\ ("{}mulq\ \ \ \ \ \ \%3"{}\ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00420\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ :\ "{}=a"{}(discard),"{}=d"{}(ret)\ \ \(\backslash\)}}
+\DoxyCodeLine{00421\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ :\ "{}a"{}(a),\ "{}g"{}(b)\ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00422\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ :\ "{}cc"{});\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00423\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ ret;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \})}}
+\DoxyCodeLine{00424\ \textcolor{preprocessor}{\#\ \ \ \ define\ BN\_UMULT\_LOHI(low,high,a,b)\ \(\backslash\)}}
+\DoxyCodeLine{00425\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ asm\ ("{}mulq\ \ \ \ \ \ \%3"{}\ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00426\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ "{}=a"{}(low),"{}=d"{}(high)\ \ \(\backslash\)}}
+\DoxyCodeLine{00427\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ "{}a"{}(a),"{}g"{}(b)\ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00428\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ "{}cc"{});}}
+\DoxyCodeLine{00429\ \textcolor{preprocessor}{\#\ \ \ endif}}
+\DoxyCodeLine{00430\ \textcolor{preprocessor}{\#\ \ elif\ (defined(\_M\_AMD64)\ ||\ defined(\_M\_X64))\ \&\&\ defined(SIXTY\_FOUR\_BIT)}}
+\DoxyCodeLine{00431\ \textcolor{preprocessor}{\#\ \ \ if\ defined(\_MSC\_VER)\ \&\&\ \_MSC\_VER>=1400}}
+\DoxyCodeLine{00432\ \textcolor{keywordtype}{unsigned}\ \_\_int64\ \_\_umulh(\textcolor{keywordtype}{unsigned}\ \_\_int64\ a,\ \textcolor{keywordtype}{unsigned}\ \_\_int64\ \mbox{\hyperlink{structb}{b}});}
+\DoxyCodeLine{00433\ \textcolor{keywordtype}{unsigned}\ \_\_int64\ \_umul128(\textcolor{keywordtype}{unsigned}\ \_\_int64\ a,\ \textcolor{keywordtype}{unsigned}\ \_\_int64\ \mbox{\hyperlink{structb}{b}},}
+\DoxyCodeLine{00434\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \_\_int64\ *h);}
+\DoxyCodeLine{00435\ \textcolor{preprocessor}{\#\ \ \ \ pragma\ intrinsic(\_\_umulh,\_umul128)}}
+\DoxyCodeLine{00436\ \textcolor{preprocessor}{\#\ \ \ \ define\ BN\_UMULT\_HIGH(a,b)\ \ \ \ \ \ \ \ \ \ \ \_\_umulh((a),(b))}}
+\DoxyCodeLine{00437\ \textcolor{preprocessor}{\#\ \ \ \ define\ BN\_UMULT\_LOHI(low,high,a,b)\ \ ((low)=\_umul128((a),(b),\&(high)))}}
+\DoxyCodeLine{00438\ \textcolor{preprocessor}{\#\ \ \ endif}}
+\DoxyCodeLine{00439\ \textcolor{preprocessor}{\#\ \ elif\ defined(\_\_mips)\ \&\&\ (defined(SIXTY\_FOUR\_BIT)\ ||\ defined(SIXTY\_FOUR\_BIT\_LONG))}}
+\DoxyCodeLine{00440\ \textcolor{preprocessor}{\#\ \ \ if\ defined(\_\_GNUC\_\_)\ \&\&\ \_\_GNUC\_\_>=2}}
+\DoxyCodeLine{00441\ \textcolor{preprocessor}{\#\ \ \ \ define\ BN\_UMULT\_HIGH(a,b)\ (\{\ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00442\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ register\ BN\_ULONG\ ret;\ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00443\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ asm\ ("{}dmultu\ \ \ \ \%1,\%2"{}\ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00444\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ :\ "{}=h"{}(ret)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00445\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ :\ "{}r"{}(a),\ "{}r"{}(b)\ :\ "{}l"{});\ \ \ \(\backslash\)}}
+\DoxyCodeLine{00446\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ ret;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \})}}
+\DoxyCodeLine{00447\ \textcolor{preprocessor}{\#\ \ \ \ define\ BN\_UMULT\_LOHI(low,high,a,b)\ \(\backslash\)}}
+\DoxyCodeLine{00448\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ asm\ ("{}dmultu\ \ \ \ \%2,\%3"{}\ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00449\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ :\ "{}=l"{}(low),"{}=h"{}(high)\ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00450\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ :\ "{}r"{}(a),\ "{}r"{}(b));}}
+\DoxyCodeLine{00451\ \textcolor{preprocessor}{\#\ \ \ endif}}
+\DoxyCodeLine{00452\ \textcolor{preprocessor}{\#\ \ elif\ defined(\_\_aarch64\_\_)\ \&\&\ defined(SIXTY\_FOUR\_BIT\_LONG)}}
+\DoxyCodeLine{00453\ \textcolor{preprocessor}{\#\ \ \ if\ defined(\_\_GNUC\_\_)\ \&\&\ \_\_GNUC\_\_>=2}}
+\DoxyCodeLine{00454\ \textcolor{preprocessor}{\#\ \ \ \ define\ BN\_UMULT\_HIGH(a,b)\ \ \ (\{\ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00455\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ register\ BN\_ULONG\ ret;\ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00456\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ asm\ ("{}umulh\ \ \ \ \ \%0,\%1,\%2"{}\ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00457\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ :\ "{}=r"{}(ret)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00458\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ :\ "{}r"{}(a),\ "{}r"{}(b));\ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00459\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ ret;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \})}}
+\DoxyCodeLine{00460\ \textcolor{preprocessor}{\#\ \ \ endif}}
+\DoxyCodeLine{00461\ \textcolor{preprocessor}{\#\ \ endif\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{/*\ cpu\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00462\ \textcolor{preprocessor}{\#\ endif\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{/*\ OPENSSL\_NO\_ASM\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00463\ }
+\DoxyCodeLine{00464\ \textcolor{preprocessor}{\#\ ifdef\ BN\_RAND\_DEBUG}}
+\DoxyCodeLine{00465\ \textcolor{preprocessor}{\#\ \ define\ bn\_clear\_top2max(a)\ \(\backslash\)}}
+\DoxyCodeLine{00466\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{\ \(\backslash\)}}
+\DoxyCodeLine{00467\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ int\ \ \ \ \ \ ind\ =\ (a)-\/>dmax\ -\/\ (a)-\/>top;\ \(\backslash\)}}
+\DoxyCodeLine{00468\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ BN\_ULONG\ *ftl\ =\ \&(a)-\/>d[(a)-\/>top-\/1];\ \(\backslash\)}}
+\DoxyCodeLine{00469\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ for\ (;\ ind\ !=\ 0;\ ind-\/-\/)\ \(\backslash\)}}
+\DoxyCodeLine{00470\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *(++ftl)\ =\ 0x0;\ \(\backslash\)}}
+\DoxyCodeLine{00471\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \}}}
+\DoxyCodeLine{00472\ \textcolor{preprocessor}{\#\ else}}
+\DoxyCodeLine{00473\ \textcolor{preprocessor}{\#\ \ define\ bn\_clear\_top2max(a)}}
+\DoxyCodeLine{00474\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00475\ }
+\DoxyCodeLine{00476\ \textcolor{preprocessor}{\#\ ifdef\ BN\_LLONG}}
+\DoxyCodeLine{00477\ \textcolor{comment}{/*******************************************************************}}
+\DoxyCodeLine{00478\ \textcolor{comment}{\ *\ Using\ the\ long\ long\ type,\ has\ to\ be\ twice\ as\ wide\ as\ BN\_ULONG...}}
+\DoxyCodeLine{00479\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00480\ \textcolor{preprocessor}{\#\ \ define\ Lw(t)\ \ \ \ (((BN\_ULONG)(t))\&BN\_MASK2)}}
+\DoxyCodeLine{00481\ \textcolor{preprocessor}{\#\ \ define\ Hw(t)\ \ \ \ (((BN\_ULONG)((t)>>BN\_BITS2))\&BN\_MASK2)}}
+\DoxyCodeLine{00482\ }
+\DoxyCodeLine{00483\ \textcolor{preprocessor}{\#\ \ define\ mul\_add(r,a,w,c)\ \{\ \(\backslash\)}}
+\DoxyCodeLine{00484\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ BN\_ULLONG\ t;\ \(\backslash\)}}
+\DoxyCodeLine{00485\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ t=(BN\_ULLONG)w\ *\ (a)\ +\ (r)\ +\ (c);\ \(\backslash\)}}
+\DoxyCodeLine{00486\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ (r)=\ Lw(t);\ \(\backslash\)}}
+\DoxyCodeLine{00487\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ (c)=\ Hw(t);\ \(\backslash\)}}
+\DoxyCodeLine{00488\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \}}}
+\DoxyCodeLine{00489\ }
+\DoxyCodeLine{00490\ \textcolor{preprocessor}{\#\ \ define\ mul(r,a,w,c)\ \{\ \(\backslash\)}}
+\DoxyCodeLine{00491\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ BN\_ULLONG\ t;\ \(\backslash\)}}
+\DoxyCodeLine{00492\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ t=(BN\_ULLONG)w\ *\ (a)\ +\ (c);\ \(\backslash\)}}
+\DoxyCodeLine{00493\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ (r)=\ Lw(t);\ \(\backslash\)}}
+\DoxyCodeLine{00494\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ (c)=\ Hw(t);\ \(\backslash\)}}
+\DoxyCodeLine{00495\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \}}}
+\DoxyCodeLine{00496\ }
+\DoxyCodeLine{00497\ \textcolor{preprocessor}{\#\ \ define\ sqr(r0,r1,a)\ \{\ \(\backslash\)}}
+\DoxyCodeLine{00498\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ BN\_ULLONG\ t;\ \(\backslash\)}}
+\DoxyCodeLine{00499\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ t=(BN\_ULLONG)(a)*(a);\ \(\backslash\)}}
+\DoxyCodeLine{00500\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ (r0)=Lw(t);\ \(\backslash\)}}
+\DoxyCodeLine{00501\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ (r1)=Hw(t);\ \(\backslash\)}}
+\DoxyCodeLine{00502\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \}}}
+\DoxyCodeLine{00503\ }
+\DoxyCodeLine{00504\ \textcolor{preprocessor}{\#\ elif\ defined(BN\_UMULT\_LOHI)}}
+\DoxyCodeLine{00505\ \textcolor{preprocessor}{\#\ \ define\ mul\_add(r,a,w,c)\ \{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00506\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ BN\_ULONG\ high,low,ret,tmp=(a);\ \ \(\backslash\)}}
+\DoxyCodeLine{00507\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ ret\ =\ \ (r);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00508\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ BN\_UMULT\_LOHI(low,high,w,tmp);\ \ \(\backslash\)}}
+\DoxyCodeLine{00509\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ ret\ +=\ (c);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00510\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ (c)\ =\ \ (ret<(c));\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00511\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ (c)\ +=\ high;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00512\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ ret\ +=\ low;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00513\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ (c)\ +=\ (ret<low);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00514\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ (r)\ =\ \ ret;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00515\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \}}}
+\DoxyCodeLine{00516\ }
+\DoxyCodeLine{00517\ \textcolor{preprocessor}{\#\ \ define\ mul(r,a,w,c)\ \ \ \ \{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00518\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ BN\_ULONG\ high,low,ret,ta=(a);\ \ \ \(\backslash\)}}
+\DoxyCodeLine{00519\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ BN\_UMULT\_LOHI(low,high,w,ta);\ \ \ \(\backslash\)}}
+\DoxyCodeLine{00520\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ ret\ =\ \ low\ +\ (c);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00521\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ (c)\ =\ \ high;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00522\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ (c)\ +=\ (ret<low);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00523\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ (r)\ =\ \ ret;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00524\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \}}}
+\DoxyCodeLine{00525\ }
+\DoxyCodeLine{00526\ \textcolor{preprocessor}{\#\ \ define\ sqr(r0,r1,a)\ \ \ \ \{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00527\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ BN\_ULONG\ tmp=(a);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00528\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ BN\_UMULT\_LOHI(r0,r1,tmp,tmp);\ \ \ \(\backslash\)}}
+\DoxyCodeLine{00529\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \}}}
+\DoxyCodeLine{00530\ }
+\DoxyCodeLine{00531\ \textcolor{preprocessor}{\#\ elif\ defined(BN\_UMULT\_HIGH)}}
+\DoxyCodeLine{00532\ \textcolor{preprocessor}{\#\ \ define\ mul\_add(r,a,w,c)\ \{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00533\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ BN\_ULONG\ high,low,ret,tmp=(a);\ \ \(\backslash\)}}
+\DoxyCodeLine{00534\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ ret\ =\ \ (r);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00535\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ high=\ \ BN\_UMULT\_HIGH(w,tmp);\ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00536\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ ret\ +=\ (c);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00537\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ low\ =\ \ (w)\ *\ tmp;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00538\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ (c)\ =\ \ (ret<(c));\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00539\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ (c)\ +=\ high;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00540\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ ret\ +=\ low;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00541\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ (c)\ +=\ (ret<low);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00542\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ (r)\ =\ \ ret;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00543\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \}}}
+\DoxyCodeLine{00544\ }
+\DoxyCodeLine{00545\ \textcolor{preprocessor}{\#\ \ define\ mul(r,a,w,c)\ \ \ \ \{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00546\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ BN\_ULONG\ high,low,ret,ta=(a);\ \ \ \(\backslash\)}}
+\DoxyCodeLine{00547\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ low\ =\ \ (w)\ *\ ta;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00548\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ high=\ \ BN\_UMULT\_HIGH(w,ta);\ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00549\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ ret\ =\ \ low\ +\ (c);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00550\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ (c)\ =\ \ high;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00551\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ (c)\ +=\ (ret<low);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00552\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ (r)\ =\ \ ret;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00553\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \}}}
+\DoxyCodeLine{00554\ }
+\DoxyCodeLine{00555\ \textcolor{preprocessor}{\#\ \ define\ sqr(r0,r1,a)\ \ \ \ \{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00556\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ BN\_ULONG\ tmp=(a);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00557\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ (r0)\ =\ tmp\ *\ tmp;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00558\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ (r1)\ =\ BN\_UMULT\_HIGH(tmp,tmp);\ \ \(\backslash\)}}
+\DoxyCodeLine{00559\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \}}}
+\DoxyCodeLine{00560\ }
+\DoxyCodeLine{00561\ \textcolor{preprocessor}{\#\ else}}
+\DoxyCodeLine{00562\ \textcolor{comment}{/*************************************************************}}
+\DoxyCodeLine{00563\ \textcolor{comment}{\ *\ No\ long\ long\ type}}
+\DoxyCodeLine{00564\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00565\ }
+\DoxyCodeLine{00566\ \textcolor{preprocessor}{\#\ \ define\ LBITS(a)\ \ \ \ \ \ \ \ ((a)\&BN\_MASK2l)}}
+\DoxyCodeLine{00567\ \textcolor{preprocessor}{\#\ \ define\ HBITS(a)\ \ \ \ \ \ \ \ (((a)>>BN\_BITS4)\&BN\_MASK2l)}}
+\DoxyCodeLine{00568\ \textcolor{preprocessor}{\#\ \ define\ L2HBITS(a)\ \ \ \ \ \ (((a)<<BN\_BITS4)\&BN\_MASK2)}}
+\DoxyCodeLine{00569\ }
+\DoxyCodeLine{00570\ \textcolor{preprocessor}{\#\ \ define\ LLBITS(a)\ \ \ \ \ \ \ ((a)\&BN\_MASKl)}}
+\DoxyCodeLine{00571\ \textcolor{preprocessor}{\#\ \ define\ LHBITS(a)\ \ \ \ \ \ \ (((a)>>BN\_BITS2)\&BN\_MASKl)}}
+\DoxyCodeLine{00572\ \textcolor{preprocessor}{\#\ \ define\ LL2HBITS(a)\ \ \ \ \ ((BN\_ULLONG)((a)\&BN\_MASKl)<<BN\_BITS2)}}
+\DoxyCodeLine{00573\ }
+\DoxyCodeLine{00574\ \textcolor{preprocessor}{\#\ \ define\ mul64(l,h,bl,bh)\ \(\backslash\)}}
+\DoxyCodeLine{00575\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{\ \(\backslash\)}}
+\DoxyCodeLine{00576\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ BN\_ULONG\ m,m1,lt,ht;\ \(\backslash\)}}
+\DoxyCodeLine{00577\ \textcolor{preprocessor}{\ \(\backslash\)}}
+\DoxyCodeLine{00578\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ lt=l;\ \(\backslash\)}}
+\DoxyCodeLine{00579\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ ht=h;\ \(\backslash\)}}
+\DoxyCodeLine{00580\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ m\ =(bh)*(lt);\ \(\backslash\)}}
+\DoxyCodeLine{00581\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ lt=(bl)*(lt);\ \(\backslash\)}}
+\DoxyCodeLine{00582\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ m1=(bl)*(ht);\ \(\backslash\)}}
+\DoxyCodeLine{00583\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ ht\ =(bh)*(ht);\ \(\backslash\)}}
+\DoxyCodeLine{00584\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ m=(m+m1)\&BN\_MASK2;\ ht\ +=\ L2HBITS((BN\_ULONG)(m\ <\ m1));\ \(\backslash\)}}
+\DoxyCodeLine{00585\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ ht+=HBITS(m);\ \(\backslash\)}}
+\DoxyCodeLine{00586\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ m1=L2HBITS(m);\ \(\backslash\)}}
+\DoxyCodeLine{00587\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ lt=(lt+m1)\&BN\_MASK2;\ ht\ +=\ (lt\ <\ m1);\ \(\backslash\)}}
+\DoxyCodeLine{00588\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ (l)=lt;\ \(\backslash\)}}
+\DoxyCodeLine{00589\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ (h)=ht;\ \(\backslash\)}}
+\DoxyCodeLine{00590\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \}}}
+\DoxyCodeLine{00591\ }
+\DoxyCodeLine{00592\ \textcolor{preprocessor}{\#\ \ define\ sqr64(lo,ho,in)\ \(\backslash\)}}
+\DoxyCodeLine{00593\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{\ \(\backslash\)}}
+\DoxyCodeLine{00594\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ BN\_ULONG\ l,h,m;\ \(\backslash\)}}
+\DoxyCodeLine{00595\ \textcolor{preprocessor}{\ \(\backslash\)}}
+\DoxyCodeLine{00596\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ h=(in);\ \(\backslash\)}}
+\DoxyCodeLine{00597\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ l=LBITS(h);\ \(\backslash\)}}
+\DoxyCodeLine{00598\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ h=HBITS(h);\ \(\backslash\)}}
+\DoxyCodeLine{00599\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ m\ =(l)*(h);\ \(\backslash\)}}
+\DoxyCodeLine{00600\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ l*=l;\ \(\backslash\)}}
+\DoxyCodeLine{00601\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ h*=h;\ \(\backslash\)}}
+\DoxyCodeLine{00602\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ h+=(m\&BN\_MASK2h1)>>(BN\_BITS4-\/1);\ \(\backslash\)}}
+\DoxyCodeLine{00603\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ m\ =(m\&BN\_MASK2l)<<(BN\_BITS4+1);\ \(\backslash\)}}
+\DoxyCodeLine{00604\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ l=(l+m)\&BN\_MASK2;\ h\ +=\ (l\ <\ m);\ \(\backslash\)}}
+\DoxyCodeLine{00605\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ (lo)=l;\ \(\backslash\)}}
+\DoxyCodeLine{00606\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ (ho)=h;\ \(\backslash\)}}
+\DoxyCodeLine{00607\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \}}}
+\DoxyCodeLine{00608\ }
+\DoxyCodeLine{00609\ \textcolor{preprocessor}{\#\ \ define\ mul\_add(r,a,bl,bh,c)\ \{\ \(\backslash\)}}
+\DoxyCodeLine{00610\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ BN\_ULONG\ l,h;\ \(\backslash\)}}
+\DoxyCodeLine{00611\ \textcolor{preprocessor}{\ \(\backslash\)}}
+\DoxyCodeLine{00612\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ h=\ (a);\ \(\backslash\)}}
+\DoxyCodeLine{00613\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ l=LBITS(h);\ \(\backslash\)}}
+\DoxyCodeLine{00614\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ h=HBITS(h);\ \(\backslash\)}}
+\DoxyCodeLine{00615\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ mul64(l,h,(bl),(bh));\ \(\backslash\)}}
+\DoxyCodeLine{00616\ \textcolor{preprocessor}{\ \(\backslash\)}}
+\DoxyCodeLine{00617\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ }\textcolor{comment}{/*\ non-\/multiply\ part\ */}\textcolor{preprocessor}{\ \(\backslash\)}}
+\DoxyCodeLine{00618\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ l=(l+(c))\&BN\_MASK2;\ h\ +=\ (l\ <\ (c));\ \(\backslash\)}}
+\DoxyCodeLine{00619\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ (c)=(r);\ \(\backslash\)}}
+\DoxyCodeLine{00620\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ l=(l+(c))\&BN\_MASK2;\ h\ +=\ (l\ <\ (c));\ \(\backslash\)}}
+\DoxyCodeLine{00621\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ (c)=h\&BN\_MASK2;\ \(\backslash\)}}
+\DoxyCodeLine{00622\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ (r)=l;\ \(\backslash\)}}
+\DoxyCodeLine{00623\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \}}}
+\DoxyCodeLine{00624\ }
+\DoxyCodeLine{00625\ \textcolor{preprocessor}{\#\ \ define\ mul(r,a,bl,bh,c)\ \{\ \(\backslash\)}}
+\DoxyCodeLine{00626\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ BN\_ULONG\ l,h;\ \(\backslash\)}}
+\DoxyCodeLine{00627\ \textcolor{preprocessor}{\ \(\backslash\)}}
+\DoxyCodeLine{00628\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ h=\ (a);\ \(\backslash\)}}
+\DoxyCodeLine{00629\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ l=LBITS(h);\ \(\backslash\)}}
+\DoxyCodeLine{00630\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ h=HBITS(h);\ \(\backslash\)}}
+\DoxyCodeLine{00631\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ mul64(l,h,(bl),(bh));\ \(\backslash\)}}
+\DoxyCodeLine{00632\ \textcolor{preprocessor}{\ \(\backslash\)}}
+\DoxyCodeLine{00633\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ }\textcolor{comment}{/*\ non-\/multiply\ part\ */}\textcolor{preprocessor}{\ \(\backslash\)}}
+\DoxyCodeLine{00634\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ l+=(c);\ h\ +=\ ((l\&BN\_MASK2)\ <\ (c));\ \(\backslash\)}}
+\DoxyCodeLine{00635\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ (c)=h\&BN\_MASK2;\ \(\backslash\)}}
+\DoxyCodeLine{00636\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ (r)=l\&BN\_MASK2;\ \(\backslash\)}}
+\DoxyCodeLine{00637\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \}}}
+\DoxyCodeLine{00638\ \textcolor{preprocessor}{\#\ endif\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{/*\ !BN\_LLONG\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00639\ }
+\DoxyCodeLine{00640\ \textcolor{keywordtype}{void}\ BN\_RECP\_CTX\_init(BN\_RECP\_CTX\ *recp);}
+\DoxyCodeLine{00641\ \textcolor{keywordtype}{void}\ BN\_MONT\_CTX\_init(BN\_MONT\_CTX\ *ctx);}
+\DoxyCodeLine{00642\ }
+\DoxyCodeLine{00643\ \textcolor{keywordtype}{void}\ bn\_init(BIGNUM\ *a);}
+\DoxyCodeLine{00644\ \textcolor{keywordtype}{void}\ bn\_mul\_normal(BN\_ULONG\ *r,\ BN\_ULONG\ *a,\ \textcolor{keywordtype}{int}\ na,\ BN\_ULONG\ *\mbox{\hyperlink{structb}{b}},\ \textcolor{keywordtype}{int}\ nb);}
+\DoxyCodeLine{00645\ \textcolor{keywordtype}{void}\ bn\_mul\_comba8(BN\_ULONG\ *r,\ BN\_ULONG\ *a,\ BN\_ULONG\ *\mbox{\hyperlink{structb}{b}});}
+\DoxyCodeLine{00646\ \textcolor{keywordtype}{void}\ bn\_mul\_comba4(BN\_ULONG\ *r,\ BN\_ULONG\ *a,\ BN\_ULONG\ *\mbox{\hyperlink{structb}{b}});}
+\DoxyCodeLine{00647\ \textcolor{keywordtype}{void}\ bn\_sqr\_normal(BN\_ULONG\ *r,\ \textcolor{keyword}{const}\ BN\_ULONG\ *a,\ \textcolor{keywordtype}{int}\ n,\ BN\_ULONG\ *tmp);}
+\DoxyCodeLine{00648\ \textcolor{keywordtype}{void}\ bn\_sqr\_comba8(BN\_ULONG\ *r,\ \textcolor{keyword}{const}\ BN\_ULONG\ *a);}
+\DoxyCodeLine{00649\ \textcolor{keywordtype}{void}\ bn\_sqr\_comba4(BN\_ULONG\ *r,\ \textcolor{keyword}{const}\ BN\_ULONG\ *a);}
+\DoxyCodeLine{00650\ \textcolor{keywordtype}{int}\ bn\_cmp\_words(\textcolor{keyword}{const}\ BN\_ULONG\ *a,\ \textcolor{keyword}{const}\ BN\_ULONG\ *\mbox{\hyperlink{structb}{b}},\ \textcolor{keywordtype}{int}\ n);}
+\DoxyCodeLine{00651\ \textcolor{keywordtype}{int}\ bn\_cmp\_part\_words(\textcolor{keyword}{const}\ BN\_ULONG\ *a,\ \textcolor{keyword}{const}\ BN\_ULONG\ *\mbox{\hyperlink{structb}{b}},\ \textcolor{keywordtype}{int}\ cl,\ \textcolor{keywordtype}{int}\ dl);}
+\DoxyCodeLine{00652\ \textcolor{keywordtype}{void}\ bn\_mul\_recursive(BN\_ULONG\ *r,\ BN\_ULONG\ *a,\ BN\_ULONG\ *\mbox{\hyperlink{structb}{b}},\ \textcolor{keywordtype}{int}\ n2,}
+\DoxyCodeLine{00653\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ dna,\ \textcolor{keywordtype}{int}\ dnb,\ BN\_ULONG\ *t);}
+\DoxyCodeLine{00654\ \textcolor{keywordtype}{void}\ bn\_mul\_part\_recursive(BN\_ULONG\ *r,\ BN\_ULONG\ *a,\ BN\_ULONG\ *\mbox{\hyperlink{structb}{b}},}
+\DoxyCodeLine{00655\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ n,\ \textcolor{keywordtype}{int}\ tna,\ \textcolor{keywordtype}{int}\ tnb,\ BN\_ULONG\ *t);}
+\DoxyCodeLine{00656\ \textcolor{keywordtype}{void}\ bn\_sqr\_recursive(BN\_ULONG\ *r,\ \textcolor{keyword}{const}\ BN\_ULONG\ *a,\ \textcolor{keywordtype}{int}\ n2,\ BN\_ULONG\ *t);}
+\DoxyCodeLine{00657\ \textcolor{keywordtype}{void}\ bn\_mul\_low\_normal(BN\_ULONG\ *r,\ BN\_ULONG\ *a,\ BN\_ULONG\ *\mbox{\hyperlink{structb}{b}},\ \textcolor{keywordtype}{int}\ n);}
+\DoxyCodeLine{00658\ \textcolor{keywordtype}{void}\ bn\_mul\_low\_recursive(BN\_ULONG\ *r,\ BN\_ULONG\ *a,\ BN\_ULONG\ *\mbox{\hyperlink{structb}{b}},\ \textcolor{keywordtype}{int}\ n2,}
+\DoxyCodeLine{00659\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BN\_ULONG\ *t);}
+\DoxyCodeLine{00660\ BN\_ULONG\ bn\_sub\_part\_words(BN\_ULONG\ *r,\ \textcolor{keyword}{const}\ BN\_ULONG\ *a,\ \textcolor{keyword}{const}\ BN\_ULONG\ *\mbox{\hyperlink{structb}{b}},}
+\DoxyCodeLine{00661\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ cl,\ \textcolor{keywordtype}{int}\ dl);}
+\DoxyCodeLine{00662\ \textcolor{keywordtype}{int}\ bn\_mul\_mont(BN\_ULONG\ *rp,\ \textcolor{keyword}{const}\ BN\_ULONG\ *ap,\ \textcolor{keyword}{const}\ BN\_ULONG\ *bp,}
+\DoxyCodeLine{00663\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BN\_ULONG\ *np,\ \textcolor{keyword}{const}\ BN\_ULONG\ *n0,\ \textcolor{keywordtype}{int}\ num);}
+\DoxyCodeLine{00664\ \textcolor{keywordtype}{void}\ bn\_correct\_top\_consttime(BIGNUM\ *a);}
+\DoxyCodeLine{00665\ BIGNUM\ *int\_bn\_mod\_inverse(BIGNUM\ *in,}
+\DoxyCodeLine{00666\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *a,\ \textcolor{keyword}{const}\ BIGNUM\ *n,\ BN\_CTX\ *ctx,}
+\DoxyCodeLine{00667\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ *noinv);}
+\DoxyCodeLine{00668\ }
+\DoxyCodeLine{00669\ \textcolor{keyword}{static}\ ossl\_inline\ BIGNUM\ *bn\_expand(BIGNUM\ *a,\ \textcolor{keywordtype}{int}\ bits)}
+\DoxyCodeLine{00670\ \{}
+\DoxyCodeLine{00671\ \ \ \ \ \textcolor{keywordflow}{if}\ (bits\ >\ (INT\_MAX\ -\/\ BN\_BITS2\ +\ 1))}
+\DoxyCodeLine{00672\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ NULL;}
+\DoxyCodeLine{00673\ }
+\DoxyCodeLine{00674\ \ \ \ \ \textcolor{keywordflow}{if}\ (((bits+BN\_BITS2-\/1)/BN\_BITS2)\ <=\ (a)-\/>dmax)}
+\DoxyCodeLine{00675\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ a;}
+\DoxyCodeLine{00676\ }
+\DoxyCodeLine{00677\ \ \ \ \ \textcolor{keywordflow}{return}\ bn\_expand2((a),(bits+BN\_BITS2-\/1)/BN\_BITS2);}
+\DoxyCodeLine{00678\ \}}
+\DoxyCodeLine{00679\ }
+\DoxyCodeLine{00680\ \textcolor{keywordtype}{int}\ ossl\_bn\_check\_prime(\textcolor{keyword}{const}\ BIGNUM\ *w,\ \textcolor{keywordtype}{int}\ checks,\ BN\_CTX\ *ctx,}
+\DoxyCodeLine{00681\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ do\_trial\_division,\ BN\_GENCB\ *cb);}
+\DoxyCodeLine{00682\ }
+\DoxyCodeLine{00683\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

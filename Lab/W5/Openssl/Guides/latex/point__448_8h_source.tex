@@ -1,0 +1,322 @@
+\doxysection{point\+\_\+448.\+h}
+\hypertarget{point__448_8h_source}{}\label{point__448_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/ec/curve448/point\_448.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/ec/curve448/point\_448.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2017-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *\ Copyright\ 2015-\/2016\ Cryptography\ Research,\ Inc.}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ *\ Originally\ written\ by\ Mike\ Hamburg}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#ifndef\ OSSL\_CRYPTO\_EC\_CURVE448\_POINT\_448\_H}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ define\ OSSL\_CRYPTO\_EC\_CURVE448\_POINT\_448\_H}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#\ include\ "{}curve448utils.h"{}}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#\ include\ "{}field.h"{}}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{comment}{/*\ Comb\ config:\ number\ of\ combs,\ n,\ t,\ s.\ */}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#define\ COMBS\_N\ 5}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#define\ COMBS\_T\ 5}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#define\ COMBS\_S\ 18}}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{comment}{/*\ Projective\ Niels\ coordinates\ */}}
+\DoxyCodeLine{00025\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00026\ \ \ \ \ gf\ a,\ \mbox{\hyperlink{structb}{b}},\ c;}
+\DoxyCodeLine{00027\ \}\ \mbox{\hyperlink{structniels__s}{niels\_s}},\ niels\_t[1];}
+\DoxyCodeLine{00028\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00029\ \ \ \ \ niels\_t\ n;}
+\DoxyCodeLine{00030\ \ \ \ \ gf\ z;}
+\DoxyCodeLine{00031\ \}\ \mbox{\hyperlink{structpniels__t}{pniels\_t}}[1];}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \textcolor{comment}{/*\ Precomputed\ base\ */}}
+\DoxyCodeLine{00034\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structcurve448__precomputed__s}{curve448\_precomputed\_s}}\ \{}
+\DoxyCodeLine{00035\ \ \ \ \ niels\_t\ table[COMBS\_N\ <<\ (COMBS\_T\ -\/\ 1)];}
+\DoxyCodeLine{00036\ \};}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#\ define\ C448\_SCALAR\_LIMBS\ ((446-\/1)/C448\_WORD\_BITS+1)}}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \textcolor{comment}{/*\ The\ number\ of\ bits\ in\ a\ scalar\ */}}
+\DoxyCodeLine{00041\ \textcolor{preprocessor}{\#\ define\ C448\_SCALAR\_BITS\ 446}}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \textcolor{comment}{/*\ Number\ of\ bytes\ in\ a\ serialized\ scalar.\ */}}
+\DoxyCodeLine{00044\ \textcolor{preprocessor}{\#\ define\ C448\_SCALAR\_BYTES\ 56}}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \textcolor{comment}{/*\ X448\ encoding\ ratio.\ */}}
+\DoxyCodeLine{00047\ \textcolor{preprocessor}{\#\ define\ X448\_ENCODE\_RATIO\ 2}}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \textcolor{comment}{/*\ Number\ of\ bytes\ in\ an\ x448\ public\ key\ */}}
+\DoxyCodeLine{00050\ \textcolor{preprocessor}{\#\ define\ X448\_PUBLIC\_BYTES\ 56}}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ \textcolor{comment}{/*\ Number\ of\ bytes\ in\ an\ x448\ private\ key\ */}}
+\DoxyCodeLine{00053\ \textcolor{preprocessor}{\#\ define\ X448\_PRIVATE\_BYTES\ 56}}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ \textcolor{comment}{/*\ Twisted\ Edwards\ extended\ homogeneous\ coordinates\ */}}
+\DoxyCodeLine{00056\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structcurve448__point__s}{curve448\_point\_s}}\ \{}
+\DoxyCodeLine{00057\ \ \ \ \ gf\ x,\ y,\ z,\ t;}
+\DoxyCodeLine{00058\ \}\ curve448\_point\_t[1];}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ \textcolor{comment}{/*\ Precomputed\ table\ based\ on\ a\ point.\ \ Can\ be\ trivial\ implementation.\ */}}
+\DoxyCodeLine{00061\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structcurve448__precomputed__s}{curve448\_precomputed\_s}};}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00063\ \textcolor{comment}{/*\ Precomputed\ table\ based\ on\ a\ point.\ \ Can\ be\ trivial\ implementation.\ */}}
+\DoxyCodeLine{00064\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structcurve448__precomputed__s}{curve448\_precomputed\_s}}\ \mbox{\hyperlink{structcurve448__precomputed__s}{curve448\_precomputed\_s}};}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \textcolor{comment}{/*\ Scalar\ is\ stored\ packed,\ because\ we\ don't\ need\ the\ speed.\ */}}
+\DoxyCodeLine{00067\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structcurve448__scalar__s}{curve448\_scalar\_s}}\ \{}
+\DoxyCodeLine{00068\ \ \ \ \ c448\_word\_t\ limb[C448\_SCALAR\_LIMBS];}
+\DoxyCodeLine{00069\ \}\ curve448\_scalar\_t[1];}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00071\ \textcolor{comment}{/*\ A\ scalar\ equal\ to\ 1.\ */}}
+\DoxyCodeLine{00072\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ curve448\_scalar\_t\ ossl\_curve448\_scalar\_one;}
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00074\ \textcolor{comment}{/*\ A\ scalar\ equal\ to\ 0.\ */}}
+\DoxyCodeLine{00075\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ curve448\_scalar\_t\ ossl\_curve448\_scalar\_zero;}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00077\ \textcolor{comment}{/*\ The\ identity\ point\ on\ the\ curve.\ */}}
+\DoxyCodeLine{00078\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ curve448\_point\_t\ ossl\_curve448\_point\_identity;}
+\DoxyCodeLine{00079\ }
+\DoxyCodeLine{00080\ \textcolor{comment}{/*\ Precomputed\ table\ for\ the\ base\ point\ on\ the\ curve.\ */}}
+\DoxyCodeLine{00081\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structcurve448__precomputed__s}{curve448\_precomputed\_s}}\ *ossl\_curve448\_precomputed\_base;}
+\DoxyCodeLine{00082\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ niels\_t\ *ossl\_curve448\_wnaf\_base;}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00085\ \textcolor{comment}{\ *\ Read\ a\ scalar\ from\ wire\ format\ or\ from\ bytes.}}
+\DoxyCodeLine{00086\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00087\ \textcolor{comment}{\ *\ ser\ (in):\ Serialized\ form\ of\ a\ scalar.}}
+\DoxyCodeLine{00088\ \textcolor{comment}{\ *\ out\ (out):\ Deserialized\ form.}}
+\DoxyCodeLine{00089\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00090\ \textcolor{comment}{\ *\ Returns:}}
+\DoxyCodeLine{00091\ \textcolor{comment}{\ *\ C448\_SUCCESS:\ The\ scalar\ was\ correctly\ encoded.}}
+\DoxyCodeLine{00092\ \textcolor{comment}{\ *\ C448\_FAILURE:\ The\ scalar\ was\ greater\ than\ the\ modulus,\ and\ has\ been\ reduced}}
+\DoxyCodeLine{00093\ \textcolor{comment}{\ *\ modulo\ that\ modulus.}}
+\DoxyCodeLine{00094\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00095\ c448\_error\_t}
+\DoxyCodeLine{00096\ ossl\_curve448\_scalar\_decode(curve448\_scalar\_t\ out,}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ser[C448\_SCALAR\_BYTES]);}
+\DoxyCodeLine{00098\ }
+\DoxyCodeLine{00099\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00100\ \textcolor{comment}{\ *\ Read\ a\ scalar\ from\ wire\ format\ or\ from\ bytes.\ \ Reduces\ mod\ scalar\ prime.}}
+\DoxyCodeLine{00101\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00102\ \textcolor{comment}{\ *\ ser\ (in):\ Serialized\ form\ of\ a\ scalar.}}
+\DoxyCodeLine{00103\ \textcolor{comment}{\ *\ ser\_len\ (in):\ Length\ of\ serialized\ form.}}
+\DoxyCodeLine{00104\ \textcolor{comment}{\ *\ out\ (out):\ Deserialized\ form.}}
+\DoxyCodeLine{00105\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00106\ \textcolor{keywordtype}{void}}
+\DoxyCodeLine{00107\ ossl\_curve448\_scalar\_decode\_long(curve448\_scalar\_t\ out,}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *ser,\ \textcolor{keywordtype}{size\_t}\ ser\_len);}
+\DoxyCodeLine{00109\ }
+\DoxyCodeLine{00110\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00111\ \textcolor{comment}{\ *\ Serialize\ a\ scalar\ to\ wire\ format.}}
+\DoxyCodeLine{00112\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00113\ \textcolor{comment}{\ *\ ser\ (out):\ Serialized\ form\ of\ a\ scalar.}}
+\DoxyCodeLine{00114\ \textcolor{comment}{\ *\ s\ (in):\ Deserialized\ scalar.}}
+\DoxyCodeLine{00115\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00116\ \textcolor{keywordtype}{void}}
+\DoxyCodeLine{00117\ ossl\_curve448\_scalar\_encode(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ser[C448\_SCALAR\_BYTES],}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ curve448\_scalar\_t\ s);}
+\DoxyCodeLine{00119\ }
+\DoxyCodeLine{00120\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00121\ \textcolor{comment}{\ *\ Add\ two\ scalars.\ |a|,\ |b|\ and\ |out|\ may\ alias\ each\ other.}}
+\DoxyCodeLine{00122\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00123\ \textcolor{comment}{\ *\ a\ (in):\ One\ scalar.}}
+\DoxyCodeLine{00124\ \textcolor{comment}{\ *\ b\ (in):\ Another\ scalar.}}
+\DoxyCodeLine{00125\ \textcolor{comment}{\ *\ out\ (out):\ a+b.}}
+\DoxyCodeLine{00126\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00127\ \textcolor{keywordtype}{void}}
+\DoxyCodeLine{00128\ ossl\_curve448\_scalar\_add(curve448\_scalar\_t\ out,}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ curve448\_scalar\_t\ a,\ \textcolor{keyword}{const}\ curve448\_scalar\_t\ \mbox{\hyperlink{structb}{b}});}
+\DoxyCodeLine{00130\ }
+\DoxyCodeLine{00131\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00132\ \textcolor{comment}{\ *\ Subtract\ two\ scalars.\ \ |a|,\ |b|\ and\ |out|\ may\ alias\ each\ other.}}
+\DoxyCodeLine{00133\ \textcolor{comment}{\ *\ a\ (in):\ One\ scalar.}}
+\DoxyCodeLine{00134\ \textcolor{comment}{\ *\ b\ (in):\ Another\ scalar.}}
+\DoxyCodeLine{00135\ \textcolor{comment}{\ *\ out\ (out):\ a-\/b.}}
+\DoxyCodeLine{00136\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00137\ \textcolor{keywordtype}{void}}
+\DoxyCodeLine{00138\ ossl\_curve448\_scalar\_sub(curve448\_scalar\_t\ out,}
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ curve448\_scalar\_t\ a,\ \textcolor{keyword}{const}\ curve448\_scalar\_t\ \mbox{\hyperlink{structb}{b}});}
+\DoxyCodeLine{00140\ }
+\DoxyCodeLine{00141\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00142\ \textcolor{comment}{\ *\ Multiply\ two\ scalars.\ |a|,\ |b|\ and\ |out|\ may\ alias\ each\ other.}}
+\DoxyCodeLine{00143\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00144\ \textcolor{comment}{\ *\ a\ (in):\ One\ scalar.}}
+\DoxyCodeLine{00145\ \textcolor{comment}{\ *\ b\ (in):\ Another\ scalar.}}
+\DoxyCodeLine{00146\ \textcolor{comment}{\ *\ out\ (out):\ a*b.}}
+\DoxyCodeLine{00147\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00148\ \textcolor{keywordtype}{void}}
+\DoxyCodeLine{00149\ ossl\_curve448\_scalar\_mul(curve448\_scalar\_t\ out,}
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ curve448\_scalar\_t\ a,\ \textcolor{keyword}{const}\ curve448\_scalar\_t\ \mbox{\hyperlink{structb}{b}});}
+\DoxyCodeLine{00151\ }
+\DoxyCodeLine{00152\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00153\ \textcolor{comment}{*\ Halve\ a\ scalar.\ \ |a|\ and\ |out|\ may\ alias\ each\ other.}}
+\DoxyCodeLine{00154\ \textcolor{comment}{*}}
+\DoxyCodeLine{00155\ \textcolor{comment}{*\ a\ (in):\ A\ scalar.}}
+\DoxyCodeLine{00156\ \textcolor{comment}{*\ out\ (out):\ a/2.}}
+\DoxyCodeLine{00157\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00158\ \textcolor{keywordtype}{void}}
+\DoxyCodeLine{00159\ ossl\_curve448\_scalar\_halve(curve448\_scalar\_t\ out,\ \textcolor{keyword}{const}\ curve448\_scalar\_t\ a);}
+\DoxyCodeLine{00160\ }
+\DoxyCodeLine{00161\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00162\ \textcolor{comment}{\ *\ Copy\ a\ scalar.\ \ The\ scalars\ may\ alias\ each\ other,\ in\ which\ case\ this}}
+\DoxyCodeLine{00163\ \textcolor{comment}{\ *\ function\ does\ nothing.}}
+\DoxyCodeLine{00164\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00165\ \textcolor{comment}{\ *\ a\ (in):\ A\ scalar.}}
+\DoxyCodeLine{00166\ \textcolor{comment}{\ *\ out\ (out):\ Will\ become\ a\ copy\ of\ a.}}
+\DoxyCodeLine{00167\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00168\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{void}\ curve448\_scalar\_copy(curve448\_scalar\_t\ out,}
+\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ curve448\_scalar\_t\ a)}
+\DoxyCodeLine{00170\ \{}
+\DoxyCodeLine{00171\ \ \ \ \ *out\ =\ *a;}
+\DoxyCodeLine{00172\ \}}
+\DoxyCodeLine{00173\ }
+\DoxyCodeLine{00174\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00175\ \textcolor{comment}{\ *\ Copy\ a\ point.\ \ The\ input\ and\ output\ may\ alias,\ in\ which\ case\ this\ function}}
+\DoxyCodeLine{00176\ \textcolor{comment}{\ *\ does\ nothing.}}
+\DoxyCodeLine{00177\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00178\ \textcolor{comment}{\ *\ a\ (out):\ A\ copy\ of\ the\ point.}}
+\DoxyCodeLine{00179\ \textcolor{comment}{\ *\ b\ (in):\ Any\ point.}}
+\DoxyCodeLine{00180\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00181\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{void}\ curve448\_point\_copy(curve448\_point\_t\ a,}
+\DoxyCodeLine{00182\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ curve448\_point\_t\ \mbox{\hyperlink{structb}{b}})}
+\DoxyCodeLine{00183\ \{}
+\DoxyCodeLine{00184\ \ \ \ \ *a\ =\ *\mbox{\hyperlink{structb}{b}};}
+\DoxyCodeLine{00185\ \}}
+\DoxyCodeLine{00186\ }
+\DoxyCodeLine{00187\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00188\ \textcolor{comment}{\ *\ Test\ whether\ two\ points\ are\ equal.\ \ If\ yes,\ return\ C448\_TRUE,\ else\ return}}
+\DoxyCodeLine{00189\ \textcolor{comment}{\ *\ C448\_FALSE.}}
+\DoxyCodeLine{00190\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00191\ \textcolor{comment}{\ *\ a\ (in):\ A\ point.}}
+\DoxyCodeLine{00192\ \textcolor{comment}{\ *\ b\ (in):\ Another\ point.}}
+\DoxyCodeLine{00193\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00194\ \textcolor{comment}{\ *\ Returns:}}
+\DoxyCodeLine{00195\ \textcolor{comment}{\ *\ C448\_TRUE:\ The\ points\ are\ equal.}}
+\DoxyCodeLine{00196\ \textcolor{comment}{\ *\ C448\_FALSE:\ The\ points\ are\ not\ equal.}}
+\DoxyCodeLine{00197\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00198\ \_\_owur\ c448\_bool\_t}
+\DoxyCodeLine{00199\ ossl\_curve448\_point\_eq(\textcolor{keyword}{const}\ curve448\_point\_t\ a,}
+\DoxyCodeLine{00200\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ curve448\_point\_t\ \mbox{\hyperlink{structb}{b}});}
+\DoxyCodeLine{00201\ }
+\DoxyCodeLine{00202\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00203\ \textcolor{comment}{\ *\ Double\ a\ point.\ Equivalent\ to\ curve448\_point\_add(two\_a,a,a),\ but\ potentially}}
+\DoxyCodeLine{00204\ \textcolor{comment}{\ *\ faster.}}
+\DoxyCodeLine{00205\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00206\ \textcolor{comment}{\ *\ two\_a\ (out):\ The\ sum\ a+a.}}
+\DoxyCodeLine{00207\ \textcolor{comment}{\ *\ a\ (in):\ A\ point.}}
+\DoxyCodeLine{00208\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00209\ \textcolor{keywordtype}{void}}
+\DoxyCodeLine{00210\ ossl\_curve448\_point\_double(curve448\_point\_t\ two\_a,\ \textcolor{keyword}{const}\ curve448\_point\_t\ a);}
+\DoxyCodeLine{00211\ }
+\DoxyCodeLine{00212\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00213\ \textcolor{comment}{\ *\ RFC\ 7748\ Diffie-\/Hellman\ scalarmul.\ \ This\ function\ uses\ a\ different}}
+\DoxyCodeLine{00214\ \textcolor{comment}{\ *\ (non-\/Decaf)\ encoding.}}
+\DoxyCodeLine{00215\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00216\ \textcolor{comment}{\ *\ out\ (out):\ The\ scaled\ point\ base*scalar}}
+\DoxyCodeLine{00217\ \textcolor{comment}{\ *\ base\ (in):\ The\ point\ to\ be\ scaled.}}
+\DoxyCodeLine{00218\ \textcolor{comment}{\ *\ scalar\ (in):\ The\ scalar\ to\ multiply\ by.}}
+\DoxyCodeLine{00219\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00220\ \textcolor{comment}{\ *\ Returns:}}
+\DoxyCodeLine{00221\ \textcolor{comment}{\ *\ C448\_SUCCESS:\ The\ scalarmul\ succeeded.}}
+\DoxyCodeLine{00222\ \textcolor{comment}{\ *\ C448\_FAILURE:\ The\ scalarmul\ didn't\ succeed,\ because\ the\ base\ point\ is\ in\ a}}
+\DoxyCodeLine{00223\ \textcolor{comment}{\ *\ small\ subgroup.}}
+\DoxyCodeLine{00224\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00225\ \_\_owur\ c448\_error\_t}
+\DoxyCodeLine{00226\ ossl\_x448\_int(uint8\_t\ out[X448\_PUBLIC\_BYTES],}
+\DoxyCodeLine{00227\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ uint8\_t\ base[X448\_PUBLIC\_BYTES],}
+\DoxyCodeLine{00228\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ uint8\_t\ scalar[X448\_PRIVATE\_BYTES]);}
+\DoxyCodeLine{00229\ }
+\DoxyCodeLine{00230\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00231\ \textcolor{comment}{\ *\ Multiply\ a\ point\ by\ X448\_ENCODE\_RATIO,\ then\ encode\ it\ like\ RFC\ 7748.}}
+\DoxyCodeLine{00232\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00233\ \textcolor{comment}{\ *\ This\ function\ is\ mainly\ used\ internally,\ but\ is\ exported\ in\ case}}
+\DoxyCodeLine{00234\ \textcolor{comment}{\ *\ it\ will\ be\ useful.}}
+\DoxyCodeLine{00235\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00236\ \textcolor{comment}{\ *\ The\ ratio\ is\ necessary\ because\ the\ internal\ representation\ doesn't}}
+\DoxyCodeLine{00237\ \textcolor{comment}{\ *\ track\ the\ cofactor\ information,\ so\ on\ output\ we\ must\ clear\ the\ cofactor.}}
+\DoxyCodeLine{00238\ \textcolor{comment}{\ *\ This\ would\ multiply\ by\ the\ cofactor,\ but\ in\ fact\ internally\ points\ are\ always}}
+\DoxyCodeLine{00239\ \textcolor{comment}{\ *\ even,\ so\ it\ multiplies\ by\ half\ the\ cofactor\ instead.}}
+\DoxyCodeLine{00240\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00241\ \textcolor{comment}{\ *\ As\ it\ happens,\ this\ aligns\ with\ the\ base\ point\ definitions;\ that\ is,}}
+\DoxyCodeLine{00242\ \textcolor{comment}{\ *\ if\ you\ pass\ the\ Decaf/Ristretto\ base\ point\ to\ this\ function,\ the\ result}}
+\DoxyCodeLine{00243\ \textcolor{comment}{\ *\ will\ be\ X448\_ENCODE\_RATIO\ times\ the\ X448}}
+\DoxyCodeLine{00244\ \textcolor{comment}{\ *\ base\ point.}}
+\DoxyCodeLine{00245\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00246\ \textcolor{comment}{\ *\ out\ (out):\ The\ scaled\ and\ encoded\ point.}}
+\DoxyCodeLine{00247\ \textcolor{comment}{\ *\ p\ (in):\ The\ point\ to\ be\ scaled\ and\ encoded.}}
+\DoxyCodeLine{00248\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00249\ \textcolor{keywordtype}{void}}
+\DoxyCodeLine{00250\ ossl\_curve448\_point\_mul\_by\_ratio\_and\_encode\_like\_x448(}
+\DoxyCodeLine{00251\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint8\_t\ out[X448\_PUBLIC\_BYTES],}
+\DoxyCodeLine{00252\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ curve448\_point\_t\ p);}
+\DoxyCodeLine{00253\ }
+\DoxyCodeLine{00254\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00255\ \textcolor{comment}{\ *\ RFC\ 7748\ Diffie-\/Hellman\ base\ point\ scalarmul.\ \ This\ function\ uses\ a\ different}}
+\DoxyCodeLine{00256\ \textcolor{comment}{\ *\ (non-\/Decaf)\ encoding.}}
+\DoxyCodeLine{00257\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00258\ \textcolor{comment}{\ *\ out\ (out):\ The\ scaled\ point\ base*scalar}}
+\DoxyCodeLine{00259\ \textcolor{comment}{\ *\ scalar\ (in):\ The\ scalar\ to\ multiply\ by.}}
+\DoxyCodeLine{00260\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00261\ \textcolor{keywordtype}{void}}
+\DoxyCodeLine{00262\ ossl\_x448\_derive\_public\_key(uint8\_t\ out[X448\_PUBLIC\_BYTES],}
+\DoxyCodeLine{00263\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ uint8\_t\ scalar[X448\_PRIVATE\_BYTES]);}
+\DoxyCodeLine{00264\ }
+\DoxyCodeLine{00265\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00266\ \textcolor{comment}{\ *\ Multiply\ a\ precomputed\ base\ point\ by\ a\ scalar:\ out\ =\ scalar*base.}}
+\DoxyCodeLine{00267\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00268\ \textcolor{comment}{\ *\ scaled\ (out):\ The\ scaled\ point\ base*scalar}}
+\DoxyCodeLine{00269\ \textcolor{comment}{\ *\ base\ (in):\ The\ point\ to\ be\ scaled.}}
+\DoxyCodeLine{00270\ \textcolor{comment}{\ *\ scalar\ (in):\ The\ scalar\ to\ multiply\ by.}}
+\DoxyCodeLine{00271\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00272\ \textcolor{keywordtype}{void}}
+\DoxyCodeLine{00273\ ossl\_curve448\_precomputed\_scalarmul(curve448\_point\_t\ scaled,}
+\DoxyCodeLine{00274\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structcurve448__precomputed__s}{curve448\_precomputed\_s}}\ *base,}
+\DoxyCodeLine{00275\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ curve448\_scalar\_t\ scalar);}
+\DoxyCodeLine{00276\ }
+\DoxyCodeLine{00277\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00278\ \textcolor{comment}{\ *\ Multiply\ two\ base\ points\ by\ two\ scalars:}}
+\DoxyCodeLine{00279\ \textcolor{comment}{\ *\ combo\ =\ scalar1*curve448\_point\_base\ +\ scalar2*base2.}}
+\DoxyCodeLine{00280\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00281\ \textcolor{comment}{\ *\ Otherwise\ equivalent\ to\ curve448\_point\_double\_scalarmul,\ but\ may\ be}}
+\DoxyCodeLine{00282\ \textcolor{comment}{\ *\ faster\ at\ the\ expense\ of\ being\ variable\ time.}}
+\DoxyCodeLine{00283\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00284\ \textcolor{comment}{\ *\ combo\ (out):\ The\ linear\ combination\ scalar1*base\ +\ scalar2*base2.}}
+\DoxyCodeLine{00285\ \textcolor{comment}{\ *\ scalar1\ (in):\ A\ first\ scalar\ to\ multiply\ by.}}
+\DoxyCodeLine{00286\ \textcolor{comment}{\ *\ base2\ (in):\ A\ second\ point\ to\ be\ scaled.}}
+\DoxyCodeLine{00287\ \textcolor{comment}{\ *\ scalar2\ (in)\ A\ second\ scalar\ to\ multiply\ by.}}
+\DoxyCodeLine{00288\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00289\ \textcolor{comment}{\ *\ Warning:\ This\ function\ takes\ variable\ time,\ and\ may\ leak\ the\ scalars\ used.}}
+\DoxyCodeLine{00290\ \textcolor{comment}{\ *\ It\ is\ designed\ for\ signature\ verification.}}
+\DoxyCodeLine{00291\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00292\ \textcolor{keywordtype}{void}}
+\DoxyCodeLine{00293\ ossl\_curve448\_base\_double\_scalarmul\_non\_secret(curve448\_point\_t\ combo,}
+\DoxyCodeLine{00294\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ curve448\_scalar\_t\ scalar1,}
+\DoxyCodeLine{00295\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ curve448\_point\_t\ base2,}
+\DoxyCodeLine{00296\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ curve448\_scalar\_t\ scalar2);}
+\DoxyCodeLine{00297\ }
+\DoxyCodeLine{00298\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00299\ \textcolor{comment}{\ *\ Test\ that\ a\ point\ is\ valid,\ for\ debugging\ purposes.}}
+\DoxyCodeLine{00300\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00301\ \textcolor{comment}{\ *\ to\_test\ (in):\ The\ point\ to\ test.}}
+\DoxyCodeLine{00302\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00303\ \textcolor{comment}{\ *\ Returns:}}
+\DoxyCodeLine{00304\ \textcolor{comment}{\ *\ C448\_TRUE\ The\ point\ is\ valid.}}
+\DoxyCodeLine{00305\ \textcolor{comment}{\ *\ C448\_FALSE\ The\ point\ is\ invalid.}}
+\DoxyCodeLine{00306\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00307\ \_\_owur\ c448\_bool\_t}
+\DoxyCodeLine{00308\ ossl\_curve448\_point\_valid(\textcolor{keyword}{const}\ curve448\_point\_t\ to\_test);}
+\DoxyCodeLine{00309\ }
+\DoxyCodeLine{00310\ \textcolor{comment}{/*\ Overwrite\ scalar\ with\ zeros.\ */}}
+\DoxyCodeLine{00311\ \textcolor{keywordtype}{void}\ ossl\_curve448\_scalar\_destroy(curve448\_scalar\_t\ scalar);}
+\DoxyCodeLine{00312\ }
+\DoxyCodeLine{00313\ \textcolor{comment}{/*\ Overwrite\ point\ with\ zeros.\ */}}
+\DoxyCodeLine{00314\ \textcolor{keywordtype}{void}\ ossl\_curve448\_point\_destroy(curve448\_point\_t\ point);}
+\DoxyCodeLine{00315\ }
+\DoxyCodeLine{00316\ \textcolor{preprocessor}{\#endif\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{/*\ OSSL\_CRYPTO\_EC\_CURVE448\_POINT\_448\_H\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

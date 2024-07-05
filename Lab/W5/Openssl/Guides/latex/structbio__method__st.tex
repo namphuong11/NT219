@@ -1,0 +1,52 @@
+\doxysection{bio\+\_\+method\+\_\+st Struct Reference}
+\hypertarget{structbio__method__st}{}\label{structbio__method__st}\index{bio\_method\_st@{bio\_method\_st}}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{structbio__method__st_aa17907bd09e726ddc073966bdd224b5b}\label{structbio__method__st_aa17907bd09e726ddc073966bdd224b5b} 
+int {\bfseries type}
+\item 
+\Hypertarget{structbio__method__st_afc241ac3d01284a82e0d2e50d525fedf}\label{structbio__method__st_afc241ac3d01284a82e0d2e50d525fedf} 
+char \texorpdfstring{$\ast$}{*} {\bfseries name}
+\item 
+\Hypertarget{structbio__method__st_aa4c87fe99db031e369ed32aa90590e7d}\label{structbio__method__st_aa4c87fe99db031e369ed32aa90590e7d} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries bwrite} )(BIO \texorpdfstring{$\ast$}{*}, const char \texorpdfstring{$\ast$}{*}, size\+\_\+t, size\+\_\+t \texorpdfstring{$\ast$}{*})
+\item 
+\Hypertarget{structbio__method__st_ad214ba51b1cc2d6bae0fd4f55e710efc}\label{structbio__method__st_ad214ba51b1cc2d6bae0fd4f55e710efc} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries bwrite\+\_\+old} )(BIO \texorpdfstring{$\ast$}{*}, const char \texorpdfstring{$\ast$}{*}, int)
+\item 
+\Hypertarget{structbio__method__st_a5ac793bf2c508fff23161c3bcee36d3b}\label{structbio__method__st_a5ac793bf2c508fff23161c3bcee36d3b} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries bread} )(BIO \texorpdfstring{$\ast$}{*}, char \texorpdfstring{$\ast$}{*}, size\+\_\+t, size\+\_\+t \texorpdfstring{$\ast$}{*})
+\item 
+\Hypertarget{structbio__method__st_a851924f1baee1375b15521605957e842}\label{structbio__method__st_a851924f1baee1375b15521605957e842} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries bread\+\_\+old} )(BIO \texorpdfstring{$\ast$}{*}, char \texorpdfstring{$\ast$}{*}, int)
+\item 
+\Hypertarget{structbio__method__st_a733f66ebc2d8c513c6a286ffbc629428}\label{structbio__method__st_a733f66ebc2d8c513c6a286ffbc629428} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries bputs} )(BIO \texorpdfstring{$\ast$}{*}, const char \texorpdfstring{$\ast$}{*})
+\item 
+\Hypertarget{structbio__method__st_a8fae124b9b9854cb1dfbee68db660b30}\label{structbio__method__st_a8fae124b9b9854cb1dfbee68db660b30} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries bgets} )(BIO \texorpdfstring{$\ast$}{*}, char \texorpdfstring{$\ast$}{*}, int)
+\item 
+\Hypertarget{structbio__method__st_ad0b4e0005a2dc107eb04a0dbec8f26b6}\label{structbio__method__st_ad0b4e0005a2dc107eb04a0dbec8f26b6} 
+long(\texorpdfstring{$\ast$}{*} {\bfseries ctrl} )(BIO \texorpdfstring{$\ast$}{*}, int, long, void \texorpdfstring{$\ast$}{*})
+\item 
+\Hypertarget{structbio__method__st_a79d9b2836d02d86c8aaf859093e5a3f5}\label{structbio__method__st_a79d9b2836d02d86c8aaf859093e5a3f5} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries create} )(BIO \texorpdfstring{$\ast$}{*})
+\item 
+\Hypertarget{structbio__method__st_a082d42c342cf11044b9a634ae96a4c94}\label{structbio__method__st_a082d42c342cf11044b9a634ae96a4c94} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries destroy} )(BIO \texorpdfstring{$\ast$}{*})
+\item 
+\Hypertarget{structbio__method__st_a1036b6544dbe043ce66512c0d7d84758}\label{structbio__method__st_a1036b6544dbe043ce66512c0d7d84758} 
+long(\texorpdfstring{$\ast$}{*} {\bfseries callback\+\_\+ctrl} )(BIO \texorpdfstring{$\ast$}{*}, int, BIO\+\_\+info\+\_\+cb \texorpdfstring{$\ast$}{*})
+\item 
+\Hypertarget{structbio__method__st_af5d75aec9ef27751081ff3b64c6c761d}\label{structbio__method__st_af5d75aec9ef27751081ff3b64c6c761d} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries bsendmmsg} )(BIO \texorpdfstring{$\ast$}{*}, BIO\+\_\+\+MSG \texorpdfstring{$\ast$}{*}, size\+\_\+t, size\+\_\+t, uint64\+\_\+t, size\+\_\+t \texorpdfstring{$\ast$}{*})
+\item 
+\Hypertarget{structbio__method__st_a47d15ab90081cbe135b6b35908618a3d}\label{structbio__method__st_a47d15ab90081cbe135b6b35908618a3d} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries brecvmmsg} )(BIO \texorpdfstring{$\ast$}{*}, BIO\+\_\+\+MSG \texorpdfstring{$\ast$}{*}, size\+\_\+t, size\+\_\+t, uint64\+\_\+t, size\+\_\+t \texorpdfstring{$\ast$}{*})
+\end{DoxyCompactItemize}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/namph/\+Downloads/openssl/openssl-\/3.\+2.\+1/include/internal/bio.\+h\end{DoxyCompactItemize}

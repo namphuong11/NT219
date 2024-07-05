@@ -1,0 +1,37 @@
+\doxysection{quic\+\_\+reactor\+\_\+st Struct Reference}
+\hypertarget{structquic__reactor__st}{}\label{structquic__reactor__st}\index{quic\_reactor\_st@{quic\_reactor\_st}}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{structquic__reactor__st_ae7b852c0bd446f127df464a2fd9eeeac}\label{structquic__reactor__st_ae7b852c0bd446f127df464a2fd9eeeac} 
+BIO\+\_\+\+POLL\+\_\+\+DESCRIPTOR {\bfseries poll\+\_\+r}
+\item 
+\Hypertarget{structquic__reactor__st_a7d87dcb2a9370afe83343bc385ba245f}\label{structquic__reactor__st_a7d87dcb2a9370afe83343bc385ba245f} 
+BIO\+\_\+\+POLL\+\_\+\+DESCRIPTOR {\bfseries poll\+\_\+w}
+\item 
+\Hypertarget{structquic__reactor__st_a4c5f82e7851cde80fbe940d112caa259}\label{structquic__reactor__st_a4c5f82e7851cde80fbe940d112caa259} 
+\mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\+\_\+\+TIME}} {\bfseries tick\+\_\+deadline}
+\item 
+\Hypertarget{structquic__reactor__st_ade3ffd4be1ed7b652cc64a93b938e12f}\label{structquic__reactor__st_ade3ffd4be1ed7b652cc64a93b938e12f} 
+void(\texorpdfstring{$\ast$}{*} {\bfseries tick\+\_\+cb} )(\mbox{\hyperlink{structquic__tick__result__st}{QUIC\+\_\+\+TICK\+\_\+\+RESULT}} \texorpdfstring{$\ast$}{*}res, void \texorpdfstring{$\ast$}{*}arg, uint32\+\_\+t flags)
+\item 
+\Hypertarget{structquic__reactor__st_a2b0101e770ad094ddef7fff26c633395}\label{structquic__reactor__st_a2b0101e770ad094ddef7fff26c633395} 
+void \texorpdfstring{$\ast$}{*} {\bfseries tick\+\_\+cb\+\_\+arg}
+\item 
+\Hypertarget{structquic__reactor__st_a23b3d91fe187a1a0aabd9d6ffbe856e3}\label{structquic__reactor__st_a23b3d91fe187a1a0aabd9d6ffbe856e3} 
+unsigned int {\bfseries net\+\_\+read\+\_\+desired}\+: 1
+\item 
+\Hypertarget{structquic__reactor__st_a74ed9fe9200f7aca3d83cddb3588f016}\label{structquic__reactor__st_a74ed9fe9200f7aca3d83cddb3588f016} 
+unsigned int {\bfseries net\+\_\+write\+\_\+desired}\+: 1
+\item 
+\Hypertarget{structquic__reactor__st_acaf6f5afe69f22c424c4a59838dc8da3}\label{structquic__reactor__st_acaf6f5afe69f22c424c4a59838dc8da3} 
+unsigned int {\bfseries can\+\_\+poll\+\_\+r}\+: 1
+\item 
+\Hypertarget{structquic__reactor__st_a2730dd3ce2c339949a9ec4395cc0f715}\label{structquic__reactor__st_a2730dd3ce2c339949a9ec4395cc0f715} 
+unsigned int {\bfseries can\+\_\+poll\+\_\+w}\+: 1
+\end{DoxyCompactItemize}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/namph/\+Downloads/openssl/openssl-\/3.\+2.\+1/include/internal/quic\+\_\+reactor.\+h\end{DoxyCompactItemize}

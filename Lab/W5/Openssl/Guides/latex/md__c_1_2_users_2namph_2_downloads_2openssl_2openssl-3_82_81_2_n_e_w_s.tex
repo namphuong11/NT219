@@ -1,0 +1,1359 @@
+\chapter{NEWS}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s}{}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s}\index{NEWS@{NEWS}}
+This file gives a brief overview of the major changes between each Open\+SSL release. For more details please read the CHANGES file.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md704}{}\doxysection{\texorpdfstring{Open\+SSL Releases}{Open\+SSL Releases}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md704}
+
+\begin{DoxyItemize}
+\item Open\+SSL 3.2
+\item Open\+SSL 3.1
+\item Open\+SSL 3.0
+\item Open\+SSL 1.1.1
+\item Open\+SSL 1.1.0
+\item Open\+SSL 1.0.2
+\item Open\+SSL 1.0.1
+\item Open\+SSL 1.0.0
+\item Open\+SSL 0.9.x
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md705}{}\doxysection{\texorpdfstring{Open\+SSL 3.\+2}{Open\+SSL 3.\+2}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md705}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md706}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 3.\+2.\+0 and Open\+SSL 3.\+2.\+1 \mbox{[}30 Jan 2024\mbox{]}}{Major changes between Open\+SSL 3.\+2.\+0 and Open\+SSL 3.\+2.\+1 \mbox{[}30 Jan 2024\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md706}
+Open\+SSL 3.\+2.\+1 is a security patch release. The most severe CVE fixed in this release is Low.
+
+This release incorporates the following bug fixes and mitigations\+:
+
+
+\begin{DoxyItemize}
+\item Fixed PKCS12 Decoding crashes (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2024-0727}{\texttt{ CVE-\/2024-\/0727}})
+\item Fixed excessive time spent checking invalid RSA public keys (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2023-6237}{\texttt{ CVE-\/2023-\/6237}})
+\item Fixed POLY1305 MAC implementation corrupting vector registers on Power\+PC CPUs which support Power\+ISA 2.\+07 (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2023-6129}{\texttt{ CVE-\/2023-\/6129}})
+\item Fixed excessive time spent in DH check / generation with large Q parameter value \mbox{[}(CVE-\/2023-\/5678)\mbox{]}
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md707}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 3.\+1 and Open\+SSL 3.\+2.\+0 \mbox{[}23 Nov 2023\mbox{]}}{Major changes between Open\+SSL 3.\+1 and Open\+SSL 3.\+2.\+0 \mbox{[}23 Nov 2023\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md707}
+Open\+SSL 3.\+2.\+0 is a feature release adding significant new functionality to Open\+SSL.
+
+This release incorporates the following potentially significant or incompatible changes\+:
+
+
+\begin{DoxyItemize}
+\item The default SSL/\+TLS security level has been changed from 1 to 2.
+\item The {\ttfamily x509}, {\ttfamily ca}, and {\ttfamily req} apps now always produce X.\+509v3 certificates.
+\item Subject or issuer names in X.\+509 objects are now displayed as UTF-\/8 strings by default.
+\end{DoxyItemize}
+
+This release adds the following new features\+:
+
+
+\begin{DoxyItemize}
+\item Support for client side QUIC, including support for multiple streams (RFC 9000)
+\item Support for Ed25519ctx, Ed25519ph and Ed448ph in addition to existing support for Ed25519 and Ed448 (RFC 8032)
+\item Support for deterministic ECDSA signatures (RFC 6979)
+\item Support for AES-\/\+GCM-\/\+SIV, a nonce-\/misuse-\/resistant AEAD (RFC 8452)
+\item Support for the Argon2 KDF, along with supporting thread pool functionality (RFC 9106)
+\item Support for Hybrid Public Key Encryption (HPKE) (RFC 9180)
+\item Support for SM4-\/\+XTS
+\item Support for Brainpool curves in TLS 1.\+3
+\item Support for TLS Raw Public Keys (RFC 7250)
+\item Support for TCP Fast Open on Linux, mac\+OS and Free\+BSD, where enabled and supported (RFC 7413)
+\item Support for TLS certificate compression, including library support for zlib, Brotli and zstd (RFC 8879)
+\item Support for provider-\/based pluggable signature algorithms in TLS 1.\+3 with supporting CMS and X.\+509 functionality
+
+With a suitable provider this enables the use of post-\/quantum/quantum-\/safe cryptography.
+\item Support for using the Windows system certificate store as a source of trusted root certificates
+
+This is not yet enabled by default and must be activated using an environment variable. This is likely to become enabled by default in a future feature release.
+\item Support for using the IANA standard names in TLS ciphersuite configuration
+\item Multiple new features and improvements to CMP protocol support
+\end{DoxyItemize}
+
+The following known issues are present in this release and will be rectified in a future release\+:
+
+
+\begin{DoxyItemize}
+\item Provider-\/based signature algorithms cannot be configured using the Signature\+Algorithms configuration file parameter (\#22761)
+\end{DoxyItemize}
+
+This release incorporates the following documentation enhancements\+:
+
+
+\begin{DoxyItemize}
+\item Added multiple tutorials on the Open\+SSL library and in particular on writing various clients (using TLS and QUIC protocols) with libssl
+
+See \href{https://www.openssl.org/docs/manmaster/man7/ossl-guide-introduction.html}{\texttt{ Open\+SSL Guide}}.
+\end{DoxyItemize}
+
+A more detailed list of changes in this release can be found in the \doxysectlink{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_c_h_a_n_g_e_s}{CHANGES.md}{0} file.
+
+Users interested in using the new QUIC functionality are encouraged to read the \doxysectlink{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_r_e_a_d_m_e-_q_u_i_c}{README file for QUIC}{0}, which provides links to relevant documentation and example code.
+
+As always, bug reports and issues relating to Open\+SSL can be \href{https://github.com/openssl/openssl/issues}{\texttt{ filed on our issue tracker}}.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md708}{}\doxysection{\texorpdfstring{Open\+SSL 3.\+1}{Open\+SSL 3.\+1}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md708}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md709}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 3.\+1.\+3 and Open\+SSL 3.\+1.\+4 \mbox{[}24 Oct 2023\mbox{]}}{Major changes between Open\+SSL 3.\+1.\+3 and Open\+SSL 3.\+1.\+4 \mbox{[}24 Oct 2023\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md709}
+
+\begin{DoxyItemize}
+\item Mitigate incorrect resize handling for symmetric cipher keys and IVs. (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2023-5363}{\texttt{ CVE-\/2023-\/5363}})
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md710}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 3.\+1.\+2 and Open\+SSL 3.\+1.\+3 \mbox{[}19 Sep 2023\mbox{]}}{Major changes between Open\+SSL 3.\+1.\+2 and Open\+SSL 3.\+1.\+3 \mbox{[}19 Sep 2023\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md710}
+
+\begin{DoxyItemize}
+\item Fix POLY1305 MAC implementation corrupting XMM registers on Windows (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2023-4807}{\texttt{ CVE-\/2023-\/4807}})
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md711}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 3.\+1.\+1 and Open\+SSL 3.\+1.\+2 \mbox{[}1 Aug 2023\mbox{]}}{Major changes between Open\+SSL 3.\+1.\+1 and Open\+SSL 3.\+1.\+2 \mbox{[}1 Aug 2023\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md711}
+
+\begin{DoxyItemize}
+\item Fix excessive time spent checking DH q parameter value (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2023-3817}{\texttt{ CVE-\/2023-\/3817}})
+\item Fix DH\+\_\+check() excessive time with over sized modulus (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2023-3446}{\texttt{ CVE-\/2023-\/3446}})
+\item Do not ignore empty associated data entries with AES-\/\+SIV (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2023-2975}{\texttt{ CVE-\/2023-\/2975}})
+\item When building with the {\ttfamily enable-\/fips} option and using the resulting FIPS provider, TLS 1.\+2 will, by default, mandate the use of an extended master secret and the Hash and HMAC DRBGs will not operate with truncated digests.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md712}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 3.\+1.\+0 and Open\+SSL 3.\+1.\+1 \mbox{[}30 May 2023\mbox{]}}{Major changes between Open\+SSL 3.\+1.\+0 and Open\+SSL 3.\+1.\+1 \mbox{[}30 May 2023\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md712}
+
+\begin{DoxyItemize}
+\item Mitigate for very slow {\ttfamily OBJ\+\_\+obj2txt()} performance with gigantic OBJECT IDENTIFIER sub-\/identities. (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2023-2650}{\texttt{ CVE-\/2023-\/2650}})
+\item Fixed buffer overread in AES-\/\+XTS decryption on ARM 64 bit platforms (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2023-1255}{\texttt{ CVE-\/2023-\/1255}})
+\item Fixed documentation of X509\+\_\+\+VERIFY\+\_\+\+PARAM\+\_\+add0\+\_\+policy() (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2023-0466}{\texttt{ CVE-\/2023-\/0466}})
+\item Fixed handling of invalid certificate policies in leaf certificates (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2023-0465}{\texttt{ CVE-\/2023-\/0465}})
+\item Limited the number of nodes created in a policy tree (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2023-0464}{\texttt{ CVE-\/2023-\/0464}})
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md713}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 3.\+0 and Open\+SSL 3.\+1.\+0 \mbox{[}14 Mar 2023\mbox{]}}{Major changes between Open\+SSL 3.\+0 and Open\+SSL 3.\+1.\+0 \mbox{[}14 Mar 2023\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md713}
+
+\begin{DoxyItemize}
+\item SSL 3, TLS 1.\+0, TLS 1.\+1, and DTLS 1.\+0 only work at security level 0.
+\item Performance enhancements and new platform support including new assembler code algorithm implementations.
+\item Deprecated LHASH statistics functions.
+\item FIPS 140-\/3 compliance changes.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md714}{}\doxysection{\texorpdfstring{Open\+SSL 3.\+0}{Open\+SSL 3.\+0}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md714}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md715}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 3.\+0.\+7 and Open\+SSL 3.\+0.\+8 \mbox{[}7 Feb 2023\mbox{]}}{Major changes between Open\+SSL 3.\+0.\+7 and Open\+SSL 3.\+0.\+8 \mbox{[}7 Feb 2023\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md715}
+
+\begin{DoxyItemize}
+\item Fixed NULL dereference during PKCS7 data verification (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2023-0401}{\texttt{ CVE-\/2023-\/0401}})
+\item Fixed X.\+400 address type confusion in X.\+509 General\+Name (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2023-0286}{\texttt{ CVE-\/2023-\/0286}})
+\item Fixed NULL dereference validating DSA public key (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2023-0217}{\texttt{ CVE-\/2023-\/0217}})
+\item Fixed Invalid pointer dereference in d2i\+\_\+\+PKCS7 functions (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2023-0216}{\texttt{ CVE-\/2023-\/0216}})
+\item Fixed Use-\/after-\/free following BIO\+\_\+new\+\_\+\+NDEF (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2023-0215}{\texttt{ CVE-\/2023-\/0215}})
+\item Fixed Double free after calling PEM\+\_\+read\+\_\+bio\+\_\+ex (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2022-4450}{\texttt{ CVE-\/2022-\/4450}})
+\item Fixed Timing Oracle in RSA Decryption (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2022-4304}{\texttt{ CVE-\/2022-\/4304}})
+\item Fixed X.\+509 Name Constraints Read Buffer Overflow (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2022-4203}{\texttt{ CVE-\/2022-\/4203}})
+\item Fixed X.\+509 Policy Constraints Double Locking (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2022-3996}{\texttt{ CVE-\/2022-\/3996}})
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md716}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 3.\+0.\+6 and Open\+SSL 3.\+0.\+7 \mbox{[}1 Nov 2022\mbox{]}}{Major changes between Open\+SSL 3.\+0.\+6 and Open\+SSL 3.\+0.\+7 \mbox{[}1 Nov 2022\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md716}
+
+\begin{DoxyItemize}
+\item Added RIPEMD160 to the default provider.
+\item Fixed regressions introduced in 3.\+0.\+6 version.
+\item Fixed two buffer overflows in punycode decoding functions. (\mbox{[}CVE-\/2022-\/3786\mbox{]}) and (\mbox{[}CVE-\/2022-\/3602\mbox{]})
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md717}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 3.\+0.\+5 and Open\+SSL 3.\+0.\+6 \mbox{[}11 Oct 2022\mbox{]}}{Major changes between Open\+SSL 3.\+0.\+5 and Open\+SSL 3.\+0.\+6 \mbox{[}11 Oct 2022\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md717}
+
+\begin{DoxyItemize}
+\item Fix for custom ciphers to prevent accidental use of NULL encryption (\mbox{[}CVE-\/2022-\/3358\mbox{]})
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md718}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 3.\+0.\+4 and Open\+SSL 3.\+0.\+5 \mbox{[}5 Jul 2022\mbox{]}}{Major changes between Open\+SSL 3.\+0.\+4 and Open\+SSL 3.\+0.\+5 \mbox{[}5 Jul 2022\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md718}
+
+\begin{DoxyItemize}
+\item Fixed heap memory corruption with RSA private key operation (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2022-2274}{\texttt{ CVE-\/2022-\/2274}})
+\item Fixed AES OCB failure to encrypt some bytes on 32-\/bit x86 platforms (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2022-2097}{\texttt{ CVE-\/2022-\/2097}})
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md719}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 3.\+0.\+3 and Open\+SSL 3.\+0.\+4 \mbox{[}21 Jun 2022\mbox{]}}{Major changes between Open\+SSL 3.\+0.\+3 and Open\+SSL 3.\+0.\+4 \mbox{[}21 Jun 2022\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md719}
+
+\begin{DoxyItemize}
+\item Fixed additional bugs in the c\+\_\+rehash script which was not properly sanitising shell metacharacters to prevent command injection (\mbox{[}CVE-\/2022-\/2068\mbox{]})
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md720}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 3.\+0.\+2 and Open\+SSL 3.\+0.\+3 \mbox{[}3 May 2022\mbox{]}}{Major changes between Open\+SSL 3.\+0.\+2 and Open\+SSL 3.\+0.\+3 \mbox{[}3 May 2022\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md720}
+
+\begin{DoxyItemize}
+\item Fixed a bug in the c\+\_\+rehash script which was not properly sanitising shell metacharacters to prevent command injection (\mbox{[}CVE-\/2022-\/1292\mbox{]})
+\item Fixed a bug in the function {\ttfamily OCSP\+\_\+basic\+\_\+verify} that verifies the signer certificate on an OCSP response (\mbox{[}CVE-\/2022-\/1343\mbox{]})
+\item Fixed a bug where the RC4-\/\+MD5 ciphersuite incorrectly used the AAD data as the MAC key (\mbox{[}CVE-\/2022-\/1434\mbox{]})
+\item Fix a bug in the OPENSSL\+\_\+\+LH\+\_\+flush() function that breaks reuse of the memory occupied by the removed hash table entries (\mbox{[}CVE-\/2022-\/1473\mbox{]})
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md721}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 3.\+0.\+1 and Open\+SSL 3.\+0.\+2 \mbox{[}15 Mar 2022\mbox{]}}{Major changes between Open\+SSL 3.\+0.\+1 and Open\+SSL 3.\+0.\+2 \mbox{[}15 Mar 2022\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md721}
+
+\begin{DoxyItemize}
+\item Fixed a bug in the BN\+\_\+mod\+\_\+sqrt() function that can cause it to loop forever for non-\/prime moduli (\mbox{[}CVE-\/2022-\/0778\mbox{]})
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md722}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 3.\+0.\+0 and Open\+SSL 3.\+0.\+1 \mbox{[}14 Dec 2021\mbox{]}}{Major changes between Open\+SSL 3.\+0.\+0 and Open\+SSL 3.\+0.\+1 \mbox{[}14 Dec 2021\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md722}
+
+\begin{DoxyItemize}
+\item Fixed invalid handling of X509\+\_\+verify\+\_\+cert() internal errors in libssl (\mbox{[}CVE-\/2021-\/4044\mbox{]})
+\item Allow fetching an operation from the provider that owns an unexportable key as a fallback if that is still allowed by the property query.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md723}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+1.\+1 and Open\+SSL 3.\+0.\+0 \mbox{[}7 sep 2021\mbox{]}}{Major changes between Open\+SSL 1.\+1.\+1 and Open\+SSL 3.\+0.\+0 \mbox{[}7 sep 2021\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md723}
+
+\begin{DoxyItemize}
+\item Enhanced \textquotesingle{}openssl list\textquotesingle{} with many new options.
+\item Added migration guide to man7.
+\item Implemented support for fully "{}pluggable"{} TLSv1.\+3 groups.
+\item Added support for Kernel TLS (KTLS).
+\item Changed the license to the Apache License v2.\+0.
+\item Moved all variations of the EVP ciphers CAST5, BF, IDEA, SEED, RC2, RC4, RC5, and DES to the legacy provider.
+\item Moved the EVP digests MD2, MD4, MDC2, WHIRLPOOL and RIPEMD-\/160 to the legacy provider.
+\item Added convenience functions for generating asymmetric key pairs.
+\item Deprecated the {\ttfamily OCSP\+\_\+\+REQ\+\_\+\+CTX} type and functions.
+\item Deprecated the {\ttfamily EC\+\_\+\+KEY} and {\ttfamily EC\+\_\+\+KEY\+\_\+\+METHOD} types and functions.
+\item Deprecated the {\ttfamily RSA} and {\ttfamily RSA\+\_\+\+METHOD} types and functions.
+\item Deprecated the {\ttfamily DSA} and {\ttfamily DSA\+\_\+\+METHOD} types and functions.
+\item Deprecated the {\ttfamily DH} and {\ttfamily DH\+\_\+\+METHOD} types and functions.
+\item Deprecated the {\ttfamily ERR\+\_\+load\+\_\+} functions.
+\item Remove the {\ttfamily RAND\+\_\+\+DRBG} API.
+\item Deprecated the {\ttfamily ENGINE} API.
+\item Added {\ttfamily OSSL\+\_\+\+LIB\+\_\+\+CTX}, a libcrypto library context.
+\item Added various {\ttfamily \+\_\+ex} functions to the Open\+SSL API that support using a non-\/default {\ttfamily OSSL\+\_\+\+LIB\+\_\+\+CTX}.
+\item Interactive mode is removed from the \textquotesingle{}openssl\textquotesingle{} program.
+\item The X25519, X448, Ed25519, Ed448, SHAKE128 and SHAKE256 algorithms are included in the FIPS provider.
+\item X509 certificates signed using SHA1 are no longer allowed at security level 1 or higher. The default security level for TLS is 1, so certificates signed using SHA1 are by default no longer trusted to authenticate servers or clients.
+\item enable-\/crypto-\/mdebug and enable-\/crypto-\/mdebug-\/backtrace were mostly disabled; the project uses address sanitize/leak-\/detect instead.
+\item Added a Certificate Management Protocol (CMP, RFC 4210) implementation also covering CRMF (RFC 4211) and HTTP transfer (RFC 6712). It is part of the crypto lib and adds a \textquotesingle{}cmp\textquotesingle{} app with a demo configuration. All widely used CMP features are supported for both clients and servers.
+\item Added a proper HTTP client supporting GET with optional redirection, POST, arbitrary request and response content types, TLS, persistent connections, connections via HTTP(s) proxies, connections and exchange via user-\/defined BIOs (allowing implicit connections), and timeout checks.
+\item Added util/check-\/format.\+pl for checking adherence to the coding guidelines.
+\item Added OSSL\+\_\+\+ENCODER, a generic encoder API.
+\item Added OSSL\+\_\+\+DECODER, a generic decoder API.
+\item Added OSSL\+\_\+\+PARAM\+\_\+\+BLD, an easier to use API to OSSL\+\_\+\+PARAM.
+\item Added error raising macros, ERR\+\_\+raise() and ERR\+\_\+raise\+\_\+data().
+\item Deprecated ERR\+\_\+put\+\_\+error(), ERR\+\_\+get\+\_\+error\+\_\+line(), ERR\+\_\+get\+\_\+error\+\_\+line\+\_\+data(), ERR\+\_\+peek\+\_\+error\+\_\+line\+\_\+data(), ERR\+\_\+peek\+\_\+last\+\_\+error\+\_\+line\+\_\+data() and ERR\+\_\+func\+\_\+error\+\_\+string().
+\item Added OSSL\+\_\+\+PROVIDER\+\_\+available(), to check provider availability.
+\item Added \textquotesingle{}openssl mac\textquotesingle{} that uses the EVP\+\_\+\+MAC API.
+\item Added \textquotesingle{}openssl kdf\textquotesingle{} that uses the EVP\+\_\+\+KDF API.
+\item Add OPENSSL\+\_\+info() and \textquotesingle{}openssl info\textquotesingle{} to get built-\/in data.
+\item Add support for enabling instrumentation through trace and debug output.
+\item Changed our version number scheme and set the next major release to 3.\+0.\+0
+\item Added EVP\+\_\+\+MAC, an EVP layer MAC API, and a generic EVP\+\_\+\+PKEY to EVP\+\_\+\+MAC bridge. Supported MACs are\+: BLAKE2, CMAC, GMAC, HMAC, KMAC, POLY1305 and SIPHASH.
+\item Removed the heartbeat message in DTLS feature.
+\item Added EVP\+\_\+\+KDF, an EVP layer KDF and PRF API, and a generic EVP\+\_\+\+PKEY to EVP\+\_\+\+KDF bridge. Supported KDFs are\+: HKDF, \doxylink{struct_k_b_k_d_f}{KBKDF}, KRB5 KDF, PBKDF2, PKCS12 KDF, SCRYPT, SSH KDF, SSKDF, TLS1 PRF, X9.\+42 KDF and X9.\+63 KDF.
+\item All of the low-\/level MD2, MD4, MD5, MDC2, RIPEMD160, SHA1, SHA224, SHA256, SHA384, SHA512 and Whirlpool digest functions have been deprecated.
+\item All of the low-\/level AES, Blowfish, Camellia, CAST, DES, IDEA, RC2, RC4, RC5 and SEED cipher functions have been deprecated.
+\item All of the low-\/level DH, DSA, ECDH, ECDSA and RSA public key functions have been deprecated.
+\item SSL 3, TLS 1.\+0, TLS 1.\+1, and DTLS 1.\+0 only work at security level 0, except when RSA key exchange without SHA1 is used.
+\item Added providers, a new pluggability concept that will replace the ENGINE API and ENGINE implementations.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md724}{}\doxysection{\texorpdfstring{Open\+SSL 1.\+1.\+1}{Open\+SSL 1.\+1.\+1}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md724}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md725}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+1.\+1k and Open\+SSL 1.\+1.\+1l \mbox{[}24 Aug 2021\mbox{]}}{Major changes between Open\+SSL 1.\+1.\+1k and Open\+SSL 1.\+1.\+1l \mbox{[}24 Aug 2021\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md725}
+
+\begin{DoxyItemize}
+\item Fixed an SM2 Decryption Buffer Overflow (\mbox{[}CVE-\/2021-\/3711\mbox{]})
+\item Fixed various read buffer overruns processing ASN.\+1 strings (\mbox{[}CVE-\/2021-\/3712\mbox{]})
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md726}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+1.\+1j and Open\+SSL 1.\+1.\+1k \mbox{[}25 Mar 2021\mbox{]}}{Major changes between Open\+SSL 1.\+1.\+1j and Open\+SSL 1.\+1.\+1k \mbox{[}25 Mar 2021\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md726}
+
+\begin{DoxyItemize}
+\item Fixed a problem with verifying a certificate chain when using the X509\+\_\+\+V\+\_\+\+FLAG\+\_\+\+X509\+\_\+\+STRICT flag (\mbox{[}CVE-\/2021-\/3450\mbox{]})
+\item Fixed an issue where an Open\+SSL TLS server may crash if sent a maliciously crafted renegotiation Client\+Hello message from a client (\mbox{[}CVE-\/2021-\/3449\mbox{]})
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md727}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+1.\+1i and Open\+SSL 1.\+1.\+1j \mbox{[}16 Feb 2021\mbox{]}}{Major changes between Open\+SSL 1.\+1.\+1i and Open\+SSL 1.\+1.\+1j \mbox{[}16 Feb 2021\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md727}
+
+\begin{DoxyItemize}
+\item Fixed a NULL pointer deref in the X509\+\_\+issuer\+\_\+and\+\_\+serial\+\_\+hash() function (\mbox{[}CVE-\/2021-\/23841\mbox{]})
+\item Fixed the RSA\+\_\+padding\+\_\+check\+\_\+\+SSLv23() function and the RSA\+\_\+\+SSLV23\+\_\+\+PADDING padding mode to correctly check for rollback attacks
+\item Fixed an overflow in the EVP\+\_\+\+Cipher\+Update, EVP\+\_\+\+Encrypt\+Update and EVP\+\_\+\+Decrypt\+Update functions (\mbox{[}CVE-\/2021-\/23840\mbox{]})
+\item Fixed SRP\+\_\+\+Calc\+\_\+client\+\_\+key so that it runs in constant time
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md728}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+1.\+1h and Open\+SSL 1.\+1.\+1i \mbox{[}8 Dec 2020\mbox{]}}{Major changes between Open\+SSL 1.\+1.\+1h and Open\+SSL 1.\+1.\+1i \mbox{[}8 Dec 2020\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md728}
+
+\begin{DoxyItemize}
+\item Fixed NULL pointer deref in GENERAL\+\_\+\+NAME\+\_\+cmp (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2020-1971}{\texttt{ CVE-\/2020-\/1971}})
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md729}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+1.\+1g and Open\+SSL 1.\+1.\+1h \mbox{[}22 Sep 2020\mbox{]}}{Major changes between Open\+SSL 1.\+1.\+1g and Open\+SSL 1.\+1.\+1h \mbox{[}22 Sep 2020\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md729}
+
+\begin{DoxyItemize}
+\item Disallow explicit curve parameters in verifications chains when X509\+\_\+\+V\+\_\+\+FLAG\+\_\+\+X509\+\_\+\+STRICT is used
+\item Enable \textquotesingle{}Min\+Protocol\textquotesingle{} and \textquotesingle{}Max\+Protocol\textquotesingle{} to configure both TLS and DTLS contexts
+\item Oracle Developer Studio will start reporting deprecation warnings
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md730}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+1.\+1f and Open\+SSL 1.\+1.\+1g \mbox{[}21 Apr 2020\mbox{]}}{Major changes between Open\+SSL 1.\+1.\+1f and Open\+SSL 1.\+1.\+1g \mbox{[}21 Apr 2020\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md730}
+
+\begin{DoxyItemize}
+\item Fixed segmentation fault in SSL\+\_\+check\+\_\+chain() (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2020-1967}{\texttt{ CVE-\/2020-\/1967}})
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md731}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+1.\+1e and Open\+SSL 1.\+1.\+1f \mbox{[}31 Mar 2020\mbox{]}}{Major changes between Open\+SSL 1.\+1.\+1e and Open\+SSL 1.\+1.\+1f \mbox{[}31 Mar 2020\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md731}
+
+\begin{DoxyItemize}
+\item Revert the unexpected EOF reporting via SSL\+\_\+\+ERROR\+\_\+\+SSL
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md732}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+1.\+1d and Open\+SSL 1.\+1.\+1e \mbox{[}17 Mar 2020\mbox{]}}{Major changes between Open\+SSL 1.\+1.\+1d and Open\+SSL 1.\+1.\+1e \mbox{[}17 Mar 2020\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md732}
+
+\begin{DoxyItemize}
+\item Fixed an overflow bug in the x64\+\_\+64 Montgomery squaring procedure used in exponentiation with 512-\/bit moduli (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2019-1551}{\texttt{ CVE-\/2019-\/1551}})
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md733}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+1.\+1c and Open\+SSL 1.\+1.\+1d \mbox{[}10 Sep 2019\mbox{]}}{Major changes between Open\+SSL 1.\+1.\+1c and Open\+SSL 1.\+1.\+1d \mbox{[}10 Sep 2019\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md733}
+
+\begin{DoxyItemize}
+\item Fixed a fork protection issue (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2019-1549}{\texttt{ CVE-\/2019-\/1549}})
+\item Fixed a padding oracle in PKCS7\+\_\+data\+Decode and CMS\+\_\+decrypt\+\_\+set1\+\_\+pkey (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2019-1563}{\texttt{ CVE-\/2019-\/1563}})
+\item For built-\/in EC curves, ensure an EC\+\_\+\+GROUP built from the curve name is used even when parsing explicit parameters
+\item Compute ECC cofactors if not provided during EC\+\_\+\+GROUP construction (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2019-1547}{\texttt{ CVE-\/2019-\/1547}})
+\item Early start up entropy quality from the DEVRANDOM seed source has been improved for older Linux systems
+\item Correct the extended master secret constant on EBCDIC systems
+\item Use Windows installation paths in the mingw builds (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2019-1552}{\texttt{ CVE-\/2019-\/1552}})
+\item Changed DH\+\_\+check to accept parameters with order q and 2q subgroups
+\item Significantly reduce secure memory usage by the randomness pools
+\item Revert the DEVRANDOM\+\_\+\+WAIT feature for Linux systems
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md734}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+1.\+1b and Open\+SSL 1.\+1.\+1c \mbox{[}28 May 2019\mbox{]}}{Major changes between Open\+SSL 1.\+1.\+1b and Open\+SSL 1.\+1.\+1c \mbox{[}28 May 2019\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md734}
+
+\begin{DoxyItemize}
+\item Prevent over long nonces in Cha\+Cha20-\/\+Poly1305 (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2019-1543}{\texttt{ CVE-\/2019-\/1543}})
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md735}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+1.\+1a and Open\+SSL 1.\+1.\+1b \mbox{[}26 Feb 2019\mbox{]}}{Major changes between Open\+SSL 1.\+1.\+1a and Open\+SSL 1.\+1.\+1b \mbox{[}26 Feb 2019\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md735}
+
+\begin{DoxyItemize}
+\item Change the info callback signals for the start and end of a post-\/handshake message exchange in TLSv1.\+3.
+\item Fix a bug in DTLS over SCTP. This breaks interoperability with older versions of Open\+SSL like Open\+SSL 1.\+1.\+0 and Open\+SSL 1.\+0.\+2.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md736}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+1.\+1 and Open\+SSL 1.\+1.\+1a \mbox{[}20 Nov 2018\mbox{]}}{Major changes between Open\+SSL 1.\+1.\+1 and Open\+SSL 1.\+1.\+1a \mbox{[}20 Nov 2018\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md736}
+
+\begin{DoxyItemize}
+\item Timing vulnerability in DSA signature generation (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2018-0734}{\texttt{ CVE-\/2018-\/0734}})
+\item Timing vulnerability in ECDSA signature generation (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2018-0735}{\texttt{ CVE-\/2018-\/0735}})
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md737}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+1.\+0i and Open\+SSL 1.\+1.\+1 \mbox{[}11 Sep 2018\mbox{]}}{Major changes between Open\+SSL 1.\+1.\+0i and Open\+SSL 1.\+1.\+1 \mbox{[}11 Sep 2018\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md737}
+
+\begin{DoxyItemize}
+\item Support for TLSv1.\+3 added. The TLSv1.\+3 implementation includes\+:
+\begin{DoxyItemize}
+\item Fully compliant implementation of RFC8446 (TLSv1.\+3) on by default
+\item Early data (0-\/RTT)
+\item Post-\/handshake authentication and key update
+\item Middlebox Compatibility Mode
+\item TLSv1.\+3 PSKs
+\item Support for all five RFC8446 ciphersuites
+\item RSA-\/\+PSS signature algorithms (backported to TLSv1.\+2)
+\item Configurable session ticket support
+\item Stateless server support
+\item Rewrite of the packet construction code for "{}safer"{} packet handling
+\item Rewrite of the extension handling code For further important information, see the \href{https://wiki.openssl.org/index.php/TLS1.3}{\texttt{ TLS1.\+3 page}} in the Open\+SSL Wiki.
+\end{DoxyItemize}
+\item Complete rewrite of the Open\+SSL random number generator to introduce the following capabilities
+\begin{DoxyItemize}
+\item The default RAND method now utilizes an AES-\/\+CTR DRBG according to NIST standard SP 800-\/90Ar1.
+\item Support for multiple DRBG instances with seed chaining.
+\item There is a public and private DRBG instance.
+\item The DRBG instances are fork-\/safe.
+\item Keep all global DRBG instances on the secure heap if it is enabled.
+\item The public and private DRBG instance are per thread for lock free operation
+\end{DoxyItemize}
+\item Support for various new cryptographic algorithms including\+:
+\begin{DoxyItemize}
+\item SHA3
+\item SHA512/224 and SHA512/256
+\item Ed\+DSA (both Ed25519 and Ed448) including X509 and TLS support
+\item X448 (adding to the existing X25519 support in 1.\+1.\+0)
+\item Multi-\/prime RSA
+\item SM2
+\item SM3
+\item SM4
+\item Sip\+Hash
+\item ARIA (including TLS support)
+\end{DoxyItemize}
+\item Significant Side-\/\+Channel attack security improvements
+\item Add a new Client\+Hello callback to provide the ability to adjust the SSL object at an early stage.
+\item Add \textquotesingle{}Maximum Fragment Length\textquotesingle{} TLS extension negotiation and support
+\item A new STORE module, which implements a uniform and URI based reader of stores that can contain keys, certificates, CRLs and numerous other objects.
+\item Move the display of configuration data to configdata.\+pm.
+\item Allow GNU style "{}make variables"{} to be used with Configure.
+\item Claim the namespaces OSSL and OPENSSL, represented as symbol prefixes
+\item Rewrite of devcrypto engine
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md738}{}\doxysection{\texorpdfstring{Open\+SSL 1.\+1.\+0}{Open\+SSL 1.\+1.\+0}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md738}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md739}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+1.\+0k and Open\+SSL 1.\+1.\+0l \mbox{[}10 Sep 2019\mbox{]}}{Major changes between Open\+SSL 1.\+1.\+0k and Open\+SSL 1.\+1.\+0l \mbox{[}10 Sep 2019\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md739}
+
+\begin{DoxyItemize}
+\item Fixed a padding oracle in PKCS7\+\_\+data\+Decode and CMS\+\_\+decrypt\+\_\+set1\+\_\+pkey (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2019-1563}{\texttt{ CVE-\/2019-\/1563}})
+\item For built-\/in EC curves, ensure an EC\+\_\+\+GROUP built from the curve name is used even when parsing explicit parameters
+\item Compute ECC cofactors if not provided during EC\+\_\+\+GROUP construction (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2019-1547}{\texttt{ CVE-\/2019-\/1547}})
+\item Use Windows installation paths in the mingw builds (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2019-1552}{\texttt{ CVE-\/2019-\/1552}})
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md740}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+1.\+0j and Open\+SSL 1.\+1.\+0k \mbox{[}28 May 2019\mbox{]}}{Major changes between Open\+SSL 1.\+1.\+0j and Open\+SSL 1.\+1.\+0k \mbox{[}28 May 2019\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md740}
+
+\begin{DoxyItemize}
+\item Prevent over long nonces in Cha\+Cha20-\/\+Poly1305 (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2019-1543}{\texttt{ CVE-\/2019-\/1543}})
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md741}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+1.\+0i and Open\+SSL 1.\+1.\+0j \mbox{[}20 Nov 2018\mbox{]}}{Major changes between Open\+SSL 1.\+1.\+0i and Open\+SSL 1.\+1.\+0j \mbox{[}20 Nov 2018\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md741}
+
+\begin{DoxyItemize}
+\item Timing vulnerability in DSA signature generation (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2018-0734}{\texttt{ CVE-\/2018-\/0734}})
+\item Timing vulnerability in ECDSA signature generation (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2018-0735}{\texttt{ CVE-\/2018-\/0735}})
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md742}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+1.\+0h and Open\+SSL 1.\+1.\+0i \mbox{[}14 Aug 2018\mbox{]}}{Major changes between Open\+SSL 1.\+1.\+0h and Open\+SSL 1.\+1.\+0i \mbox{[}14 Aug 2018\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md742}
+
+\begin{DoxyItemize}
+\item Client DoS due to large DH parameter (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2018-0732}{\texttt{ CVE-\/2018-\/0732}})
+\item Cache timing vulnerability in RSA Key Generation (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2018-0737}{\texttt{ CVE-\/2018-\/0737}})
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md743}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+1.\+0g and Open\+SSL 1.\+1.\+0h \mbox{[}27 Mar 2018\mbox{]}}{Major changes between Open\+SSL 1.\+1.\+0g and Open\+SSL 1.\+1.\+0h \mbox{[}27 Mar 2018\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md743}
+
+\begin{DoxyItemize}
+\item Constructed ASN.\+1 types with a recursive definition could exceed the stack (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2018-0739}{\texttt{ CVE-\/2018-\/0739}})
+\item Incorrect CRYPTO\+\_\+memcmp on HP-\/\+UX PA-\/\+RISC (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2018-0733}{\texttt{ CVE-\/2018-\/0733}})
+\item rsaz\+\_\+1024\+\_\+mul\+\_\+avx2 overflow bug on x86\+\_\+64 (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2017-3738}{\texttt{ CVE-\/2017-\/3738}})
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md744}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+1.\+0f and Open\+SSL 1.\+1.\+0g \mbox{[}2 Nov 2017\mbox{]}}{Major changes between Open\+SSL 1.\+1.\+0f and Open\+SSL 1.\+1.\+0g \mbox{[}2 Nov 2017\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md744}
+
+\begin{DoxyItemize}
+\item bn\+\_\+sqrx8x\+\_\+internal carry bug on x86\+\_\+64 (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2017-3736}{\texttt{ CVE-\/2017-\/3736}})
+\item Malformed X.\+509 IPAddress\+Family could cause OOB read (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2017-3735}{\texttt{ CVE-\/2017-\/3735}})
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md745}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+1.\+0e and Open\+SSL 1.\+1.\+0f \mbox{[}25 May 2017\mbox{]}}{Major changes between Open\+SSL 1.\+1.\+0e and Open\+SSL 1.\+1.\+0f \mbox{[}25 May 2017\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md745}
+
+\begin{DoxyItemize}
+\item config now recognises 64-\/bit mingw and chooses mingw64 instead of mingw
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md746}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+1.\+0d and Open\+SSL 1.\+1.\+0e \mbox{[}16 Feb 2017\mbox{]}}{Major changes between Open\+SSL 1.\+1.\+0d and Open\+SSL 1.\+1.\+0e \mbox{[}16 Feb 2017\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md746}
+
+\begin{DoxyItemize}
+\item Encrypt-\/\+Then-\/\+Mac renegotiation crash (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2017-3733}{\texttt{ CVE-\/2017-\/3733}})
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md747}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+1.\+0c and Open\+SSL 1.\+1.\+0d \mbox{[}26 Jan 2017\mbox{]}}{Major changes between Open\+SSL 1.\+1.\+0c and Open\+SSL 1.\+1.\+0d \mbox{[}26 Jan 2017\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md747}
+
+\begin{DoxyItemize}
+\item Truncated packet could crash via OOB read (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2017-3731}{\texttt{ CVE-\/2017-\/3731}})
+\item Bad (EC)DHE parameters cause a client crash (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2017-3730}{\texttt{ CVE-\/2017-\/3730}})
+\item BN\+\_\+mod\+\_\+exp may produce incorrect results on x86\+\_\+64 (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2017-3732}{\texttt{ CVE-\/2017-\/3732}})
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md748}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+1.\+0b and Open\+SSL 1.\+1.\+0c \mbox{[}10 Nov 2016\mbox{]}}{Major changes between Open\+SSL 1.\+1.\+0b and Open\+SSL 1.\+1.\+0c \mbox{[}10 Nov 2016\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md748}
+
+\begin{DoxyItemize}
+\item Cha\+Cha20/\+Poly1305 heap-\/buffer-\/overflow (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2016-7054}{\texttt{ CVE-\/2016-\/7054}})
+\item CMS Null dereference (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2016-7053}{\texttt{ CVE-\/2016-\/7053}})
+\item Montgomery multiplication may produce incorrect results (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2016-7055}{\texttt{ CVE-\/2016-\/7055}})
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md749}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+1.\+0a and Open\+SSL 1.\+1.\+0b \mbox{[}26 Sep 2016\mbox{]}}{Major changes between Open\+SSL 1.\+1.\+0a and Open\+SSL 1.\+1.\+0b \mbox{[}26 Sep 2016\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md749}
+
+\begin{DoxyItemize}
+\item Fix Use After Free for large message sizes (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2016-6309}{\texttt{ CVE-\/2016-\/6309}})
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md750}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+1.\+0 and Open\+SSL 1.\+1.\+0a \mbox{[}22 Sep 2016\mbox{]}}{Major changes between Open\+SSL 1.\+1.\+0 and Open\+SSL 1.\+1.\+0a \mbox{[}22 Sep 2016\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md750}
+
+\begin{DoxyItemize}
+\item OCSP Status Request extension unbounded memory growth (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2016-6304}{\texttt{ CVE-\/2016-\/6304}})
+\item SSL\+\_\+peek() hang on empty record (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2016-6305}{\texttt{ CVE-\/2016-\/6305}})
+\item Excessive allocation of memory in tls\+\_\+get\+\_\+message\+\_\+header() (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2016-6307}{\texttt{ CVE-\/2016-\/6307}})
+\item Excessive allocation of memory in dtls1\+\_\+preprocess\+\_\+fragment() (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2016-6308}{\texttt{ CVE-\/2016-\/6308}})
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md751}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+0.\+2h and Open\+SSL 1.\+1.\+0 \mbox{[}25 Aug 2016\mbox{]}}{Major changes between Open\+SSL 1.\+0.\+2h and Open\+SSL 1.\+1.\+0 \mbox{[}25 Aug 2016\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md751}
+
+\begin{DoxyItemize}
+\item Copyright text was shrunk to a boilerplate that points to the license
+\item "{}shared"{} builds are now the default when possible
+\item Added support for "{}pipelining"{}
+\item Added the AFALG engine
+\item New threading API implemented
+\item Support for Cha\+Cha20 and Poly1305 added to libcrypto and libssl
+\item Support for extended master secret
+\item CCM ciphersuites
+\item Reworked test suite, now based on perl, Test\+::\+Harness and Test\+::\+More
+\item {\itshape Most} libcrypto and libssl public structures were made opaque, including\+: BIGNUM and associated types, EC\+\_\+\+KEY and EC\+\_\+\+KEY\+\_\+\+METHOD, DH and DH\+\_\+\+METHOD, DSA and DSA\+\_\+\+METHOD, RSA and RSA\+\_\+\+METHOD, BIO and BIO\+\_\+\+METHOD, EVP\+\_\+\+MD\+\_\+\+CTX, EVP\+\_\+\+MD, EVP\+\_\+\+CIPHER\+\_\+\+CTX, EVP\+\_\+\+CIPHER, EVP\+\_\+\+PKEY and associated types, HMAC\+\_\+\+CTX, X509, X509\+\_\+\+CRL, X509\+\_\+\+OBJECT, X509\+\_\+\+STORE\+\_\+\+CTX, X509\+\_\+\+STORE, X509\+\_\+\+LOOKUP, X509\+\_\+\+LOOKUP\+\_\+\+METHOD
+\item libssl internal structures made opaque
+\item SSLv2 support removed
+\item Kerberos ciphersuite support removed
+\item RC4 removed from DEFAULT ciphersuites in libssl
+\item 40 and 56 bit cipher support removed from libssl
+\item All public header files moved to include/openssl, no more symlinking
+\item SSL/\+TLS state machine, version negotiation and record layer rewritten
+\item EC revision\+: now operations use new EC\+\_\+\+KEY\+\_\+\+METHOD.
+\item Support for OCB mode added to libcrypto
+\item Support for asynchronous crypto operations added to libcrypto and libssl
+\item Deprecated interfaces can now be disabled at build time either relative to the latest release via the "{}no-\/deprecated"{} Configure argument, or via the "{}-\/-\/api=1.\+1.\+0\texorpdfstring{$\vert$}{|}1.\+0.\+0\texorpdfstring{$\vert$}{|}0.\+9.\+8"{} option.
+\item Application software can be compiled with -\/DOPENSSL\+\_\+\+API\+\_\+\+COMPAT=version to ensure that features deprecated in that version are not exposed.
+\item Support for RFC6698/\+RFC7671 DANE TLSA peer authentication
+\item Change of Configure to use --prefix as the main installation directory location rather than --openssldir. The latter becomes the directory for certs, private key and openssl.\+cnf exclusively.
+\item Reworked BIO networking library, with full support for IPv6.
+\item New "{}unified"{} build system
+\item New security levels
+\item Support for scrypt algorithm
+\item Support for X25519
+\item Extended SSL\+\_\+\+CONF support using configuration files
+\item KDF algorithm support. Implement TLS PRF as a KDF.
+\item Support for Certificate Transparency
+\item HKDF support.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md752}{}\doxysection{\texorpdfstring{Open\+SSL 1.\+0.\+2}{Open\+SSL 1.\+0.\+2}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md752}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md753}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+0.\+2s and Open\+SSL 1.\+0.\+2t \mbox{[}10 Sep 2019\mbox{]}}{Major changes between Open\+SSL 1.\+0.\+2s and Open\+SSL 1.\+0.\+2t \mbox{[}10 Sep 2019\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md753}
+
+\begin{DoxyItemize}
+\item Fixed a padding oracle in PKCS7\+\_\+data\+Decode and CMS\+\_\+decrypt\+\_\+set1\+\_\+pkey (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2019-1563}{\texttt{ CVE-\/2019-\/1563}})
+\item For built-\/in EC curves, ensure an EC\+\_\+\+GROUP built from the curve name is used even when parsing explicit parameters
+\item Compute ECC cofactors if not provided during EC\+\_\+\+GROUP construction (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2019-1547}{\texttt{ CVE-\/2019-\/1547}})
+\item Document issue with installation paths in diverse Windows builds (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2019-1552}{\texttt{ CVE-\/2019-\/1552}})
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md754}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+0.\+2r and Open\+SSL 1.\+0.\+2s \mbox{[}28 May 2019\mbox{]}}{Major changes between Open\+SSL 1.\+0.\+2r and Open\+SSL 1.\+0.\+2s \mbox{[}28 May 2019\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md754}
+
+\begin{DoxyItemize}
+\item None
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md755}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+0.\+2q and Open\+SSL 1.\+0.\+2r \mbox{[}26 Feb 2019\mbox{]}}{Major changes between Open\+SSL 1.\+0.\+2q and Open\+SSL 1.\+0.\+2r \mbox{[}26 Feb 2019\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md755}
+
+\begin{DoxyItemize}
+\item 0-\/byte record padding oracle (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2019-1559}{\texttt{ CVE-\/2019-\/1559}})
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md756}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+0.\+2p and Open\+SSL 1.\+0.\+2q \mbox{[}20 Nov 2018\mbox{]}}{Major changes between Open\+SSL 1.\+0.\+2p and Open\+SSL 1.\+0.\+2q \mbox{[}20 Nov 2018\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md756}
+
+\begin{DoxyItemize}
+\item Microarchitecture timing vulnerability in ECC scalar multiplication (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2018-5407}{\texttt{ CVE-\/2018-\/5407}})
+\item Timing vulnerability in DSA signature generation (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2018-0734}{\texttt{ CVE-\/2018-\/0734}})
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md757}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+0.\+2o and Open\+SSL 1.\+0.\+2p \mbox{[}14 Aug 2018\mbox{]}}{Major changes between Open\+SSL 1.\+0.\+2o and Open\+SSL 1.\+0.\+2p \mbox{[}14 Aug 2018\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md757}
+
+\begin{DoxyItemize}
+\item Client DoS due to large DH parameter (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2018-0732}{\texttt{ CVE-\/2018-\/0732}})
+\item Cache timing vulnerability in RSA Key Generation (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2018-0737}{\texttt{ CVE-\/2018-\/0737}})
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md758}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+0.\+2n and Open\+SSL 1.\+0.\+2o \mbox{[}27 Mar 2018\mbox{]}}{Major changes between Open\+SSL 1.\+0.\+2n and Open\+SSL 1.\+0.\+2o \mbox{[}27 Mar 2018\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md758}
+
+\begin{DoxyItemize}
+\item Constructed ASN.\+1 types with a recursive definition could exceed the stack (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2018-0739}{\texttt{ CVE-\/2018-\/0739}})
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md759}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+0.\+2m and Open\+SSL 1.\+0.\+2n \mbox{[}7 Dec 2017\mbox{]}}{Major changes between Open\+SSL 1.\+0.\+2m and Open\+SSL 1.\+0.\+2n \mbox{[}7 Dec 2017\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md759}
+
+\begin{DoxyItemize}
+\item Read/write after SSL object in error state (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2017-3737}{\texttt{ CVE-\/2017-\/3737}})
+\item rsaz\+\_\+1024\+\_\+mul\+\_\+avx2 overflow bug on x86\+\_\+64 (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2017-3738}{\texttt{ CVE-\/2017-\/3738}})
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md760}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+0.\+2l and Open\+SSL 1.\+0.\+2m \mbox{[}2 Nov 2017\mbox{]}}{Major changes between Open\+SSL 1.\+0.\+2l and Open\+SSL 1.\+0.\+2m \mbox{[}2 Nov 2017\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md760}
+
+\begin{DoxyItemize}
+\item bn\+\_\+sqrx8x\+\_\+internal carry bug on x86\+\_\+64 (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2017-3736}{\texttt{ CVE-\/2017-\/3736}})
+\item Malformed X.\+509 IPAddress\+Family could cause OOB read (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2017-3735}{\texttt{ CVE-\/2017-\/3735}})
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md761}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+0.\+2k and Open\+SSL 1.\+0.\+2l \mbox{[}25 May 2017\mbox{]}}{Major changes between Open\+SSL 1.\+0.\+2k and Open\+SSL 1.\+0.\+2l \mbox{[}25 May 2017\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md761}
+
+\begin{DoxyItemize}
+\item config now recognises 64-\/bit mingw and chooses mingw64 instead of mingw
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md762}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+0.\+2j and Open\+SSL 1.\+0.\+2k \mbox{[}26 Jan 2017\mbox{]}}{Major changes between Open\+SSL 1.\+0.\+2j and Open\+SSL 1.\+0.\+2k \mbox{[}26 Jan 2017\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md762}
+
+\begin{DoxyItemize}
+\item Truncated packet could crash via OOB read (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2017-3731}{\texttt{ CVE-\/2017-\/3731}})
+\item BN\+\_\+mod\+\_\+exp may produce incorrect results on x86\+\_\+64 (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2017-3732}{\texttt{ CVE-\/2017-\/3732}})
+\item Montgomery multiplication may produce incorrect results (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2016-7055}{\texttt{ CVE-\/2016-\/7055}})
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md763}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+0.\+2i and Open\+SSL 1.\+0.\+2j \mbox{[}26 Sep 2016\mbox{]}}{Major changes between Open\+SSL 1.\+0.\+2i and Open\+SSL 1.\+0.\+2j \mbox{[}26 Sep 2016\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md763}
+
+\begin{DoxyItemize}
+\item Missing CRL sanity check (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2016-7052}{\texttt{ CVE-\/2016-\/7052}})
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md764}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+0.\+2h and Open\+SSL 1.\+0.\+2i \mbox{[}22 Sep 2016\mbox{]}}{Major changes between Open\+SSL 1.\+0.\+2h and Open\+SSL 1.\+0.\+2i \mbox{[}22 Sep 2016\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md764}
+
+\begin{DoxyItemize}
+\item OCSP Status Request extension unbounded memory growth (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2016-6304}{\texttt{ CVE-\/2016-\/6304}})
+\item SWEET32 Mitigation (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2016-2183}{\texttt{ CVE-\/2016-\/2183}})
+\item OOB write in MDC2\+\_\+\+Update() (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2016-6303}{\texttt{ CVE-\/2016-\/6303}})
+\item Malformed SHA512 ticket DoS (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2016-6302}{\texttt{ CVE-\/2016-\/6302}})
+\item OOB write in BN\+\_\+bn2dec() (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2016-2182}{\texttt{ CVE-\/2016-\/2182}})
+\item OOB read in TS\+\_\+\+OBJ\+\_\+print\+\_\+bio() (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2016-2180}{\texttt{ CVE-\/2016-\/2180}})
+\item Pointer arithmetic undefined behaviour (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2016-2177}{\texttt{ CVE-\/2016-\/2177}})
+\item Constant time flag not preserved in DSA signing (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2016-2178}{\texttt{ CVE-\/2016-\/2178}})
+\item DTLS buffered message DoS (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2016-2179}{\texttt{ CVE-\/2016-\/2179}})
+\item DTLS replay protection DoS (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2016-2181}{\texttt{ CVE-\/2016-\/2181}})
+\item Certificate message OOB reads (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2016-6306}{\texttt{ CVE-\/2016-\/6306}})
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md765}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+0.\+2g and Open\+SSL 1.\+0.\+2h \mbox{[}3 May 2016\mbox{]}}{Major changes between Open\+SSL 1.\+0.\+2g and Open\+SSL 1.\+0.\+2h \mbox{[}3 May 2016\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md765}
+
+\begin{DoxyItemize}
+\item Prevent padding oracle in AES-\/\+NI CBC MAC check (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2016-2107}{\texttt{ CVE-\/2016-\/2107}})
+\item Fix EVP\+\_\+\+Encode\+Update overflow (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2016-2105}{\texttt{ CVE-\/2016-\/2105}})
+\item Fix EVP\+\_\+\+Encrypt\+Update overflow (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2016-2106}{\texttt{ CVE-\/2016-\/2106}})
+\item Prevent ASN.\+1 BIO excessive memory allocation (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2016-2109}{\texttt{ CVE-\/2016-\/2109}})
+\item EBCDIC overread (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2016-2176}{\texttt{ CVE-\/2016-\/2176}})
+\item Modify behavior of ALPN to invoke callback after SNI/servername callback, such that updates to the SSL\+\_\+\+CTX affect ALPN.
+\item Remove LOW from the DEFAULT cipher list. This removes singles DES from the default.
+\item Only remove the SSLv2 methods with the no-\/ssl2-\/method option.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md766}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+0.\+2f and Open\+SSL 1.\+0.\+2g \mbox{[}1 Mar 2016\mbox{]}}{Major changes between Open\+SSL 1.\+0.\+2f and Open\+SSL 1.\+0.\+2g \mbox{[}1 Mar 2016\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md766}
+
+\begin{DoxyItemize}
+\item Disable weak ciphers in SSLv3 and up in default builds of Open\+SSL.
+\item Disable SSLv2 default build, default negotiation and weak ciphers (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2016-0800}{\texttt{ CVE-\/2016-\/0800}})
+\item Fix a double-\/free in DSA code (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2016-0705}{\texttt{ CVE-\/2016-\/0705}})
+\item Disable SRP fake user seed to address a server memory leak (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2016-0798}{\texttt{ CVE-\/2016-\/0798}})
+\item Fix BN\+\_\+hex2bn/\+BN\+\_\+dec2bn NULL pointer deref/heap corruption (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2016-0797}{\texttt{ CVE-\/2016-\/0797}})
+\item Fix memory issues in BIO\+\_\+\texorpdfstring{$\ast$}{*}printf functions (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2016-0799}{\texttt{ CVE-\/2016-\/0799}})
+\item Fix side channel attack on modular exponentiation (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2016-0702}{\texttt{ CVE-\/2016-\/0702}})
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md767}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+0.\+2e and Open\+SSL 1.\+0.\+2f \mbox{[}28 Jan 2016\mbox{]}}{Major changes between Open\+SSL 1.\+0.\+2e and Open\+SSL 1.\+0.\+2f \mbox{[}28 Jan 2016\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md767}
+
+\begin{DoxyItemize}
+\item DH small subgroups (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2016-0701}{\texttt{ CVE-\/2016-\/0701}})
+\item SSLv2 doesn\textquotesingle{}t block disabled ciphers (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2015-3197}{\texttt{ CVE-\/2015-\/3197}})
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md768}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+0.\+2d and Open\+SSL 1.\+0.\+2e \mbox{[}3 Dec 2015\mbox{]}}{Major changes between Open\+SSL 1.\+0.\+2d and Open\+SSL 1.\+0.\+2e \mbox{[}3 Dec 2015\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md768}
+
+\begin{DoxyItemize}
+\item BN\+\_\+mod\+\_\+exp may produce incorrect results on x86\+\_\+64 (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2015-3193}{\texttt{ CVE-\/2015-\/3193}})
+\item Certificate verify crash with missing PSS parameter (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2015-3194}{\texttt{ CVE-\/2015-\/3194}})
+\item X509\+\_\+\+ATTRIBUTE memory leak (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2015-3195}{\texttt{ CVE-\/2015-\/3195}})
+\item Rewrite EVP\+\_\+\+Decode\+Update (base64 decoding) to fix several bugs
+\item In DSA\+\_\+generate\+\_\+parameters\+\_\+ex, if the provided seed is too short, return an error
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md769}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+0.\+2c and Open\+SSL 1.\+0.\+2d \mbox{[}9 Jul 2015\mbox{]}}{Major changes between Open\+SSL 1.\+0.\+2c and Open\+SSL 1.\+0.\+2d \mbox{[}9 Jul 2015\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md769}
+
+\begin{DoxyItemize}
+\item Alternate chains certificate forgery (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2015-1793}{\texttt{ CVE-\/2015-\/1793}})
+\item Race condition handling PSK identify hint (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2015-3196}{\texttt{ CVE-\/2015-\/3196}})
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md770}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+0.\+2b and Open\+SSL 1.\+0.\+2c \mbox{[}12 Jun 2015\mbox{]}}{Major changes between Open\+SSL 1.\+0.\+2b and Open\+SSL 1.\+0.\+2c \mbox{[}12 Jun 2015\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md770}
+
+\begin{DoxyItemize}
+\item Fix HMAC ABI incompatibility
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md771}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+0.\+2a and Open\+SSL 1.\+0.\+2b \mbox{[}11 Jun 2015\mbox{]}}{Major changes between Open\+SSL 1.\+0.\+2a and Open\+SSL 1.\+0.\+2b \mbox{[}11 Jun 2015\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md771}
+
+\begin{DoxyItemize}
+\item Malformed ECParameters causes infinite loop (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2015-1788}{\texttt{ CVE-\/2015-\/1788}})
+\item Exploitable out-\/of-\/bounds read in X509\+\_\+cmp\+\_\+time (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2015-1789}{\texttt{ CVE-\/2015-\/1789}})
+\item PKCS7 crash with missing Enveloped\+Content (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2015-1790}{\texttt{ CVE-\/2015-\/1790}})
+\item CMS verify infinite loop with unknown hash function (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2015-1792}{\texttt{ CVE-\/2015-\/1792}})
+\item Race condition handling New\+Session\+Ticket (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2015-1791}{\texttt{ CVE-\/2015-\/1791}})
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md772}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+0.\+2 and Open\+SSL 1.\+0.\+2a \mbox{[}19 Mar 2015\mbox{]}}{Major changes between Open\+SSL 1.\+0.\+2 and Open\+SSL 1.\+0.\+2a \mbox{[}19 Mar 2015\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md772}
+
+\begin{DoxyItemize}
+\item Open\+SSL 1.\+0.\+2 Client\+Hello sigalgs DoS fix (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2015-0291}{\texttt{ CVE-\/2015-\/0291}})
+\item Multiblock corrupted pointer fix (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2015-0290}{\texttt{ CVE-\/2015-\/0290}})
+\item Segmentation fault in DTLSv1\+\_\+listen fix (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2015-0207}{\texttt{ CVE-\/2015-\/0207}})
+\item Segmentation fault in ASN1\+\_\+\+TYPE\+\_\+cmp fix (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2015-0286}{\texttt{ CVE-\/2015-\/0286}})
+\item Segmentation fault for invalid PSS parameters fix (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2015-0208}{\texttt{ CVE-\/2015-\/0208}})
+\item ASN.\+1 structure reuse memory corruption fix (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2015-0287}{\texttt{ CVE-\/2015-\/0287}})
+\item PKCS7 NULL pointer dereferences fix (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2015-0289}{\texttt{ CVE-\/2015-\/0289}})
+\item DoS via reachable assert in SSLv2 servers fix (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2015-0293}{\texttt{ CVE-\/2015-\/0293}})
+\item Empty CKE with client auth and DHE fix (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2015-1787}{\texttt{ CVE-\/2015-\/1787}})
+\item Handshake with unseeded PRNG fix (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2015-0285}{\texttt{ CVE-\/2015-\/0285}})
+\item Use After Free following d2i\+\_\+\+ECPrivatekey error fix (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2015-0209}{\texttt{ CVE-\/2015-\/0209}})
+\item X509\+\_\+to\+\_\+\+X509\+\_\+\+REQ NULL pointer deref fix (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2015-0288}{\texttt{ CVE-\/2015-\/0288}})
+\item Removed the export ciphers from the DEFAULT ciphers
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md773}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+0.\+1l and Open\+SSL 1.\+0.\+2 \mbox{[}22 Jan 2015\mbox{]}}{Major changes between Open\+SSL 1.\+0.\+1l and Open\+SSL 1.\+0.\+2 \mbox{[}22 Jan 2015\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md773}
+
+\begin{DoxyItemize}
+\item Suite B support for TLS 1.\+2 and DTLS 1.\+2
+\item Support for DTLS 1.\+2
+\item TLS automatic EC curve selection.
+\item API to set TLS supported signature algorithms and curves
+\item SSL\+\_\+\+CONF configuration API.
+\item TLS Brainpool support.
+\item ALPN support.
+\item CMS support for RSA-\/\+PSS, RSA-\/\+OAEP, ECDH and X9.\+42 DH.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md774}{}\doxysection{\texorpdfstring{Open\+SSL 1.\+0.\+1}{Open\+SSL 1.\+0.\+1}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md774}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md775}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+0.\+1t and Open\+SSL 1.\+0.\+1u \mbox{[}22 Sep 2016\mbox{]}}{Major changes between Open\+SSL 1.\+0.\+1t and Open\+SSL 1.\+0.\+1u \mbox{[}22 Sep 2016\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md775}
+
+\begin{DoxyItemize}
+\item OCSP Status Request extension unbounded memory growth (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2016-6304}{\texttt{ CVE-\/2016-\/6304}})
+\item SWEET32 Mitigation (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2016-2183}{\texttt{ CVE-\/2016-\/2183}})
+\item OOB write in MDC2\+\_\+\+Update() (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2016-6303}{\texttt{ CVE-\/2016-\/6303}})
+\item Malformed SHA512 ticket DoS (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2016-6302}{\texttt{ CVE-\/2016-\/6302}})
+\item OOB write in BN\+\_\+bn2dec() (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2016-2182}{\texttt{ CVE-\/2016-\/2182}})
+\item OOB read in TS\+\_\+\+OBJ\+\_\+print\+\_\+bio() (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2016-2180}{\texttt{ CVE-\/2016-\/2180}})
+\item Pointer arithmetic undefined behaviour (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2016-2177}{\texttt{ CVE-\/2016-\/2177}})
+\item Constant time flag not preserved in DSA signing (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2016-2178}{\texttt{ CVE-\/2016-\/2178}})
+\item DTLS buffered message DoS (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2016-2179}{\texttt{ CVE-\/2016-\/2179}})
+\item DTLS replay protection DoS (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2016-2181}{\texttt{ CVE-\/2016-\/2181}})
+\item Certificate message OOB reads (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2016-6306}{\texttt{ CVE-\/2016-\/6306}})
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md776}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+0.\+1s and Open\+SSL 1.\+0.\+1t \mbox{[}3 May 2016\mbox{]}}{Major changes between Open\+SSL 1.\+0.\+1s and Open\+SSL 1.\+0.\+1t \mbox{[}3 May 2016\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md776}
+
+\begin{DoxyItemize}
+\item Prevent padding oracle in AES-\/\+NI CBC MAC check (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2016-2107}{\texttt{ CVE-\/2016-\/2107}})
+\item Fix EVP\+\_\+\+Encode\+Update overflow (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2016-2105}{\texttt{ CVE-\/2016-\/2105}})
+\item Fix EVP\+\_\+\+Encrypt\+Update overflow (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2016-2106}{\texttt{ CVE-\/2016-\/2106}})
+\item Prevent ASN.\+1 BIO excessive memory allocation (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2016-2109}{\texttt{ CVE-\/2016-\/2109}})
+\item EBCDIC overread (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2016-2176}{\texttt{ CVE-\/2016-\/2176}})
+\item Modify behavior of ALPN to invoke callback after SNI/servername callback, such that updates to the SSL\+\_\+\+CTX affect ALPN.
+\item Remove LOW from the DEFAULT cipher list. This removes singles DES from the default.
+\item Only remove the SSLv2 methods with the no-\/ssl2-\/method option.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md777}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+0.\+1r and Open\+SSL 1.\+0.\+1s \mbox{[}1 Mar 2016\mbox{]}}{Major changes between Open\+SSL 1.\+0.\+1r and Open\+SSL 1.\+0.\+1s \mbox{[}1 Mar 2016\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md777}
+
+\begin{DoxyItemize}
+\item Disable weak ciphers in SSLv3 and up in default builds of Open\+SSL.
+\item Disable SSLv2 default build, default negotiation and weak ciphers (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2016-0800}{\texttt{ CVE-\/2016-\/0800}})
+\item Fix a double-\/free in DSA code (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2016-0705}{\texttt{ CVE-\/2016-\/0705}})
+\item Disable SRP fake user seed to address a server memory leak (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2016-0798}{\texttt{ CVE-\/2016-\/0798}})
+\item Fix BN\+\_\+hex2bn/\+BN\+\_\+dec2bn NULL pointer deref/heap corruption (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2016-0797}{\texttt{ CVE-\/2016-\/0797}})
+\item Fix memory issues in BIO\+\_\+\texorpdfstring{$\ast$}{*}printf functions (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2016-0799}{\texttt{ CVE-\/2016-\/0799}})
+\item Fix side channel attack on modular exponentiation (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2016-0702}{\texttt{ CVE-\/2016-\/0702}})
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md778}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+0.\+1q and Open\+SSL 1.\+0.\+1r \mbox{[}28 Jan 2016\mbox{]}}{Major changes between Open\+SSL 1.\+0.\+1q and Open\+SSL 1.\+0.\+1r \mbox{[}28 Jan 2016\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md778}
+
+\begin{DoxyItemize}
+\item Protection for DH small subgroup attacks
+\item SSLv2 doesn\textquotesingle{}t block disabled ciphers (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2015-3197}{\texttt{ CVE-\/2015-\/3197}})
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md779}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+0.\+1p and Open\+SSL 1.\+0.\+1q \mbox{[}3 Dec 2015\mbox{]}}{Major changes between Open\+SSL 1.\+0.\+1p and Open\+SSL 1.\+0.\+1q \mbox{[}3 Dec 2015\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md779}
+
+\begin{DoxyItemize}
+\item Certificate verify crash with missing PSS parameter (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2015-3194}{\texttt{ CVE-\/2015-\/3194}})
+\item X509\+\_\+\+ATTRIBUTE memory leak (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2015-3195}{\texttt{ CVE-\/2015-\/3195}})
+\item Rewrite EVP\+\_\+\+Decode\+Update (base64 decoding) to fix several bugs
+\item In DSA\+\_\+generate\+\_\+parameters\+\_\+ex, if the provided seed is too short, return an error
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md780}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+0.\+1o and Open\+SSL 1.\+0.\+1p \mbox{[}9 Jul 2015\mbox{]}}{Major changes between Open\+SSL 1.\+0.\+1o and Open\+SSL 1.\+0.\+1p \mbox{[}9 Jul 2015\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md780}
+
+\begin{DoxyItemize}
+\item Alternate chains certificate forgery (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2015-1793}{\texttt{ CVE-\/2015-\/1793}})
+\item Race condition handling PSK identify hint (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2015-3196}{\texttt{ CVE-\/2015-\/3196}})
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md781}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+0.\+1n and Open\+SSL 1.\+0.\+1o \mbox{[}12 Jun 2015\mbox{]}}{Major changes between Open\+SSL 1.\+0.\+1n and Open\+SSL 1.\+0.\+1o \mbox{[}12 Jun 2015\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md781}
+
+\begin{DoxyItemize}
+\item Fix HMAC ABI incompatibility
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md782}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+0.\+1m and Open\+SSL 1.\+0.\+1n \mbox{[}11 Jun 2015\mbox{]}}{Major changes between Open\+SSL 1.\+0.\+1m and Open\+SSL 1.\+0.\+1n \mbox{[}11 Jun 2015\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md782}
+
+\begin{DoxyItemize}
+\item Malformed ECParameters causes infinite loop (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2015-1788}{\texttt{ CVE-\/2015-\/1788}})
+\item Exploitable out-\/of-\/bounds read in X509\+\_\+cmp\+\_\+time (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2015-1789}{\texttt{ CVE-\/2015-\/1789}})
+\item PKCS7 crash with missing Enveloped\+Content (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2015-1790}{\texttt{ CVE-\/2015-\/1790}})
+\item CMS verify infinite loop with unknown hash function (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2015-1792}{\texttt{ CVE-\/2015-\/1792}})
+\item Race condition handling New\+Session\+Ticket (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2015-1791}{\texttt{ CVE-\/2015-\/1791}})
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md783}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+0.\+1l and Open\+SSL 1.\+0.\+1m \mbox{[}19 Mar 2015\mbox{]}}{Major changes between Open\+SSL 1.\+0.\+1l and Open\+SSL 1.\+0.\+1m \mbox{[}19 Mar 2015\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md783}
+
+\begin{DoxyItemize}
+\item Segmentation fault in ASN1\+\_\+\+TYPE\+\_\+cmp fix (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2015-0286}{\texttt{ CVE-\/2015-\/0286}})
+\item ASN.\+1 structure reuse memory corruption fix (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2015-0287}{\texttt{ CVE-\/2015-\/0287}})
+\item PKCS7 NULL pointer dereferences fix (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2015-0289}{\texttt{ CVE-\/2015-\/0289}})
+\item DoS via reachable assert in SSLv2 servers fix (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2015-0293}{\texttt{ CVE-\/2015-\/0293}})
+\item Use After Free following d2i\+\_\+\+ECPrivatekey error fix (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2015-0209}{\texttt{ CVE-\/2015-\/0209}})
+\item X509\+\_\+to\+\_\+\+X509\+\_\+\+REQ NULL pointer deref fix (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2015-0288}{\texttt{ CVE-\/2015-\/0288}})
+\item Removed the export ciphers from the DEFAULT ciphers
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md784}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+0.\+1k and Open\+SSL 1.\+0.\+1l \mbox{[}15 Jan 2015\mbox{]}}{Major changes between Open\+SSL 1.\+0.\+1k and Open\+SSL 1.\+0.\+1l \mbox{[}15 Jan 2015\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md784}
+
+\begin{DoxyItemize}
+\item Build fixes for the Windows and Open\+VMS platforms
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md785}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+0.\+1j and Open\+SSL 1.\+0.\+1k \mbox{[}8 Jan 2015\mbox{]}}{Major changes between Open\+SSL 1.\+0.\+1j and Open\+SSL 1.\+0.\+1k \mbox{[}8 Jan 2015\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md785}
+
+\begin{DoxyItemize}
+\item Fix for \href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2014-3571}{\texttt{ CVE-\/2014-\/3571}}
+\item Fix for \href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2015-0206}{\texttt{ CVE-\/2015-\/0206}}
+\item Fix for \href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2014-3569}{\texttt{ CVE-\/2014-\/3569}}
+\item Fix for \href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2014-3572}{\texttt{ CVE-\/2014-\/3572}}
+\item Fix for \href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2015-0204}{\texttt{ CVE-\/2015-\/0204}}
+\item Fix for \href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2015-0205}{\texttt{ CVE-\/2015-\/0205}}
+\item Fix for \href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2014-8275}{\texttt{ CVE-\/2014-\/8275}}
+\item Fix for \href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2014-3570}{\texttt{ CVE-\/2014-\/3570}}
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md786}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+0.\+1i and Open\+SSL 1.\+0.\+1j \mbox{[}15 Oct 2014\mbox{]}}{Major changes between Open\+SSL 1.\+0.\+1i and Open\+SSL 1.\+0.\+1j \mbox{[}15 Oct 2014\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md786}
+
+\begin{DoxyItemize}
+\item Fix for \href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2014-3513}{\texttt{ CVE-\/2014-\/3513}}
+\item Fix for \href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2014-3567}{\texttt{ CVE-\/2014-\/3567}}
+\item Mitigation for \mbox{[}CVE-\/2014-\/3566\mbox{]} (SSL protocol vulnerability)
+\item Fix for \href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2014-3568}{\texttt{ CVE-\/2014-\/3568}}
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md787}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+0.\+1h and Open\+SSL 1.\+0.\+1i \mbox{[}6 Aug 2014\mbox{]}}{Major changes between Open\+SSL 1.\+0.\+1h and Open\+SSL 1.\+0.\+1i \mbox{[}6 Aug 2014\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md787}
+
+\begin{DoxyItemize}
+\item Fix for \href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2014-3512}{\texttt{ CVE-\/2014-\/3512}}
+\item Fix for \href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2014-3511}{\texttt{ CVE-\/2014-\/3511}}
+\item Fix for \href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2014-3510}{\texttt{ CVE-\/2014-\/3510}}
+\item Fix for \href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2014-3507}{\texttt{ CVE-\/2014-\/3507}}
+\item Fix for \href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2014-3506}{\texttt{ CVE-\/2014-\/3506}}
+\item Fix for \href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2014-3505}{\texttt{ CVE-\/2014-\/3505}}
+\item Fix for \href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2014-3509}{\texttt{ CVE-\/2014-\/3509}}
+\item Fix for \href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2014-5139}{\texttt{ CVE-\/2014-\/5139}}
+\item Fix for \href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2014-3508}{\texttt{ CVE-\/2014-\/3508}}
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md788}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+0.\+1g and Open\+SSL 1.\+0.\+1h \mbox{[}5 Jun 2014\mbox{]}}{Major changes between Open\+SSL 1.\+0.\+1g and Open\+SSL 1.\+0.\+1h \mbox{[}5 Jun 2014\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md788}
+
+\begin{DoxyItemize}
+\item Fix for \href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2014-0224}{\texttt{ CVE-\/2014-\/0224}}
+\item Fix for \href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2014-0221}{\texttt{ CVE-\/2014-\/0221}}
+\item Fix for \href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2014-0198}{\texttt{ CVE-\/2014-\/0198}}
+\item Fix for \href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2014-0195}{\texttt{ CVE-\/2014-\/0195}}
+\item Fix for \href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2014-3470}{\texttt{ CVE-\/2014-\/3470}}
+\item Fix for \href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2010-5298}{\texttt{ CVE-\/2010-\/5298}}
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md789}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+0.\+1f and Open\+SSL 1.\+0.\+1g \mbox{[}7 Apr 2014\mbox{]}}{Major changes between Open\+SSL 1.\+0.\+1f and Open\+SSL 1.\+0.\+1g \mbox{[}7 Apr 2014\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md789}
+
+\begin{DoxyItemize}
+\item Fix for \href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2014-0160}{\texttt{ CVE-\/2014-\/0160}}
+\item Add TLS padding extension workaround for broken servers.
+\item Fix for \href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2014-0076}{\texttt{ CVE-\/2014-\/0076}}
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md790}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+0.\+1e and Open\+SSL 1.\+0.\+1f \mbox{[}6 Jan 2014\mbox{]}}{Major changes between Open\+SSL 1.\+0.\+1e and Open\+SSL 1.\+0.\+1f \mbox{[}6 Jan 2014\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md790}
+
+\begin{DoxyItemize}
+\item Don\textquotesingle{}t include gmt\+\_\+unix\+\_\+time in TLS server and client random values
+\item Fix for TLS record tampering bug (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2013-4353}{\texttt{ CVE-\/2013-\/4353}})
+\item Fix for TLS version checking bug (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2013-6449}{\texttt{ CVE-\/2013-\/6449}})
+\item Fix for DTLS retransmission bug (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2013-6450}{\texttt{ CVE-\/2013-\/6450}})
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md791}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+0.\+1d and Open\+SSL 1.\+0.\+1e \mbox{[}11 Feb 2013\mbox{]}}{Major changes between Open\+SSL 1.\+0.\+1d and Open\+SSL 1.\+0.\+1e \mbox{[}11 Feb 2013\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md791}
+
+\begin{DoxyItemize}
+\item Corrected fix for (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2013-0169}{\texttt{ CVE-\/2013-\/0169}})
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md792}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+0.\+1c and Open\+SSL 1.\+0.\+1d \mbox{[}4 Feb 2013\mbox{]}}{Major changes between Open\+SSL 1.\+0.\+1c and Open\+SSL 1.\+0.\+1d \mbox{[}4 Feb 2013\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md792}
+
+\begin{DoxyItemize}
+\item Fix renegotiation in TLS 1.\+1, 1.\+2 by using the correct TLS version.
+\item Include the fips configuration module.
+\item Fix OCSP bad key DoS attack (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2013-0166}{\texttt{ CVE-\/2013-\/0166}})
+\item Fix for SSL/\+TLS/\+DTLS CBC plaintext recovery attack (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2013-0169}{\texttt{ CVE-\/2013-\/0169}})
+\item Fix for TLS AESNI record handling flaw (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2012-2686}{\texttt{ CVE-\/2012-\/2686}})
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md793}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+0.\+1b and Open\+SSL 1.\+0.\+1c \mbox{[}10 May 2012\mbox{]}}{Major changes between Open\+SSL 1.\+0.\+1b and Open\+SSL 1.\+0.\+1c \mbox{[}10 May 2012\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md793}
+
+\begin{DoxyItemize}
+\item Fix TLS/\+DTLS record length checking bug (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2012-2333}{\texttt{ CVE-\/2012-\/2333}})
+\item Don\textquotesingle{}t attempt to use non-\/\+FIPS composite ciphers in FIPS mode.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md794}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+0.\+1a and Open\+SSL 1.\+0.\+1b \mbox{[}26 Apr 2012\mbox{]}}{Major changes between Open\+SSL 1.\+0.\+1a and Open\+SSL 1.\+0.\+1b \mbox{[}26 Apr 2012\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md794}
+
+\begin{DoxyItemize}
+\item Fix compilation error on non-\/x86 platforms.
+\item Make FIPS capable Open\+SSL ciphers work in non-\/\+FIPS mode.
+\item Fix SSL\+\_\+\+OP\+\_\+\+NO\+\_\+\+TLSv1\+\_\+1 clash with SSL\+\_\+\+OP\+\_\+\+ALL in Open\+SSL 1.\+0.\+0
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md795}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+0.\+1 and Open\+SSL 1.\+0.\+1a \mbox{[}19 Apr 2012\mbox{]}}{Major changes between Open\+SSL 1.\+0.\+1 and Open\+SSL 1.\+0.\+1a \mbox{[}19 Apr 2012\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md795}
+
+\begin{DoxyItemize}
+\item Fix for ASN1 overflow bug (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2012-2110}{\texttt{ CVE-\/2012-\/2110}})
+\item Workarounds for some servers that hang on long client hellos.
+\item Fix SEGV in AES code.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md796}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+0.\+0h and Open\+SSL 1.\+0.\+1 \mbox{[}14 Mar 2012\mbox{]}}{Major changes between Open\+SSL 1.\+0.\+0h and Open\+SSL 1.\+0.\+1 \mbox{[}14 Mar 2012\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md796}
+
+\begin{DoxyItemize}
+\item TLS/\+DTLS heartbeat support.
+\item SCTP support.
+\item RFC 5705 TLS key material exporter.
+\item RFC 5764 DTLS-\/\+SRTP negotiation.
+\item Next Protocol Negotiation.
+\item PSS signatures in certificates, requests and CRLs.
+\item Support for password based recipient info for CMS.
+\item Support TLS v1.\+2 and TLS v1.\+1.
+\item Preliminary FIPS capability for unvalidated 2.\+0 FIPS module.
+\item SRP support.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md797}{}\doxysection{\texorpdfstring{Open\+SSL 1.\+0.\+0}{Open\+SSL 1.\+0.\+0}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md797}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md798}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+0.\+0s and Open\+SSL 1.\+0.\+0t \mbox{[}3 Dec 2015\mbox{]}}{Major changes between Open\+SSL 1.\+0.\+0s and Open\+SSL 1.\+0.\+0t \mbox{[}3 Dec 2015\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md798}
+
+\begin{DoxyItemize}
+\item X509\+\_\+\+ATTRIBUTE memory leak ((\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2015-3195}{\texttt{ CVE-\/2015-\/3195}}))
+\item Race condition handling PSK identify hint (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2015-3196}{\texttt{ CVE-\/2015-\/3196}})
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md799}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+0.\+0r and Open\+SSL 1.\+0.\+0s \mbox{[}11 Jun 2015\mbox{]}}{Major changes between Open\+SSL 1.\+0.\+0r and Open\+SSL 1.\+0.\+0s \mbox{[}11 Jun 2015\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md799}
+
+\begin{DoxyItemize}
+\item Malformed ECParameters causes infinite loop (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2015-1788}{\texttt{ CVE-\/2015-\/1788}})
+\item Exploitable out-\/of-\/bounds read in X509\+\_\+cmp\+\_\+time (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2015-1789}{\texttt{ CVE-\/2015-\/1789}})
+\item PKCS7 crash with missing Enveloped\+Content (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2015-1790}{\texttt{ CVE-\/2015-\/1790}})
+\item CMS verify infinite loop with unknown hash function (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2015-1792}{\texttt{ CVE-\/2015-\/1792}})
+\item Race condition handling New\+Session\+Ticket (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2015-1791}{\texttt{ CVE-\/2015-\/1791}})
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md800}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+0.\+0q and Open\+SSL 1.\+0.\+0r \mbox{[}19 Mar 2015\mbox{]}}{Major changes between Open\+SSL 1.\+0.\+0q and Open\+SSL 1.\+0.\+0r \mbox{[}19 Mar 2015\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md800}
+
+\begin{DoxyItemize}
+\item Segmentation fault in ASN1\+\_\+\+TYPE\+\_\+cmp fix (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2015-0286}{\texttt{ CVE-\/2015-\/0286}})
+\item ASN.\+1 structure reuse memory corruption fix (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2015-0287}{\texttt{ CVE-\/2015-\/0287}})
+\item PKCS7 NULL pointer dereferences fix (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2015-0289}{\texttt{ CVE-\/2015-\/0289}})
+\item DoS via reachable assert in SSLv2 servers fix (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2015-0293}{\texttt{ CVE-\/2015-\/0293}})
+\item Use After Free following d2i\+\_\+\+ECPrivatekey error fix (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2015-0209}{\texttt{ CVE-\/2015-\/0209}})
+\item X509\+\_\+to\+\_\+\+X509\+\_\+\+REQ NULL pointer deref fix (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2015-0288}{\texttt{ CVE-\/2015-\/0288}})
+\item Removed the export ciphers from the DEFAULT ciphers
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md801}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+0.\+0p and Open\+SSL 1.\+0.\+0q \mbox{[}15 Jan 2015\mbox{]}}{Major changes between Open\+SSL 1.\+0.\+0p and Open\+SSL 1.\+0.\+0q \mbox{[}15 Jan 2015\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md801}
+
+\begin{DoxyItemize}
+\item Build fixes for the Windows and Open\+VMS platforms
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md802}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+0.\+0o and Open\+SSL 1.\+0.\+0p \mbox{[}8 Jan 2015\mbox{]}}{Major changes between Open\+SSL 1.\+0.\+0o and Open\+SSL 1.\+0.\+0p \mbox{[}8 Jan 2015\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md802}
+
+\begin{DoxyItemize}
+\item Fix for \href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2014-3571}{\texttt{ CVE-\/2014-\/3571}}
+\item Fix for \href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2015-0206}{\texttt{ CVE-\/2015-\/0206}}
+\item Fix for \href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2014-3569}{\texttt{ CVE-\/2014-\/3569}}
+\item Fix for \href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2014-3572}{\texttt{ CVE-\/2014-\/3572}}
+\item Fix for \href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2015-0204}{\texttt{ CVE-\/2015-\/0204}}
+\item Fix for \href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2015-0205}{\texttt{ CVE-\/2015-\/0205}}
+\item Fix for \href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2014-8275}{\texttt{ CVE-\/2014-\/8275}}
+\item Fix for \href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2014-3570}{\texttt{ CVE-\/2014-\/3570}}
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md803}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+0.\+0n and Open\+SSL 1.\+0.\+0o \mbox{[}15 Oct 2014\mbox{]}}{Major changes between Open\+SSL 1.\+0.\+0n and Open\+SSL 1.\+0.\+0o \mbox{[}15 Oct 2014\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md803}
+
+\begin{DoxyItemize}
+\item Fix for \href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2014-3513}{\texttt{ CVE-\/2014-\/3513}}
+\item Fix for \href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2014-3567}{\texttt{ CVE-\/2014-\/3567}}
+\item Mitigation for \mbox{[}CVE-\/2014-\/3566\mbox{]} (SSL protocol vulnerability)
+\item Fix for \href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2014-3568}{\texttt{ CVE-\/2014-\/3568}}
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md804}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+0.\+0m and Open\+SSL 1.\+0.\+0n \mbox{[}6 Aug 2014\mbox{]}}{Major changes between Open\+SSL 1.\+0.\+0m and Open\+SSL 1.\+0.\+0n \mbox{[}6 Aug 2014\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md804}
+
+\begin{DoxyItemize}
+\item Fix for \href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2014-3510}{\texttt{ CVE-\/2014-\/3510}}
+\item Fix for \href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2014-3507}{\texttt{ CVE-\/2014-\/3507}}
+\item Fix for \href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2014-3506}{\texttt{ CVE-\/2014-\/3506}}
+\item Fix for \href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2014-3505}{\texttt{ CVE-\/2014-\/3505}}
+\item Fix for \href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2014-3509}{\texttt{ CVE-\/2014-\/3509}}
+\item Fix for \href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2014-3508}{\texttt{ CVE-\/2014-\/3508}}
+\end{DoxyItemize}
+
+Known issues in Open\+SSL 1.\+0.\+0m\+:
+
+
+\begin{DoxyItemize}
+\item EAP-\/\+FAST and other applications using tls\+\_\+session\+\_\+secret\+\_\+cb won\textquotesingle{}t resume sessions. Fixed in 1.\+0.\+0n-\/dev
+\item Compilation failure of s3\+\_\+pkt.\+c on some platforms due to missing {\ttfamily \texorpdfstring{$<$}{<}limits.\+h\texorpdfstring{$>$}{>}} include. Fixed in 1.\+0.\+0n-\/dev
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md805}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+0.\+0l and Open\+SSL 1.\+0.\+0m \mbox{[}5 Jun 2014\mbox{]}}{Major changes between Open\+SSL 1.\+0.\+0l and Open\+SSL 1.\+0.\+0m \mbox{[}5 Jun 2014\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md805}
+
+\begin{DoxyItemize}
+\item Fix for \href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2014-0224}{\texttt{ CVE-\/2014-\/0224}}
+\item Fix for \href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2014-0221}{\texttt{ CVE-\/2014-\/0221}}
+\item Fix for \href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2014-0198}{\texttt{ CVE-\/2014-\/0198}}
+\item Fix for \href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2014-0195}{\texttt{ CVE-\/2014-\/0195}}
+\item Fix for \href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2014-3470}{\texttt{ CVE-\/2014-\/3470}}
+\item Fix for \href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2014-0076}{\texttt{ CVE-\/2014-\/0076}}
+\item Fix for \href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2010-5298}{\texttt{ CVE-\/2010-\/5298}}
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md806}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+0.\+0k and Open\+SSL 1.\+0.\+0l \mbox{[}6 Jan 2014\mbox{]}}{Major changes between Open\+SSL 1.\+0.\+0k and Open\+SSL 1.\+0.\+0l \mbox{[}6 Jan 2014\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md806}
+
+\begin{DoxyItemize}
+\item Fix for DTLS retransmission bug (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2013-6450}{\texttt{ CVE-\/2013-\/6450}})
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md807}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+0.\+0j and Open\+SSL 1.\+0.\+0k \mbox{[}5 Feb 2013\mbox{]}}{Major changes between Open\+SSL 1.\+0.\+0j and Open\+SSL 1.\+0.\+0k \mbox{[}5 Feb 2013\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md807}
+
+\begin{DoxyItemize}
+\item Fix for SSL/\+TLS/\+DTLS CBC plaintext recovery attack (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2013-0169}{\texttt{ CVE-\/2013-\/0169}})
+\item Fix OCSP bad key DoS attack (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2013-0166}{\texttt{ CVE-\/2013-\/0166}})
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md808}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+0.\+0i and Open\+SSL 1.\+0.\+0j \mbox{[}10 May 2012\mbox{]}}{Major changes between Open\+SSL 1.\+0.\+0i and Open\+SSL 1.\+0.\+0j \mbox{[}10 May 2012\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md808}
+
+\begin{DoxyItemize}
+\item Fix DTLS record length checking bug (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2012-2333}{\texttt{ CVE-\/2012-\/2333}})
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md809}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+0.\+0h and Open\+SSL 1.\+0.\+0i \mbox{[}19 Apr 2012\mbox{]}}{Major changes between Open\+SSL 1.\+0.\+0h and Open\+SSL 1.\+0.\+0i \mbox{[}19 Apr 2012\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md809}
+
+\begin{DoxyItemize}
+\item Fix for ASN1 overflow bug (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2012-2110}{\texttt{ CVE-\/2012-\/2110}})
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md810}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+0.\+0g and Open\+SSL 1.\+0.\+0h \mbox{[}12 Mar 2012\mbox{]}}{Major changes between Open\+SSL 1.\+0.\+0g and Open\+SSL 1.\+0.\+0h \mbox{[}12 Mar 2012\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md810}
+
+\begin{DoxyItemize}
+\item Fix for CMS/\+PKCS\#7 MMA (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2012-0884}{\texttt{ CVE-\/2012-\/0884}})
+\item Corrected fix for (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2011-4619}{\texttt{ CVE-\/2011-\/4619}})
+\item Various DTLS fixes.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md811}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+0.\+0f and Open\+SSL 1.\+0.\+0g \mbox{[}18 Jan 2012\mbox{]}}{Major changes between Open\+SSL 1.\+0.\+0f and Open\+SSL 1.\+0.\+0g \mbox{[}18 Jan 2012\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md811}
+
+\begin{DoxyItemize}
+\item Fix for DTLS DoS issue (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2012-0050}{\texttt{ CVE-\/2012-\/0050}})
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md812}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+0.\+0e and Open\+SSL 1.\+0.\+0f \mbox{[}4 Jan 2012\mbox{]}}{Major changes between Open\+SSL 1.\+0.\+0e and Open\+SSL 1.\+0.\+0f \mbox{[}4 Jan 2012\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md812}
+
+\begin{DoxyItemize}
+\item Fix for DTLS plaintext recovery attack (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2011-4108}{\texttt{ CVE-\/2011-\/4108}})
+\item Clear block padding bytes of SSL 3.\+0 records (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2011-4576}{\texttt{ CVE-\/2011-\/4576}})
+\item Only allow one SGC handshake restart for SSL/\+TLS (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2011-4619}{\texttt{ CVE-\/2011-\/4619}})
+\item Check parameters are not NULL in GOST ENGINE (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2012-0027}{\texttt{ CVE-\/2012-\/0027}})
+\item Check for malformed RFC3779 data (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2011-4577}{\texttt{ CVE-\/2011-\/4577}})
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md813}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+0.\+0d and Open\+SSL 1.\+0.\+0e \mbox{[}6 Sep 2011\mbox{]}}{Major changes between Open\+SSL 1.\+0.\+0d and Open\+SSL 1.\+0.\+0e \mbox{[}6 Sep 2011\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md813}
+
+\begin{DoxyItemize}
+\item Fix for CRL vulnerability issue (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2011-3207}{\texttt{ CVE-\/2011-\/3207}})
+\item Fix for ECDH crashes (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2011-3210}{\texttt{ CVE-\/2011-\/3210}})
+\item Protection against EC timing attacks.
+\item Support ECDH ciphersuites for certificates using SHA2 algorithms.
+\item Various DTLS fixes.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md814}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+0.\+0c and Open\+SSL 1.\+0.\+0d \mbox{[}8 Feb 2011\mbox{]}}{Major changes between Open\+SSL 1.\+0.\+0c and Open\+SSL 1.\+0.\+0d \mbox{[}8 Feb 2011\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md814}
+
+\begin{DoxyItemize}
+\item Fix for security issue (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2011-0014}{\texttt{ CVE-\/2011-\/0014}})
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md815}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+0.\+0b and Open\+SSL 1.\+0.\+0c \mbox{[}2 Dec 2010\mbox{]}}{Major changes between Open\+SSL 1.\+0.\+0b and Open\+SSL 1.\+0.\+0c \mbox{[}2 Dec 2010\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md815}
+
+\begin{DoxyItemize}
+\item Fix for security issue (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2010-4180}{\texttt{ CVE-\/2010-\/4180}})
+\item Fix for (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2010-4252}{\texttt{ CVE-\/2010-\/4252}})
+\item Fix mishandling of absent EC point format extension.
+\item Fix various platform compilation issues.
+\item Corrected fix for security issue (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2010-3864}{\texttt{ CVE-\/2010-\/3864}}).
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md816}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+0.\+0a and Open\+SSL 1.\+0.\+0b \mbox{[}16 Nov 2010\mbox{]}}{Major changes between Open\+SSL 1.\+0.\+0a and Open\+SSL 1.\+0.\+0b \mbox{[}16 Nov 2010\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md816}
+
+\begin{DoxyItemize}
+\item Fix for security issue (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2010-3864}{\texttt{ CVE-\/2010-\/3864}}).
+\item Fix for (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2010-2939}{\texttt{ CVE-\/2010-\/2939}})
+\item Fix WIN32 build system for GOST ENGINE.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md817}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 1.\+0.\+0 and Open\+SSL 1.\+0.\+0a \mbox{[}1 Jun 2010\mbox{]}}{Major changes between Open\+SSL 1.\+0.\+0 and Open\+SSL 1.\+0.\+0a \mbox{[}1 Jun 2010\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md817}
+
+\begin{DoxyItemize}
+\item Fix for security issue (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2010-1633}{\texttt{ CVE-\/2010-\/1633}}).
+\item GOST MAC and CFB fixes.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md818}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 0.\+9.\+8n and Open\+SSL 1.\+0.\+0 \mbox{[}29 Mar 2010\mbox{]}}{Major changes between Open\+SSL 0.\+9.\+8n and Open\+SSL 1.\+0.\+0 \mbox{[}29 Mar 2010\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md818}
+
+\begin{DoxyItemize}
+\item RFC3280 path validation\+: sufficient to process PKITS tests.
+\item Integrated support for PVK files and keyblobs.
+\item Change default private key format to PKCS\#8.
+\item CMS support\+: able to process all examples in RFC4134
+\item Streaming ASN1 encode support for PKCS\#7 and CMS.
+\item Multiple signer and signer add support for PKCS\#7 and CMS.
+\item ASN1 printing support.
+\item Whirlpool hash algorithm added.
+\item RFC3161 time stamp support.
+\item New generalised public key API supporting ENGINE based algorithms.
+\item New generalised public key API utilities.
+\item New ENGINE supporting GOST algorithms.
+\item SSL/\+TLS GOST ciphersuite support.
+\item PKCS\#7 and CMS GOST support.
+\item RFC4279 PSK ciphersuite support.
+\item Supported points format extension for ECC ciphersuites.
+\item ecdsa-\/with-\/\+SHA224/256/384/512 signature types.
+\item dsa-\/with-\/\+SHA224 and dsa-\/with-\/\+SHA256 signature types.
+\item Opaque PRF Input TLS extension support.
+\item Updated time routines to avoid OS limitations.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md819}{}\doxysection{\texorpdfstring{Open\+SSL 0.\+9.\+x}{Open\+SSL 0.\+9.\+x}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md819}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md820}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 0.\+9.\+8m and Open\+SSL 0.\+9.\+8n \mbox{[}24 Mar 2010\mbox{]}}{Major changes between Open\+SSL 0.\+9.\+8m and Open\+SSL 0.\+9.\+8n \mbox{[}24 Mar 2010\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md820}
+
+\begin{DoxyItemize}
+\item CFB cipher definition fixes.
+\item Fix security issues \href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2010-0740}{\texttt{ CVE-\/2010-\/0740}} and \href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2010-0433}{\texttt{ CVE-\/2010-\/0433}}.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md821}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 0.\+9.\+8l and Open\+SSL 0.\+9.\+8m \mbox{[}25 Feb 2010\mbox{]}}{Major changes between Open\+SSL 0.\+9.\+8l and Open\+SSL 0.\+9.\+8m \mbox{[}25 Feb 2010\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md821}
+
+\begin{DoxyItemize}
+\item Cipher definition fixes.
+\item Workaround for slow RAND\+\_\+poll() on some WIN32 versions.
+\item Remove MD2 from algorithm tables.
+\item SPKAC handling fixes.
+\item Support for RFC5746 TLS renegotiation extension.
+\item Compression memory leak fixed.
+\item Compression session resumption fixed.
+\item Ticket and SNI coexistence fixes.
+\item Many fixes to DTLS handling.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md822}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 0.\+9.\+8k and Open\+SSL 0.\+9.\+8l \mbox{[}5 Nov 2009\mbox{]}}{Major changes between Open\+SSL 0.\+9.\+8k and Open\+SSL 0.\+9.\+8l \mbox{[}5 Nov 2009\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md822}
+
+\begin{DoxyItemize}
+\item Temporary work around for \mbox{[}CVE-\/2009-\/3555\mbox{]}\+: disable renegotiation.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md823}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 0.\+9.\+8j and Open\+SSL 0.\+9.\+8k \mbox{[}25 Mar 2009\mbox{]}}{Major changes between Open\+SSL 0.\+9.\+8j and Open\+SSL 0.\+9.\+8k \mbox{[}25 Mar 2009\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md823}
+
+\begin{DoxyItemize}
+\item Fix various build issues.
+\item Fix security issues \href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2009-0590}{\texttt{ CVE-\/2009-\/0590}}, \href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2009-0591}{\texttt{ CVE-\/2009-\/0591}}, \href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2009-0789}{\texttt{ CVE-\/2009-\/0789}}
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md824}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 0.\+9.\+8i and Open\+SSL 0.\+9.\+8j \mbox{[}7 Jan 2009\mbox{]}}{Major changes between Open\+SSL 0.\+9.\+8i and Open\+SSL 0.\+9.\+8j \mbox{[}7 Jan 2009\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md824}
+
+\begin{DoxyItemize}
+\item Fix security issue (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2008-5077}{\texttt{ CVE-\/2008-\/5077}})
+\item Merge FIPS 140-\/2 branch code.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md825}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 0.\+9.\+8g and Open\+SSL 0.\+9.\+8h \mbox{[}28 May 2008\mbox{]}}{Major changes between Open\+SSL 0.\+9.\+8g and Open\+SSL 0.\+9.\+8h \mbox{[}28 May 2008\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md825}
+
+\begin{DoxyItemize}
+\item Crypto\+API ENGINE support.
+\item Various precautionary measures.
+\item Fix for bugs affecting certificate request creation.
+\item Support for local machine keyset attribute in PKCS\#12 files.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md826}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 0.\+9.\+8f and Open\+SSL 0.\+9.\+8g \mbox{[}19 Oct 2007\mbox{]}}{Major changes between Open\+SSL 0.\+9.\+8f and Open\+SSL 0.\+9.\+8g \mbox{[}19 Oct 2007\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md826}
+
+\begin{DoxyItemize}
+\item Backport of CMS functionality to 0.\+9.\+8.
+\item Fixes for bugs introduced with 0.\+9.\+8f.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md827}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 0.\+9.\+8e and Open\+SSL 0.\+9.\+8f \mbox{[}11 Oct 2007\mbox{]}}{Major changes between Open\+SSL 0.\+9.\+8e and Open\+SSL 0.\+9.\+8f \mbox{[}11 Oct 2007\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md827}
+
+\begin{DoxyItemize}
+\item Add gcc 4.\+2 support.
+\item Add support for AES and SSE2 assembly language optimization for VC++ build.
+\item Support for RFC4507bis and server name extensions if explicitly selected at compile time.
+\item DTLS improvements.
+\item RFC4507bis support.
+\item TLS Extensions support.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md828}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 0.\+9.\+8d and Open\+SSL 0.\+9.\+8e \mbox{[}23 Feb 2007\mbox{]}}{Major changes between Open\+SSL 0.\+9.\+8d and Open\+SSL 0.\+9.\+8e \mbox{[}23 Feb 2007\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md828}
+
+\begin{DoxyItemize}
+\item Various ciphersuite selection fixes.
+\item RFC3779 support.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md829}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 0.\+9.\+8c and Open\+SSL 0.\+9.\+8d \mbox{[}28 Sep 2006\mbox{]}}{Major changes between Open\+SSL 0.\+9.\+8c and Open\+SSL 0.\+9.\+8d \mbox{[}28 Sep 2006\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md829}
+
+\begin{DoxyItemize}
+\item Introduce limits to prevent malicious key DoS (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2006-2940}{\texttt{ CVE-\/2006-\/2940}})
+\item Fix security issues \href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2006-2937}{\texttt{ CVE-\/2006-\/2937}}, \href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2006-3737}{\texttt{ CVE-\/2006-\/3737}}, \href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2006-4343}{\texttt{ CVE-\/2006-\/4343}}
+\item Changes to ciphersuite selection algorithm
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md830}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 0.\+9.\+8b and Open\+SSL 0.\+9.\+8c \mbox{[}5 Sep 2006\mbox{]}}{Major changes between Open\+SSL 0.\+9.\+8b and Open\+SSL 0.\+9.\+8c \mbox{[}5 Sep 2006\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md830}
+
+\begin{DoxyItemize}
+\item Fix Daniel Bleichenbacher forged signature attack, \href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2006-4339}{\texttt{ CVE-\/2006-\/4339}}
+\item New cipher Camellia
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md831}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 0.\+9.\+8a and Open\+SSL 0.\+9.\+8b \mbox{[}4 May 2006\mbox{]}}{Major changes between Open\+SSL 0.\+9.\+8a and Open\+SSL 0.\+9.\+8b \mbox{[}4 May 2006\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md831}
+
+\begin{DoxyItemize}
+\item Cipher string fixes.
+\item Fixes for VC++ 2005.
+\item Updated ECC cipher suite support.
+\item New functions EVP\+\_\+\+CIPHER\+\_\+\+CTX\+\_\+new() and EVP\+\_\+\+CIPHER\+\_\+\+CTX\+\_\+free().
+\item Zlib compression usage fixes.
+\item Built in dynamic engine compilation support on Win32.
+\item Fixes auto dynamic engine loading in Win32.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md832}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 0.\+9.\+8 and Open\+SSL 0.\+9.\+8a \mbox{[}11 Oct 2005\mbox{]}}{Major changes between Open\+SSL 0.\+9.\+8 and Open\+SSL 0.\+9.\+8a \mbox{[}11 Oct 2005\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md832}
+
+\begin{DoxyItemize}
+\item Fix potential SSL 2.\+0 rollback (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2005-2969}{\texttt{ CVE-\/2005-\/2969}})
+\item Extended Windows CE support
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md833}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 0.\+9.\+7g and Open\+SSL 0.\+9.\+8 \mbox{[}5 Jul 2005\mbox{]}}{Major changes between Open\+SSL 0.\+9.\+7g and Open\+SSL 0.\+9.\+8 \mbox{[}5 Jul 2005\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md833}
+
+\begin{DoxyItemize}
+\item Major work on the BIGNUM library for higher efficiency and to make operations more streamlined and less contradictory. This is the result of a major audit of the BIGNUM library.
+\item Addition of BIGNUM functions for fields GF(2\texorpdfstring{$^\wedge$}{\string^}m) and NIST curves, to support the Elliptic Crypto functions.
+\item Major work on Elliptic Crypto; ECDH and ECDSA added, including the use through EVP, X509 and ENGINE.
+\item New ASN.\+1 mini-\/compiler that\textquotesingle{}s usable through the Open\+SSL configuration file.
+\item Added support for ASN.\+1 indefinite length constructed encoding.
+\item New PKCS\#12 \textquotesingle{}medium level\textquotesingle{} API to manipulate PKCS\#12 files.
+\item Complete rework of shared library construction and linking programs with shared or static libraries, through a separate Makefile.\+shared.
+\item Rework of the passing of parameters from one Makefile to another.
+\item Changed ENGINE framework to load dynamic engine modules automatically from specifically given directories.
+\item New structure and ASN.\+1 functions for Certificate\+Pair.
+\item Changed the ZLIB compression method to be stateful.
+\item Changed the key-\/generation and primality testing "{}progress"{} mechanism to take a structure that contains the ticker function and an argument.
+\item New engine module\+: GMP (performs private key exponentiation).
+\item New engine module\+: VIA Pad\+LOck ACE extension in VIA C3 Nehemiah processors.
+\item Added support for IPv6 addresses in certificate extensions. See RFC 1884, section 2.\+2.
+\item Added support for certificate policy mappings, policy constraints and name constraints.
+\item Added support for multi-\/valued AVAs in the Open\+SSL configuration file.
+\item Added support for multiple certificates with the same subject in the \textquotesingle{}openssl ca\textquotesingle{} index file.
+\item Make it possible to create self-\/signed certificates using \textquotesingle{}openssl ca -\/selfsign\textquotesingle{}.
+\item Make it possible to generate a serial number file with \textquotesingle{}openssl ca -\/create\+\_\+serial\textquotesingle{}.
+\item New binary search functions with extended functionality.
+\item New BUF functions.
+\item New STORE structure and library to provide an interface to all sorts of data repositories. Supports storage of public and private keys, certificates, CRLs, numbers and arbitrary blobs. This library is unfortunately unfinished and unused within Open\+SSL.
+\item New control functions for the error stack.
+\item Changed the PKCS\#7 library to support one-\/pass S/\+MIME processing.
+\item Added the possibility to compile without old deprecated functionality with the OPENSSL\+\_\+\+NO\+\_\+\+DEPRECATED macro or the \textquotesingle{}no-\/deprecated\textquotesingle{} argument to the config and Configure scripts.
+\item Constification of all ASN.\+1 conversion functions, and other affected functions.
+\item Improved platform support for Power\+PC.
+\item New FIPS 180-\/2 algorithms (SHA-\/224, -\/256, -\/384 and -\/512).
+\item New X509\+\_\+\+VERIFY\+\_\+\+PARAM structure to support parameterisation of X.\+509 path validation.
+\item Major overhaul of RC4 performance on Intel P4, IA-\/64 and AMD64.
+\item Changed the Configure script to have some algorithms disabled by default. Those can be explicitly enabled with the new argument form \textquotesingle{}enable-\/xxx\textquotesingle{}.
+\item Change the default digest in \textquotesingle{}openssl\textquotesingle{} commands from MD5 to SHA-\/1.
+\item Added support for DTLS.
+\item New BIGNUM blinding.
+\item Added support for the RSA-\/\+PSS encryption scheme
+\item Added support for the RSA X.\+931 padding.
+\item Added support for BSD sockets on Net\+Ware.
+\item Added support for files larger than 2GB.
+\item Added initial support for Win64.
+\item Added alternate pkg-\/config files.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md834}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 0.\+9.\+7l and Open\+SSL 0.\+9.\+7m \mbox{[}23 Feb 2007\mbox{]}}{Major changes between Open\+SSL 0.\+9.\+7l and Open\+SSL 0.\+9.\+7m \mbox{[}23 Feb 2007\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md834}
+
+\begin{DoxyItemize}
+\item FIPS 1.\+1.\+1 module linking.
+\item Various ciphersuite selection fixes.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md835}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 0.\+9.\+7k and Open\+SSL 0.\+9.\+7l \mbox{[}28 Sep 2006\mbox{]}}{Major changes between Open\+SSL 0.\+9.\+7k and Open\+SSL 0.\+9.\+7l \mbox{[}28 Sep 2006\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md835}
+
+\begin{DoxyItemize}
+\item Introduce limits to prevent malicious key DoS (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2006-2940}{\texttt{ CVE-\/2006-\/2940}})
+\item Fix security issues \href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2006-2937}{\texttt{ CVE-\/2006-\/2937}}, \href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2006-3737}{\texttt{ CVE-\/2006-\/3737}}, \href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2006-4343}{\texttt{ CVE-\/2006-\/4343}}
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md836}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 0.\+9.\+7j and Open\+SSL 0.\+9.\+7k \mbox{[}5 Sep 2006\mbox{]}}{Major changes between Open\+SSL 0.\+9.\+7j and Open\+SSL 0.\+9.\+7k \mbox{[}5 Sep 2006\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md836}
+
+\begin{DoxyItemize}
+\item Fix Daniel Bleichenbacher forged signature attack, \href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2006-4339}{\texttt{ CVE-\/2006-\/4339}}
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md837}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 0.\+9.\+7i and Open\+SSL 0.\+9.\+7j \mbox{[}4 May 2006\mbox{]}}{Major changes between Open\+SSL 0.\+9.\+7i and Open\+SSL 0.\+9.\+7j \mbox{[}4 May 2006\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md837}
+
+\begin{DoxyItemize}
+\item Visual C++ 2005 fixes.
+\item Update Windows build system for FIPS.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md838}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 0.\+9.\+7h and Open\+SSL 0.\+9.\+7i \mbox{[}14 Oct 2005\mbox{]}}{Major changes between Open\+SSL 0.\+9.\+7h and Open\+SSL 0.\+9.\+7i \mbox{[}14 Oct 2005\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md838}
+
+\begin{DoxyItemize}
+\item Give EVP\+\_\+\+MAX\+\_\+\+MD\+\_\+\+SIZE its old value, except for a FIPS build.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md839}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 0.\+9.\+7g and Open\+SSL 0.\+9.\+7h \mbox{[}11 Oct 2005\mbox{]}}{Major changes between Open\+SSL 0.\+9.\+7g and Open\+SSL 0.\+9.\+7h \mbox{[}11 Oct 2005\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md839}
+
+\begin{DoxyItemize}
+\item Fix SSL 2.\+0 Rollback (\href{https://www.openssl.org/news/vulnerabilities.html\#CVE-2005-2969}{\texttt{ CVE-\/2005-\/2969}})
+\item Allow use of fixed-\/length exponent on DSA signing
+\item Default fixed-\/window RSA, DSA, DH private-\/key operations
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md840}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 0.\+9.\+7f and Open\+SSL 0.\+9.\+7g \mbox{[}11 Apr 2005\mbox{]}}{Major changes between Open\+SSL 0.\+9.\+7f and Open\+SSL 0.\+9.\+7g \mbox{[}11 Apr 2005\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md840}
+
+\begin{DoxyItemize}
+\item More compilation issues fixed.
+\item Adaptation to more modern Kerberos API.
+\item Enhanced or corrected configuration for Solaris64, Mingw and Cygwin.
+\item Enhanced x86\+\_\+64 assembler BIGNUM module.
+\item More constification.
+\item Added processing of proxy certificates (RFC 3820).
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md841}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 0.\+9.\+7e and Open\+SSL 0.\+9.\+7f \mbox{[}22 Mar 2005\mbox{]}}{Major changes between Open\+SSL 0.\+9.\+7e and Open\+SSL 0.\+9.\+7f \mbox{[}22 Mar 2005\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md841}
+
+\begin{DoxyItemize}
+\item Several compilation issues fixed.
+\item Many memory allocation failure checks added.
+\item Improved comparison of X509 Name type.
+\item Mandatory basic checks on certificates.
+\item Performance improvements.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md842}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 0.\+9.\+7d and Open\+SSL 0.\+9.\+7e \mbox{[}25 Oct 2004\mbox{]}}{Major changes between Open\+SSL 0.\+9.\+7d and Open\+SSL 0.\+9.\+7e \mbox{[}25 Oct 2004\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md842}
+
+\begin{DoxyItemize}
+\item Fix race condition in CRL checking code.
+\item Fixes to PKCS\#7 (S/\+MIME) code.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md843}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 0.\+9.\+7c and Open\+SSL 0.\+9.\+7d \mbox{[}17 Mar 2004\mbox{]}}{Major changes between Open\+SSL 0.\+9.\+7c and Open\+SSL 0.\+9.\+7d \mbox{[}17 Mar 2004\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md843}
+
+\begin{DoxyItemize}
+\item Security\+: Fix Kerberos ciphersuite SSL/\+TLS handshaking bug
+\item Security\+: Fix null-\/pointer assignment in do\+\_\+change\+\_\+cipher\+\_\+spec()
+\item Allow multiple active certificates with same subject in CA index
+\item Multiple X509 verification fixes
+\item Speed up HMAC and other operations
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md844}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 0.\+9.\+7b and Open\+SSL 0.\+9.\+7c \mbox{[}30 Sep 2003\mbox{]}}{Major changes between Open\+SSL 0.\+9.\+7b and Open\+SSL 0.\+9.\+7c \mbox{[}30 Sep 2003\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md844}
+
+\begin{DoxyItemize}
+\item Security\+: fix various ASN1 parsing bugs.
+\item New -\/ignore\+\_\+err option to OCSP utility.
+\item Various interop and bug fixes in S/\+MIME code.
+\item SSL/\+TLS protocol fix for unrequested client certificates.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md845}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 0.\+9.\+7a and Open\+SSL 0.\+9.\+7b \mbox{[}10 Apr 2003\mbox{]}}{Major changes between Open\+SSL 0.\+9.\+7a and Open\+SSL 0.\+9.\+7b \mbox{[}10 Apr 2003\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md845}
+
+\begin{DoxyItemize}
+\item Security\+: counter the Klima-\/\+Pokorny-\/\+Rosa extension of Bleichbacher\textquotesingle{}s attack
+\item Security\+: make RSA blinding default.
+\item Configuration\+: Irix fixes, AIX fixes, better mingw support.
+\item Support for new platforms\+: linux-\/ia64-\/ecc.
+\item Build\+: shared library support fixes.
+\item ASN.\+1\+: treat domain\+Component correctly.
+\item Documentation\+: fixes and additions.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md846}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 0.\+9.\+7 and Open\+SSL 0.\+9.\+7a \mbox{[}19 Feb 2003\mbox{]}}{Major changes between Open\+SSL 0.\+9.\+7 and Open\+SSL 0.\+9.\+7a \mbox{[}19 Feb 2003\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md846}
+
+\begin{DoxyItemize}
+\item Security\+: Important security related bugfixes.
+\item Enhanced compatibility with MIT Kerberos.
+\item Can be built without the ENGINE framework.
+\item IA32 assembler enhancements.
+\item Support for new platforms\+: Free\+BSD/\+IA64 and Free\+BSD/\+Sparc64.
+\item Configuration\+: the no-\/err option now works properly.
+\item SSL/\+TLS\+: now handles manual certificate chain building.
+\item SSL/\+TLS\+: certain session ID malfunctions corrected.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md847}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 0.\+9.\+6 and Open\+SSL 0.\+9.\+7 \mbox{[}30 Dec 2002\mbox{]}}{Major changes between Open\+SSL 0.\+9.\+6 and Open\+SSL 0.\+9.\+7 \mbox{[}30 Dec 2002\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md847}
+
+\begin{DoxyItemize}
+\item New library section OCSP.
+\item Complete rewrite of ASN1 code.
+\item CRL checking in verify code and openssl utility.
+\item Extension copying in \textquotesingle{}ca\textquotesingle{} utility.
+\item Flexible display options in \textquotesingle{}ca\textquotesingle{} utility.
+\item Provisional support for international characters with UTF8.
+\item Support for external crypto devices (\textquotesingle{}engine\textquotesingle{}) is no longer a separate distribution.
+\item New elliptic curve library section.
+\item New AES (Rijndael) library section.
+\item Support for new platforms\+: Windows CE, Tandem OSS, A/\+UX, AIX 64-\/bit, Linux x86\+\_\+64, Linux 64-\/bit on Sparc v9
+\item Extended support for some platforms\+: Vx\+Works
+\item Enhanced support for shared libraries.
+\item Now only builds PIC code when shared library support is requested.
+\item Support for pkg-\/config.
+\item Lots of new manuals.
+\item Makes symbolic links to or copies of manuals to cover all described functions.
+\item Change DES API to clean up the namespace (some applications link also against libdes providing similar functions having the same name). Provide macros for backward compatibility (will be removed in the future).
+\item Unify handling of cryptographic algorithms (software and engine) to be available via EVP routines for asymmetric and symmetric ciphers.
+\item NCONF\+: new configuration handling routines.
+\item Change API to use more \textquotesingle{}const\textquotesingle{} modifiers to improve error checking and help optimizers.
+\item Finally remove references to RSAref.
+\item Reworked parts of the BIGNUM code.
+\item Support for new engines\+: Broadcom ubsec, Accelerated Encryption Processing, IBM 4758.
+\item A few new engines added in the demos area.
+\item Extended and corrected OID (object identifier) table.
+\item PRNG\+: query at more locations for a random device, automatic query for EGD style random sources at several locations.
+\item SSL/\+TLS\+: allow optional cipher choice according to server\textquotesingle{}s preference.
+\item SSL/\+TLS\+: allow server to explicitly set new session ids.
+\item SSL/\+TLS\+: support Kerberos cipher suites (RFC2712). Only supports MIT Kerberos for now.
+\item SSL/\+TLS\+: allow more precise control of renegotiations and sessions.
+\item SSL/\+TLS\+: add callback to retrieve SSL/\+TLS messages.
+\item SSL/\+TLS\+: support AES cipher suites (RFC3268).
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md848}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 0.\+9.\+6j and Open\+SSL 0.\+9.\+6k \mbox{[}30 Sep 2003\mbox{]}}{Major changes between Open\+SSL 0.\+9.\+6j and Open\+SSL 0.\+9.\+6k \mbox{[}30 Sep 2003\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md848}
+
+\begin{DoxyItemize}
+\item Security\+: fix various ASN1 parsing bugs.
+\item SSL/\+TLS protocol fix for unrequested client certificates.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md849}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 0.\+9.\+6i and Open\+SSL 0.\+9.\+6j \mbox{[}10 Apr 2003\mbox{]}}{Major changes between Open\+SSL 0.\+9.\+6i and Open\+SSL 0.\+9.\+6j \mbox{[}10 Apr 2003\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md849}
+
+\begin{DoxyItemize}
+\item Security\+: counter the Klima-\/\+Pokorny-\/\+Rosa extension of Bleichbacher\textquotesingle{}s attack
+\item Security\+: make RSA blinding default.
+\item Build\+: shared library support fixes.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md850}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 0.\+9.\+6h and Open\+SSL 0.\+9.\+6i \mbox{[}19 Feb 2003\mbox{]}}{Major changes between Open\+SSL 0.\+9.\+6h and Open\+SSL 0.\+9.\+6i \mbox{[}19 Feb 2003\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md850}
+
+\begin{DoxyItemize}
+\item Important security related bugfixes.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md851}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 0.\+9.\+6g and Open\+SSL 0.\+9.\+6h \mbox{[}5 Dec 2002\mbox{]}}{Major changes between Open\+SSL 0.\+9.\+6g and Open\+SSL 0.\+9.\+6h \mbox{[}5 Dec 2002\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md851}
+
+\begin{DoxyItemize}
+\item New configuration targets for Tandem OSS and A/\+UX.
+\item New OIDs for Microsoft attributes.
+\item Better handling of SSL session caching.
+\item Better comparison of distinguished names.
+\item Better handling of shared libraries in a mixed GNU/non-\/\+GNU environment.
+\item Support assembler code with Borland C.
+\item Fixes for length problems.
+\item Fixes for uninitialised variables.
+\item Fixes for memory leaks, some unusual crashes and some race conditions.
+\item Fixes for smaller building problems.
+\item Updates of manuals, FAQ and other instructive documents.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md852}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 0.\+9.\+6f and Open\+SSL 0.\+9.\+6g \mbox{[}9 Aug 2002\mbox{]}}{Major changes between Open\+SSL 0.\+9.\+6f and Open\+SSL 0.\+9.\+6g \mbox{[}9 Aug 2002\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md852}
+
+\begin{DoxyItemize}
+\item Important building fixes on Unix.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md853}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 0.\+9.\+6e and Open\+SSL 0.\+9.\+6f \mbox{[}8 Aug 2002\mbox{]}}{Major changes between Open\+SSL 0.\+9.\+6e and Open\+SSL 0.\+9.\+6f \mbox{[}8 Aug 2002\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md853}
+
+\begin{DoxyItemize}
+\item Various important bugfixes.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md854}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 0.\+9.\+6d and Open\+SSL 0.\+9.\+6e \mbox{[}30 Jul 2002\mbox{]}}{Major changes between Open\+SSL 0.\+9.\+6d and Open\+SSL 0.\+9.\+6e \mbox{[}30 Jul 2002\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md854}
+
+\begin{DoxyItemize}
+\item Important security related bugfixes.
+\item Various SSL/\+TLS library bugfixes.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md855}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 0.\+9.\+6c and Open\+SSL 0.\+9.\+6d \mbox{[}9 May 2002\mbox{]}}{Major changes between Open\+SSL 0.\+9.\+6c and Open\+SSL 0.\+9.\+6d \mbox{[}9 May 2002\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md855}
+
+\begin{DoxyItemize}
+\item Various SSL/\+TLS library bugfixes.
+\item Fix DH parameter generation for \textquotesingle{}non-\/standard\textquotesingle{} generators.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md856}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 0.\+9.\+6b and Open\+SSL 0.\+9.\+6c \mbox{[}21 Dec 2001\mbox{]}}{Major changes between Open\+SSL 0.\+9.\+6b and Open\+SSL 0.\+9.\+6c \mbox{[}21 Dec 2001\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md856}
+
+\begin{DoxyItemize}
+\item Various SSL/\+TLS library bugfixes.
+\item BIGNUM library fixes.
+\item RSA OAEP and random number generation fixes.
+\item Object identifiers corrected and added.
+\item Add assembler BN routines for IA64.
+\item Add support for OS/390 Unix, Unix\+Ware with gcc, Open\+UNIX 8, MIPS Linux; shared library support for Irix, HP-\/\+UX.
+\item Add crypto accelerator support for AEP, Baltimore Sure\+Ware, Broadcom and Cryptographic Appliance\textquotesingle{}s keyserver \mbox{[}in 0.\+9.\+6c-\/engine release\mbox{]}.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md857}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 0.\+9.\+6a and Open\+SSL 0.\+9.\+6b \mbox{[}9 Jul 2001\mbox{]}}{Major changes between Open\+SSL 0.\+9.\+6a and Open\+SSL 0.\+9.\+6b \mbox{[}9 Jul 2001\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md857}
+
+\begin{DoxyItemize}
+\item Security fix\+: PRNG improvements.
+\item Security fix\+: RSA OAEP check.
+\item Security fix\+: Reinsert and fix countermeasure to Bleichbacher\textquotesingle{}s attack.
+\item MIPS bug fix in BIGNUM.
+\item Bug fix in "{}openssl enc"{}.
+\item Bug fix in X.\+509 printing routine.
+\item Bug fix in DSA verification routine and DSA S/\+MIME verification.
+\item Bug fix to make PRNG thread-\/safe.
+\item Bug fix in RAND\+\_\+file\+\_\+name().
+\item Bug fix in compatibility mode trust settings.
+\item Bug fix in blowfish EVP.
+\item Increase default size for BIO buffering filter.
+\item Compatibility fixes in some scripts.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md858}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 0.\+9.\+6 and Open\+SSL 0.\+9.\+6a \mbox{[}5 Apr 2001\mbox{]}}{Major changes between Open\+SSL 0.\+9.\+6 and Open\+SSL 0.\+9.\+6a \mbox{[}5 Apr 2001\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md858}
+
+\begin{DoxyItemize}
+\item Security fix\+: change behavior of Open\+SSL to avoid using environment variables when running as root.
+\item Security fix\+: check the result of RSA-\/\+CRT to reduce the possibility of deducing the private key from an incorrectly calculated signature.
+\item Security fix\+: prevent Bleichenbacher\textquotesingle{}s DSA attack.
+\item Security fix\+: Zero the premaster secret after deriving the master secret in DH ciphersuites.
+\item Reimplement SSL\+\_\+peek(), which had various problems.
+\item Compatibility fix\+: the function des\+\_\+encrypt() renamed to des\+\_\+encrypt1() to avoid clashes with some Unixen libc.
+\item Bug fixes for Win32, HP/\+UX and Irix.
+\item Bug fixes in BIGNUM, SSL, PKCS\#7, PKCS\#12, X.\+509, CONF and memory checking routines.
+\item Bug fixes for RSA operations in threaded environments.
+\item Bug fixes in misc. openssl applications.
+\item Remove a few potential memory leaks.
+\item Add tighter checks of BIGNUM routines.
+\item Shared library support has been reworked for generality.
+\item More documentation.
+\item New function BN\+\_\+rand\+\_\+range().
+\item Add "{}-\/rand"{} option to openssl s\+\_\+client and s\+\_\+server.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md859}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 0.\+9.\+5a and Open\+SSL 0.\+9.\+6 \mbox{[}10 Oct 2000\mbox{]}}{Major changes between Open\+SSL 0.\+9.\+5a and Open\+SSL 0.\+9.\+6 \mbox{[}10 Oct 2000\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md859}
+
+\begin{DoxyItemize}
+\item Some documentation for BIO and SSL libraries.
+\item Enhanced chain verification using key identifiers.
+\item New sign and verify options to \textquotesingle{}dgst\textquotesingle{} application.
+\item Support for DER and PEM encoded messages in \textquotesingle{}smime\textquotesingle{} application.
+\item New \textquotesingle{}rsautl\textquotesingle{} application, low-\/level RSA utility.
+\item MD4 now included.
+\item Bugfix for SSL rollback padding check.
+\item Support for external crypto devices \mbox{[}1\mbox{]}.
+\item Enhanced EVP interface.
+\end{DoxyItemize}
+
+\mbox{[}1\mbox{]} The support for external crypto devices is currently a separate distribution. See the file README-\/\+Engine.\+md.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md860}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 0.\+9.\+5 and Open\+SSL 0.\+9.\+5a \mbox{[}1 Apr 2000\mbox{]}}{Major changes between Open\+SSL 0.\+9.\+5 and Open\+SSL 0.\+9.\+5a \mbox{[}1 Apr 2000\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md860}
+
+\begin{DoxyItemize}
+\item Bug fixes for Win32, Su\+SE Linux, Ne\+XTSTEP and Free\+BSD 2.\+2.\+8
+\item Shared library support for HPUX and Solaris-\/gcc
+\item Support of Linux/\+IA64
+\item Assembler support for Mingw32
+\item New \textquotesingle{}rand\textquotesingle{} application
+\item New way to check for existence of algorithms from scripts
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md861}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 0.\+9.\+4 and Open\+SSL 0.\+9.\+5 \mbox{[}25 May 2000\mbox{]}}{Major changes between Open\+SSL 0.\+9.\+4 and Open\+SSL 0.\+9.\+5 \mbox{[}25 May 2000\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md861}
+
+\begin{DoxyItemize}
+\item S/\+MIME support in new \textquotesingle{}smime\textquotesingle{} command
+\item Documentation for the Open\+SSL command line application
+\item Automation of \textquotesingle{}req\textquotesingle{} application
+\item Fixes to make s\+\_\+client, s\+\_\+server work under Windows
+\item Support for multiple fieldnames in SPKACs
+\item New SPKAC command line utility and associated library functions
+\item Options to allow passwords to be obtained from various sources
+\item New public key PEM format and options to handle it
+\item Many other fixes and enhancements to command line utilities
+\item Usable certificate chain verification
+\item Certificate purpose checking
+\item Certificate trust settings
+\item Support of authority information access extension
+\item Extensions in certificate requests
+\item Simplified X509 name and attribute routines
+\item Initial (incomplete) support for international character sets
+\item New DH\+\_\+\+METHOD, DSA\+\_\+\+METHOD and enhanced RSA\+\_\+\+METHOD
+\item Read only memory BIOs and simplified creation function
+\item TLS/\+SSL protocol bugfixes\+: Accept TLS \textquotesingle{}client hello\textquotesingle{} in SSL 3.\+0 record; allow fragmentation and interleaving of handshake and other data
+\item TLS/\+SSL code now "{}tolerates"{} MS SGC
+\item Work around for Netscape client certificate hang bug
+\item RSA\+\_\+\+NULL option that removes RSA patent code but keeps other RSA functionality
+\item Memory leak detection now allows applications to add extra information via a per-\/thread stack
+\item PRNG robustness improved
+\item EGD support
+\item BIGNUM library bug fixes
+\item Faster DSA parameter generation
+\item Enhanced support for Alpha Linux
+\item Experimental mac\+OS support
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md862}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 0.\+9.\+3 and Open\+SSL 0.\+9.\+4 \mbox{[}9 Aug 1999\mbox{]}}{Major changes between Open\+SSL 0.\+9.\+3 and Open\+SSL 0.\+9.\+4 \mbox{[}9 Aug 1999\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md862}
+
+\begin{DoxyItemize}
+\item Transparent support for PKCS\#8 format private keys\+: these are used by several software packages and are more secure than the standard form
+\item PKCS\#5 v2.\+0 implementation
+\item Password callbacks have a new void \texorpdfstring{$\ast$}{*} argument for application data
+\item Avoid various memory leaks
+\item New pipe-\/like BIO that allows using the SSL library when actual I/O must be handled by the application (BIO pair)
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md863}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 0.\+9.\+2b and Open\+SSL 0.\+9.\+3 \mbox{[}24 May 1999\mbox{]}}{Major changes between Open\+SSL 0.\+9.\+2b and Open\+SSL 0.\+9.\+3 \mbox{[}24 May 1999\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md863}
+
+\begin{DoxyItemize}
+\item Lots of enhancements and cleanups to the Configuration mechanism
+\item RSA OEAP related fixes
+\item Added "{}openssl ca -\/revoke"{} option for revoking a certificate
+\item Source cleanups\+: const correctness, type-\/safe stacks and ASN.\+1 SETs
+\item Source tree cleanups\+: removed lots of obsolete files
+\item Thawte SXNet, certificate policies and CRL distribution points extension support
+\item Preliminary (experimental) S/\+MIME support
+\item Support for ASN.\+1 UTF8\+String and Visible\+String
+\item Full integration of PKCS\#12 code
+\item Sparc assembler bignum implementation, optimized hash functions
+\item Option to disable selected ciphers
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md864}{}\doxysubsection{\texorpdfstring{Major changes between Open\+SSL 0.\+9.\+1c and Open\+SSL 0.\+9.\+2b \mbox{[}22 Mar 1999\mbox{]}}{Major changes between Open\+SSL 0.\+9.\+1c and Open\+SSL 0.\+9.\+2b \mbox{[}22 Mar 1999\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md864}
+
+\begin{DoxyItemize}
+\item Fixed a security hole related to session resumption
+\item Fixed RSA encryption routines for the p \texorpdfstring{$<$}{<} q case
+\item "{}\+ALL"{} in cipher lists now means "{}everything except NULL ciphers"{}
+\item Support for Triple-\/\+DES CBCM cipher
+\item Support of Optimal Asymmetric Encryption Padding (OAEP) for RSA
+\item First support for new TLSv1 ciphers
+\item Added a few new BIOs (syslog BIO, reliable BIO)
+\item Extended support for DSA certificate/keys.
+\item Extended support for Certificate Signing Requests (CSR)
+\item Initial support for X.\+509v3 extensions
+\item Extended support for compression inside the SSL record layer
+\item Overhauled Win32 builds
+\item Cleanups and fixes to the Big Number (BN) library
+\item Support for ASN.\+1 Generalized\+Time
+\item Split ASN.\+1 SETs from SEQUENCEs
+\item ASN1 and PEM support for Netscape Certificate Sequences
+\item Overhauled Perl interface
+\item Lots of source tree cleanups.
+\item Lots of memory leak fixes.
+\item Lots of bug fixes.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md865}{}\doxysubsection{\texorpdfstring{Major changes between SSLeay 0.\+9.\+0b and Open\+SSL 0.\+9.\+1c \mbox{[}23 Dec 1998\mbox{]}}{Major changes between SSLeay 0.\+9.\+0b and Open\+SSL 0.\+9.\+1c \mbox{[}23 Dec 1998\mbox{]}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_e_w_s_autotoc_md865}
+
+\begin{DoxyItemize}
+\item Integration of the popular NO\+\_\+\+RSA/\+NO\+\_\+\+DSA patches
+\item Initial support for compression inside the SSL record layer
+\item Added BIO proxy and filtering functionality
+\item Extended Big Number (BN) library
+\item Added RIPE MD160 message digest
+\item Added support for RC2/64bit cipher
+\item Extended ASN.\+1 parser routines
+\item Adjustments of the source tree for CVS
+\item Support for various new platforms 
+\end{DoxyItemize}

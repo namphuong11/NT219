@@ -1,0 +1,796 @@
+\doxysection{ec\+\_\+local.\+h}
+\hypertarget{ec__local_8h_source}{}\label{ec__local_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/ec/ec\_local.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/ec/ec\_local.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2001-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *\ Copyright\ (c)\ 2002,\ Oracle\ and/or\ its\ affiliates.\ All\ rights\ reserved}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ <stdlib.h>}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ <openssl/obj\_mac.h>}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ <openssl/ec.h>}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#include\ <openssl/bn.h>}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#include\ "{}internal/refcount.h"{}}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#include\ "{}crypto/ec.h"{}}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#if\ defined(\_\_SUNPRO\_C)}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#\ if\ \_\_SUNPRO\_C\ >=\ 0x520}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#\ \ pragma\ error\_messages\ (off,E\_ARRAY\_OF\_INCOMPLETE\_NONAME,E\_ARRAY\_OF\_INCOMPLETE)}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{comment}{/*\ Use\ default\ functions\ for\ poin2oct,\ oct2point\ and\ compressed\ coordinates\ */}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#define\ EC\_FLAGS\_DEFAULT\_OCT\ \ \ \ 0x1}}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \textcolor{comment}{/*\ Use\ custom\ formats\ for\ EC\_GROUP,\ EC\_POINT\ and\ EC\_KEY\ */}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#define\ EC\_FLAGS\_CUSTOM\_CURVE\ \ \ 0x2}}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \textcolor{comment}{/*\ Curve\ does\ not\ support\ signing\ operations\ */}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#define\ EC\_FLAGS\_NO\_SIGN\ \ \ \ \ \ \ \ 0x4}}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#ifdef\ OPENSSL\_NO\_DEPRECATED\_3\_0}}
+\DoxyCodeLine{00035\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structec__method__st}{ec\_method\_st}}\ EC\_METHOD;}
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00039\ \textcolor{comment}{\ *\ Structure\ details\ are\ not\ part\ of\ the\ exported\ interface,\ so\ all\ this\ may}}
+\DoxyCodeLine{00040\ \textcolor{comment}{\ *\ change\ in\ future\ versions.}}
+\DoxyCodeLine{00041\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structec__method__st}{ec\_method\_st}}\ \{}
+\DoxyCodeLine{00044\ \ \ \ \ \textcolor{comment}{/*\ Various\ method\ flags\ */}}
+\DoxyCodeLine{00045\ \ \ \ \ \textcolor{keywordtype}{int}\ flags;}
+\DoxyCodeLine{00046\ \ \ \ \ \textcolor{comment}{/*\ used\ by\ EC\_METHOD\_get\_field\_type:\ */}}
+\DoxyCodeLine{00047\ \ \ \ \ \textcolor{keywordtype}{int}\ field\_type;\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ a\ NID\ */}}
+\DoxyCodeLine{00048\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00049\ \textcolor{comment}{\ \ \ \ \ *\ used\ by\ EC\_GROUP\_new,\ EC\_GROUP\_free,\ EC\_GROUP\_clear\_free,}}
+\DoxyCodeLine{00050\ \textcolor{comment}{\ \ \ \ \ *\ EC\_GROUP\_copy:}}
+\DoxyCodeLine{00051\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00052\ \ \ \ \ int\ (*group\_init)\ (EC\_GROUP\ *);}
+\DoxyCodeLine{00053\ \ \ \ \ void\ (*group\_finish)\ (EC\_GROUP\ *);}
+\DoxyCodeLine{00054\ \ \ \ \ void\ (*group\_clear\_finish)\ (EC\_GROUP\ *);}
+\DoxyCodeLine{00055\ \ \ \ \ int\ (*group\_copy)\ (EC\_GROUP\ *,\ \textcolor{keyword}{const}\ EC\_GROUP\ *);}
+\DoxyCodeLine{00056\ \ \ \ \ \textcolor{comment}{/*\ used\ by\ EC\_GROUP\_set\_curve,\ EC\_GROUP\_get\_curve:\ */}}
+\DoxyCodeLine{00057\ \ \ \ \ int\ (*group\_set\_curve)\ (EC\_GROUP\ *,\ \textcolor{keyword}{const}\ BIGNUM\ *p,\ \textcolor{keyword}{const}\ BIGNUM\ *a,}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *\mbox{\hyperlink{structb}{b}},\ BN\_CTX\ *);}
+\DoxyCodeLine{00059\ \ \ \ \ int\ (*group\_get\_curve)\ (\textcolor{keyword}{const}\ EC\_GROUP\ *,\ BIGNUM\ *p,\ BIGNUM\ *a,\ BIGNUM\ *\mbox{\hyperlink{structb}{b}},}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BN\_CTX\ *);}
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{comment}{/*\ used\ by\ EC\_GROUP\_get\_degree:\ */}}
+\DoxyCodeLine{00062\ \ \ \ \ int\ (*group\_get\_degree)\ (\textcolor{keyword}{const}\ EC\_GROUP\ *);}
+\DoxyCodeLine{00063\ \ \ \ \ int\ (*group\_order\_bits)\ (\textcolor{keyword}{const}\ EC\_GROUP\ *);}
+\DoxyCodeLine{00064\ \ \ \ \ \textcolor{comment}{/*\ used\ by\ EC\_GROUP\_check:\ */}}
+\DoxyCodeLine{00065\ \ \ \ \ int\ (*group\_check\_discriminant)\ (\textcolor{keyword}{const}\ EC\_GROUP\ *,\ BN\_CTX\ *);}
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00067\ \textcolor{comment}{\ \ \ \ \ *\ used\ by\ EC\_POINT\_new,\ EC\_POINT\_free,\ EC\_POINT\_clear\_free,}}
+\DoxyCodeLine{00068\ \textcolor{comment}{\ \ \ \ \ *\ EC\_POINT\_copy:}}
+\DoxyCodeLine{00069\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00070\ \ \ \ \ int\ (*point\_init)\ (EC\_POINT\ *);}
+\DoxyCodeLine{00071\ \ \ \ \ void\ (*point\_finish)\ (EC\_POINT\ *);}
+\DoxyCodeLine{00072\ \ \ \ \ void\ (*point\_clear\_finish)\ (EC\_POINT\ *);}
+\DoxyCodeLine{00073\ \ \ \ \ int\ (*point\_copy)\ (EC\_POINT\ *,\ \textcolor{keyword}{const}\ EC\_POINT\ *);}
+\DoxyCodeLine{00074\ \ \ \ \ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00075\ \textcolor{comment}{\ \ \ \ \ *\ used\ by\ EC\_POINT\_set\_to\_infinity,}}
+\DoxyCodeLine{00076\ \textcolor{comment}{\ \ \ \ \ *\ EC\_POINT\_set\_Jprojective\_coordinates\_GFp,}}
+\DoxyCodeLine{00077\ \textcolor{comment}{\ \ \ \ \ *\ EC\_POINT\_get\_Jprojective\_coordinates\_GFp,}}
+\DoxyCodeLine{00078\ \textcolor{comment}{\ \ \ \ \ *\ EC\_POINT\_set\_affine\_coordinates,}}
+\DoxyCodeLine{00079\ \textcolor{comment}{\ \ \ \ \ *\ EC\_POINT\_get\_affine\_coordinates,}}
+\DoxyCodeLine{00080\ \textcolor{comment}{\ \ \ \ \ *\ EC\_POINT\_set\_compressed\_coordinates:}}
+\DoxyCodeLine{00081\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00082\ \ \ \ \ int\ (*point\_set\_to\_infinity)\ (\textcolor{keyword}{const}\ EC\_GROUP\ *,\ EC\_POINT\ *);}
+\DoxyCodeLine{00083\ \ \ \ \ int\ (*point\_set\_affine\_coordinates)\ (\textcolor{keyword}{const}\ EC\_GROUP\ *,\ EC\_POINT\ *,}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *x,\ \textcolor{keyword}{const}\ BIGNUM\ *y,}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BN\_CTX\ *);}
+\DoxyCodeLine{00086\ \ \ \ \ int\ (*point\_get\_affine\_coordinates)\ (\textcolor{keyword}{const}\ EC\_GROUP\ *,\ \textcolor{keyword}{const}\ EC\_POINT\ *,}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BIGNUM\ *x,\ BIGNUM\ *y,\ BN\_CTX\ *);}
+\DoxyCodeLine{00088\ \ \ \ \ int\ (*point\_set\_compressed\_coordinates)\ (\textcolor{keyword}{const}\ EC\_GROUP\ *,\ EC\_POINT\ *,}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *x,\ \textcolor{keywordtype}{int}\ y\_bit,}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BN\_CTX\ *);}
+\DoxyCodeLine{00091\ \ \ \ \ \textcolor{comment}{/*\ used\ by\ EC\_POINT\_point2oct,\ EC\_POINT\_oct2point:\ */}}
+\DoxyCodeLine{00092\ \ \ \ \ size\_t\ (*point2oct)\ (\textcolor{keyword}{const}\ EC\_GROUP\ *,\ \textcolor{keyword}{const}\ EC\_POINT\ *,}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ point\_conversion\_form\_t\ form,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *buf,}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ len,\ BN\_CTX\ *);}
+\DoxyCodeLine{00095\ \ \ \ \ int\ (*oct2point)\ (\textcolor{keyword}{const}\ EC\_GROUP\ *,\ EC\_POINT\ *,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *buf,}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ len,\ BN\_CTX\ *);}
+\DoxyCodeLine{00097\ \ \ \ \ \textcolor{comment}{/*\ used\ by\ EC\_POINT\_add,\ EC\_POINT\_dbl,\ ECP\_POINT\_invert:\ */}}
+\DoxyCodeLine{00098\ \ \ \ \ int\ (*add)\ (\textcolor{keyword}{const}\ EC\_GROUP\ *,\ EC\_POINT\ *r,\ \textcolor{keyword}{const}\ EC\_POINT\ *a,}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ EC\_POINT\ *\mbox{\hyperlink{structb}{b}},\ BN\_CTX\ *);}
+\DoxyCodeLine{00100\ \ \ \ \ int\ (*dbl)\ (\textcolor{keyword}{const}\ EC\_GROUP\ *,\ EC\_POINT\ *r,\ \textcolor{keyword}{const}\ EC\_POINT\ *a,\ BN\_CTX\ *);}
+\DoxyCodeLine{00101\ \ \ \ \ int\ (*invert)\ (\textcolor{keyword}{const}\ EC\_GROUP\ *,\ EC\_POINT\ *,\ BN\_CTX\ *);}
+\DoxyCodeLine{00102\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00103\ \textcolor{comment}{\ \ \ \ \ *\ used\ by\ EC\_POINT\_is\_at\_infinity,\ EC\_POINT\_is\_on\_curve,\ EC\_POINT\_cmp:}}
+\DoxyCodeLine{00104\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00105\ \ \ \ \ int\ (*is\_at\_infinity)\ (\textcolor{keyword}{const}\ EC\_GROUP\ *,\ \textcolor{keyword}{const}\ EC\_POINT\ *);}
+\DoxyCodeLine{00106\ \ \ \ \ int\ (*is\_on\_curve)\ (\textcolor{keyword}{const}\ EC\_GROUP\ *,\ \textcolor{keyword}{const}\ EC\_POINT\ *,\ BN\_CTX\ *);}
+\DoxyCodeLine{00107\ \ \ \ \ int\ (*point\_cmp)\ (\textcolor{keyword}{const}\ EC\_GROUP\ *,\ \textcolor{keyword}{const}\ EC\_POINT\ *a,\ \textcolor{keyword}{const}\ EC\_POINT\ *\mbox{\hyperlink{structb}{b}},}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BN\_CTX\ *);}
+\DoxyCodeLine{00109\ \ \ \ \ \textcolor{comment}{/*\ used\ by\ EC\_POINT\_make\_affine,\ EC\_POINTs\_make\_affine:\ */}}
+\DoxyCodeLine{00110\ \ \ \ \ int\ (*make\_affine)\ (\textcolor{keyword}{const}\ EC\_GROUP\ *,\ EC\_POINT\ *,\ BN\_CTX\ *);}
+\DoxyCodeLine{00111\ \ \ \ \ int\ (*points\_make\_affine)\ (\textcolor{keyword}{const}\ EC\_GROUP\ *,\ \textcolor{keywordtype}{size\_t}\ num,\ EC\_POINT\ *[],}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BN\_CTX\ *);}
+\DoxyCodeLine{00113\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00114\ \textcolor{comment}{\ \ \ \ \ *\ used\ by\ EC\_POINTs\_mul,\ EC\_POINT\_mul,\ EC\_POINT\_precompute\_mult,}}
+\DoxyCodeLine{00115\ \textcolor{comment}{\ \ \ \ \ *\ EC\_POINT\_have\_precompute\_mult\ (default\ implementations\ are\ used\ if\ the}}
+\DoxyCodeLine{00116\ \textcolor{comment}{\ \ \ \ \ *\ 'mul'\ pointer\ is\ 0):}}
+\DoxyCodeLine{00117\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00118\ \ \ \ \ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00119\ \textcolor{comment}{\ \ \ \ \ *\ mul()\ calculates\ the\ value}}
+\DoxyCodeLine{00120\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00121\ \textcolor{comment}{\ \ \ \ \ *\ \ \ r\ :=\ generator\ *\ scalar}}
+\DoxyCodeLine{00122\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ +\ points[0]\ *\ scalars[0]}}
+\DoxyCodeLine{00123\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ +\ ...}}
+\DoxyCodeLine{00124\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ +\ points[num-\/1]\ *\ scalars[num-\/1].}}
+\DoxyCodeLine{00125\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00126\ \textcolor{comment}{\ \ \ \ \ *\ For\ a\ fixed\ point\ multiplication\ (scalar\ !=\ NULL,\ num\ ==\ 0)}}
+\DoxyCodeLine{00127\ \textcolor{comment}{\ \ \ \ \ *\ or\ a\ variable\ point\ multiplication\ (scalar\ ==\ NULL,\ num\ ==\ 1),}}
+\DoxyCodeLine{00128\ \textcolor{comment}{\ \ \ \ \ *\ mul()\ must\ use\ a\ constant\ time\ algorithm:\ in\ both\ cases\ callers}}
+\DoxyCodeLine{00129\ \textcolor{comment}{\ \ \ \ \ *\ should\ provide\ an\ input\ scalar\ (either\ scalar\ or\ scalars[0])}}
+\DoxyCodeLine{00130\ \textcolor{comment}{\ \ \ \ \ *\ in\ the\ range\ [0,\ ec\_group\_order);\ for\ robustness,\ implementers}}
+\DoxyCodeLine{00131\ \textcolor{comment}{\ \ \ \ \ *\ should\ handle\ the\ case\ when\ the\ scalar\ has\ not\ been\ reduced,\ but}}
+\DoxyCodeLine{00132\ \textcolor{comment}{\ \ \ \ \ *\ may\ treat\ it\ as\ an\ unusual\ input,\ without\ any\ constant-\/timeness}}
+\DoxyCodeLine{00133\ \textcolor{comment}{\ \ \ \ \ *\ guarantee.}}
+\DoxyCodeLine{00134\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00135\ \ \ \ \ int\ (*mul)\ (\textcolor{keyword}{const}\ EC\_GROUP\ *group,\ EC\_POINT\ *r,\ \textcolor{keyword}{const}\ BIGNUM\ *scalar,}
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ num,\ \textcolor{keyword}{const}\ EC\_POINT\ *points[],\ \textcolor{keyword}{const}\ BIGNUM\ *scalars[],}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BN\_CTX\ *);}
+\DoxyCodeLine{00138\ \ \ \ \ int\ (*precompute\_mult)\ (EC\_GROUP\ *group,\ BN\_CTX\ *);}
+\DoxyCodeLine{00139\ \ \ \ \ int\ (*have\_precompute\_mult)\ (\textcolor{keyword}{const}\ EC\_GROUP\ *group);}
+\DoxyCodeLine{00140\ \ \ \ \ \textcolor{comment}{/*\ internal\ functions\ */}}
+\DoxyCodeLine{00141\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00142\ \textcolor{comment}{\ \ \ \ \ *\ 'field\_mul',\ 'field\_sqr',\ and\ 'field\_div'\ can\ be\ used\ by\ 'add'\ and}}
+\DoxyCodeLine{00143\ \textcolor{comment}{\ \ \ \ \ *\ 'dbl'\ so\ that\ the\ same\ implementations\ of\ point\ operations\ can\ be\ used}}
+\DoxyCodeLine{00144\ \textcolor{comment}{\ \ \ \ \ *\ with\ different\ optimized\ implementations\ of\ expensive\ field}}
+\DoxyCodeLine{00145\ \textcolor{comment}{\ \ \ \ \ *\ operations:}}
+\DoxyCodeLine{00146\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00147\ \ \ \ \ int\ (*field\_mul)\ (\textcolor{keyword}{const}\ EC\_GROUP\ *,\ BIGNUM\ *r,\ \textcolor{keyword}{const}\ BIGNUM\ *a,}
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *\mbox{\hyperlink{structb}{b}},\ BN\_CTX\ *);}
+\DoxyCodeLine{00149\ \ \ \ \ int\ (*field\_sqr)\ (\textcolor{keyword}{const}\ EC\_GROUP\ *,\ BIGNUM\ *r,\ \textcolor{keyword}{const}\ BIGNUM\ *a,\ BN\_CTX\ *);}
+\DoxyCodeLine{00150\ \ \ \ \ int\ (*field\_div)\ (\textcolor{keyword}{const}\ EC\_GROUP\ *,\ BIGNUM\ *r,\ \textcolor{keyword}{const}\ BIGNUM\ *a,}
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *\mbox{\hyperlink{structb}{b}},\ BN\_CTX\ *);}
+\DoxyCodeLine{00152\ \ \ \ \ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00153\ \textcolor{comment}{\ \ \ \ \ *\ 'field\_inv'\ computes\ the\ multiplicative\ inverse\ of\ a\ in\ the\ field,}}
+\DoxyCodeLine{00154\ \textcolor{comment}{\ \ \ \ \ *\ storing\ the\ result\ in\ r.}}
+\DoxyCodeLine{00155\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00156\ \textcolor{comment}{\ \ \ \ \ *\ If\ 'a'\ is\ zero\ (or\ equivalent),\ you'll\ get\ an\ EC\_R\_CANNOT\_INVERT\ error.}}
+\DoxyCodeLine{00157\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00158\ \ \ \ \ int\ (*field\_inv)\ (\textcolor{keyword}{const}\ EC\_GROUP\ *,\ BIGNUM\ *r,\ \textcolor{keyword}{const}\ BIGNUM\ *a,\ BN\_CTX\ *);}
+\DoxyCodeLine{00159\ \ \ \ \ \textcolor{comment}{/*\ e.g.\ to\ Montgomery\ */}}
+\DoxyCodeLine{00160\ \ \ \ \ int\ (*field\_encode)\ (\textcolor{keyword}{const}\ EC\_GROUP\ *,\ BIGNUM\ *r,\ \textcolor{keyword}{const}\ BIGNUM\ *a,}
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BN\_CTX\ *);}
+\DoxyCodeLine{00162\ \ \ \ \ \textcolor{comment}{/*\ e.g.\ from\ Montgomery\ */}}
+\DoxyCodeLine{00163\ \ \ \ \ int\ (*field\_decode)\ (\textcolor{keyword}{const}\ EC\_GROUP\ *,\ BIGNUM\ *r,\ \textcolor{keyword}{const}\ BIGNUM\ *a,}
+\DoxyCodeLine{00164\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BN\_CTX\ *);}
+\DoxyCodeLine{00165\ \ \ \ \ int\ (*field\_set\_to\_one)\ (\textcolor{keyword}{const}\ EC\_GROUP\ *,\ BIGNUM\ *r,\ BN\_CTX\ *);}
+\DoxyCodeLine{00166\ \ \ \ \ \textcolor{comment}{/*\ private\ key\ operations\ */}}
+\DoxyCodeLine{00167\ \ \ \ \ size\_t\ (*priv2oct)(\textcolor{keyword}{const}\ EC\_KEY\ *eckey,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *buf,\ \textcolor{keywordtype}{size\_t}\ len);}
+\DoxyCodeLine{00168\ \ \ \ \ int\ (*oct2priv)(EC\_KEY\ *eckey,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *buf,\ \textcolor{keywordtype}{size\_t}\ len);}
+\DoxyCodeLine{00169\ \ \ \ \ int\ (*set\_private)(EC\_KEY\ *eckey,\ \textcolor{keyword}{const}\ BIGNUM\ *priv\_key);}
+\DoxyCodeLine{00170\ \ \ \ \ int\ (*keygen)(EC\_KEY\ *eckey);}
+\DoxyCodeLine{00171\ \ \ \ \ int\ (*keycheck)(\textcolor{keyword}{const}\ EC\_KEY\ *eckey);}
+\DoxyCodeLine{00172\ \ \ \ \ int\ (*keygenpub)(EC\_KEY\ *eckey);}
+\DoxyCodeLine{00173\ \ \ \ \ int\ (*keycopy)(EC\_KEY\ *dst,\ \textcolor{keyword}{const}\ EC\_KEY\ *src);}
+\DoxyCodeLine{00174\ \ \ \ \ void\ (*keyfinish)(EC\_KEY\ *eckey);}
+\DoxyCodeLine{00175\ \ \ \ \ \textcolor{comment}{/*\ custom\ ECDH\ operation\ */}}
+\DoxyCodeLine{00176\ \ \ \ \ int\ (*ecdh\_compute\_key)(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **pout,\ \textcolor{keywordtype}{size\_t}\ *poutlen,}
+\DoxyCodeLine{00177\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ EC\_POINT\ *pub\_key,\ \textcolor{keyword}{const}\ EC\_KEY\ *ecdh);}
+\DoxyCodeLine{00178\ \ \ \ \ \textcolor{comment}{/*\ custom\ ECDSA\ */}}
+\DoxyCodeLine{00179\ \ \ \ \ int\ (*ecdsa\_sign\_setup)(EC\_KEY\ *eckey,\ BN\_CTX\ *ctx,\ BIGNUM\ **kinvp,}
+\DoxyCodeLine{00180\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BIGNUM\ **rp);}
+\DoxyCodeLine{00181\ \ \ \ \ ECDSA\_SIG\ *(*ecdsa\_sign\_sig)(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *dgst,\ \textcolor{keywordtype}{int}\ dgstlen,}
+\DoxyCodeLine{00182\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *kinv,\ \textcolor{keyword}{const}\ BIGNUM\ *r,}
+\DoxyCodeLine{00183\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ EC\_KEY\ *eckey);}
+\DoxyCodeLine{00184\ \ \ \ \ int\ (*ecdsa\_verify\_sig)(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *dgst,\ \textcolor{keywordtype}{int}\ dgstlen,}
+\DoxyCodeLine{00185\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ ECDSA\_SIG\ *sig,\ EC\_KEY\ *eckey);}
+\DoxyCodeLine{00186\ \ \ \ \ \textcolor{comment}{/*\ Inverse\ modulo\ order\ */}}
+\DoxyCodeLine{00187\ \ \ \ \ int\ (*field\_inverse\_mod\_ord)(\textcolor{keyword}{const}\ EC\_GROUP\ *,\ BIGNUM\ *r,}
+\DoxyCodeLine{00188\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *x,\ BN\_CTX\ *);}
+\DoxyCodeLine{00189\ \ \ \ \ int\ (*blind\_coordinates)(\textcolor{keyword}{const}\ EC\_GROUP\ *group,\ EC\_POINT\ *p,\ BN\_CTX\ *ctx);}
+\DoxyCodeLine{00190\ \ \ \ \ int\ (*ladder\_pre)(\textcolor{keyword}{const}\ EC\_GROUP\ *group,}
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ EC\_POINT\ *r,\ EC\_POINT\ *s,}
+\DoxyCodeLine{00192\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ EC\_POINT\ *p,\ BN\_CTX\ *ctx);}
+\DoxyCodeLine{00193\ \ \ \ \ int\ (*ladder\_step)(\textcolor{keyword}{const}\ EC\_GROUP\ *group,}
+\DoxyCodeLine{00194\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ EC\_POINT\ *r,\ EC\_POINT\ *s,}
+\DoxyCodeLine{00195\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ EC\_POINT\ *p,\ BN\_CTX\ *ctx);}
+\DoxyCodeLine{00196\ \ \ \ \ int\ (*ladder\_post)(\textcolor{keyword}{const}\ EC\_GROUP\ *group,}
+\DoxyCodeLine{00197\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ EC\_POINT\ *r,\ EC\_POINT\ *s,}
+\DoxyCodeLine{00198\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ EC\_POINT\ *p,\ BN\_CTX\ *ctx);}
+\DoxyCodeLine{00199\ \};}
+\DoxyCodeLine{00200\ }
+\DoxyCodeLine{00201\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00202\ \textcolor{comment}{\ *\ Types\ and\ functions\ to\ manipulate\ pre-\/computed\ values.}}
+\DoxyCodeLine{00203\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00204\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structnistp224__pre__comp__st}{nistp224\_pre\_comp\_st}}\ \mbox{\hyperlink{structnistp224__pre__comp__st}{NISTP224\_PRE\_COMP}};}
+\DoxyCodeLine{00205\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structnistp256__pre__comp__st}{nistp256\_pre\_comp\_st}}\ \mbox{\hyperlink{structnistp256__pre__comp__st}{NISTP256\_PRE\_COMP}};}
+\DoxyCodeLine{00206\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structnistp384__pre__comp__st}{nistp384\_pre\_comp\_st}}\ \mbox{\hyperlink{structnistp384__pre__comp__st}{NISTP384\_PRE\_COMP}};}
+\DoxyCodeLine{00207\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structnistp521__pre__comp__st}{nistp521\_pre\_comp\_st}}\ \mbox{\hyperlink{structnistp521__pre__comp__st}{NISTP521\_PRE\_COMP}};}
+\DoxyCodeLine{00208\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structnistz256__pre__comp__st}{nistz256\_pre\_comp\_st}}\ \mbox{\hyperlink{structnistz256__pre__comp__st}{NISTZ256\_PRE\_COMP}};}
+\DoxyCodeLine{00209\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structec__pre__comp__st}{ec\_pre\_comp\_st}}\ \mbox{\hyperlink{structec__pre__comp__st}{EC\_PRE\_COMP}};}
+\DoxyCodeLine{00210\ }
+\DoxyCodeLine{00211\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structec__group__st}{ec\_group\_st}}\ \{}
+\DoxyCodeLine{00212\ \ \ \ \ \textcolor{keyword}{const}\ EC\_METHOD\ *meth;}
+\DoxyCodeLine{00213\ \ \ \ \ EC\_POINT\ *generator;\ \ \ \ \ \ \ \ \textcolor{comment}{/*\ optional\ */}}
+\DoxyCodeLine{00214\ \ \ \ \ BIGNUM\ *order,\ *cofactor;}
+\DoxyCodeLine{00215\ \ \ \ \ \textcolor{keywordtype}{int}\ curve\_name;\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ optional\ NID\ for\ named\ curve\ */}}
+\DoxyCodeLine{00216\ \ \ \ \ \textcolor{keywordtype}{int}\ asn1\_flag;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ flag\ to\ control\ the\ asn1\ encoding\ */}}
+\DoxyCodeLine{00217\ \ \ \ \ \textcolor{keywordtype}{int}\ decoded\_from\_explicit\_params;\ \textcolor{comment}{/*\ set\ if\ decoded\ from\ explicit}}
+\DoxyCodeLine{00218\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *\ curve\ parameters\ encoding\ */}}
+\DoxyCodeLine{00219\ \ \ \ \ point\_conversion\_form\_t\ asn1\_form;}
+\DoxyCodeLine{00220\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *seed;\ \ \ \ \ \ \ \ \textcolor{comment}{/*\ optional\ seed\ for\ parameters\ (appears\ in}}
+\DoxyCodeLine{00221\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *\ ASN1)\ */}}
+\DoxyCodeLine{00222\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ seed\_len;}
+\DoxyCodeLine{00223\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00224\ \textcolor{comment}{\ \ \ \ \ *\ The\ following\ members\ are\ handled\ by\ the\ method\ functions,\ even\ if}}
+\DoxyCodeLine{00225\ \textcolor{comment}{\ \ \ \ \ *\ they\ appear\ generic}}
+\DoxyCodeLine{00226\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00227\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00228\ \textcolor{comment}{\ \ \ \ \ *\ Field\ specification.\ For\ curves\ over\ GF(p),\ this\ is\ the\ modulus;\ for}}
+\DoxyCodeLine{00229\ \textcolor{comment}{\ \ \ \ \ *\ curves\ over\ GF(2\string^m),\ this\ is\ the\ irreducible\ polynomial\ defining\ the}}
+\DoxyCodeLine{00230\ \textcolor{comment}{\ \ \ \ \ *\ field.}}
+\DoxyCodeLine{00231\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00232\ \ \ \ \ BIGNUM\ *field;}
+\DoxyCodeLine{00233\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00234\ \textcolor{comment}{\ \ \ \ \ *\ Field\ specification\ for\ curves\ over\ GF(2\string^m).\ The\ irreducible\ f(t)\ is}}
+\DoxyCodeLine{00235\ \textcolor{comment}{\ \ \ \ \ *\ then\ of\ the\ form:\ t\string^poly[0]\ +\ t\string^poly[1]\ +\ ...\ +\ t\string^poly[k]\ where\ m\ =}}
+\DoxyCodeLine{00236\ \textcolor{comment}{\ \ \ \ \ *\ poly[0]\ >\ poly[1]\ >\ ...\ >\ poly[k]\ =\ 0.\ The\ array\ is\ terminated\ with}}
+\DoxyCodeLine{00237\ \textcolor{comment}{\ \ \ \ \ *\ poly[k+1]=-\/1.\ All\ elliptic\ curve\ irreducibles\ have\ at\ most\ 5\ non-\/zero}}
+\DoxyCodeLine{00238\ \textcolor{comment}{\ \ \ \ \ *\ terms.}}
+\DoxyCodeLine{00239\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00240\ \ \ \ \ \textcolor{keywordtype}{int}\ poly[6];}
+\DoxyCodeLine{00241\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00242\ \textcolor{comment}{\ \ \ \ \ *\ Curve\ coefficients.\ (Here\ the\ assumption\ is\ that\ BIGNUMs\ can\ be\ used}}
+\DoxyCodeLine{00243\ \textcolor{comment}{\ \ \ \ \ *\ or\ abused\ for\ all\ kinds\ of\ fields,\ not\ just\ GF(p).)\ For\ characteristic}}
+\DoxyCodeLine{00244\ \textcolor{comment}{\ \ \ \ \ *\ >\ 3,\ the\ curve\ is\ defined\ by\ a\ Weierstrass\ equation\ of\ the\ form\ y\string^2\ =}}
+\DoxyCodeLine{00245\ \textcolor{comment}{\ \ \ \ \ *\ x\string^3\ +\ a*x\ +\ b.\ For\ characteristic\ 2,\ the\ curve\ is\ defined\ by\ an}}
+\DoxyCodeLine{00246\ \textcolor{comment}{\ \ \ \ \ *\ equation\ of\ the\ form\ y\string^2\ +\ x*y\ =\ x\string^3\ +\ a*x\string^2\ +\ b.}}
+\DoxyCodeLine{00247\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00248\ \ \ \ \ BIGNUM\ *a,\ *\mbox{\hyperlink{structb}{b}};}
+\DoxyCodeLine{00249\ \ \ \ \ \textcolor{comment}{/*\ enable\ optimized\ point\ arithmetic\ for\ special\ case\ */}}
+\DoxyCodeLine{00250\ \ \ \ \ \textcolor{keywordtype}{int}\ a\_is\_minus3;}
+\DoxyCodeLine{00251\ \ \ \ \ \textcolor{comment}{/*\ method-\/specific\ (e.g.,\ Montgomery\ structure)\ */}}
+\DoxyCodeLine{00252\ \ \ \ \ \textcolor{keywordtype}{void}\ *field\_data1;}
+\DoxyCodeLine{00253\ \ \ \ \ \textcolor{comment}{/*\ method-\/specific\ */}}
+\DoxyCodeLine{00254\ \ \ \ \ \textcolor{keywordtype}{void}\ *field\_data2;}
+\DoxyCodeLine{00255\ \ \ \ \ \textcolor{comment}{/*\ method-\/specific\ */}}
+\DoxyCodeLine{00256\ \ \ \ \ int\ (*field\_mod\_func)\ (BIGNUM\ *,\ \textcolor{keyword}{const}\ BIGNUM\ *,\ \textcolor{keyword}{const}\ BIGNUM\ *,}
+\DoxyCodeLine{00257\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BN\_CTX\ *);}
+\DoxyCodeLine{00258\ \ \ \ \ \textcolor{comment}{/*\ data\ for\ ECDSA\ inverse\ */}}
+\DoxyCodeLine{00259\ \ \ \ \ BN\_MONT\_CTX\ *mont\_data;}
+\DoxyCodeLine{00260\ }
+\DoxyCodeLine{00261\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00262\ \textcolor{comment}{\ \ \ \ \ *\ Precomputed\ values\ for\ speed.\ The\ PCT\_xxx\ names\ match\ the}}
+\DoxyCodeLine{00263\ \textcolor{comment}{\ \ \ \ \ *\ pre\_comp.xxx\ union\ names;\ see\ the\ SETPRECOMP\ and\ HAVEPRECOMP}}
+\DoxyCodeLine{00264\ \textcolor{comment}{\ \ \ \ \ *\ macros,\ below.}}
+\DoxyCodeLine{00265\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00266\ \ \ \ \ \textcolor{keyword}{enum}\ \{}
+\DoxyCodeLine{00267\ \ \ \ \ \ \ \ \ PCT\_none,}
+\DoxyCodeLine{00268\ \ \ \ \ \ \ \ \ PCT\_nistp224,\ PCT\_nistp256,\ PCT\_nistp384,\ PCT\_nistp521,\ PCT\_nistz256,}
+\DoxyCodeLine{00269\ \ \ \ \ \ \ \ \ PCT\_ec}
+\DoxyCodeLine{00270\ \ \ \ \ \}\ pre\_comp\_type;}
+\DoxyCodeLine{00271\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00272\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structnistp224__pre__comp__st}{NISTP224\_PRE\_COMP}}\ *nistp224;}
+\DoxyCodeLine{00273\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structnistp256__pre__comp__st}{NISTP256\_PRE\_COMP}}\ *nistp256;}
+\DoxyCodeLine{00274\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structnistp384__pre__comp__st}{NISTP384\_PRE\_COMP}}\ *nistp384;}
+\DoxyCodeLine{00275\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structnistp521__pre__comp__st}{NISTP521\_PRE\_COMP}}\ *nistp521;}
+\DoxyCodeLine{00276\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structnistz256__pre__comp__st}{NISTZ256\_PRE\_COMP}}\ *nistz256;}
+\DoxyCodeLine{00277\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structec__pre__comp__st}{EC\_PRE\_COMP}}\ *ec;}
+\DoxyCodeLine{00278\ \ \ \ \ \}\ pre\_comp;}
+\DoxyCodeLine{00279\ }
+\DoxyCodeLine{00280\ \ \ \ \ OSSL\_LIB\_CTX\ *libctx;}
+\DoxyCodeLine{00281\ \ \ \ \ \textcolor{keywordtype}{char}\ *propq;}
+\DoxyCodeLine{00282\ \};}
+\DoxyCodeLine{00283\ }
+\DoxyCodeLine{00284\ \textcolor{preprocessor}{\#define\ SETPRECOMP(g,\ type,\ pre)\ \(\backslash\)}}
+\DoxyCodeLine{00285\ \textcolor{preprocessor}{\ \ \ \ g-\/>pre\_comp\_type\ =\ PCT\_\#\#type,\ g-\/>pre\_comp.type\ =\ pre}}
+\DoxyCodeLine{00286\ \textcolor{preprocessor}{\#define\ HAVEPRECOMP(g,\ type)\ \(\backslash\)}}
+\DoxyCodeLine{00287\ \textcolor{preprocessor}{\ \ \ \ g-\/>pre\_comp\_type\ ==\ PCT\_\#\#type\ \&\&\ g-\/>pre\_comp.type\ !=\ NULL}}
+\DoxyCodeLine{00288\ }
+\DoxyCodeLine{00289\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structec__key__st}{ec\_key\_st}}\ \{}
+\DoxyCodeLine{00290\ \ \ \ \ \textcolor{keyword}{const}\ EC\_KEY\_METHOD\ *meth;}
+\DoxyCodeLine{00291\ \ \ \ \ ENGINE\ *engine;}
+\DoxyCodeLine{00292\ \ \ \ \ \textcolor{keywordtype}{int}\ version;}
+\DoxyCodeLine{00293\ \ \ \ \ EC\_GROUP\ *group;}
+\DoxyCodeLine{00294\ \ \ \ \ EC\_POINT\ *pub\_key;}
+\DoxyCodeLine{00295\ \ \ \ \ BIGNUM\ *priv\_key;}
+\DoxyCodeLine{00296\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ enc\_flag;}
+\DoxyCodeLine{00297\ \ \ \ \ point\_conversion\_form\_t\ conv\_form;}
+\DoxyCodeLine{00298\ \ \ \ \ \mbox{\hyperlink{struct_c_r_y_p_t_o___r_e_f___c_o_u_n_t}{CRYPTO\_REF\_COUNT}}\ references;}
+\DoxyCodeLine{00299\ \ \ \ \ \textcolor{keywordtype}{int}\ flags;}
+\DoxyCodeLine{00300\ \textcolor{preprocessor}{\#ifndef\ FIPS\_MODULE}}
+\DoxyCodeLine{00301\ \ \ \ \ CRYPTO\_EX\_DATA\ ex\_data;}
+\DoxyCodeLine{00302\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00303\ \ \ \ \ OSSL\_LIB\_CTX\ *libctx;}
+\DoxyCodeLine{00304\ \ \ \ \ \textcolor{keywordtype}{char}\ *propq;}
+\DoxyCodeLine{00305\ }
+\DoxyCodeLine{00306\ \ \ \ \ \textcolor{comment}{/*\ Provider\ data\ */}}
+\DoxyCodeLine{00307\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ dirty\_cnt;\ \textcolor{comment}{/*\ If\ any\ key\ material\ changes,\ increment\ this\ */}}
+\DoxyCodeLine{00308\ \};}
+\DoxyCodeLine{00309\ }
+\DoxyCodeLine{00310\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structec__point__st}{ec\_point\_st}}\ \{}
+\DoxyCodeLine{00311\ \ \ \ \ \textcolor{keyword}{const}\ EC\_METHOD\ *meth;}
+\DoxyCodeLine{00312\ \ \ \ \ \textcolor{comment}{/*\ NID\ for\ the\ curve\ if\ known\ */}}
+\DoxyCodeLine{00313\ \ \ \ \ \textcolor{keywordtype}{int}\ curve\_name;}
+\DoxyCodeLine{00314\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00315\ \textcolor{comment}{\ \ \ \ \ *\ All\ members\ except\ 'meth'\ are\ handled\ by\ the\ method\ functions,\ even\ if}}
+\DoxyCodeLine{00316\ \textcolor{comment}{\ \ \ \ \ *\ they\ appear\ generic}}
+\DoxyCodeLine{00317\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00318\ \ \ \ \ BIGNUM\ *X;}
+\DoxyCodeLine{00319\ \ \ \ \ BIGNUM\ *Y;}
+\DoxyCodeLine{00320\ \ \ \ \ BIGNUM\ *Z;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Jacobian\ projective\ coordinates:\ *\ (X,\ Y,}}
+\DoxyCodeLine{00321\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *\ Z)\ represents\ (X/Z\string^2,\ Y/Z\string^3)\ if\ Z\ !=\ 0\ */}}
+\DoxyCodeLine{00322\ \ \ \ \ \textcolor{keywordtype}{int}\ Z\_is\_one;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ enable\ optimized\ point\ arithmetic\ for}}
+\DoxyCodeLine{00323\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *\ special\ case\ */}}
+\DoxyCodeLine{00324\ \};}
+\DoxyCodeLine{00325\ }
+\DoxyCodeLine{00326\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{int}\ ec\_point\_is\_compat(\textcolor{keyword}{const}\ EC\_POINT\ *point,}
+\DoxyCodeLine{00327\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ EC\_GROUP\ *group)}
+\DoxyCodeLine{00328\ \{}
+\DoxyCodeLine{00329\ \ \ \ \ \textcolor{keywordflow}{return}\ group-\/>meth\ ==\ point-\/>meth}
+\DoxyCodeLine{00330\ \ \ \ \ \ \ \ \ \ \ \ \&\&\ (group-\/>curve\_name\ ==\ 0}
+\DoxyCodeLine{00331\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ||\ point-\/>curve\_name\ ==\ 0}
+\DoxyCodeLine{00332\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ||\ group-\/>curve\_name\ ==\ point-\/>curve\_name);}
+\DoxyCodeLine{00333\ \}}
+\DoxyCodeLine{00334\ }
+\DoxyCodeLine{00335\ \mbox{\hyperlink{structnistp224__pre__comp__st}{NISTP224\_PRE\_COMP}}\ *EC\_nistp224\_pre\_comp\_dup(\mbox{\hyperlink{structnistp224__pre__comp__st}{NISTP224\_PRE\_COMP}}\ *);}
+\DoxyCodeLine{00336\ \mbox{\hyperlink{structnistp256__pre__comp__st}{NISTP256\_PRE\_COMP}}\ *EC\_nistp256\_pre\_comp\_dup(\mbox{\hyperlink{structnistp256__pre__comp__st}{NISTP256\_PRE\_COMP}}\ *);}
+\DoxyCodeLine{00337\ \mbox{\hyperlink{structnistp384__pre__comp__st}{NISTP384\_PRE\_COMP}}\ *ossl\_ec\_nistp384\_pre\_comp\_dup(\mbox{\hyperlink{structnistp384__pre__comp__st}{NISTP384\_PRE\_COMP}}\ *);}
+\DoxyCodeLine{00338\ \mbox{\hyperlink{structnistp521__pre__comp__st}{NISTP521\_PRE\_COMP}}\ *EC\_nistp521\_pre\_comp\_dup(\mbox{\hyperlink{structnistp521__pre__comp__st}{NISTP521\_PRE\_COMP}}\ *);}
+\DoxyCodeLine{00339\ \mbox{\hyperlink{structnistz256__pre__comp__st}{NISTZ256\_PRE\_COMP}}\ *EC\_nistz256\_pre\_comp\_dup(\mbox{\hyperlink{structnistz256__pre__comp__st}{NISTZ256\_PRE\_COMP}}\ *);}
+\DoxyCodeLine{00340\ \mbox{\hyperlink{structnistp256__pre__comp__st}{NISTP256\_PRE\_COMP}}\ *EC\_nistp256\_pre\_comp\_dup(\mbox{\hyperlink{structnistp256__pre__comp__st}{NISTP256\_PRE\_COMP}}\ *);}
+\DoxyCodeLine{00341\ \mbox{\hyperlink{structec__pre__comp__st}{EC\_PRE\_COMP}}\ *EC\_ec\_pre\_comp\_dup(\mbox{\hyperlink{structec__pre__comp__st}{EC\_PRE\_COMP}}\ *);}
+\DoxyCodeLine{00342\ }
+\DoxyCodeLine{00343\ \textcolor{keywordtype}{void}\ EC\_pre\_comp\_free(EC\_GROUP\ *group);}
+\DoxyCodeLine{00344\ \textcolor{keywordtype}{void}\ EC\_nistp224\_pre\_comp\_free(\mbox{\hyperlink{structnistp224__pre__comp__st}{NISTP224\_PRE\_COMP}}\ *);}
+\DoxyCodeLine{00345\ \textcolor{keywordtype}{void}\ EC\_nistp256\_pre\_comp\_free(\mbox{\hyperlink{structnistp256__pre__comp__st}{NISTP256\_PRE\_COMP}}\ *);}
+\DoxyCodeLine{00346\ \textcolor{keywordtype}{void}\ ossl\_ec\_nistp384\_pre\_comp\_free(\mbox{\hyperlink{structnistp384__pre__comp__st}{NISTP384\_PRE\_COMP}}\ *);}
+\DoxyCodeLine{00347\ \textcolor{keywordtype}{void}\ EC\_nistp521\_pre\_comp\_free(\mbox{\hyperlink{structnistp521__pre__comp__st}{NISTP521\_PRE\_COMP}}\ *);}
+\DoxyCodeLine{00348\ \textcolor{keywordtype}{void}\ EC\_nistz256\_pre\_comp\_free(\mbox{\hyperlink{structnistz256__pre__comp__st}{NISTZ256\_PRE\_COMP}}\ *);}
+\DoxyCodeLine{00349\ \textcolor{keywordtype}{void}\ EC\_ec\_pre\_comp\_free(\mbox{\hyperlink{structec__pre__comp__st}{EC\_PRE\_COMP}}\ *);}
+\DoxyCodeLine{00350\ }
+\DoxyCodeLine{00351\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00352\ \textcolor{comment}{\ *\ method\ functions\ in\ ec\_mult.c\ (ec\_lib.c\ uses\ these\ as\ defaults\ if}}
+\DoxyCodeLine{00353\ \textcolor{comment}{\ *\ group-\/>method-\/>mul\ is\ 0)}}
+\DoxyCodeLine{00354\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00355\ \textcolor{keywordtype}{int}\ ossl\_ec\_wNAF\_mul(\textcolor{keyword}{const}\ EC\_GROUP\ *group,\ EC\_POINT\ *r,\ \textcolor{keyword}{const}\ BIGNUM\ *scalar,}
+\DoxyCodeLine{00356\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ num,\ \textcolor{keyword}{const}\ EC\_POINT\ *points[],}
+\DoxyCodeLine{00357\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *scalars[],\ BN\_CTX\ *);}
+\DoxyCodeLine{00358\ \textcolor{keywordtype}{int}\ ossl\_ec\_wNAF\_precompute\_mult(EC\_GROUP\ *group,\ BN\_CTX\ *);}
+\DoxyCodeLine{00359\ \textcolor{keywordtype}{int}\ ossl\_ec\_wNAF\_have\_precompute\_mult(\textcolor{keyword}{const}\ EC\_GROUP\ *group);}
+\DoxyCodeLine{00360\ }
+\DoxyCodeLine{00361\ \textcolor{comment}{/*\ method\ functions\ in\ ecp\_smpl.c\ */}}
+\DoxyCodeLine{00362\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_simple\_group\_init(EC\_GROUP\ *);}
+\DoxyCodeLine{00363\ \textcolor{keywordtype}{void}\ ossl\_ec\_GFp\_simple\_group\_finish(EC\_GROUP\ *);}
+\DoxyCodeLine{00364\ \textcolor{keywordtype}{void}\ ossl\_ec\_GFp\_simple\_group\_clear\_finish(EC\_GROUP\ *);}
+\DoxyCodeLine{00365\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_simple\_group\_copy(EC\_GROUP\ *,\ \textcolor{keyword}{const}\ EC\_GROUP\ *);}
+\DoxyCodeLine{00366\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_simple\_group\_set\_curve(EC\_GROUP\ *,\ \textcolor{keyword}{const}\ BIGNUM\ *p,}
+\DoxyCodeLine{00367\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *a,\ \textcolor{keyword}{const}\ BIGNUM\ *\mbox{\hyperlink{structb}{b}},}
+\DoxyCodeLine{00368\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BN\_CTX\ *);}
+\DoxyCodeLine{00369\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_simple\_group\_get\_curve(\textcolor{keyword}{const}\ EC\_GROUP\ *,\ BIGNUM\ *p,\ BIGNUM\ *a,}
+\DoxyCodeLine{00370\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BIGNUM\ *\mbox{\hyperlink{structb}{b}},\ BN\_CTX\ *);}
+\DoxyCodeLine{00371\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_simple\_group\_get\_degree(\textcolor{keyword}{const}\ EC\_GROUP\ *);}
+\DoxyCodeLine{00372\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_simple\_group\_check\_discriminant(\textcolor{keyword}{const}\ EC\_GROUP\ *,\ BN\_CTX\ *);}
+\DoxyCodeLine{00373\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_simple\_point\_init(EC\_POINT\ *);}
+\DoxyCodeLine{00374\ \textcolor{keywordtype}{void}\ ossl\_ec\_GFp\_simple\_point\_finish(EC\_POINT\ *);}
+\DoxyCodeLine{00375\ \textcolor{keywordtype}{void}\ ossl\_ec\_GFp\_simple\_point\_clear\_finish(EC\_POINT\ *);}
+\DoxyCodeLine{00376\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_simple\_point\_copy(EC\_POINT\ *,\ \textcolor{keyword}{const}\ EC\_POINT\ *);}
+\DoxyCodeLine{00377\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_simple\_point\_set\_to\_infinity(\textcolor{keyword}{const}\ EC\_GROUP\ *,\ EC\_POINT\ *);}
+\DoxyCodeLine{00378\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_simple\_set\_Jprojective\_coordinates\_GFp(\textcolor{keyword}{const}\ EC\_GROUP\ *,}
+\DoxyCodeLine{00379\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ EC\_POINT\ *,}
+\DoxyCodeLine{00380\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *x,}
+\DoxyCodeLine{00381\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *y,}
+\DoxyCodeLine{00382\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *z,}
+\DoxyCodeLine{00383\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BN\_CTX\ *);}
+\DoxyCodeLine{00384\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_simple\_get\_Jprojective\_coordinates\_GFp(\textcolor{keyword}{const}\ EC\_GROUP\ *,}
+\DoxyCodeLine{00385\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ EC\_POINT\ *,}
+\DoxyCodeLine{00386\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BIGNUM\ *x,}
+\DoxyCodeLine{00387\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BIGNUM\ *y,\ BIGNUM\ *z,}
+\DoxyCodeLine{00388\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BN\_CTX\ *);}
+\DoxyCodeLine{00389\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_simple\_point\_set\_affine\_coordinates(\textcolor{keyword}{const}\ EC\_GROUP\ *,\ EC\_POINT\ *,}
+\DoxyCodeLine{00390\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *x,}
+\DoxyCodeLine{00391\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *y,\ BN\_CTX\ *);}
+\DoxyCodeLine{00392\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_simple\_point\_get\_affine\_coordinates(\textcolor{keyword}{const}\ EC\_GROUP\ *,}
+\DoxyCodeLine{00393\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ EC\_POINT\ *,\ BIGNUM\ *x,}
+\DoxyCodeLine{00394\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BIGNUM\ *y,\ BN\_CTX\ *);}
+\DoxyCodeLine{00395\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_simple\_set\_compressed\_coordinates(\textcolor{keyword}{const}\ EC\_GROUP\ *,\ EC\_POINT\ *,}
+\DoxyCodeLine{00396\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *x,\ \textcolor{keywordtype}{int}\ y\_bit,}
+\DoxyCodeLine{00397\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BN\_CTX\ *);}
+\DoxyCodeLine{00398\ \textcolor{keywordtype}{size\_t}\ ossl\_ec\_GFp\_simple\_point2oct(\textcolor{keyword}{const}\ EC\_GROUP\ *,\ \textcolor{keyword}{const}\ EC\_POINT\ *,}
+\DoxyCodeLine{00399\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ point\_conversion\_form\_t\ form,}
+\DoxyCodeLine{00400\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *buf,\ \textcolor{keywordtype}{size\_t}\ len,\ BN\_CTX\ *);}
+\DoxyCodeLine{00401\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_simple\_oct2point(\textcolor{keyword}{const}\ EC\_GROUP\ *,\ EC\_POINT\ *,}
+\DoxyCodeLine{00402\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *buf,\ \textcolor{keywordtype}{size\_t}\ len,\ BN\_CTX\ *);}
+\DoxyCodeLine{00403\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_simple\_add(\textcolor{keyword}{const}\ EC\_GROUP\ *,\ EC\_POINT\ *r,\ \textcolor{keyword}{const}\ EC\_POINT\ *a,}
+\DoxyCodeLine{00404\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ EC\_POINT\ *\mbox{\hyperlink{structb}{b}},\ BN\_CTX\ *);}
+\DoxyCodeLine{00405\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_simple\_dbl(\textcolor{keyword}{const}\ EC\_GROUP\ *,\ EC\_POINT\ *r,\ \textcolor{keyword}{const}\ EC\_POINT\ *a,}
+\DoxyCodeLine{00406\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BN\_CTX\ *);}
+\DoxyCodeLine{00407\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_simple\_invert(\textcolor{keyword}{const}\ EC\_GROUP\ *,\ EC\_POINT\ *,\ BN\_CTX\ *);}
+\DoxyCodeLine{00408\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_simple\_is\_at\_infinity(\textcolor{keyword}{const}\ EC\_GROUP\ *,\ \textcolor{keyword}{const}\ EC\_POINT\ *);}
+\DoxyCodeLine{00409\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_simple\_is\_on\_curve(\textcolor{keyword}{const}\ EC\_GROUP\ *,\ \textcolor{keyword}{const}\ EC\_POINT\ *,\ BN\_CTX\ *);}
+\DoxyCodeLine{00410\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_simple\_cmp(\textcolor{keyword}{const}\ EC\_GROUP\ *,\ \textcolor{keyword}{const}\ EC\_POINT\ *a,}
+\DoxyCodeLine{00411\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ EC\_POINT\ *\mbox{\hyperlink{structb}{b}},\ BN\_CTX\ *);}
+\DoxyCodeLine{00412\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_simple\_make\_affine(\textcolor{keyword}{const}\ EC\_GROUP\ *,\ EC\_POINT\ *,\ BN\_CTX\ *);}
+\DoxyCodeLine{00413\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_simple\_points\_make\_affine(\textcolor{keyword}{const}\ EC\_GROUP\ *,\ \textcolor{keywordtype}{size\_t}\ num,}
+\DoxyCodeLine{00414\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ EC\_POINT\ *[],\ BN\_CTX\ *);}
+\DoxyCodeLine{00415\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_simple\_field\_mul(\textcolor{keyword}{const}\ EC\_GROUP\ *,\ BIGNUM\ *r,\ \textcolor{keyword}{const}\ BIGNUM\ *a,}
+\DoxyCodeLine{00416\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *\mbox{\hyperlink{structb}{b}},\ BN\_CTX\ *);}
+\DoxyCodeLine{00417\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_simple\_field\_sqr(\textcolor{keyword}{const}\ EC\_GROUP\ *,\ BIGNUM\ *r,\ \textcolor{keyword}{const}\ BIGNUM\ *a,}
+\DoxyCodeLine{00418\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BN\_CTX\ *);}
+\DoxyCodeLine{00419\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_simple\_field\_inv(\textcolor{keyword}{const}\ EC\_GROUP\ *,\ BIGNUM\ *r,\ \textcolor{keyword}{const}\ BIGNUM\ *a,}
+\DoxyCodeLine{00420\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BN\_CTX\ *);}
+\DoxyCodeLine{00421\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_simple\_blind\_coordinates(\textcolor{keyword}{const}\ EC\_GROUP\ *group,\ EC\_POINT\ *p,}
+\DoxyCodeLine{00422\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BN\_CTX\ *ctx);}
+\DoxyCodeLine{00423\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_simple\_ladder\_pre(\textcolor{keyword}{const}\ EC\_GROUP\ *group,}
+\DoxyCodeLine{00424\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ EC\_POINT\ *r,\ EC\_POINT\ *s,}
+\DoxyCodeLine{00425\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ EC\_POINT\ *p,\ BN\_CTX\ *ctx);}
+\DoxyCodeLine{00426\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_simple\_ladder\_step(\textcolor{keyword}{const}\ EC\_GROUP\ *group,}
+\DoxyCodeLine{00427\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ EC\_POINT\ *r,\ EC\_POINT\ *s,}
+\DoxyCodeLine{00428\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ EC\_POINT\ *p,\ BN\_CTX\ *ctx);}
+\DoxyCodeLine{00429\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_simple\_ladder\_post(\textcolor{keyword}{const}\ EC\_GROUP\ *group,}
+\DoxyCodeLine{00430\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ EC\_POINT\ *r,\ EC\_POINT\ *s,}
+\DoxyCodeLine{00431\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ EC\_POINT\ *p,\ BN\_CTX\ *ctx);}
+\DoxyCodeLine{00432\ }
+\DoxyCodeLine{00433\ \textcolor{comment}{/*\ method\ functions\ in\ ecp\_mont.c\ */}}
+\DoxyCodeLine{00434\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_mont\_group\_init(EC\_GROUP\ *);}
+\DoxyCodeLine{00435\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_mont\_group\_set\_curve(EC\_GROUP\ *,\ \textcolor{keyword}{const}\ BIGNUM\ *p,}
+\DoxyCodeLine{00436\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *a,}
+\DoxyCodeLine{00437\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *\mbox{\hyperlink{structb}{b}},\ BN\_CTX\ *);}
+\DoxyCodeLine{00438\ \textcolor{keywordtype}{void}\ ossl\_ec\_GFp\_mont\_group\_finish(EC\_GROUP\ *);}
+\DoxyCodeLine{00439\ \textcolor{keywordtype}{void}\ ossl\_ec\_GFp\_mont\_group\_clear\_finish(EC\_GROUP\ *);}
+\DoxyCodeLine{00440\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_mont\_group\_copy(EC\_GROUP\ *,\ \textcolor{keyword}{const}\ EC\_GROUP\ *);}
+\DoxyCodeLine{00441\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_mont\_field\_mul(\textcolor{keyword}{const}\ EC\_GROUP\ *,\ BIGNUM\ *r,\ \textcolor{keyword}{const}\ BIGNUM\ *a,}
+\DoxyCodeLine{00442\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *\mbox{\hyperlink{structb}{b}},\ BN\_CTX\ *);}
+\DoxyCodeLine{00443\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_mont\_field\_sqr(\textcolor{keyword}{const}\ EC\_GROUP\ *,\ BIGNUM\ *r,\ \textcolor{keyword}{const}\ BIGNUM\ *a,}
+\DoxyCodeLine{00444\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BN\_CTX\ *);}
+\DoxyCodeLine{00445\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_mont\_field\_inv(\textcolor{keyword}{const}\ EC\_GROUP\ *,\ BIGNUM\ *r,\ \textcolor{keyword}{const}\ BIGNUM\ *a,}
+\DoxyCodeLine{00446\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BN\_CTX\ *);}
+\DoxyCodeLine{00447\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_mont\_field\_encode(\textcolor{keyword}{const}\ EC\_GROUP\ *,\ BIGNUM\ *r,\ \textcolor{keyword}{const}\ BIGNUM\ *a,}
+\DoxyCodeLine{00448\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BN\_CTX\ *);}
+\DoxyCodeLine{00449\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_mont\_field\_decode(\textcolor{keyword}{const}\ EC\_GROUP\ *,\ BIGNUM\ *r,\ \textcolor{keyword}{const}\ BIGNUM\ *a,}
+\DoxyCodeLine{00450\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BN\_CTX\ *);}
+\DoxyCodeLine{00451\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_mont\_field\_set\_to\_one(\textcolor{keyword}{const}\ EC\_GROUP\ *,\ BIGNUM\ *r,\ BN\_CTX\ *);}
+\DoxyCodeLine{00452\ }
+\DoxyCodeLine{00453\ \textcolor{comment}{/*\ method\ functions\ in\ ecp\_nist.c\ */}}
+\DoxyCodeLine{00454\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_nist\_group\_copy(EC\_GROUP\ *dest,\ \textcolor{keyword}{const}\ EC\_GROUP\ *src);}
+\DoxyCodeLine{00455\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_nist\_group\_set\_curve(EC\_GROUP\ *,\ \textcolor{keyword}{const}\ BIGNUM\ *p,}
+\DoxyCodeLine{00456\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *a,\ \textcolor{keyword}{const}\ BIGNUM\ *\mbox{\hyperlink{structb}{b}},\ BN\_CTX\ *);}
+\DoxyCodeLine{00457\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_nist\_field\_mul(\textcolor{keyword}{const}\ EC\_GROUP\ *,\ BIGNUM\ *r,\ \textcolor{keyword}{const}\ BIGNUM\ *a,}
+\DoxyCodeLine{00458\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *\mbox{\hyperlink{structb}{b}},\ BN\_CTX\ *);}
+\DoxyCodeLine{00459\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_nist\_field\_sqr(\textcolor{keyword}{const}\ EC\_GROUP\ *,\ BIGNUM\ *r,\ \textcolor{keyword}{const}\ BIGNUM\ *a,}
+\DoxyCodeLine{00460\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BN\_CTX\ *);}
+\DoxyCodeLine{00461\ }
+\DoxyCodeLine{00462\ \textcolor{comment}{/*\ method\ functions\ in\ ec2\_smpl.c\ */}}
+\DoxyCodeLine{00463\ \textcolor{keywordtype}{int}\ ossl\_ec\_GF2m\_simple\_group\_init(EC\_GROUP\ *);}
+\DoxyCodeLine{00464\ \textcolor{keywordtype}{void}\ ossl\_ec\_GF2m\_simple\_group\_finish(EC\_GROUP\ *);}
+\DoxyCodeLine{00465\ \textcolor{keywordtype}{void}\ ossl\_ec\_GF2m\_simple\_group\_clear\_finish(EC\_GROUP\ *);}
+\DoxyCodeLine{00466\ \textcolor{keywordtype}{int}\ ossl\_ec\_GF2m\_simple\_group\_copy(EC\_GROUP\ *,\ \textcolor{keyword}{const}\ EC\_GROUP\ *);}
+\DoxyCodeLine{00467\ \textcolor{keywordtype}{int}\ ossl\_ec\_GF2m\_simple\_group\_set\_curve(EC\_GROUP\ *,\ \textcolor{keyword}{const}\ BIGNUM\ *p,}
+\DoxyCodeLine{00468\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *a,\ \textcolor{keyword}{const}\ BIGNUM\ *\mbox{\hyperlink{structb}{b}},}
+\DoxyCodeLine{00469\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BN\_CTX\ *);}
+\DoxyCodeLine{00470\ \textcolor{keywordtype}{int}\ ossl\_ec\_GF2m\_simple\_group\_get\_curve(\textcolor{keyword}{const}\ EC\_GROUP\ *,\ BIGNUM\ *p,\ BIGNUM\ *a,}
+\DoxyCodeLine{00471\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BIGNUM\ *\mbox{\hyperlink{structb}{b}},\ BN\_CTX\ *);}
+\DoxyCodeLine{00472\ \textcolor{keywordtype}{int}\ ossl\_ec\_GF2m\_simple\_group\_get\_degree(\textcolor{keyword}{const}\ EC\_GROUP\ *);}
+\DoxyCodeLine{00473\ \textcolor{keywordtype}{int}\ ossl\_ec\_GF2m\_simple\_group\_check\_discriminant(\textcolor{keyword}{const}\ EC\_GROUP\ *,\ BN\_CTX\ *);}
+\DoxyCodeLine{00474\ \textcolor{keywordtype}{int}\ ossl\_ec\_GF2m\_simple\_point\_init(EC\_POINT\ *);}
+\DoxyCodeLine{00475\ \textcolor{keywordtype}{void}\ ossl\_ec\_GF2m\_simple\_point\_finish(EC\_POINT\ *);}
+\DoxyCodeLine{00476\ \textcolor{keywordtype}{void}\ ossl\_ec\_GF2m\_simple\_point\_clear\_finish(EC\_POINT\ *);}
+\DoxyCodeLine{00477\ \textcolor{keywordtype}{int}\ ossl\_ec\_GF2m\_simple\_point\_copy(EC\_POINT\ *,\ \textcolor{keyword}{const}\ EC\_POINT\ *);}
+\DoxyCodeLine{00478\ \textcolor{keywordtype}{int}\ ossl\_ec\_GF2m\_simple\_point\_set\_to\_infinity(\textcolor{keyword}{const}\ EC\_GROUP\ *,\ EC\_POINT\ *);}
+\DoxyCodeLine{00479\ \textcolor{keywordtype}{int}\ ossl\_ec\_GF2m\_simple\_point\_set\_affine\_coordinates(\textcolor{keyword}{const}\ EC\_GROUP\ *,}
+\DoxyCodeLine{00480\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ EC\_POINT\ *,}
+\DoxyCodeLine{00481\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *x,}
+\DoxyCodeLine{00482\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *y,\ BN\_CTX\ *);}
+\DoxyCodeLine{00483\ \textcolor{keywordtype}{int}\ ossl\_ec\_GF2m\_simple\_point\_get\_affine\_coordinates(\textcolor{keyword}{const}\ EC\_GROUP\ *,}
+\DoxyCodeLine{00484\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ EC\_POINT\ *,\ BIGNUM\ *x,}
+\DoxyCodeLine{00485\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BIGNUM\ *y,\ BN\_CTX\ *);}
+\DoxyCodeLine{00486\ \textcolor{keywordtype}{int}\ ossl\_ec\_GF2m\_simple\_set\_compressed\_coordinates(\textcolor{keyword}{const}\ EC\_GROUP\ *,\ EC\_POINT\ *,}
+\DoxyCodeLine{00487\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *x,\ \textcolor{keywordtype}{int}\ y\_bit,}
+\DoxyCodeLine{00488\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BN\_CTX\ *);}
+\DoxyCodeLine{00489\ \textcolor{keywordtype}{size\_t}\ ossl\_ec\_GF2m\_simple\_point2oct(\textcolor{keyword}{const}\ EC\_GROUP\ *,\ \textcolor{keyword}{const}\ EC\_POINT\ *,}
+\DoxyCodeLine{00490\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ point\_conversion\_form\_t\ form,}
+\DoxyCodeLine{00491\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *buf,\ \textcolor{keywordtype}{size\_t}\ len,\ BN\_CTX\ *);}
+\DoxyCodeLine{00492\ \textcolor{keywordtype}{int}\ ossl\_ec\_GF2m\_simple\_oct2point(\textcolor{keyword}{const}\ EC\_GROUP\ *,\ EC\_POINT\ *,}
+\DoxyCodeLine{00493\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *buf,\ \textcolor{keywordtype}{size\_t}\ len,\ BN\_CTX\ *);}
+\DoxyCodeLine{00494\ \textcolor{keywordtype}{int}\ ossl\_ec\_GF2m\_simple\_add(\textcolor{keyword}{const}\ EC\_GROUP\ *,\ EC\_POINT\ *r,\ \textcolor{keyword}{const}\ EC\_POINT\ *a,}
+\DoxyCodeLine{00495\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ EC\_POINT\ *\mbox{\hyperlink{structb}{b}},\ BN\_CTX\ *);}
+\DoxyCodeLine{00496\ \textcolor{keywordtype}{int}\ ossl\_ec\_GF2m\_simple\_dbl(\textcolor{keyword}{const}\ EC\_GROUP\ *,\ EC\_POINT\ *r,\ \textcolor{keyword}{const}\ EC\_POINT\ *a,}
+\DoxyCodeLine{00497\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BN\_CTX\ *);}
+\DoxyCodeLine{00498\ \textcolor{keywordtype}{int}\ ossl\_ec\_GF2m\_simple\_invert(\textcolor{keyword}{const}\ EC\_GROUP\ *,\ EC\_POINT\ *,\ BN\_CTX\ *);}
+\DoxyCodeLine{00499\ \textcolor{keywordtype}{int}\ ossl\_ec\_GF2m\_simple\_is\_at\_infinity(\textcolor{keyword}{const}\ EC\_GROUP\ *,\ \textcolor{keyword}{const}\ EC\_POINT\ *);}
+\DoxyCodeLine{00500\ \textcolor{keywordtype}{int}\ ossl\_ec\_GF2m\_simple\_is\_on\_curve(\textcolor{keyword}{const}\ EC\_GROUP\ *,\ \textcolor{keyword}{const}\ EC\_POINT\ *,\ BN\_CTX\ *);}
+\DoxyCodeLine{00501\ \textcolor{keywordtype}{int}\ ossl\_ec\_GF2m\_simple\_cmp(\textcolor{keyword}{const}\ EC\_GROUP\ *,\ \textcolor{keyword}{const}\ EC\_POINT\ *a,}
+\DoxyCodeLine{00502\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ EC\_POINT\ *\mbox{\hyperlink{structb}{b}},\ BN\_CTX\ *);}
+\DoxyCodeLine{00503\ \textcolor{keywordtype}{int}\ ossl\_ec\_GF2m\_simple\_make\_affine(\textcolor{keyword}{const}\ EC\_GROUP\ *,\ EC\_POINT\ *,\ BN\_CTX\ *);}
+\DoxyCodeLine{00504\ \textcolor{keywordtype}{int}\ ossl\_ec\_GF2m\_simple\_points\_make\_affine(\textcolor{keyword}{const}\ EC\_GROUP\ *,\ \textcolor{keywordtype}{size\_t}\ num,}
+\DoxyCodeLine{00505\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ EC\_POINT\ *[],\ BN\_CTX\ *);}
+\DoxyCodeLine{00506\ \textcolor{keywordtype}{int}\ ossl\_ec\_GF2m\_simple\_field\_mul(\textcolor{keyword}{const}\ EC\_GROUP\ *,\ BIGNUM\ *r,\ \textcolor{keyword}{const}\ BIGNUM\ *a,}
+\DoxyCodeLine{00507\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *\mbox{\hyperlink{structb}{b}},\ BN\_CTX\ *);}
+\DoxyCodeLine{00508\ \textcolor{keywordtype}{int}\ ossl\_ec\_GF2m\_simple\_field\_sqr(\textcolor{keyword}{const}\ EC\_GROUP\ *,\ BIGNUM\ *r,\ \textcolor{keyword}{const}\ BIGNUM\ *a,}
+\DoxyCodeLine{00509\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BN\_CTX\ *);}
+\DoxyCodeLine{00510\ \textcolor{keywordtype}{int}\ ossl\_ec\_GF2m\_simple\_field\_div(\textcolor{keyword}{const}\ EC\_GROUP\ *,\ BIGNUM\ *r,\ \textcolor{keyword}{const}\ BIGNUM\ *a,}
+\DoxyCodeLine{00511\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *\mbox{\hyperlink{structb}{b}},\ BN\_CTX\ *);}
+\DoxyCodeLine{00512\ }
+\DoxyCodeLine{00513\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_EC\_NISTP\_64\_GCC\_128}}
+\DoxyCodeLine{00514\ \textcolor{preprocessor}{\#\ ifdef\ B\_ENDIAN}}
+\DoxyCodeLine{00515\ \textcolor{preprocessor}{\#\ \ error\ "{}Can\ not\ enable\ ec\_nistp\_64\_gcc\_128\ on\ big-\/endian\ systems"{}}}
+\DoxyCodeLine{00516\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00517\ }
+\DoxyCodeLine{00518\ \textcolor{comment}{/*\ method\ functions\ in\ ecp\_nistp224.c\ */}}
+\DoxyCodeLine{00519\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_nistp224\_group\_init(EC\_GROUP\ *group);}
+\DoxyCodeLine{00520\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_nistp224\_group\_set\_curve(EC\_GROUP\ *group,\ \textcolor{keyword}{const}\ BIGNUM\ *p,}
+\DoxyCodeLine{00521\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *a,\ \textcolor{keyword}{const}\ BIGNUM\ *n,}
+\DoxyCodeLine{00522\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BN\_CTX\ *);}
+\DoxyCodeLine{00523\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_nistp224\_point\_get\_affine\_coordinates(\textcolor{keyword}{const}\ EC\_GROUP\ *group,}
+\DoxyCodeLine{00524\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ EC\_POINT\ *point,}
+\DoxyCodeLine{00525\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BIGNUM\ *x,\ BIGNUM\ *y,}
+\DoxyCodeLine{00526\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BN\_CTX\ *ctx);}
+\DoxyCodeLine{00527\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_nistp224\_mul(\textcolor{keyword}{const}\ EC\_GROUP\ *group,\ EC\_POINT\ *r,}
+\DoxyCodeLine{00528\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *scalar,\ \textcolor{keywordtype}{size\_t}\ num,}
+\DoxyCodeLine{00529\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ EC\_POINT\ *points[],\ \textcolor{keyword}{const}\ BIGNUM\ *scalars[],}
+\DoxyCodeLine{00530\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BN\_CTX\ *);}
+\DoxyCodeLine{00531\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_nistp224\_points\_mul(\textcolor{keyword}{const}\ EC\_GROUP\ *group,\ EC\_POINT\ *r,}
+\DoxyCodeLine{00532\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *scalar,\ \textcolor{keywordtype}{size\_t}\ num,}
+\DoxyCodeLine{00533\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ EC\_POINT\ *points[],}
+\DoxyCodeLine{00534\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *scalars[],\ BN\_CTX\ *ctx);}
+\DoxyCodeLine{00535\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_nistp224\_precompute\_mult(EC\_GROUP\ *group,\ BN\_CTX\ *ctx);}
+\DoxyCodeLine{00536\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_nistp224\_have\_precompute\_mult(\textcolor{keyword}{const}\ EC\_GROUP\ *group);}
+\DoxyCodeLine{00537\ }
+\DoxyCodeLine{00538\ \textcolor{comment}{/*\ method\ functions\ in\ ecp\_nistp256.c\ */}}
+\DoxyCodeLine{00539\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_nistp256\_group\_init(EC\_GROUP\ *group);}
+\DoxyCodeLine{00540\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_nistp256\_group\_set\_curve(EC\_GROUP\ *group,\ \textcolor{keyword}{const}\ BIGNUM\ *p,}
+\DoxyCodeLine{00541\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *a,\ \textcolor{keyword}{const}\ BIGNUM\ *n,}
+\DoxyCodeLine{00542\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BN\_CTX\ *);}
+\DoxyCodeLine{00543\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_nistp256\_point\_get\_affine\_coordinates(\textcolor{keyword}{const}\ EC\_GROUP\ *group,}
+\DoxyCodeLine{00544\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ EC\_POINT\ *point,}
+\DoxyCodeLine{00545\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BIGNUM\ *x,\ BIGNUM\ *y,}
+\DoxyCodeLine{00546\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BN\_CTX\ *ctx);}
+\DoxyCodeLine{00547\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_nistp256\_mul(\textcolor{keyword}{const}\ EC\_GROUP\ *group,\ EC\_POINT\ *r,}
+\DoxyCodeLine{00548\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *scalar,\ \textcolor{keywordtype}{size\_t}\ num,}
+\DoxyCodeLine{00549\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ EC\_POINT\ *points[],\ \textcolor{keyword}{const}\ BIGNUM\ *scalars[],}
+\DoxyCodeLine{00550\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BN\_CTX\ *);}
+\DoxyCodeLine{00551\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_nistp256\_points\_mul(\textcolor{keyword}{const}\ EC\_GROUP\ *group,\ EC\_POINT\ *r,}
+\DoxyCodeLine{00552\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *scalar,\ \textcolor{keywordtype}{size\_t}\ num,}
+\DoxyCodeLine{00553\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ EC\_POINT\ *points[],}
+\DoxyCodeLine{00554\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *scalars[],\ BN\_CTX\ *ctx);}
+\DoxyCodeLine{00555\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_nistp256\_precompute\_mult(EC\_GROUP\ *group,\ BN\_CTX\ *ctx);}
+\DoxyCodeLine{00556\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_nistp256\_have\_precompute\_mult(\textcolor{keyword}{const}\ EC\_GROUP\ *group);}
+\DoxyCodeLine{00557\ }
+\DoxyCodeLine{00558\ \textcolor{comment}{/*\ method\ functions\ in\ ecp\_nistp384.c\ */}}
+\DoxyCodeLine{00559\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_nistp384\_group\_init(EC\_GROUP\ *group);}
+\DoxyCodeLine{00560\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_nistp384\_group\_set\_curve(EC\_GROUP\ *group,\ \textcolor{keyword}{const}\ BIGNUM\ *p,}
+\DoxyCodeLine{00561\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *a,\ \textcolor{keyword}{const}\ BIGNUM\ *n,}
+\DoxyCodeLine{00562\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BN\_CTX\ *);}
+\DoxyCodeLine{00563\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_nistp384\_point\_get\_affine\_coordinates(\textcolor{keyword}{const}\ EC\_GROUP\ *group,}
+\DoxyCodeLine{00564\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ EC\_POINT\ *point,}
+\DoxyCodeLine{00565\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BIGNUM\ *x,\ BIGNUM\ *y,}
+\DoxyCodeLine{00566\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BN\_CTX\ *ctx);}
+\DoxyCodeLine{00567\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_nistp384\_mul(\textcolor{keyword}{const}\ EC\_GROUP\ *group,\ EC\_POINT\ *r,}
+\DoxyCodeLine{00568\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *scalar,\ \textcolor{keywordtype}{size\_t}\ num,}
+\DoxyCodeLine{00569\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ EC\_POINT\ *points[],\ \textcolor{keyword}{const}\ BIGNUM\ *scalars[],}
+\DoxyCodeLine{00570\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BN\_CTX\ *);}
+\DoxyCodeLine{00571\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_nistp384\_points\_mul(\textcolor{keyword}{const}\ EC\_GROUP\ *group,\ EC\_POINT\ *r,}
+\DoxyCodeLine{00572\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *scalar,\ \textcolor{keywordtype}{size\_t}\ num,}
+\DoxyCodeLine{00573\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ EC\_POINT\ *points[],}
+\DoxyCodeLine{00574\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *scalars[],\ BN\_CTX\ *ctx);}
+\DoxyCodeLine{00575\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_nistp384\_precompute\_mult(EC\_GROUP\ *group,\ BN\_CTX\ *ctx);}
+\DoxyCodeLine{00576\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_nistp384\_have\_precompute\_mult(\textcolor{keyword}{const}\ EC\_GROUP\ *group);}
+\DoxyCodeLine{00577\ \textcolor{keyword}{const}\ EC\_METHOD\ *ossl\_ec\_GFp\_nistp384\_method(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00578\ }
+\DoxyCodeLine{00579\ \textcolor{comment}{/*\ method\ functions\ in\ ecp\_nistp521.c\ */}}
+\DoxyCodeLine{00580\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_nistp521\_group\_init(EC\_GROUP\ *group);}
+\DoxyCodeLine{00581\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_nistp521\_group\_set\_curve(EC\_GROUP\ *group,\ \textcolor{keyword}{const}\ BIGNUM\ *p,}
+\DoxyCodeLine{00582\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *a,\ \textcolor{keyword}{const}\ BIGNUM\ *n,}
+\DoxyCodeLine{00583\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BN\_CTX\ *);}
+\DoxyCodeLine{00584\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_nistp521\_point\_get\_affine\_coordinates(\textcolor{keyword}{const}\ EC\_GROUP\ *group,}
+\DoxyCodeLine{00585\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ EC\_POINT\ *point,}
+\DoxyCodeLine{00586\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BIGNUM\ *x,\ BIGNUM\ *y,}
+\DoxyCodeLine{00587\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BN\_CTX\ *ctx);}
+\DoxyCodeLine{00588\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_nistp521\_mul(\textcolor{keyword}{const}\ EC\_GROUP\ *group,\ EC\_POINT\ *r,}
+\DoxyCodeLine{00589\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *scalar,\ \textcolor{keywordtype}{size\_t}\ num,}
+\DoxyCodeLine{00590\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ EC\_POINT\ *points[],\ \textcolor{keyword}{const}\ BIGNUM\ *scalars[],}
+\DoxyCodeLine{00591\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BN\_CTX\ *);}
+\DoxyCodeLine{00592\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_nistp521\_points\_mul(\textcolor{keyword}{const}\ EC\_GROUP\ *group,\ EC\_POINT\ *r,}
+\DoxyCodeLine{00593\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *scalar,\ \textcolor{keywordtype}{size\_t}\ num,}
+\DoxyCodeLine{00594\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ EC\_POINT\ *points[],}
+\DoxyCodeLine{00595\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *scalars[],\ BN\_CTX\ *ctx);}
+\DoxyCodeLine{00596\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_nistp521\_precompute\_mult(EC\_GROUP\ *group,\ BN\_CTX\ *ctx);}
+\DoxyCodeLine{00597\ \textcolor{keywordtype}{int}\ ossl\_ec\_GFp\_nistp521\_have\_precompute\_mult(\textcolor{keyword}{const}\ EC\_GROUP\ *group);}
+\DoxyCodeLine{00598\ }
+\DoxyCodeLine{00599\ \textcolor{comment}{/*\ utility\ functions\ in\ ecp\_nistputil.c\ */}}
+\DoxyCodeLine{00600\ \textcolor{keywordtype}{void}\ ossl\_ec\_GFp\_nistp\_points\_make\_affine\_internal(\textcolor{keywordtype}{size\_t}\ num,\ \textcolor{keywordtype}{void}\ *point\_array,}
+\DoxyCodeLine{00601\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ felem\_size,}
+\DoxyCodeLine{00602\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *tmp\_felems,}
+\DoxyCodeLine{00603\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ (*felem\_one)\ (\textcolor{keywordtype}{void}\ *out),}
+\DoxyCodeLine{00604\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ (*felem\_is\_zero)}
+\DoxyCodeLine{00605\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (\textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *in),}
+\DoxyCodeLine{00606\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ (*felem\_assign)}
+\DoxyCodeLine{00607\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (\textcolor{keywordtype}{void}\ *out,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *in),}
+\DoxyCodeLine{00608\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ (*felem\_square)}
+\DoxyCodeLine{00609\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (\textcolor{keywordtype}{void}\ *out,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *in),}
+\DoxyCodeLine{00610\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ (*felem\_mul)}
+\DoxyCodeLine{00611\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (\textcolor{keywordtype}{void}\ *out,}
+\DoxyCodeLine{00612\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *in1,}
+\DoxyCodeLine{00613\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *in2),}
+\DoxyCodeLine{00614\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ (*felem\_inv)}
+\DoxyCodeLine{00615\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (\textcolor{keywordtype}{void}\ *out,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *in),}
+\DoxyCodeLine{00616\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ (*felem\_contract)}
+\DoxyCodeLine{00617\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (\textcolor{keywordtype}{void}\ *out,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *in));}
+\DoxyCodeLine{00618\ \textcolor{keywordtype}{void}\ ossl\_ec\_GFp\_nistp\_recode\_scalar\_bits(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *sign,}
+\DoxyCodeLine{00619\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *digit,}
+\DoxyCodeLine{00620\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ in);}
+\DoxyCodeLine{00621\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00622\ \textcolor{keywordtype}{int}\ ossl\_ec\_group\_simple\_order\_bits(\textcolor{keyword}{const}\ EC\_GROUP\ *group);}
+\DoxyCodeLine{00623\ }
+\DoxyCodeLine{00632\ EC\_GROUP\ *ossl\_ec\_group\_new\_ex(OSSL\_LIB\_CTX\ *libctx,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *propq,}
+\DoxyCodeLine{00633\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ EC\_METHOD\ *meth);}
+\DoxyCodeLine{00634\ }
+\DoxyCodeLine{00635\ \textcolor{preprocessor}{\#ifdef\ ECP\_NISTZ256\_ASM}}
+\DoxyCodeLine{00640\ \textcolor{keyword}{const}\ EC\_METHOD\ *EC\_GFp\_nistz256\_method(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00641\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00642\ \textcolor{preprocessor}{\#ifdef\ S390X\_EC\_ASM}}
+\DoxyCodeLine{00643\ \textcolor{keyword}{const}\ EC\_METHOD\ *EC\_GFp\_s390x\_nistp256\_method(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00644\ \textcolor{keyword}{const}\ EC\_METHOD\ *EC\_GFp\_s390x\_nistp384\_method(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00645\ \textcolor{keyword}{const}\ EC\_METHOD\ *EC\_GFp\_s390x\_nistp521\_method(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00646\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00647\ }
+\DoxyCodeLine{00648\ \textcolor{keywordtype}{size\_t}\ ossl\_ec\_key\_simple\_priv2oct(\textcolor{keyword}{const}\ EC\_KEY\ *eckey,}
+\DoxyCodeLine{00649\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *buf,\ \textcolor{keywordtype}{size\_t}\ len);}
+\DoxyCodeLine{00650\ \textcolor{keywordtype}{int}\ ossl\_ec\_key\_simple\_oct2priv(EC\_KEY\ *eckey,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *buf,}
+\DoxyCodeLine{00651\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ len);}
+\DoxyCodeLine{00652\ \textcolor{keywordtype}{int}\ ossl\_ec\_key\_simple\_generate\_key(EC\_KEY\ *eckey);}
+\DoxyCodeLine{00653\ \textcolor{keywordtype}{int}\ ossl\_ec\_key\_simple\_generate\_public\_key(EC\_KEY\ *eckey);}
+\DoxyCodeLine{00654\ \textcolor{keywordtype}{int}\ ossl\_ec\_key\_simple\_check\_key(\textcolor{keyword}{const}\ EC\_KEY\ *eckey);}
+\DoxyCodeLine{00655\ }
+\DoxyCodeLine{00656\ \textcolor{preprocessor}{\#ifdef\ ECP\_SM2P256\_ASM}}
+\DoxyCodeLine{00657\ \textcolor{comment}{/*\ Returns\ optimized\ methods\ for\ SM2\ */}}
+\DoxyCodeLine{00658\ \textcolor{keyword}{const}\ EC\_METHOD\ *EC\_GFp\_sm2p256\_method(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00659\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00660\ }
+\DoxyCodeLine{00661\ \textcolor{keywordtype}{int}\ ossl\_ec\_curve\_nid\_from\_params(\textcolor{keyword}{const}\ EC\_GROUP\ *group,\ BN\_CTX\ *ctx);}
+\DoxyCodeLine{00662\ }
+\DoxyCodeLine{00663\ \textcolor{comment}{/*\ EC\_METHOD\ definitions\ */}}
+\DoxyCodeLine{00664\ }
+\DoxyCodeLine{00665\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structec__key__method__st}{ec\_key\_method\_st}}\ \{}
+\DoxyCodeLine{00666\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *name;}
+\DoxyCodeLine{00667\ \ \ \ \ int32\_t\ flags;}
+\DoxyCodeLine{00668\ \ \ \ \ int\ (*init)(EC\_KEY\ *key);}
+\DoxyCodeLine{00669\ \ \ \ \ void\ (*finish)(EC\_KEY\ *key);}
+\DoxyCodeLine{00670\ \ \ \ \ int\ (*copy)(EC\_KEY\ *dest,\ \textcolor{keyword}{const}\ EC\_KEY\ *src);}
+\DoxyCodeLine{00671\ \ \ \ \ int\ (*set\_group)(EC\_KEY\ *key,\ \textcolor{keyword}{const}\ EC\_GROUP\ *grp);}
+\DoxyCodeLine{00672\ \ \ \ \ int\ (*set\_private)(EC\_KEY\ *key,\ \textcolor{keyword}{const}\ BIGNUM\ *priv\_key);}
+\DoxyCodeLine{00673\ \ \ \ \ int\ (*set\_public)(EC\_KEY\ *key,\ \textcolor{keyword}{const}\ EC\_POINT\ *pub\_key);}
+\DoxyCodeLine{00674\ \ \ \ \ int\ (*keygen)(EC\_KEY\ *key);}
+\DoxyCodeLine{00675\ \ \ \ \ int\ (*compute\_key)(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **pout,\ \textcolor{keywordtype}{size\_t}\ *poutlen,}
+\DoxyCodeLine{00676\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ EC\_POINT\ *pub\_key,\ \textcolor{keyword}{const}\ EC\_KEY\ *ecdh);}
+\DoxyCodeLine{00677\ \ \ \ \ int\ (*sign)(\textcolor{keywordtype}{int}\ type,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *dgst,\ \textcolor{keywordtype}{int}\ dlen,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}}
+\DoxyCodeLine{00678\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *sig,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ *siglen,\ \textcolor{keyword}{const}\ BIGNUM\ *kinv,}
+\DoxyCodeLine{00679\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *r,\ EC\_KEY\ *eckey);}
+\DoxyCodeLine{00680\ \ \ \ \ int\ (*sign\_setup)(EC\_KEY\ *eckey,\ BN\_CTX\ *ctx\_in,\ BIGNUM\ **kinvp,}
+\DoxyCodeLine{00681\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BIGNUM\ **rp);}
+\DoxyCodeLine{00682\ \ \ \ \ ECDSA\_SIG\ *(*sign\_sig)(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *dgst,\ \textcolor{keywordtype}{int}\ dgst\_len,}
+\DoxyCodeLine{00683\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *in\_kinv,\ \textcolor{keyword}{const}\ BIGNUM\ *in\_r,}
+\DoxyCodeLine{00684\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ EC\_KEY\ *eckey);}
+\DoxyCodeLine{00685\ }
+\DoxyCodeLine{00686\ \ \ \ \ int\ (*verify)(\textcolor{keywordtype}{int}\ type,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *dgst,\ \textcolor{keywordtype}{int}\ dgst\_len,}
+\DoxyCodeLine{00687\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *sigbuf,\ \textcolor{keywordtype}{int}\ sig\_len,\ EC\_KEY\ *eckey);}
+\DoxyCodeLine{00688\ \ \ \ \ int\ (*verify\_sig)(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *dgst,\ \textcolor{keywordtype}{int}\ dgst\_len,}
+\DoxyCodeLine{00689\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ ECDSA\_SIG\ *sig,\ EC\_KEY\ *eckey);}
+\DoxyCodeLine{00690\ \};}
+\DoxyCodeLine{00691\ }
+\DoxyCodeLine{00692\ \textcolor{preprocessor}{\#define\ EC\_KEY\_METHOD\_DYNAMIC\ \ \ 1}}
+\DoxyCodeLine{00693\ }
+\DoxyCodeLine{00694\ EC\_KEY\ *ossl\_ec\_key\_new\_method\_int(OSSL\_LIB\_CTX\ *libctx,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *propq,}
+\DoxyCodeLine{00695\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ENGINE\ *engine);}
+\DoxyCodeLine{00696\ }
+\DoxyCodeLine{00697\ \textcolor{keywordtype}{int}\ ossl\_ec\_key\_gen(EC\_KEY\ *eckey);}
+\DoxyCodeLine{00698\ \textcolor{keywordtype}{int}\ ossl\_ecdh\_compute\_key(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **pout,\ \textcolor{keywordtype}{size\_t}\ *poutlen,}
+\DoxyCodeLine{00699\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ EC\_POINT\ *pub\_key,\ \textcolor{keyword}{const}\ EC\_KEY\ *ecdh);}
+\DoxyCodeLine{00700\ \textcolor{keywordtype}{int}\ ossl\_ecdh\_simple\_compute\_key(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **pout,\ \textcolor{keywordtype}{size\_t}\ *poutlen,}
+\DoxyCodeLine{00701\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ EC\_POINT\ *pub\_key,\ \textcolor{keyword}{const}\ EC\_KEY\ *ecdh);}
+\DoxyCodeLine{00702\ }
+\DoxyCodeLine{00703\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_e_c_d_s_a___s_i_g__st}{ECDSA\_SIG\_st}}\ \{}
+\DoxyCodeLine{00704\ \ \ \ \ BIGNUM\ *r;}
+\DoxyCodeLine{00705\ \ \ \ \ BIGNUM\ *s;}
+\DoxyCodeLine{00706\ \};}
+\DoxyCodeLine{00707\ }
+\DoxyCodeLine{00708\ \textcolor{keywordtype}{int}\ ossl\_ecdsa\_sign\_setup(EC\_KEY\ *eckey,\ BN\_CTX\ *ctx\_in,\ BIGNUM\ **kinvp,}
+\DoxyCodeLine{00709\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BIGNUM\ **rp);}
+\DoxyCodeLine{00710\ \textcolor{keywordtype}{int}\ ossl\_ecdsa\_sign(\textcolor{keywordtype}{int}\ type,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *dgst,\ \textcolor{keywordtype}{int}\ dlen,}
+\DoxyCodeLine{00711\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *sig,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ *siglen,}
+\DoxyCodeLine{00712\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *kinv,\ \textcolor{keyword}{const}\ BIGNUM\ *r,\ EC\_KEY\ *eckey);}
+\DoxyCodeLine{00713\ ECDSA\_SIG\ *ossl\_ecdsa\_sign\_sig(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *dgst,\ \textcolor{keywordtype}{int}\ dgst\_len,}
+\DoxyCodeLine{00714\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *in\_kinv,\ \textcolor{keyword}{const}\ BIGNUM\ *in\_r,}
+\DoxyCodeLine{00715\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ EC\_KEY\ *eckey);}
+\DoxyCodeLine{00716\ \textcolor{keywordtype}{int}\ ossl\_ecdsa\_verify(\textcolor{keywordtype}{int}\ type,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *dgst,\ \textcolor{keywordtype}{int}\ dgst\_len,}
+\DoxyCodeLine{00717\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *sigbuf,\ \textcolor{keywordtype}{int}\ sig\_len,\ EC\_KEY\ *eckey);}
+\DoxyCodeLine{00718\ \textcolor{keywordtype}{int}\ ossl\_ecdsa\_verify\_sig(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *dgst,\ \textcolor{keywordtype}{int}\ dgst\_len,}
+\DoxyCodeLine{00719\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ ECDSA\_SIG\ *sig,\ EC\_KEY\ *eckey);}
+\DoxyCodeLine{00720\ \textcolor{keywordtype}{int}\ ossl\_ecdsa\_simple\_sign\_setup(EC\_KEY\ *eckey,\ BN\_CTX\ *ctx\_in,\ BIGNUM\ **kinvp,}
+\DoxyCodeLine{00721\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BIGNUM\ **rp);}
+\DoxyCodeLine{00722\ ECDSA\_SIG\ *ossl\_ecdsa\_simple\_sign\_sig(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *dgst,\ \textcolor{keywordtype}{int}\ dgst\_len,}
+\DoxyCodeLine{00723\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *in\_kinv,\ \textcolor{keyword}{const}\ BIGNUM\ *in\_r,}
+\DoxyCodeLine{00724\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ EC\_KEY\ *eckey);}
+\DoxyCodeLine{00725\ \textcolor{keywordtype}{int}\ ossl\_ecdsa\_simple\_verify\_sig(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *dgst,\ \textcolor{keywordtype}{int}\ dgst\_len,}
+\DoxyCodeLine{00726\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ ECDSA\_SIG\ *sig,\ EC\_KEY\ *eckey);}
+\DoxyCodeLine{00727\ }
+\DoxyCodeLine{00728\ }
+\DoxyCodeLine{00729\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00730\ \textcolor{comment}{\ *\ This\ functions\ computes\ a\ single\ point\ multiplication\ over\ the\ EC\ group,}}
+\DoxyCodeLine{00731\ \textcolor{comment}{\ *\ using,\ at\ a\ high\ level,\ a\ Montgomery\ ladder\ with\ conditional\ swaps,\ with}}
+\DoxyCodeLine{00732\ \textcolor{comment}{\ *\ various\ timing\ attack\ defenses.}}
+\DoxyCodeLine{00733\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00734\ \textcolor{comment}{\ *\ It\ performs\ either\ a\ fixed\ point\ multiplication}}
+\DoxyCodeLine{00735\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ (scalar\ *\ generator)}}
+\DoxyCodeLine{00736\ \textcolor{comment}{\ *\ when\ point\ is\ NULL,\ or\ a\ variable\ point\ multiplication}}
+\DoxyCodeLine{00737\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ (scalar\ *\ point)}}
+\DoxyCodeLine{00738\ \textcolor{comment}{\ *\ when\ point\ is\ not\ NULL.}}
+\DoxyCodeLine{00739\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00740\ \textcolor{comment}{\ *\ \`{}scalar`\ cannot\ be\ NULL\ and\ should\ be\ in\ the\ range\ [0,n)\ otherwise\ all}}
+\DoxyCodeLine{00741\ \textcolor{comment}{\ *\ constant\ time\ bets\ are\ off\ (where\ n\ is\ the\ cardinality\ of\ the\ EC\ group).}}
+\DoxyCodeLine{00742\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00743\ \textcolor{comment}{\ *\ This\ function\ expects\ \`{}group-\/>order`\ and\ \`{}group-\/>cardinality`\ to\ be\ well}}
+\DoxyCodeLine{00744\ \textcolor{comment}{\ *\ defined\ and\ non-\/zero:\ it\ fails\ with\ an\ error\ code\ otherwise.}}
+\DoxyCodeLine{00745\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00746\ \textcolor{comment}{\ *\ NB:\ This\ says\ nothing\ about\ the\ constant-\/timeness\ of\ the\ ladder\ step}}
+\DoxyCodeLine{00747\ \textcolor{comment}{\ *\ implementation\ (i.e.,\ the\ default\ implementation\ is\ based\ on\ EC\_POINT\_add\ and}}
+\DoxyCodeLine{00748\ \textcolor{comment}{\ *\ EC\_POINT\_dbl,\ which\ of\ course\ are\ not\ constant\ time\ themselves)\ or\ the}}
+\DoxyCodeLine{00749\ \textcolor{comment}{\ *\ underlying\ multiprecision\ arithmetic.}}
+\DoxyCodeLine{00750\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00751\ \textcolor{comment}{\ *\ The\ product\ is\ stored\ in\ \`{}r`.}}
+\DoxyCodeLine{00752\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00753\ \textcolor{comment}{\ *\ This\ is\ an\ internal\ function:\ callers\ are\ in\ charge\ of\ ensuring\ that\ the}}
+\DoxyCodeLine{00754\ \textcolor{comment}{\ *\ input\ parameters\ \`{}group`,\ \`{}r`,\ \`{}scalar`\ and\ \`{}ctx`\ are\ not\ NULL.}}
+\DoxyCodeLine{00755\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00756\ \textcolor{comment}{\ *\ Returns\ 1\ on\ success,\ 0\ otherwise.}}
+\DoxyCodeLine{00757\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00758\ \textcolor{keywordtype}{int}\ ossl\_ec\_scalar\_mul\_ladder(\textcolor{keyword}{const}\ EC\_GROUP\ *group,\ EC\_POINT\ *r,}
+\DoxyCodeLine{00759\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *scalar,\ \textcolor{keyword}{const}\ EC\_POINT\ *point,}
+\DoxyCodeLine{00760\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BN\_CTX\ *ctx);}
+\DoxyCodeLine{00761\ }
+\DoxyCodeLine{00762\ \textcolor{keywordtype}{int}\ ossl\_ec\_point\_blind\_coordinates(\textcolor{keyword}{const}\ EC\_GROUP\ *group,\ EC\_POINT\ *p,}
+\DoxyCodeLine{00763\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BN\_CTX\ *ctx);}
+\DoxyCodeLine{00764\ }
+\DoxyCodeLine{00765\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{int}\ ec\_point\_ladder\_pre(\textcolor{keyword}{const}\ EC\_GROUP\ *group,}
+\DoxyCodeLine{00766\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ EC\_POINT\ *r,\ EC\_POINT\ *s,}
+\DoxyCodeLine{00767\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ EC\_POINT\ *p,\ BN\_CTX\ *ctx)}
+\DoxyCodeLine{00768\ \{}
+\DoxyCodeLine{00769\ \ \ \ \ \textcolor{keywordflow}{if}\ (group-\/>meth-\/>ladder\_pre\ !=\ NULL)}
+\DoxyCodeLine{00770\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ group-\/>meth-\/>ladder\_pre(group,\ r,\ s,\ p,\ ctx);}
+\DoxyCodeLine{00771\ }
+\DoxyCodeLine{00772\ \ \ \ \ \textcolor{keywordflow}{if}\ (!EC\_POINT\_copy(s,\ p)}
+\DoxyCodeLine{00773\ \ \ \ \ \ \ \ \ ||\ !EC\_POINT\_dbl(group,\ r,\ s,\ ctx))}
+\DoxyCodeLine{00774\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00775\ }
+\DoxyCodeLine{00776\ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00777\ \}}
+\DoxyCodeLine{00778\ }
+\DoxyCodeLine{00779\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{int}\ ec\_point\_ladder\_step(\textcolor{keyword}{const}\ EC\_GROUP\ *group,}
+\DoxyCodeLine{00780\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ EC\_POINT\ *r,\ EC\_POINT\ *s,}
+\DoxyCodeLine{00781\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ EC\_POINT\ *p,\ BN\_CTX\ *ctx)}
+\DoxyCodeLine{00782\ \{}
+\DoxyCodeLine{00783\ \ \ \ \ \textcolor{keywordflow}{if}\ (group-\/>meth-\/>ladder\_step\ !=\ NULL)}
+\DoxyCodeLine{00784\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ group-\/>meth-\/>ladder\_step(group,\ r,\ s,\ p,\ ctx);}
+\DoxyCodeLine{00785\ }
+\DoxyCodeLine{00786\ \ \ \ \ \textcolor{keywordflow}{if}\ (!EC\_POINT\_add(group,\ s,\ r,\ s,\ ctx)}
+\DoxyCodeLine{00787\ \ \ \ \ \ \ \ \ ||\ !EC\_POINT\_dbl(group,\ r,\ r,\ ctx))}
+\DoxyCodeLine{00788\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00789\ }
+\DoxyCodeLine{00790\ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00791\ }
+\DoxyCodeLine{00792\ \}}
+\DoxyCodeLine{00793\ }
+\DoxyCodeLine{00794\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{int}\ ec\_point\_ladder\_post(\textcolor{keyword}{const}\ EC\_GROUP\ *group,}
+\DoxyCodeLine{00795\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ EC\_POINT\ *r,\ EC\_POINT\ *s,}
+\DoxyCodeLine{00796\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ EC\_POINT\ *p,\ BN\_CTX\ *ctx)}
+\DoxyCodeLine{00797\ \{}
+\DoxyCodeLine{00798\ \ \ \ \ \textcolor{keywordflow}{if}\ (group-\/>meth-\/>ladder\_post\ !=\ NULL)}
+\DoxyCodeLine{00799\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ group-\/>meth-\/>ladder\_post(group,\ r,\ s,\ p,\ ctx);}
+\DoxyCodeLine{00800\ }
+\DoxyCodeLine{00801\ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00802\ \}}
+
+\end{DoxyCode}

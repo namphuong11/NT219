@@ -1,0 +1,130 @@
+\chapter{Fetching composite algorithms and using them -\/ adding the bits still missing}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2fetching-composite-algorithms}{}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2fetching-composite-algorithms}\index{Fetching composite algorithms and using them -\/ adding the bits still missing@{Fetching composite algorithms and using them -\/ adding the bits still missing}}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2fetching-composite-algorithms_autotoc_md213}{}\doxysection{\texorpdfstring{Quick background}{Quick background}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2fetching-composite-algorithms_autotoc_md213}
+We currently support -\/ at least in the public libcrypto API -\/ explicitly fetching composite algorithms (such as AES-\/128-\/\+CBC or HMAC-\/\+SHA256), and using them in most cases. In some cases (symmetric ciphers), our providers also provide them.
+
+However, there is one class of algorithms where the support for {\itshape using} explicitly fetched algorithms is lacking\+: asymmetric algorithms.
+
+For a longer background and explanation, see Background / tl;dr at the end of this design.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2fetching-composite-algorithms_autotoc_md214}{}\doxysection{\texorpdfstring{Public API -\/ Add variants of {\ttfamily EVP\+\_\+\+PKEY\+\_\+\+CTX} initializers}{Public API -\/ Add variants of {\ttfamily EVP\+\_\+\+PKEY\+\_\+\+CTX} initializers}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2fetching-composite-algorithms_autotoc_md214}
+As far as this design is concerned, these API sets are affected\+:
+
+
+\begin{DoxyItemize}
+\item SIGNATURE (Digest\+Sign and Digest\+Verify)
+\item ASYM\+\_\+\+CIPHER
+\item KEYEXCH
+\end{DoxyItemize}
+
+The proposal is to add these functions\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\ C}
+\DoxyCodeLine{EVP\_DigestSignInit\_ex2(EVP\_PKEY\_CTX\ **pctx,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ EVP\_SIGNATURE\ *sig,\ EVP\_PKEY\ *pkey,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OSSL\_LIB\_CTX\ *libctx,\ const\ OSSL\_PARAM\ params[]);}
+\DoxyCodeLine{EVP\_DigestVerifyInit\_ex2(EVP\_PKEY\_CTX\ **pctx,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ EVP\_SIGNATURE\ *sig,\ EVP\_PKEY\ *pkey,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OSSL\_LIB\_CTX\ *libctx,\ const\ OSSL\_PARAM\ params[]);}
+\DoxyCodeLine{}
+\DoxyCodeLine{int\ EVP\_PKEY\_encrypt\_init\_ex2(EVP\_PKEY\_CTX\ *ctx,\ EVP\_ASYM\_CIPHER\ *asymciph,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ const\ OSSL\_PARAM\ params[]);}
+\DoxyCodeLine{int\ EVP\_PKEY\_decrypt\_init\_ex2(EVP\_PKEY\_CTX\ *ctx,\ EVP\_ASYM\_CIPHER\ *asymciph,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ const\ OSSL\_PARAM\ params[]);}
+\DoxyCodeLine{}
+\DoxyCodeLine{int\ EVP\_PKEY\_derive\_init\_ex2(EVP\_PKEY\_CTX\ *ctx,\ EVP\_KEYEXCH\ *exchange,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ const\ OSSL\_PARAM\ params[]);}
+
+\end{DoxyCode}
+
+
+Because {\ttfamily EVP\+\_\+\+SIGNATURE}, {\ttfamily EVP\+\_\+\+ASYM\+\_\+\+CIPHER} and {\ttfamily EVP\+\_\+\+KEYEXCH} aren\textquotesingle{}t limited to composite algorithms, these functions can be used just as well with explicit fetches of simple algorithms, say "{}\+RSA"{}. In that case, the caller will need to pass necessary auxiliary parameters through the {\ttfamily OSSL\+\_\+\+PARAM} or a call to a corresponding {\ttfamily set\+\_\+params} function.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2fetching-composite-algorithms_autotoc_md215}{}\doxysection{\texorpdfstring{Requirements on the providers}{Requirements on the providers}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2fetching-composite-algorithms_autotoc_md215}
+Because it\textquotesingle{}s not immediately obvious from a composite algorithm name what key type it requires / supports, at least in code, allowing the use of an explicitly fetched implementation of a composite algorithm requires that providers cooperate by declaring what key type is required / supported by each algorithm.
+
+For non-\/composite operation algorithms (like "{}\+RSA"{}), this is not necessary, see the fallback strategies below.
+
+There are two ways this could be implemented\+:
+
+
+\begin{DoxyEnumerate}
+\item through an added provider function that would work like keymgmt\textquotesingle{}s {\ttfamily query\+\_\+operation\+\_\+name} function, but would return a key type name instead\+:
+
+\`{}\`{}\`{} C 
+\end{DoxyEnumerate}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2fetching-composite-algorithms_autotoc_md216}{}\doxysection{\texorpdfstring{define OSSL\+\_\+\+FUNC\+\_\+\+SIGNATURE\+\_\+\+QUERY\+\_\+\+KEY\+\_\+\+TYPE 26}{define OSSL\+\_\+\+FUNC\+\_\+\+SIGNATURE\+\_\+\+QUERY\+\_\+\+KEY\+\_\+\+TYPE 26}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2fetching-composite-algorithms_autotoc_md216}
+OSSL\+\_\+\+CORE\+\_\+\+MAKE\+\_\+\+FUNC(const char \texorpdfstring{$\ast$}{*}, signature\+\_\+query\+\_\+key\+\_\+type, (void))\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2fetching-composite-algorithms_autotoc_md217}{}\doxysection{\texorpdfstring{define OSSL\+\_\+\+FUNC ASYM\+\_\+\+CIPHER\+\_\+\+QUERY\+\_\+\+KEY\+\_\+\+TYPE 12}{define OSSL\+\_\+\+FUNC ASYM\+\_\+\+CIPHER\+\_\+\+QUERY\+\_\+\+KEY\+\_\+\+TYPE 12}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2fetching-composite-algorithms_autotoc_md217}
+OSSL\+\_\+\+CORE\+\_\+\+MAKE\+\_\+\+FUNC(const char \texorpdfstring{$\ast$}{*}, asym\+\_\+cipher\+\_\+query\+\_\+key\+\_\+type, (void))\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2fetching-composite-algorithms_autotoc_md218}{}\doxysection{\texorpdfstring{define OSSL\+\_\+\+FUNC\+\_\+\+KEYEXCH\+\_\+\+QUERY\+\_\+\+KEY\+\_\+\+TYPE 11}{define OSSL\+\_\+\+FUNC\+\_\+\+KEYEXCH\+\_\+\+QUERY\+\_\+\+KEY\+\_\+\+TYPE 11}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2fetching-composite-algorithms_autotoc_md218}
+OSSL\+\_\+\+CORE\+\_\+\+MAKE\+\_\+\+FUNC(const char \texorpdfstring{$\ast$}{*}, keyexch\+\_\+query\+\_\+key\+\_\+type, (void)) \`{}\`{}\`{}
+
+
+\begin{DoxyEnumerate}
+\item through a gettable {\ttfamily OSSL\+\_\+\+PARAM}, using the param identity "{}keytype"{}
+\end{DoxyEnumerate}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2fetching-composite-algorithms_autotoc_md219}{}\doxysubsection{\texorpdfstring{Fallback strategies}{Fallback strategies}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2fetching-composite-algorithms_autotoc_md219}
+Because existing providers haven\textquotesingle{}t been updated to declare composite algorithms, or to respond to the key type query, some fallback strategies will be needed to find out if the {\ttfamily EVP\+\_\+\+PKEY} key type is possible to use with the fetched algorithm\+:
+
+
+\begin{DoxyItemize}
+\item Check if the fetched operation name matches the key type (keymgmt name) of the {\ttfamily EVP\+\_\+\+PKEY} that\textquotesingle{}s involved in the operation. For example, this is useful when someone fetched the {\ttfamily EVP\+\_\+\+SIGNATURE} "{}\+RSA"{}.
+\item Check if the fetched algorithm name matches the name returned by the keymgmt\textquotesingle{}s {\ttfamily query\+\_\+operation\+\_\+name} function. For example, this is useful when someone fetched the {\ttfamily EVP\+\_\+\+SIGNATURE} "{}\+ECDSA"{}, for which the key type to use is "{}\+EC"{}.
+\item libcrypto currently has knowledge of some composite algorithm names and what they are composed of, accessible with {\ttfamily OBJ\+\_\+find\+\_\+sigid\+\_\+algs} and similar functionality. This knowledge is regarded legacy, but can be used to figure out the key type.
+\end{DoxyItemize}
+
+If none of these strategies work out, the operation initialization should fail.
+
+These strategies have their limitations, but the built-\/in legacy knowledge we currently have in libcrypto should be enough to cover most bases.
+
+\DoxyHorRuler{0}
+
+
+\DoxyHorRuler{0}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2fetching-composite-algorithms_autotoc_md222}{}\doxysubsection{\texorpdfstring{Background / tl;dr}{Background / tl;dr}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2fetching-composite-algorithms_autotoc_md222}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2fetching-composite-algorithms_autotoc_md223}{}\doxysubsubsection{\texorpdfstring{What is a composite algorithm?}{What is a composite algorithm?}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2fetching-composite-algorithms_autotoc_md223}
+A composite algorithm is an algorithm that\textquotesingle{}s composed of more than one other algorithm. In Open\+SSL parlance with a focus on signatures, they have been known as "{}sigalgs"{}, but this is really broader than just signature algorithms. Examples are\+:
+
+
+\begin{DoxyItemize}
+\item AES-\/128-\/\+CBC
+\item hmac\+With\+SHA256
+\item sha256\+With\+RSAEncryption
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2fetching-composite-algorithms_autotoc_md224}{}\doxysubsubsection{\texorpdfstring{The connection with Algorithm\+Identifiers}{The connection with Algorithm\+Identifiers}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2fetching-composite-algorithms_autotoc_md224}
+Algorithm\+Identifier is an ASN.\+1 structure that defines an algorithm as an OID, along with parameters that should be passed to that algorithm.
+
+It is expected that an application should be able to take that OID and fetch it directly, after conversion to string form (either a name if the application or libcrypto happens to know it, or the OID itself in canonical numerical form). To enable this, explicit fetching is necessary.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2fetching-composite-algorithms_autotoc_md225}{}\doxysubsubsection{\texorpdfstring{What we have today}{What we have today}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2fetching-composite-algorithms_autotoc_md225}
+As a matter of fact, we already have built-\/in support for fetching composite algorithms, although our providers do not fully participate in that support, and {\itshape most of the time}, we also have public APIs to use the fetched result, commonly known as support for explicit fetching.
+
+The idea is that providers can declare the different compositions of a base algorithm in the {\ttfamily OSSL\+\_\+\+ALGORITHM} array, each pointing to different {\ttfamily OSSL\+\_\+\+DISPATCH} tables, which would in turn refer to pretty much the same functions, apart from the constructor function.
+
+For example, we already do this with symmetric ciphers.
+
+Another example, which we could implement in our providers today, would be compositions of HMAC\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\ C}
+\DoxyCodeLine{static\ const\ OSSL\_ALGORITHM\ deflt\_macs[]\ =\ \{}
+\DoxyCodeLine{\ \ \ \ /*\ ...\ */}
+\DoxyCodeLine{\ \ \ \ \{\ "{}HMAC-\/SHA1:hmacWithSHA1:1.2.840.113549.2.7"{},}
+\DoxyCodeLine{\ \ \ \ \ \ "{}provider=default"{},\ ossl\_hmac\_sha1\_functions\ \},}
+\DoxyCodeLine{\ \ \ \ \{\ "{}HMAC-\/SHA224:hmacWithSHA224:1.2.840.113549.2.8"{},}
+\DoxyCodeLine{\ \ \ \ \ \ "{}provider=default"{},\ ossl\_hmac\_sha224\_functions\ \},}
+\DoxyCodeLine{\ \ \ \ \{\ "{}HMAC-\/SHA256:hmacWithSHA256:1.2.840.113549.2.9"{},}
+\DoxyCodeLine{\ \ \ \ \ \ "{}provider=default"{},\ ossl\_hmac\_sha256\_functions\ \},}
+\DoxyCodeLine{\ \ \ \ \{\ "{}HMAC-\/SHA384:hmacWithSHA384:1.2.840.113549.2.10"{},}
+\DoxyCodeLine{\ \ \ \ \ \ "{}provider=default"{},\ ossl\_hmac\_sha384\_functions\ \},}
+\DoxyCodeLine{\ \ \ \ \{\ "{}HMAC-\/SHA512:hmacWithSHA512:1.2.840.113549.2.11"{},}
+\DoxyCodeLine{\ \ \ \ \ \ "{}provider=default"{},\ ossl\_hmac\_sha512\_functions\ \},}
+\DoxyCodeLine{\ \ \ \ /*\ ...\ */}
+
+\end{DoxyCode}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2fetching-composite-algorithms_autotoc_md226}{}\doxysubsubsection{\texorpdfstring{What we don\textquotesingle{}t have today}{What we don\textquotesingle{}t have today}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2fetching-composite-algorithms_autotoc_md226}
+There are some classes of algorithms for which we have no support for using the result of explicit fetching. So for example, while it\textquotesingle{}s possible for a provider to declare composite algorithms through the {\ttfamily OSSL\+\_\+\+ALGORITHM} array, there\textquotesingle{}s currently no way for an application to use them.
+
+This all revolves around asymmetric algorithms, where we currently only support implicit fetching.
+
+This is hurtful in multiple ways\+:
+
+
+\begin{DoxyItemize}
+\item It fails the provider authors in terms being able to consistently declare all algorithms through {\ttfamily OSSL\+\_\+\+ALGORITHM} arrays.
+\item It fails the applications in terms of being able to fetch algorithms and use the result.
+\item It fails discoverability, for example through the {\ttfamily openssl list} command. 
+\end{DoxyItemize}

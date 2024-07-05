@@ -1,0 +1,133 @@
+\doxysection{thread\+\_\+arch.\+h}
+\hypertarget{thread__arch_8h_source}{}\label{thread__arch_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/thread\_arch.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/thread\_arch.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2019-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_INTERNAL\_THREAD\_ARCH\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_INTERNAL\_THREAD\_ARCH\_H}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#\ include\ <openssl/configuration.h>}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#\ include\ <openssl/e\_os2.h>}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ include\ "{}internal/time.h"{}}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#\ if\ defined(\_WIN32)}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#\ \ include\ <windows.h>}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#\ if\ defined(OPENSSL\_THREADS)\ \&\&\ defined(OPENSSL\_SYS\_UNIX)}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#\ \ define\ OPENSSL\_THREADS\_POSIX}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#\ elif\ defined(OPENSSL\_THREADS)\ \&\&\ defined(OPENSSL\_SYS\_VMS)}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#\ \ define\ OPENSSL\_THREADS\_POSIX}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#\ elif\ defined(OPENSSL\_THREADS)\ \&\&\ defined(OPENSSL\_SYS\_WINDOWS)\ \&\&\ \(\backslash\)}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\ \ \ \ defined(\_WIN32\_WINNT)}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#\ \ if\ \_WIN32\_WINNT\ >=\ 0x0600}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#\ \ \ define\ OPENSSL\_THREADS\_WINNT}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#\ \ elif\ \_WIN32\_WINNT\ >=\ 0x0501}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#\ \ \ define\ OPENSSL\_THREADS\_WINNT}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#\ \ \ define\ OPENSSL\_THREADS\_WINNT\_LEGACY}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#\ \ else}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#\ \ \ define\ OPENSSL\_THREADS\_NONE}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#\ \ endif}}
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#\ else}}
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#\ \ define\ OPENSSL\_THREADS\_NONE}}
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#\ include\ <openssl/crypto.h>}}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \textcolor{keyword}{typedef}\ \textcolor{keywordtype}{void}\ CRYPTO\_MUTEX;}
+\DoxyCodeLine{00041\ \textcolor{keyword}{typedef}\ \textcolor{keywordtype}{void}\ CRYPTO\_CONDVAR;}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ CRYPTO\_MUTEX\ *ossl\_crypto\_mutex\_new(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00044\ \textcolor{keywordtype}{void}\ ossl\_crypto\_mutex\_lock(CRYPTO\_MUTEX\ *mutex);}
+\DoxyCodeLine{00045\ \textcolor{keywordtype}{int}\ ossl\_crypto\_mutex\_try\_lock(CRYPTO\_MUTEX\ *mutex);}
+\DoxyCodeLine{00046\ \textcolor{keywordtype}{void}\ ossl\_crypto\_mutex\_unlock(CRYPTO\_MUTEX\ *mutex);}
+\DoxyCodeLine{00047\ \textcolor{keywordtype}{void}\ ossl\_crypto\_mutex\_free(CRYPTO\_MUTEX\ **mutex);}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ CRYPTO\_CONDVAR\ *ossl\_crypto\_condvar\_new(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00050\ \textcolor{keywordtype}{void}\ ossl\_crypto\_condvar\_wait(CRYPTO\_CONDVAR\ *cv,\ CRYPTO\_MUTEX\ *mutex);}
+\DoxyCodeLine{00051\ \textcolor{keywordtype}{void}\ ossl\_crypto\_condvar\_wait\_timeout(CRYPTO\_CONDVAR\ *cv,\ CRYPTO\_MUTEX\ *mutex,}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ deadline);}
+\DoxyCodeLine{00053\ \textcolor{keywordtype}{void}\ ossl\_crypto\_condvar\_broadcast(CRYPTO\_CONDVAR\ *cv);}
+\DoxyCodeLine{00054\ \textcolor{keywordtype}{void}\ ossl\_crypto\_condvar\_signal(CRYPTO\_CONDVAR\ *cv);}
+\DoxyCodeLine{00055\ \textcolor{keywordtype}{void}\ ossl\_crypto\_condvar\_free(CRYPTO\_CONDVAR\ **cv);}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \textcolor{keyword}{typedef}\ uint32\_t\ CRYPTO\_THREAD\_RETVAL;}
+\DoxyCodeLine{00058\ \textcolor{keyword}{typedef}\ CRYPTO\_THREAD\_RETVAL\ (*CRYPTO\_THREAD\_ROUTINE)(\textcolor{keywordtype}{void}\ *);}
+\DoxyCodeLine{00059\ \textcolor{keyword}{typedef}\ CRYPTO\_THREAD\_RETVAL\ (*CRYPTO\_THREAD\_ROUTINE\_CB)(\textcolor{keywordtype}{void}\ *,}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ void\ (**)(\textcolor{keywordtype}{void}\ *),}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ **);}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00063\ \textcolor{preprocessor}{\#\ define\ CRYPTO\_THREAD\_NO\_STATE\ \ \ 0UL}}
+\DoxyCodeLine{00064\ \textcolor{preprocessor}{\#\ define\ CRYPTO\_THREAD\_FINISHED\ \ \ (1UL\ <<\ 0)}}
+\DoxyCodeLine{00065\ \textcolor{preprocessor}{\#\ define\ CRYPTO\_THREAD\_JOIN\_AWAIT\ (1UL\ <<\ 1)}}
+\DoxyCodeLine{00066\ \textcolor{preprocessor}{\#\ define\ CRYPTO\_THREAD\_JOINED\ \ \ \ \ (1UL\ <<\ 2)}}
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00068\ \textcolor{preprocessor}{\#\ define\ CRYPTO\_THREAD\_GET\_STATE(THREAD,\ FLAG)\ ((THREAD)-\/>state\ \&\ (FLAG))}}
+\DoxyCodeLine{00069\ \textcolor{preprocessor}{\#\ define\ CRYPTO\_THREAD\_GET\_ERROR(THREAD,\ FLAG)\ (((THREAD)-\/>state\ >>\ 16)\ \&\ (FLAG))}}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00071\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structcrypto__thread__st}{crypto\_thread\_st}}\ \{}
+\DoxyCodeLine{00072\ \ \ \ \ uint32\_t\ state;}
+\DoxyCodeLine{00073\ \ \ \ \ \textcolor{keywordtype}{void}\ *data;}
+\DoxyCodeLine{00074\ \ \ \ \ CRYPTO\_THREAD\_ROUTINE\ routine;}
+\DoxyCodeLine{00075\ \ \ \ \ CRYPTO\_THREAD\_RETVAL\ retval;}
+\DoxyCodeLine{00076\ \ \ \ \ \textcolor{keywordtype}{void}\ *handle;}
+\DoxyCodeLine{00077\ \ \ \ \ CRYPTO\_MUTEX\ *lock;}
+\DoxyCodeLine{00078\ \ \ \ \ CRYPTO\_MUTEX\ *statelock;}
+\DoxyCodeLine{00079\ \ \ \ \ CRYPTO\_CONDVAR\ *condvar;}
+\DoxyCodeLine{00080\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ thread\_id;}
+\DoxyCodeLine{00081\ \ \ \ \ \textcolor{keywordtype}{int}\ joinable;}
+\DoxyCodeLine{00082\ \ \ \ \ OSSL\_LIB\_CTX\ *ctx;}
+\DoxyCodeLine{00083\ \}\ \mbox{\hyperlink{structcrypto__thread__st}{CRYPTO\_THREAD}};}
+\DoxyCodeLine{00084\ }
+\DoxyCodeLine{00085\ \textcolor{preprocessor}{\#\ if\ defined(OPENSSL\_THREADS)}}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00087\ \textcolor{preprocessor}{\#\ \ define\ CRYPTO\_THREAD\_UNSET\_STATE(THREAD,\ FLAG)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00088\ \textcolor{preprocessor}{\ \ \ \ do\ \{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00089\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ (THREAD)-\/>state\ \&=\ \string~(FLAG);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00090\ \textcolor{preprocessor}{\ \ \ \ \}\ while\ ((void)0,\ 0)}}
+\DoxyCodeLine{00091\ }
+\DoxyCodeLine{00092\ \textcolor{preprocessor}{\#\ \ define\ CRYPTO\_THREAD\_SET\_STATE(THREAD,\ FLAG)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00093\ \textcolor{preprocessor}{\ \ \ \ do\ \{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00094\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ (THREAD)-\/>state\ |=\ (FLAG);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00095\ \textcolor{preprocessor}{\ \ \ \ \}\ while\ ((void)0,\ 0)}}
+\DoxyCodeLine{00096\ }
+\DoxyCodeLine{00097\ \textcolor{preprocessor}{\#\ \ define\ CRYPTO\_THREAD\_SET\_ERROR(THREAD,\ FLAG)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00098\ \textcolor{preprocessor}{\ \ \ \ do\ \{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00099\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ (THREAD)-\/>state\ |=\ ((FLAG)\ <<\ 16);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00100\ \textcolor{preprocessor}{\ \ \ \ \}\ while\ ((void)0,\ 0)}}
+\DoxyCodeLine{00101\ }
+\DoxyCodeLine{00102\ \textcolor{preprocessor}{\#\ \ define\ CRYPTO\_THREAD\_UNSET\_ERROR(THREAD,\ FLAG)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00103\ \textcolor{preprocessor}{\ \ \ \ do\ \{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00104\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ (THREAD)-\/>state\ \&=\ \string~((FLAG)\ <<\ 16);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00105\ \textcolor{preprocessor}{\ \ \ \ \}\ while\ ((void)0,\ 0)}}
+\DoxyCodeLine{00106\ }
+\DoxyCodeLine{00107\ \textcolor{preprocessor}{\#\ else}}
+\DoxyCodeLine{00108\ }
+\DoxyCodeLine{00109\ \textcolor{preprocessor}{\#\ \ define\ CRYPTO\_THREAD\_UNSET\_STATE(THREAD,\ FLAG)}}
+\DoxyCodeLine{00110\ \textcolor{preprocessor}{\#\ \ define\ CRYPTO\_THREAD\_SET\_STATE(THREAD,\ FLAG)}}
+\DoxyCodeLine{00111\ \textcolor{preprocessor}{\#\ \ define\ CRYPTO\_THREAD\_SET\_ERROR(THREAD,\ FLAG)}}
+\DoxyCodeLine{00112\ \textcolor{preprocessor}{\#\ \ define\ CRYPTO\_THREAD\_UNSET\_ERROR(THREAD,\ FLAG)}}
+\DoxyCodeLine{00113\ }
+\DoxyCodeLine{00114\ \textcolor{preprocessor}{\#\ endif\ }\textcolor{comment}{/*\ defined(OPENSSL\_THREADS)\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00115\ }
+\DoxyCodeLine{00116\ \mbox{\hyperlink{structcrypto__thread__st}{CRYPTO\_THREAD}}\ *\ ossl\_crypto\_thread\_native\_start(CRYPTO\_THREAD\_ROUTINE\ routine,}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *data,\ \textcolor{keywordtype}{int}\ joinable);}
+\DoxyCodeLine{00118\ \textcolor{keywordtype}{int}\ ossl\_crypto\_thread\_native\_spawn(\mbox{\hyperlink{structcrypto__thread__st}{CRYPTO\_THREAD}}\ *thread);}
+\DoxyCodeLine{00119\ \textcolor{keywordtype}{int}\ ossl\_crypto\_thread\_native\_join(\mbox{\hyperlink{structcrypto__thread__st}{CRYPTO\_THREAD}}\ *thread,}
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ CRYPTO\_THREAD\_RETVAL\ *retval);}
+\DoxyCodeLine{00121\ \textcolor{keywordtype}{int}\ ossl\_crypto\_thread\_native\_perform\_join(\mbox{\hyperlink{structcrypto__thread__st}{CRYPTO\_THREAD}}\ *thread,}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ CRYPTO\_THREAD\_RETVAL\ *retval);}
+\DoxyCodeLine{00123\ \textcolor{keywordtype}{int}\ ossl\_crypto\_thread\_native\_exit(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00124\ \textcolor{keywordtype}{int}\ ossl\_crypto\_thread\_native\_is\_self(\mbox{\hyperlink{structcrypto__thread__st}{CRYPTO\_THREAD}}\ *thread);}
+\DoxyCodeLine{00125\ \textcolor{keywordtype}{int}\ ossl\_crypto\_thread\_native\_clean(\mbox{\hyperlink{structcrypto__thread__st}{CRYPTO\_THREAD}}\ *thread);}
+\DoxyCodeLine{00126\ }
+\DoxyCodeLine{00127\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ OSSL\_INTERNAL\_THREAD\_ARCH\_H\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

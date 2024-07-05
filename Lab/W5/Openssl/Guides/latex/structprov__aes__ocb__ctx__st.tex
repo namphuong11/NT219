@@ -1,0 +1,58 @@
+\doxysection{prov\+\_\+aes\+\_\+ocb\+\_\+ctx\+\_\+st Struct Reference}
+\hypertarget{structprov__aes__ocb__ctx__st}{}\label{structprov__aes__ocb__ctx__st}\index{prov\_aes\_ocb\_ctx\_st@{prov\_aes\_ocb\_ctx\_st}}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{structprov__aes__ocb__ctx__st_a38f52ddce880425587d6499e11da1b1a}\label{structprov__aes__ocb__ctx__st_a38f52ddce880425587d6499e11da1b1a} 
+\mbox{\hyperlink{structprov__cipher__ctx__st}{PROV\+\_\+\+CIPHER\+\_\+\+CTX}} {\bfseries base}
+\item 
+\Hypertarget{structprov__aes__ocb__ctx__st_a24617e3a8def10d07d18fcf51b575696}\label{structprov__aes__ocb__ctx__st_a24617e3a8def10d07d18fcf51b575696} 
+\begin{tabbing}
+xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=\kill
+union \{\\
+\>{\bfseries OSSL\_UNION\_ALIGN}\\
+\>AES\_KEY {\bfseries ks}\\
+\} {\bfseries ksenc}\\
+
+\end{tabbing}\item 
+\Hypertarget{structprov__aes__ocb__ctx__st_a8c522956ad9a12531a23eb1a1bde33b0}\label{structprov__aes__ocb__ctx__st_a8c522956ad9a12531a23eb1a1bde33b0} 
+\begin{tabbing}
+xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=\kill
+union \{\\
+\>{\bfseries OSSL\_UNION\_ALIGN}\\
+\>AES\_KEY {\bfseries ks}\\
+\} {\bfseries ksdec}\\
+
+\end{tabbing}\item 
+\Hypertarget{structprov__aes__ocb__ctx__st_a8a7ce64495f14c3a6dea10dd75243679}\label{structprov__aes__ocb__ctx__st_a8a7ce64495f14c3a6dea10dd75243679} 
+OCB128\+\_\+\+CONTEXT {\bfseries ocb}
+\item 
+\Hypertarget{structprov__aes__ocb__ctx__st_a17161fa1190b266711118d5235b706a0}\label{structprov__aes__ocb__ctx__st_a17161fa1190b266711118d5235b706a0} 
+unsigned int {\bfseries iv\+\_\+state}
+\item 
+\Hypertarget{structprov__aes__ocb__ctx__st_ac6cc89093a1468051896298e9f86921d}\label{structprov__aes__ocb__ctx__st_ac6cc89093a1468051896298e9f86921d} 
+unsigned int {\bfseries key\+\_\+set}\+: 1
+\item 
+\Hypertarget{structprov__aes__ocb__ctx__st_aa5f9447bbbe32c6811a335a6e33c19dd}\label{structprov__aes__ocb__ctx__st_aa5f9447bbbe32c6811a335a6e33c19dd} 
+size\+\_\+t {\bfseries taglen}
+\item 
+\Hypertarget{structprov__aes__ocb__ctx__st_a1ca9acdd6ed005121db4c95183e32190}\label{structprov__aes__ocb__ctx__st_a1ca9acdd6ed005121db4c95183e32190} 
+size\+\_\+t {\bfseries data\+\_\+buf\+\_\+len}
+\item 
+\Hypertarget{structprov__aes__ocb__ctx__st_a371e11cdecf0ae8a610f4a01ad241623}\label{structprov__aes__ocb__ctx__st_a371e11cdecf0ae8a610f4a01ad241623} 
+size\+\_\+t {\bfseries aad\+\_\+buf\+\_\+len}
+\item 
+\Hypertarget{structprov__aes__ocb__ctx__st_a99e597bfc98b4bdf401f80ac729b00eb}\label{structprov__aes__ocb__ctx__st_a99e597bfc98b4bdf401f80ac729b00eb} 
+unsigned char {\bfseries tag} \mbox{[}OCB\+\_\+\+MAX\+\_\+\+TAG\+\_\+\+LEN\mbox{]}
+\item 
+\Hypertarget{structprov__aes__ocb__ctx__st_ad0fbbcfe8dd0f54252203bd8766b133c}\label{structprov__aes__ocb__ctx__st_ad0fbbcfe8dd0f54252203bd8766b133c} 
+unsigned char {\bfseries data\+\_\+buf} \mbox{[}OCB\+\_\+\+MAX\+\_\+\+DATA\+\_\+\+LEN\mbox{]}
+\item 
+\Hypertarget{structprov__aes__ocb__ctx__st_ade2fdae21b3e7d40cecbfa6651bc0d9d}\label{structprov__aes__ocb__ctx__st_ade2fdae21b3e7d40cecbfa6651bc0d9d} 
+unsigned char {\bfseries aad\+\_\+buf} \mbox{[}OCB\+\_\+\+MAX\+\_\+\+AAD\+\_\+\+LEN\mbox{]}
+\end{DoxyCompactItemize}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/namph/\+Downloads/openssl/openssl-\/3.\+2.\+1/providers/implementations/ciphers/cipher\+\_\+aes\+\_\+ocb.\+h\end{DoxyCompactItemize}

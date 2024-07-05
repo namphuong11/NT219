@@ -1,0 +1,360 @@
+\doxysection{apps.\+h}
+\hypertarget{apps_8h_source}{}\label{apps_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/apps/include/apps.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/apps/include/apps.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 1995-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_APPS\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_APPS\_H}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#\ include\ "{}internal/e\_os.h"{}}\ \textcolor{comment}{/*\ struct\ timeval\ for\ DTLS\ */}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ include\ "{}internal/common.h"{}}\ \textcolor{comment}{/*\ for\ HAS\_PREFIX\ */}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#\ include\ "{}internal/nelem.h"{}}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#\ include\ "{}internal/sockets.h"{}}\ \textcolor{comment}{/*\ for\ openssl\_fdset()\ */}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#\ include\ <assert.h>}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#\ include\ <stdarg.h>}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#\ include\ <sys/types.h>}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#\ ifndef\ OPENSSL\_NO\_POSIX\_IO}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#\ \ include\ <sys/stat.h>}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#\ \ include\ <fcntl.h>}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#\ include\ <openssl/e\_os2.h>}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#\ include\ <openssl/types.h>}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#\ include\ <openssl/bio.h>}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#\ include\ <openssl/x509.h>}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#\ include\ <openssl/conf.h>}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#\ include\ <openssl/txt\_db.h>}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#\ include\ <openssl/engine.h>}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#\ include\ <openssl/ocsp.h>}}
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#\ include\ <openssl/http.h>}}
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#\ include\ <signal.h>}}
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#\ include\ "{}apps\_ui.h"{}}}
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#\ include\ "{}opt.h"{}}}
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#\ include\ "{}fmt.h"{}}}
+\DoxyCodeLine{00039\ \textcolor{preprocessor}{\#\ include\ "{}platform.h"{}}}
+\DoxyCodeLine{00040\ \textcolor{preprocessor}{\#\ include\ "{}engine\_loader.h"{}}}
+\DoxyCodeLine{00041\ \textcolor{preprocessor}{\#\ include\ "{}app\_libctx.h"{}}}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00044\ \textcolor{comment}{\ *\ quick\ macro\ when\ you\ need\ to\ pass\ an\ unsigned\ char\ instead\ of\ a\ char.}}
+\DoxyCodeLine{00045\ \textcolor{comment}{\ *\ this\ is\ true\ for\ some\ implementations\ of\ the\ is*()\ functions,\ for}}
+\DoxyCodeLine{00046\ \textcolor{comment}{\ *\ example.}}
+\DoxyCodeLine{00047\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00048\ \textcolor{preprocessor}{\#\ define\ \_UC(c)\ ((unsigned\ char)(c))}}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \textcolor{keywordtype}{void}\ app\_RAND\_load\_conf(CONF\ *c,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *section);}
+\DoxyCodeLine{00051\ \textcolor{keywordtype}{int}\ app\_RAND\_write(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00052\ \textcolor{keywordtype}{int}\ app\_RAND\_load(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \textcolor{keyword}{extern}\ \textcolor{keywordtype}{char}\ *default\_config\_file;\ \textcolor{comment}{/*\ may\ be\ "{}"{}\ */}}
+\DoxyCodeLine{00055\ \textcolor{keyword}{extern}\ BIO\ *bio\_in;}
+\DoxyCodeLine{00056\ \textcolor{keyword}{extern}\ BIO\ *bio\_out;}
+\DoxyCodeLine{00057\ \textcolor{keyword}{extern}\ BIO\ *bio\_err;}
+\DoxyCodeLine{00058\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ tls13\_aes128gcmsha256\_id[];}
+\DoxyCodeLine{00059\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ tls13\_aes256gcmsha384\_id[];}
+\DoxyCodeLine{00060\ \textcolor{keyword}{extern}\ BIO\_ADDR\ *ourpeer;}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ BIO\ *dup\_bio\_in(\textcolor{keywordtype}{int}\ format);}
+\DoxyCodeLine{00063\ BIO\ *dup\_bio\_out(\textcolor{keywordtype}{int}\ format);}
+\DoxyCodeLine{00064\ BIO\ *dup\_bio\_err(\textcolor{keywordtype}{int}\ format);}
+\DoxyCodeLine{00065\ BIO\ *bio\_open\_owner(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *filename,\ \textcolor{keywordtype}{int}\ format,\ \textcolor{keywordtype}{int}\ \textcolor{keyword}{private});}
+\DoxyCodeLine{00066\ BIO\ *bio\_open\_default(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *filename,\ \textcolor{keywordtype}{char}\ mode,\ \textcolor{keywordtype}{int}\ format);}
+\DoxyCodeLine{00067\ BIO\ *bio\_open\_default\_quiet(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *filename,\ \textcolor{keywordtype}{char}\ mode,\ \textcolor{keywordtype}{int}\ format);}
+\DoxyCodeLine{00068\ \textcolor{keywordtype}{char}\ *app\_conf\_try\_string(\textcolor{keyword}{const}\ CONF\ *cnf,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *group,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *name);}
+\DoxyCodeLine{00069\ \textcolor{keywordtype}{int}\ app\_conf\_try\_number(\textcolor{keyword}{const}\ CONF\ *conf,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *group,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *name,}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{long}\ *result);}
+\DoxyCodeLine{00071\ CONF\ *app\_load\_config\_bio(BIO\ *in,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *filename);}
+\DoxyCodeLine{00072\ \textcolor{preprocessor}{\#\ define\ app\_load\_config(filename)\ app\_load\_config\_internal(filename,\ 0)}}
+\DoxyCodeLine{00073\ \textcolor{preprocessor}{\#\ define\ app\_load\_config\_quiet(filename)\ app\_load\_config\_internal(filename,\ 1)}}
+\DoxyCodeLine{00074\ CONF\ *app\_load\_config\_internal(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *filename,\ \textcolor{keywordtype}{int}\ quiet);}
+\DoxyCodeLine{00075\ CONF\ *app\_load\_config\_verbose(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *filename,\ \textcolor{keywordtype}{int}\ verbose);}
+\DoxyCodeLine{00076\ \textcolor{keywordtype}{int}\ app\_load\_modules(\textcolor{keyword}{const}\ CONF\ *config);}
+\DoxyCodeLine{00077\ CONF\ *app\_load\_config\_modules(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *configfile);}
+\DoxyCodeLine{00078\ \textcolor{keywordtype}{void}\ unbuffer(FILE\ *fp);}
+\DoxyCodeLine{00079\ \textcolor{keywordtype}{void}\ wait\_for\_async(SSL\ *s);}
+\DoxyCodeLine{00080\ \textcolor{preprocessor}{\#\ if\ defined(OPENSSL\_SYS\_MSDOS)}}
+\DoxyCodeLine{00081\ \textcolor{keywordtype}{int}\ has\_stdin\_waiting(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00082\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \textcolor{keywordtype}{void}\ corrupt\_signature(\textcolor{keyword}{const}\ ASN1\_STRING\ *signature);}
+\DoxyCodeLine{00085\ \textcolor{keywordtype}{int}\ set\_cert\_times(X509\ *x,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *startdate,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *enddate,}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ days);}
+\DoxyCodeLine{00087\ \textcolor{keywordtype}{int}\ set\_crl\_lastupdate(X509\_CRL\ *crl,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *lastupdate);}
+\DoxyCodeLine{00088\ \textcolor{keywordtype}{int}\ set\_crl\_nextupdate(X509\_CRL\ *crl,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *nextupdate,}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{long}\ days,\ \textcolor{keywordtype}{long}\ hours,\ \textcolor{keywordtype}{long}\ secs);}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structargs__st}{args\_st}}\ \{}
+\DoxyCodeLine{00092\ \ \ \ \ \textcolor{keywordtype}{int}\ size;}
+\DoxyCodeLine{00093\ \ \ \ \ \textcolor{keywordtype}{int}\ argc;}
+\DoxyCodeLine{00094\ \ \ \ \ \textcolor{keywordtype}{char}\ **argv;}
+\DoxyCodeLine{00095\ \}\ \mbox{\hyperlink{structargs__st}{ARGS}};}
+\DoxyCodeLine{00096\ }
+\DoxyCodeLine{00097\ \textcolor{comment}{/*\ We\ need\ both\ wrap\ and\ the\ "{}real"{}\ function\ because\ libcrypto\ uses\ both.\ */}}
+\DoxyCodeLine{00098\ \textcolor{keywordtype}{int}\ wrap\_password\_callback(\textcolor{keywordtype}{char}\ *buf,\ \textcolor{keywordtype}{int}\ bufsiz,\ \textcolor{keywordtype}{int}\ verify,\ \textcolor{keywordtype}{void}\ *cb\_data);}
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00100\ \textcolor{comment}{/*\ progress\ callback\ for\ dsaparam,\ dhparam,\ req,\ genpkey,\ etc.\ */}}
+\DoxyCodeLine{00101\ \textcolor{keywordtype}{int}\ progress\_cb(EVP\_PKEY\_CTX\ *ctx);}
+\DoxyCodeLine{00102\ }
+\DoxyCodeLine{00103\ \textcolor{keywordtype}{int}\ chopup\_args(\mbox{\hyperlink{structargs__st}{ARGS}}\ *arg,\ \textcolor{keywordtype}{char}\ *buf);}
+\DoxyCodeLine{00104\ \textcolor{keywordtype}{void}\ dump\_cert\_text(BIO\ *out,\ X509\ *x);}
+\DoxyCodeLine{00105\ \textcolor{keywordtype}{void}\ print\_name(BIO\ *out,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *title,\ \textcolor{keyword}{const}\ X509\_NAME\ *nm);}
+\DoxyCodeLine{00106\ \textcolor{keywordtype}{void}\ print\_bignum\_var(BIO\ *,\ \textcolor{keyword}{const}\ BIGNUM\ *,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *,}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int},\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *);}
+\DoxyCodeLine{00108\ \textcolor{keywordtype}{void}\ print\_array(BIO\ *,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *,\ \textcolor{keywordtype}{int},\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *);}
+\DoxyCodeLine{00109\ \textcolor{keywordtype}{int}\ set\_nameopt(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *arg);}
+\DoxyCodeLine{00110\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ get\_nameopt(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00111\ \textcolor{keywordtype}{int}\ set\_dateopt(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ *dateopt,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *arg);}
+\DoxyCodeLine{00112\ \textcolor{keywordtype}{int}\ set\_cert\_ex(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ *flags,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *arg);}
+\DoxyCodeLine{00113\ \textcolor{keywordtype}{int}\ set\_name\_ex(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ *flags,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *arg);}
+\DoxyCodeLine{00114\ \textcolor{keywordtype}{int}\ set\_ext\_copy(\textcolor{keywordtype}{int}\ *copy\_type,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *arg);}
+\DoxyCodeLine{00115\ \textcolor{keywordtype}{int}\ copy\_extensions(X509\ *x,\ X509\_REQ\ *req,\ \textcolor{keywordtype}{int}\ copy\_type);}
+\DoxyCodeLine{00116\ \textcolor{keywordtype}{char}\ *get\_passwd(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *pass,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *desc);}
+\DoxyCodeLine{00117\ \textcolor{keywordtype}{int}\ app\_passwd(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *arg1,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *arg2,\ \textcolor{keywordtype}{char}\ **pass1,\ \textcolor{keywordtype}{char}\ **pass2);}
+\DoxyCodeLine{00118\ \textcolor{keywordtype}{int}\ add\_oid\_section(CONF\ *conf);}
+\DoxyCodeLine{00119\ X509\_REQ\ *load\_csr(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *file,\ \textcolor{keywordtype}{int}\ format,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *desc);}
+\DoxyCodeLine{00120\ X509\_REQ\ *load\_csr\_autofmt(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *infile,\ \textcolor{keywordtype}{int}\ format,}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ STACK\_OF(OPENSSL\_STRING)\ *vfyopts,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *desc);}
+\DoxyCodeLine{00122\ X509\ *load\_cert\_pass(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *uri,\ \textcolor{keywordtype}{int}\ format,\ \textcolor{keywordtype}{int}\ maybe\_stdin,}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *pass,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *desc);}
+\DoxyCodeLine{00124\ \textcolor{preprocessor}{\#\ define\ load\_cert(uri,\ format,\ desc)\ load\_cert\_pass(uri,\ format,\ 1,\ NULL,\ desc)}}
+\DoxyCodeLine{00125\ X509\_CRL\ *load\_crl(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *uri,\ \textcolor{keywordtype}{int}\ format,\ \textcolor{keywordtype}{int}\ maybe\_stdin,}
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *desc);}
+\DoxyCodeLine{00127\ \textcolor{keywordtype}{void}\ cleanse(\textcolor{keywordtype}{char}\ *str);}
+\DoxyCodeLine{00128\ \textcolor{keywordtype}{void}\ clear\_free(\textcolor{keywordtype}{char}\ *str);}
+\DoxyCodeLine{00129\ EVP\_PKEY\ *load\_key(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *uri,\ \textcolor{keywordtype}{int}\ format,\ \textcolor{keywordtype}{int}\ maybe\_stdin,}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *pass,\ ENGINE\ *\mbox{\hyperlink{structe}{e}},\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *desc);}
+\DoxyCodeLine{00131\ \textcolor{comment}{/*\ first\ try\ reading\ public\ key,\ on\ failure\ resort\ to\ loading\ private\ key\ */}}
+\DoxyCodeLine{00132\ EVP\_PKEY\ *load\_pubkey(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *uri,\ \textcolor{keywordtype}{int}\ format,\ \textcolor{keywordtype}{int}\ maybe\_stdin,}
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *pass,\ ENGINE\ *\mbox{\hyperlink{structe}{e}},\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *desc);}
+\DoxyCodeLine{00134\ EVP\_PKEY\ *load\_keyparams(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *uri,\ \textcolor{keywordtype}{int}\ format,\ \textcolor{keywordtype}{int}\ maybe\_stdin,}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *keytype,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *desc);}
+\DoxyCodeLine{00136\ EVP\_PKEY\ *load\_keyparams\_suppress(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *uri,\ \textcolor{keywordtype}{int}\ format,\ \textcolor{keywordtype}{int}\ maybe\_stdin,}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *keytype,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *desc,}
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ suppress\_decode\_errors);}
+\DoxyCodeLine{00139\ \textcolor{keywordtype}{char}\ *next\_item(\textcolor{keywordtype}{char}\ *opt);\ \textcolor{comment}{/*\ in\ list\ separated\ by\ comma\ and/or\ space\ */}}
+\DoxyCodeLine{00140\ \textcolor{keywordtype}{int}\ load\_cert\_certs(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *uri,}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\ **pcert,\ STACK\_OF(X509)\ **pcerts,}
+\DoxyCodeLine{00142\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ exclude\_http,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *pass,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *desc,}
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\_VERIFY\_PARAM\ *vpm);}
+\DoxyCodeLine{00144\ STACK\_OF(X509)\ *load\_certs\_multifile(\textcolor{keywordtype}{char}\ *files,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *pass,}
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *desc,\ X509\_VERIFY\_PARAM\ *vpm);}
+\DoxyCodeLine{00146\ X509\_STORE\ *load\_certstore(\textcolor{keywordtype}{char}\ *input,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *pass,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *desc,}
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\_VERIFY\_PARAM\ *vpm);}
+\DoxyCodeLine{00148\ \textcolor{keywordtype}{int}\ load\_certs(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *uri,\ \textcolor{keywordtype}{int}\ maybe\_stdin,\ STACK\_OF(X509)\ **certs,}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *pass,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *desc);}
+\DoxyCodeLine{00150\ \textcolor{keywordtype}{int}\ load\_crls(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *uri,\ STACK\_OF(X509\_CRL)\ **crls,}
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *pass,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *desc);}
+\DoxyCodeLine{00152\ \textcolor{keywordtype}{int}\ load\_key\_certs\_crls(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *uri,\ \textcolor{keywordtype}{int}\ format,\ \textcolor{keywordtype}{int}\ maybe\_stdin,}
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *pass,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *desc,\ \textcolor{keywordtype}{int}\ quiet,}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ EVP\_PKEY\ **ppkey,\ EVP\_PKEY\ **ppubkey,}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ EVP\_PKEY\ **pparams,}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\ **pcert,\ STACK\_OF(X509)\ **pcerts,}
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\_CRL\ **pcrl,\ STACK\_OF(X509\_CRL)\ **pcrls);}
+\DoxyCodeLine{00158\ X509\_STORE\ *setup\_verify(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *CAfile,\ \textcolor{keywordtype}{int}\ noCAfile,}
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *CApath,\ \textcolor{keywordtype}{int}\ noCApath,}
+\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *CAstore,\ \textcolor{keywordtype}{int}\ noCAstore);}
+\DoxyCodeLine{00161\ \_\_owur\ \textcolor{keywordtype}{int}\ ctx\_set\_verify\_locations(SSL\_CTX\ *ctx,}
+\DoxyCodeLine{00162\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *CAfile,\ \textcolor{keywordtype}{int}\ noCAfile,}
+\DoxyCodeLine{00163\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *CApath,\ \textcolor{keywordtype}{int}\ noCApath,}
+\DoxyCodeLine{00164\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *CAstore,\ \textcolor{keywordtype}{int}\ noCAstore);}
+\DoxyCodeLine{00165\ }
+\DoxyCodeLine{00166\ \textcolor{preprocessor}{\#\ ifndef\ OPENSSL\_NO\_CT}}
+\DoxyCodeLine{00167\ }
+\DoxyCodeLine{00168\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00169\ \textcolor{comment}{\ *\ Sets\ the\ file\ to\ load\ the\ Certificate\ Transparency\ log\ list\ from.}}
+\DoxyCodeLine{00170\ \textcolor{comment}{\ *\ If\ path\ is\ NULL,\ loads\ from\ the\ default\ file\ path.}}
+\DoxyCodeLine{00171\ \textcolor{comment}{\ *\ Returns\ 1\ on\ success,\ 0\ otherwise.}}
+\DoxyCodeLine{00172\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00173\ \_\_owur\ \textcolor{keywordtype}{int}\ ctx\_set\_ctlog\_list\_file(SSL\_CTX\ *ctx,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *path);}
+\DoxyCodeLine{00174\ }
+\DoxyCodeLine{00175\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00176\ }
+\DoxyCodeLine{00177\ ENGINE\ *setup\_engine\_methods(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *\textcolor{keywordtype}{id},\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ methods,\ \textcolor{keywordtype}{int}\ debug);}
+\DoxyCodeLine{00178\ \textcolor{preprocessor}{\#\ define\ setup\_engine(e,\ debug)\ setup\_engine\_methods(e,\ (unsigned\ int)-\/1,\ debug)}}
+\DoxyCodeLine{00179\ \textcolor{keywordtype}{void}\ release\_engine(ENGINE\ *\mbox{\hyperlink{structe}{e}});}
+\DoxyCodeLine{00180\ \textcolor{keywordtype}{int}\ init\_engine(ENGINE\ *\mbox{\hyperlink{structe}{e}});}
+\DoxyCodeLine{00181\ \textcolor{keywordtype}{int}\ finish\_engine(ENGINE\ *\mbox{\hyperlink{structe}{e}});}
+\DoxyCodeLine{00182\ \textcolor{keywordtype}{char}\ *make\_engine\_uri(ENGINE\ *\mbox{\hyperlink{structe}{e}},\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *key\_id,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *desc);}
+\DoxyCodeLine{00183\ }
+\DoxyCodeLine{00184\ \textcolor{keywordtype}{int}\ get\_legacy\_pkey\_id(OSSL\_LIB\_CTX\ *libctx,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *algname,\ ENGINE\ *\mbox{\hyperlink{structe}{e}});}
+\DoxyCodeLine{00185\ \textcolor{keyword}{const}\ EVP\_MD\ *get\_digest\_from\_engine(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *name);}
+\DoxyCodeLine{00186\ \textcolor{keyword}{const}\ EVP\_CIPHER\ *get\_cipher\_from\_engine(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *name);}
+\DoxyCodeLine{00187\ }
+\DoxyCodeLine{00188\ \textcolor{preprocessor}{\#\ ifndef\ OPENSSL\_NO\_OCSP}}
+\DoxyCodeLine{00189\ OCSP\_RESPONSE\ *process\_responder(OCSP\_REQUEST\ *req,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *host,}
+\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *port,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *path,}
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *proxy,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *no\_proxy,}
+\DoxyCodeLine{00192\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ use\_ssl,\ STACK\_OF(CONF\_VALUE)\ *headers,}
+\DoxyCodeLine{00193\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ req\_timeout);}
+\DoxyCodeLine{00194\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00195\ }
+\DoxyCodeLine{00196\ \textcolor{comment}{/*\ Functions\ defined\ in\ ca.c\ and\ also\ used\ in\ ocsp.c\ */}}
+\DoxyCodeLine{00197\ \textcolor{keywordtype}{int}\ unpack\_revinfo(ASN1\_TIME\ **prevtm,\ \textcolor{keywordtype}{int}\ *preason,\ ASN1\_OBJECT\ **phold,}
+\DoxyCodeLine{00198\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ASN1\_GENERALIZEDTIME\ **pinvtm,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *str);}
+\DoxyCodeLine{00199\ }
+\DoxyCodeLine{00200\ \textcolor{preprocessor}{\#\ define\ DB\_type\ \ \ \ \ \ \ \ \ 0}}
+\DoxyCodeLine{00201\ \textcolor{preprocessor}{\#\ define\ DB\_exp\_date\ \ \ \ \ 1}}
+\DoxyCodeLine{00202\ \textcolor{preprocessor}{\#\ define\ DB\_rev\_date\ \ \ \ \ 2}}
+\DoxyCodeLine{00203\ \textcolor{preprocessor}{\#\ define\ DB\_serial\ \ \ \ \ \ \ 3\ }\textcolor{comment}{/*\ index\ -\/\ unique\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00204\ \textcolor{preprocessor}{\#\ define\ DB\_file\ \ \ \ \ \ \ \ \ 4}}
+\DoxyCodeLine{00205\ \textcolor{preprocessor}{\#\ define\ DB\_name\ \ \ \ \ \ \ \ \ 5\ }\textcolor{comment}{/*\ index\ -\/\ unique\ when\ active\ and\ not\ disabled\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00206\ \textcolor{preprocessor}{\#\ define\ DB\_NUMBER\ \ \ \ \ \ \ 6}}
+\DoxyCodeLine{00207\ }
+\DoxyCodeLine{00208\ \textcolor{preprocessor}{\#\ define\ DB\_TYPE\_REV\ \ \ \ \ 'R'\ \ \ \ }\textcolor{comment}{/*\ Revoked\ \ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00209\ \textcolor{preprocessor}{\#\ define\ DB\_TYPE\_EXP\ \ \ \ \ 'E'\ \ \ \ }\textcolor{comment}{/*\ Expired\ \ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00210\ \textcolor{preprocessor}{\#\ define\ DB\_TYPE\_VAL\ \ \ \ \ 'V'\ \ \ \ }\textcolor{comment}{/*\ Valid\ ;\ inserted\ with:\ ca\ ...\ -\/valid\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00211\ \textcolor{preprocessor}{\#\ define\ DB\_TYPE\_SUSP\ \ \ \ 'S'\ \ \ \ }\textcolor{comment}{/*\ Suspended\ \ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00212\ }
+\DoxyCodeLine{00213\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structdb__attr__st}{db\_attr\_st}}\ \{}
+\DoxyCodeLine{00214\ \ \ \ \ \textcolor{keywordtype}{int}\ unique\_subject;}
+\DoxyCodeLine{00215\ \}\ \mbox{\hyperlink{structdb__attr__st}{DB\_ATTR}};}
+\DoxyCodeLine{00216\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structca__db__st}{ca\_db\_st}}\ \{}
+\DoxyCodeLine{00217\ \ \ \ \ \mbox{\hyperlink{structdb__attr__st}{DB\_ATTR}}\ attributes;}
+\DoxyCodeLine{00218\ \ \ \ \ TXT\_DB\ *db;}
+\DoxyCodeLine{00219\ \ \ \ \ \textcolor{keywordtype}{char}\ *dbfname;}
+\DoxyCodeLine{00220\ \textcolor{preprocessor}{\#\ ifndef\ OPENSSL\_NO\_POSIX\_IO}}
+\DoxyCodeLine{00221\ \ \ \ \ \textcolor{keyword}{struct\ }stat\ dbst;}
+\DoxyCodeLine{00222\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00223\ \}\ \mbox{\hyperlink{structca__db__st}{CA\_DB}};}
+\DoxyCodeLine{00224\ }
+\DoxyCodeLine{00225\ \textcolor{keyword}{extern}\ \textcolor{keywordtype}{int}\ do\_updatedb(\mbox{\hyperlink{structca__db__st}{CA\_DB}}\ *db,\ time\_t\ *now);}
+\DoxyCodeLine{00226\ }
+\DoxyCodeLine{00227\ \textcolor{keywordtype}{void}\ app\_bail\_out(\textcolor{keywordtype}{char}\ *fmt,\ ...);}
+\DoxyCodeLine{00228\ \textcolor{keywordtype}{void}\ *app\_malloc(\textcolor{keywordtype}{size\_t}\ sz,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *what);}
+\DoxyCodeLine{00229\ }
+\DoxyCodeLine{00230\ \textcolor{comment}{/*\ load\_serial,\ save\_serial,\ and\ rotate\_serial\ are\ also\ used\ for\ CRL\ numbers\ */}}
+\DoxyCodeLine{00231\ BIGNUM\ *load\_serial(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *serialfile,\ \textcolor{keywordtype}{int}\ *exists,\ \textcolor{keywordtype}{int}\ create,}
+\DoxyCodeLine{00232\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ASN1\_INTEGER\ **retai);}
+\DoxyCodeLine{00233\ \textcolor{keywordtype}{int}\ save\_serial(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *serialfile,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *suffix,}
+\DoxyCodeLine{00234\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BIGNUM\ *serial,\ ASN1\_INTEGER\ **retai);}
+\DoxyCodeLine{00235\ \textcolor{keywordtype}{int}\ rotate\_serial(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *serialfile,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *new\_suffix,}
+\DoxyCodeLine{00236\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *old\_suffix);}
+\DoxyCodeLine{00237\ \textcolor{keywordtype}{int}\ rand\_serial(BIGNUM\ *\mbox{\hyperlink{structb}{b}},\ ASN1\_INTEGER\ *ai);}
+\DoxyCodeLine{00238\ }
+\DoxyCodeLine{00239\ \mbox{\hyperlink{structca__db__st}{CA\_DB}}\ *load\_index(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *dbfile,\ \mbox{\hyperlink{structdb__attr__st}{DB\_ATTR}}\ *dbattr);}
+\DoxyCodeLine{00240\ \textcolor{keywordtype}{int}\ index\_index(\mbox{\hyperlink{structca__db__st}{CA\_DB}}\ *db);}
+\DoxyCodeLine{00241\ \textcolor{keywordtype}{int}\ save\_index(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *dbfile,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *suffix,\ \mbox{\hyperlink{structca__db__st}{CA\_DB}}\ *db);}
+\DoxyCodeLine{00242\ \textcolor{keywordtype}{int}\ rotate\_index(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *dbfile,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *new\_suffix,}
+\DoxyCodeLine{00243\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *old\_suffix);}
+\DoxyCodeLine{00244\ \textcolor{keywordtype}{void}\ free\_index(\mbox{\hyperlink{structca__db__st}{CA\_DB}}\ *db);}
+\DoxyCodeLine{00245\ \textcolor{preprocessor}{\#\ define\ index\_name\_cmp\_noconst(a,\ b)\ \(\backslash\)}}
+\DoxyCodeLine{00246\ \textcolor{preprocessor}{\ \ \ \ index\_name\_cmp((const\ OPENSSL\_CSTRING\ *)CHECKED\_PTR\_OF(OPENSSL\_STRING,\ a),\ \(\backslash\)}}
+\DoxyCodeLine{00247\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (const\ OPENSSL\_CSTRING\ *)CHECKED\_PTR\_OF(OPENSSL\_STRING,\ b))}}
+\DoxyCodeLine{00248\ \textcolor{keywordtype}{int}\ index\_name\_cmp(\textcolor{keyword}{const}\ OPENSSL\_CSTRING\ *a,\ \textcolor{keyword}{const}\ OPENSSL\_CSTRING\ *\mbox{\hyperlink{structb}{b}});}
+\DoxyCodeLine{00249\ \textcolor{keywordtype}{int}\ parse\_yesno(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *str,\ \textcolor{keywordtype}{int}\ def);}
+\DoxyCodeLine{00250\ }
+\DoxyCodeLine{00251\ X509\_NAME\ *parse\_name(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *str,\ \textcolor{keywordtype}{int}\ chtype,\ \textcolor{keywordtype}{int}\ multirdn,}
+\DoxyCodeLine{00252\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *desc);}
+\DoxyCodeLine{00253\ \textcolor{keywordtype}{void}\ policies\_print(X509\_STORE\_CTX\ *ctx);}
+\DoxyCodeLine{00254\ \textcolor{keywordtype}{int}\ bio\_to\_mem(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **out,\ \textcolor{keywordtype}{int}\ maxlen,\ BIO\ *in);}
+\DoxyCodeLine{00255\ \textcolor{keywordtype}{int}\ pkey\_ctrl\_string(EVP\_PKEY\_CTX\ *ctx,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *value);}
+\DoxyCodeLine{00256\ \textcolor{keywordtype}{int}\ x509\_ctrl\_string(X509\ *x,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *value);}
+\DoxyCodeLine{00257\ \textcolor{keywordtype}{int}\ x509\_req\_ctrl\_string(X509\_REQ\ *x,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *value);}
+\DoxyCodeLine{00258\ \textcolor{keywordtype}{int}\ init\_gen\_str(EVP\_PKEY\_CTX\ **pctx,}
+\DoxyCodeLine{00259\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *algname,\ ENGINE\ *\mbox{\hyperlink{structe}{e}},\ \textcolor{keywordtype}{int}\ do\_param,}
+\DoxyCodeLine{00260\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OSSL\_LIB\_CTX\ *libctx,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *propq);}
+\DoxyCodeLine{00261\ \textcolor{keywordtype}{int}\ cert\_matches\_key(\textcolor{keyword}{const}\ X509\ *cert,\ \textcolor{keyword}{const}\ EVP\_PKEY\ *pkey);}
+\DoxyCodeLine{00262\ \textcolor{keywordtype}{int}\ do\_X509\_sign(X509\ *x,\ \textcolor{keywordtype}{int}\ force\_v1,\ EVP\_PKEY\ *pkey,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *md,}
+\DoxyCodeLine{00263\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ STACK\_OF(OPENSSL\_STRING)\ *sigopts,\ X509V3\_CTX\ *ext\_ctx);}
+\DoxyCodeLine{00264\ \textcolor{keywordtype}{int}\ do\_X509\_verify(X509\ *x,\ EVP\_PKEY\ *pkey,\ STACK\_OF(OPENSSL\_STRING)\ *vfyopts);}
+\DoxyCodeLine{00265\ \textcolor{keywordtype}{int}\ do\_X509\_REQ\_sign(X509\_REQ\ *x,\ EVP\_PKEY\ *pkey,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *md,}
+\DoxyCodeLine{00266\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ STACK\_OF(OPENSSL\_STRING)\ *sigopts);}
+\DoxyCodeLine{00267\ \textcolor{keywordtype}{int}\ do\_X509\_REQ\_verify(X509\_REQ\ *x,\ EVP\_PKEY\ *pkey,}
+\DoxyCodeLine{00268\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ STACK\_OF(OPENSSL\_STRING)\ *vfyopts);}
+\DoxyCodeLine{00269\ \textcolor{keywordtype}{int}\ do\_X509\_CRL\_sign(X509\_CRL\ *x,\ EVP\_PKEY\ *pkey,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *md,}
+\DoxyCodeLine{00270\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ STACK\_OF(OPENSSL\_STRING)\ *sigopts);}
+\DoxyCodeLine{00271\ }
+\DoxyCodeLine{00272\ \textcolor{keyword}{extern}\ \textcolor{keywordtype}{char}\ *psk\_key;}
+\DoxyCodeLine{00273\ }
+\DoxyCodeLine{00274\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *next\_protos\_parse(\textcolor{keywordtype}{size\_t}\ *outlen,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *in);}
+\DoxyCodeLine{00275\ }
+\DoxyCodeLine{00276\ \textcolor{keywordtype}{int}\ check\_cert\_attributes(BIO\ *bio,\ X509\ *x,}
+\DoxyCodeLine{00277\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *checkhost,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *checkemail,}
+\DoxyCodeLine{00278\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *checkip,\ \textcolor{keywordtype}{int}\ print);}
+\DoxyCodeLine{00279\ }
+\DoxyCodeLine{00280\ \textcolor{keywordtype}{void}\ store\_setup\_crl\_download(X509\_STORE\ *st);}
+\DoxyCodeLine{00281\ }
+\DoxyCodeLine{00282\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structapp__http__tls__info__st}{app\_http\_tls\_info\_st}}\ \{}
+\DoxyCodeLine{00283\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *server;}
+\DoxyCodeLine{00284\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *port;}
+\DoxyCodeLine{00285\ \ \ \ \ \textcolor{keywordtype}{int}\ use\_proxy;}
+\DoxyCodeLine{00286\ \ \ \ \ \textcolor{keywordtype}{long}\ timeout;}
+\DoxyCodeLine{00287\ \ \ \ \ SSL\_CTX\ *ssl\_ctx;}
+\DoxyCodeLine{00288\ \}\ \mbox{\hyperlink{structapp__http__tls__info__st}{APP\_HTTP\_TLS\_INFO}};}
+\DoxyCodeLine{00289\ BIO\ *app\_http\_tls\_cb(BIO\ *hbio,\ \textcolor{comment}{/*\ APP\_HTTP\_TLS\_INFO\ */}\ \textcolor{keywordtype}{void}\ *arg,}
+\DoxyCodeLine{00290\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ connect,\ \textcolor{keywordtype}{int}\ detail);}
+\DoxyCodeLine{00291\ \textcolor{keywordtype}{void}\ APP\_HTTP\_TLS\_INFO\_free(\mbox{\hyperlink{structapp__http__tls__info__st}{APP\_HTTP\_TLS\_INFO}}\ *info);}
+\DoxyCodeLine{00292\ \textcolor{preprocessor}{\#\ ifndef\ OPENSSL\_NO\_SOCK}}
+\DoxyCodeLine{00293\ ASN1\_VALUE\ *app\_http\_get\_asn1(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *url,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *proxy,}
+\DoxyCodeLine{00294\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *no\_proxy,\ SSL\_CTX\ *ssl\_ctx,}
+\DoxyCodeLine{00295\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ STACK\_OF(CONF\_VALUE)\ *headers,}
+\DoxyCodeLine{00296\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{long}\ timeout,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *expected\_content\_type,}
+\DoxyCodeLine{00297\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ ASN1\_ITEM\ *it);}
+\DoxyCodeLine{00298\ ASN1\_VALUE\ *app\_http\_post\_asn1(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *host,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *port,}
+\DoxyCodeLine{00299\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *path,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *proxy,}
+\DoxyCodeLine{00300\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *no\_proxy,\ SSL\_CTX\ *ctx,}
+\DoxyCodeLine{00301\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ STACK\_OF(CONF\_VALUE)\ *headers,}
+\DoxyCodeLine{00302\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *content\_type,}
+\DoxyCodeLine{00303\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ASN1\_VALUE\ *req,\ \textcolor{keyword}{const}\ ASN1\_ITEM\ *req\_it,}
+\DoxyCodeLine{00304\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *expected\_content\_type,}
+\DoxyCodeLine{00305\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{long}\ timeout,\ \textcolor{keyword}{const}\ ASN1\_ITEM\ *rsp\_it);}
+\DoxyCodeLine{00306\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00307\ }
+\DoxyCodeLine{00308\ \textcolor{preprocessor}{\#\ define\ EXT\_COPY\_NONE\ \ \ 0}}
+\DoxyCodeLine{00309\ \textcolor{preprocessor}{\#\ define\ EXT\_COPY\_ADD\ \ \ \ 1}}
+\DoxyCodeLine{00310\ \textcolor{preprocessor}{\#\ define\ EXT\_COPY\_ALL\ \ \ \ 2}}
+\DoxyCodeLine{00311\ }
+\DoxyCodeLine{00312\ \textcolor{preprocessor}{\#\ define\ NETSCAPE\_CERT\_HDR\ "{}certificate"{}}}
+\DoxyCodeLine{00313\ }
+\DoxyCodeLine{00314\ \textcolor{preprocessor}{\#\ define\ APP\_PASS\_LEN\ 1024}}
+\DoxyCodeLine{00315\ }
+\DoxyCodeLine{00316\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00317\ \textcolor{comment}{\ *\ IETF\ RFC\ 5280\ says\ serial\ number\ must\ be\ <=\ 20\ bytes.\ Use\ 159\ bits}}
+\DoxyCodeLine{00318\ \textcolor{comment}{\ *\ so\ that\ the\ first\ bit\ will\ never\ be\ one,\ so\ that\ the\ DER\ encoding}}
+\DoxyCodeLine{00319\ \textcolor{comment}{\ *\ rules\ won't\ force\ a\ leading\ octet.}}
+\DoxyCodeLine{00320\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00321\ \textcolor{preprocessor}{\#\ define\ SERIAL\_RAND\_BITS\ 159}}
+\DoxyCodeLine{00322\ }
+\DoxyCodeLine{00323\ \textcolor{keywordtype}{int}\ app\_isdir(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *);}
+\DoxyCodeLine{00324\ \textcolor{keywordtype}{int}\ app\_access(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *,\ \textcolor{keywordtype}{int}\ flag);}
+\DoxyCodeLine{00325\ \textcolor{keywordtype}{int}\ fileno\_stdin(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00326\ \textcolor{keywordtype}{int}\ fileno\_stdout(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00327\ \textcolor{keywordtype}{int}\ raw\_read\_stdin(\textcolor{keywordtype}{void}\ *,\ \textcolor{keywordtype}{int});}
+\DoxyCodeLine{00328\ \textcolor{keywordtype}{int}\ raw\_write\_stdout(\textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *,\ \textcolor{keywordtype}{int});}
+\DoxyCodeLine{00329\ }
+\DoxyCodeLine{00330\ \textcolor{preprocessor}{\#\ define\ TM\_START\ \ \ \ \ \ \ \ 0}}
+\DoxyCodeLine{00331\ \textcolor{preprocessor}{\#\ define\ TM\_STOP\ \ \ \ \ \ \ \ \ 1}}
+\DoxyCodeLine{00332\ \textcolor{keywordtype}{double}\ app\_tminterval(\textcolor{keywordtype}{int}\ stop,\ \textcolor{keywordtype}{int}\ usertime);}
+\DoxyCodeLine{00333\ }
+\DoxyCodeLine{00334\ \textcolor{keywordtype}{void}\ make\_uppercase(\textcolor{keywordtype}{char}\ *\textcolor{keywordtype}{string});}
+\DoxyCodeLine{00335\ }
+\DoxyCodeLine{00336\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structverify__options__st}{verify\_options\_st}}\ \{}
+\DoxyCodeLine{00337\ \ \ \ \ \textcolor{keywordtype}{int}\ depth;}
+\DoxyCodeLine{00338\ \ \ \ \ \textcolor{keywordtype}{int}\ quiet;}
+\DoxyCodeLine{00339\ \ \ \ \ \textcolor{keywordtype}{int}\ error;}
+\DoxyCodeLine{00340\ \ \ \ \ \textcolor{keywordtype}{int}\ return\_error;}
+\DoxyCodeLine{00341\ \}\ \mbox{\hyperlink{structverify__options__st}{VERIFY\_CB\_ARGS}};}
+\DoxyCodeLine{00342\ }
+\DoxyCodeLine{00343\ \textcolor{keyword}{extern}\ \mbox{\hyperlink{structverify__options__st}{VERIFY\_CB\_ARGS}}\ verify\_args;}
+\DoxyCodeLine{00344\ }
+\DoxyCodeLine{00345\ OSSL\_PARAM\ *app\_params\_new\_from\_opts(STACK\_OF(OPENSSL\_STRING)\ *opts,}
+\DoxyCodeLine{00346\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ OSSL\_PARAM\ *paramdefs);}
+\DoxyCodeLine{00347\ \textcolor{keywordtype}{void}\ app\_params\_free(OSSL\_PARAM\ *params);}
+\DoxyCodeLine{00348\ \textcolor{keywordtype}{int}\ app\_provider\_load(OSSL\_LIB\_CTX\ *libctx,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *provider\_name);}
+\DoxyCodeLine{00349\ \textcolor{keywordtype}{void}\ app\_providers\_cleanup(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00350\ }
+\DoxyCodeLine{00351\ EVP\_PKEY\ *app\_keygen(EVP\_PKEY\_CTX\ *ctx,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *alg,\ \textcolor{keywordtype}{int}\ bits,\ \textcolor{keywordtype}{int}\ verbose);}
+\DoxyCodeLine{00352\ EVP\_PKEY\ *app\_paramgen(EVP\_PKEY\_CTX\ *ctx,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *alg);}
+\DoxyCodeLine{00353\ }
+\DoxyCodeLine{00354\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

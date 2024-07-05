@@ -1,0 +1,93 @@
+\doxysection{rmd\+\_\+local.\+h}
+\hypertarget{rmd__local_8h_source}{}\label{rmd__local_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/ripemd/rmd\_local.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/ripemd/rmd\_local.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 1995-\/2016\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <stdlib.h>}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ <string.h>}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ <openssl/opensslconf.h>}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ <openssl/ripemd.h>}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ *\ DO\ EXAMINE\ COMMENTS\ IN\ crypto/md5/md5\_local.h\ \&\ crypto/md5/md5\_dgst.c}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ *\ FOR\ EXPLANATIONS\ ON\ FOLLOWING\ "{}CODE."{}}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#ifdef\ RMD160\_ASM}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#\ if\ defined(\_\_i386)\ ||\ defined(\_\_i386\_\_)\ ||\ defined(\_M\_IX86)}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#\ \ define\ ripemd160\_block\_data\_order\ ripemd160\_block\_asm\_data\_order}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{keywordtype}{void}\ ripemd160\_block\_data\_order(RIPEMD160\_CTX\ *c,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *p,\ \textcolor{keywordtype}{size\_t}\ num);}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#define\ DATA\_ORDER\_IS\_LITTLE\_ENDIAN}}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#define\ HASH\_LONG\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ RIPEMD160\_LONG}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#define\ HASH\_CTX\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ RIPEMD160\_CTX}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#define\ HASH\_CBLOCK\ \ \ \ \ \ \ \ \ \ \ \ \ RIPEMD160\_CBLOCK}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#define\ HASH\_UPDATE\ \ \ \ \ \ \ \ \ \ \ \ \ RIPEMD160\_Update}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#define\ HASH\_TRANSFORM\ \ \ \ \ \ \ \ \ \ RIPEMD160\_Transform}}
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#define\ HASH\_FINAL\ \ \ \ \ \ \ \ \ \ \ \ \ \ RIPEMD160\_Final}}
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#define\ HASH\_MAKE\_STRING(c,s)\ \ \ do\ \{\ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ unsigned\ long\ ll;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ ll=(c)-\/>A;\ (void)HOST\_l2c(ll,(s));\ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ ll=(c)-\/>B;\ (void)HOST\_l2c(ll,(s));\ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00039\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ ll=(c)-\/>C;\ (void)HOST\_l2c(ll,(s));\ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00040\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ ll=(c)-\/>D;\ (void)HOST\_l2c(ll,(s));\ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00041\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ ll=(c)-\/>E;\ (void)HOST\_l2c(ll,(s));\ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00042\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \}\ while\ (0)}}
+\DoxyCodeLine{00043\ \textcolor{preprocessor}{\#define\ HASH\_BLOCK\_DATA\_ORDER\ \ \ ripemd160\_block\_data\_order}}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \textcolor{preprocessor}{\#include\ "{}crypto/md32\_common.h"{}}}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00048\ \textcolor{comment}{\ *\ Transformed\ F2\ and\ F4\ are\ courtesy\ of\ Wei\ Dai}}
+\DoxyCodeLine{00049\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00050\ \textcolor{preprocessor}{\#define\ F1(x,y,z)\ \ \ \ \ \ \ ((x)\ \string^\ (y)\ \string^\ (z))}}
+\DoxyCodeLine{00051\ \textcolor{preprocessor}{\#define\ F2(x,y,z)\ \ \ \ \ \ \ ((((y)\ \string^\ (z))\ \&\ (x))\ \string^\ (z))}}
+\DoxyCodeLine{00052\ \textcolor{preprocessor}{\#define\ F3(x,y,z)\ \ \ \ \ \ \ (((\string~(y))\ |\ (x))\ \string^\ (z))}}
+\DoxyCodeLine{00053\ \textcolor{preprocessor}{\#define\ F4(x,y,z)\ \ \ \ \ \ \ ((((x)\ \string^\ (y))\ \&\ (z))\ \string^\ (y))}}
+\DoxyCodeLine{00054\ \textcolor{preprocessor}{\#define\ F5(x,y,z)\ \ \ \ \ \ \ (((\string~(z))\ |\ (y))\ \string^\ (x))}}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \textcolor{preprocessor}{\#define\ RIPEMD160\_A\ \ \ \ \ 0x67452301L}}
+\DoxyCodeLine{00057\ \textcolor{preprocessor}{\#define\ RIPEMD160\_B\ \ \ \ \ 0xEFCDAB89L}}
+\DoxyCodeLine{00058\ \textcolor{preprocessor}{\#define\ RIPEMD160\_C\ \ \ \ \ 0x98BADCFEL}}
+\DoxyCodeLine{00059\ \textcolor{preprocessor}{\#define\ RIPEMD160\_D\ \ \ \ \ 0x10325476L}}
+\DoxyCodeLine{00060\ \textcolor{preprocessor}{\#define\ RIPEMD160\_E\ \ \ \ \ 0xC3D2E1F0L}}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \textcolor{preprocessor}{\#include\ "{}rmdconst.h"{}}}
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00064\ \textcolor{preprocessor}{\#define\ RIP1(a,b,c,d,e,w,s)\ \{\ \(\backslash\)}}
+\DoxyCodeLine{00065\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ a+=F1(b,c,d)+X(w);\ \(\backslash\)}}
+\DoxyCodeLine{00066\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ a=ROTATE(a,s)+e;\ \(\backslash\)}}
+\DoxyCodeLine{00067\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ c=ROTATE(c,10);\ \}}}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ \textcolor{preprocessor}{\#define\ RIP2(a,b,c,d,e,w,s,K)\ \{\ \(\backslash\)}}
+\DoxyCodeLine{00070\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ a+=F2(b,c,d)+X(w)+K;\ \(\backslash\)}}
+\DoxyCodeLine{00071\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ a=ROTATE(a,s)+e;\ \(\backslash\)}}
+\DoxyCodeLine{00072\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ c=ROTATE(c,10);\ \}}}
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00074\ \textcolor{preprocessor}{\#define\ RIP3(a,b,c,d,e,w,s,K)\ \{\ \(\backslash\)}}
+\DoxyCodeLine{00075\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ a+=F3(b,c,d)+X(w)+K;\ \(\backslash\)}}
+\DoxyCodeLine{00076\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ a=ROTATE(a,s)+e;\ \(\backslash\)}}
+\DoxyCodeLine{00077\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ c=ROTATE(c,10);\ \}}}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \textcolor{preprocessor}{\#define\ RIP4(a,b,c,d,e,w,s,K)\ \{\ \(\backslash\)}}
+\DoxyCodeLine{00080\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ a+=F4(b,c,d)+X(w)+K;\ \(\backslash\)}}
+\DoxyCodeLine{00081\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ a=ROTATE(a,s)+e;\ \(\backslash\)}}
+\DoxyCodeLine{00082\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ c=ROTATE(c,10);\ \}}}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \textcolor{preprocessor}{\#define\ RIP5(a,b,c,d,e,w,s,K)\ \{\ \(\backslash\)}}
+\DoxyCodeLine{00085\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ a+=F5(b,c,d)+X(w)+K;\ \(\backslash\)}}
+\DoxyCodeLine{00086\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ a=ROTATE(a,s)+e;\ \(\backslash\)}}
+\DoxyCodeLine{00087\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ c=ROTATE(c,10);\ \}}}
+
+\end{DoxyCode}

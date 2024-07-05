@@ -1,0 +1,56 @@
+\doxysection{siphash.\+h}
+\hypertarget{siphash_8h_source}{}\label{siphash_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/crypto/siphash.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/crypto/siphash.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2017-\/2021\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_CRYPTO\_SIPHASH\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_CRYPTO\_SIPHASH\_H}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#\ pragma\ once}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ include\ <stddef.h>}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#\ define\ SIPHASH\_BLOCK\_SIZE\ \ \ \ \ \ \ \ 8}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#\ define\ SIPHASH\_KEY\_SIZE\ \ \ \ \ \ \ \ \ 16}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#\ define\ SIPHASH\_MIN\_DIGEST\_SIZE\ \ \ 8}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#\ define\ SIPHASH\_MAX\_DIGEST\_SIZE\ \ 16}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structsiphash__st}{siphash\_st}}\ \mbox{\hyperlink{structsiphash__st}{SIPHASH}};}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{keywordtype}{size\_t}\ SipHash\_ctx\_size(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00024\ \textcolor{keywordtype}{size\_t}\ SipHash\_hash\_size(\mbox{\hyperlink{structsiphash__st}{SIPHASH}}\ *ctx);}
+\DoxyCodeLine{00025\ \textcolor{keywordtype}{int}\ SipHash\_set\_hash\_size(\mbox{\hyperlink{structsiphash__st}{SIPHASH}}\ *ctx,\ \textcolor{keywordtype}{size\_t}\ hash\_size);}
+\DoxyCodeLine{00026\ \textcolor{keywordtype}{int}\ SipHash\_Init(\mbox{\hyperlink{structsiphash__st}{SIPHASH}}\ *ctx,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *k,}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ crounds,\ \textcolor{keywordtype}{int}\ drounds);}
+\DoxyCodeLine{00028\ \textcolor{keywordtype}{void}\ SipHash\_Update(\mbox{\hyperlink{structsiphash__st}{SIPHASH}}\ *ctx,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,\ \textcolor{keywordtype}{size\_t}\ inlen);}
+\DoxyCodeLine{00029\ \textcolor{keywordtype}{int}\ SipHash\_Final(\mbox{\hyperlink{structsiphash__st}{SIPHASH}}\ *ctx,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,\ \textcolor{keywordtype}{size\_t}\ outlen);}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \textcolor{comment}{/*\ Based\ on\ https://131002.net/siphash\ C\ reference\ implementation\ */}}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structsiphash__st}{siphash\_st}}\ \{}
+\DoxyCodeLine{00034\ \ \ \ \ uint64\_t\ total\_inlen;}
+\DoxyCodeLine{00035\ \ \ \ \ uint64\_t\ v0;}
+\DoxyCodeLine{00036\ \ \ \ \ uint64\_t\ v1;}
+\DoxyCodeLine{00037\ \ \ \ \ uint64\_t\ v2;}
+\DoxyCodeLine{00038\ \ \ \ \ uint64\_t\ v3;}
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ len;}
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ hash\_size;}
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ crounds;}
+\DoxyCodeLine{00042\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ drounds;}
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ leavings[SIPHASH\_BLOCK\_SIZE];}
+\DoxyCodeLine{00044\ \};}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \textcolor{comment}{/*\ default:\ SipHash-\/2-\/4\ */}}
+\DoxyCodeLine{00047\ \textcolor{preprocessor}{\#\ define\ SIPHASH\_C\_ROUNDS\ 2}}
+\DoxyCodeLine{00048\ \textcolor{preprocessor}{\#\ define\ SIPHASH\_D\_ROUNDS\ 4}}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

@@ -1,0 +1,976 @@
+\doxysection{evp.\+h}
+\hypertarget{crypto_2evp_8h_source}{}\label{crypto_2evp_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/crypto/evp.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/crypto/evp.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2015-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_CRYPTO\_EVP\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_CRYPTO\_EVP\_H}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#\ pragma\ once}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ include\ <openssl/evp.h>}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#\ include\ <openssl/core\_dispatch.h>}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#\ include\ "{}internal/refcount.h"{}}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#\ include\ "{}crypto/ecx.h"{}}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00020\ \textcolor{comment}{\ *\ Default\ PKCS5\ PBE\ KDF\ salt\ lengths}}
+\DoxyCodeLine{00021\ \textcolor{comment}{\ *\ In\ RFC\ 8018,\ PBE1\ uses\ 8\ bytes\ (64\ bits)\ for\ its\ salt\ length.}}
+\DoxyCodeLine{00022\ \textcolor{comment}{\ *\ It\ also\ specifies\ to\ use\ at\ least\ 8\ bytes\ for\ PBES2.}}
+\DoxyCodeLine{00023\ \textcolor{comment}{\ *\ The\ NIST\ requirement\ for\ PBKDF2\ is\ 128\ bits\ so\ we\ use\ this\ as\ the}}
+\DoxyCodeLine{00024\ \textcolor{comment}{\ *\ default\ for\ PBE2\ (scrypt\ and\ HKDF2)}}
+\DoxyCodeLine{00025\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#\ define\ PKCS5\_DEFAULT\_PBE1\_SALT\_LEN\ \ \ \ \ PKCS5\_SALT\_LEN}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#\ define\ PKCS5\_DEFAULT\_PBE2\_SALT\_LEN\ \ \ \ \ 16}}
+\DoxyCodeLine{00028\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00029\ \textcolor{comment}{\ *\ Don't\ free\ up\ md\_ctx-\/>pctx\ in\ EVP\_MD\_CTX\_reset,\ use\ the\ reserved\ flag}}
+\DoxyCodeLine{00030\ \textcolor{comment}{\ *\ values\ in\ evp.h}}
+\DoxyCodeLine{00031\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#define\ EVP\_MD\_CTX\_FLAG\_KEEP\_PKEY\_CTX\ \ \ 0x0400}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#define\ EVP\_MD\_CTX\_FLAG\_FINALISED\ \ \ \ \ \ \ 0x0800}}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#define\ evp\_pkey\_ctx\_is\_legacy(ctx)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\ \ \ \ ((ctx)-\/>keymgmt\ ==\ NULL)}}
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#define\ evp\_pkey\_ctx\_is\_provided(ctx)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\ \ \ \ (!evp\_pkey\_ctx\_is\_legacy(ctx))}}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structevp__pkey__ctx__st}{evp\_pkey\_ctx\_st}}\ \{}
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{comment}{/*\ Actual\ operation\ */}}
+\DoxyCodeLine{00042\ \ \ \ \ \textcolor{keywordtype}{int}\ operation;}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00045\ \textcolor{comment}{\ \ \ \ \ *\ Library\ context,\ property\ query,\ keytype\ and\ keymgmt\ associated\ with}}
+\DoxyCodeLine{00046\ \textcolor{comment}{\ \ \ \ \ *\ this\ context}}
+\DoxyCodeLine{00047\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00048\ \ \ \ \ OSSL\_LIB\_CTX\ *libctx;}
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{keywordtype}{char}\ *propquery;}
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *keytype;}
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{comment}{/*\ If\ |pkey|\ below\ is\ set,\ this\ field\ is\ always\ a\ reference\ to\ its\ keymgmt\ */}}
+\DoxyCodeLine{00052\ \ \ \ \ EVP\_KEYMGMT\ *keymgmt;}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *genctx;}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \}\ keymgmt;}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \ \ \ \ EVP\_KEYEXCH\ *exchange;}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00062\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ *\ Opaque\ ctx\ returned\ from\ a\ providers\ exchange\ algorithm}}
+\DoxyCodeLine{00063\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ *\ implementation\ OSSL\_FUNC\_keyexch\_newctx()}}
+\DoxyCodeLine{00064\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *algctx;}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \}\ kex;}
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \ \ \ \ EVP\_SIGNATURE\ *signature;}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00071\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ *\ Opaque\ ctx\ returned\ from\ a\ providers\ signature\ algorithm}}
+\DoxyCodeLine{00072\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ *\ implementation\ OSSL\_FUNC\_signature\_newctx()}}
+\DoxyCodeLine{00073\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *algctx;}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \}\ sig;}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \ \ \ \ EVP\_ASYM\_CIPHER\ *cipher;}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00080\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ *\ Opaque\ ctx\ returned\ from\ a\ providers\ asymmetric\ cipher\ algorithm}}
+\DoxyCodeLine{00081\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ *\ implementation\ OSSL\_FUNC\_asym\_cipher\_newctx()}}
+\DoxyCodeLine{00082\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *algctx;}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \}\ ciph;}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \ \ \ \ EVP\_KEM\ *kem;}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00088\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ *\ Opaque\ ctx\ returned\ from\ a\ providers\ KEM\ algorithm}}
+\DoxyCodeLine{00089\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ *\ implementation\ OSSL\_FUNC\_kem\_newctx()}}
+\DoxyCodeLine{00090\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *algctx;}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \}\ encap;}
+\DoxyCodeLine{00093\ \ \ \ \ \}\ op;}
+\DoxyCodeLine{00094\ }
+\DoxyCodeLine{00095\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00096\ \textcolor{comment}{\ \ \ \ \ *\ Cached\ parameters.\ \ Inits\ of\ operations\ that\ depend\ on\ these\ should}}
+\DoxyCodeLine{00097\ \textcolor{comment}{\ \ \ \ \ *\ call\ evp\_pkey\_ctx\_use\_delayed\_data()\ when\ the\ operation\ has\ been\ set}}
+\DoxyCodeLine{00098\ \textcolor{comment}{\ \ \ \ \ *\ up\ properly.}}
+\DoxyCodeLine{00099\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00100\ \ \ \ \ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Distinguishing\ Identifier,\ ISO/IEC\ 15946-\/3,\ FIPS\ 196\ */}}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{char}\ *dist\_id\_name;\ \textcolor{comment}{/*\ The\ name\ used\ with\ EVP\_PKEY\_CTX\_ctrl\_str()\ */}}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *dist\_id;\ \ \ \ \ \ \textcolor{comment}{/*\ The\ distinguishing\ ID\ itself\ */}}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ dist\_id\_len;\ \textcolor{comment}{/*\ The\ length\ of\ the\ distinguishing\ ID\ */}}
+\DoxyCodeLine{00105\ }
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Indicators\ of\ what\ has\ been\ set.\ \ Keep\ them\ together!\ */}}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ dist\_id\_set\ :\ 1;}
+\DoxyCodeLine{00108\ \ \ \ \ \}\ cached\_parameters;}
+\DoxyCodeLine{00109\ }
+\DoxyCodeLine{00110\ \ \ \ \ \textcolor{comment}{/*\ Application\ specific\ data,\ usually\ used\ by\ the\ callback\ */}}
+\DoxyCodeLine{00111\ \ \ \ \ \textcolor{keywordtype}{void}\ *app\_data;}
+\DoxyCodeLine{00112\ \ \ \ \ \textcolor{comment}{/*\ Keygen\ callback\ */}}
+\DoxyCodeLine{00113\ \ \ \ \ EVP\_PKEY\_gen\_cb\ *pkey\_gencb;}
+\DoxyCodeLine{00114\ \ \ \ \ \textcolor{comment}{/*\ implementation\ specific\ keygen\ data\ */}}
+\DoxyCodeLine{00115\ \ \ \ \ \textcolor{keywordtype}{int}\ *keygen\_info;}
+\DoxyCodeLine{00116\ \ \ \ \ \textcolor{keywordtype}{int}\ keygen\_info\_count;}
+\DoxyCodeLine{00117\ }
+\DoxyCodeLine{00118\ \ \ \ \ \textcolor{comment}{/*\ Legacy\ fields\ below\ */}}
+\DoxyCodeLine{00119\ }
+\DoxyCodeLine{00120\ \ \ \ \ \textcolor{comment}{/*\ EVP\_PKEY\ identity\ */}}
+\DoxyCodeLine{00121\ \ \ \ \ \textcolor{keywordtype}{int}\ legacy\_keytype;}
+\DoxyCodeLine{00122\ \ \ \ \ \textcolor{comment}{/*\ Method\ associated\ with\ this\ operation\ */}}
+\DoxyCodeLine{00123\ \ \ \ \ \textcolor{keyword}{const}\ EVP\_PKEY\_METHOD\ *pmeth;}
+\DoxyCodeLine{00124\ \ \ \ \ \textcolor{comment}{/*\ Engine\ that\ implements\ this\ method\ or\ NULL\ if\ builtin\ */}}
+\DoxyCodeLine{00125\ \ \ \ \ ENGINE\ *engine;}
+\DoxyCodeLine{00126\ \ \ \ \ \textcolor{comment}{/*\ Key:\ may\ be\ NULL\ */}}
+\DoxyCodeLine{00127\ \ \ \ \ EVP\_PKEY\ *pkey;}
+\DoxyCodeLine{00128\ \ \ \ \ \textcolor{comment}{/*\ Peer\ key\ for\ key\ agreement,\ may\ be\ NULL\ */}}
+\DoxyCodeLine{00129\ \ \ \ \ EVP\_PKEY\ *peerkey;}
+\DoxyCodeLine{00130\ \ \ \ \ \textcolor{comment}{/*\ Algorithm\ specific\ data\ */}}
+\DoxyCodeLine{00131\ \ \ \ \ \textcolor{keywordtype}{void}\ *data;}
+\DoxyCodeLine{00132\ \ \ \ \ \textcolor{comment}{/*\ Indicator\ if\ digest\_custom\ needs\ to\ be\ called\ */}}
+\DoxyCodeLine{00133\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ flag\_call\_digest\_custom:1;}
+\DoxyCodeLine{00134\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00135\ \textcolor{comment}{\ \ \ \ \ *\ Used\ to\ support\ taking\ custody\ of\ memory\ in\ the\ case\ of\ a\ provider\ being}}
+\DoxyCodeLine{00136\ \textcolor{comment}{\ \ \ \ \ *\ used\ with\ the\ deprecated\ EVP\_PKEY\_CTX\_set\_rsa\_keygen\_pubexp()\ API.\ This}}
+\DoxyCodeLine{00137\ \textcolor{comment}{\ \ \ \ \ *\ member\ should\ NOT\ be\ used\ for\ any\ other\ purpose\ and\ should\ be\ removed}}
+\DoxyCodeLine{00138\ \textcolor{comment}{\ \ \ \ \ *\ when\ said\ deprecated\ API\ is\ excised\ completely.}}
+\DoxyCodeLine{00139\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00140\ \ \ \ \ BIGNUM\ *rsa\_pubexp;}
+\DoxyCodeLine{00141\ \}\ \textcolor{comment}{/*\ EVP\_PKEY\_CTX\ */}\ ;}
+\DoxyCodeLine{00142\ }
+\DoxyCodeLine{00143\ \textcolor{preprocessor}{\#define\ EVP\_PKEY\_FLAG\_DYNAMIC\ \ \ 1}}
+\DoxyCodeLine{00144\ }
+\DoxyCodeLine{00145\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structevp__pkey__method__st}{evp\_pkey\_method\_st}}\ \{}
+\DoxyCodeLine{00146\ \ \ \ \ \textcolor{keywordtype}{int}\ pkey\_id;}
+\DoxyCodeLine{00147\ \ \ \ \ \textcolor{keywordtype}{int}\ flags;}
+\DoxyCodeLine{00148\ \ \ \ \ int\ (*init)\ (EVP\_PKEY\_CTX\ *ctx);}
+\DoxyCodeLine{00149\ \ \ \ \ int\ (*copy)\ (EVP\_PKEY\_CTX\ *dst,\ \textcolor{keyword}{const}\ EVP\_PKEY\_CTX\ *src);}
+\DoxyCodeLine{00150\ \ \ \ \ void\ (*cleanup)\ (EVP\_PKEY\_CTX\ *ctx);}
+\DoxyCodeLine{00151\ \ \ \ \ int\ (*paramgen\_init)\ (EVP\_PKEY\_CTX\ *ctx);}
+\DoxyCodeLine{00152\ \ \ \ \ int\ (*paramgen)\ (EVP\_PKEY\_CTX\ *ctx,\ EVP\_PKEY\ *pkey);}
+\DoxyCodeLine{00153\ \ \ \ \ int\ (*keygen\_init)\ (EVP\_PKEY\_CTX\ *ctx);}
+\DoxyCodeLine{00154\ \ \ \ \ int\ (*keygen)\ (EVP\_PKEY\_CTX\ *ctx,\ EVP\_PKEY\ *pkey);}
+\DoxyCodeLine{00155\ \ \ \ \ int\ (*sign\_init)\ (EVP\_PKEY\_CTX\ *ctx);}
+\DoxyCodeLine{00156\ \ \ \ \ int\ (*sign)\ (EVP\_PKEY\_CTX\ *ctx,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *sig,\ \textcolor{keywordtype}{size\_t}\ *siglen,}
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *tbs,\ \textcolor{keywordtype}{size\_t}\ tbslen);}
+\DoxyCodeLine{00158\ \ \ \ \ int\ (*verify\_init)\ (EVP\_PKEY\_CTX\ *ctx);}
+\DoxyCodeLine{00159\ \ \ \ \ int\ (*verify)\ (EVP\_PKEY\_CTX\ *ctx,}
+\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *sig,\ \textcolor{keywordtype}{size\_t}\ siglen,}
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *tbs,\ \textcolor{keywordtype}{size\_t}\ tbslen);}
+\DoxyCodeLine{00162\ \ \ \ \ int\ (*verify\_recover\_init)\ (EVP\_PKEY\_CTX\ *ctx);}
+\DoxyCodeLine{00163\ \ \ \ \ int\ (*verify\_recover)\ (EVP\_PKEY\_CTX\ *ctx,}
+\DoxyCodeLine{00164\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *rout,\ \textcolor{keywordtype}{size\_t}\ *routlen,}
+\DoxyCodeLine{00165\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *sig,\ \textcolor{keywordtype}{size\_t}\ siglen);}
+\DoxyCodeLine{00166\ \ \ \ \ int\ (*signctx\_init)\ (EVP\_PKEY\_CTX\ *ctx,\ EVP\_MD\_CTX\ *mctx);}
+\DoxyCodeLine{00167\ \ \ \ \ int\ (*signctx)\ (EVP\_PKEY\_CTX\ *ctx,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *sig,\ \textcolor{keywordtype}{size\_t}\ *siglen,}
+\DoxyCodeLine{00168\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ EVP\_MD\_CTX\ *mctx);}
+\DoxyCodeLine{00169\ \ \ \ \ int\ (*verifyctx\_init)\ (EVP\_PKEY\_CTX\ *ctx,\ EVP\_MD\_CTX\ *mctx);}
+\DoxyCodeLine{00170\ \ \ \ \ int\ (*verifyctx)\ (EVP\_PKEY\_CTX\ *ctx,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *sig,\ \textcolor{keywordtype}{int}\ siglen,}
+\DoxyCodeLine{00171\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ EVP\_MD\_CTX\ *mctx);}
+\DoxyCodeLine{00172\ \ \ \ \ int\ (*encrypt\_init)\ (EVP\_PKEY\_CTX\ *ctx);}
+\DoxyCodeLine{00173\ \ \ \ \ int\ (*encrypt)\ (EVP\_PKEY\_CTX\ *ctx,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,\ \textcolor{keywordtype}{size\_t}\ *outlen,}
+\DoxyCodeLine{00174\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,\ \textcolor{keywordtype}{size\_t}\ inlen);}
+\DoxyCodeLine{00175\ \ \ \ \ int\ (*decrypt\_init)\ (EVP\_PKEY\_CTX\ *ctx);}
+\DoxyCodeLine{00176\ \ \ \ \ int\ (*decrypt)\ (EVP\_PKEY\_CTX\ *ctx,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,\ \textcolor{keywordtype}{size\_t}\ *outlen,}
+\DoxyCodeLine{00177\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,\ \textcolor{keywordtype}{size\_t}\ inlen);}
+\DoxyCodeLine{00178\ \ \ \ \ int\ (*derive\_init)\ (EVP\_PKEY\_CTX\ *ctx);}
+\DoxyCodeLine{00179\ \ \ \ \ int\ (*derive)\ (EVP\_PKEY\_CTX\ *ctx,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *key,\ \textcolor{keywordtype}{size\_t}\ *keylen);}
+\DoxyCodeLine{00180\ \ \ \ \ int\ (*ctrl)\ (EVP\_PKEY\_CTX\ *ctx,\ \textcolor{keywordtype}{int}\ type,\ \textcolor{keywordtype}{int}\ p1,\ \textcolor{keywordtype}{void}\ *p2);}
+\DoxyCodeLine{00181\ \ \ \ \ int\ (*ctrl\_str)\ (EVP\_PKEY\_CTX\ *ctx,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *type,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *value);}
+\DoxyCodeLine{00182\ \ \ \ \ int\ (*digestsign)\ (EVP\_MD\_CTX\ *ctx,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *sig,\ \textcolor{keywordtype}{size\_t}\ *siglen,}
+\DoxyCodeLine{00183\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *tbs,\ \textcolor{keywordtype}{size\_t}\ tbslen);}
+\DoxyCodeLine{00184\ \ \ \ \ int\ (*digestverify)\ (EVP\_MD\_CTX\ *ctx,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *sig,}
+\DoxyCodeLine{00185\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ siglen,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *tbs,}
+\DoxyCodeLine{00186\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ tbslen);}
+\DoxyCodeLine{00187\ \ \ \ \ int\ (*check)\ (EVP\_PKEY\ *pkey);}
+\DoxyCodeLine{00188\ \ \ \ \ int\ (*public\_check)\ (EVP\_PKEY\ *pkey);}
+\DoxyCodeLine{00189\ \ \ \ \ int\ (*param\_check)\ (EVP\_PKEY\ *pkey);}
+\DoxyCodeLine{00190\ }
+\DoxyCodeLine{00191\ \ \ \ \ int\ (*digest\_custom)\ (EVP\_PKEY\_CTX\ *ctx,\ EVP\_MD\_CTX\ *mctx);}
+\DoxyCodeLine{00192\ \}\ \textcolor{comment}{/*\ EVP\_PKEY\_METHOD\ */}\ ;}
+\DoxyCodeLine{00193\ }
+\DoxyCodeLine{00194\ DEFINE\_STACK\_OF\_CONST(EVP\_PKEY\_METHOD)}
+\DoxyCodeLine{00195\ }
+\DoxyCodeLine{00196\ \textcolor{keywordtype}{void}\ evp\_pkey\_set\_cb\_translate(BN\_GENCB\ *cb,\ EVP\_PKEY\_CTX\ *ctx);}
+\DoxyCodeLine{00197\ }
+\DoxyCodeLine{00198\ \textcolor{keyword}{const}\ EVP\_PKEY\_METHOD\ *ossl\_dh\_pkey\_method(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00199\ \textcolor{keyword}{const}\ EVP\_PKEY\_METHOD\ *ossl\_dhx\_pkey\_method(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00200\ \textcolor{keyword}{const}\ EVP\_PKEY\_METHOD\ *ossl\_dsa\_pkey\_method(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00201\ \textcolor{keyword}{const}\ EVP\_PKEY\_METHOD\ *ossl\_ec\_pkey\_method(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00202\ \textcolor{keyword}{const}\ EVP\_PKEY\_METHOD\ *ossl\_ecx25519\_pkey\_method(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00203\ \textcolor{keyword}{const}\ EVP\_PKEY\_METHOD\ *ossl\_ecx448\_pkey\_method(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00204\ \textcolor{keyword}{const}\ EVP\_PKEY\_METHOD\ *ossl\_ed25519\_pkey\_method(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00205\ \textcolor{keyword}{const}\ EVP\_PKEY\_METHOD\ *ossl\_ed448\_pkey\_method(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00206\ \textcolor{keyword}{const}\ EVP\_PKEY\_METHOD\ *ossl\_rsa\_pkey\_method(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00207\ \textcolor{keyword}{const}\ EVP\_PKEY\_METHOD\ *ossl\_rsa\_pss\_pkey\_method(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00208\ }
+\DoxyCodeLine{00209\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structevp__mac__st}{evp\_mac\_st}}\ \{}
+\DoxyCodeLine{00210\ \ \ \ \ OSSL\_PROVIDER\ *prov;}
+\DoxyCodeLine{00211\ \ \ \ \ \textcolor{keywordtype}{int}\ name\_id;}
+\DoxyCodeLine{00212\ \ \ \ \ \textcolor{keywordtype}{char}\ *type\_name;}
+\DoxyCodeLine{00213\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *description;}
+\DoxyCodeLine{00214\ }
+\DoxyCodeLine{00215\ \ \ \ \ \mbox{\hyperlink{struct_c_r_y_p_t_o___r_e_f___c_o_u_n_t}{CRYPTO\_REF\_COUNT}}\ refcnt;}
+\DoxyCodeLine{00216\ }
+\DoxyCodeLine{00217\ \ \ \ \ OSSL\_FUNC\_mac\_newctx\_fn\ *newctx;}
+\DoxyCodeLine{00218\ \ \ \ \ OSSL\_FUNC\_mac\_dupctx\_fn\ *dupctx;}
+\DoxyCodeLine{00219\ \ \ \ \ OSSL\_FUNC\_mac\_freectx\_fn\ *freectx;}
+\DoxyCodeLine{00220\ \ \ \ \ OSSL\_FUNC\_mac\_init\_fn\ *init;}
+\DoxyCodeLine{00221\ \ \ \ \ OSSL\_FUNC\_mac\_update\_fn\ *update;}
+\DoxyCodeLine{00222\ \ \ \ \ OSSL\_FUNC\_mac\_final\_fn\ *\textcolor{keyword}{final};}
+\DoxyCodeLine{00223\ \ \ \ \ OSSL\_FUNC\_mac\_gettable\_params\_fn\ *gettable\_params;}
+\DoxyCodeLine{00224\ \ \ \ \ OSSL\_FUNC\_mac\_gettable\_ctx\_params\_fn\ *gettable\_ctx\_params;}
+\DoxyCodeLine{00225\ \ \ \ \ OSSL\_FUNC\_mac\_settable\_ctx\_params\_fn\ *settable\_ctx\_params;}
+\DoxyCodeLine{00226\ \ \ \ \ OSSL\_FUNC\_mac\_get\_params\_fn\ *get\_params;}
+\DoxyCodeLine{00227\ \ \ \ \ OSSL\_FUNC\_mac\_get\_ctx\_params\_fn\ *get\_ctx\_params;}
+\DoxyCodeLine{00228\ \ \ \ \ OSSL\_FUNC\_mac\_set\_ctx\_params\_fn\ *set\_ctx\_params;}
+\DoxyCodeLine{00229\ \};}
+\DoxyCodeLine{00230\ }
+\DoxyCodeLine{00231\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structevp__kdf__st}{evp\_kdf\_st}}\ \{}
+\DoxyCodeLine{00232\ \ \ \ \ OSSL\_PROVIDER\ *prov;}
+\DoxyCodeLine{00233\ \ \ \ \ \textcolor{keywordtype}{int}\ name\_id;}
+\DoxyCodeLine{00234\ \ \ \ \ \textcolor{keywordtype}{char}\ *type\_name;}
+\DoxyCodeLine{00235\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *description;}
+\DoxyCodeLine{00236\ \ \ \ \ \mbox{\hyperlink{struct_c_r_y_p_t_o___r_e_f___c_o_u_n_t}{CRYPTO\_REF\_COUNT}}\ refcnt;}
+\DoxyCodeLine{00237\ }
+\DoxyCodeLine{00238\ \ \ \ \ OSSL\_FUNC\_kdf\_newctx\_fn\ *newctx;}
+\DoxyCodeLine{00239\ \ \ \ \ OSSL\_FUNC\_kdf\_dupctx\_fn\ *dupctx;}
+\DoxyCodeLine{00240\ \ \ \ \ OSSL\_FUNC\_kdf\_freectx\_fn\ *freectx;}
+\DoxyCodeLine{00241\ \ \ \ \ OSSL\_FUNC\_kdf\_reset\_fn\ *reset;}
+\DoxyCodeLine{00242\ \ \ \ \ OSSL\_FUNC\_kdf\_derive\_fn\ *derive;}
+\DoxyCodeLine{00243\ \ \ \ \ OSSL\_FUNC\_kdf\_gettable\_params\_fn\ *gettable\_params;}
+\DoxyCodeLine{00244\ \ \ \ \ OSSL\_FUNC\_kdf\_gettable\_ctx\_params\_fn\ *gettable\_ctx\_params;}
+\DoxyCodeLine{00245\ \ \ \ \ OSSL\_FUNC\_kdf\_settable\_ctx\_params\_fn\ *settable\_ctx\_params;}
+\DoxyCodeLine{00246\ \ \ \ \ OSSL\_FUNC\_kdf\_get\_params\_fn\ *get\_params;}
+\DoxyCodeLine{00247\ \ \ \ \ OSSL\_FUNC\_kdf\_get\_ctx\_params\_fn\ *get\_ctx\_params;}
+\DoxyCodeLine{00248\ \ \ \ \ OSSL\_FUNC\_kdf\_set\_ctx\_params\_fn\ *set\_ctx\_params;}
+\DoxyCodeLine{00249\ \};}
+\DoxyCodeLine{00250\ }
+\DoxyCodeLine{00251\ \textcolor{preprocessor}{\#define\ EVP\_ORIG\_DYNAMIC\ \ \ \ 0}}
+\DoxyCodeLine{00252\ \textcolor{preprocessor}{\#define\ EVP\_ORIG\_GLOBAL\ \ \ \ \ 1}}
+\DoxyCodeLine{00253\ \textcolor{preprocessor}{\#define\ EVP\_ORIG\_METH\ \ \ \ \ \ \ 2}}
+\DoxyCodeLine{00254\ }
+\DoxyCodeLine{00255\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structevp__md__st}{evp\_md\_st}}\ \{}
+\DoxyCodeLine{00256\ \ \ \ \ \textcolor{comment}{/*\ nid\ */}}
+\DoxyCodeLine{00257\ \ \ \ \ \textcolor{keywordtype}{int}\ type;}
+\DoxyCodeLine{00258\ }
+\DoxyCodeLine{00259\ \ \ \ \ \textcolor{comment}{/*\ Legacy\ structure\ members\ */}}
+\DoxyCodeLine{00260\ \ \ \ \ \textcolor{keywordtype}{int}\ pkey\_type;}
+\DoxyCodeLine{00261\ \ \ \ \ \textcolor{keywordtype}{int}\ md\_size;}
+\DoxyCodeLine{00262\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ flags;}
+\DoxyCodeLine{00263\ \ \ \ \ \textcolor{keywordtype}{int}\ origin;}
+\DoxyCodeLine{00264\ \ \ \ \ int\ (*init)\ (EVP\_MD\_CTX\ *ctx);}
+\DoxyCodeLine{00265\ \ \ \ \ int\ (*update)\ (EVP\_MD\_CTX\ *ctx,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *data,\ \textcolor{keywordtype}{size\_t}\ count);}
+\DoxyCodeLine{00266\ \ \ \ \ int\ (*\textcolor{keyword}{final})\ (EVP\_MD\_CTX\ *ctx,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *md);}
+\DoxyCodeLine{00267\ \ \ \ \ int\ (*copy)\ (EVP\_MD\_CTX\ *to,\ \textcolor{keyword}{const}\ EVP\_MD\_CTX\ *from);}
+\DoxyCodeLine{00268\ \ \ \ \ int\ (*cleanup)\ (EVP\_MD\_CTX\ *ctx);}
+\DoxyCodeLine{00269\ \ \ \ \ \textcolor{keywordtype}{int}\ block\_size;}
+\DoxyCodeLine{00270\ \ \ \ \ \textcolor{keywordtype}{int}\ ctx\_size;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ how\ big\ does\ the\ ctx-\/>md\_data\ need\ to\ be\ */}}
+\DoxyCodeLine{00271\ \ \ \ \ \textcolor{comment}{/*\ control\ function\ */}}
+\DoxyCodeLine{00272\ \ \ \ \ int\ (*md\_ctrl)\ (EVP\_MD\_CTX\ *ctx,\ \textcolor{keywordtype}{int}\ cmd,\ \textcolor{keywordtype}{int}\ p1,\ \textcolor{keywordtype}{void}\ *p2);}
+\DoxyCodeLine{00273\ }
+\DoxyCodeLine{00274\ \ \ \ \ \textcolor{comment}{/*\ New\ structure\ members\ */}}
+\DoxyCodeLine{00275\ \ \ \ \ \textcolor{comment}{/*\ Above\ comment\ to\ be\ removed\ when\ legacy\ has\ gone\ */}}
+\DoxyCodeLine{00276\ \ \ \ \ \textcolor{keywordtype}{int}\ name\_id;}
+\DoxyCodeLine{00277\ \ \ \ \ \textcolor{keywordtype}{char}\ *type\_name;}
+\DoxyCodeLine{00278\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *description;}
+\DoxyCodeLine{00279\ \ \ \ \ OSSL\_PROVIDER\ *prov;}
+\DoxyCodeLine{00280\ \ \ \ \ \mbox{\hyperlink{struct_c_r_y_p_t_o___r_e_f___c_o_u_n_t}{CRYPTO\_REF\_COUNT}}\ refcnt;}
+\DoxyCodeLine{00281\ \ \ \ \ OSSL\_FUNC\_digest\_newctx\_fn\ *newctx;}
+\DoxyCodeLine{00282\ \ \ \ \ OSSL\_FUNC\_digest\_init\_fn\ *dinit;}
+\DoxyCodeLine{00283\ \ \ \ \ OSSL\_FUNC\_digest\_update\_fn\ *dupdate;}
+\DoxyCodeLine{00284\ \ \ \ \ OSSL\_FUNC\_digest\_final\_fn\ *dfinal;}
+\DoxyCodeLine{00285\ \ \ \ \ OSSL\_FUNC\_digest\_digest\_fn\ *digest;}
+\DoxyCodeLine{00286\ \ \ \ \ OSSL\_FUNC\_digest\_freectx\_fn\ *freectx;}
+\DoxyCodeLine{00287\ \ \ \ \ OSSL\_FUNC\_digest\_dupctx\_fn\ *dupctx;}
+\DoxyCodeLine{00288\ \ \ \ \ OSSL\_FUNC\_digest\_get\_params\_fn\ *get\_params;}
+\DoxyCodeLine{00289\ \ \ \ \ OSSL\_FUNC\_digest\_set\_ctx\_params\_fn\ *set\_ctx\_params;}
+\DoxyCodeLine{00290\ \ \ \ \ OSSL\_FUNC\_digest\_get\_ctx\_params\_fn\ *get\_ctx\_params;}
+\DoxyCodeLine{00291\ \ \ \ \ OSSL\_FUNC\_digest\_gettable\_params\_fn\ *gettable\_params;}
+\DoxyCodeLine{00292\ \ \ \ \ OSSL\_FUNC\_digest\_settable\_ctx\_params\_fn\ *settable\_ctx\_params;}
+\DoxyCodeLine{00293\ \ \ \ \ OSSL\_FUNC\_digest\_gettable\_ctx\_params\_fn\ *gettable\_ctx\_params;}
+\DoxyCodeLine{00294\ }
+\DoxyCodeLine{00295\ \}\ \textcolor{comment}{/*\ EVP\_MD\ */}\ ;}
+\DoxyCodeLine{00296\ }
+\DoxyCodeLine{00297\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structevp__cipher__st}{evp\_cipher\_st}}\ \{}
+\DoxyCodeLine{00298\ \ \ \ \ \textcolor{keywordtype}{int}\ nid;}
+\DoxyCodeLine{00299\ }
+\DoxyCodeLine{00300\ \ \ \ \ \textcolor{keywordtype}{int}\ block\_size;}
+\DoxyCodeLine{00301\ \ \ \ \ \textcolor{comment}{/*\ Default\ value\ for\ variable\ length\ ciphers\ */}}
+\DoxyCodeLine{00302\ \ \ \ \ \textcolor{keywordtype}{int}\ key\_len;}
+\DoxyCodeLine{00303\ \ \ \ \ \textcolor{keywordtype}{int}\ iv\_len;}
+\DoxyCodeLine{00304\ }
+\DoxyCodeLine{00305\ \ \ \ \ \textcolor{comment}{/*\ Legacy\ structure\ members\ */}}
+\DoxyCodeLine{00306\ \ \ \ \ \textcolor{comment}{/*\ Various\ flags\ */}}
+\DoxyCodeLine{00307\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ flags;}
+\DoxyCodeLine{00308\ \ \ \ \ \textcolor{comment}{/*\ How\ the\ EVP\_CIPHER\ was\ created.\ */}}
+\DoxyCodeLine{00309\ \ \ \ \ \textcolor{keywordtype}{int}\ origin;}
+\DoxyCodeLine{00310\ \ \ \ \ \textcolor{comment}{/*\ init\ key\ */}}
+\DoxyCodeLine{00311\ \ \ \ \ int\ (*init)\ (EVP\_CIPHER\_CTX\ *ctx,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *key,}
+\DoxyCodeLine{00312\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *iv,\ \textcolor{keywordtype}{int}\ enc);}
+\DoxyCodeLine{00313\ \ \ \ \ \textcolor{comment}{/*\ encrypt/decrypt\ data\ */}}
+\DoxyCodeLine{00314\ \ \ \ \ int\ (*do\_cipher)\ (EVP\_CIPHER\_CTX\ *ctx,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,}
+\DoxyCodeLine{00315\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,\ \textcolor{keywordtype}{size\_t}\ inl);}
+\DoxyCodeLine{00316\ \ \ \ \ \textcolor{comment}{/*\ cleanup\ ctx\ */}}
+\DoxyCodeLine{00317\ \ \ \ \ int\ (*cleanup)\ (EVP\_CIPHER\_CTX\ *);}
+\DoxyCodeLine{00318\ \ \ \ \ \textcolor{comment}{/*\ how\ big\ ctx-\/>cipher\_data\ needs\ to\ be\ */}}
+\DoxyCodeLine{00319\ \ \ \ \ \textcolor{keywordtype}{int}\ ctx\_size;}
+\DoxyCodeLine{00320\ \ \ \ \ \textcolor{comment}{/*\ Populate\ a\ ASN1\_TYPE\ with\ parameters\ */}}
+\DoxyCodeLine{00321\ \ \ \ \ int\ (*set\_asn1\_parameters)\ (EVP\_CIPHER\_CTX\ *,\ ASN1\_TYPE\ *);}
+\DoxyCodeLine{00322\ \ \ \ \ \textcolor{comment}{/*\ Get\ parameters\ from\ a\ ASN1\_TYPE\ */}}
+\DoxyCodeLine{00323\ \ \ \ \ int\ (*get\_asn1\_parameters)\ (EVP\_CIPHER\_CTX\ *,\ ASN1\_TYPE\ *);}
+\DoxyCodeLine{00324\ \ \ \ \ \textcolor{comment}{/*\ Miscellaneous\ operations\ */}}
+\DoxyCodeLine{00325\ \ \ \ \ int\ (*ctrl)\ (EVP\_CIPHER\_CTX\ *,\ \textcolor{keywordtype}{int}\ type,\ \textcolor{keywordtype}{int}\ arg,\ \textcolor{keywordtype}{void}\ *ptr);}
+\DoxyCodeLine{00326\ \ \ \ \ \textcolor{comment}{/*\ Application\ data\ */}}
+\DoxyCodeLine{00327\ \ \ \ \ \textcolor{keywordtype}{void}\ *app\_data;}
+\DoxyCodeLine{00328\ }
+\DoxyCodeLine{00329\ \ \ \ \ \textcolor{comment}{/*\ New\ structure\ members\ */}}
+\DoxyCodeLine{00330\ \ \ \ \ \textcolor{comment}{/*\ Above\ comment\ to\ be\ removed\ when\ legacy\ has\ gone\ */}}
+\DoxyCodeLine{00331\ \ \ \ \ \textcolor{keywordtype}{int}\ name\_id;}
+\DoxyCodeLine{00332\ \ \ \ \ \textcolor{keywordtype}{char}\ *type\_name;}
+\DoxyCodeLine{00333\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *description;}
+\DoxyCodeLine{00334\ \ \ \ \ OSSL\_PROVIDER\ *prov;}
+\DoxyCodeLine{00335\ \ \ \ \ \mbox{\hyperlink{struct_c_r_y_p_t_o___r_e_f___c_o_u_n_t}{CRYPTO\_REF\_COUNT}}\ refcnt;}
+\DoxyCodeLine{00336\ \ \ \ \ OSSL\_FUNC\_cipher\_newctx\_fn\ *newctx;}
+\DoxyCodeLine{00337\ \ \ \ \ OSSL\_FUNC\_cipher\_encrypt\_init\_fn\ *einit;}
+\DoxyCodeLine{00338\ \ \ \ \ OSSL\_FUNC\_cipher\_decrypt\_init\_fn\ *dinit;}
+\DoxyCodeLine{00339\ \ \ \ \ OSSL\_FUNC\_cipher\_update\_fn\ *cupdate;}
+\DoxyCodeLine{00340\ \ \ \ \ OSSL\_FUNC\_cipher\_final\_fn\ *cfinal;}
+\DoxyCodeLine{00341\ \ \ \ \ OSSL\_FUNC\_cipher\_cipher\_fn\ *ccipher;}
+\DoxyCodeLine{00342\ \ \ \ \ OSSL\_FUNC\_cipher\_freectx\_fn\ *freectx;}
+\DoxyCodeLine{00343\ \ \ \ \ OSSL\_FUNC\_cipher\_dupctx\_fn\ *dupctx;}
+\DoxyCodeLine{00344\ \ \ \ \ OSSL\_FUNC\_cipher\_get\_params\_fn\ *get\_params;}
+\DoxyCodeLine{00345\ \ \ \ \ OSSL\_FUNC\_cipher\_get\_ctx\_params\_fn\ *get\_ctx\_params;}
+\DoxyCodeLine{00346\ \ \ \ \ OSSL\_FUNC\_cipher\_set\_ctx\_params\_fn\ *set\_ctx\_params;}
+\DoxyCodeLine{00347\ \ \ \ \ OSSL\_FUNC\_cipher\_gettable\_params\_fn\ *gettable\_params;}
+\DoxyCodeLine{00348\ \ \ \ \ OSSL\_FUNC\_cipher\_gettable\_ctx\_params\_fn\ *gettable\_ctx\_params;}
+\DoxyCodeLine{00349\ \ \ \ \ OSSL\_FUNC\_cipher\_settable\_ctx\_params\_fn\ *settable\_ctx\_params;}
+\DoxyCodeLine{00350\ \}\ \textcolor{comment}{/*\ EVP\_CIPHER\ */}\ ;}
+\DoxyCodeLine{00351\ }
+\DoxyCodeLine{00352\ \textcolor{comment}{/*\ Macros\ to\ code\ block\ cipher\ wrappers\ */}}
+\DoxyCodeLine{00353\ }
+\DoxyCodeLine{00354\ \textcolor{comment}{/*\ Wrapper\ functions\ for\ each\ cipher\ mode\ */}}
+\DoxyCodeLine{00355\ }
+\DoxyCodeLine{00356\ \textcolor{preprocessor}{\#define\ EVP\_C\_DATA(kstruct,\ ctx)\ \(\backslash\)}}
+\DoxyCodeLine{00357\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ ((kstruct\ *)EVP\_CIPHER\_CTX\_get\_cipher\_data(ctx))}}
+\DoxyCodeLine{00358\ }
+\DoxyCodeLine{00359\ \textcolor{preprocessor}{\#define\ BLOCK\_CIPHER\_ecb\_loop()\ \(\backslash\)}}
+\DoxyCodeLine{00360\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ size\_t\ i,\ bl;\ \(\backslash\)}}
+\DoxyCodeLine{00361\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ bl\ =\ EVP\_CIPHER\_CTX\_get0\_cipher(ctx)-\/>block\_size;\ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00362\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ if\ (inl\ <\ bl)\ return\ 1;\(\backslash\)}}
+\DoxyCodeLine{00363\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ inl\ -\/=\ bl;\ \(\backslash\)}}
+\DoxyCodeLine{00364\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ for\ (i=0;\ i\ <=\ inl;\ i+=bl)}}
+\DoxyCodeLine{00365\ }
+\DoxyCodeLine{00366\ \textcolor{preprocessor}{\#define\ BLOCK\_CIPHER\_func\_ecb(cname,\ cprefix,\ kstruct,\ ksched)\ \(\backslash\)}}
+\DoxyCodeLine{00367\ \textcolor{preprocessor}{static\ int\ cname\#\#\_ecb\_cipher(EVP\_CIPHER\_CTX\ *ctx,\ unsigned\ char\ *out,\ const\ unsigned\ char\ *in,\ size\_t\ inl)\ \(\backslash\)}}
+\DoxyCodeLine{00368\ \textcolor{preprocessor}{\{\(\backslash\)}}
+\DoxyCodeLine{00369\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ BLOCK\_CIPHER\_ecb\_loop()\ \(\backslash\)}}
+\DoxyCodeLine{00370\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ cprefix\#\#\_ecb\_encrypt(in\ +\ i,\ out\ +\ i,\ \&EVP\_C\_DATA(kstruct,ctx)-\/>ksched,\ EVP\_CIPHER\_CTX\_is\_encrypting(ctx));\ \(\backslash\)}}
+\DoxyCodeLine{00371\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ return\ 1;\(\backslash\)}}
+\DoxyCodeLine{00372\ \textcolor{preprocessor}{\}}}
+\DoxyCodeLine{00373\ }
+\DoxyCodeLine{00374\ \textcolor{preprocessor}{\#define\ EVP\_MAXCHUNK\ ((size\_t)1\ <<\ 30)}}
+\DoxyCodeLine{00375\ }
+\DoxyCodeLine{00376\ \textcolor{preprocessor}{\#define\ BLOCK\_CIPHER\_func\_ofb(cname,\ cprefix,\ cbits,\ kstruct,\ ksched)\ \(\backslash\)}}
+\DoxyCodeLine{00377\ \textcolor{preprocessor}{\ \ \ \ static\ int\ cname\#\#\_ofb\_cipher(EVP\_CIPHER\_CTX\ *ctx,\ unsigned\ char\ *out,\ const\ unsigned\ char\ *in,\ size\_t\ inl)\ \(\backslash\)}}
+\DoxyCodeLine{00378\ \textcolor{preprocessor}{\{\(\backslash\)}}
+\DoxyCodeLine{00379\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ while(inl>=EVP\_MAXCHUNK)\ \{\(\backslash\)}}
+\DoxyCodeLine{00380\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ int\ num\ =\ EVP\_CIPHER\_CTX\_get\_num(ctx);\(\backslash\)}}
+\DoxyCodeLine{00381\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ cprefix\#\#\_ofb\#\#cbits\#\#\_encrypt(in,\ out,\ (long)EVP\_MAXCHUNK,\ \&EVP\_C\_DATA(kstruct,ctx)-\/>ksched,\ ctx-\/>iv,\ \&num);\ \(\backslash\)}}
+\DoxyCodeLine{00382\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ EVP\_CIPHER\_CTX\_set\_num(ctx,\ num);\(\backslash\)}}
+\DoxyCodeLine{00383\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ inl-\/=EVP\_MAXCHUNK;\(\backslash\)}}
+\DoxyCodeLine{00384\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ in\ +=EVP\_MAXCHUNK;\(\backslash\)}}
+\DoxyCodeLine{00385\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ out+=EVP\_MAXCHUNK;\(\backslash\)}}
+\DoxyCodeLine{00386\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \}\(\backslash\)}}
+\DoxyCodeLine{00387\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ if\ (inl)\ \{\(\backslash\)}}
+\DoxyCodeLine{00388\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ int\ num\ =\ EVP\_CIPHER\_CTX\_get\_num(ctx);\(\backslash\)}}
+\DoxyCodeLine{00389\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ cprefix\#\#\_ofb\#\#cbits\#\#\_encrypt(in,\ out,\ (long)inl,\ \&EVP\_C\_DATA(kstruct,ctx)-\/>ksched,\ ctx-\/>iv,\ \&num);\ \(\backslash\)}}
+\DoxyCodeLine{00390\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ EVP\_CIPHER\_CTX\_set\_num(ctx,\ num);\(\backslash\)}}
+\DoxyCodeLine{00391\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \}\(\backslash\)}}
+\DoxyCodeLine{00392\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ return\ 1;\(\backslash\)}}
+\DoxyCodeLine{00393\ \textcolor{preprocessor}{\}}}
+\DoxyCodeLine{00394\ }
+\DoxyCodeLine{00395\ \textcolor{preprocessor}{\#define\ BLOCK\_CIPHER\_func\_cbc(cname,\ cprefix,\ kstruct,\ ksched)\ \(\backslash\)}}
+\DoxyCodeLine{00396\ \textcolor{preprocessor}{static\ int\ cname\#\#\_cbc\_cipher(EVP\_CIPHER\_CTX\ *ctx,\ unsigned\ char\ *out,\ const\ unsigned\ char\ *in,\ size\_t\ inl)\ \(\backslash\)}}
+\DoxyCodeLine{00397\ \textcolor{preprocessor}{\{\(\backslash\)}}
+\DoxyCodeLine{00398\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ while(inl>=EVP\_MAXCHUNK)\ \(\backslash\)}}
+\DoxyCodeLine{00399\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \{\(\backslash\)}}
+\DoxyCodeLine{00400\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ cprefix\#\#\_cbc\_encrypt(in,\ out,\ (long)EVP\_MAXCHUNK,\ \&EVP\_C\_DATA(kstruct,ctx)-\/>ksched,\ ctx-\/>iv,\ EVP\_CIPHER\_CTX\_is\_encrypting(ctx));\(\backslash\)}}
+\DoxyCodeLine{00401\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ inl-\/=EVP\_MAXCHUNK;\(\backslash\)}}
+\DoxyCodeLine{00402\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ in\ +=EVP\_MAXCHUNK;\(\backslash\)}}
+\DoxyCodeLine{00403\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ out+=EVP\_MAXCHUNK;\(\backslash\)}}
+\DoxyCodeLine{00404\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \}\(\backslash\)}}
+\DoxyCodeLine{00405\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ if\ (inl)\(\backslash\)}}
+\DoxyCodeLine{00406\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ cprefix\#\#\_cbc\_encrypt(in,\ out,\ (long)inl,\ \&EVP\_C\_DATA(kstruct,ctx)-\/>ksched,\ ctx-\/>iv,\ EVP\_CIPHER\_CTX\_is\_encrypting(ctx));\(\backslash\)}}
+\DoxyCodeLine{00407\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ return\ 1;\(\backslash\)}}
+\DoxyCodeLine{00408\ \textcolor{preprocessor}{\}}}
+\DoxyCodeLine{00409\ }
+\DoxyCodeLine{00410\ \textcolor{preprocessor}{\#define\ BLOCK\_CIPHER\_func\_cfb(cname,\ cprefix,\ cbits,\ kstruct,\ ksched)\ \ \(\backslash\)}}
+\DoxyCodeLine{00411\ \textcolor{preprocessor}{static\ int\ cname\#\#\_cfb\#\#cbits\#\#\_cipher(EVP\_CIPHER\_CTX\ *ctx,\ unsigned\ char\ *out,\ const\ unsigned\ char\ *in,\ size\_t\ inl)\ \(\backslash\)}}
+\DoxyCodeLine{00412\ \textcolor{preprocessor}{\{\(\backslash\)}}
+\DoxyCodeLine{00413\ \textcolor{preprocessor}{\ \ \ \ size\_t\ chunk\ =\ EVP\_MAXCHUNK;\(\backslash\)}}
+\DoxyCodeLine{00414\ \textcolor{preprocessor}{\ \ \ \ if\ (cbits\ ==\ 1)\ \ chunk\ >>=\ 3;\(\backslash\)}}
+\DoxyCodeLine{00415\ \textcolor{preprocessor}{\ \ \ \ if\ (inl\ <\ chunk)\ chunk\ =\ inl;\(\backslash\)}}
+\DoxyCodeLine{00416\ \textcolor{preprocessor}{\ \ \ \ while\ (inl\ \&\&\ inl\ >=\ chunk)\(\backslash\)}}
+\DoxyCodeLine{00417\ \textcolor{preprocessor}{\ \ \ \ \{\(\backslash\)}}
+\DoxyCodeLine{00418\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ int\ num\ =\ EVP\_CIPHER\_CTX\_get\_num(ctx);\(\backslash\)}}
+\DoxyCodeLine{00419\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ cprefix\#\#\_cfb\#\#cbits\#\#\_encrypt(in,\ out,\ (long)\ \(\backslash\)}}
+\DoxyCodeLine{00420\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ ((cbits\ ==\ 1)\ \(\backslash\)}}
+\DoxyCodeLine{00421\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \&\&\ !EVP\_CIPHER\_CTX\_test\_flags(ctx,\ EVP\_CIPH\_FLAG\_LENGTH\_BITS)\ \(\backslash\)}}
+\DoxyCodeLine{00422\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ?\ chunk*8\ :\ chunk),\ \(\backslash\)}}
+\DoxyCodeLine{00423\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \&EVP\_C\_DATA(kstruct,\ ctx)-\/>ksched,\ ctx-\/>iv,\(\backslash\)}}
+\DoxyCodeLine{00424\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \&num,\ EVP\_CIPHER\_CTX\_is\_encrypting(ctx));\(\backslash\)}}
+\DoxyCodeLine{00425\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ EVP\_CIPHER\_CTX\_set\_num(ctx,\ num);\(\backslash\)}}
+\DoxyCodeLine{00426\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ inl\ -\/=\ chunk;\(\backslash\)}}
+\DoxyCodeLine{00427\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ in\ +=\ chunk;\(\backslash\)}}
+\DoxyCodeLine{00428\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ out\ +=\ chunk;\(\backslash\)}}
+\DoxyCodeLine{00429\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ if\ (inl\ <\ chunk)\ chunk\ =\ inl;\(\backslash\)}}
+\DoxyCodeLine{00430\ \textcolor{preprocessor}{\ \ \ \ \}\(\backslash\)}}
+\DoxyCodeLine{00431\ \textcolor{preprocessor}{\ \ \ \ return\ 1;\(\backslash\)}}
+\DoxyCodeLine{00432\ \textcolor{preprocessor}{\}}}
+\DoxyCodeLine{00433\ }
+\DoxyCodeLine{00434\ \textcolor{preprocessor}{\#define\ BLOCK\_CIPHER\_all\_funcs(cname,\ cprefix,\ cbits,\ kstruct,\ ksched)\ \(\backslash\)}}
+\DoxyCodeLine{00435\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ BLOCK\_CIPHER\_func\_cbc(cname,\ cprefix,\ kstruct,\ ksched)\ \(\backslash\)}}
+\DoxyCodeLine{00436\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ BLOCK\_CIPHER\_func\_cfb(cname,\ cprefix,\ cbits,\ kstruct,\ ksched)\ \(\backslash\)}}
+\DoxyCodeLine{00437\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ BLOCK\_CIPHER\_func\_ecb(cname,\ cprefix,\ kstruct,\ ksched)\ \(\backslash\)}}
+\DoxyCodeLine{00438\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ BLOCK\_CIPHER\_func\_ofb(cname,\ cprefix,\ cbits,\ kstruct,\ ksched)}}
+\DoxyCodeLine{00439\ }
+\DoxyCodeLine{00440\ \textcolor{preprocessor}{\#define\ BLOCK\_CIPHER\_def1(cname,\ nmode,\ mode,\ MODE,\ kstruct,\ nid,\ block\_size,\ \(\backslash\)}}
+\DoxyCodeLine{00441\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ key\_len,\ iv\_len,\ flags,\ init\_key,\ cleanup,\ \(\backslash\)}}
+\DoxyCodeLine{00442\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ set\_asn1,\ get\_asn1,\ ctrl)\ \(\backslash\)}}
+\DoxyCodeLine{00443\ \textcolor{preprocessor}{static\ const\ EVP\_CIPHER\ cname\#\#\_\#\#mode\ =\ \{\ \(\backslash\)}}
+\DoxyCodeLine{00444\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ nid\#\#\_\#\#nmode,\ block\_size,\ key\_len,\ iv\_len,\ \(\backslash\)}}
+\DoxyCodeLine{00445\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ flags\ |\ EVP\_CIPH\_\#\#MODE\#\#\_MODE,\ \(\backslash\)}}
+\DoxyCodeLine{00446\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ EVP\_ORIG\_GLOBAL,\ \(\backslash\)}}
+\DoxyCodeLine{00447\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ init\_key,\ \(\backslash\)}}
+\DoxyCodeLine{00448\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ cname\#\#\_\#\#mode\#\#\_cipher,\ \(\backslash\)}}
+\DoxyCodeLine{00449\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ cleanup,\ \(\backslash\)}}
+\DoxyCodeLine{00450\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ sizeof(kstruct),\ \(\backslash\)}}
+\DoxyCodeLine{00451\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ set\_asn1,\ get\_asn1,\(\backslash\)}}
+\DoxyCodeLine{00452\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ ctrl,\ \(\backslash\)}}
+\DoxyCodeLine{00453\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ NULL\ \(\backslash\)}}
+\DoxyCodeLine{00454\ \textcolor{preprocessor}{\};\ \(\backslash\)}}
+\DoxyCodeLine{00455\ \textcolor{preprocessor}{const\ EVP\_CIPHER\ *EVP\_\#\#cname\#\#\_\#\#mode(void)\ \{\ return\ \&cname\#\#\_\#\#mode;\ \}}}
+\DoxyCodeLine{00456\ }
+\DoxyCodeLine{00457\ \textcolor{preprocessor}{\#define\ BLOCK\_CIPHER\_def\_cbc(cname,\ kstruct,\ nid,\ block\_size,\ key\_len,\ \(\backslash\)}}
+\DoxyCodeLine{00458\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ iv\_len,\ flags,\ init\_key,\ cleanup,\ set\_asn1,\ \(\backslash\)}}
+\DoxyCodeLine{00459\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ get\_asn1,\ ctrl)\ \(\backslash\)}}
+\DoxyCodeLine{00460\ \textcolor{preprocessor}{BLOCK\_CIPHER\_def1(cname,\ cbc,\ cbc,\ CBC,\ kstruct,\ nid,\ block\_size,\ key\_len,\ \(\backslash\)}}
+\DoxyCodeLine{00461\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ iv\_len,\ flags,\ init\_key,\ cleanup,\ set\_asn1,\ get\_asn1,\ ctrl)}}
+\DoxyCodeLine{00462\ }
+\DoxyCodeLine{00463\ \textcolor{preprocessor}{\#define\ BLOCK\_CIPHER\_def\_cfb(cname,\ kstruct,\ nid,\ key\_len,\ \(\backslash\)}}
+\DoxyCodeLine{00464\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ iv\_len,\ cbits,\ flags,\ init\_key,\ cleanup,\ \(\backslash\)}}
+\DoxyCodeLine{00465\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ set\_asn1,\ get\_asn1,\ ctrl)\ \(\backslash\)}}
+\DoxyCodeLine{00466\ \textcolor{preprocessor}{BLOCK\_CIPHER\_def1(cname,\ cfb\#\#cbits,\ cfb\#\#cbits,\ CFB,\ kstruct,\ nid,\ 1,\ \(\backslash\)}}
+\DoxyCodeLine{00467\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ key\_len,\ iv\_len,\ flags,\ init\_key,\ cleanup,\ set\_asn1,\ \(\backslash\)}}
+\DoxyCodeLine{00468\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ get\_asn1,\ ctrl)}}
+\DoxyCodeLine{00469\ }
+\DoxyCodeLine{00470\ \textcolor{preprocessor}{\#define\ BLOCK\_CIPHER\_def\_ofb(cname,\ kstruct,\ nid,\ key\_len,\ \(\backslash\)}}
+\DoxyCodeLine{00471\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ iv\_len,\ cbits,\ flags,\ init\_key,\ cleanup,\ \(\backslash\)}}
+\DoxyCodeLine{00472\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ set\_asn1,\ get\_asn1,\ ctrl)\ \(\backslash\)}}
+\DoxyCodeLine{00473\ \textcolor{preprocessor}{BLOCK\_CIPHER\_def1(cname,\ ofb\#\#cbits,\ ofb,\ OFB,\ kstruct,\ nid,\ 1,\ \(\backslash\)}}
+\DoxyCodeLine{00474\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ key\_len,\ iv\_len,\ flags,\ init\_key,\ cleanup,\ set\_asn1,\ \(\backslash\)}}
+\DoxyCodeLine{00475\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ get\_asn1,\ ctrl)}}
+\DoxyCodeLine{00476\ }
+\DoxyCodeLine{00477\ \textcolor{preprocessor}{\#define\ BLOCK\_CIPHER\_def\_ecb(cname,\ kstruct,\ nid,\ block\_size,\ key\_len,\ \(\backslash\)}}
+\DoxyCodeLine{00478\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ flags,\ init\_key,\ cleanup,\ set\_asn1,\ \(\backslash\)}}
+\DoxyCodeLine{00479\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ get\_asn1,\ ctrl)\ \(\backslash\)}}
+\DoxyCodeLine{00480\ \textcolor{preprocessor}{BLOCK\_CIPHER\_def1(cname,\ ecb,\ ecb,\ ECB,\ kstruct,\ nid,\ block\_size,\ key\_len,\ \(\backslash\)}}
+\DoxyCodeLine{00481\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 0,\ flags,\ init\_key,\ cleanup,\ set\_asn1,\ get\_asn1,\ ctrl)}}
+\DoxyCodeLine{00482\ }
+\DoxyCodeLine{00483\ \textcolor{preprocessor}{\#define\ BLOCK\_CIPHER\_defs(cname,\ kstruct,\ \(\backslash\)}}
+\DoxyCodeLine{00484\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ nid,\ block\_size,\ key\_len,\ iv\_len,\ cbits,\ flags,\ \(\backslash\)}}
+\DoxyCodeLine{00485\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ init\_key,\ cleanup,\ set\_asn1,\ get\_asn1,\ ctrl)\ \(\backslash\)}}
+\DoxyCodeLine{00486\ \textcolor{preprocessor}{BLOCK\_CIPHER\_def\_cbc(cname,\ kstruct,\ nid,\ block\_size,\ key\_len,\ iv\_len,\ flags,\ \(\backslash\)}}
+\DoxyCodeLine{00487\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ init\_key,\ cleanup,\ set\_asn1,\ get\_asn1,\ ctrl)\ \(\backslash\)}}
+\DoxyCodeLine{00488\ \textcolor{preprocessor}{BLOCK\_CIPHER\_def\_cfb(cname,\ kstruct,\ nid,\ key\_len,\ iv\_len,\ cbits,\ \(\backslash\)}}
+\DoxyCodeLine{00489\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ flags,\ init\_key,\ cleanup,\ set\_asn1,\ get\_asn1,\ ctrl)\ \(\backslash\)}}
+\DoxyCodeLine{00490\ \textcolor{preprocessor}{BLOCK\_CIPHER\_def\_ofb(cname,\ kstruct,\ nid,\ key\_len,\ iv\_len,\ cbits,\ \(\backslash\)}}
+\DoxyCodeLine{00491\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ flags,\ init\_key,\ cleanup,\ set\_asn1,\ get\_asn1,\ ctrl)\ \(\backslash\)}}
+\DoxyCodeLine{00492\ \textcolor{preprocessor}{BLOCK\_CIPHER\_def\_ecb(cname,\ kstruct,\ nid,\ block\_size,\ key\_len,\ flags,\ \(\backslash\)}}
+\DoxyCodeLine{00493\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ init\_key,\ cleanup,\ set\_asn1,\ get\_asn1,\ ctrl)}}
+\DoxyCodeLine{00494\ }
+\DoxyCodeLine{00495\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00496\ \textcolor{comment}{\#define\ BLOCK\_CIPHER\_defs(cname,\ kstruct,\ \(\backslash\)}}
+\DoxyCodeLine{00497\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ nid,\ block\_size,\ key\_len,\ iv\_len,\ flags,\(\backslash\)}}
+\DoxyCodeLine{00498\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ init\_key,\ cleanup,\ set\_asn1,\ get\_asn1,\ ctrl)\(\backslash\)}}
+\DoxyCodeLine{00499\ \textcolor{comment}{static\ const\ EVP\_CIPHER\ cname\#\#\_cbc\ =\ \{\(\backslash\)}}
+\DoxyCodeLine{00500\ \textcolor{comment}{\ \ \ \ \ \ \ \ nid\#\#\_cbc,\ block\_size,\ key\_len,\ iv\_len,\ \(\backslash\)}}
+\DoxyCodeLine{00501\ \textcolor{comment}{\ \ \ \ \ \ \ \ flags\ |\ EVP\_CIPH\_CBC\_MODE,\(\backslash\)}}
+\DoxyCodeLine{00502\ \textcolor{comment}{\ \ \ \ \ \ \ \ EVP\_ORIG\_GLOBAL,\(\backslash\)}}
+\DoxyCodeLine{00503\ \textcolor{comment}{\ \ \ \ \ \ \ \ init\_key,\(\backslash\)}}
+\DoxyCodeLine{00504\ \textcolor{comment}{\ \ \ \ \ \ \ \ cname\#\#\_cbc\_cipher,\(\backslash\)}}
+\DoxyCodeLine{00505\ \textcolor{comment}{\ \ \ \ \ \ \ \ cleanup,\(\backslash\)}}
+\DoxyCodeLine{00506\ \textcolor{comment}{\ \ \ \ \ \ \ \ sizeof(EVP\_CIPHER\_CTX)-\/sizeof((((EVP\_CIPHER\_CTX\ *)NULL)-\/>c))+\(\backslash\)}}
+\DoxyCodeLine{00507\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sizeof((((EVP\_CIPHER\_CTX\ *)NULL)-\/>c.kstruct)),\(\backslash\)}}
+\DoxyCodeLine{00508\ \textcolor{comment}{\ \ \ \ \ \ \ \ set\_asn1,\ get\_asn1,\(\backslash\)}}
+\DoxyCodeLine{00509\ \textcolor{comment}{\ \ \ \ \ \ \ \ ctrl,\ \(\backslash\)}}
+\DoxyCodeLine{00510\ \textcolor{comment}{\ \ \ \ \ \ \ \ NULL\ \(\backslash\)}}
+\DoxyCodeLine{00511\ \textcolor{comment}{\};\(\backslash\)}}
+\DoxyCodeLine{00512\ \textcolor{comment}{const\ EVP\_CIPHER\ *EVP\_\#\#cname\#\#\_cbc(void)\ \{\ return\ \&cname\#\#\_cbc;\ \}\(\backslash\)}}
+\DoxyCodeLine{00513\ \textcolor{comment}{static\ const\ EVP\_CIPHER\ cname\#\#\_cfb\ =\ \{\(\backslash\)}}
+\DoxyCodeLine{00514\ \textcolor{comment}{\ \ \ \ \ \ \ \ nid\#\#\_cfb64,\ 1,\ key\_len,\ iv\_len,\ \(\backslash\)}}
+\DoxyCodeLine{00515\ \textcolor{comment}{\ \ \ \ \ \ \ \ flags\ |\ EVP\_CIPH\_CFB\_MODE,\(\backslash\)}}
+\DoxyCodeLine{00516\ \textcolor{comment}{\ \ \ \ \ \ \ \ EVP\_ORIG\_GLOBAL,\(\backslash\)}}
+\DoxyCodeLine{00517\ \textcolor{comment}{\ \ \ \ \ \ \ \ init\_key,\(\backslash\)}}
+\DoxyCodeLine{00518\ \textcolor{comment}{\ \ \ \ \ \ \ \ cname\#\#\_cfb\_cipher,\(\backslash\)}}
+\DoxyCodeLine{00519\ \textcolor{comment}{\ \ \ \ \ \ \ \ cleanup,\(\backslash\)}}
+\DoxyCodeLine{00520\ \textcolor{comment}{\ \ \ \ \ \ \ \ sizeof(EVP\_CIPHER\_CTX)-\/sizeof((((EVP\_CIPHER\_CTX\ *)NULL)-\/>c))+\(\backslash\)}}
+\DoxyCodeLine{00521\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sizeof((((EVP\_CIPHER\_CTX\ *)NULL)-\/>c.kstruct)),\(\backslash\)}}
+\DoxyCodeLine{00522\ \textcolor{comment}{\ \ \ \ \ \ \ \ set\_asn1,\ get\_asn1,\(\backslash\)}}
+\DoxyCodeLine{00523\ \textcolor{comment}{\ \ \ \ \ \ \ \ ctrl,\(\backslash\)}}
+\DoxyCodeLine{00524\ \textcolor{comment}{\ \ \ \ \ \ \ \ NULL\ \(\backslash\)}}
+\DoxyCodeLine{00525\ \textcolor{comment}{\};\(\backslash\)}}
+\DoxyCodeLine{00526\ \textcolor{comment}{const\ EVP\_CIPHER\ *EVP\_\#\#cname\#\#\_cfb(void)\ \{\ return\ \&cname\#\#\_cfb;\ \}\(\backslash\)}}
+\DoxyCodeLine{00527\ \textcolor{comment}{static\ const\ EVP\_CIPHER\ cname\#\#\_ofb\ =\ \{\(\backslash\)}}
+\DoxyCodeLine{00528\ \textcolor{comment}{\ \ \ \ \ \ \ \ nid\#\#\_ofb64,\ 1,\ key\_len,\ iv\_len,\ \(\backslash\)}}
+\DoxyCodeLine{00529\ \textcolor{comment}{\ \ \ \ \ \ \ \ flags\ |\ EVP\_CIPH\_OFB\_MODE,\(\backslash\)}}
+\DoxyCodeLine{00530\ \textcolor{comment}{\ \ \ \ \ \ \ \ EVP\_ORIG\_GLOBAL,\(\backslash\)}}
+\DoxyCodeLine{00531\ \textcolor{comment}{\ \ \ \ \ \ \ \ init\_key,\(\backslash\)}}
+\DoxyCodeLine{00532\ \textcolor{comment}{\ \ \ \ \ \ \ \ cname\#\#\_ofb\_cipher,\(\backslash\)}}
+\DoxyCodeLine{00533\ \textcolor{comment}{\ \ \ \ \ \ \ \ cleanup,\(\backslash\)}}
+\DoxyCodeLine{00534\ \textcolor{comment}{\ \ \ \ \ \ \ \ sizeof(EVP\_CIPHER\_CTX)-\/sizeof((((EVP\_CIPHER\_CTX\ *)NULL)-\/>c))+\(\backslash\)}}
+\DoxyCodeLine{00535\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sizeof((((EVP\_CIPHER\_CTX\ *)NULL)-\/>c.kstruct)),\(\backslash\)}}
+\DoxyCodeLine{00536\ \textcolor{comment}{\ \ \ \ \ \ \ \ set\_asn1,\ get\_asn1,\(\backslash\)}}
+\DoxyCodeLine{00537\ \textcolor{comment}{\ \ \ \ \ \ \ \ ctrl,\(\backslash\)}}
+\DoxyCodeLine{00538\ \textcolor{comment}{\ \ \ \ \ \ \ \ NULL\ \(\backslash\)}}
+\DoxyCodeLine{00539\ \textcolor{comment}{\};\(\backslash\)}}
+\DoxyCodeLine{00540\ \textcolor{comment}{const\ EVP\_CIPHER\ *EVP\_\#\#cname\#\#\_ofb(void)\ \{\ return\ \&cname\#\#\_ofb;\ \}\(\backslash\)}}
+\DoxyCodeLine{00541\ \textcolor{comment}{static\ const\ EVP\_CIPHER\ cname\#\#\_ecb\ =\ \{\(\backslash\)}}
+\DoxyCodeLine{00542\ \textcolor{comment}{\ \ \ \ \ \ \ \ nid\#\#\_ecb,\ block\_size,\ key\_len,\ iv\_len,\ \(\backslash\)}}
+\DoxyCodeLine{00543\ \textcolor{comment}{\ \ \ \ \ \ \ \ flags\ |\ EVP\_CIPH\_ECB\_MODE,\(\backslash\)}}
+\DoxyCodeLine{00544\ \textcolor{comment}{\ \ \ \ \ \ \ \ EVP\_ORIG\_GLOBAL,\(\backslash\)}}
+\DoxyCodeLine{00545\ \textcolor{comment}{\ \ \ \ \ \ \ \ init\_key,\(\backslash\)}}
+\DoxyCodeLine{00546\ \textcolor{comment}{\ \ \ \ \ \ \ \ cname\#\#\_ecb\_cipher,\(\backslash\)}}
+\DoxyCodeLine{00547\ \textcolor{comment}{\ \ \ \ \ \ \ \ cleanup,\(\backslash\)}}
+\DoxyCodeLine{00548\ \textcolor{comment}{\ \ \ \ \ \ \ \ sizeof(EVP\_CIPHER\_CTX)-\/sizeof((((EVP\_CIPHER\_CTX\ *)NULL)-\/>c))+\(\backslash\)}}
+\DoxyCodeLine{00549\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sizeof((((EVP\_CIPHER\_CTX\ *)NULL)-\/>c.kstruct)),\(\backslash\)}}
+\DoxyCodeLine{00550\ \textcolor{comment}{\ \ \ \ \ \ \ \ set\_asn1,\ get\_asn1,\(\backslash\)}}
+\DoxyCodeLine{00551\ \textcolor{comment}{\ \ \ \ \ \ \ \ ctrl,\(\backslash\)}}
+\DoxyCodeLine{00552\ \textcolor{comment}{\ \ \ \ \ \ \ \ NULL\ \(\backslash\)}}
+\DoxyCodeLine{00553\ \textcolor{comment}{\};\(\backslash\)}}
+\DoxyCodeLine{00554\ \textcolor{comment}{const\ EVP\_CIPHER\ *EVP\_\#\#cname\#\#\_ecb(void)\ \{\ return\ \&cname\#\#\_ecb;\ \}}}
+\DoxyCodeLine{00555\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00556\ }
+\DoxyCodeLine{00557\ \textcolor{preprocessor}{\#define\ IMPLEMENT\_BLOCK\_CIPHER(cname,\ ksched,\ cprefix,\ kstruct,\ nid,\ \(\backslash\)}}
+\DoxyCodeLine{00558\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ block\_size,\ key\_len,\ iv\_len,\ cbits,\ \(\backslash\)}}
+\DoxyCodeLine{00559\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ flags,\ init\_key,\ \(\backslash\)}}
+\DoxyCodeLine{00560\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cleanup,\ set\_asn1,\ get\_asn1,\ ctrl)\ \(\backslash\)}}
+\DoxyCodeLine{00561\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ BLOCK\_CIPHER\_all\_funcs(cname,\ cprefix,\ cbits,\ kstruct,\ ksched)\ \(\backslash\)}}
+\DoxyCodeLine{00562\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ BLOCK\_CIPHER\_defs(cname,\ kstruct,\ nid,\ block\_size,\ key\_len,\ iv\_len,\ \(\backslash\)}}
+\DoxyCodeLine{00563\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cbits,\ flags,\ init\_key,\ cleanup,\ set\_asn1,\ \(\backslash\)}}
+\DoxyCodeLine{00564\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ get\_asn1,\ ctrl)}}
+\DoxyCodeLine{00565\ }
+\DoxyCodeLine{00566\ \textcolor{preprocessor}{\#define\ IMPLEMENT\_CFBR(cipher,cprefix,kstruct,ksched,keysize,cbits,iv\_len,fl)\ \(\backslash\)}}
+\DoxyCodeLine{00567\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ BLOCK\_CIPHER\_func\_cfb(cipher\#\#\_\#\#keysize,cprefix,cbits,kstruct,ksched)\ \(\backslash\)}}
+\DoxyCodeLine{00568\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ BLOCK\_CIPHER\_def\_cfb(cipher\#\#\_\#\#keysize,kstruct,\ \(\backslash\)}}
+\DoxyCodeLine{00569\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ NID\_\#\#cipher\#\#\_\#\#keysize,\ keysize/8,\ iv\_len,\ cbits,\ \(\backslash\)}}
+\DoxyCodeLine{00570\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (fl)|EVP\_CIPH\_FLAG\_DEFAULT\_ASN1,\ \(\backslash\)}}
+\DoxyCodeLine{00571\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cipher\#\#\_init\_key,\ NULL,\ NULL,\ NULL,\ NULL)}}
+\DoxyCodeLine{00572\ }
+\DoxyCodeLine{00573\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00574\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ iv[EVP\_MAX\_IV\_LENGTH];}
+\DoxyCodeLine{00575\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ iv\_len;}
+\DoxyCodeLine{00576\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ tag\_len;}
+\DoxyCodeLine{00577\ \}\ \mbox{\hyperlink{structevp__cipher__aead__asn1__params}{evp\_cipher\_aead\_asn1\_params}};}
+\DoxyCodeLine{00578\ }
+\DoxyCodeLine{00579\ \textcolor{keywordtype}{int}\ evp\_cipher\_param\_to\_asn1\_ex(EVP\_CIPHER\_CTX\ *c,\ ASN1\_TYPE\ *type,}
+\DoxyCodeLine{00580\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structevp__cipher__aead__asn1__params}{evp\_cipher\_aead\_asn1\_params}}\ *params);}
+\DoxyCodeLine{00581\ }
+\DoxyCodeLine{00582\ \textcolor{keywordtype}{int}\ evp\_cipher\_asn1\_to\_param\_ex(EVP\_CIPHER\_CTX\ *c,\ ASN1\_TYPE\ *type,}
+\DoxyCodeLine{00583\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structevp__cipher__aead__asn1__params}{evp\_cipher\_aead\_asn1\_params}}\ *params);}
+\DoxyCodeLine{00584\ }
+\DoxyCodeLine{00585\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00586\ \textcolor{comment}{\ *\ To\ support\ transparent\ execution\ of\ operation\ in\ backends\ other}}
+\DoxyCodeLine{00587\ \textcolor{comment}{\ *\ than\ the\ "{}origin"{}\ key,\ we\ support\ transparent\ export/import\ to}}
+\DoxyCodeLine{00588\ \textcolor{comment}{\ *\ those\ providers,\ and\ maintain\ a\ cache\ of\ the\ imported\ keydata,}}
+\DoxyCodeLine{00589\ \textcolor{comment}{\ *\ so\ we\ don't\ need\ to\ redo\ the\ export/import\ every\ time\ we\ perform}}
+\DoxyCodeLine{00590\ \textcolor{comment}{\ *\ the\ same\ operation\ in\ that\ same\ provider.}}
+\DoxyCodeLine{00591\ \textcolor{comment}{\ *\ This\ requires\ that\ the\ "{}origin"{}\ backend\ (whether\ it's\ a\ legacy\ or\ a}}
+\DoxyCodeLine{00592\ \textcolor{comment}{\ *\ provider\ "{}origin"{})\ implements\ exports,\ and\ that\ the\ target\ provider}}
+\DoxyCodeLine{00593\ \textcolor{comment}{\ *\ has\ an\ EVP\_KEYMGMT\ that\ implements\ import.}}
+\DoxyCodeLine{00594\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00595\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00596\ \ \ \ \ EVP\_KEYMGMT\ *keymgmt;}
+\DoxyCodeLine{00597\ \ \ \ \ \textcolor{keywordtype}{void}\ *keydata;}
+\DoxyCodeLine{00598\ \ \ \ \ \textcolor{keywordtype}{int}\ selection;}
+\DoxyCodeLine{00599\ \}\ \mbox{\hyperlink{struct_o_p___c_a_c_h_e___e_l_e_m}{OP\_CACHE\_ELEM}};}
+\DoxyCodeLine{00600\ }
+\DoxyCodeLine{00601\ DEFINE\_STACK\_OF(\mbox{\hyperlink{struct_o_p___c_a_c_h_e___e_l_e_m}{OP\_CACHE\_ELEM}})}
+\DoxyCodeLine{00602\ }
+\DoxyCodeLine{00603\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00604\ \textcolor{comment}{\ *\ An\ EVP\_PKEY\ can\ have\ the\ following\ states:}}
+\DoxyCodeLine{00605\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00606\ \textcolor{comment}{\ *\ untyped\ \&\ empty:}}
+\DoxyCodeLine{00607\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00608\ \textcolor{comment}{\ *\ \ \ \ \ type\ ==\ EVP\_PKEY\_NONE\ \&\&\ keymgmt\ ==\ NULL}}
+\DoxyCodeLine{00609\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00610\ \textcolor{comment}{\ *\ typed\ \&\ empty:}}
+\DoxyCodeLine{00611\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00612\ \textcolor{comment}{\ *\ \ \ \ \ (type\ !=\ EVP\_PKEY\_NONE\ \&\&\ pkey.ptr\ ==\ NULL)\ \ \ \ \ \ \#\#\ legacy\ (libcrypto\ only)}}
+\DoxyCodeLine{00613\ \textcolor{comment}{\ *\ \ \ \ \ ||\ (keymgmt\ !=\ NULL\ \&\&\ keydata\ ==\ NULL)\ \ \ \ \ \ \ \ \ \ \#\#\ provider\ side}}
+\DoxyCodeLine{00614\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00615\ \textcolor{comment}{\ *\ fully\ assigned:}}
+\DoxyCodeLine{00616\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00617\ \textcolor{comment}{\ *\ \ \ \ \ (type\ !=\ EVP\_PKEY\_NONE\ \&\&\ pkey.ptr\ !=\ NULL)\ \ \ \ \ \ \#\#\ legacy\ (libcrypto\ only)}}
+\DoxyCodeLine{00618\ \textcolor{comment}{\ *\ \ \ \ \ ||\ (keymgmt\ !=\ NULL\ \&\&\ keydata\ !=\ NULL)\ \ \ \ \ \ \ \ \ \ \#\#\ provider\ side}}
+\DoxyCodeLine{00619\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00620\ \textcolor{comment}{\ *\ The\ easiest\ way\ to\ detect\ a\ legacy\ key\ is:}}
+\DoxyCodeLine{00621\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00622\ \textcolor{comment}{\ *\ \ \ \ \ keymgmt\ ==\ NULL\ \&\&\ type\ !=\ EVP\_PKEY\_NONE}}
+\DoxyCodeLine{00623\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00624\ \textcolor{comment}{\ *\ The\ easiest\ way\ to\ detect\ a\ provider\ side\ key\ is:}}
+\DoxyCodeLine{00625\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00626\ \textcolor{comment}{\ *\ \ \ \ \ keymgmt\ !=\ NULL}}
+\DoxyCodeLine{00627\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00628\ \textcolor{preprocessor}{\#define\ evp\_pkey\_is\_blank(pk)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00629\ \textcolor{preprocessor}{\ \ \ \ ((pk)-\/>type\ ==\ EVP\_PKEY\_NONE\ \&\&\ (pk)-\/>keymgmt\ ==\ NULL)}}
+\DoxyCodeLine{00630\ \textcolor{preprocessor}{\#define\ evp\_pkey\_is\_typed(pk)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00631\ \textcolor{preprocessor}{\ \ \ \ ((pk)-\/>type\ !=\ EVP\_PKEY\_NONE\ ||\ (pk)-\/>keymgmt\ !=\ NULL)}}
+\DoxyCodeLine{00632\ \textcolor{preprocessor}{\#ifndef\ FIPS\_MODULE}}
+\DoxyCodeLine{00633\ \textcolor{preprocessor}{\#\ define\ evp\_pkey\_is\_assigned(pk)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00634\ \textcolor{preprocessor}{\ \ \ \ ((pk)-\/>pkey.ptr\ !=\ NULL\ ||\ (pk)-\/>keydata\ !=\ NULL)}}
+\DoxyCodeLine{00635\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00636\ \textcolor{preprocessor}{\#\ define\ evp\_pkey\_is\_assigned(pk)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00637\ \textcolor{preprocessor}{\ \ \ \ ((pk)-\/>keydata\ !=\ NULL)}}
+\DoxyCodeLine{00638\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00639\ \textcolor{preprocessor}{\#define\ evp\_pkey\_is\_legacy(pk)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00640\ \textcolor{preprocessor}{\ \ \ \ ((pk)-\/>type\ !=\ EVP\_PKEY\_NONE\ \&\&\ (pk)-\/>keymgmt\ ==\ NULL)}}
+\DoxyCodeLine{00641\ \textcolor{preprocessor}{\#define\ evp\_pkey\_is\_provided(pk)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00642\ \textcolor{preprocessor}{\ \ \ \ ((pk)-\/>keymgmt\ !=\ NULL)}}
+\DoxyCodeLine{00643\ }
+\DoxyCodeLine{00644\ \textcolor{keyword}{union\ }\mbox{\hyperlink{unionlegacy__pkey__st}{legacy\_pkey\_st}}\ \{}
+\DoxyCodeLine{00645\ \ \ \ \ \textcolor{keywordtype}{void}\ *ptr;}
+\DoxyCodeLine{00646\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structrsa__st}{rsa\_st}}\ *rsa;\ \ \ \ \ \textcolor{comment}{/*\ RSA\ */}}
+\DoxyCodeLine{00647\ \textcolor{preprocessor}{\#\ \ ifndef\ OPENSSL\_NO\_DSA}}
+\DoxyCodeLine{00648\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structdsa__st}{dsa\_st}}\ *dsa;\ \ \ \ \ \textcolor{comment}{/*\ DSA\ */}}
+\DoxyCodeLine{00649\ \textcolor{preprocessor}{\#\ \ endif}}
+\DoxyCodeLine{00650\ \textcolor{preprocessor}{\#\ \ ifndef\ OPENSSL\_NO\_DH}}
+\DoxyCodeLine{00651\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structdh__st}{dh\_st}}\ *dh;\ \ \ \ \ \ \ \textcolor{comment}{/*\ DH\ */}}
+\DoxyCodeLine{00652\ \textcolor{preprocessor}{\#\ \ endif}}
+\DoxyCodeLine{00653\ \textcolor{preprocessor}{\#\ \ ifndef\ OPENSSL\_NO\_EC}}
+\DoxyCodeLine{00654\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structec__key__st}{ec\_key\_st}}\ *ec;\ \ \ \textcolor{comment}{/*\ ECC\ */}}
+\DoxyCodeLine{00655\ \textcolor{preprocessor}{\#\ \ \ ifndef\ OPENSSL\_NO\_ECX}}
+\DoxyCodeLine{00656\ \ \ \ \ \mbox{\hyperlink{structecx__key__st}{ECX\_KEY}}\ *ecx;\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ X25519,\ X448,\ Ed25519,\ Ed448\ */}}
+\DoxyCodeLine{00657\ \textcolor{preprocessor}{\#\ \ \ endif}}
+\DoxyCodeLine{00658\ \textcolor{preprocessor}{\#\ \ endif}}
+\DoxyCodeLine{00659\ \};}
+\DoxyCodeLine{00660\ }
+\DoxyCodeLine{00661\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structevp__pkey__st}{evp\_pkey\_st}}\ \{}
+\DoxyCodeLine{00662\ \ \ \ \ \textcolor{comment}{/*\ ==\ Legacy\ attributes\ ==\ */}}
+\DoxyCodeLine{00663\ \ \ \ \ \textcolor{keywordtype}{int}\ type;}
+\DoxyCodeLine{00664\ \ \ \ \ \textcolor{keywordtype}{int}\ save\_type;}
+\DoxyCodeLine{00665\ }
+\DoxyCodeLine{00666\ \textcolor{preprocessor}{\#\ ifndef\ FIPS\_MODULE}}
+\DoxyCodeLine{00667\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00668\ \textcolor{comment}{\ \ \ \ \ *\ Legacy\ key\ "{}origin"{}\ is\ composed\ of\ a\ pointer\ to\ an\ EVP\_PKEY\_ASN1\_METHOD,}}
+\DoxyCodeLine{00669\ \textcolor{comment}{\ \ \ \ \ *\ a\ pointer\ to\ a\ low\ level\ key\ and\ possibly\ a\ pointer\ to\ an\ engine.}}
+\DoxyCodeLine{00670\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00671\ \ \ \ \ \textcolor{keyword}{const}\ EVP\_PKEY\_ASN1\_METHOD\ *ameth;}
+\DoxyCodeLine{00672\ \ \ \ \ ENGINE\ *engine;}
+\DoxyCodeLine{00673\ \ \ \ \ ENGINE\ *pmeth\_engine;\ \textcolor{comment}{/*\ If\ not\ NULL\ public\ key\ ENGINE\ to\ use\ */}}
+\DoxyCodeLine{00674\ }
+\DoxyCodeLine{00675\ \ \ \ \ \textcolor{comment}{/*\ Union\ to\ store\ the\ reference\ to\ an\ origin\ legacy\ key\ */}}
+\DoxyCodeLine{00676\ \ \ \ \ \textcolor{keyword}{union\ }\mbox{\hyperlink{unionlegacy__pkey__st}{legacy\_pkey\_st}}\ pkey;}
+\DoxyCodeLine{00677\ }
+\DoxyCodeLine{00678\ \ \ \ \ \textcolor{comment}{/*\ Union\ to\ store\ the\ reference\ to\ a\ non-\/origin\ legacy\ key\ */}}
+\DoxyCodeLine{00679\ \ \ \ \ \textcolor{keyword}{union\ }\mbox{\hyperlink{unionlegacy__pkey__st}{legacy\_pkey\_st}}\ legacy\_cache\_pkey;}
+\DoxyCodeLine{00680\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00681\ }
+\DoxyCodeLine{00682\ \ \ \ \ \textcolor{comment}{/*\ ==\ Common\ attributes\ ==\ */}}
+\DoxyCodeLine{00683\ \ \ \ \ \mbox{\hyperlink{struct_c_r_y_p_t_o___r_e_f___c_o_u_n_t}{CRYPTO\_REF\_COUNT}}\ references;}
+\DoxyCodeLine{00684\ \ \ \ \ CRYPTO\_RWLOCK\ *lock;}
+\DoxyCodeLine{00685\ \textcolor{preprocessor}{\#ifndef\ FIPS\_MODULE}}
+\DoxyCodeLine{00686\ \ \ \ \ STACK\_OF(X509\_ATTRIBUTE)\ *attributes;\ \textcolor{comment}{/*\ [\ 0\ ]\ */}}
+\DoxyCodeLine{00687\ \ \ \ \ \textcolor{keywordtype}{int}\ save\_parameters;}
+\DoxyCodeLine{00688\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ foreign:1;\ \textcolor{comment}{/*\ the\ low-\/level\ key\ is\ using\ an\ engine\ or\ an\ app-\/method\ */}}
+\DoxyCodeLine{00689\ \ \ \ \ CRYPTO\_EX\_DATA\ ex\_data;}
+\DoxyCodeLine{00690\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00691\ }
+\DoxyCodeLine{00692\ \ \ \ \ \textcolor{comment}{/*\ ==\ Provider\ attributes\ ==\ */}}
+\DoxyCodeLine{00693\ }
+\DoxyCodeLine{00694\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00695\ \textcolor{comment}{\ \ \ \ \ *\ Provider\ keydata\ "{}origin"{}\ is\ composed\ of\ a\ pointer\ to\ an\ EVP\_KEYMGMT}}
+\DoxyCodeLine{00696\ \textcolor{comment}{\ \ \ \ \ *\ and\ a\ pointer\ to\ the\ provider\ side\ key\ data.\ \ This\ is\ never\ used\ at}}
+\DoxyCodeLine{00697\ \textcolor{comment}{\ \ \ \ \ *\ the\ same\ time\ as\ the\ legacy\ key\ data\ above.}}
+\DoxyCodeLine{00698\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00699\ \ \ \ \ EVP\_KEYMGMT\ *keymgmt;}
+\DoxyCodeLine{00700\ \ \ \ \ \textcolor{keywordtype}{void}\ *keydata;}
+\DoxyCodeLine{00701\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00702\ \textcolor{comment}{\ \ \ \ \ *\ If\ any\ libcrypto\ code\ does\ anything\ that\ may\ modify\ the\ keydata}}
+\DoxyCodeLine{00703\ \textcolor{comment}{\ \ \ \ \ *\ contents,\ this\ dirty\ counter\ must\ be\ incremented.}}
+\DoxyCodeLine{00704\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00705\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ dirty\_cnt;}
+\DoxyCodeLine{00706\ }
+\DoxyCodeLine{00707\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00708\ \textcolor{comment}{\ \ \ \ \ *\ To\ support\ transparent\ execution\ of\ operation\ in\ backends\ other}}
+\DoxyCodeLine{00709\ \textcolor{comment}{\ \ \ \ \ *\ than\ the\ "{}origin"{}\ key,\ we\ support\ transparent\ export/import\ to}}
+\DoxyCodeLine{00710\ \textcolor{comment}{\ \ \ \ \ *\ those\ providers,\ and\ maintain\ a\ cache\ of\ the\ imported\ keydata,}}
+\DoxyCodeLine{00711\ \textcolor{comment}{\ \ \ \ \ *\ so\ we\ don't\ need\ to\ redo\ the\ export/import\ every\ time\ we\ perform}}
+\DoxyCodeLine{00712\ \textcolor{comment}{\ \ \ \ \ *\ the\ same\ operation\ in\ that\ same\ provider.}}
+\DoxyCodeLine{00713\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00714\ \ \ \ \ STACK\_OF(\mbox{\hyperlink{struct_o_p___c_a_c_h_e___e_l_e_m}{OP\_CACHE\_ELEM}})\ *operation\_cache;}
+\DoxyCodeLine{00715\ }
+\DoxyCodeLine{00716\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00717\ \textcolor{comment}{\ \ \ \ \ *\ We\ keep\ a\ copy\ of\ that\ "{}origin"{}'s\ dirty\ count,\ so\ we\ know\ if\ the}}
+\DoxyCodeLine{00718\ \textcolor{comment}{\ \ \ \ \ *\ operation\ cache\ needs\ flushing.}}
+\DoxyCodeLine{00719\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00720\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ dirty\_cnt\_copy;}
+\DoxyCodeLine{00721\ }
+\DoxyCodeLine{00722\ \ \ \ \ \textcolor{comment}{/*\ Cache\ of\ key\ object\ information\ */}}
+\DoxyCodeLine{00723\ \ \ \ \ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00724\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ bits;}
+\DoxyCodeLine{00725\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ security\_bits;}
+\DoxyCodeLine{00726\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ size;}
+\DoxyCodeLine{00727\ \ \ \ \ \}\ cache;}
+\DoxyCodeLine{00728\ \}\ \textcolor{comment}{/*\ EVP\_PKEY\ */}\ ;}
+\DoxyCodeLine{00729\ }
+\DoxyCodeLine{00730\ \textcolor{preprocessor}{\#define\ EVP\_PKEY\_CTX\_IS\_SIGNATURE\_OP(ctx)\ \(\backslash\)}}
+\DoxyCodeLine{00731\ \textcolor{preprocessor}{\ \ \ \ ((ctx)-\/>operation\ ==\ EVP\_PKEY\_OP\_SIGN\ \(\backslash\)}}
+\DoxyCodeLine{00732\ \textcolor{preprocessor}{\ \ \ \ \ ||\ (ctx)-\/>operation\ ==\ EVP\_PKEY\_OP\_SIGNCTX\ \(\backslash\)}}
+\DoxyCodeLine{00733\ \textcolor{preprocessor}{\ \ \ \ \ ||\ (ctx)-\/>operation\ ==\ EVP\_PKEY\_OP\_VERIFY\ \(\backslash\)}}
+\DoxyCodeLine{00734\ \textcolor{preprocessor}{\ \ \ \ \ ||\ (ctx)-\/>operation\ ==\ EVP\_PKEY\_OP\_VERIFYCTX\ \(\backslash\)}}
+\DoxyCodeLine{00735\ \textcolor{preprocessor}{\ \ \ \ \ ||\ (ctx)-\/>operation\ ==\ EVP\_PKEY\_OP\_VERIFYRECOVER)}}
+\DoxyCodeLine{00736\ }
+\DoxyCodeLine{00737\ \textcolor{preprocessor}{\#define\ EVP\_PKEY\_CTX\_IS\_DERIVE\_OP(ctx)\ \(\backslash\)}}
+\DoxyCodeLine{00738\ \textcolor{preprocessor}{\ \ \ \ ((ctx)-\/>operation\ ==\ EVP\_PKEY\_OP\_DERIVE)}}
+\DoxyCodeLine{00739\ }
+\DoxyCodeLine{00740\ \textcolor{preprocessor}{\#define\ EVP\_PKEY\_CTX\_IS\_ASYM\_CIPHER\_OP(ctx)\ \(\backslash\)}}
+\DoxyCodeLine{00741\ \textcolor{preprocessor}{\ \ \ \ ((ctx)-\/>operation\ ==\ EVP\_PKEY\_OP\_ENCRYPT\ \(\backslash\)}}
+\DoxyCodeLine{00742\ \textcolor{preprocessor}{\ \ \ \ \ ||\ (ctx)-\/>operation\ ==\ EVP\_PKEY\_OP\_DECRYPT)}}
+\DoxyCodeLine{00743\ }
+\DoxyCodeLine{00744\ \textcolor{preprocessor}{\#define\ EVP\_PKEY\_CTX\_IS\_GEN\_OP(ctx)\ \(\backslash\)}}
+\DoxyCodeLine{00745\ \textcolor{preprocessor}{\ \ \ \ ((ctx)-\/>operation\ ==\ EVP\_PKEY\_OP\_PARAMGEN\ \(\backslash\)}}
+\DoxyCodeLine{00746\ \textcolor{preprocessor}{\ \ \ \ \ ||\ (ctx)-\/>operation\ ==\ EVP\_PKEY\_OP\_KEYGEN)}}
+\DoxyCodeLine{00747\ }
+\DoxyCodeLine{00748\ \textcolor{preprocessor}{\#define\ EVP\_PKEY\_CTX\_IS\_FROMDATA\_OP(ctx)\ \(\backslash\)}}
+\DoxyCodeLine{00749\ \textcolor{preprocessor}{\ \ \ \ ((ctx)-\/>operation\ ==\ EVP\_PKEY\_OP\_FROMDATA)}}
+\DoxyCodeLine{00750\ }
+\DoxyCodeLine{00751\ \textcolor{preprocessor}{\#define\ EVP\_PKEY\_CTX\_IS\_KEM\_OP(ctx)\ \(\backslash\)}}
+\DoxyCodeLine{00752\ \textcolor{preprocessor}{\ \ \ \ ((ctx)-\/>operation\ ==\ EVP\_PKEY\_OP\_ENCAPSULATE\ \(\backslash\)}}
+\DoxyCodeLine{00753\ \textcolor{preprocessor}{\ \ \ \ \ ||\ (ctx)-\/>operation\ ==\ EVP\_PKEY\_OP\_DECAPSULATE)}}
+\DoxyCodeLine{00754\ }
+\DoxyCodeLine{00755\ \textcolor{keywordtype}{void}\ openssl\_add\_all\_ciphers\_int(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00756\ \textcolor{keywordtype}{void}\ openssl\_add\_all\_digests\_int(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00757\ \textcolor{keywordtype}{void}\ evp\_cleanup\_int(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00758\ \textcolor{keywordtype}{void}\ evp\_app\_cleanup\_int(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00759\ \textcolor{keywordtype}{void}\ *evp\_pkey\_export\_to\_provider(EVP\_PKEY\ *pk,\ OSSL\_LIB\_CTX\ *libctx,}
+\DoxyCodeLine{00760\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ EVP\_KEYMGMT\ **keymgmt,}
+\DoxyCodeLine{00761\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *propquery);}
+\DoxyCodeLine{00762\ \textcolor{preprocessor}{\#ifndef\ FIPS\_MODULE}}
+\DoxyCodeLine{00763\ \textcolor{keywordtype}{int}\ evp\_pkey\_copy\_downgraded(EVP\_PKEY\ **dest,\ \textcolor{keyword}{const}\ EVP\_PKEY\ *src);}
+\DoxyCodeLine{00764\ \textcolor{keywordtype}{void}\ *evp\_pkey\_get\_legacy(EVP\_PKEY\ *pk);}
+\DoxyCodeLine{00765\ \textcolor{keywordtype}{void}\ evp\_pkey\_free\_legacy(EVP\_PKEY\ *x);}
+\DoxyCodeLine{00766\ EVP\_PKEY\ *evp\_pkcs82pkey\_legacy(\textcolor{keyword}{const}\ PKCS8\_PRIV\_KEY\_INFO\ *p8inf,}
+\DoxyCodeLine{00767\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OSSL\_LIB\_CTX\ *libctx,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *propq);}
+\DoxyCodeLine{00768\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00769\ }
+\DoxyCodeLine{00770\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00771\ \textcolor{comment}{\ *\ KEYMGMT\ utility\ functions}}
+\DoxyCodeLine{00772\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00773\ }
+\DoxyCodeLine{00774\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00775\ \textcolor{comment}{\ *\ Key\ import\ structure\ and\ helper\ function,\ to\ be\ used\ as\ an\ export\ callback}}
+\DoxyCodeLine{00776\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00777\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structevp__keymgmt__util__try__import__data__st}{evp\_keymgmt\_util\_try\_import\_data\_st}}\ \{}
+\DoxyCodeLine{00778\ \ \ \ \ EVP\_KEYMGMT\ *keymgmt;}
+\DoxyCodeLine{00779\ \ \ \ \ \textcolor{keywordtype}{void}\ *keydata;}
+\DoxyCodeLine{00780\ }
+\DoxyCodeLine{00781\ \ \ \ \ \textcolor{keywordtype}{int}\ selection;}
+\DoxyCodeLine{00782\ \};}
+\DoxyCodeLine{00783\ \textcolor{keywordtype}{int}\ evp\_keymgmt\_util\_try\_import(\textcolor{keyword}{const}\ OSSL\_PARAM\ params[],\ \textcolor{keywordtype}{void}\ *arg);}
+\DoxyCodeLine{00784\ \textcolor{keywordtype}{int}\ evp\_keymgmt\_util\_assign\_pkey(EVP\_PKEY\ *pkey,\ EVP\_KEYMGMT\ *keymgmt,}
+\DoxyCodeLine{00785\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *keydata);}
+\DoxyCodeLine{00786\ EVP\_PKEY\ *evp\_keymgmt\_util\_make\_pkey(EVP\_KEYMGMT\ *keymgmt,\ \textcolor{keywordtype}{void}\ *keydata);}
+\DoxyCodeLine{00787\ }
+\DoxyCodeLine{00788\ \textcolor{keywordtype}{int}\ evp\_keymgmt\_util\_export(\textcolor{keyword}{const}\ EVP\_PKEY\ *pk,\ \textcolor{keywordtype}{int}\ selection,}
+\DoxyCodeLine{00789\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OSSL\_CALLBACK\ *export\_cb,\ \textcolor{keywordtype}{void}\ *export\_cbarg);}
+\DoxyCodeLine{00790\ \textcolor{keywordtype}{void}\ *evp\_keymgmt\_util\_export\_to\_provider(EVP\_PKEY\ *pk,\ EVP\_KEYMGMT\ *keymgmt,}
+\DoxyCodeLine{00791\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ selection);}
+\DoxyCodeLine{00792\ \mbox{\hyperlink{struct_o_p___c_a_c_h_e___e_l_e_m}{OP\_CACHE\_ELEM}}\ *evp\_keymgmt\_util\_find\_operation\_cache(EVP\_PKEY\ *pk,}
+\DoxyCodeLine{00793\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ EVP\_KEYMGMT\ *keymgmt,}
+\DoxyCodeLine{00794\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ selection);}
+\DoxyCodeLine{00795\ \textcolor{keywordtype}{int}\ evp\_keymgmt\_util\_clear\_operation\_cache(EVP\_PKEY\ *pk);}
+\DoxyCodeLine{00796\ \textcolor{keywordtype}{int}\ evp\_keymgmt\_util\_cache\_keydata(EVP\_PKEY\ *pk,\ EVP\_KEYMGMT\ *keymgmt,}
+\DoxyCodeLine{00797\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *keydata,\ \textcolor{keywordtype}{int}\ selection);}
+\DoxyCodeLine{00798\ \textcolor{keywordtype}{void}\ evp\_keymgmt\_util\_cache\_keyinfo(EVP\_PKEY\ *pk);}
+\DoxyCodeLine{00799\ \textcolor{keywordtype}{void}\ *evp\_keymgmt\_util\_fromdata(EVP\_PKEY\ *target,\ EVP\_KEYMGMT\ *keymgmt,}
+\DoxyCodeLine{00800\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ selection,\ \textcolor{keyword}{const}\ OSSL\_PARAM\ params[]);}
+\DoxyCodeLine{00801\ \textcolor{keywordtype}{int}\ evp\_keymgmt\_util\_has(EVP\_PKEY\ *pk,\ \textcolor{keywordtype}{int}\ selection);}
+\DoxyCodeLine{00802\ \textcolor{keywordtype}{int}\ evp\_keymgmt\_util\_match(EVP\_PKEY\ *pk1,\ EVP\_PKEY\ *pk2,\ \textcolor{keywordtype}{int}\ selection);}
+\DoxyCodeLine{00803\ \textcolor{keywordtype}{int}\ evp\_keymgmt\_util\_copy(EVP\_PKEY\ *to,\ EVP\_PKEY\ *from,\ \textcolor{keywordtype}{int}\ selection);}
+\DoxyCodeLine{00804\ \textcolor{keywordtype}{void}\ *evp\_keymgmt\_util\_gen(EVP\_PKEY\ *target,\ EVP\_KEYMGMT\ *keymgmt,}
+\DoxyCodeLine{00805\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *genctx,\ OSSL\_CALLBACK\ *cb,\ \textcolor{keywordtype}{void}\ *cbarg);}
+\DoxyCodeLine{00806\ \textcolor{keywordtype}{int}\ evp\_keymgmt\_util\_get\_deflt\_digest\_name(EVP\_KEYMGMT\ *keymgmt,}
+\DoxyCodeLine{00807\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *keydata,}
+\DoxyCodeLine{00808\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{char}\ *mdname,\ \textcolor{keywordtype}{size\_t}\ mdname\_sz);}
+\DoxyCodeLine{00809\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *evp\_keymgmt\_util\_query\_operation\_name(EVP\_KEYMGMT\ *keymgmt,}
+\DoxyCodeLine{00810\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ op\_id);}
+\DoxyCodeLine{00811\ }
+\DoxyCodeLine{00812\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00813\ \textcolor{comment}{\ *\ KEYMGMT\ provider\ interface\ functions}}
+\DoxyCodeLine{00814\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00815\ \textcolor{keywordtype}{void}\ *evp\_keymgmt\_newdata(\textcolor{keyword}{const}\ EVP\_KEYMGMT\ *keymgmt);}
+\DoxyCodeLine{00816\ \textcolor{keywordtype}{void}\ evp\_keymgmt\_freedata(\textcolor{keyword}{const}\ EVP\_KEYMGMT\ *keymgmt,\ \textcolor{keywordtype}{void}\ *keyddata);}
+\DoxyCodeLine{00817\ \textcolor{keywordtype}{int}\ evp\_keymgmt\_get\_params(\textcolor{keyword}{const}\ EVP\_KEYMGMT\ *keymgmt,}
+\DoxyCodeLine{00818\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *keydata,\ OSSL\_PARAM\ params[]);}
+\DoxyCodeLine{00819\ \textcolor{keywordtype}{int}\ evp\_keymgmt\_set\_params(\textcolor{keyword}{const}\ EVP\_KEYMGMT\ *keymgmt,}
+\DoxyCodeLine{00820\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *keydata,\ \textcolor{keyword}{const}\ OSSL\_PARAM\ params[]);}
+\DoxyCodeLine{00821\ \textcolor{keywordtype}{void}\ *evp\_keymgmt\_gen\_init(\textcolor{keyword}{const}\ EVP\_KEYMGMT\ *keymgmt,\ \textcolor{keywordtype}{int}\ selection,}
+\DoxyCodeLine{00822\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ OSSL\_PARAM\ params[]);}
+\DoxyCodeLine{00823\ \textcolor{keywordtype}{int}\ evp\_keymgmt\_gen\_set\_template(\textcolor{keyword}{const}\ EVP\_KEYMGMT\ *keymgmt,\ \textcolor{keywordtype}{void}\ *genctx,}
+\DoxyCodeLine{00824\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *templ);}
+\DoxyCodeLine{00825\ \textcolor{keywordtype}{int}\ evp\_keymgmt\_gen\_set\_params(\textcolor{keyword}{const}\ EVP\_KEYMGMT\ *keymgmt,\ \textcolor{keywordtype}{void}\ *genctx,}
+\DoxyCodeLine{00826\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ OSSL\_PARAM\ params[]);}
+\DoxyCodeLine{00827\ \textcolor{keywordtype}{void}\ *evp\_keymgmt\_gen(\textcolor{keyword}{const}\ EVP\_KEYMGMT\ *keymgmt,\ \textcolor{keywordtype}{void}\ *genctx,}
+\DoxyCodeLine{00828\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OSSL\_CALLBACK\ *cb,\ \textcolor{keywordtype}{void}\ *cbarg);}
+\DoxyCodeLine{00829\ \textcolor{keywordtype}{void}\ evp\_keymgmt\_gen\_cleanup(\textcolor{keyword}{const}\ EVP\_KEYMGMT\ *keymgmt,\ \textcolor{keywordtype}{void}\ *genctx);}
+\DoxyCodeLine{00830\ }
+\DoxyCodeLine{00831\ \textcolor{keywordtype}{int}\ evp\_keymgmt\_has\_load(\textcolor{keyword}{const}\ EVP\_KEYMGMT\ *keymgmt);}
+\DoxyCodeLine{00832\ \textcolor{keywordtype}{void}\ *evp\_keymgmt\_load(\textcolor{keyword}{const}\ EVP\_KEYMGMT\ *keymgmt,}
+\DoxyCodeLine{00833\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *objref,\ \textcolor{keywordtype}{size\_t}\ objref\_sz);}
+\DoxyCodeLine{00834\ }
+\DoxyCodeLine{00835\ \textcolor{keywordtype}{int}\ evp\_keymgmt\_has(\textcolor{keyword}{const}\ EVP\_KEYMGMT\ *keymgmt,\ \textcolor{keywordtype}{void}\ *keyddata,\ \textcolor{keywordtype}{int}\ selection);}
+\DoxyCodeLine{00836\ \textcolor{keywordtype}{int}\ evp\_keymgmt\_validate(\textcolor{keyword}{const}\ EVP\_KEYMGMT\ *keymgmt,\ \textcolor{keywordtype}{void}\ *keydata,}
+\DoxyCodeLine{00837\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ selection,\ \textcolor{keywordtype}{int}\ checktype);}
+\DoxyCodeLine{00838\ \textcolor{keywordtype}{int}\ evp\_keymgmt\_match(\textcolor{keyword}{const}\ EVP\_KEYMGMT\ *keymgmt,}
+\DoxyCodeLine{00839\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *keydata1,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *keydata2,}
+\DoxyCodeLine{00840\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ selection);}
+\DoxyCodeLine{00841\ }
+\DoxyCodeLine{00842\ \textcolor{keywordtype}{int}\ evp\_keymgmt\_import(\textcolor{keyword}{const}\ EVP\_KEYMGMT\ *keymgmt,\ \textcolor{keywordtype}{void}\ *keydata,}
+\DoxyCodeLine{00843\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ selection,\ \textcolor{keyword}{const}\ OSSL\_PARAM\ params[]);}
+\DoxyCodeLine{00844\ \textcolor{keyword}{const}\ OSSL\_PARAM\ *evp\_keymgmt\_import\_types(\textcolor{keyword}{const}\ EVP\_KEYMGMT\ *keymgmt,}
+\DoxyCodeLine{00845\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ selection);}
+\DoxyCodeLine{00846\ \textcolor{keywordtype}{int}\ evp\_keymgmt\_export(\textcolor{keyword}{const}\ EVP\_KEYMGMT\ *keymgmt,\ \textcolor{keywordtype}{void}\ *keydata,}
+\DoxyCodeLine{00847\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ selection,\ OSSL\_CALLBACK\ *param\_cb,\ \textcolor{keywordtype}{void}\ *cbarg);}
+\DoxyCodeLine{00848\ \textcolor{keyword}{const}\ OSSL\_PARAM\ *evp\_keymgmt\_export\_types(\textcolor{keyword}{const}\ EVP\_KEYMGMT\ *keymgmt,}
+\DoxyCodeLine{00849\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ selection);}
+\DoxyCodeLine{00850\ \textcolor{keywordtype}{void}\ *evp\_keymgmt\_dup(\textcolor{keyword}{const}\ EVP\_KEYMGMT\ *keymgmt,}
+\DoxyCodeLine{00851\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *keydata\_from,\ \textcolor{keywordtype}{int}\ selection);}
+\DoxyCodeLine{00852\ EVP\_KEYMGMT\ *evp\_keymgmt\_fetch\_from\_prov(OSSL\_PROVIDER\ *prov,}
+\DoxyCodeLine{00853\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *name,}
+\DoxyCodeLine{00854\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *properties);}
+\DoxyCodeLine{00855\ }
+\DoxyCodeLine{00856\ \textcolor{comment}{/*\ Pulling\ defines\ out\ of\ C\ source\ files\ */}}
+\DoxyCodeLine{00857\ }
+\DoxyCodeLine{00858\ \textcolor{preprocessor}{\#\ define\ EVP\_RC4\_KEY\_SIZE\ 16}}
+\DoxyCodeLine{00859\ \textcolor{preprocessor}{\#\ ifndef\ TLS1\_1\_VERSION}}
+\DoxyCodeLine{00860\ \textcolor{preprocessor}{\#\ \ define\ TLS1\_1\_VERSION\ \ \ 0x0302}}
+\DoxyCodeLine{00861\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00862\ }
+\DoxyCodeLine{00863\ \textcolor{keywordtype}{void}\ evp\_encode\_ctx\_set\_flags(EVP\_ENCODE\_CTX\ *ctx,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ flags);}
+\DoxyCodeLine{00864\ }
+\DoxyCodeLine{00865\ \textcolor{comment}{/*\ EVP\_ENCODE\_CTX\ flags\ */}}
+\DoxyCodeLine{00866\ \textcolor{comment}{/*\ Don't\ generate\ new\ lines\ when\ encoding\ */}}
+\DoxyCodeLine{00867\ \textcolor{preprocessor}{\#define\ EVP\_ENCODE\_CTX\_NO\_NEWLINES\ \ \ \ \ \ \ \ \ \ 1}}
+\DoxyCodeLine{00868\ \textcolor{comment}{/*\ Use\ the\ SRP\ base64\ alphabet\ instead\ of\ the\ standard\ one\ */}}
+\DoxyCodeLine{00869\ \textcolor{preprocessor}{\#define\ EVP\_ENCODE\_CTX\_USE\_SRP\_ALPHABET\ \ \ \ \ 2}}
+\DoxyCodeLine{00870\ }
+\DoxyCodeLine{00871\ \textcolor{keyword}{const}\ EVP\_CIPHER\ *evp\_get\_cipherbyname\_ex(OSSL\_LIB\_CTX\ *libctx,}
+\DoxyCodeLine{00872\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *name);}
+\DoxyCodeLine{00873\ \textcolor{keyword}{const}\ EVP\_MD\ *evp\_get\_digestbyname\_ex(OSSL\_LIB\_CTX\ *libctx,}
+\DoxyCodeLine{00874\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *name);}
+\DoxyCodeLine{00875\ }
+\DoxyCodeLine{00876\ \textcolor{keywordtype}{int}\ ossl\_pkcs5\_pbkdf2\_hmac\_ex(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *pass,\ \textcolor{keywordtype}{int}\ passlen,}
+\DoxyCodeLine{00877\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *salt,\ \textcolor{keywordtype}{int}\ saltlen,\ \textcolor{keywordtype}{int}\ iter,}
+\DoxyCodeLine{00878\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ EVP\_MD\ *digest,\ \textcolor{keywordtype}{int}\ keylen,}
+\DoxyCodeLine{00879\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,}
+\DoxyCodeLine{00880\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OSSL\_LIB\_CTX\ *libctx,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *propq);}
+\DoxyCodeLine{00881\ }
+\DoxyCodeLine{00882\ \textcolor{preprocessor}{\#\ ifndef\ FIPS\_MODULE}}
+\DoxyCodeLine{00883\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00884\ \textcolor{comment}{\ *\ Internal\ helpers\ for\ stricter\ EVP\_PKEY\_CTX\_\{set,get\}\_params().}}
+\DoxyCodeLine{00885\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00886\ \textcolor{comment}{\ *\ Return\ 1\ on\ success,\ 0\ or\ negative\ for\ errors.}}
+\DoxyCodeLine{00887\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00888\ \textcolor{comment}{\ *\ In\ particular\ they\ return\ -\/2\ if\ any\ of\ the\ params\ is\ not\ supported.}}
+\DoxyCodeLine{00889\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00890\ \textcolor{comment}{\ *\ They\ are\ not\ available\ in\ FIPS\_MODULE\ as\ they\ depend\ on}}
+\DoxyCodeLine{00891\ \textcolor{comment}{\ *\ \ \ \ \ \ -\/\ EVP\_PKEY\_CTX\_\{get,set\}\_params()}}
+\DoxyCodeLine{00892\ \textcolor{comment}{\ *\ \ \ \ \ \ -\/\ EVP\_PKEY\_CTX\_\{gettable,settable\}\_params()}}
+\DoxyCodeLine{00893\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00894\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00895\ \textcolor{keywordtype}{int}\ evp\_pkey\_ctx\_set\_params\_strict(EVP\_PKEY\_CTX\ *ctx,\ OSSL\_PARAM\ *params);}
+\DoxyCodeLine{00896\ \textcolor{keywordtype}{int}\ evp\_pkey\_ctx\_get\_params\_strict(EVP\_PKEY\_CTX\ *ctx,\ OSSL\_PARAM\ *params);}
+\DoxyCodeLine{00897\ }
+\DoxyCodeLine{00898\ EVP\_MD\_CTX\ *evp\_md\_ctx\_new\_ex(EVP\_PKEY\ *pkey,\ \textcolor{keyword}{const}\ ASN1\_OCTET\_STRING\ *\textcolor{keywordtype}{id},}
+\DoxyCodeLine{00899\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OSSL\_LIB\_CTX\ *libctx,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *propq);}
+\DoxyCodeLine{00900\ \textcolor{keywordtype}{int}\ evp\_pkey\_name2type(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *name);}
+\DoxyCodeLine{00901\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *evp\_pkey\_type2name(\textcolor{keywordtype}{int}\ type);}
+\DoxyCodeLine{00902\ }
+\DoxyCodeLine{00903\ \textcolor{keywordtype}{int}\ evp\_pkey\_ctx\_use\_cached\_data(EVP\_PKEY\_CTX\ *ctx);}
+\DoxyCodeLine{00904\ \textcolor{preprocessor}{\#\ endif\ }\textcolor{comment}{/*\ !defined(FIPS\_MODULE)\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00905\ }
+\DoxyCodeLine{00906\ \textcolor{keywordtype}{int}\ evp\_method\_store\_cache\_flush(OSSL\_LIB\_CTX\ *libctx);}
+\DoxyCodeLine{00907\ \textcolor{keywordtype}{int}\ evp\_method\_store\_remove\_all\_provided(\textcolor{keyword}{const}\ OSSL\_PROVIDER\ *prov);}
+\DoxyCodeLine{00908\ }
+\DoxyCodeLine{00909\ \textcolor{keywordtype}{int}\ evp\_default\_properties\_enable\_fips\_int(OSSL\_LIB\_CTX\ *libctx,\ \textcolor{keywordtype}{int}\ enable,}
+\DoxyCodeLine{00910\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ loadconfig);}
+\DoxyCodeLine{00911\ \textcolor{keywordtype}{int}\ evp\_set\_default\_properties\_int(OSSL\_LIB\_CTX\ *libctx,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *propq,}
+\DoxyCodeLine{00912\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ loadconfig,\ \textcolor{keywordtype}{int}\ mirrored);}
+\DoxyCodeLine{00913\ \textcolor{keywordtype}{char}\ *evp\_get\_global\_properties\_str(OSSL\_LIB\_CTX\ *libctx,\ \textcolor{keywordtype}{int}\ loadconfig);}
+\DoxyCodeLine{00914\ }
+\DoxyCodeLine{00915\ \textcolor{keywordtype}{void}\ evp\_md\_ctx\_clear\_digest(EVP\_MD\_CTX\ *ctx,\ \textcolor{keywordtype}{int}\ force,\ \textcolor{keywordtype}{int}\ keep\_digest);}
+\DoxyCodeLine{00916\ \textcolor{comment}{/*\ just\ free\ the\ algctx\ if\ set,\ returns\ 0\ on\ inconsistent\ state\ of\ ctx\ */}}
+\DoxyCodeLine{00917\ \textcolor{keywordtype}{int}\ evp\_md\_ctx\_free\_algctx(EVP\_MD\_CTX\ *ctx);}
+\DoxyCodeLine{00918\ }
+\DoxyCodeLine{00919\ \textcolor{comment}{/*\ Three\ possible\ states:\ */}}
+\DoxyCodeLine{00920\ \textcolor{preprocessor}{\#\ define\ EVP\_PKEY\_STATE\_UNKNOWN\ \ \ \ \ \ \ \ \ 0}}
+\DoxyCodeLine{00921\ \textcolor{preprocessor}{\#\ define\ EVP\_PKEY\_STATE\_LEGACY\ \ \ \ \ \ \ \ \ \ 1}}
+\DoxyCodeLine{00922\ \textcolor{preprocessor}{\#\ define\ EVP\_PKEY\_STATE\_PROVIDER\ \ \ \ \ \ \ \ 2}}
+\DoxyCodeLine{00923\ \textcolor{keywordtype}{int}\ evp\_pkey\_ctx\_state(\textcolor{keyword}{const}\ EVP\_PKEY\_CTX\ *ctx);}
+\DoxyCodeLine{00924\ }
+\DoxyCodeLine{00925\ \textcolor{comment}{/*\ These\ two\ must\ ONLY\ be\ called\ for\ provider\ side\ operations\ */}}
+\DoxyCodeLine{00926\ \textcolor{keywordtype}{int}\ evp\_pkey\_ctx\_ctrl\_to\_param(EVP\_PKEY\_CTX\ *ctx,}
+\DoxyCodeLine{00927\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ keytype,\ \textcolor{keywordtype}{int}\ optype,}
+\DoxyCodeLine{00928\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ cmd,\ \textcolor{keywordtype}{int}\ p1,\ \textcolor{keywordtype}{void}\ *p2);}
+\DoxyCodeLine{00929\ \textcolor{keywordtype}{int}\ evp\_pkey\_ctx\_ctrl\_str\_to\_param(EVP\_PKEY\_CTX\ *ctx,}
+\DoxyCodeLine{00930\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *name,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *value);}
+\DoxyCodeLine{00931\ }
+\DoxyCodeLine{00932\ \textcolor{comment}{/*\ These\ two\ must\ ONLY\ be\ called\ for\ legacy\ operations\ */}}
+\DoxyCodeLine{00933\ \textcolor{keywordtype}{int}\ evp\_pkey\_ctx\_set\_params\_to\_ctrl(EVP\_PKEY\_CTX\ *ctx,\ \textcolor{keyword}{const}\ OSSL\_PARAM\ *params);}
+\DoxyCodeLine{00934\ \textcolor{keywordtype}{int}\ evp\_pkey\_ctx\_get\_params\_to\_ctrl(EVP\_PKEY\_CTX\ *ctx,\ OSSL\_PARAM\ *params);}
+\DoxyCodeLine{00935\ }
+\DoxyCodeLine{00936\ \textcolor{comment}{/*\ This\ must\ ONLY\ be\ called\ for\ legacy\ EVP\_PKEYs\ */}}
+\DoxyCodeLine{00937\ \textcolor{keywordtype}{int}\ evp\_pkey\_get\_params\_to\_ctrl(\textcolor{keyword}{const}\ EVP\_PKEY\ *pkey,\ OSSL\_PARAM\ *params);}
+\DoxyCodeLine{00938\ }
+\DoxyCodeLine{00939\ \textcolor{comment}{/*\ Same\ as\ the\ public\ get0\ functions\ but\ are\ not\ const\ */}}
+\DoxyCodeLine{00940\ \textcolor{preprocessor}{\#\ ifndef\ OPENSSL\_NO\_DEPRECATED\_3\_0}}
+\DoxyCodeLine{00941\ DH\ *evp\_pkey\_get0\_DH\_int(\textcolor{keyword}{const}\ EVP\_PKEY\ *pkey);}
+\DoxyCodeLine{00942\ EC\_KEY\ *evp\_pkey\_get0\_EC\_KEY\_int(\textcolor{keyword}{const}\ EVP\_PKEY\ *pkey);}
+\DoxyCodeLine{00943\ RSA\ *evp\_pkey\_get0\_RSA\_int(\textcolor{keyword}{const}\ EVP\_PKEY\ *pkey);}
+\DoxyCodeLine{00944\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00945\ }
+\DoxyCodeLine{00946\ \textcolor{comment}{/*\ Get\ internal\ identification\ number\ routines\ */}}
+\DoxyCodeLine{00947\ \textcolor{keywordtype}{int}\ evp\_asym\_cipher\_get\_number(\textcolor{keyword}{const}\ EVP\_ASYM\_CIPHER\ *cipher);}
+\DoxyCodeLine{00948\ \textcolor{keywordtype}{int}\ evp\_cipher\_get\_number(\textcolor{keyword}{const}\ EVP\_CIPHER\ *cipher);}
+\DoxyCodeLine{00949\ \textcolor{keywordtype}{int}\ evp\_kdf\_get\_number(\textcolor{keyword}{const}\ EVP\_KDF\ *kdf);}
+\DoxyCodeLine{00950\ \textcolor{keywordtype}{int}\ evp\_kem\_get\_number(\textcolor{keyword}{const}\ EVP\_KEM\ *wrap);}
+\DoxyCodeLine{00951\ \textcolor{keywordtype}{int}\ evp\_keyexch\_get\_number(\textcolor{keyword}{const}\ EVP\_KEYEXCH\ *keyexch);}
+\DoxyCodeLine{00952\ \textcolor{keywordtype}{int}\ evp\_keymgmt\_get\_number(\textcolor{keyword}{const}\ EVP\_KEYMGMT\ *keymgmt);}
+\DoxyCodeLine{00953\ \textcolor{keywordtype}{int}\ evp\_mac\_get\_number(\textcolor{keyword}{const}\ EVP\_MAC\ *mac);}
+\DoxyCodeLine{00954\ \textcolor{keywordtype}{int}\ evp\_md\_get\_number(\textcolor{keyword}{const}\ EVP\_MD\ *md);}
+\DoxyCodeLine{00955\ \textcolor{keywordtype}{int}\ evp\_rand\_get\_number(\textcolor{keyword}{const}\ EVP\_RAND\ *rand);}
+\DoxyCodeLine{00956\ \textcolor{keywordtype}{int}\ evp\_rand\_can\_seed(EVP\_RAND\_CTX\ *ctx);}
+\DoxyCodeLine{00957\ \textcolor{keywordtype}{size\_t}\ evp\_rand\_get\_seed(EVP\_RAND\_CTX\ *ctx,}
+\DoxyCodeLine{00958\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **buffer,}
+\DoxyCodeLine{00959\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ entropy,\ \textcolor{keywordtype}{size\_t}\ min\_len,\ \textcolor{keywordtype}{size\_t}\ max\_len,}
+\DoxyCodeLine{00960\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ prediction\_resistance,}
+\DoxyCodeLine{00961\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *adin,\ \textcolor{keywordtype}{size\_t}\ adin\_len);}
+\DoxyCodeLine{00962\ \textcolor{keywordtype}{void}\ evp\_rand\_clear\_seed(EVP\_RAND\_CTX\ *ctx,}
+\DoxyCodeLine{00963\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *buffer,\ \textcolor{keywordtype}{size\_t}\ b\_len);}
+\DoxyCodeLine{00964\ \textcolor{keywordtype}{int}\ evp\_signature\_get\_number(\textcolor{keyword}{const}\ EVP\_SIGNATURE\ *signature);}
+\DoxyCodeLine{00965\ }
+\DoxyCodeLine{00966\ \textcolor{keywordtype}{int}\ evp\_pkey\_decrypt\_alloc(EVP\_PKEY\_CTX\ *ctx,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **outp,}
+\DoxyCodeLine{00967\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ *outlenp,\ \textcolor{keywordtype}{size\_t}\ expected\_outlen,}
+\DoxyCodeLine{00968\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,\ \textcolor{keywordtype}{size\_t}\ inlen);}
+\DoxyCodeLine{00969\ }
+\DoxyCodeLine{00970\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ OSSL\_CRYPTO\_EVP\_H\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

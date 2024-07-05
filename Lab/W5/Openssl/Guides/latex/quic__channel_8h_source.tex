@@ -1,0 +1,435 @@
+\doxysection{quic\+\_\+channel.\+h}
+\hypertarget{quic__channel_8h_source}{}\label{quic__channel_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/quic\_channel.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/quic\_channel.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2022-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_QUIC\_CHANNEL\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_QUIC\_CHANNEL\_H}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#\ include\ <openssl/ssl.h>}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ include\ "{}internal/quic\_types.h"{}}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#\ include\ "{}internal/quic\_stream\_map.h"{}}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#\ include\ "{}internal/quic\_reactor.h"{}}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#\ include\ "{}internal/quic\_statm.h"{}}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#\ include\ "{}internal/time.h"{}}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#\ include\ "{}internal/thread.h"{}}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#\ ifndef\ OPENSSL\_NO\_QUIC}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00024\ \textcolor{comment}{\ *\ QUIC\ Channel}}
+\DoxyCodeLine{00025\ \textcolor{comment}{\ *\ ============}}
+\DoxyCodeLine{00026\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00027\ \textcolor{comment}{\ *\ A\ QUIC\ channel\ (QUIC\_CHANNEL)\ is\ an\ object\ which\ binds\ together\ all\ of\ the}}
+\DoxyCodeLine{00028\ \textcolor{comment}{\ *\ various\ pieces\ of\ QUIC\ into\ a\ single\ top-\/level\ object,\ and\ handles\ connection}}
+\DoxyCodeLine{00029\ \textcolor{comment}{\ *\ state\ which\ is\ not\ specific\ to\ the\ client\ or\ server\ roles.\ In\ particular,\ it}}
+\DoxyCodeLine{00030\ \textcolor{comment}{\ *\ is\ strictly\ separated\ from\ the\ libssl\ front\ end\ I/O\ API\ personality\ layer,}}
+\DoxyCodeLine{00031\ \textcolor{comment}{\ *\ and\ is\ not\ an\ SSL\ object.}}
+\DoxyCodeLine{00032\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00033\ \textcolor{comment}{\ *\ The\ name\ QUIC\_CHANNEL\ is\ chosen\ because\ QUIC\_CONNECTION\ is\ already\ in\ use,}}
+\DoxyCodeLine{00034\ \textcolor{comment}{\ *\ but\ functionally\ these\ relate\ to\ the\ same\ thing\ (a\ QUIC\ connection).\ The\ use}}
+\DoxyCodeLine{00035\ \textcolor{comment}{\ *\ of\ two\ separate\ objects\ ensures\ clean\ separation\ between\ the\ API\ personality}}
+\DoxyCodeLine{00036\ \textcolor{comment}{\ *\ layer\ and\ common\ code\ for\ handling\ connections,\ and\ between\ the\ functionality}}
+\DoxyCodeLine{00037\ \textcolor{comment}{\ *\ which\ is\ specific\ to\ clients\ and\ which\ is\ specific\ to\ servers,\ and\ the}}
+\DoxyCodeLine{00038\ \textcolor{comment}{\ *\ functionality\ which\ is\ common\ to\ both.}}
+\DoxyCodeLine{00039\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00040\ \textcolor{comment}{\ *\ The\ API\ personality\ layer\ provides\ SSL\ objects\ (e.g.\ a\ QUIC\_CONNECTION)\ which}}
+\DoxyCodeLine{00041\ \textcolor{comment}{\ *\ consume\ a\ QUIC\ channel\ and\ implement\ a\ specific\ public\ API.\ Things\ which\ are}}
+\DoxyCodeLine{00042\ \textcolor{comment}{\ *\ handled\ by\ the\ API\ personality\ layer\ include\ emulation\ of\ blocking\ semantics,}}
+\DoxyCodeLine{00043\ \textcolor{comment}{\ *\ handling\ of\ SSL\ object\ mode\ flags\ like\ non-\/partial\ write\ mode,\ etc.}}
+\DoxyCodeLine{00044\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00045\ \textcolor{comment}{\ *\ Where\ the\ QUIC\_CHANNEL\ is\ used\ in\ a\ server\ role,\ there\ is\ one\ QUIC\_CHANNEL}}
+\DoxyCodeLine{00046\ \textcolor{comment}{\ *\ per\ connection.\ In\ the\ future\ a\ QUIC\ Channel\ Manager\ will\ probably\ be\ defined}}
+\DoxyCodeLine{00047\ \textcolor{comment}{\ *\ to\ handle\ ownership\ of\ resources\ which\ are\ shared\ between\ connections\ (e.g.}}
+\DoxyCodeLine{00048\ \textcolor{comment}{\ *\ demuxers).\ Since\ we\ only\ use\ server-\/side\ functionality\ for\ dummy\ test\ servers}}
+\DoxyCodeLine{00049\ \textcolor{comment}{\ *\ for\ now,\ which\ only\ need\ to\ handle\ one\ connection\ at\ a\ time,\ this\ is\ not}}
+\DoxyCodeLine{00050\ \textcolor{comment}{\ *\ currently\ modelled.}}
+\DoxyCodeLine{00051\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00052\ \textcolor{comment}{\ *\ Synchronisation}}
+\DoxyCodeLine{00053\ \textcolor{comment}{\ *\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00054\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00055\ \textcolor{comment}{\ *\ To\ support\ thread\ assisted\ mode,\ QUIC\_CHANNEL\ can\ be\ used\ by\ multiple}}
+\DoxyCodeLine{00056\ \textcolor{comment}{\ *\ threads.\ **It\ is\ the\ caller's\ responsibility\ to\ ensure\ that\ the\ QUIC\_CHANNEL}}
+\DoxyCodeLine{00057\ \textcolor{comment}{\ *\ is\ only\ accessed\ (whether\ via\ its\ methods\ or\ via\ direct\ access\ to\ its\ state)}}
+\DoxyCodeLine{00058\ \textcolor{comment}{\ *\ while\ the\ channel\ mutex\ is\ held**,\ except\ for\ methods\ explicitly\ marked\ as}}
+\DoxyCodeLine{00059\ \textcolor{comment}{\ *\ not\ requiring\ prior\ locking.\ This\ is\ an\ unchecked\ precondition.}}
+\DoxyCodeLine{00060\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00061\ \textcolor{comment}{\ *\ The\ instantiator\ of\ the\ channel\ is\ responsible\ for\ providing\ a\ suitable}}
+\DoxyCodeLine{00062\ \textcolor{comment}{\ *\ mutex\ which\ then\ serves\ as\ the\ channel\ mutex;\ see\ QUIC\_CHANNEL\_ARGS.}}
+\DoxyCodeLine{00063\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00066\ \textcolor{comment}{\ *\ The\ function\ does\ not\ acquire\ the\ channel\ mutex\ and\ assumes\ it\ is\ already}}
+\DoxyCodeLine{00067\ \textcolor{comment}{\ *\ held\ by\ the\ calling\ thread.}}
+\DoxyCodeLine{00068\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00069\ \textcolor{comment}{\ *\ Any\ function\ tagged\ with\ this\ has\ the\ following\ precondition:}}
+\DoxyCodeLine{00070\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00071\ \textcolor{comment}{\ *\ \ \ Precondition:\ must\ hold\ channel\ mutex\ (unchecked)}}
+\DoxyCodeLine{00072\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00073\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_NEEDS\_LOCK}}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00075\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00076\ \textcolor{comment}{\ *\ The\ function\ acquires\ the\ channel\ mutex\ and\ releases\ it\ before\ returning\ in}}
+\DoxyCodeLine{00077\ \textcolor{comment}{\ *\ all\ circumstances.}}
+\DoxyCodeLine{00078\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00079\ \textcolor{comment}{\ *\ Any\ function\ tagged\ with\ this\ has\ the\ following\ precondition\ and}}
+\DoxyCodeLine{00080\ \textcolor{comment}{\ *\ postcondition:}}
+\DoxyCodeLine{00081\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00082\ \textcolor{comment}{\ *\ \ \ Precondition:\ must\ not\ hold\ channel\ mutex\ (unchecked)}}
+\DoxyCodeLine{00083\ \textcolor{comment}{\ *\ \ \ Postcondition:\ channel\ mutex\ is\ not\ held\ (by\ calling\ thread)}}
+\DoxyCodeLine{00084\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00085\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_TAKES\_LOCK}}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00087\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00088\ \textcolor{comment}{\ *\ The\ function\ acquires\ the\ channel\ mutex\ and\ leaves\ it\ acquired}}
+\DoxyCodeLine{00089\ \textcolor{comment}{\ *\ when\ returning\ success.}}
+\DoxyCodeLine{00090\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00091\ \textcolor{comment}{\ *\ Any\ function\ tagged\ with\ this\ has\ the\ following\ precondition\ and}}
+\DoxyCodeLine{00092\ \textcolor{comment}{\ *\ postcondition:}}
+\DoxyCodeLine{00093\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00094\ \textcolor{comment}{\ *\ \ \ Precondition:\ must\ not\ hold\ channel\ mutex\ (unchecked)}}
+\DoxyCodeLine{00095\ \textcolor{comment}{\ *\ \ \ Postcondition:\ channel\ mutex\ is\ held\ by\ calling\ thread}}
+\DoxyCodeLine{00096\ \textcolor{comment}{\ *\ \ \ \ \ \ or\ function\ returned\ failure}}
+\DoxyCodeLine{00097\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00098\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_ACQUIRES\_LOCK}}
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00100\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_TODO\_LOCK}}
+\DoxyCodeLine{00101\ }
+\DoxyCodeLine{00102\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_CHANNEL\_STATE\_IDLE\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 0}}
+\DoxyCodeLine{00103\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_CHANNEL\_STATE\_ACTIVE\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 1}}
+\DoxyCodeLine{00104\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_CHANNEL\_STATE\_TERMINATING\_CLOSING\ \ \ \ \ \ \ \ \ 2}}
+\DoxyCodeLine{00105\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_CHANNEL\_STATE\_TERMINATING\_DRAINING\ \ \ \ \ \ \ \ 3}}
+\DoxyCodeLine{00106\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_CHANNEL\_STATE\_TERMINATED\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 4}}
+\DoxyCodeLine{00107\ }
+\DoxyCodeLine{00108\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structquic__channel__args__st}{quic\_channel\_args\_st}}\ \{}
+\DoxyCodeLine{00109\ \ \ \ \ OSSL\_LIB\_CTX\ \ \ \ *libctx;}
+\DoxyCodeLine{00110\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ \ \ \ \ \ *propq;}
+\DoxyCodeLine{00111\ \ \ \ \ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ is\_server;}
+\DoxyCodeLine{00112\ \ \ \ \ SSL\ \ \ \ \ \ \ \ \ \ \ \ \ *tls;}
+\DoxyCodeLine{00113\ }
+\DoxyCodeLine{00114\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00115\ \textcolor{comment}{\ \ \ \ \ *\ This\ must\ be\ a\ mutex\ the\ lifetime\ of\ which\ will\ exceed\ that\ of\ the}}
+\DoxyCodeLine{00116\ \textcolor{comment}{\ \ \ \ \ *\ channel.\ The\ instantiator\ of\ the\ channel\ is\ responsible\ for\ providing\ a}}
+\DoxyCodeLine{00117\ \textcolor{comment}{\ \ \ \ \ *\ mutex\ as\ this\ makes\ it\ easier\ to\ handle\ instantiation\ and\ teardown\ of}}
+\DoxyCodeLine{00118\ \textcolor{comment}{\ \ \ \ \ *\ channels\ in\ situations\ potentially\ requiring\ locking.}}
+\DoxyCodeLine{00119\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00120\ \textcolor{comment}{\ \ \ \ \ *\ Note\ that\ this\ is\ a\ MUTEX\ not\ a\ RWLOCK\ as\ it\ needs\ to\ be\ an\ OS\ mutex\ for}}
+\DoxyCodeLine{00121\ \textcolor{comment}{\ \ \ \ \ *\ compatibility\ with\ an\ OS's\ condition\ variable\ wait\ API,\ whereas\ RWLOCK}}
+\DoxyCodeLine{00122\ \textcolor{comment}{\ \ \ \ \ *\ may,\ depending\ on\ the\ build\ configuration,\ be\ implemented\ using\ an\ OS's}}
+\DoxyCodeLine{00123\ \textcolor{comment}{\ \ \ \ \ *\ mutex\ primitive\ or\ using\ its\ RW\ mutex\ primitive.}}
+\DoxyCodeLine{00124\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00125\ \ \ \ \ CRYPTO\_MUTEX\ \ \ \ *mutex;}
+\DoxyCodeLine{00126\ }
+\DoxyCodeLine{00127\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00128\ \textcolor{comment}{\ \ \ \ \ *\ Optional\ function\ pointer\ to\ use\ to\ retrieve\ the\ current\ time.\ If\ NULL,}}
+\DoxyCodeLine{00129\ \textcolor{comment}{\ \ \ \ \ *\ ossl\_time\_now()\ is\ used.}}
+\DoxyCodeLine{00130\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00131\ \ \ \ \ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ \ \ \ \ \ \ (*now\_cb)(\textcolor{keywordtype}{void}\ *arg);}
+\DoxyCodeLine{00132\ \ \ \ \ \textcolor{keywordtype}{void}\ \ \ \ \ \ \ \ \ \ \ \ *now\_cb\_arg;}
+\DoxyCodeLine{00133\ \}\ \mbox{\hyperlink{structquic__channel__args__st}{QUIC\_CHANNEL\_ARGS}};}
+\DoxyCodeLine{00134\ }
+\DoxyCodeLine{00135\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structquic__channel__st}{quic\_channel\_st}}\ \mbox{\hyperlink{structquic__channel__st}{QUIC\_CHANNEL}};}
+\DoxyCodeLine{00136\ }
+\DoxyCodeLine{00137\ \textcolor{comment}{/*\ Represents\ the\ cause\ for\ a\ connection's\ termination.\ */}}
+\DoxyCodeLine{00138\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structquic__terminate__cause__st}{quic\_terminate\_cause\_st}}\ \{}
+\DoxyCodeLine{00139\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00140\ \textcolor{comment}{\ \ \ \ \ *\ If\ we\ are\ in\ a\ TERMINATING\ or\ TERMINATED\ state,\ this\ is\ the\ error\ code}}
+\DoxyCodeLine{00141\ \textcolor{comment}{\ \ \ \ \ *\ associated\ with\ the\ error.\ This\ field\ is\ valid\ iff\ we\ are\ in\ the}}
+\DoxyCodeLine{00142\ \textcolor{comment}{\ \ \ \ \ *\ TERMINATING\ or\ TERMINATED\ states.}}
+\DoxyCodeLine{00143\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00144\ \ \ \ \ uint64\_t\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ error\_code;}
+\DoxyCodeLine{00145\ }
+\DoxyCodeLine{00146\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00147\ \textcolor{comment}{\ \ \ \ \ *\ If\ terminate\_app\ is\ set\ and\ this\ is\ nonzero,\ this\ is\ the\ frame\ type\ which}}
+\DoxyCodeLine{00148\ \textcolor{comment}{\ \ \ \ \ *\ caused\ the\ connection\ to\ be\ terminated.}}
+\DoxyCodeLine{00149\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00150\ \ \ \ \ uint64\_t\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ frame\_type;}
+\DoxyCodeLine{00151\ }
+\DoxyCodeLine{00152\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00153\ \textcolor{comment}{\ \ \ \ \ *\ Optional\ reason\ string.\ When\ calling\ ossl\_quic\_channel\_local\_close,\ if\ a}}
+\DoxyCodeLine{00154\ \textcolor{comment}{\ \ \ \ \ *\ reason\ string\ pointer\ is\ passed,\ it\ is\ copied\ and\ stored\ inside}}
+\DoxyCodeLine{00155\ \textcolor{comment}{\ \ \ \ \ *\ QUIC\_CHANNEL\ for\ the\ remainder\ of\ the\ lifetime\ of\ the\ channel\ object.}}
+\DoxyCodeLine{00156\ \textcolor{comment}{\ \ \ \ \ *\ Thus\ the\ string\ pointed\ to\ by\ this\ value,\ if\ non-\/NULL,\ is\ valid\ for\ the}}
+\DoxyCodeLine{00157\ \textcolor{comment}{\ \ \ \ \ *\ lifetime\ of\ the\ QUIC\_CHANNEL\ object.}}
+\DoxyCodeLine{00158\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00159\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *reason;}
+\DoxyCodeLine{00160\ }
+\DoxyCodeLine{00161\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00162\ \textcolor{comment}{\ \ \ \ \ *\ Length\ of\ reason\ in\ bytes.\ The\ reason\ is\ supposed\ to\ contain\ a\ UTF-\/8}}
+\DoxyCodeLine{00163\ \textcolor{comment}{\ \ \ \ \ *\ string\ but\ may\ be\ arbitrary\ data\ if\ the\ reason\ came\ from\ the\ network.}}
+\DoxyCodeLine{00164\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00165\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ reason\_len;}
+\DoxyCodeLine{00166\ }
+\DoxyCodeLine{00167\ \ \ \ \ \textcolor{comment}{/*\ Is\ this\ error\ code\ in\ the\ transport\ (0)\ or\ application\ (1)\ space?\ */}}
+\DoxyCodeLine{00168\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ app\ :\ 1;}
+\DoxyCodeLine{00169\ }
+\DoxyCodeLine{00170\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00171\ \textcolor{comment}{\ \ \ \ \ *\ If\ set,\ the\ cause\ of\ the\ termination\ is\ a\ received\ CONNECTION\_CLOSE}}
+\DoxyCodeLine{00172\ \textcolor{comment}{\ \ \ \ \ *\ frame.\ Otherwise,\ we\ decided\ to\ terminate\ ourselves\ and\ sent\ a}}
+\DoxyCodeLine{00173\ \textcolor{comment}{\ \ \ \ \ *\ CONNECTION\_CLOSE\ frame\ (regardless\ of\ whether\ the\ peer\ later\ also\ sends}}
+\DoxyCodeLine{00174\ \textcolor{comment}{\ \ \ \ \ *\ one).}}
+\DoxyCodeLine{00175\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00176\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ remote\ :\ 1;}
+\DoxyCodeLine{00177\ \}\ \mbox{\hyperlink{structquic__terminate__cause__st}{QUIC\_TERMINATE\_CAUSE}};}
+\DoxyCodeLine{00178\ }
+\DoxyCodeLine{00179\ }
+\DoxyCodeLine{00180\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00181\ \textcolor{comment}{\ *\ Create\ a\ new\ QUIC\ channel\ using\ the\ given\ arguments.\ The\ argument\ structure}}
+\DoxyCodeLine{00182\ \textcolor{comment}{\ *\ does\ not\ need\ to\ remain\ allocated.\ Returns\ NULL\ on\ failure.}}
+\DoxyCodeLine{00183\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00184\ \mbox{\hyperlink{structquic__channel__st}{QUIC\_CHANNEL}}\ *ossl\_quic\_channel\_new(\textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__channel__args__st}{QUIC\_CHANNEL\_ARGS}}\ *args);}
+\DoxyCodeLine{00185\ }
+\DoxyCodeLine{00186\ \textcolor{comment}{/*\ No-\/op\ if\ ch\ is\ NULL.\ */}}
+\DoxyCodeLine{00187\ \textcolor{keywordtype}{void}\ ossl\_quic\_channel\_free(\mbox{\hyperlink{structquic__channel__st}{QUIC\_CHANNEL}}\ *ch);}
+\DoxyCodeLine{00188\ }
+\DoxyCodeLine{00189\ \textcolor{comment}{/*\ Set\ mutator\ callbacks\ for\ test\ framework\ support\ */}}
+\DoxyCodeLine{00190\ \textcolor{keywordtype}{int}\ ossl\_quic\_channel\_set\_mutator(\mbox{\hyperlink{structquic__channel__st}{QUIC\_CHANNEL}}\ *ch,}
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ossl\_mutate\_packet\_cb\ mutatecb,}
+\DoxyCodeLine{00192\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ossl\_finish\_mutate\_cb\ finishmutatecb,}
+\DoxyCodeLine{00193\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *mutatearg);}
+\DoxyCodeLine{00194\ }
+\DoxyCodeLine{00195\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00196\ \textcolor{comment}{\ *\ Connection\ Lifecycle\ Events}}
+\DoxyCodeLine{00197\ \textcolor{comment}{\ *\ ===========================}}
+\DoxyCodeLine{00198\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00199\ \textcolor{comment}{\ *\ Various\ events\ that\ can\ be\ raised\ on\ the\ channel\ by\ other\ parts\ of\ the\ QUIC}}
+\DoxyCodeLine{00200\ \textcolor{comment}{\ *\ implementation.\ Some\ of\ these\ are\ suitable\ for\ general\ use\ by\ any\ part\ of\ the}}
+\DoxyCodeLine{00201\ \textcolor{comment}{\ *\ code\ (e.g.\ ossl\_quic\_channel\_raise\_protocol\_error),\ others\ are\ for\ very}}
+\DoxyCodeLine{00202\ \textcolor{comment}{\ *\ specific\ use\ by\ particular\ components\ only\ (e.g.}}
+\DoxyCodeLine{00203\ \textcolor{comment}{\ *\ ossl\_quic\_channel\_on\_handshake\_confirmed).}}
+\DoxyCodeLine{00204\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00205\ }
+\DoxyCodeLine{00206\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00207\ \textcolor{comment}{\ *\ To\ be\ used\ by\ a\ QUIC\ connection.\ Starts\ the\ channel.\ For\ a\ client-\/mode}}
+\DoxyCodeLine{00208\ \textcolor{comment}{\ *\ channel,\ this\ starts\ sending\ the\ first\ handshake\ layer\ message,\ etc.\ Can\ only}}
+\DoxyCodeLine{00209\ \textcolor{comment}{\ *\ be\ called\ in\ the\ idle\ state;\ successive\ calls\ are\ ignored.}}
+\DoxyCodeLine{00210\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00211\ \textcolor{keywordtype}{int}\ ossl\_quic\_channel\_start(\mbox{\hyperlink{structquic__channel__st}{QUIC\_CHANNEL}}\ *ch);}
+\DoxyCodeLine{00212\ }
+\DoxyCodeLine{00213\ \textcolor{comment}{/*\ Start\ a\ locally\ initiated\ connection\ shutdown.\ */}}
+\DoxyCodeLine{00214\ \textcolor{keywordtype}{void}\ ossl\_quic\_channel\_local\_close(\mbox{\hyperlink{structquic__channel__st}{QUIC\_CHANNEL}}\ *ch,\ uint64\_t\ app\_error\_code,}
+\DoxyCodeLine{00215\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *app\_reason);}
+\DoxyCodeLine{00216\ }
+\DoxyCodeLine{00217\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00218\ \textcolor{comment}{\ *\ Called\ when\ the\ handshake\ is\ confirmed.}}
+\DoxyCodeLine{00219\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00220\ \textcolor{keywordtype}{int}\ ossl\_quic\_channel\_on\_handshake\_confirmed(\mbox{\hyperlink{structquic__channel__st}{QUIC\_CHANNEL}}\ *ch);}
+\DoxyCodeLine{00221\ }
+\DoxyCodeLine{00222\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00223\ \textcolor{comment}{\ *\ Raises\ a\ protocol\ error.\ This\ is\ intended\ to\ be\ the\ universal\ call\ suitable}}
+\DoxyCodeLine{00224\ \textcolor{comment}{\ *\ for\ handling\ of\ all\ peer-\/triggered\ protocol\ violations\ or\ errors\ detected\ by}}
+\DoxyCodeLine{00225\ \textcolor{comment}{\ *\ us.\ We\ specify\ a\ QUIC\ transport-\/scope\ error\ code\ and\ optional\ frame\ type}}
+\DoxyCodeLine{00226\ \textcolor{comment}{\ *\ which\ was\ responsible.\ If\ a\ frame\ type\ is\ not\ applicable,\ specify\ zero.\ The}}
+\DoxyCodeLine{00227\ \textcolor{comment}{\ *\ reason\ string\ is\ not\ currently\ handled,\ but\ should\ be\ a\ string\ of\ static}}
+\DoxyCodeLine{00228\ \textcolor{comment}{\ *\ storage\ duration.\ If\ the\ connection\ has\ already\ terminated\ due\ to\ a\ previous}}
+\DoxyCodeLine{00229\ \textcolor{comment}{\ *\ protocol\ error,\ this\ is\ a\ no-\/op;\ first\ error\ wins.}}
+\DoxyCodeLine{00230\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00231\ \textcolor{comment}{\ *\ Usually\ the\ ossl\_quic\_channel\_raise\_protocol\_error()\ function\ should\ be\ used.}}
+\DoxyCodeLine{00232\ \textcolor{comment}{\ *\ The\ ossl\_quic\_channel\_raise\_protocol\_error\_loc()\ function\ can\ be\ used}}
+\DoxyCodeLine{00233\ \textcolor{comment}{\ *\ directly\ for\ passing\ through\ existing\ call\ site\ information\ from\ an\ existing}}
+\DoxyCodeLine{00234\ \textcolor{comment}{\ *\ error.}}
+\DoxyCodeLine{00235\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00236\ \textcolor{keywordtype}{void}\ ossl\_quic\_channel\_raise\_protocol\_error\_loc(\mbox{\hyperlink{structquic__channel__st}{QUIC\_CHANNEL}}\ *ch,}
+\DoxyCodeLine{00237\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ error\_code,}
+\DoxyCodeLine{00238\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ frame\_type,}
+\DoxyCodeLine{00239\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *reason,}
+\DoxyCodeLine{00240\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ERR\_STATE\ *err\_state,}
+\DoxyCodeLine{00241\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *src\_file,}
+\DoxyCodeLine{00242\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ src\_line,}
+\DoxyCodeLine{00243\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *src\_func);}
+\DoxyCodeLine{00244\ }
+\DoxyCodeLine{00245\ \textcolor{preprocessor}{\#define\ ossl\_quic\_channel\_raise\_protocol\_error(ch,\ error\_code,\ frame\_type,\ reason)\ \(\backslash\)}}
+\DoxyCodeLine{00246\ \textcolor{preprocessor}{\ \ \ \ ossl\_quic\_channel\_raise\_protocol\_error\_loc((ch),\ (error\_code),\ \ \(\backslash\)}}
+\DoxyCodeLine{00247\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (frame\_type),\ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00248\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (reason),\ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00249\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ NULL,\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00250\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OPENSSL\_FILE,\ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00251\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OPENSSL\_LINE,\ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00252\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OPENSSL\_FUNC)}}
+\DoxyCodeLine{00253\ }
+\DoxyCodeLine{00254\ \textcolor{preprocessor}{\#define\ ossl\_quic\_channel\_raise\_protocol\_error\_state(ch,\ error\_code,\ frame\_type,\ reason,\ state)\ \(\backslash\)}}
+\DoxyCodeLine{00255\ \textcolor{preprocessor}{\ \ \ \ ossl\_quic\_channel\_raise\_protocol\_error\_loc((ch),\ (error\_code),\ \ \(\backslash\)}}
+\DoxyCodeLine{00256\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (frame\_type),\ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00257\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (reason),\ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00258\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (state),\ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00259\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OPENSSL\_FILE,\ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00260\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OPENSSL\_LINE,\ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00261\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OPENSSL\_FUNC)}}
+\DoxyCodeLine{00262\ }
+\DoxyCodeLine{00263\ }
+\DoxyCodeLine{00264\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00265\ \textcolor{comment}{\ *\ Returns\ 1\ if\ permanent\ net\ error\ was\ detected\ on\ the\ QUIC\_CHANNEL,}}
+\DoxyCodeLine{00266\ \textcolor{comment}{\ *\ 0\ otherwise.}}
+\DoxyCodeLine{00267\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00268\ \textcolor{keywordtype}{int}\ ossl\_quic\_channel\_net\_error(\mbox{\hyperlink{structquic__channel__st}{QUIC\_CHANNEL}}\ *ch);}
+\DoxyCodeLine{00269\ }
+\DoxyCodeLine{00270\ \textcolor{comment}{/*\ Restore\ saved\ error\ state\ (best\ effort)\ */}}
+\DoxyCodeLine{00271\ \textcolor{keywordtype}{void}\ ossl\_quic\_channel\_restore\_err\_state(\mbox{\hyperlink{structquic__channel__st}{QUIC\_CHANNEL}}\ *ch);}
+\DoxyCodeLine{00272\ }
+\DoxyCodeLine{00273\ \textcolor{comment}{/*\ For\ RXDP\ use.\ */}}
+\DoxyCodeLine{00274\ \textcolor{keywordtype}{void}\ ossl\_quic\_channel\_on\_remote\_conn\_close(\mbox{\hyperlink{structquic__channel__st}{QUIC\_CHANNEL}}\ *ch,}
+\DoxyCodeLine{00275\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structossl__quic__frame__conn__close__st}{OSSL\_QUIC\_FRAME\_CONN\_CLOSE}}\ *f);}
+\DoxyCodeLine{00276\ \textcolor{keywordtype}{void}\ ossl\_quic\_channel\_on\_new\_conn\_id(\mbox{\hyperlink{structquic__channel__st}{QUIC\_CHANNEL}}\ *ch,}
+\DoxyCodeLine{00277\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structossl__quic__frame__new__conn__id__st}{OSSL\_QUIC\_FRAME\_NEW\_CONN\_ID}}\ *f);}
+\DoxyCodeLine{00278\ }
+\DoxyCodeLine{00279\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00280\ \textcolor{comment}{\ *\ Queries\ and\ Accessors}}
+\DoxyCodeLine{00281\ \textcolor{comment}{\ *\ =====================}}
+\DoxyCodeLine{00282\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00283\ }
+\DoxyCodeLine{00284\ \textcolor{comment}{/*\ Gets\ the\ reactor\ which\ can\ be\ used\ to\ tick/poll\ on\ the\ channel.\ */}}
+\DoxyCodeLine{00285\ \mbox{\hyperlink{structquic__reactor__st}{QUIC\_REACTOR}}\ *ossl\_quic\_channel\_get\_reactor(\mbox{\hyperlink{structquic__channel__st}{QUIC\_CHANNEL}}\ *ch);}
+\DoxyCodeLine{00286\ }
+\DoxyCodeLine{00287\ \textcolor{comment}{/*\ Gets\ the\ QSM\ used\ with\ the\ channel.\ */}}
+\DoxyCodeLine{00288\ \mbox{\hyperlink{structquic__stream__map__st}{QUIC\_STREAM\_MAP}}\ *ossl\_quic\_channel\_get\_qsm(\mbox{\hyperlink{structquic__channel__st}{QUIC\_CHANNEL}}\ *ch);}
+\DoxyCodeLine{00289\ }
+\DoxyCodeLine{00290\ \textcolor{comment}{/*\ Gets\ the\ statistics\ manager\ used\ with\ the\ channel.\ */}}
+\DoxyCodeLine{00291\ \mbox{\hyperlink{structossl__statm__st}{OSSL\_STATM}}\ *ossl\_quic\_channel\_get\_statm(\mbox{\hyperlink{structquic__channel__st}{QUIC\_CHANNEL}}\ *ch);}
+\DoxyCodeLine{00292\ }
+\DoxyCodeLine{00293\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00294\ \textcolor{comment}{\ *\ Gets/sets\ the\ current\ peer\ address.\ Generally\ this\ should\ be\ used\ before}}
+\DoxyCodeLine{00295\ \textcolor{comment}{\ *\ starting\ a\ channel\ in\ client\ mode.}}
+\DoxyCodeLine{00296\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00297\ \textcolor{keywordtype}{int}\ ossl\_quic\_channel\_get\_peer\_addr(\mbox{\hyperlink{structquic__channel__st}{QUIC\_CHANNEL}}\ *ch,\ BIO\_ADDR\ *peer\_addr);}
+\DoxyCodeLine{00298\ \textcolor{keywordtype}{int}\ ossl\_quic\_channel\_set\_peer\_addr(\mbox{\hyperlink{structquic__channel__st}{QUIC\_CHANNEL}}\ *ch,\ \textcolor{keyword}{const}\ BIO\_ADDR\ *peer\_addr);}
+\DoxyCodeLine{00299\ }
+\DoxyCodeLine{00300\ \textcolor{comment}{/*\ Gets/sets\ the\ underlying\ network\ read\ and\ write\ BIOs.\ */}}
+\DoxyCodeLine{00301\ BIO\ *ossl\_quic\_channel\_get\_net\_rbio(\mbox{\hyperlink{structquic__channel__st}{QUIC\_CHANNEL}}\ *ch);}
+\DoxyCodeLine{00302\ BIO\ *ossl\_quic\_channel\_get\_net\_wbio(\mbox{\hyperlink{structquic__channel__st}{QUIC\_CHANNEL}}\ *ch);}
+\DoxyCodeLine{00303\ \textcolor{keywordtype}{int}\ ossl\_quic\_channel\_set\_net\_rbio(\mbox{\hyperlink{structquic__channel__st}{QUIC\_CHANNEL}}\ *ch,\ BIO\ *net\_rbio);}
+\DoxyCodeLine{00304\ \textcolor{keywordtype}{int}\ ossl\_quic\_channel\_set\_net\_wbio(\mbox{\hyperlink{structquic__channel__st}{QUIC\_CHANNEL}}\ *ch,\ BIO\ *net\_wbio);}
+\DoxyCodeLine{00305\ }
+\DoxyCodeLine{00306\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00307\ \textcolor{comment}{\ *\ Re-\/poll\ the\ network\ BIOs\ already\ set\ to\ determine\ if\ their\ support}}
+\DoxyCodeLine{00308\ \textcolor{comment}{\ *\ for\ polling\ has\ changed.}}
+\DoxyCodeLine{00309\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00310\ \textcolor{keywordtype}{int}\ ossl\_quic\_channel\_update\_poll\_descriptors(\mbox{\hyperlink{structquic__channel__st}{QUIC\_CHANNEL}}\ *ch);}
+\DoxyCodeLine{00311\ }
+\DoxyCodeLine{00312\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00313\ \textcolor{comment}{\ *\ Returns\ an\ existing\ stream\ by\ stream\ ID.\ Returns\ NULL\ if\ the\ stream\ does\ not}}
+\DoxyCodeLine{00314\ \textcolor{comment}{\ *\ exist.}}
+\DoxyCodeLine{00315\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00316\ \mbox{\hyperlink{structquic__stream__st}{QUIC\_STREAM}}\ *ossl\_quic\_channel\_get\_stream\_by\_id(\mbox{\hyperlink{structquic__channel__st}{QUIC\_CHANNEL}}\ *ch,}
+\DoxyCodeLine{00317\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ stream\_id);}
+\DoxyCodeLine{00318\ }
+\DoxyCodeLine{00319\ \textcolor{comment}{/*\ Returns\ 1\ if\ channel\ is\ terminating\ or\ terminated.\ */}}
+\DoxyCodeLine{00320\ \textcolor{keywordtype}{int}\ ossl\_quic\_channel\_is\_term\_any(\textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__channel__st}{QUIC\_CHANNEL}}\ *ch);}
+\DoxyCodeLine{00321\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__terminate__cause__st}{QUIC\_TERMINATE\_CAUSE}}\ *}
+\DoxyCodeLine{00322\ ossl\_quic\_channel\_get\_terminate\_cause(\textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__channel__st}{QUIC\_CHANNEL}}\ *ch);}
+\DoxyCodeLine{00323\ \textcolor{keywordtype}{int}\ ossl\_quic\_channel\_is\_closing(\textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__channel__st}{QUIC\_CHANNEL}}\ *ch);}
+\DoxyCodeLine{00324\ \textcolor{keywordtype}{int}\ ossl\_quic\_channel\_is\_terminated(\textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__channel__st}{QUIC\_CHANNEL}}\ *ch);}
+\DoxyCodeLine{00325\ \textcolor{keywordtype}{int}\ ossl\_quic\_channel\_is\_active(\textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__channel__st}{QUIC\_CHANNEL}}\ *ch);}
+\DoxyCodeLine{00326\ \textcolor{keywordtype}{int}\ ossl\_quic\_channel\_is\_handshake\_complete(\textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__channel__st}{QUIC\_CHANNEL}}\ *ch);}
+\DoxyCodeLine{00327\ \textcolor{keywordtype}{int}\ ossl\_quic\_channel\_is\_handshake\_confirmed(\textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__channel__st}{QUIC\_CHANNEL}}\ *ch);}
+\DoxyCodeLine{00328\ }
+\DoxyCodeLine{00329\ \mbox{\hyperlink{structquic__demux__st}{QUIC\_DEMUX}}\ *ossl\_quic\_channel\_get0\_demux(\mbox{\hyperlink{structquic__channel__st}{QUIC\_CHANNEL}}\ *ch);}
+\DoxyCodeLine{00330\ }
+\DoxyCodeLine{00331\ SSL\ *ossl\_quic\_channel\_get0\_ssl(\mbox{\hyperlink{structquic__channel__st}{QUIC\_CHANNEL}}\ *ch);}
+\DoxyCodeLine{00332\ }
+\DoxyCodeLine{00333\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00334\ \textcolor{comment}{\ *\ Retrieves\ a\ pointer\ to\ the\ channel\ mutex\ which\ was\ provided\ at\ the\ time\ the}}
+\DoxyCodeLine{00335\ \textcolor{comment}{\ *\ channel\ was\ instantiated.\ In\ order\ to\ allow\ locks\ to\ be\ acquired\ and\ released}}
+\DoxyCodeLine{00336\ \textcolor{comment}{\ *\ with\ the\ correct\ granularity,\ it\ is\ the\ caller's\ responsibility\ to\ ensure}}
+\DoxyCodeLine{00337\ \textcolor{comment}{\ *\ this\ lock\ is\ held\ for\ write\ while\ calling\ any\ QUIC\_CHANNEL\ method,\ except\ for}}
+\DoxyCodeLine{00338\ \textcolor{comment}{\ *\ methods\ explicitly\ designed\ otherwise.}}
+\DoxyCodeLine{00339\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00340\ \textcolor{comment}{\ *\ This\ method\ is\ thread\ safe\ and\ does\ not\ require\ prior\ locking.\ It\ can\ also\ be}}
+\DoxyCodeLine{00341\ \textcolor{comment}{\ *\ called\ while\ the\ lock\ is\ already\ held.\ Note\ that\ this\ is\ simply\ a\ convenience}}
+\DoxyCodeLine{00342\ \textcolor{comment}{\ *\ function\ to\ access\ the\ mutex\ which\ was\ passed\ to\ the\ channel\ at\ instantiation}}
+\DoxyCodeLine{00343\ \textcolor{comment}{\ *\ time;\ it\ does\ not\ belong\ to\ the\ channel\ but\ rather\ is\ presumed\ to\ belong\ to}}
+\DoxyCodeLine{00344\ \textcolor{comment}{\ *\ the\ owner\ of\ the\ channel.}}
+\DoxyCodeLine{00345\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00346\ CRYPTO\_MUTEX\ *ossl\_quic\_channel\_get\_mutex(\mbox{\hyperlink{structquic__channel__st}{QUIC\_CHANNEL}}\ *ch);}
+\DoxyCodeLine{00347\ }
+\DoxyCodeLine{00348\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00349\ \textcolor{comment}{\ *\ Creates\ a\ new\ locally-\/initiated\ stream\ in\ the\ stream\ mapper,\ choosing\ an}}
+\DoxyCodeLine{00350\ \textcolor{comment}{\ *\ appropriate\ stream\ ID.\ If\ is\_uni\ is\ 1,\ creates\ a\ unidirectional\ stream,\ else}}
+\DoxyCodeLine{00351\ \textcolor{comment}{\ *\ creates\ a\ bidirectional\ stream.\ Returns\ NULL\ on\ failure.}}
+\DoxyCodeLine{00352\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00353\ \mbox{\hyperlink{structquic__stream__st}{QUIC\_STREAM}}\ *ossl\_quic\_channel\_new\_stream\_local(\mbox{\hyperlink{structquic__channel__st}{QUIC\_CHANNEL}}\ *ch,\ \textcolor{keywordtype}{int}\ is\_uni);}
+\DoxyCodeLine{00354\ }
+\DoxyCodeLine{00355\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00356\ \textcolor{comment}{\ *\ Creates\ a\ new\ remotely-\/initiated\ stream\ in\ the\ stream\ mapper.\ The\ stream\ ID}}
+\DoxyCodeLine{00357\ \textcolor{comment}{\ *\ is\ used\ to\ confirm\ the\ initiator\ and\ determine\ the\ stream\ type.\ The\ stream\ is}}
+\DoxyCodeLine{00358\ \textcolor{comment}{\ *\ automatically\ added\ to\ the\ QSM's\ accept\ queue.\ A\ pointer\ to\ the\ stream\ is}}
+\DoxyCodeLine{00359\ \textcolor{comment}{\ *\ also\ returned.\ Returns\ NULL\ on\ failure.}}
+\DoxyCodeLine{00360\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00361\ \mbox{\hyperlink{structquic__stream__st}{QUIC\_STREAM}}\ *ossl\_quic\_channel\_new\_stream\_remote(\mbox{\hyperlink{structquic__channel__st}{QUIC\_CHANNEL}}\ *ch,}
+\DoxyCodeLine{00362\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ stream\_id);}
+\DoxyCodeLine{00363\ }
+\DoxyCodeLine{00364\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00365\ \textcolor{comment}{\ *\ Configures\ incoming\ stream\ auto-\/reject.\ If\ enabled,\ incoming\ streams\ have}}
+\DoxyCodeLine{00366\ \textcolor{comment}{\ *\ both\ their\ sending\ and\ receiving\ parts\ automatically\ rejected\ using}}
+\DoxyCodeLine{00367\ \textcolor{comment}{\ *\ STOP\_SENDING\ and\ STREAM\_RESET\ frames.\ aec\ is\ the\ application\ error}}
+\DoxyCodeLine{00368\ \textcolor{comment}{\ *\ code\ to\ be\ used\ for\ those\ frames.}}
+\DoxyCodeLine{00369\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00370\ \textcolor{keywordtype}{void}\ ossl\_quic\_channel\_set\_incoming\_stream\_auto\_reject(\mbox{\hyperlink{structquic__channel__st}{QUIC\_CHANNEL}}\ *ch,}
+\DoxyCodeLine{00371\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ enable,}
+\DoxyCodeLine{00372\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ aec);}
+\DoxyCodeLine{00373\ }
+\DoxyCodeLine{00374\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00375\ \textcolor{comment}{\ *\ Causes\ the\ channel\ to\ reject\ the\ sending\ and\ receiving\ parts\ of\ a\ stream,}}
+\DoxyCodeLine{00376\ \textcolor{comment}{\ *\ as\ though\ autorejected.\ Can\ be\ used\ if\ a\ stream\ has\ already\ been}}
+\DoxyCodeLine{00377\ \textcolor{comment}{\ *\ accepted.}}
+\DoxyCodeLine{00378\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00379\ \textcolor{keywordtype}{void}\ ossl\_quic\_channel\_reject\_stream(\mbox{\hyperlink{structquic__channel__st}{QUIC\_CHANNEL}}\ *ch,\ \mbox{\hyperlink{structquic__stream__st}{QUIC\_STREAM}}\ *qs);}
+\DoxyCodeLine{00380\ }
+\DoxyCodeLine{00381\ \textcolor{comment}{/*\ Replace\ local\ connection\ ID\ in\ TXP\ and\ DEMUX\ for\ testing\ purposes.\ */}}
+\DoxyCodeLine{00382\ \textcolor{keywordtype}{int}\ ossl\_quic\_channel\_replace\_local\_cid(\mbox{\hyperlink{structquic__channel__st}{QUIC\_CHANNEL}}\ *ch,}
+\DoxyCodeLine{00383\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__conn__id__st}{QUIC\_CONN\_ID}}\ *conn\_id);}
+\DoxyCodeLine{00384\ }
+\DoxyCodeLine{00385\ \textcolor{comment}{/*\ Setters\ for\ the\ msg\_callback\ and\ msg\_callback\_arg\ */}}
+\DoxyCodeLine{00386\ \textcolor{keywordtype}{void}\ ossl\_quic\_channel\_set\_msg\_callback(\mbox{\hyperlink{structquic__channel__st}{QUIC\_CHANNEL}}\ *ch,}
+\DoxyCodeLine{00387\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ossl\_msg\_cb\ msg\_callback,}
+\DoxyCodeLine{00388\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ SSL\ *msg\_callback\_ssl);}
+\DoxyCodeLine{00389\ \textcolor{keywordtype}{void}\ ossl\_quic\_channel\_set\_msg\_callback\_arg(\mbox{\hyperlink{structquic__channel__st}{QUIC\_CHANNEL}}\ *ch,}
+\DoxyCodeLine{00390\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *msg\_callback\_arg);}
+\DoxyCodeLine{00391\ }
+\DoxyCodeLine{00392\ \textcolor{comment}{/*\ Testing\ use\ only\ -\/\ sets\ a\ TXKU\ threshold\ packet\ count\ override\ value.\ */}}
+\DoxyCodeLine{00393\ \textcolor{keywordtype}{void}\ ossl\_quic\_channel\_set\_txku\_threshold\_override(\mbox{\hyperlink{structquic__channel__st}{QUIC\_CHANNEL}}\ *ch,}
+\DoxyCodeLine{00394\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ tx\_pkt\_threshold);}
+\DoxyCodeLine{00395\ }
+\DoxyCodeLine{00396\ \textcolor{comment}{/*\ Testing\ use\ only\ -\/\ gets\ current\ 1-\/RTT\ key\ epochs\ for\ QTX\ and\ QRX.\ */}}
+\DoxyCodeLine{00397\ uint64\_t\ ossl\_quic\_channel\_get\_tx\_key\_epoch(\mbox{\hyperlink{structquic__channel__st}{QUIC\_CHANNEL}}\ *ch);}
+\DoxyCodeLine{00398\ uint64\_t\ ossl\_quic\_channel\_get\_rx\_key\_epoch(\mbox{\hyperlink{structquic__channel__st}{QUIC\_CHANNEL}}\ *ch);}
+\DoxyCodeLine{00399\ }
+\DoxyCodeLine{00400\ \textcolor{comment}{/*\ Artificially\ trigger\ a\ spontaneous\ TXKU\ if\ possible.\ */}}
+\DoxyCodeLine{00401\ \textcolor{keywordtype}{int}\ ossl\_quic\_channel\_trigger\_txku(\mbox{\hyperlink{structquic__channel__st}{QUIC\_CHANNEL}}\ *ch);}
+\DoxyCodeLine{00402\ \textcolor{keywordtype}{int}\ ossl\_quic\_channel\_has\_pending(\textcolor{keyword}{const}\ \mbox{\hyperlink{structquic__channel__st}{QUIC\_CHANNEL}}\ *ch);}
+\DoxyCodeLine{00403\ }
+\DoxyCodeLine{00404\ \textcolor{comment}{/*\ Force\ transmission\ of\ an\ ACK-\/eliciting\ packet.\ */}}
+\DoxyCodeLine{00405\ \textcolor{keywordtype}{int}\ ossl\_quic\_channel\_ping(\mbox{\hyperlink{structquic__channel__st}{QUIC\_CHANNEL}}\ *ch);}
+\DoxyCodeLine{00406\ }
+\DoxyCodeLine{00407\ \textcolor{comment}{/*\ For\ testing\ use.\ While\ enabled,\ ticking\ is\ not\ performed.\ */}}
+\DoxyCodeLine{00408\ \textcolor{keywordtype}{void}\ ossl\_quic\_channel\_set\_inhibit\_tick(\mbox{\hyperlink{structquic__channel__st}{QUIC\_CHANNEL}}\ *ch,\ \textcolor{keywordtype}{int}\ inhibit);}
+\DoxyCodeLine{00409\ }
+\DoxyCodeLine{00410\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00411\ \textcolor{comment}{\ *\ These\ queries\ exist\ for\ diagnostic\ purposes\ only.\ They\ may\ roll\ over.}}
+\DoxyCodeLine{00412\ \textcolor{comment}{\ *\ Do\ not\ rely\ on\ them\ for\ non-\/testing\ purposes.}}
+\DoxyCodeLine{00413\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00414\ uint16\_t\ ossl\_quic\_channel\_get\_diag\_num\_rx\_ack(\mbox{\hyperlink{structquic__channel__st}{QUIC\_CHANNEL}}\ *ch);}
+\DoxyCodeLine{00415\ }
+\DoxyCodeLine{00416\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00417\ \textcolor{comment}{\ *\ Diagnostic\ use\ only.\ Gets\ the\ current\ local\ CID.}}
+\DoxyCodeLine{00418\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00419\ \textcolor{keywordtype}{void}\ ossl\_quic\_channel\_get\_diag\_local\_cid(\mbox{\hyperlink{structquic__channel__st}{QUIC\_CHANNEL}}\ *ch,\ \mbox{\hyperlink{structquic__conn__id__st}{QUIC\_CONN\_ID}}\ *cid);}
+\DoxyCodeLine{00420\ }
+\DoxyCodeLine{00421\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00422\ \textcolor{comment}{\ *\ Returns\ 1\ if\ stream\ count\ flow\ control\ allows\ us\ to\ create\ a\ new}}
+\DoxyCodeLine{00423\ \textcolor{comment}{\ *\ locally-\/initiated\ stream.}}
+\DoxyCodeLine{00424\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00425\ \textcolor{keywordtype}{int}\ ossl\_quic\_channel\_is\_new\_local\_stream\_admissible(\mbox{\hyperlink{structquic__channel__st}{QUIC\_CHANNEL}}\ *ch,\ \textcolor{keywordtype}{int}\ is\_uni);}
+\DoxyCodeLine{00426\ }
+\DoxyCodeLine{00427\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00428\ }
+\DoxyCodeLine{00429\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

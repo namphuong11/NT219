@@ -1,0 +1,77 @@
+\doxysection{evp\+\_\+pkey\+\_\+st Struct Reference}
+\hypertarget{structevp__pkey__st}{}\label{structevp__pkey__st}\index{evp\_pkey\_st@{evp\_pkey\_st}}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{structevp__pkey__st_a1566b6f371f8086a57f9e2405addb749}\label{structevp__pkey__st_a1566b6f371f8086a57f9e2405addb749} 
+{\bfseries STACK\+\_\+\+OF} (X509\+\_\+\+ATTRIBUTE) \texorpdfstring{$\ast$}{*}attributes
+\item 
+\Hypertarget{structevp__pkey__st_a33423a6baf4774dcffa4300bf8583d40}\label{structevp__pkey__st_a33423a6baf4774dcffa4300bf8583d40} 
+{\bfseries STACK\+\_\+\+OF} (\mbox{\hyperlink{struct_o_p___c_a_c_h_e___e_l_e_m}{OP\+\_\+\+CACHE\+\_\+\+ELEM}}) \texorpdfstring{$\ast$}{*}operation\+\_\+cache
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{structevp__pkey__st_a7d550d554ff45db26681e2d2e2f23b66}\label{structevp__pkey__st_a7d550d554ff45db26681e2d2e2f23b66} 
+int {\bfseries type}
+\item 
+\Hypertarget{structevp__pkey__st_a0bbebdbdbba1e1f9c796c1e4a3a2eb04}\label{structevp__pkey__st_a0bbebdbdbba1e1f9c796c1e4a3a2eb04} 
+int {\bfseries save\+\_\+type}
+\item 
+\Hypertarget{structevp__pkey__st_a89d9cab6071d889719126a8ebc03b673}\label{structevp__pkey__st_a89d9cab6071d889719126a8ebc03b673} 
+const EVP\+\_\+\+PKEY\+\_\+\+ASN1\+\_\+\+METHOD \texorpdfstring{$\ast$}{*} {\bfseries ameth}
+\item 
+\Hypertarget{structevp__pkey__st_a1fa3baf8af4a6f09233be9db77623e30}\label{structevp__pkey__st_a1fa3baf8af4a6f09233be9db77623e30} 
+ENGINE \texorpdfstring{$\ast$}{*} {\bfseries engine}
+\item 
+\Hypertarget{structevp__pkey__st_aed806ae63c3801705cd32e775dd287e8}\label{structevp__pkey__st_aed806ae63c3801705cd32e775dd287e8} 
+ENGINE \texorpdfstring{$\ast$}{*} {\bfseries pmeth\+\_\+engine}
+\item 
+\Hypertarget{structevp__pkey__st_a7ae330d261674ae19af6827ed3dfd344}\label{structevp__pkey__st_a7ae330d261674ae19af6827ed3dfd344} 
+union \mbox{\hyperlink{unionlegacy__pkey__st}{legacy\+\_\+pkey\+\_\+st}} {\bfseries pkey}
+\item 
+\Hypertarget{structevp__pkey__st_a593cbbeca12be6802b0626de6dd53306}\label{structevp__pkey__st_a593cbbeca12be6802b0626de6dd53306} 
+union \mbox{\hyperlink{unionlegacy__pkey__st}{legacy\+\_\+pkey\+\_\+st}} {\bfseries legacy\+\_\+cache\+\_\+pkey}
+\item 
+\Hypertarget{structevp__pkey__st_aa1e1038e13fc1a3dfa9c1e26f8e49225}\label{structevp__pkey__st_aa1e1038e13fc1a3dfa9c1e26f8e49225} 
+\mbox{\hyperlink{struct_c_r_y_p_t_o___r_e_f___c_o_u_n_t}{CRYPTO\+\_\+\+REF\+\_\+\+COUNT}} {\bfseries references}
+\item 
+\Hypertarget{structevp__pkey__st_a501b7e3dbe99e189906dfc7f642aea7e}\label{structevp__pkey__st_a501b7e3dbe99e189906dfc7f642aea7e} 
+CRYPTO\+\_\+\+RWLOCK \texorpdfstring{$\ast$}{*} {\bfseries lock}
+\item 
+\Hypertarget{structevp__pkey__st_a5ce6533b78cc5e5814a60ca2403c3108}\label{structevp__pkey__st_a5ce6533b78cc5e5814a60ca2403c3108} 
+int {\bfseries save\+\_\+parameters}
+\item 
+\Hypertarget{structevp__pkey__st_a3e04325b50411a558f773b6ed336435a}\label{structevp__pkey__st_a3e04325b50411a558f773b6ed336435a} 
+unsigned int {\bfseries foreign}\+:1
+\item 
+\Hypertarget{structevp__pkey__st_a5b92c1669a2e589ac94ffb04328fa298}\label{structevp__pkey__st_a5b92c1669a2e589ac94ffb04328fa298} 
+CRYPTO\+\_\+\+EX\+\_\+\+DATA {\bfseries ex\+\_\+data}
+\item 
+\Hypertarget{structevp__pkey__st_aa68080ec9f262711eecabf08e7ced944}\label{structevp__pkey__st_aa68080ec9f262711eecabf08e7ced944} 
+EVP\+\_\+\+KEYMGMT \texorpdfstring{$\ast$}{*} {\bfseries keymgmt}
+\item 
+\Hypertarget{structevp__pkey__st_a111a7af75911dc6e8d48f8ca56f80c0b}\label{structevp__pkey__st_a111a7af75911dc6e8d48f8ca56f80c0b} 
+void \texorpdfstring{$\ast$}{*} {\bfseries keydata}
+\item 
+\Hypertarget{structevp__pkey__st_a1254ab09a070a5ddc67d4fbea683ede9}\label{structevp__pkey__st_a1254ab09a070a5ddc67d4fbea683ede9} 
+size\+\_\+t {\bfseries dirty\+\_\+cnt}
+\item 
+\Hypertarget{structevp__pkey__st_a53272da673d37123fdae1a5f210f9112}\label{structevp__pkey__st_a53272da673d37123fdae1a5f210f9112} 
+size\+\_\+t {\bfseries dirty\+\_\+cnt\+\_\+copy}
+\item 
+\Hypertarget{structevp__pkey__st_ab51f628f87a06c2ea77b3dfedfa431d1}\label{structevp__pkey__st_ab51f628f87a06c2ea77b3dfedfa431d1} 
+\begin{tabbing}
+xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=\kill
+struct \{\\
+\>int {\bfseries bits}\\
+\>int {\bfseries security\_bits}\\
+\>int {\bfseries size}\\
+\} {\bfseries cache}\\
+
+\end{tabbing}\end{DoxyCompactItemize}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/namph/\+Downloads/openssl/openssl-\/3.\+2.\+1/include/crypto/evp.\+h\end{DoxyCompactItemize}

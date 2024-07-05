@@ -1,0 +1,545 @@
+\doxysection{recmethod\+\_\+local.\+h}
+\hypertarget{recmethod__local_8h_source}{}\label{recmethod__local_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/ssl/record/methods/recmethod\_local.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/ssl/record/methods/recmethod\_local.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2022-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <openssl/bio.h>}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ <openssl/ssl.h>}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ <openssl/err.h>}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ "{}../../ssl\_local.h"{}}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ "{}../record\_local.h"{}}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structdtls__bitmap__st}{dtls\_bitmap\_st}}\ \{}
+\DoxyCodeLine{00017\ \ \ \ \ \textcolor{comment}{/*\ Track\ 64\ packets\ */}}
+\DoxyCodeLine{00018\ \ \ \ \ uint64\_t\ map;}
+\DoxyCodeLine{00019\ \ \ \ \ \textcolor{comment}{/*\ Max\ record\ number\ seen\ so\ far,\ 64-\/bit\ value\ in\ big-\/endian\ encoding\ */}}
+\DoxyCodeLine{00020\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ max\_seq\_num[SEQ\_NUM\_SIZE];}
+\DoxyCodeLine{00021\ \}\ \mbox{\hyperlink{structdtls__bitmap__st}{DTLS\_BITMAP}};}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structssl__mac__buf__st}{ssl\_mac\_buf\_st}}\ \{}
+\DoxyCodeLine{00024\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *mac;}
+\DoxyCodeLine{00025\ \ \ \ \ \textcolor{keywordtype}{int}\ alloced;}
+\DoxyCodeLine{00026\ \}\ \mbox{\hyperlink{structssl__mac__buf__st}{SSL\_MAC\_BUF}};}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structtls__buffer__st}{tls\_buffer\_st}}\ \{}
+\DoxyCodeLine{00029\ \ \ \ \ \textcolor{comment}{/*\ at\ least\ SSL3\_RT\_MAX\_PACKET\_SIZE\ bytes\ */}}
+\DoxyCodeLine{00030\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *buf;}
+\DoxyCodeLine{00031\ \ \ \ \ \textcolor{comment}{/*\ default\ buffer\ size\ (or\ 0\ if\ no\ default\ set)\ */}}
+\DoxyCodeLine{00032\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ default\_len;}
+\DoxyCodeLine{00033\ \ \ \ \ \textcolor{comment}{/*\ buffer\ size\ */}}
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ len;}
+\DoxyCodeLine{00035\ \ \ \ \ \textcolor{comment}{/*\ where\ to\ 'copy\ from'\ */}}
+\DoxyCodeLine{00036\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ offset;}
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{comment}{/*\ how\ many\ bytes\ left\ */}}
+\DoxyCodeLine{00038\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ left;}
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{comment}{/*\ 'buf'\ is\ from\ application\ for\ KTLS\ */}}
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{keywordtype}{int}\ app\_buffer;}
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{comment}{/*\ The\ type\ of\ data\ stored\ in\ this\ buffer.\ Only\ used\ for\ writing\ */}}
+\DoxyCodeLine{00042\ \ \ \ \ \textcolor{keywordtype}{int}\ type;}
+\DoxyCodeLine{00043\ \}\ \mbox{\hyperlink{structtls__buffer__st}{TLS\_BUFFER}};}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structtls__rl__record__st}{tls\_rl\_record\_st}}\ \{}
+\DoxyCodeLine{00046\ \ \ \ \ \textcolor{comment}{/*\ Record\ layer\ version\ */}}
+\DoxyCodeLine{00047\ \ \ \ \ \textcolor{comment}{/*\ r\ */}}
+\DoxyCodeLine{00048\ \ \ \ \ \textcolor{keywordtype}{int}\ rec\_version;}
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{comment}{/*\ type\ of\ record\ */}}
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{comment}{/*\ r\ */}}
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{keywordtype}{int}\ type;}
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{comment}{/*\ How\ many\ bytes\ available\ */}}
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{comment}{/*\ rw\ */}}
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ length;}
+\DoxyCodeLine{00055\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00056\ \textcolor{comment}{\ \ \ \ \ *\ How\ many\ bytes\ were\ available\ before\ padding\ was\ removed?\ This\ is\ used}}
+\DoxyCodeLine{00057\ \textcolor{comment}{\ \ \ \ \ *\ to\ implement\ the\ MAC\ check\ in\ constant\ time\ for\ CBC\ records.}}
+\DoxyCodeLine{00058\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00059\ \ \ \ \ \textcolor{comment}{/*\ rw\ */}}
+\DoxyCodeLine{00060\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ orig\_len;}
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{comment}{/*\ read/write\ offset\ into\ 'buf'\ */}}
+\DoxyCodeLine{00062\ \ \ \ \ \textcolor{comment}{/*\ r\ */}}
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ off;}
+\DoxyCodeLine{00064\ \ \ \ \ \textcolor{comment}{/*\ pointer\ to\ the\ record\ data\ */}}
+\DoxyCodeLine{00065\ \ \ \ \ \textcolor{comment}{/*\ rw\ */}}
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *data;}
+\DoxyCodeLine{00067\ \ \ \ \ \textcolor{comment}{/*\ where\ the\ decode\ bytes\ are\ */}}
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{comment}{/*\ rw\ */}}
+\DoxyCodeLine{00069\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *input;}
+\DoxyCodeLine{00070\ \ \ \ \ \textcolor{comment}{/*\ only\ used\ with\ decompression\ -\/\ malloc()ed\ */}}
+\DoxyCodeLine{00071\ \ \ \ \ \textcolor{comment}{/*\ r\ */}}
+\DoxyCodeLine{00072\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *comp;}
+\DoxyCodeLine{00073\ \ \ \ \ \textcolor{comment}{/*\ epoch\ number,\ needed\ by\ DTLS1\ */}}
+\DoxyCodeLine{00074\ \ \ \ \ \textcolor{comment}{/*\ r\ */}}
+\DoxyCodeLine{00075\ \ \ \ \ uint16\_t\ epoch;}
+\DoxyCodeLine{00076\ \ \ \ \ \textcolor{comment}{/*\ sequence\ number,\ needed\ by\ DTLS1\ */}}
+\DoxyCodeLine{00077\ \ \ \ \ \textcolor{comment}{/*\ r\ */}}
+\DoxyCodeLine{00078\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ seq\_num[SEQ\_NUM\_SIZE];}
+\DoxyCodeLine{00079\ \}\ \mbox{\hyperlink{structtls__rl__record__st}{TLS\_RL\_RECORD}};}
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00081\ \textcolor{comment}{/*\ Macros/functions\ provided\ by\ the\ TLS\_RL\_RECORD\ component\ */}}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00083\ \textcolor{preprocessor}{\#define\ TLS\_RL\_RECORD\_set\_type(r,\ t)\ \ \ \ \ \ \ \ \ \ \ \ \ \ ((r)-\/>type\ =\ (t))}}
+\DoxyCodeLine{00084\ \textcolor{preprocessor}{\#define\ TLS\_RL\_RECORD\_set\_rec\_version(r,\ v)\ \ \ \ \ \ \ ((r)-\/>rec\_version\ =\ (v))}}
+\DoxyCodeLine{00085\ \textcolor{preprocessor}{\#define\ TLS\_RL\_RECORD\_get\_length(r)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ((r)-\/>length)}}
+\DoxyCodeLine{00086\ \textcolor{preprocessor}{\#define\ TLS\_RL\_RECORD\_set\_length(r,\ l)\ \ \ \ \ \ \ \ \ \ \ \ ((r)-\/>length\ =\ (l))}}
+\DoxyCodeLine{00087\ \textcolor{preprocessor}{\#define\ TLS\_RL\_RECORD\_add\_length(r,\ l)\ \ \ \ \ \ \ \ \ \ \ \ ((r)-\/>length\ +=\ (l))}}
+\DoxyCodeLine{00088\ \textcolor{preprocessor}{\#define\ TLS\_RL\_RECORD\_set\_data(r,\ d)\ \ \ \ \ \ \ \ \ \ \ \ \ \ ((r)-\/>data\ =\ (d))}}
+\DoxyCodeLine{00089\ \textcolor{preprocessor}{\#define\ TLS\_RL\_RECORD\_set\_input(r,\ i)\ \ \ \ \ \ \ \ \ \ \ \ \ ((r)-\/>input\ =\ (i))}}
+\DoxyCodeLine{00090\ \textcolor{preprocessor}{\#define\ TLS\_RL\_RECORD\_reset\_input(r)\ \ \ \ \ \ \ \ \ \ \ \ \ \ ((r)-\/>input\ =\ (r)-\/>data)}}
+\DoxyCodeLine{00091\ }
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \textcolor{comment}{/*\ Protocol\ version\ specific\ function\ pointers\ */}}
+\DoxyCodeLine{00094\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structrecord__functions__st}{record\_functions\_st}}}
+\DoxyCodeLine{00095\ \{}
+\DoxyCodeLine{00096\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00097\ \textcolor{comment}{\ \ \ \ \ *\ Returns\ either\ OSSL\_RECORD\_RETURN\_SUCCESS,\ OSSL\_RECORD\_RETURN\_FATAL\ or}}
+\DoxyCodeLine{00098\ \textcolor{comment}{\ \ \ \ \ *\ OSSL\_RECORD\_RETURN\_NON\_FATAL\_ERR\ if\ we\ can\ keep\ trying\ to\ find\ an}}
+\DoxyCodeLine{00099\ \textcolor{comment}{\ \ \ \ \ *\ alternative\ record\ layer.}}
+\DoxyCodeLine{00100\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00101\ \ \ \ \ int\ (*set\_crypto\_state)(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\_RECORD\_LAYER}}\ *rl,\ \textcolor{keywordtype}{int}\ level,}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *key,\ \textcolor{keywordtype}{size\_t}\ keylen,}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *iv,\ \textcolor{keywordtype}{size\_t}\ ivlen,}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *mackey,\ \textcolor{keywordtype}{size\_t}\ mackeylen,}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ EVP\_CIPHER\ *ciph,}
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ taglen,}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ mactype,}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ EVP\_MD\ *md,}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ COMP\_METHOD\ *comp);}
+\DoxyCodeLine{00110\ }
+\DoxyCodeLine{00111\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00112\ \textcolor{comment}{\ \ \ \ \ *\ Returns:}}
+\DoxyCodeLine{00113\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ 0:\ if\ the\ record\ is\ publicly\ invalid,\ or\ an\ internal\ error,\ or\ AEAD}}
+\DoxyCodeLine{00114\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ decryption\ failed,\ or\ EtM\ decryption\ failed.}}
+\DoxyCodeLine{00115\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ 1:\ Success\ or\ MtE\ decryption\ failed\ (MAC\ will\ be\ randomised)}}
+\DoxyCodeLine{00116\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00117\ \ \ \ \ int\ (*cipher)(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\_RECORD\_LAYER}}\ *rl,\ \mbox{\hyperlink{structtls__rl__record__st}{TLS\_RL\_RECORD}}\ *recs,\ \textcolor{keywordtype}{size\_t}\ n\_recs,}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ sending,\ \mbox{\hyperlink{structssl__mac__buf__st}{SSL\_MAC\_BUF}}\ *macs,\ \textcolor{keywordtype}{size\_t}\ macsize);}
+\DoxyCodeLine{00119\ \ \ \ \ \textcolor{comment}{/*\ Returns\ 1\ for\ success\ or\ 0\ for\ error\ */}}
+\DoxyCodeLine{00120\ \ \ \ \ int\ (*mac)(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\_RECORD\_LAYER}}\ *rl,\ \mbox{\hyperlink{structtls__rl__record__st}{TLS\_RL\_RECORD}}\ *rec,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *md,}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ sending);}
+\DoxyCodeLine{00122\ }
+\DoxyCodeLine{00123\ \ \ \ \ \textcolor{comment}{/*\ Return\ 1\ for\ success\ or\ 0\ for\ error\ */}}
+\DoxyCodeLine{00124\ \ \ \ \ int\ (*set\_protocol\_version)(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\_RECORD\_LAYER}}\ *rl,\ \textcolor{keywordtype}{int}\ version);}
+\DoxyCodeLine{00125\ }
+\DoxyCodeLine{00126\ \ \ \ \ \textcolor{comment}{/*\ Read\ related\ functions\ */}}
+\DoxyCodeLine{00127\ }
+\DoxyCodeLine{00128\ \ \ \ \ int\ (*read\_n)(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\_RECORD\_LAYER}}\ *rl,\ \textcolor{keywordtype}{size\_t}\ n,\ \textcolor{keywordtype}{size\_t}\ max,\ \textcolor{keywordtype}{int}\ extend,}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ clearold,\ \textcolor{keywordtype}{size\_t}\ *readbytes);}
+\DoxyCodeLine{00130\ }
+\DoxyCodeLine{00131\ \ \ \ \ int\ (*get\_more\_records)(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\_RECORD\_LAYER}}\ *rl);}
+\DoxyCodeLine{00132\ }
+\DoxyCodeLine{00133\ \ \ \ \ \textcolor{comment}{/*\ Return\ 1\ for\ success\ or\ 0\ for\ error\ */}}
+\DoxyCodeLine{00134\ \ \ \ \ int\ (*validate\_record\_header)(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\_RECORD\_LAYER}}\ *rl,\ \mbox{\hyperlink{structtls__rl__record__st}{TLS\_RL\_RECORD}}\ *rec);}
+\DoxyCodeLine{00135\ }
+\DoxyCodeLine{00136\ \ \ \ \ \textcolor{comment}{/*\ Return\ 1\ for\ success\ or\ 0\ for\ error\ */}}
+\DoxyCodeLine{00137\ \ \ \ \ int\ (*post\_process\_record)(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\_RECORD\_LAYER}}\ *rl,\ \mbox{\hyperlink{structtls__rl__record__st}{TLS\_RL\_RECORD}}\ *rec);}
+\DoxyCodeLine{00138\ }
+\DoxyCodeLine{00139\ \ \ \ \ \textcolor{comment}{/*\ Write\ related\ functions\ */}}
+\DoxyCodeLine{00140\ }
+\DoxyCodeLine{00141\ \ \ \ \ size\_t\ (*get\_max\_records)(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\_RECORD\_LAYER}}\ *rl,\ uint8\_t\ type,\ \textcolor{keywordtype}{size\_t}\ len,}
+\DoxyCodeLine{00142\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ maxfrag,\ \textcolor{keywordtype}{size\_t}\ *preffrag);}
+\DoxyCodeLine{00143\ }
+\DoxyCodeLine{00144\ \ \ \ \ \textcolor{comment}{/*\ Return\ 1\ for\ success\ or\ 0\ for\ error\ */}}
+\DoxyCodeLine{00145\ \ \ \ \ int\ (*write\_records)(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\_RECORD\_LAYER}}\ *rl,\ \mbox{\hyperlink{structossl__record__template__st}{OSSL\_RECORD\_TEMPLATE}}\ *templates,}
+\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ numtempl);}
+\DoxyCodeLine{00147\ }
+\DoxyCodeLine{00148\ \ \ \ \ \textcolor{comment}{/*\ Allocate\ the\ rl-\/>wbuf\ buffers.\ Return\ 1\ for\ success\ or\ 0\ for\ error\ */}}
+\DoxyCodeLine{00149\ \ \ \ \ int\ (*allocate\_write\_buffers)(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\_RECORD\_LAYER}}\ *rl,}
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structossl__record__template__st}{OSSL\_RECORD\_TEMPLATE}}\ *templates,}
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ numtempl,\ \textcolor{keywordtype}{size\_t}\ *prefix);}
+\DoxyCodeLine{00152\ }
+\DoxyCodeLine{00153\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00154\ \textcolor{comment}{\ \ \ \ \ *\ Initialise\ the\ packets\ in\ the\ |pkt|\ array\ using\ the\ buffers\ in\ |rl-\/>wbuf|.}}
+\DoxyCodeLine{00155\ \textcolor{comment}{\ \ \ \ \ *\ Some\ protocol\ versions\ may\ use\ the\ space\ in\ |prefixtempl|\ to\ add}}
+\DoxyCodeLine{00156\ \textcolor{comment}{\ \ \ \ \ *\ an\ artificial\ template\ in\ front\ of\ the\ |templates|\ array\ and\ hence\ may}}
+\DoxyCodeLine{00157\ \textcolor{comment}{\ \ \ \ \ *\ initialise\ 1\ more\ WPACKET\ than\ there\ are\ templates.\ |*wpinited|}}
+\DoxyCodeLine{00158\ \textcolor{comment}{\ \ \ \ \ *\ returns\ the\ number\ of\ WPACKETs\ in\ |pkt|\ that\ were\ successfully}}
+\DoxyCodeLine{00159\ \textcolor{comment}{\ \ \ \ \ *\ initialised.\ This\ must\ be\ 0\ on\ entry\ and\ will\ be\ filled\ in\ even\ on\ error.}}
+\DoxyCodeLine{00160\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00161\ \ \ \ \ int\ (*initialise\_write\_packets)(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\_RECORD\_LAYER}}\ *rl,}
+\DoxyCodeLine{00162\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structossl__record__template__st}{OSSL\_RECORD\_TEMPLATE}}\ *templates,}
+\DoxyCodeLine{00163\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ numtempl,}
+\DoxyCodeLine{00164\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structossl__record__template__st}{OSSL\_RECORD\_TEMPLATE}}\ *prefixtempl,}
+\DoxyCodeLine{00165\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00166\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtls__buffer__st}{TLS\_BUFFER}}\ *bufs,}
+\DoxyCodeLine{00167\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ *wpinited);}
+\DoxyCodeLine{00168\ }
+\DoxyCodeLine{00169\ \ \ \ \ \textcolor{comment}{/*\ Get\ the\ actual\ record\ type\ to\ be\ used\ for\ a\ given\ template\ */}}
+\DoxyCodeLine{00170\ \ \ \ \ uint8\_t\ (*get\_record\_type)(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\_RECORD\_LAYER}}\ *rl,}
+\DoxyCodeLine{00171\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structossl__record__template__st}{OSSL\_RECORD\_TEMPLATE}}\ *\textcolor{keyword}{template});}
+\DoxyCodeLine{00172\ }
+\DoxyCodeLine{00173\ \ \ \ \ \textcolor{comment}{/*\ Write\ the\ record\ header\ data\ to\ the\ WPACKET\ */}}
+\DoxyCodeLine{00174\ \ \ \ \ int\ (*prepare\_record\_header)(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\_RECORD\_LAYER}}\ *rl,\ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *thispkt,}
+\DoxyCodeLine{00175\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structossl__record__template__st}{OSSL\_RECORD\_TEMPLATE}}\ *templ,}
+\DoxyCodeLine{00176\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint8\_t\ rectype,}
+\DoxyCodeLine{00177\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **recdata);}
+\DoxyCodeLine{00178\ }
+\DoxyCodeLine{00179\ \ \ \ \ int\ (*add\_record\_padding)(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\_RECORD\_LAYER}}\ *rl,}
+\DoxyCodeLine{00180\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structossl__record__template__st}{OSSL\_RECORD\_TEMPLATE}}\ *thistempl,}
+\DoxyCodeLine{00181\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *thispkt,}
+\DoxyCodeLine{00182\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtls__rl__record__st}{TLS\_RL\_RECORD}}\ *thiswr);}
+\DoxyCodeLine{00183\ }
+\DoxyCodeLine{00184\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00185\ \textcolor{comment}{\ \ \ \ \ *\ This\ applies\ any\ mac\ that\ might\ be\ necessary,\ ensures\ that\ we\ have\ enough}}
+\DoxyCodeLine{00186\ \textcolor{comment}{\ \ \ \ \ *\ space\ in\ the\ WPACKET\ to\ perform\ the\ encryption\ and\ sets\ up\ the}}
+\DoxyCodeLine{00187\ \textcolor{comment}{\ \ \ \ \ *\ TLS\_RL\_RECORD\ ready\ for\ that\ encryption.}}
+\DoxyCodeLine{00188\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00189\ \ \ \ \ int\ (*prepare\_for\_encryption)(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\_RECORD\_LAYER}}\ *rl,}
+\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ mac\_size,}
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *thispkt,}
+\DoxyCodeLine{00192\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtls__rl__record__st}{TLS\_RL\_RECORD}}\ *thiswr);}
+\DoxyCodeLine{00193\ }
+\DoxyCodeLine{00194\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00195\ \textcolor{comment}{\ \ \ \ \ *\ Any\ updates\ required\ to\ the\ record\ after\ encryption\ has\ been\ applied.\ For}}
+\DoxyCodeLine{00196\ \textcolor{comment}{\ \ \ \ \ *\ example,\ adding\ a\ MAC\ if\ using\ encrypt-\/then-\/mac}}
+\DoxyCodeLine{00197\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00198\ \ \ \ \ int\ (*post\_encryption\_processing)(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\_RECORD\_LAYER}}\ *rl,}
+\DoxyCodeLine{00199\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ mac\_size,}
+\DoxyCodeLine{00200\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structossl__record__template__st}{OSSL\_RECORD\_TEMPLATE}}\ *thistempl,}
+\DoxyCodeLine{00201\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *thispkt,}
+\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtls__rl__record__st}{TLS\_RL\_RECORD}}\ *thiswr);}
+\DoxyCodeLine{00203\ }
+\DoxyCodeLine{00204\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00205\ \textcolor{comment}{\ \ \ \ \ *\ Some\ record\ layer\ implementations\ need\ to\ do\ some\ custom\ preparation\ of}}
+\DoxyCodeLine{00206\ \textcolor{comment}{\ \ \ \ \ *\ the\ BIO\ before\ we\ write\ to\ it.\ KTLS\ does\ this\ to\ prevent\ coalescing\ of}}
+\DoxyCodeLine{00207\ \textcolor{comment}{\ \ \ \ \ *\ control\ and\ data\ messages.}}
+\DoxyCodeLine{00208\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00209\ \ \ \ \ int\ (*prepare\_write\_bio)(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\_RECORD\_LAYER}}\ *rl,\ \textcolor{keywordtype}{int}\ type);}
+\DoxyCodeLine{00210\ \};}
+\DoxyCodeLine{00211\ }
+\DoxyCodeLine{00212\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__record__layer__st}{ossl\_record\_layer\_st}}}
+\DoxyCodeLine{00213\ \{}
+\DoxyCodeLine{00214\ \ \ \ \ OSSL\_LIB\_CTX\ *libctx;}
+\DoxyCodeLine{00215\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *propq;}
+\DoxyCodeLine{00216\ \ \ \ \ \textcolor{keywordtype}{int}\ isdtls;}
+\DoxyCodeLine{00217\ \ \ \ \ \textcolor{keywordtype}{int}\ version;}
+\DoxyCodeLine{00218\ \ \ \ \ \textcolor{keywordtype}{int}\ role;}
+\DoxyCodeLine{00219\ \ \ \ \ \textcolor{keywordtype}{int}\ direction;}
+\DoxyCodeLine{00220\ \ \ \ \ \textcolor{keywordtype}{int}\ level;}
+\DoxyCodeLine{00221\ \ \ \ \ \textcolor{keyword}{const}\ EVP\_MD\ *md;}
+\DoxyCodeLine{00222\ \ \ \ \ \textcolor{comment}{/*\ DTLS\ only\ */}}
+\DoxyCodeLine{00223\ \ \ \ \ uint16\_t\ epoch;}
+\DoxyCodeLine{00224\ }
+\DoxyCodeLine{00225\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00226\ \textcolor{comment}{\ \ \ \ \ *\ A\ BIO\ containing\ any\ data\ read\ in\ the\ previous\ epoch\ that\ was\ destined}}
+\DoxyCodeLine{00227\ \textcolor{comment}{\ \ \ \ \ *\ for\ this\ epoch}}
+\DoxyCodeLine{00228\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00229\ \ \ \ \ BIO\ *prev;}
+\DoxyCodeLine{00230\ }
+\DoxyCodeLine{00231\ \ \ \ \ \textcolor{comment}{/*\ The\ transport\ BIO\ */}}
+\DoxyCodeLine{00232\ \ \ \ \ BIO\ *bio;}
+\DoxyCodeLine{00233\ }
+\DoxyCodeLine{00234\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00235\ \textcolor{comment}{\ \ \ \ \ *\ A\ BIO\ where\ we\ will\ send\ any\ data\ read\ by\ us\ that\ is\ destined\ for\ the}}
+\DoxyCodeLine{00236\ \textcolor{comment}{\ \ \ \ \ *\ next\ epoch.}}
+\DoxyCodeLine{00237\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00238\ \ \ \ \ BIO\ *next;}
+\DoxyCodeLine{00239\ }
+\DoxyCodeLine{00240\ \ \ \ \ \textcolor{comment}{/*\ Types\ match\ the\ equivalent\ fields\ in\ the\ SSL\ object\ */}}
+\DoxyCodeLine{00241\ \ \ \ \ uint64\_t\ options;}
+\DoxyCodeLine{00242\ \ \ \ \ uint32\_t\ mode;}
+\DoxyCodeLine{00243\ }
+\DoxyCodeLine{00244\ \ \ \ \ \textcolor{comment}{/*\ write\ IO\ goes\ into\ here\ */}}
+\DoxyCodeLine{00245\ \ \ \ \ \mbox{\hyperlink{structtls__buffer__st}{TLS\_BUFFER}}\ wbuf[SSL\_MAX\_PIPELINES\ +\ 1];}
+\DoxyCodeLine{00246\ }
+\DoxyCodeLine{00247\ \ \ \ \ \textcolor{comment}{/*\ Next\ wbuf\ with\ pending\ data\ still\ to\ write\ */}}
+\DoxyCodeLine{00248\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ nextwbuf;}
+\DoxyCodeLine{00249\ }
+\DoxyCodeLine{00250\ \ \ \ \ \textcolor{comment}{/*\ How\ many\ pipelines\ can\ be\ used\ to\ write\ data\ */}}
+\DoxyCodeLine{00251\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ numwpipes;}
+\DoxyCodeLine{00252\ }
+\DoxyCodeLine{00253\ \ \ \ \ \textcolor{comment}{/*\ read\ IO\ goes\ into\ here\ */}}
+\DoxyCodeLine{00254\ \ \ \ \ \mbox{\hyperlink{structtls__buffer__st}{TLS\_BUFFER}}\ rbuf;}
+\DoxyCodeLine{00255\ \ \ \ \ \textcolor{comment}{/*\ each\ decoded\ record\ goes\ in\ here\ */}}
+\DoxyCodeLine{00256\ \ \ \ \ \mbox{\hyperlink{structtls__rl__record__st}{TLS\_RL\_RECORD}}\ rrec[SSL\_MAX\_PIPELINES];}
+\DoxyCodeLine{00257\ }
+\DoxyCodeLine{00258\ \ \ \ \ \textcolor{comment}{/*\ How\ many\ records\ have\ we\ got\ available\ in\ the\ rrec\ buffer\ */}}
+\DoxyCodeLine{00259\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ num\_recs;}
+\DoxyCodeLine{00260\ }
+\DoxyCodeLine{00261\ \ \ \ \ \textcolor{comment}{/*\ The\ record\ number\ in\ the\ rrec\ buffer\ that\ can\ be\ read\ next\ */}}
+\DoxyCodeLine{00262\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ curr\_rec;}
+\DoxyCodeLine{00263\ }
+\DoxyCodeLine{00264\ \ \ \ \ \textcolor{comment}{/*\ The\ number\ of\ records\ that\ have\ been\ released\ via\ tls\_release\_record\ */}}
+\DoxyCodeLine{00265\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ num\_released;}
+\DoxyCodeLine{00266\ }
+\DoxyCodeLine{00267\ \ \ \ \ \textcolor{comment}{/*\ where\ we\ are\ when\ reading\ */}}
+\DoxyCodeLine{00268\ \ \ \ \ \textcolor{keywordtype}{int}\ rstate;}
+\DoxyCodeLine{00269\ }
+\DoxyCodeLine{00270\ \ \ \ \ \textcolor{comment}{/*\ used\ internally\ to\ point\ at\ a\ raw\ packet\ */}}
+\DoxyCodeLine{00271\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *packet;}
+\DoxyCodeLine{00272\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ packet\_length;}
+\DoxyCodeLine{00273\ }
+\DoxyCodeLine{00274\ \ \ \ \ \textcolor{comment}{/*\ Sequence\ number\ for\ the\ next\ record\ */}}
+\DoxyCodeLine{00275\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ sequence[SEQ\_NUM\_SIZE];}
+\DoxyCodeLine{00276\ }
+\DoxyCodeLine{00277\ \ \ \ \ \textcolor{comment}{/*\ Alert\ code\ to\ be\ used\ if\ an\ error\ occurs\ */}}
+\DoxyCodeLine{00278\ \ \ \ \ \textcolor{keywordtype}{int}\ alert;}
+\DoxyCodeLine{00279\ }
+\DoxyCodeLine{00280\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00281\ \textcolor{comment}{\ \ \ \ \ *\ Read\ as\ many\ input\ bytes\ as\ possible\ (for\ non-\/blocking\ reads)}}
+\DoxyCodeLine{00282\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00283\ \ \ \ \ \textcolor{keywordtype}{int}\ read\_ahead;}
+\DoxyCodeLine{00284\ }
+\DoxyCodeLine{00285\ \ \ \ \ \textcolor{comment}{/*\ The\ number\ of\ consecutive\ empty\ records\ we\ have\ received\ */}}
+\DoxyCodeLine{00286\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ empty\_record\_count;}
+\DoxyCodeLine{00287\ }
+\DoxyCodeLine{00288\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00289\ \textcolor{comment}{\ \ \ \ \ *\ Do\ we\ need\ to\ send\ a\ prefix\ empty\ record\ before\ application\ data\ as\ a}}
+\DoxyCodeLine{00290\ \textcolor{comment}{\ \ \ \ \ *\ countermeasure\ against\ known-\/IV\ weakness\ (necessary\ for\ SSLv3\ and}}
+\DoxyCodeLine{00291\ \textcolor{comment}{\ \ \ \ \ *\ TLSv1.0)}}
+\DoxyCodeLine{00292\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00293\ \ \ \ \ \textcolor{keywordtype}{int}\ need\_empty\_fragments;}
+\DoxyCodeLine{00294\ }
+\DoxyCodeLine{00295\ \ \ \ \ \textcolor{comment}{/*\ cryptographic\ state\ */}}
+\DoxyCodeLine{00296\ \ \ \ \ EVP\_CIPHER\_CTX\ *enc\_ctx;}
+\DoxyCodeLine{00297\ }
+\DoxyCodeLine{00298\ \ \ \ \ \textcolor{comment}{/*\ Explicit\ IV\ length\ */}}
+\DoxyCodeLine{00299\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ eivlen;}
+\DoxyCodeLine{00300\ }
+\DoxyCodeLine{00301\ \ \ \ \ \textcolor{comment}{/*\ used\ for\ mac\ generation\ */}}
+\DoxyCodeLine{00302\ \ \ \ \ EVP\_MD\_CTX\ *md\_ctx;}
+\DoxyCodeLine{00303\ }
+\DoxyCodeLine{00304\ \ \ \ \ \textcolor{comment}{/*\ compress/uncompress\ */}}
+\DoxyCodeLine{00305\ \ \ \ \ COMP\_CTX\ *compctx;}
+\DoxyCodeLine{00306\ }
+\DoxyCodeLine{00307\ \ \ \ \ \textcolor{comment}{/*\ Set\ to\ 1\ if\ this\ is\ the\ first\ handshake.\ 0\ otherwise\ */}}
+\DoxyCodeLine{00308\ \ \ \ \ \textcolor{keywordtype}{int}\ is\_first\_handshake;}
+\DoxyCodeLine{00309\ }
+\DoxyCodeLine{00310\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00311\ \textcolor{comment}{\ \ \ \ \ *\ The\ smaller\ of\ the\ configured\ and\ negotiated\ maximum\ fragment\ length}}
+\DoxyCodeLine{00312\ \textcolor{comment}{\ \ \ \ \ *\ or\ SSL3\_RT\_MAX\_PLAIN\_LENGTH\ if\ none}}
+\DoxyCodeLine{00313\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00314\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ max\_frag\_len;}
+\DoxyCodeLine{00315\ }
+\DoxyCodeLine{00316\ \ \ \ \ \textcolor{comment}{/*\ The\ maximum\ amount\ of\ early\ data\ we\ can\ receive/send\ */}}
+\DoxyCodeLine{00317\ \ \ \ \ uint32\_t\ max\_early\_data;}
+\DoxyCodeLine{00318\ }
+\DoxyCodeLine{00319\ \ \ \ \ \textcolor{comment}{/*\ The\ amount\ of\ early\ data\ that\ we\ have\ sent/received\ */}}
+\DoxyCodeLine{00320\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ early\_data\_count;}
+\DoxyCodeLine{00321\ }
+\DoxyCodeLine{00322\ \ \ \ \ \textcolor{comment}{/*\ TLSv1.3\ record\ padding\ */}}
+\DoxyCodeLine{00323\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ block\_padding;}
+\DoxyCodeLine{00324\ }
+\DoxyCodeLine{00325\ \ \ \ \ \textcolor{comment}{/*\ Only\ used\ by\ SSLv3\ */}}
+\DoxyCodeLine{00326\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ mac\_secret[EVP\_MAX\_MD\_SIZE];}
+\DoxyCodeLine{00327\ }
+\DoxyCodeLine{00328\ \ \ \ \ \textcolor{comment}{/*\ TLSv1.0/TLSv1.1/TLSv1.2\ */}}
+\DoxyCodeLine{00329\ \ \ \ \ \textcolor{keywordtype}{int}\ use\_etm;}
+\DoxyCodeLine{00330\ }
+\DoxyCodeLine{00331\ \ \ \ \ \textcolor{comment}{/*\ Flags\ for\ GOST\ ciphers\ */}}
+\DoxyCodeLine{00332\ \ \ \ \ \textcolor{keywordtype}{int}\ stream\_mac;}
+\DoxyCodeLine{00333\ \ \ \ \ \textcolor{keywordtype}{int}\ tlstree;}
+\DoxyCodeLine{00334\ }
+\DoxyCodeLine{00335\ \ \ \ \ \textcolor{comment}{/*\ TLSv1.3\ fields\ */}}
+\DoxyCodeLine{00336\ \ \ \ \ \textcolor{comment}{/*\ static\ IV\ */}}
+\DoxyCodeLine{00337\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ iv[EVP\_MAX\_IV\_LENGTH];}
+\DoxyCodeLine{00338\ \ \ \ \ \textcolor{keywordtype}{int}\ allow\_plain\_alerts;}
+\DoxyCodeLine{00339\ }
+\DoxyCodeLine{00340\ \ \ \ \ \textcolor{comment}{/*\ TLS\ "{}any"{}\ fields\ */}}
+\DoxyCodeLine{00341\ \ \ \ \ \textcolor{comment}{/*\ Set\ to\ true\ if\ this\ is\ the\ first\ record\ in\ a\ connection\ */}}
+\DoxyCodeLine{00342\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ is\_first\_record;}
+\DoxyCodeLine{00343\ }
+\DoxyCodeLine{00344\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ taglen;}
+\DoxyCodeLine{00345\ }
+\DoxyCodeLine{00346\ \ \ \ \ \textcolor{comment}{/*\ DTLS\ received\ handshake\ records\ (processed\ and\ unprocessed)\ */}}
+\DoxyCodeLine{00347\ \ \ \ \ \mbox{\hyperlink{structrecord__pqueue__st}{record\_pqueue}}\ unprocessed\_rcds;}
+\DoxyCodeLine{00348\ \ \ \ \ \mbox{\hyperlink{structrecord__pqueue__st}{record\_pqueue}}\ processed\_rcds;}
+\DoxyCodeLine{00349\ }
+\DoxyCodeLine{00350\ \ \ \ \ \textcolor{comment}{/*\ records\ being\ received\ in\ the\ current\ epoch\ */}}
+\DoxyCodeLine{00351\ \ \ \ \ \mbox{\hyperlink{structdtls__bitmap__st}{DTLS\_BITMAP}}\ bitmap;}
+\DoxyCodeLine{00352\ \ \ \ \ \textcolor{comment}{/*\ renegotiation\ starts\ a\ new\ set\ of\ sequence\ numbers\ */}}
+\DoxyCodeLine{00353\ \ \ \ \ \mbox{\hyperlink{structdtls__bitmap__st}{DTLS\_BITMAP}}\ next\_bitmap;}
+\DoxyCodeLine{00354\ }
+\DoxyCodeLine{00355\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00356\ \textcolor{comment}{\ \ \ \ \ *\ Whether\ we\ are\ currently\ in\ a\ handshake\ or\ not.\ Only\ maintained\ for\ DTLS}}
+\DoxyCodeLine{00357\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00358\ \ \ \ \ \textcolor{keywordtype}{int}\ in\_init;}
+\DoxyCodeLine{00359\ }
+\DoxyCodeLine{00360\ \ \ \ \ \textcolor{comment}{/*\ Callbacks\ */}}
+\DoxyCodeLine{00361\ \ \ \ \ \textcolor{keywordtype}{void}\ *cbarg;}
+\DoxyCodeLine{00362\ \ \ \ \ OSSL\_FUNC\_rlayer\_skip\_early\_data\_fn\ *skip\_early\_data;}
+\DoxyCodeLine{00363\ \ \ \ \ OSSL\_FUNC\_rlayer\_msg\_callback\_fn\ *msg\_callback;}
+\DoxyCodeLine{00364\ \ \ \ \ OSSL\_FUNC\_rlayer\_security\_fn\ *security;}
+\DoxyCodeLine{00365\ \ \ \ \ OSSL\_FUNC\_rlayer\_padding\_fn\ *padding;}
+\DoxyCodeLine{00366\ }
+\DoxyCodeLine{00367\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ max\_pipelines;}
+\DoxyCodeLine{00368\ }
+\DoxyCodeLine{00369\ \ \ \ \ \textcolor{comment}{/*\ Function\ pointers\ for\ version\ specific\ functions\ */}}
+\DoxyCodeLine{00370\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structrecord__functions__st}{record\_functions\_st}}\ *funcs;}
+\DoxyCodeLine{00371\ \};}
+\DoxyCodeLine{00372\ }
+\DoxyCodeLine{00373\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structdtls__rlayer__record__data__st}{dtls\_rlayer\_record\_data\_st}}\ \{}
+\DoxyCodeLine{00374\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *packet;}
+\DoxyCodeLine{00375\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ packet\_length;}
+\DoxyCodeLine{00376\ \ \ \ \ \mbox{\hyperlink{structtls__buffer__st}{TLS\_BUFFER}}\ rbuf;}
+\DoxyCodeLine{00377\ \ \ \ \ \mbox{\hyperlink{structtls__rl__record__st}{TLS\_RL\_RECORD}}\ rrec;}
+\DoxyCodeLine{00378\ \}\ \mbox{\hyperlink{structdtls__rlayer__record__data__st}{DTLS\_RLAYER\_RECORD\_DATA}};}
+\DoxyCodeLine{00379\ }
+\DoxyCodeLine{00380\ \textcolor{keyword}{extern}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structrecord__functions__st}{record\_functions\_st}}\ ssl\_3\_0\_funcs;}
+\DoxyCodeLine{00381\ \textcolor{keyword}{extern}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structrecord__functions__st}{record\_functions\_st}}\ tls\_1\_funcs;}
+\DoxyCodeLine{00382\ \textcolor{keyword}{extern}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structrecord__functions__st}{record\_functions\_st}}\ tls\_1\_3\_funcs;}
+\DoxyCodeLine{00383\ \textcolor{keyword}{extern}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structrecord__functions__st}{record\_functions\_st}}\ tls\_any\_funcs;}
+\DoxyCodeLine{00384\ \textcolor{keyword}{extern}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structrecord__functions__st}{record\_functions\_st}}\ dtls\_1\_funcs;}
+\DoxyCodeLine{00385\ \textcolor{keyword}{extern}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structrecord__functions__st}{record\_functions\_st}}\ dtls\_any\_funcs;}
+\DoxyCodeLine{00386\ }
+\DoxyCodeLine{00387\ \textcolor{keywordtype}{void}\ ossl\_rlayer\_fatal(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\_RECORD\_LAYER}}\ *rl,\ \textcolor{keywordtype}{int}\ al,\ \textcolor{keywordtype}{int}\ reason,}
+\DoxyCodeLine{00388\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *fmt,\ ...);}
+\DoxyCodeLine{00389\ }
+\DoxyCodeLine{00390\ \textcolor{preprocessor}{\#define\ RLAYERfatal(rl,\ al,\ r)\ RLAYERfatal\_data((rl),\ (al),\ (r),\ NULL)}}
+\DoxyCodeLine{00391\ \textcolor{preprocessor}{\#define\ RLAYERfatal\_data\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00392\ \textcolor{preprocessor}{\ \ \ \ (ERR\_new(),\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00393\ \textcolor{preprocessor}{\ \ \ \ \ ERR\_set\_debug(OPENSSL\_FILE,\ OPENSSL\_LINE,\ OPENSSL\_FUNC),\ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00394\ \textcolor{preprocessor}{\ \ \ \ \ ossl\_rlayer\_fatal)}}
+\DoxyCodeLine{00395\ }
+\DoxyCodeLine{00396\ \textcolor{preprocessor}{\#define\ RLAYER\_USE\_EXPLICIT\_IV(rl)\ ((rl)-\/>version\ ==\ TLS1\_1\_VERSION\ \(\backslash\)}}
+\DoxyCodeLine{00397\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ||\ (rl)-\/>version\ ==\ TLS1\_2\_VERSION\ \(\backslash\)}}
+\DoxyCodeLine{00398\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ||\ (rl)-\/>isdtls)}}
+\DoxyCodeLine{00399\ }
+\DoxyCodeLine{00400\ \textcolor{keywordtype}{void}\ ossl\_tls\_rl\_record\_set\_seq\_num(\mbox{\hyperlink{structtls__rl__record__st}{TLS\_RL\_RECORD}}\ *r,}
+\DoxyCodeLine{00401\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *seq\_num);}
+\DoxyCodeLine{00402\ }
+\DoxyCodeLine{00403\ \textcolor{keywordtype}{int}\ ossl\_set\_tls\_provider\_parameters(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\_RECORD\_LAYER}}\ *rl,}
+\DoxyCodeLine{00404\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ EVP\_CIPHER\_CTX\ *ctx,}
+\DoxyCodeLine{00405\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ EVP\_CIPHER\ *ciph,}
+\DoxyCodeLine{00406\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ EVP\_MD\ *md);}
+\DoxyCodeLine{00407\ }
+\DoxyCodeLine{00408\ \textcolor{keywordtype}{int}\ tls\_increment\_sequence\_ctr(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\_RECORD\_LAYER}}\ *rl);}
+\DoxyCodeLine{00409\ \textcolor{keywordtype}{int}\ tls\_alloc\_buffers(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\_RECORD\_LAYER}}\ *rl);}
+\DoxyCodeLine{00410\ \textcolor{keywordtype}{int}\ tls\_free\_buffers(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\_RECORD\_LAYER}}\ *rl);}
+\DoxyCodeLine{00411\ }
+\DoxyCodeLine{00412\ \textcolor{keywordtype}{int}\ tls\_default\_read\_n(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\_RECORD\_LAYER}}\ *rl,\ \textcolor{keywordtype}{size\_t}\ n,\ \textcolor{keywordtype}{size\_t}\ max,\ \textcolor{keywordtype}{int}\ extend,}
+\DoxyCodeLine{00413\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ clearold,\ \textcolor{keywordtype}{size\_t}\ *readbytes);}
+\DoxyCodeLine{00414\ \textcolor{keywordtype}{int}\ tls\_get\_more\_records(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\_RECORD\_LAYER}}\ *rl);}
+\DoxyCodeLine{00415\ \textcolor{keywordtype}{int}\ dtls\_get\_more\_records(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\_RECORD\_LAYER}}\ *rl);}
+\DoxyCodeLine{00416\ }
+\DoxyCodeLine{00417\ \textcolor{keywordtype}{int}\ dtls\_prepare\_record\_header(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\_RECORD\_LAYER}}\ *rl,}
+\DoxyCodeLine{00418\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *thispkt,}
+\DoxyCodeLine{00419\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structossl__record__template__st}{OSSL\_RECORD\_TEMPLATE}}\ *templ,}
+\DoxyCodeLine{00420\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint8\_t\ rectype,}
+\DoxyCodeLine{00421\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **recdata);}
+\DoxyCodeLine{00422\ \textcolor{keywordtype}{int}\ dtls\_post\_encryption\_processing(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\_RECORD\_LAYER}}\ *rl,}
+\DoxyCodeLine{00423\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ mac\_size,}
+\DoxyCodeLine{00424\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structossl__record__template__st}{OSSL\_RECORD\_TEMPLATE}}\ *thistempl,}
+\DoxyCodeLine{00425\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *thispkt,}
+\DoxyCodeLine{00426\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtls__rl__record__st}{TLS\_RL\_RECORD}}\ *thiswr);}
+\DoxyCodeLine{00427\ }
+\DoxyCodeLine{00428\ \textcolor{keywordtype}{int}\ tls\_default\_set\_protocol\_version(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\_RECORD\_LAYER}}\ *rl,\ \textcolor{keywordtype}{int}\ version);}
+\DoxyCodeLine{00429\ \textcolor{keywordtype}{int}\ tls\_default\_validate\_record\_header(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\_RECORD\_LAYER}}\ *rl,\ \mbox{\hyperlink{structtls__rl__record__st}{TLS\_RL\_RECORD}}\ *re);}
+\DoxyCodeLine{00430\ \textcolor{keywordtype}{int}\ tls\_do\_compress(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\_RECORD\_LAYER}}\ *rl,\ \mbox{\hyperlink{structtls__rl__record__st}{TLS\_RL\_RECORD}}\ *wr);}
+\DoxyCodeLine{00431\ \textcolor{keywordtype}{int}\ tls\_do\_uncompress(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\_RECORD\_LAYER}}\ *rl,\ \mbox{\hyperlink{structtls__rl__record__st}{TLS\_RL\_RECORD}}\ *rec);}
+\DoxyCodeLine{00432\ \textcolor{keywordtype}{int}\ tls\_default\_post\_process\_record(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\_RECORD\_LAYER}}\ *rl,\ \mbox{\hyperlink{structtls__rl__record__st}{TLS\_RL\_RECORD}}\ *rec);}
+\DoxyCodeLine{00433\ \textcolor{keywordtype}{int}\ tls13\_common\_post\_process\_record(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\_RECORD\_LAYER}}\ *rl,\ \mbox{\hyperlink{structtls__rl__record__st}{TLS\_RL\_RECORD}}\ *rec);}
+\DoxyCodeLine{00434\ }
+\DoxyCodeLine{00435\ \textcolor{keywordtype}{int}}
+\DoxyCodeLine{00436\ tls\_int\_new\_record\_layer(OSSL\_LIB\_CTX\ *libctx,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *propq,\ \textcolor{keywordtype}{int}\ vers,}
+\DoxyCodeLine{00437\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ role,\ \textcolor{keywordtype}{int}\ direction,\ \textcolor{keywordtype}{int}\ level,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *key,}
+\DoxyCodeLine{00438\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ keylen,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *iv,\ \textcolor{keywordtype}{size\_t}\ ivlen,}
+\DoxyCodeLine{00439\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *mackey,\ \textcolor{keywordtype}{size\_t}\ mackeylen,}
+\DoxyCodeLine{00440\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ EVP\_CIPHER\ *ciph,\ \textcolor{keywordtype}{size\_t}\ taglen,}
+\DoxyCodeLine{00441\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ mactype,}
+\DoxyCodeLine{00442\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ EVP\_MD\ *md,\ COMP\_METHOD\ *comp,\ BIO\ *prev,}
+\DoxyCodeLine{00443\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BIO\ *transport,\ BIO\ *next,}
+\DoxyCodeLine{00444\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BIO\_ADDR\ *local,\ BIO\_ADDR\ *peer,}
+\DoxyCodeLine{00445\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ OSSL\_PARAM\ *settings,\ \textcolor{keyword}{const}\ OSSL\_PARAM\ *options,}
+\DoxyCodeLine{00446\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ OSSL\_DISPATCH\ *fns,\ \textcolor{keywordtype}{void}\ *cbarg,}
+\DoxyCodeLine{00447\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structossl__record__layer__st}{OSSL\_RECORD\_LAYER}}\ **retrl);}
+\DoxyCodeLine{00448\ \textcolor{keywordtype}{int}\ tls\_free(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\_RECORD\_LAYER}}\ *rl);}
+\DoxyCodeLine{00449\ \textcolor{keywordtype}{int}\ tls\_unprocessed\_read\_pending(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\_RECORD\_LAYER}}\ *rl);}
+\DoxyCodeLine{00450\ \textcolor{keywordtype}{int}\ tls\_processed\_read\_pending(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\_RECORD\_LAYER}}\ *rl);}
+\DoxyCodeLine{00451\ \textcolor{keywordtype}{size\_t}\ tls\_app\_data\_pending(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\_RECORD\_LAYER}}\ *rl);}
+\DoxyCodeLine{00452\ \textcolor{keywordtype}{size\_t}\ tls\_get\_max\_records(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\_RECORD\_LAYER}}\ *rl,\ uint8\_t\ type,\ \textcolor{keywordtype}{size\_t}\ len,}
+\DoxyCodeLine{00453\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ maxfrag,\ \textcolor{keywordtype}{size\_t}\ *preffrag);}
+\DoxyCodeLine{00454\ \textcolor{keywordtype}{int}\ tls\_write\_records(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\_RECORD\_LAYER}}\ *rl,\ \mbox{\hyperlink{structossl__record__template__st}{OSSL\_RECORD\_TEMPLATE}}\ *templates,}
+\DoxyCodeLine{00455\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ numtempl);}
+\DoxyCodeLine{00456\ \textcolor{keywordtype}{int}\ tls\_retry\_write\_records(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\_RECORD\_LAYER}}\ *rl);}
+\DoxyCodeLine{00457\ \textcolor{keywordtype}{int}\ tls\_get\_alert\_code(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\_RECORD\_LAYER}}\ *rl);}
+\DoxyCodeLine{00458\ \textcolor{keywordtype}{int}\ tls\_set1\_bio(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\_RECORD\_LAYER}}\ *rl,\ BIO\ *bio);}
+\DoxyCodeLine{00459\ \textcolor{keywordtype}{int}\ tls\_read\_record(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\_RECORD\_LAYER}}\ *rl,\ \textcolor{keywordtype}{void}\ **rechandle,\ \textcolor{keywordtype}{int}\ *rversion,}
+\DoxyCodeLine{00460\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint8\_t\ *type,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **data,\ \textcolor{keywordtype}{size\_t}\ *datalen,}
+\DoxyCodeLine{00461\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint16\_t\ *epoch,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *seq\_num);}
+\DoxyCodeLine{00462\ \textcolor{keywordtype}{int}\ tls\_release\_record(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\_RECORD\_LAYER}}\ *rl,\ \textcolor{keywordtype}{void}\ *rechandle,\ \textcolor{keywordtype}{size\_t}\ length);}
+\DoxyCodeLine{00463\ \textcolor{keywordtype}{int}\ tls\_default\_set\_protocol\_version(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\_RECORD\_LAYER}}\ *rl,\ \textcolor{keywordtype}{int}\ version);}
+\DoxyCodeLine{00464\ \textcolor{keywordtype}{int}\ tls\_set\_protocol\_version(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\_RECORD\_LAYER}}\ *rl,\ \textcolor{keywordtype}{int}\ version);}
+\DoxyCodeLine{00465\ \textcolor{keywordtype}{void}\ tls\_set\_plain\_alerts(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\_RECORD\_LAYER}}\ *rl,\ \textcolor{keywordtype}{int}\ allow);}
+\DoxyCodeLine{00466\ \textcolor{keywordtype}{void}\ tls\_set\_first\_handshake(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\_RECORD\_LAYER}}\ *rl,\ \textcolor{keywordtype}{int}\ first);}
+\DoxyCodeLine{00467\ \textcolor{keywordtype}{void}\ tls\_set\_max\_pipelines(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\_RECORD\_LAYER}}\ *rl,\ \textcolor{keywordtype}{size\_t}\ max\_pipelines);}
+\DoxyCodeLine{00468\ \textcolor{keywordtype}{void}\ tls\_get\_state(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\_RECORD\_LAYER}}\ *rl,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ **shortstr,}
+\DoxyCodeLine{00469\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ **longstr);}
+\DoxyCodeLine{00470\ \textcolor{keywordtype}{int}\ tls\_set\_options(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\_RECORD\_LAYER}}\ *rl,\ \textcolor{keyword}{const}\ OSSL\_PARAM\ *options);}
+\DoxyCodeLine{00471\ \textcolor{keyword}{const}\ COMP\_METHOD\ *tls\_get\_compression(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\_RECORD\_LAYER}}\ *rl);}
+\DoxyCodeLine{00472\ \textcolor{keywordtype}{void}\ tls\_set\_max\_frag\_len(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\_RECORD\_LAYER}}\ *rl,\ \textcolor{keywordtype}{size\_t}\ max\_frag\_len);}
+\DoxyCodeLine{00473\ \textcolor{keywordtype}{int}\ tls\_setup\_read\_buffer(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\_RECORD\_LAYER}}\ *rl);}
+\DoxyCodeLine{00474\ \textcolor{keywordtype}{int}\ tls\_setup\_write\_buffer(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\_RECORD\_LAYER}}\ *rl,\ \textcolor{keywordtype}{size\_t}\ numwpipes,}
+\DoxyCodeLine{00475\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ firstlen,\ \textcolor{keywordtype}{size\_t}\ nextlen);}
+\DoxyCodeLine{00476\ }
+\DoxyCodeLine{00477\ \textcolor{keywordtype}{int}\ tls\_write\_records\_multiblock(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\_RECORD\_LAYER}}\ *rl,}
+\DoxyCodeLine{00478\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structossl__record__template__st}{OSSL\_RECORD\_TEMPLATE}}\ *templates,}
+\DoxyCodeLine{00479\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ numtempl);}
+\DoxyCodeLine{00480\ }
+\DoxyCodeLine{00481\ \textcolor{keywordtype}{size\_t}\ tls\_get\_max\_records\_default(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\_RECORD\_LAYER}}\ *rl,\ uint8\_t\ type,}
+\DoxyCodeLine{00482\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ len,}
+\DoxyCodeLine{00483\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ maxfrag,\ \textcolor{keywordtype}{size\_t}\ *preffrag);}
+\DoxyCodeLine{00484\ \textcolor{keywordtype}{size\_t}\ tls\_get\_max\_records\_multiblock(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\_RECORD\_LAYER}}\ *rl,\ uint8\_t\ type,}
+\DoxyCodeLine{00485\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ len,\ \textcolor{keywordtype}{size\_t}\ maxfrag,}
+\DoxyCodeLine{00486\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ *preffrag);}
+\DoxyCodeLine{00487\ \textcolor{keywordtype}{int}\ tls\_allocate\_write\_buffers\_default(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\_RECORD\_LAYER}}\ *rl,}
+\DoxyCodeLine{00488\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structossl__record__template__st}{OSSL\_RECORD\_TEMPLATE}}\ *templates,}
+\DoxyCodeLine{00489\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ numtempl,\ \textcolor{keywordtype}{size\_t}\ *prefix);}
+\DoxyCodeLine{00490\ \textcolor{keywordtype}{int}\ tls\_initialise\_write\_packets\_default(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\_RECORD\_LAYER}}\ *rl,}
+\DoxyCodeLine{00491\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structossl__record__template__st}{OSSL\_RECORD\_TEMPLATE}}\ *templates,}
+\DoxyCodeLine{00492\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ numtempl,}
+\DoxyCodeLine{00493\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structossl__record__template__st}{OSSL\_RECORD\_TEMPLATE}}\ *prefixtempl,}
+\DoxyCodeLine{00494\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00495\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtls__buffer__st}{TLS\_BUFFER}}\ *bufs,}
+\DoxyCodeLine{00496\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ *wpinited);}
+\DoxyCodeLine{00497\ \textcolor{keywordtype}{int}\ tls1\_allocate\_write\_buffers(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\_RECORD\_LAYER}}\ *rl,}
+\DoxyCodeLine{00498\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structossl__record__template__st}{OSSL\_RECORD\_TEMPLATE}}\ *templates,}
+\DoxyCodeLine{00499\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ numtempl,\ \textcolor{keywordtype}{size\_t}\ *prefix);}
+\DoxyCodeLine{00500\ \textcolor{keywordtype}{int}\ tls1\_initialise\_write\_packets(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\_RECORD\_LAYER}}\ *rl,}
+\DoxyCodeLine{00501\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structossl__record__template__st}{OSSL\_RECORD\_TEMPLATE}}\ *templates,}
+\DoxyCodeLine{00502\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ numtempl,}
+\DoxyCodeLine{00503\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structossl__record__template__st}{OSSL\_RECORD\_TEMPLATE}}\ *prefixtempl,}
+\DoxyCodeLine{00504\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,}
+\DoxyCodeLine{00505\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtls__buffer__st}{TLS\_BUFFER}}\ *bufs,}
+\DoxyCodeLine{00506\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ *wpinited);}
+\DoxyCodeLine{00507\ \textcolor{keywordtype}{int}\ tls\_prepare\_record\_header\_default(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\_RECORD\_LAYER}}\ *rl,}
+\DoxyCodeLine{00508\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *thispkt,}
+\DoxyCodeLine{00509\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structossl__record__template__st}{OSSL\_RECORD\_TEMPLATE}}\ *templ,}
+\DoxyCodeLine{00510\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint8\_t\ rectype,}
+\DoxyCodeLine{00511\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **recdata);}
+\DoxyCodeLine{00512\ \textcolor{keywordtype}{int}\ tls\_prepare\_for\_encryption\_default(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\_RECORD\_LAYER}}\ *rl,}
+\DoxyCodeLine{00513\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ mac\_size,}
+\DoxyCodeLine{00514\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *thispkt,}
+\DoxyCodeLine{00515\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtls__rl__record__st}{TLS\_RL\_RECORD}}\ *thiswr);}
+\DoxyCodeLine{00516\ \textcolor{keywordtype}{int}\ tls\_post\_encryption\_processing\_default(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\_RECORD\_LAYER}}\ *rl,}
+\DoxyCodeLine{00517\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ mac\_size,}
+\DoxyCodeLine{00518\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structossl__record__template__st}{OSSL\_RECORD\_TEMPLATE}}\ *thistempl,}
+\DoxyCodeLine{00519\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *thispkt,}
+\DoxyCodeLine{00520\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structtls__rl__record__st}{TLS\_RL\_RECORD}}\ *thiswr);}
+\DoxyCodeLine{00521\ \textcolor{keywordtype}{int}\ tls\_write\_records\_default(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\_RECORD\_LAYER}}\ *rl,}
+\DoxyCodeLine{00522\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structossl__record__template__st}{OSSL\_RECORD\_TEMPLATE}}\ *templates,}
+\DoxyCodeLine{00523\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ numtempl);}
+\DoxyCodeLine{00524\ }
+\DoxyCodeLine{00525\ \textcolor{comment}{/*\ Macros/functions\ provided\ by\ the\ TLS\_BUFFER\ component\ */}}
+\DoxyCodeLine{00526\ }
+\DoxyCodeLine{00527\ \textcolor{preprocessor}{\#define\ TLS\_BUFFER\_get\_buf(b)\ \ \ \ \ \ \ \ \ \ \ \ \ \ ((b)-\/>buf)}}
+\DoxyCodeLine{00528\ \textcolor{preprocessor}{\#define\ TLS\_BUFFER\_set\_buf(b,\ n)\ \ \ \ \ \ \ \ \ \ \ ((b)-\/>buf\ =\ (n))}}
+\DoxyCodeLine{00529\ \textcolor{preprocessor}{\#define\ TLS\_BUFFER\_get\_len(b)\ \ \ \ \ \ \ \ \ \ \ \ \ \ ((b)-\/>len)}}
+\DoxyCodeLine{00530\ \textcolor{preprocessor}{\#define\ TLS\_BUFFER\_get\_left(b)\ \ \ \ \ \ \ \ \ \ \ \ \ ((b)-\/>left)}}
+\DoxyCodeLine{00531\ \textcolor{preprocessor}{\#define\ TLS\_BUFFER\_set\_left(b,\ l)\ \ \ \ \ \ \ \ \ \ ((b)-\/>left\ =\ (l))}}
+\DoxyCodeLine{00532\ \textcolor{preprocessor}{\#define\ TLS\_BUFFER\_sub\_left(b,\ l)\ \ \ \ \ \ \ \ \ \ ((b)-\/>left\ -\/=\ (l))}}
+\DoxyCodeLine{00533\ \textcolor{preprocessor}{\#define\ TLS\_BUFFER\_get\_offset(b)\ \ \ \ \ \ \ \ \ \ \ ((b)-\/>offset)}}
+\DoxyCodeLine{00534\ \textcolor{preprocessor}{\#define\ TLS\_BUFFER\_set\_offset(b,\ o)\ \ \ \ \ \ \ \ ((b)-\/>offset\ =\ (o))}}
+\DoxyCodeLine{00535\ \textcolor{preprocessor}{\#define\ TLS\_BUFFER\_add\_offset(b,\ o)\ \ \ \ \ \ \ \ ((b)-\/>offset\ +=\ (o))}}
+\DoxyCodeLine{00536\ \textcolor{preprocessor}{\#define\ TLS\_BUFFER\_set\_app\_buffer(b,\ l)\ \ \ \ ((b)-\/>app\_buffer\ =\ (l))}}
+\DoxyCodeLine{00537\ \textcolor{preprocessor}{\#define\ TLS\_BUFFER\_is\_app\_buffer(b)\ \ \ \ \ \ \ \ ((b)-\/>app\_buffer)}}
+\DoxyCodeLine{00538\ }
+\DoxyCodeLine{00539\ \textcolor{keywordtype}{void}\ ossl\_tls\_buffer\_release(\mbox{\hyperlink{structtls__buffer__st}{TLS\_BUFFER}}\ *\mbox{\hyperlink{structb}{b}});}
+
+\end{DoxyCode}

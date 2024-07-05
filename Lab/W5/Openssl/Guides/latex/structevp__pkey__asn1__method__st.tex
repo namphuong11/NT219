@@ -1,0 +1,133 @@
+\doxysection{evp\+\_\+pkey\+\_\+asn1\+\_\+method\+\_\+st Struct Reference}
+\hypertarget{structevp__pkey__asn1__method__st}{}\label{structevp__pkey__asn1__method__st}\index{evp\_pkey\_asn1\_method\_st@{evp\_pkey\_asn1\_method\_st}}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{structevp__pkey__asn1__method__st_aab1f5676ee04b92948699285c278a539}\label{structevp__pkey__asn1__method__st_aab1f5676ee04b92948699285c278a539} 
+int {\bfseries pkey\+\_\+id}
+\item 
+\Hypertarget{structevp__pkey__asn1__method__st_a32815f25e045825d2a59d83141b8239d}\label{structevp__pkey__asn1__method__st_a32815f25e045825d2a59d83141b8239d} 
+int {\bfseries pkey\+\_\+base\+\_\+id}
+\item 
+\Hypertarget{structevp__pkey__asn1__method__st_a55c44804c0df12fa9e4ad454ccd49908}\label{structevp__pkey__asn1__method__st_a55c44804c0df12fa9e4ad454ccd49908} 
+unsigned long {\bfseries pkey\+\_\+flags}
+\item 
+\Hypertarget{structevp__pkey__asn1__method__st_a91cfb0fc74223d4f5ccfb1ce404b5fec}\label{structevp__pkey__asn1__method__st_a91cfb0fc74223d4f5ccfb1ce404b5fec} 
+char \texorpdfstring{$\ast$}{*} {\bfseries pem\+\_\+str}
+\item 
+\Hypertarget{structevp__pkey__asn1__method__st_a5355d69cb3de15a3066c811181e3b697}\label{structevp__pkey__asn1__method__st_a5355d69cb3de15a3066c811181e3b697} 
+char \texorpdfstring{$\ast$}{*} {\bfseries info}
+\item 
+\Hypertarget{structevp__pkey__asn1__method__st_afe7a9a056f7b49d85077bae4a0537a67}\label{structevp__pkey__asn1__method__st_afe7a9a056f7b49d85077bae4a0537a67} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries pub\+\_\+decode} )(EVP\+\_\+\+PKEY \texorpdfstring{$\ast$}{*}pk, const X509\+\_\+\+PUBKEY \texorpdfstring{$\ast$}{*}pub)
+\item 
+\Hypertarget{structevp__pkey__asn1__method__st_a1aecba3c244253ad03f2da17ab0d3d69}\label{structevp__pkey__asn1__method__st_a1aecba3c244253ad03f2da17ab0d3d69} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries pub\+\_\+encode} )(X509\+\_\+\+PUBKEY \texorpdfstring{$\ast$}{*}pub, const EVP\+\_\+\+PKEY \texorpdfstring{$\ast$}{*}pk)
+\item 
+\Hypertarget{structevp__pkey__asn1__method__st_aad5bdfedd51bece216b04b13ce8b2fa5}\label{structevp__pkey__asn1__method__st_aad5bdfedd51bece216b04b13ce8b2fa5} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries pub\+\_\+cmp} )(const EVP\+\_\+\+PKEY \texorpdfstring{$\ast$}{*}a, const EVP\+\_\+\+PKEY \texorpdfstring{$\ast$}{*}\mbox{\hyperlink{structb}{b}})
+\item 
+\Hypertarget{structevp__pkey__asn1__method__st_a77b2101fc24df65075be948d203d4109}\label{structevp__pkey__asn1__method__st_a77b2101fc24df65075be948d203d4109} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries pub\+\_\+print} )(BIO \texorpdfstring{$\ast$}{*}out, const EVP\+\_\+\+PKEY \texorpdfstring{$\ast$}{*}pkey, int indent, ASN1\+\_\+\+PCTX \texorpdfstring{$\ast$}{*}pctx)
+\item 
+\Hypertarget{structevp__pkey__asn1__method__st_a6022f3d5fed19d3e0494699da5d143dc}\label{structevp__pkey__asn1__method__st_a6022f3d5fed19d3e0494699da5d143dc} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries priv\+\_\+decode} )(EVP\+\_\+\+PKEY \texorpdfstring{$\ast$}{*}pk, const PKCS8\+\_\+\+PRIV\+\_\+\+KEY\+\_\+\+INFO \texorpdfstring{$\ast$}{*}p8inf)
+\item 
+\Hypertarget{structevp__pkey__asn1__method__st_a263c8dbed0b7e1a0622efc7ce15c8986}\label{structevp__pkey__asn1__method__st_a263c8dbed0b7e1a0622efc7ce15c8986} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries priv\+\_\+encode} )(PKCS8\+\_\+\+PRIV\+\_\+\+KEY\+\_\+\+INFO \texorpdfstring{$\ast$}{*}p8, const EVP\+\_\+\+PKEY \texorpdfstring{$\ast$}{*}pk)
+\item 
+\Hypertarget{structevp__pkey__asn1__method__st_a3e76c51bba62754534137e4b6b9d4d3f}\label{structevp__pkey__asn1__method__st_a3e76c51bba62754534137e4b6b9d4d3f} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries priv\+\_\+print} )(BIO \texorpdfstring{$\ast$}{*}out, const EVP\+\_\+\+PKEY \texorpdfstring{$\ast$}{*}pkey, int indent, ASN1\+\_\+\+PCTX \texorpdfstring{$\ast$}{*}pctx)
+\item 
+\Hypertarget{structevp__pkey__asn1__method__st_a046dc749b92b5b062882f017b365f76d}\label{structevp__pkey__asn1__method__st_a046dc749b92b5b062882f017b365f76d} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries pkey\+\_\+size} )(const EVP\+\_\+\+PKEY \texorpdfstring{$\ast$}{*}pk)
+\item 
+\Hypertarget{structevp__pkey__asn1__method__st_a32f8bf33f9b9bd30beb61cf6d0bca2d4}\label{structevp__pkey__asn1__method__st_a32f8bf33f9b9bd30beb61cf6d0bca2d4} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries pkey\+\_\+bits} )(const EVP\+\_\+\+PKEY \texorpdfstring{$\ast$}{*}pk)
+\item 
+\Hypertarget{structevp__pkey__asn1__method__st_a3e424085b1433098bcacc046e8793c19}\label{structevp__pkey__asn1__method__st_a3e424085b1433098bcacc046e8793c19} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries pkey\+\_\+security\+\_\+bits} )(const EVP\+\_\+\+PKEY \texorpdfstring{$\ast$}{*}pk)
+\item 
+\Hypertarget{structevp__pkey__asn1__method__st_ad6ade45e6d42a4a7cdefcc73b0e3bbf8}\label{structevp__pkey__asn1__method__st_ad6ade45e6d42a4a7cdefcc73b0e3bbf8} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries param\+\_\+decode} )(EVP\+\_\+\+PKEY \texorpdfstring{$\ast$}{*}pkey, const unsigned char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}pder, int derlen)
+\item 
+\Hypertarget{structevp__pkey__asn1__method__st_a3fad1346413d77bcd24d9eeb946b3cb7}\label{structevp__pkey__asn1__method__st_a3fad1346413d77bcd24d9eeb946b3cb7} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries param\+\_\+encode} )(const EVP\+\_\+\+PKEY \texorpdfstring{$\ast$}{*}pkey, unsigned char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}pder)
+\item 
+\Hypertarget{structevp__pkey__asn1__method__st_aeaed21deb57876808475a9019859c13c}\label{structevp__pkey__asn1__method__st_aeaed21deb57876808475a9019859c13c} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries param\+\_\+missing} )(const EVP\+\_\+\+PKEY \texorpdfstring{$\ast$}{*}pk)
+\item 
+\Hypertarget{structevp__pkey__asn1__method__st_a955078df18426422a4bae39e2001caaf}\label{structevp__pkey__asn1__method__st_a955078df18426422a4bae39e2001caaf} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries param\+\_\+copy} )(EVP\+\_\+\+PKEY \texorpdfstring{$\ast$}{*}to, const EVP\+\_\+\+PKEY \texorpdfstring{$\ast$}{*}from)
+\item 
+\Hypertarget{structevp__pkey__asn1__method__st_a8338ad7f8672cb1bde2871f0b32c5c43}\label{structevp__pkey__asn1__method__st_a8338ad7f8672cb1bde2871f0b32c5c43} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries param\+\_\+cmp} )(const EVP\+\_\+\+PKEY \texorpdfstring{$\ast$}{*}a, const EVP\+\_\+\+PKEY \texorpdfstring{$\ast$}{*}\mbox{\hyperlink{structb}{b}})
+\item 
+\Hypertarget{structevp__pkey__asn1__method__st_a13dc72a7398cfe4714e24917cc46d1de}\label{structevp__pkey__asn1__method__st_a13dc72a7398cfe4714e24917cc46d1de} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries param\+\_\+print} )(BIO \texorpdfstring{$\ast$}{*}out, const EVP\+\_\+\+PKEY \texorpdfstring{$\ast$}{*}pkey, int indent, ASN1\+\_\+\+PCTX \texorpdfstring{$\ast$}{*}pctx)
+\item 
+\Hypertarget{structevp__pkey__asn1__method__st_a9509736c754b5248c127503193e3d1a1}\label{structevp__pkey__asn1__method__st_a9509736c754b5248c127503193e3d1a1} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries sig\+\_\+print} )(BIO \texorpdfstring{$\ast$}{*}out, const X509\+\_\+\+ALGOR \texorpdfstring{$\ast$}{*}sigalg, const ASN1\+\_\+\+STRING \texorpdfstring{$\ast$}{*}sig, int indent, ASN1\+\_\+\+PCTX \texorpdfstring{$\ast$}{*}pctx)
+\item 
+\Hypertarget{structevp__pkey__asn1__method__st_a9bc4c5f4c1e0960e7ccc72131415b1b2}\label{structevp__pkey__asn1__method__st_a9bc4c5f4c1e0960e7ccc72131415b1b2} 
+void(\texorpdfstring{$\ast$}{*} {\bfseries pkey\+\_\+free} )(EVP\+\_\+\+PKEY \texorpdfstring{$\ast$}{*}pkey)
+\item 
+\Hypertarget{structevp__pkey__asn1__method__st_af922954fe2474be5a4a38fd87677ca90}\label{structevp__pkey__asn1__method__st_af922954fe2474be5a4a38fd87677ca90} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries pkey\+\_\+ctrl} )(EVP\+\_\+\+PKEY \texorpdfstring{$\ast$}{*}pkey, int op, long arg1, void \texorpdfstring{$\ast$}{*}arg2)
+\item 
+\Hypertarget{structevp__pkey__asn1__method__st_a2a473efedb9975779471523d2c563b08}\label{structevp__pkey__asn1__method__st_a2a473efedb9975779471523d2c563b08} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries old\+\_\+priv\+\_\+decode} )(EVP\+\_\+\+PKEY \texorpdfstring{$\ast$}{*}pkey, const unsigned char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}pder, int derlen)
+\item 
+\Hypertarget{structevp__pkey__asn1__method__st_a5a382d560bd1ad816ecebfeee585224c}\label{structevp__pkey__asn1__method__st_a5a382d560bd1ad816ecebfeee585224c} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries old\+\_\+priv\+\_\+encode} )(const EVP\+\_\+\+PKEY \texorpdfstring{$\ast$}{*}pkey, unsigned char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}pder)
+\item 
+\Hypertarget{structevp__pkey__asn1__method__st_a723886a54600fd08f7ad083f5f27bd27}\label{structevp__pkey__asn1__method__st_a723886a54600fd08f7ad083f5f27bd27} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries item\+\_\+verify} )(EVP\+\_\+\+MD\+\_\+\+CTX \texorpdfstring{$\ast$}{*}ctx, const ASN1\+\_\+\+ITEM \texorpdfstring{$\ast$}{*}it, const void \texorpdfstring{$\ast$}{*}data, const X509\+\_\+\+ALGOR \texorpdfstring{$\ast$}{*}a, const ASN1\+\_\+\+BIT\+\_\+\+STRING \texorpdfstring{$\ast$}{*}sig, EVP\+\_\+\+PKEY \texorpdfstring{$\ast$}{*}pkey)
+\item 
+\Hypertarget{structevp__pkey__asn1__method__st_a03c7b8a7daf925e26aec95138d83f4b5}\label{structevp__pkey__asn1__method__st_a03c7b8a7daf925e26aec95138d83f4b5} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries item\+\_\+sign} )(EVP\+\_\+\+MD\+\_\+\+CTX \texorpdfstring{$\ast$}{*}ctx, const ASN1\+\_\+\+ITEM \texorpdfstring{$\ast$}{*}it, const void \texorpdfstring{$\ast$}{*}data, X509\+\_\+\+ALGOR \texorpdfstring{$\ast$}{*}alg1, X509\+\_\+\+ALGOR \texorpdfstring{$\ast$}{*}alg2, ASN1\+\_\+\+BIT\+\_\+\+STRING \texorpdfstring{$\ast$}{*}sig)
+\item 
+\Hypertarget{structevp__pkey__asn1__method__st_aace5ad656af8a4c87234ea0710b85f23}\label{structevp__pkey__asn1__method__st_aace5ad656af8a4c87234ea0710b85f23} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries siginf\+\_\+set} )(X509\+\_\+\+SIG\+\_\+\+INFO \texorpdfstring{$\ast$}{*}siginf, const X509\+\_\+\+ALGOR \texorpdfstring{$\ast$}{*}alg, const ASN1\+\_\+\+STRING \texorpdfstring{$\ast$}{*}sig)
+\item 
+\Hypertarget{structevp__pkey__asn1__method__st_a596446f78985617e3497fa9fad20c751}\label{structevp__pkey__asn1__method__st_a596446f78985617e3497fa9fad20c751} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries pkey\+\_\+check} )(const EVP\+\_\+\+PKEY \texorpdfstring{$\ast$}{*}pk)
+\item 
+\Hypertarget{structevp__pkey__asn1__method__st_a2e30f24d80a55e5d69452d008ee6eae2}\label{structevp__pkey__asn1__method__st_a2e30f24d80a55e5d69452d008ee6eae2} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries pkey\+\_\+public\+\_\+check} )(const EVP\+\_\+\+PKEY \texorpdfstring{$\ast$}{*}pk)
+\item 
+\Hypertarget{structevp__pkey__asn1__method__st_ae4dc6f8ac9256207fcbc1712140c3e06}\label{structevp__pkey__asn1__method__st_ae4dc6f8ac9256207fcbc1712140c3e06} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries pkey\+\_\+param\+\_\+check} )(const EVP\+\_\+\+PKEY \texorpdfstring{$\ast$}{*}pk)
+\item 
+\Hypertarget{structevp__pkey__asn1__method__st_adbe4eed54446e283cf00dbc74556fe87}\label{structevp__pkey__asn1__method__st_adbe4eed54446e283cf00dbc74556fe87} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries set\+\_\+priv\+\_\+key} )(EVP\+\_\+\+PKEY \texorpdfstring{$\ast$}{*}pk, const unsigned char \texorpdfstring{$\ast$}{*}priv, size\+\_\+t len)
+\item 
+\Hypertarget{structevp__pkey__asn1__method__st_a5f9d5deb41d85f76c9ea53774f26edb5}\label{structevp__pkey__asn1__method__st_a5f9d5deb41d85f76c9ea53774f26edb5} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries set\+\_\+pub\+\_\+key} )(EVP\+\_\+\+PKEY \texorpdfstring{$\ast$}{*}pk, const unsigned char \texorpdfstring{$\ast$}{*}pub, size\+\_\+t len)
+\item 
+\Hypertarget{structevp__pkey__asn1__method__st_aac5efc3f11256de3745bb7c4f6ad8c87}\label{structevp__pkey__asn1__method__st_aac5efc3f11256de3745bb7c4f6ad8c87} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries get\+\_\+priv\+\_\+key} )(const EVP\+\_\+\+PKEY \texorpdfstring{$\ast$}{*}pk, unsigned char \texorpdfstring{$\ast$}{*}priv, size\+\_\+t \texorpdfstring{$\ast$}{*}len)
+\item 
+\Hypertarget{structevp__pkey__asn1__method__st_a6c4ae48b2a49f6c827fa88be2b336141}\label{structevp__pkey__asn1__method__st_a6c4ae48b2a49f6c827fa88be2b336141} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries get\+\_\+pub\+\_\+key} )(const EVP\+\_\+\+PKEY \texorpdfstring{$\ast$}{*}pk, unsigned char \texorpdfstring{$\ast$}{*}pub, size\+\_\+t \texorpdfstring{$\ast$}{*}len)
+\item 
+\Hypertarget{structevp__pkey__asn1__method__st_a99433f2ef5a6f732274021cfa56a7798}\label{structevp__pkey__asn1__method__st_a99433f2ef5a6f732274021cfa56a7798} 
+size\+\_\+t(\texorpdfstring{$\ast$}{*} {\bfseries dirty\+\_\+cnt} )(const EVP\+\_\+\+PKEY \texorpdfstring{$\ast$}{*}pk)
+\item 
+\Hypertarget{structevp__pkey__asn1__method__st_a5b7e45da17b40c4897b770dbd75cd3a5}\label{structevp__pkey__asn1__method__st_a5b7e45da17b40c4897b770dbd75cd3a5} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries export\+\_\+to} )(const EVP\+\_\+\+PKEY \texorpdfstring{$\ast$}{*}pk, void \texorpdfstring{$\ast$}{*}to\+\_\+keydata, OSSL\+\_\+\+FUNC\+\_\+keymgmt\+\_\+import\+\_\+fn \texorpdfstring{$\ast$}{*}importer, OSSL\+\_\+\+LIB\+\_\+\+CTX \texorpdfstring{$\ast$}{*}libctx, const char \texorpdfstring{$\ast$}{*}propq)
+\item 
+\Hypertarget{structevp__pkey__asn1__method__st_aa4b8eb09608933fe41c25b5f0b4ded3c}\label{structevp__pkey__asn1__method__st_aa4b8eb09608933fe41c25b5f0b4ded3c} 
+OSSL\+\_\+\+CALLBACK \texorpdfstring{$\ast$}{*} {\bfseries import\+\_\+from}
+\item 
+\Hypertarget{structevp__pkey__asn1__method__st_a909293086373589e508544aaed008c93}\label{structevp__pkey__asn1__method__st_a909293086373589e508544aaed008c93} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries copy} )(EVP\+\_\+\+PKEY \texorpdfstring{$\ast$}{*}to, EVP\+\_\+\+PKEY \texorpdfstring{$\ast$}{*}from)
+\item 
+\Hypertarget{structevp__pkey__asn1__method__st_a975b8d5880eb71751d16f57adaeb0701}\label{structevp__pkey__asn1__method__st_a975b8d5880eb71751d16f57adaeb0701} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries priv\+\_\+decode\+\_\+ex} )(EVP\+\_\+\+PKEY \texorpdfstring{$\ast$}{*}pk, const PKCS8\+\_\+\+PRIV\+\_\+\+KEY\+\_\+\+INFO \texorpdfstring{$\ast$}{*}p8inf, OSSL\+\_\+\+LIB\+\_\+\+CTX \texorpdfstring{$\ast$}{*}libctx, const char \texorpdfstring{$\ast$}{*}propq)
+\end{DoxyCompactItemize}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/namph/\+Downloads/openssl/openssl-\/3.\+2.\+1/include/crypto/asn1.\+h\end{DoxyCompactItemize}

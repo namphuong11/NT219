@@ -1,0 +1,41 @@
+\doxysection{cipher\+\_\+aes\+\_\+xts.\+h}
+\hypertarget{cipher__aes__xts_8h_source}{}\label{cipher__aes__xts_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/providers/implementations/ciphers/cipher\_aes\_xts.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/providers/implementations/ciphers/cipher\_aes\_xts.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2019-\/2021\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <openssl/aes.h>}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ "{}prov/ciphercommon.h"{}}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ "{}crypto/aes\_platform.h"{}}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ *\ Available\ in\ cipher\_fips.c,\ and\ compiled\ with\ different\ values\ depending}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ *\ on\ we're\ in\ the\ FIPS\ module\ or\ not.}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00018\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ ossl\_aes\_xts\_allow\_insecure\_decrypt;}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ PROV\_CIPHER\_FUNC(\textcolor{keywordtype}{void},\ xts\_stream,}
+\DoxyCodeLine{00021\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,\ \textcolor{keywordtype}{size\_t}\ len,}
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ AES\_KEY\ *key1,\ \textcolor{keyword}{const}\ AES\_KEY\ *key2,}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ iv[16]));}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structprov__aes__xts__ctx__st}{prov\_aes\_xts\_ctx\_st}}\ \{}
+\DoxyCodeLine{00026\ \ \ \ \ \mbox{\hyperlink{structprov__cipher__ctx__st}{PROV\_CIPHER\_CTX}}\ base;\ \ \ \ \ \ \textcolor{comment}{/*\ Must\ be\ first\ */}}
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ OSSL\_UNION\_ALIGN;}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ AES\_KEY\ ks;}
+\DoxyCodeLine{00030\ \ \ \ \ \}\ ks1,\ ks2;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ AES\ key\ schedules\ to\ use\ */}}
+\DoxyCodeLine{00031\ \ \ \ \ XTS128\_CONTEXT\ xts;}
+\DoxyCodeLine{00032\ \ \ \ \ OSSL\_xts\_stream\_fn\ stream;}
+\DoxyCodeLine{00033\ \}\ \mbox{\hyperlink{structprov__aes__xts__ctx__st}{PROV\_AES\_XTS\_CTX}};}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structprov__cipher__hw__st}{PROV\_CIPHER\_HW}}\ *ossl\_prov\_cipher\_hw\_aes\_xts(\textcolor{keywordtype}{size\_t}\ keybits);}
+
+\end{DoxyCode}

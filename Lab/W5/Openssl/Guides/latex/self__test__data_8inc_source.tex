@@ -1,0 +1,1693 @@
+\doxysection{self\+\_\+test\+\_\+data.\+inc}
+\hypertarget{self__test__data_8inc_source}{}\label{self__test__data_8inc_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/providers/fips/self\_test\_data.inc@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/providers/fips/self\_test\_data.inc}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2019-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{comment}{/*\ Macros\ to\ build\ Self\ test\ data\ */}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#define\ ITM(x)\ ((void\ *)\&x),\ sizeof(x)}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#define\ ITM\_STR(x)\ ((void\ *)\&x),\ (sizeof(x)\ -\/\ 1)}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#define\ ST\_KAT\_PARAM\_END()\ \{\ "{}"{},\ 0,\ NULL,\ 0\ \}}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#define\ ST\_KAT\_PARAM\_BIGNUM(name,\ data)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\ \ \ \ \{\ name,\ OSSL\_PARAM\_UNSIGNED\_INTEGER,\ ITM(data)\ \}}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ ST\_KAT\_PARAM\_OCTET(name,\ data)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\ \ \ \ \{\ name,\ OSSL\_PARAM\_OCTET\_STRING,\ ITM(data)\ \}}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#define\ ST\_KAT\_PARAM\_UTF8STRING(name,\ data)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\ \ \ \ \{\ name,\ OSSL\_PARAM\_UTF8\_STRING,\ ITM\_STR(data)\ \}}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#define\ ST\_KAT\_PARAM\_UTF8CHAR(name,\ data)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\ \ \ \ \{\ name,\ OSSL\_PARAM\_UTF8\_STRING,\ ITM(data)\ \}}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#define\ ST\_KAT\_PARAM\_INT(name,\ i)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\ \ \ \ \{\ name,\ OSSL\_PARAM\_INTEGER,\ ITM(i)\ \}}}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \textcolor{comment}{/*\ used\ to\ store\ raw\ parameters\ for\ keys\ and\ algorithms\ */}}
+\DoxyCodeLine{00027\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }st\_kat\_param\_st\ \{}
+\DoxyCodeLine{00028\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *name;\ \ \textcolor{comment}{/*\ an\ OSSL\_PARAM\ name\ */}}
+\DoxyCodeLine{00029\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ type;\ \ \ \ \ \ \ \textcolor{comment}{/*\ the\ type\ associated\ with\ the\ data\ */}}
+\DoxyCodeLine{00030\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *data;\ \ \textcolor{comment}{/*\ unsigned\ char\ [],\ or\ char\ []\ depending\ on\ the\ type\ */}}
+\DoxyCodeLine{00031\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ data\_len;\ \ \ \textcolor{comment}{/*\ the\ length\ of\ the\ data\ */}}
+\DoxyCodeLine{00032\ \}\ ST\_KAT\_PARAM;}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }st\_kat\_st\ \{}
+\DoxyCodeLine{00035\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *desc;}
+\DoxyCodeLine{00036\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *algorithm;}
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *pt;}
+\DoxyCodeLine{00038\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ pt\_len;}
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *expected;}
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ expected\_len;}
+\DoxyCodeLine{00041\ \}\ ST\_KAT;}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \textcolor{preprocessor}{\#define\ CIPHER\_MODE\_ENCRYPT\ 1}}
+\DoxyCodeLine{00044\ \textcolor{preprocessor}{\#define\ CIPHER\_MODE\_DECRYPT\ 2}}
+\DoxyCodeLine{00045\ \textcolor{preprocessor}{\#define\ CIPHER\_MODE\_ALL\ \ \ \ \ (CIPHER\_MODE\_ENCRYPT\ |\ CIPHER\_MODE\_DECRYPT)}}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \textcolor{keyword}{typedef}\ ST\_KAT\ ST\_KAT\_DIGEST;}
+\DoxyCodeLine{00048\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }st\_kat\_cipher\_st\ \{}
+\DoxyCodeLine{00049\ \ \ \ \ ST\_KAT\ base;}
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{keywordtype}{int}\ mode;}
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *key;}
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ key\_len;}
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *iv;}
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ iv\_len;}
+\DoxyCodeLine{00055\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *aad;}
+\DoxyCodeLine{00056\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ aad\_len;}
+\DoxyCodeLine{00057\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *tag;}
+\DoxyCodeLine{00058\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ tag\_len;}
+\DoxyCodeLine{00059\ \}\ ST\_KAT\_CIPHER;}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }st\_kat\_kdf\_st\ \{}
+\DoxyCodeLine{00062\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *desc;}
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *algorithm;}
+\DoxyCodeLine{00064\ \ \ \ \ \textcolor{keyword}{const}\ ST\_KAT\_PARAM\ *params;}
+\DoxyCodeLine{00065\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *expected;}
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ expected\_len;}
+\DoxyCodeLine{00067\ \}\ ST\_KAT\_KDF;}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }st\_kat\_drbg\_st\ \{}
+\DoxyCodeLine{00070\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *desc;}
+\DoxyCodeLine{00071\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *algorithm;}
+\DoxyCodeLine{00072\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *param\_name;}
+\DoxyCodeLine{00073\ \ \ \ \ \textcolor{keywordtype}{char}\ *param\_value;}
+\DoxyCodeLine{00074\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *entropyin;}
+\DoxyCodeLine{00075\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ entropyinlen;}
+\DoxyCodeLine{00076\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *nonce;}
+\DoxyCodeLine{00077\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ noncelen;}
+\DoxyCodeLine{00078\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *persstr;}
+\DoxyCodeLine{00079\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ persstrlen;}
+\DoxyCodeLine{00080\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *entropyinpr1;}
+\DoxyCodeLine{00081\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ entropyinpr1len;}
+\DoxyCodeLine{00082\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *entropyinpr2;}
+\DoxyCodeLine{00083\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ entropyinpr2len;}
+\DoxyCodeLine{00084\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *entropyaddin1;}
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ entropyaddin1len;}
+\DoxyCodeLine{00086\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *entropyaddin2;}
+\DoxyCodeLine{00087\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ entropyaddin2len;}
+\DoxyCodeLine{00088\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *expected;}
+\DoxyCodeLine{00089\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ expectedlen;}
+\DoxyCodeLine{00090\ \}\ ST\_KAT\_DRBG;}
+\DoxyCodeLine{00091\ }
+\DoxyCodeLine{00092\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }st\_kat\_kas\_st\ \{}
+\DoxyCodeLine{00093\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *desc;}
+\DoxyCodeLine{00094\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *algorithm;}
+\DoxyCodeLine{00095\ }
+\DoxyCodeLine{00096\ \ \ \ \ \textcolor{keyword}{const}\ ST\_KAT\_PARAM\ *key\_group;}
+\DoxyCodeLine{00097\ \ \ \ \ \textcolor{keyword}{const}\ ST\_KAT\_PARAM\ *key\_host\_data;}
+\DoxyCodeLine{00098\ \ \ \ \ \textcolor{keyword}{const}\ ST\_KAT\_PARAM\ *key\_peer\_data;}
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00100\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *expected;}
+\DoxyCodeLine{00101\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ expected\_len;}
+\DoxyCodeLine{00102\ \}\ ST\_KAT\_KAS;}
+\DoxyCodeLine{00103\ }
+\DoxyCodeLine{00104\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }st\_kat\_sign\_st\ \{}
+\DoxyCodeLine{00105\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *desc;}
+\DoxyCodeLine{00106\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *algorithm;}
+\DoxyCodeLine{00107\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *mdalgorithm;}
+\DoxyCodeLine{00108\ \ \ \ \ \textcolor{keyword}{const}\ ST\_KAT\_PARAM\ *key;}
+\DoxyCodeLine{00109\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *entropy;}
+\DoxyCodeLine{00110\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ entropy\_len;}
+\DoxyCodeLine{00111\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *nonce;}
+\DoxyCodeLine{00112\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ nonce\_len;}
+\DoxyCodeLine{00113\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *persstr;}
+\DoxyCodeLine{00114\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ persstr\_len;}
+\DoxyCodeLine{00115\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *sig\_expected;\ \textcolor{comment}{/*\ Set\ to\ NULL\ if\ this\ value\ changes\ */}}
+\DoxyCodeLine{00116\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ sig\_expected\_len;}
+\DoxyCodeLine{00117\ \}\ ST\_KAT\_SIGN;}
+\DoxyCodeLine{00118\ }
+\DoxyCodeLine{00119\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }st\_kat\_asym\_cipher\_st\ \{}
+\DoxyCodeLine{00120\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *desc;}
+\DoxyCodeLine{00121\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *algorithm;}
+\DoxyCodeLine{00122\ \ \ \ \ \textcolor{keywordtype}{int}\ encrypt;}
+\DoxyCodeLine{00123\ \ \ \ \ \textcolor{keyword}{const}\ ST\_KAT\_PARAM\ *key;}
+\DoxyCodeLine{00124\ \ \ \ \ \textcolor{keyword}{const}\ ST\_KAT\_PARAM\ *postinit;}
+\DoxyCodeLine{00125\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in;}
+\DoxyCodeLine{00126\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ in\_len;}
+\DoxyCodeLine{00127\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *expected;}
+\DoxyCodeLine{00128\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ expected\_len;}
+\DoxyCodeLine{00129\ \}\ ST\_KAT\_ASYM\_CIPHER;}
+\DoxyCodeLine{00130\ }
+\DoxyCodeLine{00131\ \textcolor{comment}{/*-\/\ DIGEST\ TEST\ DATA\ */}}
+\DoxyCodeLine{00132\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ sha1\_pt[]\ =\ \textcolor{stringliteral}{"{}abc"{}};}
+\DoxyCodeLine{00133\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ sha1\_digest[]\ =\ \{}
+\DoxyCodeLine{00134\ \ \ \ \ 0xA9,\ 0x99,\ 0x3E,\ 0x36,\ 0x47,\ 0x06,\ 0x81,\ 0x6A,\ 0xBA,\ 0x3E,\ 0x25,\ 0x71,}
+\DoxyCodeLine{00135\ \ \ \ \ 0x78,\ 0x50,\ 0xC2,\ 0x6C,\ 0x9C,\ 0xD0,\ 0xD8,\ 0x9D}
+\DoxyCodeLine{00136\ \};}
+\DoxyCodeLine{00137\ }
+\DoxyCodeLine{00138\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ sha512\_pt[]\ =\ \textcolor{stringliteral}{"{}abc"{}};}
+\DoxyCodeLine{00139\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ sha512\_digest[]\ =\ \{}
+\DoxyCodeLine{00140\ \ \ \ \ 0xDD,\ 0xAF,\ 0x35,\ 0xA1,\ 0x93,\ 0x61,\ 0x7A,\ 0xBA,\ 0xCC,\ 0x41,\ 0x73,\ 0x49,}
+\DoxyCodeLine{00141\ \ \ \ \ 0xAE,\ 0x20,\ 0x41,\ 0x31,\ 0x12,\ 0xE6,\ 0xFA,\ 0x4E,\ 0x89,\ 0xA9,\ 0x7E,\ 0xA2,}
+\DoxyCodeLine{00142\ \ \ \ \ 0x0A,\ 0x9E,\ 0xEE,\ 0xE6,\ 0x4B,\ 0x55,\ 0xD3,\ 0x9A,\ 0x21,\ 0x92,\ 0x99,\ 0x2A,}
+\DoxyCodeLine{00143\ \ \ \ \ 0x27,\ 0x4F,\ 0xC1,\ 0xA8,\ 0x36,\ 0xBA,\ 0x3C,\ 0x23,\ 0xA3,\ 0xFE,\ 0xEB,\ 0xBD,}
+\DoxyCodeLine{00144\ \ \ \ \ 0x45,\ 0x4D,\ 0x44,\ 0x23,\ 0x64,\ 0x3C,\ 0xE8,\ 0x0E,\ 0x2A,\ 0x9A,\ 0xC9,\ 0x4F,}
+\DoxyCodeLine{00145\ \ \ \ \ 0xA5,\ 0x4C,\ 0xA4,\ 0x9F}
+\DoxyCodeLine{00146\ \};}
+\DoxyCodeLine{00147\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ sha3\_256\_pt[]\ =\ \{\ 0xe7,\ 0x37,\ 0x21,\ 0x05\ \};}
+\DoxyCodeLine{00148\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ sha3\_256\_digest[]\ =\ \{}
+\DoxyCodeLine{00149\ \ \ \ \ 0x3a,\ 0x42,\ 0xb6,\ 0x8a,\ 0xb0,\ 0x79,\ 0xf2,\ 0x8c,\ 0x4c,\ 0xa3,\ 0xc7,\ 0x52,}
+\DoxyCodeLine{00150\ \ \ \ \ 0x29,\ 0x6f,\ 0x27,\ 0x90,\ 0x06,\ 0xc4,\ 0xfe,\ 0x78,\ 0xb1,\ 0xeb,\ 0x79,\ 0xd9,}
+\DoxyCodeLine{00151\ \ \ \ \ 0x89,\ 0x77,\ 0x7f,\ 0x05,\ 0x1e,\ 0x40,\ 0x46,\ 0xae}
+\DoxyCodeLine{00152\ \};}
+\DoxyCodeLine{00153\ }
+\DoxyCodeLine{00154\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ ST\_KAT\_DIGEST\ st\_kat\_digest\_tests[]\ =}
+\DoxyCodeLine{00155\ \{}
+\DoxyCodeLine{00156\ \ \ \ \ \{}
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ \ OSSL\_SELF\_TEST\_DESC\_MD\_SHA1,}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}SHA1"{}},}
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ \ ITM\_STR(sha1\_pt),}
+\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ \ ITM(sha1\_digest),}
+\DoxyCodeLine{00161\ \ \ \ \ \},}
+\DoxyCodeLine{00162\ \ \ \ \ \{}
+\DoxyCodeLine{00163\ \ \ \ \ \ \ \ \ \ OSSL\_SELF\_TEST\_DESC\_MD\_SHA2,}
+\DoxyCodeLine{00164\ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}SHA512"{}},}
+\DoxyCodeLine{00165\ \ \ \ \ \ \ \ \ \ ITM\_STR(sha512\_pt),}
+\DoxyCodeLine{00166\ \ \ \ \ \ \ \ \ \ ITM(sha512\_digest),}
+\DoxyCodeLine{00167\ \ \ \ \ \},}
+\DoxyCodeLine{00168\ \ \ \ \ \{}
+\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ \ OSSL\_SELF\_TEST\_DESC\_MD\_SHA3,}
+\DoxyCodeLine{00170\ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}SHA3-\/256"{}},}
+\DoxyCodeLine{00171\ \ \ \ \ \ \ \ \ \ ITM(sha3\_256\_pt),}
+\DoxyCodeLine{00172\ \ \ \ \ \ \ \ \ \ ITM(sha3\_256\_digest),}
+\DoxyCodeLine{00173\ \ \ \ \ \},}
+\DoxyCodeLine{00174\ \};}
+\DoxyCodeLine{00175\ }
+\DoxyCodeLine{00176\ }
+\DoxyCodeLine{00177\ \textcolor{comment}{/*-\/\ CIPHER\ TEST\ DATA\ */}}
+\DoxyCodeLine{00178\ }
+\DoxyCodeLine{00179\ \textcolor{comment}{/*\ DES3\ test\ data\ */}}
+\DoxyCodeLine{00180\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ des\_ede3\_cbc\_pt[]\ =\ \{}
+\DoxyCodeLine{00181\ \ \ \ \ 0x6B,\ 0xC1,\ 0xBE,\ 0xE2,\ 0x2E,\ 0x40,\ 0x9F,\ 0x96,}
+\DoxyCodeLine{00182\ \ \ \ \ 0xE9,\ 0x3D,\ 0x7E,\ 0x11,\ 0x73,\ 0x93,\ 0x17,\ 0x2A,}
+\DoxyCodeLine{00183\ \ \ \ \ 0xAE,\ 0x2D,\ 0x8A,\ 0x57,\ 0x1E,\ 0x03,\ 0xAC,\ 0x9C,}
+\DoxyCodeLine{00184\ \ \ \ \ 0x9E,\ 0xB7,\ 0x6F,\ 0xAC,\ 0x45,\ 0xAF,\ 0x8E,\ 0x51}
+\DoxyCodeLine{00185\ \};}
+\DoxyCodeLine{00186\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ des\_ede3\_cbc\_key[]\ =\ \{}
+\DoxyCodeLine{00187\ \ \ \ \ 0x01,\ 0x23,\ 0x45,\ 0x67,\ 0x89,\ 0xAB,\ 0xCD,\ 0xEF,}
+\DoxyCodeLine{00188\ \ \ \ \ 0x23,\ 0x45,\ 0x67,\ 0x89,\ 0xAB,\ 0xCD,\ 0xEF,\ 0x01,}
+\DoxyCodeLine{00189\ \ \ \ \ 0x45,\ 0x67,\ 0x89,\ 0xAB,\ 0xCD,\ 0xEF,\ 0x01,\ 0x23}
+\DoxyCodeLine{00190\ \};}
+\DoxyCodeLine{00191\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ des\_ede3\_cbc\_iv[]\ =\ \{}
+\DoxyCodeLine{00192\ \ \ \ \ 0xF6,\ 0x9F,\ 0x24,\ 0x45,\ 0xDF,\ 0x4F,\ 0x9B,\ 0x17}
+\DoxyCodeLine{00193\ \};}
+\DoxyCodeLine{00194\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ des\_ede3\_cbc\_ct[]\ =\ \{}
+\DoxyCodeLine{00195\ \ \ \ \ 0x20,\ 0x79,\ 0xC3,\ 0xD5,\ 0x3A,\ 0xA7,\ 0x63,\ 0xE1,}
+\DoxyCodeLine{00196\ \ \ \ \ 0x93,\ 0xB7,\ 0x9E,\ 0x25,\ 0x69,\ 0xAB,\ 0x52,\ 0x62,}
+\DoxyCodeLine{00197\ \ \ \ \ 0x51,\ 0x65,\ 0x70,\ 0x48,\ 0x1F,\ 0x25,\ 0xB5,\ 0x0F,}
+\DoxyCodeLine{00198\ \ \ \ \ 0x73,\ 0xC0,\ 0xBD,\ 0xA8,\ 0x5C,\ 0x8E,\ 0x0D,\ 0xA7}
+\DoxyCodeLine{00199\ \};}
+\DoxyCodeLine{00200\ }
+\DoxyCodeLine{00201\ \textcolor{comment}{/*\ AES-\/256\ GCM\ test\ data\ */}}
+\DoxyCodeLine{00202\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ aes\_256\_gcm\_key[]\ =\ \{}
+\DoxyCodeLine{00203\ \ \ \ \ 0x92,\ 0xe1,\ 0x1d,\ 0xcd,\ 0xaa,\ 0x86,\ 0x6f,\ 0x5c,}
+\DoxyCodeLine{00204\ \ \ \ \ 0xe7,\ 0x90,\ 0xfd,\ 0x24,\ 0x50,\ 0x1f,\ 0x92,\ 0x50,}
+\DoxyCodeLine{00205\ \ \ \ \ 0x9a,\ 0xac,\ 0xf4,\ 0xcb,\ 0x8b,\ 0x13,\ 0x39,\ 0xd5,}
+\DoxyCodeLine{00206\ \ \ \ \ 0x0c,\ 0x9c,\ 0x12,\ 0x40,\ 0x93,\ 0x5d,\ 0xd0,\ 0x8b}
+\DoxyCodeLine{00207\ \};}
+\DoxyCodeLine{00208\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ aes\_256\_gcm\_iv[]\ =\ \{}
+\DoxyCodeLine{00209\ \ \ \ \ 0xac,\ 0x93,\ 0xa1,\ 0xa6,\ 0x14,\ 0x52,\ 0x99,\ 0xbd,}
+\DoxyCodeLine{00210\ \ \ \ \ 0xe9,\ 0x02,\ 0xf2,\ 0x1a}
+\DoxyCodeLine{00211\ \};}
+\DoxyCodeLine{00212\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ aes\_256\_gcm\_pt[]\ =\ \{}
+\DoxyCodeLine{00213\ \ \ \ \ 0x2d,\ 0x71,\ 0xbc,\ 0xfa,\ 0x91,\ 0x4e,\ 0x4a,\ 0xc0,}
+\DoxyCodeLine{00214\ \ \ \ \ 0x45,\ 0xb2,\ 0xaa,\ 0x60,\ 0x95,\ 0x5f,\ 0xad,\ 0x24}
+\DoxyCodeLine{00215\ \};}
+\DoxyCodeLine{00216\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ aes\_256\_gcm\_aad[]\ =\ \{}
+\DoxyCodeLine{00217\ \ \ \ \ 0x1e,\ 0x08,\ 0x89,\ 0x01,\ 0x6f,\ 0x67,\ 0x60,\ 0x1c,}
+\DoxyCodeLine{00218\ \ \ \ \ 0x8e,\ 0xbe,\ 0xa4,\ 0x94,\ 0x3b,\ 0xc2,\ 0x3a,\ 0xd6}
+\DoxyCodeLine{00219\ \};}
+\DoxyCodeLine{00220\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ aes\_256\_gcm\_ct[]\ =\ \{}
+\DoxyCodeLine{00221\ \ \ \ \ 0x89,\ 0x95,\ 0xae,\ 0x2e,\ 0x6d,\ 0xf3,\ 0xdb,\ 0xf9,}
+\DoxyCodeLine{00222\ \ \ \ \ 0x6f,\ 0xac,\ 0x7b,\ 0x71,\ 0x37,\ 0xba,\ 0xe6,\ 0x7f}
+\DoxyCodeLine{00223\ \};}
+\DoxyCodeLine{00224\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ aes\_256\_gcm\_tag[]\ =\ \{}
+\DoxyCodeLine{00225\ \ \ \ \ 0xec,\ 0xa5,\ 0xaa,\ 0x77,\ 0xd5,\ 0x1d,\ 0x4a,\ 0x0a,}
+\DoxyCodeLine{00226\ \ \ \ \ 0x14,\ 0xd9,\ 0xc5,\ 0x1e,\ 0x1d,\ 0xa4,\ 0x74,\ 0xab}
+\DoxyCodeLine{00227\ \};}
+\DoxyCodeLine{00228\ }
+\DoxyCodeLine{00229\ \textcolor{comment}{/*\ AES-\/ECB\ test\ data\ */}}
+\DoxyCodeLine{00230\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ aes\_128\_ecb\_key[]\ =\ \{}
+\DoxyCodeLine{00231\ \ \ \ \ 0x10,\ 0xa5,\ 0x88,\ 0x69,\ 0xd7,\ 0x4b,\ 0xe5,\ 0xa3,}
+\DoxyCodeLine{00232\ \ \ \ \ 0x74,\ 0xcf,\ 0x86,\ 0x7c,\ 0xfb,\ 0x47,\ 0x38,\ 0x59}
+\DoxyCodeLine{00233\ \};}
+\DoxyCodeLine{00234\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ aes\_128\_ecb\_pt[]\ =\ \{}
+\DoxyCodeLine{00235\ \ \ \ \ 0x00,\ 0x00,\ 0x00,\ 0x00,\ 0x00,\ 0x00,\ 0x00,\ 0x00,}
+\DoxyCodeLine{00236\ \ \ \ \ 0x00,\ 0x00,\ 0x00,\ 0x00,\ 0x00,\ 0x00,\ 0x00,\ 0x00}
+\DoxyCodeLine{00237\ \};}
+\DoxyCodeLine{00238\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ aes\_128\_ecb\_ct[]\ =\ \{}
+\DoxyCodeLine{00239\ \ \ \ \ 0x6d,\ 0x25,\ 0x1e,\ 0x69,\ 0x44,\ 0xb0,\ 0x51,\ 0xe0,}
+\DoxyCodeLine{00240\ \ \ \ \ 0x4e,\ 0xaa,\ 0x6f,\ 0xb4,\ 0xdb,\ 0xf7,\ 0x84,\ 0x65}
+\DoxyCodeLine{00241\ \};}
+\DoxyCodeLine{00242\ }
+\DoxyCodeLine{00243\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ ST\_KAT\_CIPHER\ st\_kat\_cipher\_tests[]\ =\ \{}
+\DoxyCodeLine{00244\ \ \ \ \ \{}
+\DoxyCodeLine{00245\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00246\ \ \ \ \ \ \ \ \ \ \ \ \ OSSL\_SELF\_TEST\_DESC\_CIPHER\_AES\_GCM,}
+\DoxyCodeLine{00247\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}AES-\/256-\/GCM"{}},}
+\DoxyCodeLine{00248\ \ \ \ \ \ \ \ \ \ \ \ \ ITM(aes\_256\_gcm\_pt),}
+\DoxyCodeLine{00249\ \ \ \ \ \ \ \ \ \ \ \ \ ITM(aes\_256\_gcm\_ct)}
+\DoxyCodeLine{00250\ \ \ \ \ \ \ \ \ \},}
+\DoxyCodeLine{00251\ \ \ \ \ \ \ \ \ CIPHER\_MODE\_ENCRYPT\ |\ CIPHER\_MODE\_DECRYPT,}
+\DoxyCodeLine{00252\ \ \ \ \ \ \ \ \ ITM(aes\_256\_gcm\_key),}
+\DoxyCodeLine{00253\ \ \ \ \ \ \ \ \ ITM(aes\_256\_gcm\_iv),}
+\DoxyCodeLine{00254\ \ \ \ \ \ \ \ \ ITM(aes\_256\_gcm\_aad),}
+\DoxyCodeLine{00255\ \ \ \ \ \ \ \ \ ITM(aes\_256\_gcm\_tag)}
+\DoxyCodeLine{00256\ \ \ \ \ \},}
+\DoxyCodeLine{00257\ \ \ \ \ \{}
+\DoxyCodeLine{00258\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00259\ \ \ \ \ \ \ \ \ \ \ \ \ OSSL\_SELF\_TEST\_DESC\_CIPHER\_AES\_ECB,}
+\DoxyCodeLine{00260\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}AES-\/128-\/ECB"{}},}
+\DoxyCodeLine{00261\ \ \ \ \ \ \ \ \ \ \ \ \ ITM(aes\_128\_ecb\_pt),}
+\DoxyCodeLine{00262\ \ \ \ \ \ \ \ \ \ \ \ \ ITM(aes\_128\_ecb\_ct)}
+\DoxyCodeLine{00263\ \ \ \ \ \ \ \ \ \},}
+\DoxyCodeLine{00264\ \ \ \ \ \ \ \ \ CIPHER\_MODE\_DECRYPT,}
+\DoxyCodeLine{00265\ \ \ \ \ \ \ \ \ ITM(aes\_128\_ecb\_key)}
+\DoxyCodeLine{00266\ \ \ \ \ \}}
+\DoxyCodeLine{00267\ \};}
+\DoxyCodeLine{00268\ }
+\DoxyCodeLine{00269\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ hkdf\_digest[]\ =\ \textcolor{stringliteral}{"{}SHA256"{}};}
+\DoxyCodeLine{00270\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ hkdf\_secret[]\ =\ \{\ \textcolor{charliteral}{'s'},\ \textcolor{charliteral}{'e'},\ \textcolor{charliteral}{'c'},\ \textcolor{charliteral}{'r'},\ \textcolor{charliteral}{'e'},\ \textcolor{charliteral}{'t'}\ \};}
+\DoxyCodeLine{00271\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ hkdf\_salt[]\ =\ \{\ \textcolor{charliteral}{'s'},\ \textcolor{charliteral}{'a'},\ \textcolor{charliteral}{'l'},\ \textcolor{charliteral}{'t'}\ \};}
+\DoxyCodeLine{00272\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ hkdf\_info[]\ =\ \{\ \textcolor{charliteral}{'l'},\ \textcolor{charliteral}{'a'},\ \textcolor{charliteral}{'b'},\ \textcolor{charliteral}{'e'},\ \textcolor{charliteral}{'l'}\ \};}
+\DoxyCodeLine{00273\ }
+\DoxyCodeLine{00274\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ ST\_KAT\_PARAM\ hkdf\_params[]\ =\ \{}
+\DoxyCodeLine{00275\ \ \ \ \ ST\_KAT\_PARAM\_UTF8STRING(OSSL\_KDF\_PARAM\_DIGEST,\ hkdf\_digest),}
+\DoxyCodeLine{00276\ \ \ \ \ ST\_KAT\_PARAM\_OCTET(OSSL\_KDF\_PARAM\_KEY,\ hkdf\_secret),}
+\DoxyCodeLine{00277\ \ \ \ \ ST\_KAT\_PARAM\_OCTET(OSSL\_KDF\_PARAM\_SALT,\ hkdf\_salt),}
+\DoxyCodeLine{00278\ \ \ \ \ ST\_KAT\_PARAM\_OCTET(OSSL\_KDF\_PARAM\_INFO,\ hkdf\_info),}
+\DoxyCodeLine{00279\ \ \ \ \ ST\_KAT\_PARAM\_END()}
+\DoxyCodeLine{00280\ \};}
+\DoxyCodeLine{00281\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ hkdf\_expected[]\ =\ \{}
+\DoxyCodeLine{00282\ \ \ \ \ 0x2a,\ 0xc4,\ 0x36,\ 0x9f,\ 0x52,\ 0x59,\ 0x96,\ 0xf8,}
+\DoxyCodeLine{00283\ \ \ \ \ 0xde,\ 0x13}
+\DoxyCodeLine{00284\ \};}
+\DoxyCodeLine{00285\ }
+\DoxyCodeLine{00286\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ sskdf\_digest[]\ =\ \textcolor{stringliteral}{"{}SHA224"{}};}
+\DoxyCodeLine{00287\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ sskdf\_secret[]\ =\ \{}
+\DoxyCodeLine{00288\ \ \ \ \ 0x6d,\ 0xbd,\ 0xc2,\ 0x3f,\ 0x04,\ 0x54,\ 0x88,\ 0xe4,}
+\DoxyCodeLine{00289\ \ \ \ \ 0x06,\ 0x27,\ 0x57,\ 0xb0,\ 0x6b,\ 0x9e,\ 0xba,\ 0xe1,}
+\DoxyCodeLine{00290\ \ \ \ \ 0x83,\ 0xfc,\ 0x5a,\ 0x59,\ 0x46,\ 0xd8,\ 0x0d,\ 0xb9,}
+\DoxyCodeLine{00291\ \ \ \ \ 0x3f,\ 0xec,\ 0x6f,\ 0x62,\ 0xec,\ 0x07,\ 0xe3,\ 0x72,}
+\DoxyCodeLine{00292\ \ \ \ \ 0x7f,\ 0x01,\ 0x26,\ 0xae,\ 0xd1,\ 0x2c,\ 0xe4,\ 0xb2,}
+\DoxyCodeLine{00293\ \ \ \ \ 0x62,\ 0xf4,\ 0x7d,\ 0x48,\ 0xd5,\ 0x42,\ 0x87,\ 0xf8,}
+\DoxyCodeLine{00294\ \ \ \ \ 0x1d,\ 0x47,\ 0x4c,\ 0x7c,\ 0x3b,\ 0x18,\ 0x50,\ 0xe9}
+\DoxyCodeLine{00295\ \};}
+\DoxyCodeLine{00296\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ sskdf\_otherinfo[]\ =\ \{}
+\DoxyCodeLine{00297\ \ \ \ \ 0xa1,\ 0xb2,\ 0xc3,\ 0xd4,\ 0xe5,\ 0x43,\ 0x41,\ 0x56,}
+\DoxyCodeLine{00298\ \ \ \ \ 0x53,\ 0x69,\ 0x64,\ 0x3c,\ 0x83,\ 0x2e,\ 0x98,\ 0x49,}
+\DoxyCodeLine{00299\ \ \ \ \ 0xdc,\ 0xdb,\ 0xa7,\ 0x1e,\ 0x9a,\ 0x31,\ 0x39,\ 0xe6,}
+\DoxyCodeLine{00300\ \ \ \ \ 0x06,\ 0xe0,\ 0x95,\ 0xde,\ 0x3c,\ 0x26,\ 0x4a,\ 0x66,}
+\DoxyCodeLine{00301\ \ \ \ \ 0xe9,\ 0x8a,\ 0x16,\ 0x58,\ 0x54,\ 0xcd,\ 0x07,\ 0x98,}
+\DoxyCodeLine{00302\ \ \ \ \ 0x9b,\ 0x1e,\ 0xe0,\ 0xec,\ 0x3f,\ 0x8d,\ 0xbe}
+\DoxyCodeLine{00303\ \};}
+\DoxyCodeLine{00304\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ sskdf\_expected[]\ =\ \{}
+\DoxyCodeLine{00305\ \ \ \ \ 0xa4,\ 0x62,\ 0xde,\ 0x16,\ 0xa8,\ 0x9d,\ 0xe8,\ 0x46,}
+\DoxyCodeLine{00306\ \ \ \ \ 0x6e,\ 0xf5,\ 0x46,\ 0x0b,\ 0x47,\ 0xb8}
+\DoxyCodeLine{00307\ \};}
+\DoxyCodeLine{00308\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ ST\_KAT\_PARAM\ sskdf\_params[]\ =\ \{}
+\DoxyCodeLine{00309\ \ \ \ \ ST\_KAT\_PARAM\_UTF8STRING(OSSL\_KDF\_PARAM\_DIGEST,\ sskdf\_digest),}
+\DoxyCodeLine{00310\ \ \ \ \ ST\_KAT\_PARAM\_OCTET(OSSL\_KDF\_PARAM\_KEY,\ sskdf\_secret),}
+\DoxyCodeLine{00311\ \ \ \ \ ST\_KAT\_PARAM\_OCTET(OSSL\_KDF\_PARAM\_INFO,\ sskdf\_otherinfo),}
+\DoxyCodeLine{00312\ \ \ \ \ ST\_KAT\_PARAM\_END()}
+\DoxyCodeLine{00313\ \};}
+\DoxyCodeLine{00314\ }
+\DoxyCodeLine{00315\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ x942kdf\_digest[]\ =\ \textcolor{stringliteral}{"{}SHA1"{}};}
+\DoxyCodeLine{00316\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ x942kdf\_cekalg[]\ =\ \textcolor{stringliteral}{"{}AES-\/128-\/WRAP"{}};}
+\DoxyCodeLine{00317\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ x942kdf\_secret[]\ =\ \{}
+\DoxyCodeLine{00318\ \ \ \ \ 0x00,\ 0x01,\ 0x02,\ 0x03,\ 0x04,\ 0x05,\ 0x06,\ 0x07,}
+\DoxyCodeLine{00319\ \ \ \ \ 0x08,\ 0x09,\ 0x0a,\ 0x0b,\ 0x0c,\ 0x0d,\ 0x0e,\ 0x0f,}
+\DoxyCodeLine{00320\ \ \ \ \ 0x10,\ 0x11,\ 0x12,\ 0x13}
+\DoxyCodeLine{00321\ \};}
+\DoxyCodeLine{00322\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ x942kdf\_expected[]\ =\ \{}
+\DoxyCodeLine{00323\ \ \ \ \ 0xd6,\ 0xd6,\ 0xb0,\ 0x94,\ 0xc1,\ 0x02,\ 0x7a,\ 0x7d,}
+\DoxyCodeLine{00324\ \ \ \ \ 0xe6,\ 0xe3,\ 0x11,\ 0x72,\ 0x94,\ 0xa3,\ 0x53,\ 0x64}
+\DoxyCodeLine{00325\ \};}
+\DoxyCodeLine{00326\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ ST\_KAT\_PARAM\ x942kdf\_params[]\ =\ \{}
+\DoxyCodeLine{00327\ \ \ \ \ ST\_KAT\_PARAM\_UTF8STRING(OSSL\_KDF\_PARAM\_DIGEST,\ x942kdf\_digest),}
+\DoxyCodeLine{00328\ \ \ \ \ ST\_KAT\_PARAM\_UTF8STRING(OSSL\_KDF\_PARAM\_CEK\_ALG,\ x942kdf\_cekalg),}
+\DoxyCodeLine{00329\ \ \ \ \ ST\_KAT\_PARAM\_OCTET(OSSL\_KDF\_PARAM\_KEY,\ x942kdf\_secret),}
+\DoxyCodeLine{00330\ \ \ \ \ ST\_KAT\_PARAM\_END()}
+\DoxyCodeLine{00331\ \};}
+\DoxyCodeLine{00332\ }
+\DoxyCodeLine{00333\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ x963kdf\_digest[]\ =\ \textcolor{stringliteral}{"{}SHA256"{}};}
+\DoxyCodeLine{00334\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ x963kdf\_otherinfo[]\ =\ \{}
+\DoxyCodeLine{00335\ \ \ \ \ 0x75,\ 0xee,\ 0xf8,\ 0x1a,\ 0xa3,\ 0x04,\ 0x1e,\ 0x33,}
+\DoxyCodeLine{00336\ \ \ \ \ 0xb8,\ 0x09,\ 0x71,\ 0x20,\ 0x3d,\ 0x2c,\ 0x0c,\ 0x52}
+\DoxyCodeLine{00337\ \};}
+\DoxyCodeLine{00338\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ x963kdf\_secret[]\ =\ \{}
+\DoxyCodeLine{00339\ \ \ \ \ 0x22,\ 0x51,\ 0x8b,\ 0x10,\ 0xe7,\ 0x0f,\ 0x2a,\ 0x3f,}
+\DoxyCodeLine{00340\ \ \ \ \ 0x24,\ 0x38,\ 0x10,\ 0xae,\ 0x32,\ 0x54,\ 0x13,\ 0x9e,}
+\DoxyCodeLine{00341\ \ \ \ \ 0xfb,\ 0xee,\ 0x04,\ 0xaa,\ 0x57,\ 0xc7,\ 0xaf,\ 0x7d}
+\DoxyCodeLine{00342\ \};}
+\DoxyCodeLine{00343\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ x963kdf\_expected[]\ =\ \{}
+\DoxyCodeLine{00344\ \ \ \ \ 0xc4,\ 0x98,\ 0xaf,\ 0x77,\ 0x16,\ 0x1c,\ 0xc5,\ 0x9f,}
+\DoxyCodeLine{00345\ \ \ \ \ 0x29,\ 0x62,\ 0xb9,\ 0xa7,\ 0x13,\ 0xe2,\ 0xb2,\ 0x15,}
+\DoxyCodeLine{00346\ \ \ \ \ 0x15,\ 0x2d,\ 0x13,\ 0x97,\ 0x66,\ 0xce,\ 0x34,\ 0xa7,}
+\DoxyCodeLine{00347\ \ \ \ \ 0x76,\ 0xdf,\ 0x11,\ 0x86,\ 0x6a,\ 0x69,\ 0xbf,\ 0x2e}
+\DoxyCodeLine{00348\ \};}
+\DoxyCodeLine{00349\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ ST\_KAT\_PARAM\ x963kdf\_params[]\ =\ \{}
+\DoxyCodeLine{00350\ \ \ \ \ ST\_KAT\_PARAM\_UTF8STRING(OSSL\_KDF\_PARAM\_DIGEST,\ x963kdf\_digest),}
+\DoxyCodeLine{00351\ \ \ \ \ ST\_KAT\_PARAM\_OCTET(OSSL\_KDF\_PARAM\_KEY,\ x963kdf\_secret),}
+\DoxyCodeLine{00352\ \ \ \ \ ST\_KAT\_PARAM\_OCTET(OSSL\_KDF\_PARAM\_INFO,\ x963kdf\_otherinfo),}
+\DoxyCodeLine{00353\ \ \ \ \ ST\_KAT\_PARAM\_END()}
+\DoxyCodeLine{00354\ \};}
+\DoxyCodeLine{00355\ }
+\DoxyCodeLine{00356\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ pbkdf2\_digest[]\ =\ \textcolor{stringliteral}{"{}SHA256"{}};}
+\DoxyCodeLine{00357\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00358\ \textcolor{comment}{\ *\ Input\ parameters\ from\ RFC\ 6070,\ vector\ 5\ (because\ it\ is\ the\ only\ one\ with}}
+\DoxyCodeLine{00359\ \textcolor{comment}{\ *\ a\ salt\ >=\ 16\ bytes,\ which\ NIST\ SP\ 800-\/132\ section\ 5.1\ requires).\ The}}
+\DoxyCodeLine{00360\ \textcolor{comment}{\ *\ expected\ output\ is\ taken\ from}}
+\DoxyCodeLine{00361\ \textcolor{comment}{\ *\ \ \ https://github.com/brycx/Test-\/Vector-\/Generation/blob/master/PBKDF2/pbkdf2-\/hmac-\/sha2-\/test-\/vectors.md,}}
+\DoxyCodeLine{00362\ \textcolor{comment}{\ *\ which\ ran\ these\ test\ vectors\ with\ SHA-\/256.}}
+\DoxyCodeLine{00363\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00364\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ pbkdf2\_password[]\ =\ \{}
+\DoxyCodeLine{00365\ \ \ \ \ 0x70,\ 0x61,\ 0x73,\ 0x73,\ 0x77,\ 0x6f,\ 0x72,\ 0x64,\ 0x50,\ 0x41,\ 0x53,\ 0x53,}
+\DoxyCodeLine{00366\ \ \ \ \ 0x57,\ 0x4f,\ 0x52,\ 0x44,\ 0x70,\ 0x61,\ 0x73,\ 0x73,\ 0x77,\ 0x6f,\ 0x72,\ 0x64}
+\DoxyCodeLine{00367\ \};}
+\DoxyCodeLine{00368\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ pbkdf2\_salt[]\ =\ \{}
+\DoxyCodeLine{00369\ \ \ \ \ 0x73,\ 0x61,\ 0x6c,\ 0x74,\ 0x53,\ 0x41,\ 0x4c,\ 0x54,\ 0x73,\ 0x61,\ 0x6c,\ 0x74,}
+\DoxyCodeLine{00370\ \ \ \ \ 0x53,\ 0x41,\ 0x4c,\ 0x54,\ 0x73,\ 0x61,\ 0x6c,\ 0x74,\ 0x53,\ 0x41,\ 0x4c,\ 0x54,}
+\DoxyCodeLine{00371\ \ \ \ \ 0x73,\ 0x61,\ 0x6c,\ 0x74,\ 0x53,\ 0x41,\ 0x4c,\ 0x54,\ 0x73,\ 0x61,\ 0x6c,\ 0x74}
+\DoxyCodeLine{00372\ \};}
+\DoxyCodeLine{00373\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ pbkdf2\_expected[]\ =\ \{}
+\DoxyCodeLine{00374\ \ \ \ \ 0x34,\ 0x8c,\ 0x89,\ 0xdb,\ 0xcb,\ 0xd3,\ 0x2b,\ 0x2f,\ 0x32,\ 0xd8,\ 0x14,\ 0xb8,}
+\DoxyCodeLine{00375\ \ \ \ \ 0x11,\ 0x6e,\ 0x84,\ 0xcf,\ 0x2b,\ 0x17,\ 0x34,\ 0x7e,\ 0xbc,\ 0x18,\ 0x00,\ 0x18,}
+\DoxyCodeLine{00376\ \ \ \ \ 0x1c}
+\DoxyCodeLine{00377\ \};}
+\DoxyCodeLine{00378\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ pbkdf2\_iterations\ =\ 4096;}
+\DoxyCodeLine{00379\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ pbkdf2\_pkcs5\ =\ 0;}
+\DoxyCodeLine{00380\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ ST\_KAT\_PARAM\ pbkdf2\_params[]\ =\ \{}
+\DoxyCodeLine{00381\ \ \ \ \ ST\_KAT\_PARAM\_UTF8STRING(OSSL\_KDF\_PARAM\_DIGEST,\ pbkdf2\_digest),}
+\DoxyCodeLine{00382\ \ \ \ \ ST\_KAT\_PARAM\_OCTET(OSSL\_KDF\_PARAM\_PASSWORD,\ pbkdf2\_password),}
+\DoxyCodeLine{00383\ \ \ \ \ ST\_KAT\_PARAM\_OCTET(OSSL\_KDF\_PARAM\_SALT,\ pbkdf2\_salt),}
+\DoxyCodeLine{00384\ \ \ \ \ ST\_KAT\_PARAM\_INT(OSSL\_KDF\_PARAM\_ITER,\ pbkdf2\_iterations),}
+\DoxyCodeLine{00385\ \ \ \ \ ST\_KAT\_PARAM\_INT(OSSL\_KDF\_PARAM\_PKCS5,\ pbkdf2\_pkcs5),}
+\DoxyCodeLine{00386\ \ \ \ \ ST\_KAT\_PARAM\_END()}
+\DoxyCodeLine{00387\ \};}
+\DoxyCodeLine{00388\ }
+\DoxyCodeLine{00389\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ sshkdf\_digest[]\ =\ \textcolor{stringliteral}{"{}SHA1"{}};}
+\DoxyCodeLine{00390\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ sshkdf\_type\ =\ EVP\_KDF\_SSHKDF\_TYPE\_INITIAL\_IV\_CLI\_TO\_SRV;}
+\DoxyCodeLine{00391\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ sshkdf\_key[]\ =\ \{}
+\DoxyCodeLine{00392\ \ \ \ \ 0x00,\ 0x00,\ 0x00,\ 0x80,\ 0x55,\ 0xba,\ 0xe9,\ 0x31,}
+\DoxyCodeLine{00393\ \ \ \ \ 0xc0,\ 0x7f,\ 0xd8,\ 0x24,\ 0xbf,\ 0x10,\ 0xad,\ 0xd1,}
+\DoxyCodeLine{00394\ \ \ \ \ 0x90,\ 0x2b,\ 0x6f,\ 0xbc,\ 0x7c,\ 0x66,\ 0x53,\ 0x47,}
+\DoxyCodeLine{00395\ \ \ \ \ 0x38,\ 0x34,\ 0x98,\ 0xa6,\ 0x86,\ 0x92,\ 0x9f,\ 0xf5,}
+\DoxyCodeLine{00396\ \ \ \ \ 0xa2,\ 0x5f,\ 0x8e,\ 0x40,\ 0xcb,\ 0x66,\ 0x45,\ 0xea,}
+\DoxyCodeLine{00397\ \ \ \ \ 0x81,\ 0x4f,\ 0xb1,\ 0xa5,\ 0xe0,\ 0xa1,\ 0x1f,\ 0x85,}
+\DoxyCodeLine{00398\ \ \ \ \ 0x2f,\ 0x86,\ 0x25,\ 0x56,\ 0x41,\ 0xe5,\ 0xed,\ 0x98,}
+\DoxyCodeLine{00399\ \ \ \ \ 0x6e,\ 0x83,\ 0xa7,\ 0x8b,\ 0xc8,\ 0x26,\ 0x94,\ 0x80,}
+\DoxyCodeLine{00400\ \ \ \ \ 0xea,\ 0xc0,\ 0xb0,\ 0xdf,\ 0xd7,\ 0x70,\ 0xca,\ 0xb9,}
+\DoxyCodeLine{00401\ \ \ \ \ 0x2e,\ 0x7a,\ 0x28,\ 0xdd,\ 0x87,\ 0xff,\ 0x45,\ 0x24,}
+\DoxyCodeLine{00402\ \ \ \ \ 0x66,\ 0xd6,\ 0xae,\ 0x86,\ 0x7c,\ 0xea,\ 0xd6,\ 0x3b,}
+\DoxyCodeLine{00403\ \ \ \ \ 0x36,\ 0x6b,\ 0x1c,\ 0x28,\ 0x6e,\ 0x6c,\ 0x48,\ 0x11,}
+\DoxyCodeLine{00404\ \ \ \ \ 0xa9,\ 0xf1,\ 0x4c,\ 0x27,\ 0xae,\ 0xa1,\ 0x4c,\ 0x51,}
+\DoxyCodeLine{00405\ \ \ \ \ 0x71,\ 0xd4,\ 0x9b,\ 0x78,\ 0xc0,\ 0x6e,\ 0x37,\ 0x35,}
+\DoxyCodeLine{00406\ \ \ \ \ 0xd3,\ 0x6e,\ 0x6a,\ 0x3b,\ 0xe3,\ 0x21,\ 0xdd,\ 0x5f,}
+\DoxyCodeLine{00407\ \ \ \ \ 0xc8,\ 0x23,\ 0x08,\ 0xf3,\ 0x4e,\ 0xe1,\ 0xcb,\ 0x17,}
+\DoxyCodeLine{00408\ \ \ \ \ 0xfb,\ 0xa9,\ 0x4a,\ 0x59,}
+\DoxyCodeLine{00409\ \};}
+\DoxyCodeLine{00410\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ sshkdf\_xcghash[]\ =\ \{}
+\DoxyCodeLine{00411\ \ \ \ \ 0xa4,\ 0xeb,\ 0xd4,\ 0x59,\ 0x34,\ 0xf5,\ 0x67,\ 0x92,}
+\DoxyCodeLine{00412\ \ \ \ \ 0xb5,\ 0x11,\ 0x2d,\ 0xcd,\ 0x75,\ 0xa1,\ 0x07,\ 0x5f,}
+\DoxyCodeLine{00413\ \ \ \ \ 0xdc,\ 0x88,\ 0x92,\ 0x45,}
+\DoxyCodeLine{00414\ \};}
+\DoxyCodeLine{00415\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ sshkdf\_session\_id[]\ =\ \{}
+\DoxyCodeLine{00416\ \ \ \ \ 0xa4,\ 0xeb,\ 0xd4,\ 0x59,\ 0x34,\ 0xf5,\ 0x67,\ 0x92,}
+\DoxyCodeLine{00417\ \ \ \ \ 0xb5,\ 0x11,\ 0x2d,\ 0xcd,\ 0x75,\ 0xa1,\ 0x07,\ 0x5f,}
+\DoxyCodeLine{00418\ \ \ \ \ 0xdc,\ 0x88,\ 0x92,\ 0x45,}
+\DoxyCodeLine{00419\ \};}
+\DoxyCodeLine{00420\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ sshkdf\_expected[]\ =\ \{}
+\DoxyCodeLine{00421\ \ \ \ \ 0xe2,\ 0xf6,\ 0x27,\ 0xc0,\ 0xb4,\ 0x3f,\ 0x1a,\ 0xc1,}
+\DoxyCodeLine{00422\ \};}
+\DoxyCodeLine{00423\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ ST\_KAT\_PARAM\ sshkdf\_params[]\ =\ \{}
+\DoxyCodeLine{00424\ \ \ \ \ ST\_KAT\_PARAM\_UTF8STRING(OSSL\_KDF\_PARAM\_DIGEST,\ sshkdf\_digest),}
+\DoxyCodeLine{00425\ \ \ \ \ ST\_KAT\_PARAM\_UTF8CHAR(OSSL\_KDF\_PARAM\_SSHKDF\_TYPE,\ sshkdf\_type),}
+\DoxyCodeLine{00426\ \ \ \ \ ST\_KAT\_PARAM\_OCTET(OSSL\_KDF\_PARAM\_KEY,\ sshkdf\_key),}
+\DoxyCodeLine{00427\ \ \ \ \ ST\_KAT\_PARAM\_OCTET(OSSL\_KDF\_PARAM\_SSHKDF\_XCGHASH,\ sshkdf\_xcghash),}
+\DoxyCodeLine{00428\ \ \ \ \ ST\_KAT\_PARAM\_OCTET(OSSL\_KDF\_PARAM\_SSHKDF\_SESSION\_ID,\ sshkdf\_session\_id),}
+\DoxyCodeLine{00429\ \ \ \ \ ST\_KAT\_PARAM\_END()}
+\DoxyCodeLine{00430\ \};}
+\DoxyCodeLine{00431\ }
+\DoxyCodeLine{00432\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ tls12prf\_digest[]\ =\ \textcolor{stringliteral}{"{}SHA256"{}};}
+\DoxyCodeLine{00433\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ tls12prf\_secret[]\ =\ \{}
+\DoxyCodeLine{00434\ \ \ \ \ 0x20,\ 0x2c,\ 0x88,\ 0xc0,\ 0x0f,\ 0x84,\ 0xa1,\ 0x7a,}
+\DoxyCodeLine{00435\ \ \ \ \ 0x20,\ 0x02,\ 0x70,\ 0x79,\ 0x60,\ 0x47,\ 0x87,\ 0x46,}
+\DoxyCodeLine{00436\ \ \ \ \ 0x11,\ 0x76,\ 0x45,\ 0x55,\ 0x39,\ 0xe7,\ 0x05,\ 0xbe,}
+\DoxyCodeLine{00437\ \ \ \ \ 0x73,\ 0x08,\ 0x90,\ 0x60,\ 0x2c,\ 0x28,\ 0x9a,\ 0x50,}
+\DoxyCodeLine{00438\ \ \ \ \ 0x01,\ 0xe3,\ 0x4e,\ 0xeb,\ 0x3a,\ 0x04,\ 0x3e,\ 0x5d,}
+\DoxyCodeLine{00439\ \ \ \ \ 0x52,\ 0xa6,\ 0x5e,\ 0x66,\ 0x12,\ 0x51,\ 0x88,\ 0xbf,}
+\DoxyCodeLine{00440\ \};}
+\DoxyCodeLine{00441\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ tls12prf\_seed[]\ =\ \{}
+\DoxyCodeLine{00442\ \ \ \ \ \textcolor{charliteral}{'k'},\ \textcolor{charliteral}{'e'},\ \textcolor{charliteral}{'y'},\ \textcolor{charliteral}{'\ '},\ \textcolor{charliteral}{'e'},\ \textcolor{charliteral}{'x'},\ \textcolor{charliteral}{'p'},\ \textcolor{charliteral}{'a'},\ \textcolor{charliteral}{'n'},\ \textcolor{charliteral}{'s'},\ \textcolor{charliteral}{'i'},\ \textcolor{charliteral}{'o'},\ \textcolor{charliteral}{'n'},}
+\DoxyCodeLine{00443\ \ \ \ \ 0xae,\ 0x6c,\ 0x80,\ 0x6f,\ 0x8a,\ 0xd4,\ 0xd8,\ 0x07,}
+\DoxyCodeLine{00444\ \ \ \ \ 0x84,\ 0x54,\ 0x9d,\ 0xff,\ 0x28,\ 0xa4,\ 0xb5,\ 0x8f,}
+\DoxyCodeLine{00445\ \ \ \ \ 0xd8,\ 0x37,\ 0x68,\ 0x1a,\ 0x51,\ 0xd9,\ 0x28,\ 0xc3,}
+\DoxyCodeLine{00446\ \ \ \ \ 0xe3,\ 0x0e,\ 0xe5,\ 0xff,\ 0x14,\ 0xf3,\ 0x98,\ 0x68,}
+\DoxyCodeLine{00447\ \ \ \ \ 0x62,\ 0xe1,\ 0xfd,\ 0x91,\ 0xf2,\ 0x3f,\ 0x55,\ 0x8a,}
+\DoxyCodeLine{00448\ \ \ \ \ 0x60,\ 0x5f,\ 0x28,\ 0x47,\ 0x8c,\ 0x58,\ 0xcf,\ 0x72,}
+\DoxyCodeLine{00449\ \ \ \ \ 0x63,\ 0x7b,\ 0x89,\ 0x78,\ 0x4d,\ 0x95,\ 0x9d,\ 0xf7,}
+\DoxyCodeLine{00450\ \ \ \ \ 0xe9,\ 0x46,\ 0xd3,\ 0xf0,\ 0x7b,\ 0xd1,\ 0xb6,\ 0x16,}
+\DoxyCodeLine{00451\ \ \};}
+\DoxyCodeLine{00452\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ tls12prf\_expected[]\ =\ \{}
+\DoxyCodeLine{00453\ \ \ \ \ 0xd0,\ 0x61,\ 0x39,\ 0x88,\ 0x9f,\ 0xff,\ 0xac,\ 0x1e,}
+\DoxyCodeLine{00454\ \ \ \ \ 0x3a,\ 0x71,\ 0x86,\ 0x5f,\ 0x50,\ 0x4a,\ 0xa5,\ 0xd0,}
+\DoxyCodeLine{00455\ \ \ \ \ 0xd2,\ 0xa2,\ 0xe8,\ 0x95,\ 0x06,\ 0xc6,\ 0xf2,\ 0x27,}
+\DoxyCodeLine{00456\ \ \ \ \ 0x9b,\ 0x67,\ 0x0c,\ 0x3e,\ 0x1b,\ 0x74,\ 0xf5,\ 0x31,}
+\DoxyCodeLine{00457\ \ \ \ \ 0x01,\ 0x6a,\ 0x25,\ 0x30,\ 0xc5,\ 0x1a,\ 0x3a,\ 0x0f,}
+\DoxyCodeLine{00458\ \ \ \ \ 0x7e,\ 0x1d,\ 0x65,\ 0x90,\ 0xd0,\ 0xf0,\ 0x56,\ 0x6b,}
+\DoxyCodeLine{00459\ \ \ \ \ 0x2f,\ 0x38,\ 0x7f,\ 0x8d,\ 0x11,\ 0xfd,\ 0x4f,\ 0x73,}
+\DoxyCodeLine{00460\ \ \ \ \ 0x1c,\ 0xdd,\ 0x57,\ 0x2d,\ 0x2e,\ 0xae,\ 0x92,\ 0x7f,}
+\DoxyCodeLine{00461\ \ \ \ \ 0x6f,\ 0x2f,\ 0x81,\ 0x41,\ 0x0b,\ 0x25,\ 0xe6,\ 0x96,}
+\DoxyCodeLine{00462\ \ \ \ \ 0x0b,\ 0xe6,\ 0x89,\ 0x85,\ 0xad,\ 0xd6,\ 0xc3,\ 0x84,}
+\DoxyCodeLine{00463\ \ \ \ \ 0x45,\ 0xad,\ 0x9f,\ 0x8c,\ 0x64,\ 0xbf,\ 0x80,\ 0x68,}
+\DoxyCodeLine{00464\ \ \ \ \ 0xbf,\ 0x9a,\ 0x66,\ 0x79,\ 0x48,\ 0x5d,\ 0x96,\ 0x6f,}
+\DoxyCodeLine{00465\ \ \ \ \ 0x1a,\ 0xd6,\ 0xf6,\ 0x8b,\ 0x43,\ 0x49,\ 0x5b,\ 0x10,}
+\DoxyCodeLine{00466\ \ \ \ \ 0xa6,\ 0x83,\ 0x75,\ 0x5e,\ 0xa2,\ 0xb8,\ 0x58,\ 0xd7,}
+\DoxyCodeLine{00467\ \ \ \ \ 0x0c,\ 0xca,\ 0xc7,\ 0xec,\ 0x8b,\ 0x05,\ 0x3c,\ 0x6b,}
+\DoxyCodeLine{00468\ \ \ \ \ 0xd4,\ 0x1c,\ 0xa2,\ 0x99,\ 0xd4,\ 0xe5,\ 0x19,\ 0x28,}
+\DoxyCodeLine{00469\ \};}
+\DoxyCodeLine{00470\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ ST\_KAT\_PARAM\ tls12prf\_params[]\ =\ \{}
+\DoxyCodeLine{00471\ \ \ \ \ ST\_KAT\_PARAM\_UTF8STRING(OSSL\_KDF\_PARAM\_DIGEST,\ tls12prf\_digest),}
+\DoxyCodeLine{00472\ \ \ \ \ ST\_KAT\_PARAM\_OCTET(OSSL\_KDF\_PARAM\_SECRET,\ tls12prf\_secret),}
+\DoxyCodeLine{00473\ \ \ \ \ ST\_KAT\_PARAM\_OCTET(OSSL\_KDF\_PARAM\_SEED,\ tls12prf\_seed),}
+\DoxyCodeLine{00474\ \ \ \ \ ST\_KAT\_PARAM\_END()}
+\DoxyCodeLine{00475\ \};}
+\DoxyCodeLine{00476\ }
+\DoxyCodeLine{00477\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ kbkdf\_digest[]\ =\ \textcolor{stringliteral}{"{}SHA256"{}};}
+\DoxyCodeLine{00478\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ kbkdf\_mac[]\ =\ \textcolor{stringliteral}{"{}HMAC"{}};}
+\DoxyCodeLine{00479\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ kbkdf\_salt[]\ =\ \{\ \textcolor{charliteral}{'p'},\ \textcolor{charliteral}{'r'},\ \textcolor{charliteral}{'f'}\ \};}
+\DoxyCodeLine{00480\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ kbkdf\_prfinput[]\ =\ \{\ \textcolor{charliteral}{'t'},\ \textcolor{charliteral}{'e'},\ \textcolor{charliteral}{'s'},\ \textcolor{charliteral}{'t'}\ \};}
+\DoxyCodeLine{00481\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ kbkdf\_key[]\ =\ \{}
+\DoxyCodeLine{00482\ \ \ \ \ 0x37,\ 0x05,\ 0xD9,\ 0x60,\ 0x80,\ 0xC1,\ 0x77,\ 0x28,}
+\DoxyCodeLine{00483\ \ \ \ \ 0xA0,\ 0xE8,\ 0x00,\ 0xEA,\ 0xB6,\ 0xE0,\ 0xD2,\ 0x3C,}
+\DoxyCodeLine{00484\ \};}
+\DoxyCodeLine{00485\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ kbkdf\_expected[]\ =\ \{}
+\DoxyCodeLine{00486\ \ \ \ \ 0x9D,\ 0x18,\ 0x86,\ 0x16,\ 0xF6,\ 0x38,\ 0x52,\ 0xFE,}
+\DoxyCodeLine{00487\ \ \ \ \ 0x86,\ 0x91,\ 0x5B,\ 0xB8,\ 0x40,\ 0xB4,\ 0xA8,\ 0x86,}
+\DoxyCodeLine{00488\ \ \ \ \ 0xFF,\ 0x3E,\ 0x6B,\ 0xB0,\ 0xF8,\ 0x19,\ 0xB4,\ 0x9B,}
+\DoxyCodeLine{00489\ \ \ \ \ 0x89,\ 0x33,\ 0x93,\ 0xD3,\ 0x93,\ 0x85,\ 0x42,\ 0x95,}
+\DoxyCodeLine{00490\ \};}
+\DoxyCodeLine{00491\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ ST\_KAT\_PARAM\ kbkdf\_params[]\ =\ \{}
+\DoxyCodeLine{00492\ \ \ \ \ ST\_KAT\_PARAM\_UTF8STRING(OSSL\_KDF\_PARAM\_DIGEST,\ kbkdf\_digest),}
+\DoxyCodeLine{00493\ \ \ \ \ ST\_KAT\_PARAM\_UTF8STRING(OSSL\_KDF\_PARAM\_MAC,\ kbkdf\_mac),}
+\DoxyCodeLine{00494\ \ \ \ \ ST\_KAT\_PARAM\_OCTET(OSSL\_KDF\_PARAM\_KEY,\ kbkdf\_key),}
+\DoxyCodeLine{00495\ \ \ \ \ ST\_KAT\_PARAM\_OCTET(OSSL\_KDF\_PARAM\_SALT,\ kbkdf\_salt),}
+\DoxyCodeLine{00496\ \ \ \ \ ST\_KAT\_PARAM\_OCTET(OSSL\_KDF\_PARAM\_INFO,\ kbkdf\_prfinput),}
+\DoxyCodeLine{00497\ \ \ \ \ ST\_KAT\_PARAM\_END()}
+\DoxyCodeLine{00498\ \};}
+\DoxyCodeLine{00499\ }
+\DoxyCodeLine{00500\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ tls13\_kdf\_digest[]\ =\ \textcolor{stringliteral}{"{}SHA256"{}};}
+\DoxyCodeLine{00501\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ tls13\_kdf\_extract\_mode\ =\ EVP\_KDF\_HKDF\_MODE\_EXTRACT\_ONLY;}
+\DoxyCodeLine{00502\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ tls13\_kdf\_expand\_mode\ =\ EVP\_KDF\_HKDF\_MODE\_EXPAND\_ONLY;}
+\DoxyCodeLine{00503\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ tls13\_kdf\_prefix[]\ =\ \{}
+\DoxyCodeLine{00504\ \ \ \ \ 0x74,\ 0x6C,\ 0x73,\ 0x31,\ 0x33,\ 0x20\ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ "{}tls13\ "{}\ */}}
+\DoxyCodeLine{00505\ \};}
+\DoxyCodeLine{00506\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ tls13\_kdf\_client\_early\_secret\_label[]\ =\ \{}
+\DoxyCodeLine{00507\ \ \ \ \ 0x63,\ 0x20,\ 0x65,\ 0x20,\ 0x74,\ 0x72,\ 0x61,\ 0x66,}
+\DoxyCodeLine{00508\ \ \ \ \ 0x66,\ 0x69,\ 0x63\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ "{}c\ e\ traffic"{}*/}}
+\DoxyCodeLine{00509\ \};}
+\DoxyCodeLine{00510\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ tls13\_kdf\_psk[]\ =\ \{}
+\DoxyCodeLine{00511\ \ \ \ \ 0xF8,\ 0xAF,\ 0x6A,\ 0xEA,\ 0x2D,\ 0x39,\ 0x7B,\ 0xAF,}
+\DoxyCodeLine{00512\ \ \ \ \ 0x29,\ 0x48,\ 0xA2,\ 0x5B,\ 0x28,\ 0x34,\ 0x20,\ 0x06,}
+\DoxyCodeLine{00513\ \ \ \ \ 0x92,\ 0xCF,\ 0xF1,\ 0x7E,\ 0xEE,\ 0x91,\ 0x65,\ 0xE4,}
+\DoxyCodeLine{00514\ \ \ \ \ 0xE2,\ 0x7B,\ 0xAB,\ 0xEE,\ 0x9E,\ 0xDE,\ 0xFD,\ 0x05}
+\DoxyCodeLine{00515\ \};}
+\DoxyCodeLine{00516\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ tls13\_kdf\_client\_hello\_hash[]\ =\ \{}
+\DoxyCodeLine{00517\ \ \ \ \ 0x7c,\ 0x92,\ 0xf6,\ 0x8b,\ 0xd5,\ 0xbf,\ 0x36,\ 0x38,}
+\DoxyCodeLine{00518\ \ \ \ \ 0xea,\ 0x33,\ 0x8a,\ 0x64,\ 0x94,\ 0x72,\ 0x2e,\ 0x1b,}
+\DoxyCodeLine{00519\ \ \ \ \ 0x44,\ 0x12,\ 0x7e,\ 0x1b,\ 0x7e,\ 0x8a,\ 0xad,\ 0x53,}
+\DoxyCodeLine{00520\ \ \ \ \ 0x5f,\ 0x23,\ 0x22,\ 0xa6,\ 0x44,\ 0xff,\ 0x22,\ 0xb3}
+\DoxyCodeLine{00521\ \};}
+\DoxyCodeLine{00522\ }
+\DoxyCodeLine{00523\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ tls13\_kdf\_early\_secret[]\ =\ \{}
+\DoxyCodeLine{00524\ \ \ \ \ 0x15,\ 0x3B,\ 0x63,\ 0x94,\ 0xA9,\ 0xC0,\ 0x3C,\ 0xF3,}
+\DoxyCodeLine{00525\ \ \ \ \ 0xF5,\ 0xAC,\ 0xCC,\ 0x6E,\ 0x45,\ 0x5A,\ 0x76,\ 0x93,}
+\DoxyCodeLine{00526\ \ \ \ \ 0x28,\ 0x11,\ 0x38,\ 0xA1,\ 0xBC,\ 0xFA,\ 0x38,\ 0x03,}
+\DoxyCodeLine{00527\ \ \ \ \ 0xC2,\ 0x67,\ 0x35,\ 0xDD,\ 0x11,\ 0x94,\ 0xD2,\ 0x16}
+\DoxyCodeLine{00528\ \};}
+\DoxyCodeLine{00529\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ tls13\_kdf\_client\_early\_traffic\_secret[]\ =\ \{}
+\DoxyCodeLine{00530\ \ \ \ \ 0xC8,\ 0x05,\ 0x83,\ 0xA9,\ 0x0E,\ 0x99,\ 0x5C,\ 0x48,}
+\DoxyCodeLine{00531\ \ \ \ \ 0x96,\ 0x00,\ 0x49,\ 0x2A,\ 0x5D,\ 0xA6,\ 0x42,\ 0xE6,}
+\DoxyCodeLine{00532\ \ \ \ \ 0xB1,\ 0xF6,\ 0x79,\ 0xBA,\ 0x67,\ 0x48,\ 0x28,\ 0x79,}
+\DoxyCodeLine{00533\ \ \ \ \ 0x2D,\ 0xF0,\ 0x87,\ 0xB9,\ 0x39,\ 0x63,\ 0x61,\ 0x71}
+\DoxyCodeLine{00534\ \};}
+\DoxyCodeLine{00535\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ ST\_KAT\_PARAM\ tls13\_kdf\_early\_secret\_params[]\ =\ \{}
+\DoxyCodeLine{00536\ \ \ \ \ ST\_KAT\_PARAM\_INT(OSSL\_KDF\_PARAM\_MODE,\ tls13\_kdf\_extract\_mode),}
+\DoxyCodeLine{00537\ \ \ \ \ ST\_KAT\_PARAM\_UTF8STRING(OSSL\_KDF\_PARAM\_DIGEST,\ tls13\_kdf\_digest),}
+\DoxyCodeLine{00538\ \ \ \ \ ST\_KAT\_PARAM\_OCTET(OSSL\_KDF\_PARAM\_KEY,\ tls13\_kdf\_psk),}
+\DoxyCodeLine{00539\ \ \ \ \ ST\_KAT\_PARAM\_END()}
+\DoxyCodeLine{00540\ \};}
+\DoxyCodeLine{00541\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ ST\_KAT\_PARAM\ tls13\_kdf\_client\_early\_secret\_params[]\ =\ \{}
+\DoxyCodeLine{00542\ \ \ \ \ ST\_KAT\_PARAM\_INT(OSSL\_KDF\_PARAM\_MODE,\ tls13\_kdf\_expand\_mode),}
+\DoxyCodeLine{00543\ \ \ \ \ ST\_KAT\_PARAM\_UTF8STRING(OSSL\_KDF\_PARAM\_DIGEST,\ tls13\_kdf\_digest),}
+\DoxyCodeLine{00544\ \ \ \ \ ST\_KAT\_PARAM\_OCTET(OSSL\_KDF\_PARAM\_KEY,\ tls13\_kdf\_early\_secret),}
+\DoxyCodeLine{00545\ \ \ \ \ ST\_KAT\_PARAM\_OCTET(OSSL\_KDF\_PARAM\_DATA,\ tls13\_kdf\_client\_hello\_hash),}
+\DoxyCodeLine{00546\ \ \ \ \ ST\_KAT\_PARAM\_OCTET(OSSL\_KDF\_PARAM\_PREFIX,\ tls13\_kdf\_prefix),}
+\DoxyCodeLine{00547\ \ \ \ \ ST\_KAT\_PARAM\_OCTET(OSSL\_KDF\_PARAM\_LABEL,}
+\DoxyCodeLine{00548\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ tls13\_kdf\_client\_early\_secret\_label),}
+\DoxyCodeLine{00549\ \ \ \ \ ST\_KAT\_PARAM\_END()}
+\DoxyCodeLine{00550\ \};}
+\DoxyCodeLine{00551\ }
+\DoxyCodeLine{00552\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ ST\_KAT\_KDF\ st\_kat\_kdf\_tests[]\ =}
+\DoxyCodeLine{00553\ \{}
+\DoxyCodeLine{00554\ \ \ \ \ \{}
+\DoxyCodeLine{00555\ \ \ \ \ \ \ \ \ OSSL\_SELF\_TEST\_DESC\_KDF\_TLS13\_EXTRACT,}
+\DoxyCodeLine{00556\ \ \ \ \ \ \ \ \ OSSL\_KDF\_NAME\_TLS1\_3\_KDF,}
+\DoxyCodeLine{00557\ \ \ \ \ \ \ \ \ tls13\_kdf\_early\_secret\_params,}
+\DoxyCodeLine{00558\ \ \ \ \ \ \ \ \ ITM(tls13\_kdf\_early\_secret)}
+\DoxyCodeLine{00559\ \ \ \ \ \},}
+\DoxyCodeLine{00560\ \ \ \ \ \{}
+\DoxyCodeLine{00561\ \ \ \ \ \ \ \ \ OSSL\_SELF\_TEST\_DESC\_KDF\_TLS13\_EXPAND,}
+\DoxyCodeLine{00562\ \ \ \ \ \ \ \ \ OSSL\_KDF\_NAME\_TLS1\_3\_KDF,}
+\DoxyCodeLine{00563\ \ \ \ \ \ \ \ \ tls13\_kdf\_client\_early\_secret\_params,}
+\DoxyCodeLine{00564\ \ \ \ \ \ \ \ \ ITM(tls13\_kdf\_client\_early\_traffic\_secret)}
+\DoxyCodeLine{00565\ \ \ \ \ \},}
+\DoxyCodeLine{00566\ \ \ \ \ \{}
+\DoxyCodeLine{00567\ \ \ \ \ \ \ \ \ OSSL\_SELF\_TEST\_DESC\_KDF\_TLS12\_PRF,}
+\DoxyCodeLine{00568\ \ \ \ \ \ \ \ \ OSSL\_KDF\_NAME\_TLS1\_PRF,}
+\DoxyCodeLine{00569\ \ \ \ \ \ \ \ \ tls12prf\_params,}
+\DoxyCodeLine{00570\ \ \ \ \ \ \ \ \ ITM(tls12prf\_expected)}
+\DoxyCodeLine{00571\ \ \ \ \ \},}
+\DoxyCodeLine{00572\ \ \ \ \ \{}
+\DoxyCodeLine{00573\ \ \ \ \ \ \ \ \ OSSL\_SELF\_TEST\_DESC\_KDF\_PBKDF2,}
+\DoxyCodeLine{00574\ \ \ \ \ \ \ \ \ OSSL\_KDF\_NAME\_PBKDF2,}
+\DoxyCodeLine{00575\ \ \ \ \ \ \ \ \ pbkdf2\_params,}
+\DoxyCodeLine{00576\ \ \ \ \ \ \ \ \ ITM(pbkdf2\_expected)}
+\DoxyCodeLine{00577\ \ \ \ \ \},}
+\DoxyCodeLine{00578\ \ \ \ \ \{}
+\DoxyCodeLine{00579\ \ \ \ \ \ \ \ \ OSSL\_SELF\_TEST\_DESC\_KDF\_SSHKDF,}
+\DoxyCodeLine{00580\ \ \ \ \ \ \ \ \ OSSL\_KDF\_NAME\_SSHKDF,}
+\DoxyCodeLine{00581\ \ \ \ \ \ \ \ \ sshkdf\_params,}
+\DoxyCodeLine{00582\ \ \ \ \ \ \ \ \ ITM(sshkdf\_expected)}
+\DoxyCodeLine{00583\ \ \ \ \ \},}
+\DoxyCodeLine{00584\ \ \ \ \ \{}
+\DoxyCodeLine{00585\ \ \ \ \ \ \ \ \ OSSL\_SELF\_TEST\_DESC\_KDF\_KBKDF,}
+\DoxyCodeLine{00586\ \ \ \ \ \ \ \ \ OSSL\_KDF\_NAME\_KBKDF,}
+\DoxyCodeLine{00587\ \ \ \ \ \ \ \ \ kbkdf\_params,}
+\DoxyCodeLine{00588\ \ \ \ \ \ \ \ \ ITM(kbkdf\_expected)}
+\DoxyCodeLine{00589\ \ \ \ \ \},}
+\DoxyCodeLine{00590\ \ \ \ \ \{}
+\DoxyCodeLine{00591\ \ \ \ \ \ \ \ \ OSSL\_SELF\_TEST\_DESC\_KDF\_HKDF,}
+\DoxyCodeLine{00592\ \ \ \ \ \ \ \ \ OSSL\_KDF\_NAME\_HKDF,}
+\DoxyCodeLine{00593\ \ \ \ \ \ \ \ \ hkdf\_params,}
+\DoxyCodeLine{00594\ \ \ \ \ \ \ \ \ ITM(hkdf\_expected)}
+\DoxyCodeLine{00595\ \ \ \ \ \},}
+\DoxyCodeLine{00596\ \ \ \ \ \{}
+\DoxyCodeLine{00597\ \ \ \ \ \ \ \ \ OSSL\_SELF\_TEST\_DESC\_KDF\_SSKDF,}
+\DoxyCodeLine{00598\ \ \ \ \ \ \ \ \ OSSL\_KDF\_NAME\_SSKDF,}
+\DoxyCodeLine{00599\ \ \ \ \ \ \ \ \ sskdf\_params,}
+\DoxyCodeLine{00600\ \ \ \ \ \ \ \ \ ITM(sskdf\_expected)}
+\DoxyCodeLine{00601\ \ \ \ \ \},}
+\DoxyCodeLine{00602\ \ \ \ \ \{}
+\DoxyCodeLine{00603\ \ \ \ \ \ \ \ \ OSSL\_SELF\_TEST\_DESC\_KDF\_X963KDF,}
+\DoxyCodeLine{00604\ \ \ \ \ \ \ \ \ OSSL\_KDF\_NAME\_X963KDF,}
+\DoxyCodeLine{00605\ \ \ \ \ \ \ \ \ x963kdf\_params,}
+\DoxyCodeLine{00606\ \ \ \ \ \ \ \ \ ITM(x963kdf\_expected)}
+\DoxyCodeLine{00607\ \ \ \ \ \},}
+\DoxyCodeLine{00608\ \ \ \ \ \{}
+\DoxyCodeLine{00609\ \ \ \ \ \ \ \ \ OSSL\_SELF\_TEST\_DESC\_KDF\_X942KDF,}
+\DoxyCodeLine{00610\ \ \ \ \ \ \ \ \ OSSL\_KDF\_NAME\_X942KDF\_ASN1,}
+\DoxyCodeLine{00611\ \ \ \ \ \ \ \ \ x942kdf\_params,}
+\DoxyCodeLine{00612\ \ \ \ \ \ \ \ \ ITM(x942kdf\_expected)}
+\DoxyCodeLine{00613\ \ \ \ \ \},}
+\DoxyCodeLine{00614\ \};}
+\DoxyCodeLine{00615\ }
+\DoxyCodeLine{00616\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00617\ \textcolor{comment}{*\ DRBG\ test\ vectors\ are\ a\ small\ subset\ of}}
+\DoxyCodeLine{00618\ \textcolor{comment}{*\ https://csrc.nist.rip/groups/STM/cavp/documents/drbg/drbgtestvectors.zip}}
+\DoxyCodeLine{00619\ \textcolor{comment}{*\ Using\ the\ folder\ drbgvectors\_pr\_true}}
+\DoxyCodeLine{00620\ \textcolor{comment}{*\ Generated\ for\ CAVS\ 14.3.}}
+\DoxyCodeLine{00621\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00622\ }
+\DoxyCodeLine{00623\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00624\ \textcolor{comment}{\ *\ Hash\_DRBG.rsp}}
+\DoxyCodeLine{00625\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00626\ \textcolor{comment}{\ *\ [SHA-\/256]}}
+\DoxyCodeLine{00627\ \textcolor{comment}{\ *\ [PredictionResistance\ =\ True]}}
+\DoxyCodeLine{00628\ \textcolor{comment}{\ *\ [EntropyInputLen\ =\ 256]}}
+\DoxyCodeLine{00629\ \textcolor{comment}{\ *\ [NonceLen\ =\ 128]}}
+\DoxyCodeLine{00630\ \textcolor{comment}{\ *\ [PersonalizationStringLen\ =\ 256]}}
+\DoxyCodeLine{00631\ \textcolor{comment}{\ *\ [AdditionalInputLen\ =\ 256]}}
+\DoxyCodeLine{00632\ \textcolor{comment}{\ *\ [ReturnedBitsLen\ =\ 1024]}}
+\DoxyCodeLine{00633\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00634\ \textcolor{comment}{\ *\ COUNT\ =\ 14}}
+\DoxyCodeLine{00635\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00636\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ drbg\_hash\_sha256\_pr\_entropyin[]\ =\ \{}
+\DoxyCodeLine{00637\ \ \ \ \ 0x06,\ 0x6d,\ 0xc8,\ 0xce,\ 0x75,\ 0xb2,\ 0x89,\ 0x66,\ 0xa6,\ 0x85,\ 0x16,\ 0x3f,}
+\DoxyCodeLine{00638\ \ \ \ \ 0xe2,\ 0xa4,\ 0xd4,\ 0x27,\ 0xfb,\ 0xdb,\ 0x61,\ 0x66,\ 0x50,\ 0x61,\ 0x6b,\ 0xa2,}
+\DoxyCodeLine{00639\ \ \ \ \ 0x82,\ 0xfc,\ 0x33,\ 0x2b,\ 0x4e,\ 0x6f,\ 0x12,\ 0x20}
+\DoxyCodeLine{00640\ \};}
+\DoxyCodeLine{00641\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ drbg\_hash\_sha256\_pr\_nonce[]\ =\ \{}
+\DoxyCodeLine{00642\ \ \ \ \ 0x55,\ 0x9f,\ 0x7c,\ 0x64,\ 0x89,\ 0x70,\ 0x83,\ 0xec,\ 0x2d,\ 0x73,\ 0x70,\ 0xd9,}
+\DoxyCodeLine{00643\ \ \ \ \ 0xf0,\ 0xe5,\ 0x07,\ 0x1f}
+\DoxyCodeLine{00644\ \};}
+\DoxyCodeLine{00645\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ drbg\_hash\_sha256\_pr\_persstr[]\ =\ \{}
+\DoxyCodeLine{00646\ \ \ \ \ 0x88,\ 0x6f,\ 0x54,\ 0x9a,\ 0xad,\ 0x1a,\ 0xc6,\ 0x3d,\ 0x18,\ 0xcb,\ 0xcc,\ 0x66,}
+\DoxyCodeLine{00647\ \ \ \ \ 0x85,\ 0xda,\ 0xa2,\ 0xc2,\ 0xf7,\ 0x9e,\ 0xb0,\ 0x89,\ 0x4c,\ 0xb4,\ 0xae,\ 0xf1,}
+\DoxyCodeLine{00648\ \ \ \ \ 0xac,\ 0x54,\ 0x4f,\ 0xce,\ 0x57,\ 0xf1,\ 0x5e,\ 0x11}
+\DoxyCodeLine{00649\ \};}
+\DoxyCodeLine{00650\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ drbg\_hash\_sha256\_pr\_entropyinpr0[]\ =\ \{}
+\DoxyCodeLine{00651\ \ \ \ \ 0xff,\ 0x80,\ 0xb7,\ 0xd2,\ 0x6a,\ 0x05,\ 0xbc,\ 0x8a,\ 0x7a,\ 0xbe,\ 0x53,\ 0x28,}
+\DoxyCodeLine{00652\ \ \ \ \ 0x6b,\ 0x0e,\ 0xeb,\ 0x73,\ 0x3b,\ 0x71,\ 0x5a,\ 0x20,\ 0x5b,\ 0xfa,\ 0x4f,\ 0xf6,}
+\DoxyCodeLine{00653\ \ \ \ \ 0x37,\ 0x03,\ 0xde,\ 0xad,\ 0xb6,\ 0xea,\ 0x0e,\ 0xf4}
+\DoxyCodeLine{00654\ \};}
+\DoxyCodeLine{00655\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ drbg\_hash\_sha256\_pr\_entropyinpr1[]\ =\ \{}
+\DoxyCodeLine{00656\ \ \ \ \ 0xc7,\ 0x38,\ 0x32,\ 0x53,\ 0x46,\ 0x81,\ 0xed,\ 0xe3,\ 0x7e,\ 0x03,\ 0x84,\ 0x6d,}
+\DoxyCodeLine{00657\ \ \ \ \ 0x3c,\ 0x84,\ 0x17,\ 0x67,\ 0x29,\ 0x7d,\ 0x24,\ 0x6c,\ 0x68,\ 0x92,\ 0x41,\ 0xd2,}
+\DoxyCodeLine{00658\ \ \ \ \ 0xe7,\ 0x75,\ 0xbe,\ 0x7e,\ 0xc9,\ 0x96,\ 0x29,\ 0x3d}
+\DoxyCodeLine{00659\ \};}
+\DoxyCodeLine{00660\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ drbg\_hash\_sha256\_pr\_addin0[]\ =\ \{}
+\DoxyCodeLine{00661\ \ \ \ \ 0xb7,\ 0x21,\ 0x5f,\ 0x14,\ 0xac,\ 0x7b,\ 0xaf,\ 0xd0,\ 0xa9,\ 0x17,\ 0x72,\ 0xba,}
+\DoxyCodeLine{00662\ \ \ \ \ 0x22,\ 0xf7,\ 0x19,\ 0xaf,\ 0xbd,\ 0x20,\ 0xb3,\ 0x11,\ 0x63,\ 0x6c,\ 0x2b,\ 0x1e,}
+\DoxyCodeLine{00663\ \ \ \ \ 0x83,\ 0xe4,\ 0xa8,\ 0x23,\ 0x35,\ 0x3f,\ 0xc6,\ 0xea}
+\DoxyCodeLine{00664\ \};}
+\DoxyCodeLine{00665\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ drbg\_hash\_sha256\_pr\_addin1[]\ =\ \{}
+\DoxyCodeLine{00666\ \ \ \ \ 0xce,\ 0xd3,\ 0x1f,\ 0x7e,\ 0x0d,\ 0xae,\ 0x5b,\ 0xb5,\ 0xc0,\ 0x43,\ 0xe2,\ 0x46,}
+\DoxyCodeLine{00667\ \ \ \ \ 0xb2,\ 0x94,\ 0x73,\ 0xe2,\ 0xfd,\ 0x39,\ 0x51,\ 0x2e,\ 0xad,\ 0x45,\ 0x69,\ 0xee,}
+\DoxyCodeLine{00668\ \ \ \ \ 0xe3,\ 0xe3,\ 0x80,\ 0x33,\ 0x14,\ 0xab,\ 0xa7,\ 0xa3}
+\DoxyCodeLine{00669\ \};}
+\DoxyCodeLine{00670\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ drbg\_hash\_sha256\_pr\_expected[]\ =\ \{}
+\DoxyCodeLine{00671\ \ \ \ \ 0x60,\ 0xc2,\ 0x34,\ 0xcf,\ 0xaf,\ 0xb4,\ 0x68,\ 0x03,\ 0x3b,\ 0xf1,\ 0x95,\ 0xe5,}
+\DoxyCodeLine{00672\ \ \ \ \ 0x78,\ 0xce,\ 0x26,\ 0x6e,\ 0x14,\ 0x65,\ 0x32,\ 0x6a,\ 0x96,\ 0xa9,\ 0xe0,\ 0x3f,}
+\DoxyCodeLine{00673\ \ \ \ \ 0x8b,\ 0x89,\ 0x36,\ 0x70,\ 0xef,\ 0x62,\ 0x75,\ 0x4d,\ 0x5e,\ 0x80,\ 0xd5,\ 0x53,}
+\DoxyCodeLine{00674\ \ \ \ \ 0xa1,\ 0xf8,\ 0x49,\ 0x50,\ 0x20,\ 0x8b,\ 0x93,\ 0x43,\ 0x07,\ 0x9f,\ 0x2e,\ 0xf8,}
+\DoxyCodeLine{00675\ \ \ \ \ 0x56,\ 0xe9,\ 0xc5,\ 0x70,\ 0x61,\ 0x85,\ 0x97,\ 0xb5,\ 0xdc,\ 0x82,\ 0xa2,\ 0xda,}
+\DoxyCodeLine{00676\ \ \ \ \ 0xea,\ 0xa3,\ 0xfd,\ 0x9b,\ 0x2f,\ 0xd2,\ 0xa0,\ 0xd7,\ 0x1b,\ 0xc6,\ 0x29,\ 0x35,}
+\DoxyCodeLine{00677\ \ \ \ \ 0xcc,\ 0xb8,\ 0x3d,\ 0xa0,\ 0x67,\ 0x98,\ 0x05,\ 0xa0,\ 0xe3,\ 0x1e,\ 0xfe,\ 0xe4,}
+\DoxyCodeLine{00678\ \ \ \ \ 0xf0,\ 0xe5,\ 0x13,\ 0xb0,\ 0x83,\ 0x17,\ 0xfa,\ 0xca,\ 0x93,\ 0x5e,\ 0x38,\ 0x29,}
+\DoxyCodeLine{00679\ \ \ \ \ 0x48,\ 0xd2,\ 0x72,\ 0xdb,\ 0x76,\ 0x3e,\ 0x6d,\ 0xf3,\ 0x25,\ 0x10,\ 0xff,\ 0x1b,}
+\DoxyCodeLine{00680\ \ \ \ \ 0x99,\ 0xff,\ 0xf8,\ 0xc6,\ 0x0e,\ 0xb0,\ 0xdd,\ 0x29,\ 0x2e,\ 0xbc,\ 0xbb,\ 0xc8,}
+\DoxyCodeLine{00681\ \ \ \ \ 0x0a,\ 0x01,\ 0x6e,\ 0xd3,\ 0xb0,\ 0x0e,\ 0x4e,\ 0xab}
+\DoxyCodeLine{00682\ \};}
+\DoxyCodeLine{00683\ }
+\DoxyCodeLine{00684\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00685\ \textcolor{comment}{\ *\ CTR\_DRBG.rsp}}
+\DoxyCodeLine{00686\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00687\ \textcolor{comment}{\ *\ [AES-\/128\ use\ df]}}
+\DoxyCodeLine{00688\ \textcolor{comment}{\ *\ [PredictionResistance\ =\ True]}}
+\DoxyCodeLine{00689\ \textcolor{comment}{\ *\ [EntropyInputLen\ =\ 128]}}
+\DoxyCodeLine{00690\ \textcolor{comment}{\ *\ [NonceLen\ =\ 64]}}
+\DoxyCodeLine{00691\ \textcolor{comment}{\ *\ [PersonalizationStringLen\ =\ 128]}}
+\DoxyCodeLine{00692\ \textcolor{comment}{\ *\ [AdditionalInputLen\ =\ 128]}}
+\DoxyCodeLine{00693\ \textcolor{comment}{\ *\ [ReturnedBitsLen\ =\ 512]}}
+\DoxyCodeLine{00694\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00695\ \textcolor{comment}{\ *\ COUNT\ =\ 0}}
+\DoxyCodeLine{00696\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00697\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ drbg\_ctr\_aes128\_pr\_df\_entropyin[]\ =\ \{}
+\DoxyCodeLine{00698\ \ \ \ \ 0x92,\ 0x89,\ 0x8f,\ 0x31,\ 0xfa,\ 0x1c,\ 0xff,\ 0x6d,\ 0x18,\ 0x2f,\ 0x26,\ 0x06,}
+\DoxyCodeLine{00699\ \ \ \ \ 0x43,\ 0xdf,\ 0xf8,\ 0x18}
+\DoxyCodeLine{00700\ \};}
+\DoxyCodeLine{00701\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ drbg\_ctr\_aes128\_pr\_df\_nonce[]\ =\ \{}
+\DoxyCodeLine{00702\ \ \ \ \ 0xc2,\ 0xa4,\ 0xd9,\ 0x72,\ 0xc3,\ 0xb9,\ 0xb6,\ 0x97}
+\DoxyCodeLine{00703\ \};}
+\DoxyCodeLine{00704\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ drbg\_ctr\_aes128\_pr\_df\_persstr[]\ =\ \{}
+\DoxyCodeLine{00705\ \ \ \ \ 0xea,\ 0x65,\ 0xee,\ 0x60,\ 0x26,\ 0x4e,\ 0x7e,\ 0xb6,\ 0x0e,\ 0x82,\ 0x68,\ 0xc4,}
+\DoxyCodeLine{00706\ \ \ \ \ 0x37,\ 0x3c,\ 0x5c,\ 0x0b}
+\DoxyCodeLine{00707\ \};}
+\DoxyCodeLine{00708\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ drbg\_ctr\_aes128\_pr\_df\_entropyinpr0[]\ =\ \{}
+\DoxyCodeLine{00709\ \ \ \ \ 0x20,\ 0x72,\ 0x8a,\ 0x06,\ 0xf8,\ 0x6f,\ 0x8d,\ 0xd4,\ 0x41,\ 0xe2,\ 0x72,\ 0xb7,}
+\DoxyCodeLine{00710\ \ \ \ \ 0xc4,\ 0x2c,\ 0xe8,\ 0x10}
+\DoxyCodeLine{00711\ \};}
+\DoxyCodeLine{00712\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ drbg\_ctr\_aes128\_pr\_df\_entropyinpr1[]\ =\ \{}
+\DoxyCodeLine{00713\ \ \ \ \ 0x3d,\ 0xb0,\ 0xf0,\ 0x94,\ 0xf3,\ 0x05,\ 0x50,\ 0x33,\ 0x17,\ 0x86,\ 0x3e,\ 0x22,}
+\DoxyCodeLine{00714\ \ \ \ \ 0x08,\ 0xf7,\ 0xa5,\ 0x01}
+\DoxyCodeLine{00715\ \};}
+\DoxyCodeLine{00716\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ drbg\_ctr\_aes128\_pr\_df\_addin0[]\ =\ \{}
+\DoxyCodeLine{00717\ \ \ \ \ 0x1a,\ 0x40,\ 0xfa,\ 0xe3,\ 0xcc,\ 0x6c,\ 0x7c,\ 0xa0,\ 0xf8,\ 0xda,\ 0xba,\ 0x59,}
+\DoxyCodeLine{00718\ \ \ \ \ 0x23,\ 0x6d,\ 0xad,\ 0x1d}
+\DoxyCodeLine{00719\ \};}
+\DoxyCodeLine{00720\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ drbg\_ctr\_aes128\_pr\_df\_addin1[]\ =\ \{}
+\DoxyCodeLine{00721\ \ \ \ \ 0x9f,\ 0x72,\ 0x76,\ 0x6c,\ 0xc7,\ 0x46,\ 0xe5,\ 0xed,\ 0x2e,\ 0x53,\ 0x20,\ 0x12,}
+\DoxyCodeLine{00722\ \ \ \ \ 0xbc,\ 0x59,\ 0x31,\ 0x8c}
+\DoxyCodeLine{00723\ \};}
+\DoxyCodeLine{00724\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ drbg\_ctr\_aes128\_pr\_df\_expected[]\ =\ \{}
+\DoxyCodeLine{00725\ \ \ \ \ 0x5a,\ 0x35,\ 0x39,\ 0x87,\ 0x0f,\ 0x4d,\ 0x22,\ 0xa4,\ 0x09,\ 0x24,\ 0xee,\ 0x71,}
+\DoxyCodeLine{00726\ \ \ \ \ 0xc9,\ 0x6f,\ 0xac,\ 0x72,\ 0x0a,\ 0xd6,\ 0xf0,\ 0x88,\ 0x82,\ 0xd0,\ 0x83,\ 0x28,}
+\DoxyCodeLine{00727\ \ \ \ \ 0x73,\ 0xec,\ 0x3f,\ 0x93,\ 0xd8,\ 0xab,\ 0x45,\ 0x23,\ 0xf0,\ 0x7e,\ 0xac,\ 0x45,}
+\DoxyCodeLine{00728\ \ \ \ \ 0x14,\ 0x5e,\ 0x93,\ 0x9f,\ 0xb1,\ 0xd6,\ 0x76,\ 0x43,\ 0x3d,\ 0xb6,\ 0xe8,\ 0x08,}
+\DoxyCodeLine{00729\ \ \ \ \ 0x88,\ 0xf6,\ 0xda,\ 0x89,\ 0x08,\ 0x77,\ 0x42,\ 0xfe,\ 0x1a,\ 0xf4,\ 0x3f,\ 0xc4,}
+\DoxyCodeLine{00730\ \ \ \ \ 0x23,\ 0xc5,\ 0x1f,\ 0x68}
+\DoxyCodeLine{00731\ \};}
+\DoxyCodeLine{00732\ }
+\DoxyCodeLine{00733\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00734\ \textcolor{comment}{\ *\ HMAC\_DRBG.rsp}}
+\DoxyCodeLine{00735\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00736\ \textcolor{comment}{\ *\ [SHA-\/1]}}
+\DoxyCodeLine{00737\ \textcolor{comment}{\ *\ [PredictionResistance\ =\ True]}}
+\DoxyCodeLine{00738\ \textcolor{comment}{\ *\ [EntropyInputLen\ =\ 128]}}
+\DoxyCodeLine{00739\ \textcolor{comment}{\ *\ [NonceLen\ =\ 64]}}
+\DoxyCodeLine{00740\ \textcolor{comment}{\ *\ [PersonalizationStringLen\ =\ 128]}}
+\DoxyCodeLine{00741\ \textcolor{comment}{\ *\ [AdditionalInputLen\ =\ 128]}}
+\DoxyCodeLine{00742\ \textcolor{comment}{\ *\ [ReturnedBitsLen\ =\ 640]}}
+\DoxyCodeLine{00743\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00744\ \textcolor{comment}{\ *\ COUNT\ =\ 0}}
+\DoxyCodeLine{00745\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00746\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ drbg\_hmac\_sha1\_pr\_entropyin[]\ =\ \{}
+\DoxyCodeLine{00747\ \ \ \ \ 0x68,\ 0x0f,\ 0xac,\ 0xe9,\ 0x0d,\ 0x7b,\ 0xca,\ 0x21,\ 0xd4,\ 0xa0,\ 0xed,\ 0xb7,}
+\DoxyCodeLine{00748\ \ \ \ \ 0x79,\ 0x9e,\ 0xe5,\ 0xd8}
+\DoxyCodeLine{00749\ \};}
+\DoxyCodeLine{00750\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ drbg\_hmac\_sha1\_pr\_nonce[]\ =\ \{}
+\DoxyCodeLine{00751\ \ \ \ \ 0xb7,\ 0xbe,\ 0x9e,\ 0xed,\ 0xdd,\ 0x0e,\ 0x3b,\ 0x4b}
+\DoxyCodeLine{00752\ \};}
+\DoxyCodeLine{00753\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ drbg\_hmac\_sha1\_pr\_persstr[]\ =\ \{}
+\DoxyCodeLine{00754\ \ \ \ \ 0xf5,\ 0x8c,\ 0x40,\ 0xae,\ 0x70,\ 0xf7,\ 0xa5,\ 0x56,\ 0x48,\ 0xa9,\ 0x31,\ 0xa0,}
+\DoxyCodeLine{00755\ \ \ \ \ 0xa9,\ 0x31,\ 0x3d,\ 0xd7}
+\DoxyCodeLine{00756\ \};}
+\DoxyCodeLine{00757\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ drbg\_hmac\_sha1\_pr\_entropyinpr0[]\ =\ \{}
+\DoxyCodeLine{00758\ \ \ \ \ 0x7c,\ 0xaf,\ 0xe2,\ 0x31,\ 0x63,\ 0x0a,\ 0xa9,\ 0x5a,\ 0x74,\ 0x2c,\ 0x4e,\ 0x5f,}
+\DoxyCodeLine{00759\ \ \ \ \ 0x5f,\ 0x22,\ 0xc6,\ 0xa4}
+\DoxyCodeLine{00760\ \};}
+\DoxyCodeLine{00761\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ drbg\_hmac\_sha1\_pr\_entropyinpr1[]\ =\ \{}
+\DoxyCodeLine{00762\ \ \ \ \ 0x1c,\ 0x0d,\ 0x77,\ 0x92,\ 0x89,\ 0x88,\ 0x27,\ 0x94,\ 0x8a,\ 0x58,\ 0x9f,\ 0x82,}
+\DoxyCodeLine{00763\ \ \ \ \ 0x2d,\ 0x1a,\ 0xf7,\ 0xa6}
+\DoxyCodeLine{00764\ \};}
+\DoxyCodeLine{00765\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ drbg\_hmac\_sha1\_pr\_addin0[]\ =\ \{}
+\DoxyCodeLine{00766\ \ \ \ \ 0xdc,\ 0x36,\ 0x63,\ 0xf0,\ 0x62,\ 0x78,\ 0x9c,\ 0xd1,\ 0x5c,\ 0xbb,\ 0x20,\ 0xc3,}
+\DoxyCodeLine{00767\ \ \ \ \ 0xc1,\ 0x8c,\ 0xd9,\ 0xd7}
+\DoxyCodeLine{00768\ \};}
+\DoxyCodeLine{00769\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ drbg\_hmac\_sha1\_pr\_addin1[]\ =\ \{}
+\DoxyCodeLine{00770\ \ \ \ \ 0xfe,\ 0x85,\ 0xb0,\ 0xab,\ 0x14,\ 0xc6,\ 0x96,\ 0xe6,\ 0x9c,\ 0x24,\ 0xe7,\ 0xb5,}
+\DoxyCodeLine{00771\ \ \ \ \ 0xa1,\ 0x37,\ 0x12,\ 0x0c}
+\DoxyCodeLine{00772\ \};}
+\DoxyCodeLine{00773\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ drbg\_hmac\_sha1\_pr\_expected[]\ =\ \{}
+\DoxyCodeLine{00774\ \ \ \ \ 0x68,\ 0x00,\ 0x4b,\ 0x3a,\ 0x28,\ 0xf7,\ 0xf0,\ 0x1c,\ 0xf9,\ 0xe9,\ 0xb5,\ 0x71,}
+\DoxyCodeLine{00775\ \ \ \ \ 0x20,\ 0x79,\ 0xef,\ 0x80,\ 0x87,\ 0x1b,\ 0x08,\ 0xb9,\ 0xa9,\ 0x1b,\ 0xcd,\ 0x2b,}
+\DoxyCodeLine{00776\ \ \ \ \ 0x9f,\ 0x09,\ 0x4d,\ 0xa4,\ 0x84,\ 0x80,\ 0xb3,\ 0x4c,\ 0xaf,\ 0xd5,\ 0x59,\ 0x6b,}
+\DoxyCodeLine{00777\ \ \ \ \ 0x0c,\ 0x0a,\ 0x48,\ 0xe1,\ 0x48,\ 0xda,\ 0xbc,\ 0x6f,\ 0x77,\ 0xb8,\ 0xff,\ 0xaf,}
+\DoxyCodeLine{00778\ \ \ \ \ 0x18,\ 0x70,\ 0x28,\ 0xe1,\ 0x04,\ 0x13,\ 0x7a,\ 0x4f,\ 0xeb,\ 0x1c,\ 0x72,\ 0xb0,}
+\DoxyCodeLine{00779\ \ \ \ \ 0xc4,\ 0x4f,\ 0xe8,\ 0xb1,\ 0xaf,\ 0xab,\ 0xa5,\ 0xbc,\ 0xfd,\ 0x86,\ 0x67,\ 0xf2,}
+\DoxyCodeLine{00780\ \ \ \ \ 0xf5,\ 0x5b,\ 0x46,\ 0x06,\ 0x63,\ 0x2e,\ 0x3c,\ 0xbc}
+\DoxyCodeLine{00781\ \};}
+\DoxyCodeLine{00782\ }
+\DoxyCodeLine{00783\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ ST\_KAT\_DRBG\ st\_kat\_drbg\_tests[]\ =}
+\DoxyCodeLine{00784\ \{}
+\DoxyCodeLine{00785\ \ \ \ \ \{}
+\DoxyCodeLine{00786\ \ \ \ \ \ \ \ \ OSSL\_SELF\_TEST\_DESC\_DRBG\_HASH,}
+\DoxyCodeLine{00787\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}HASH-\/DRBG"{}},\ \textcolor{stringliteral}{"{}digest"{}},\ \textcolor{stringliteral}{"{}SHA256"{}},}
+\DoxyCodeLine{00788\ \ \ \ \ \ \ \ \ ITM(drbg\_hash\_sha256\_pr\_entropyin),}
+\DoxyCodeLine{00789\ \ \ \ \ \ \ \ \ ITM(drbg\_hash\_sha256\_pr\_nonce),}
+\DoxyCodeLine{00790\ \ \ \ \ \ \ \ \ ITM(drbg\_hash\_sha256\_pr\_persstr),}
+\DoxyCodeLine{00791\ \ \ \ \ \ \ \ \ ITM(drbg\_hash\_sha256\_pr\_entropyinpr0),}
+\DoxyCodeLine{00792\ \ \ \ \ \ \ \ \ ITM(drbg\_hash\_sha256\_pr\_entropyinpr1),}
+\DoxyCodeLine{00793\ \ \ \ \ \ \ \ \ ITM(drbg\_hash\_sha256\_pr\_addin0),}
+\DoxyCodeLine{00794\ \ \ \ \ \ \ \ \ ITM(drbg\_hash\_sha256\_pr\_addin1),}
+\DoxyCodeLine{00795\ \ \ \ \ \ \ \ \ ITM(drbg\_hash\_sha256\_pr\_expected)}
+\DoxyCodeLine{00796\ \ \ \ \ \},}
+\DoxyCodeLine{00797\ \ \ \ \ \{}
+\DoxyCodeLine{00798\ \ \ \ \ \ \ \ \ OSSL\_SELF\_TEST\_DESC\_DRBG\_CTR,}
+\DoxyCodeLine{00799\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}CTR-\/DRBG"{}},\ \textcolor{stringliteral}{"{}cipher"{}},\ \textcolor{stringliteral}{"{}AES-\/128-\/CTR"{}},}
+\DoxyCodeLine{00800\ \ \ \ \ \ \ \ \ ITM(drbg\_ctr\_aes128\_pr\_df\_entropyin),}
+\DoxyCodeLine{00801\ \ \ \ \ \ \ \ \ ITM(drbg\_ctr\_aes128\_pr\_df\_nonce),}
+\DoxyCodeLine{00802\ \ \ \ \ \ \ \ \ ITM(drbg\_ctr\_aes128\_pr\_df\_persstr),}
+\DoxyCodeLine{00803\ \ \ \ \ \ \ \ \ ITM(drbg\_ctr\_aes128\_pr\_df\_entropyinpr0),}
+\DoxyCodeLine{00804\ \ \ \ \ \ \ \ \ ITM(drbg\_ctr\_aes128\_pr\_df\_entropyinpr1),}
+\DoxyCodeLine{00805\ \ \ \ \ \ \ \ \ ITM(drbg\_ctr\_aes128\_pr\_df\_addin0),}
+\DoxyCodeLine{00806\ \ \ \ \ \ \ \ \ ITM(drbg\_ctr\_aes128\_pr\_df\_addin1),}
+\DoxyCodeLine{00807\ \ \ \ \ \ \ \ \ ITM(drbg\_ctr\_aes128\_pr\_df\_expected)}
+\DoxyCodeLine{00808\ \ \ \ \ \},}
+\DoxyCodeLine{00809\ \ \ \ \ \{}
+\DoxyCodeLine{00810\ \ \ \ \ \ \ \ \ OSSL\_SELF\_TEST\_DESC\_DRBG\_HMAC,}
+\DoxyCodeLine{00811\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}HMAC-\/DRBG"{}},\ \textcolor{stringliteral}{"{}digest"{}},\ \textcolor{stringliteral}{"{}SHA1"{}},}
+\DoxyCodeLine{00812\ \ \ \ \ \ \ \ \ ITM(drbg\_hmac\_sha1\_pr\_entropyin),}
+\DoxyCodeLine{00813\ \ \ \ \ \ \ \ \ ITM(drbg\_hmac\_sha1\_pr\_nonce),}
+\DoxyCodeLine{00814\ \ \ \ \ \ \ \ \ ITM(drbg\_hmac\_sha1\_pr\_persstr),}
+\DoxyCodeLine{00815\ \ \ \ \ \ \ \ \ ITM(drbg\_hmac\_sha1\_pr\_entropyinpr0),}
+\DoxyCodeLine{00816\ \ \ \ \ \ \ \ \ ITM(drbg\_hmac\_sha1\_pr\_entropyinpr1),}
+\DoxyCodeLine{00817\ \ \ \ \ \ \ \ \ ITM(drbg\_hmac\_sha1\_pr\_addin0),}
+\DoxyCodeLine{00818\ \ \ \ \ \ \ \ \ ITM(drbg\_hmac\_sha1\_pr\_addin1),}
+\DoxyCodeLine{00819\ \ \ \ \ \ \ \ \ ITM(drbg\_hmac\_sha1\_pr\_expected)}
+\DoxyCodeLine{00820\ \ \ \ \ \}}
+\DoxyCodeLine{00821\ \};}
+\DoxyCodeLine{00822\ }
+\DoxyCodeLine{00823\ \textcolor{comment}{/*\ KEY\ EXCHANGE\ TEST\ DATA\ */}}
+\DoxyCodeLine{00824\ }
+\DoxyCodeLine{00825\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_DH}}
+\DoxyCodeLine{00826\ \textcolor{comment}{/*\ DH\ KAT\ */}}
+\DoxyCodeLine{00827\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ dh\_p[]\ =\ \{}
+\DoxyCodeLine{00828\ \ \ \ \ 0xdc,\ 0xca,\ 0x15,\ 0x11,\ 0xb2,\ 0x31,\ 0x32,\ 0x25,}
+\DoxyCodeLine{00829\ \ \ \ \ 0xf5,\ 0x21,\ 0x16,\ 0xe1,\ 0x54,\ 0x27,\ 0x89,\ 0xe0,}
+\DoxyCodeLine{00830\ \ \ \ \ 0x01,\ 0xf0,\ 0x42,\ 0x5b,\ 0xcc,\ 0xc7,\ 0xf3,\ 0x66,}
+\DoxyCodeLine{00831\ \ \ \ \ 0xf7,\ 0x40,\ 0x64,\ 0x07,\ 0xf1,\ 0xc9,\ 0xfa,\ 0x8b,}
+\DoxyCodeLine{00832\ \ \ \ \ 0xe6,\ 0x10,\ 0xf1,\ 0x77,\ 0x8b,\ 0xb1,\ 0x70,\ 0xbe,}
+\DoxyCodeLine{00833\ \ \ \ \ 0x39,\ 0xdb,\ 0xb7,\ 0x6f,\ 0x85,\ 0xbf,\ 0x24,\ 0xce,}
+\DoxyCodeLine{00834\ \ \ \ \ 0x68,\ 0x80,\ 0xad,\ 0xb7,\ 0x62,\ 0x9f,\ 0x7c,\ 0x6d,}
+\DoxyCodeLine{00835\ \ \ \ \ 0x01,\ 0x5e,\ 0x61,\ 0xd4,\ 0x3f,\ 0xa3,\ 0xee,\ 0x4d,}
+\DoxyCodeLine{00836\ \ \ \ \ 0xe1,\ 0x85,\ 0xf2,\ 0xcf,\ 0xd0,\ 0x41,\ 0xff,\ 0xde,}
+\DoxyCodeLine{00837\ \ \ \ \ 0x9d,\ 0x41,\ 0x84,\ 0x07,\ 0xe1,\ 0x51,\ 0x38,\ 0xbb,}
+\DoxyCodeLine{00838\ \ \ \ \ 0x02,\ 0x1d,\ 0xae,\ 0xb3,\ 0x5f,\ 0x76,\ 0x2d,\ 0x17,}
+\DoxyCodeLine{00839\ \ \ \ \ 0x82,\ 0xac,\ 0xc6,\ 0x58,\ 0xd3,\ 0x2b,\ 0xd4,\ 0xb0,}
+\DoxyCodeLine{00840\ \ \ \ \ 0x23,\ 0x2c,\ 0x92,\ 0x7d,\ 0xd3,\ 0x8f,\ 0xa0,\ 0x97,}
+\DoxyCodeLine{00841\ \ \ \ \ 0xb3,\ 0xd1,\ 0x85,\ 0x9f,\ 0xa8,\ 0xac,\ 0xaf,\ 0xb9,}
+\DoxyCodeLine{00842\ \ \ \ \ 0x8f,\ 0x06,\ 0x66,\ 0x08,\ 0xfc,\ 0x64,\ 0x4e,\ 0xc7,}
+\DoxyCodeLine{00843\ \ \ \ \ 0xdd,\ 0xb6,\ 0xf0,\ 0x85,\ 0x99,\ 0xf9,\ 0x2a,\ 0xc1,}
+\DoxyCodeLine{00844\ \ \ \ \ 0xb5,\ 0x98,\ 0x25,\ 0xda,\ 0x84,\ 0x32,\ 0x07,\ 0x7d,}
+\DoxyCodeLine{00845\ \ \ \ \ 0xef,\ 0x69,\ 0x56,\ 0x46,\ 0x06,\ 0x3c,\ 0x20,\ 0x82,}
+\DoxyCodeLine{00846\ \ \ \ \ 0x3c,\ 0x95,\ 0x07,\ 0xab,\ 0x6f,\ 0x01,\ 0x76,\ 0xd4,}
+\DoxyCodeLine{00847\ \ \ \ \ 0x73,\ 0x0d,\ 0x99,\ 0x0d,\ 0xbb,\ 0xe6,\ 0x36,\ 0x1c,}
+\DoxyCodeLine{00848\ \ \ \ \ 0xd8,\ 0xb2,\ 0xb9,\ 0x4d,\ 0x3d,\ 0x2f,\ 0x32,\ 0x9b,}
+\DoxyCodeLine{00849\ \ \ \ \ 0x82,\ 0x09,\ 0x9b,\ 0xd6,\ 0x61,\ 0xf4,\ 0x29,\ 0x50,}
+\DoxyCodeLine{00850\ \ \ \ \ 0xf4,\ 0x03,\ 0xdf,\ 0x3e,\ 0xde,\ 0x62,\ 0xa3,\ 0x31,}
+\DoxyCodeLine{00851\ \ \ \ \ 0x88,\ 0xb0,\ 0x27,\ 0x98,\ 0xba,\ 0x82,\ 0x3f,\ 0x44,}
+\DoxyCodeLine{00852\ \ \ \ \ 0xb9,\ 0x46,\ 0xfe,\ 0x9d,\ 0xf6,\ 0x77,\ 0xa0,\ 0xc5,}
+\DoxyCodeLine{00853\ \ \ \ \ 0xa1,\ 0x23,\ 0x8e,\ 0xaa,\ 0x97,\ 0xb7,\ 0x0f,\ 0x80,}
+\DoxyCodeLine{00854\ \ \ \ \ 0xda,\ 0x8c,\ 0xac,\ 0x88,\ 0xe0,\ 0x92,\ 0xb1,\ 0x12,}
+\DoxyCodeLine{00855\ \ \ \ \ 0x70,\ 0x60,\ 0xff,\ 0xbf,\ 0x45,\ 0x57,\ 0x99,\ 0x94,}
+\DoxyCodeLine{00856\ \ \ \ \ 0x01,\ 0x1d,\ 0xc2,\ 0xfa,\ 0xa5,\ 0xe7,\ 0xf6,\ 0xc7,}
+\DoxyCodeLine{00857\ \ \ \ \ 0x62,\ 0x45,\ 0xe1,\ 0xcc,\ 0x31,\ 0x22,\ 0x31,\ 0xc1,}
+\DoxyCodeLine{00858\ \ \ \ \ 0x7d,\ 0x1c,\ 0xa6,\ 0xb1,\ 0x90,\ 0x07,\ 0xef,\ 0x0d,}
+\DoxyCodeLine{00859\ \ \ \ \ 0xb9,\ 0x9f,\ 0x9c,\ 0xb6,\ 0x0e,\ 0x1d,\ 0x5f,\ 0x69}
+\DoxyCodeLine{00860\ \};}
+\DoxyCodeLine{00861\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ dh\_q[]\ =\ \{}
+\DoxyCodeLine{00862\ \ \ \ \ 0x89,\ 0x8b,\ 0x22,\ 0x67,\ 0x17,\ 0xef,\ 0x03,\ 0x9e,}
+\DoxyCodeLine{00863\ \ \ \ \ 0x60,\ 0x3e,\ 0x82,\ 0xe5,\ 0xc7,\ 0xaf,\ 0xe4,\ 0x83,}
+\DoxyCodeLine{00864\ \ \ \ \ 0x74,\ 0xac,\ 0x5f,\ 0x62,\ 0x5c,\ 0x54,\ 0xf1,\ 0xea,}
+\DoxyCodeLine{00865\ \ \ \ \ 0x11,\ 0xac,\ 0xb5,\ 0x7d}
+\DoxyCodeLine{00866\ \};}
+\DoxyCodeLine{00867\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ dh\_g[]\ =\ \{}
+\DoxyCodeLine{00868\ \ \ \ \ 0x5e,\ 0xf7,\ 0xb8,\ 0x8f,\ 0x2d,\ 0xf6,\ 0x01,\ 0x39,}
+\DoxyCodeLine{00869\ \ \ \ \ 0x35,\ 0x1d,\ 0xfb,\ 0xfe,\ 0x12,\ 0x66,\ 0x80,\ 0x5f,}
+\DoxyCodeLine{00870\ \ \ \ \ 0xdf,\ 0x35,\ 0x6c,\ 0xdf,\ 0xd1,\ 0x3a,\ 0x4d,\ 0xa0,}
+\DoxyCodeLine{00871\ \ \ \ \ 0x05,\ 0x0c,\ 0x7e,\ 0xde,\ 0x24,\ 0x6d,\ 0xf5,\ 0x9f,}
+\DoxyCodeLine{00872\ \ \ \ \ 0x6a,\ 0xbf,\ 0x96,\ 0xad,\ 0xe5,\ 0xf2,\ 0xb2,\ 0x8f,}
+\DoxyCodeLine{00873\ \ \ \ \ 0xfe,\ 0x88,\ 0xd6,\ 0xbc,\ 0xe7,\ 0xf7,\ 0x89,\ 0x4a,}
+\DoxyCodeLine{00874\ \ \ \ \ 0x3d,\ 0x53,\ 0x5f,\ 0xc8,\ 0x21,\ 0x26,\ 0xdd,\ 0xd4,}
+\DoxyCodeLine{00875\ \ \ \ \ 0x24,\ 0x87,\ 0x2e,\ 0x16,\ 0xb8,\ 0x38,\ 0xdf,\ 0x8c,}
+\DoxyCodeLine{00876\ \ \ \ \ 0x51,\ 0xe9,\ 0x01,\ 0x6f,\ 0x88,\ 0x9c,\ 0x7c,\ 0x20,}
+\DoxyCodeLine{00877\ \ \ \ \ 0x3e,\ 0x98,\ 0xa8,\ 0xb6,\ 0x31,\ 0xf9,\ 0xc7,\ 0x25,}
+\DoxyCodeLine{00878\ \ \ \ \ 0x63,\ 0xd3,\ 0x8a,\ 0x49,\ 0x58,\ 0x9a,\ 0x07,\ 0x53,}
+\DoxyCodeLine{00879\ \ \ \ \ 0xd3,\ 0x58,\ 0xe7,\ 0x83,\ 0x31,\ 0x8c,\ 0xef,\ 0xd9,}
+\DoxyCodeLine{00880\ \ \ \ \ 0x67,\ 0x7c,\ 0x7b,\ 0x2d,\ 0xbb,\ 0x77,\ 0xd6,\ 0xdc,}
+\DoxyCodeLine{00881\ \ \ \ \ 0xe2,\ 0xa1,\ 0x96,\ 0x37,\ 0x95,\ 0xca,\ 0x64,\ 0xb9,}
+\DoxyCodeLine{00882\ \ \ \ \ 0x2d,\ 0x1c,\ 0x9a,\ 0xac,\ 0x6d,\ 0x0e,\ 0x8d,\ 0x43,}
+\DoxyCodeLine{00883\ \ \ \ \ 0x1d,\ 0xe5,\ 0xe5,\ 0x00,\ 0x60,\ 0xdf,\ 0xf7,\ 0x86,}
+\DoxyCodeLine{00884\ \ \ \ \ 0x89,\ 0xc9,\ 0xec,\ 0xa1,\ 0xc1,\ 0x24,\ 0x8c,\ 0x16,}
+\DoxyCodeLine{00885\ \ \ \ \ 0xed,\ 0x09,\ 0xc7,\ 0xad,\ 0x41,\ 0x2a,\ 0x17,\ 0x40,}
+\DoxyCodeLine{00886\ \ \ \ \ 0x6d,\ 0x2b,\ 0x52,\ 0x5a,\ 0xa1,\ 0xca,\ 0xbb,\ 0x23,}
+\DoxyCodeLine{00887\ \ \ \ \ 0x7b,\ 0x97,\ 0x34,\ 0xec,\ 0x7b,\ 0x8c,\ 0xe3,\ 0xfa,}
+\DoxyCodeLine{00888\ \ \ \ \ 0xe0,\ 0x2f,\ 0x29,\ 0xc5,\ 0xef,\ 0xed,\ 0x30,\ 0xd6,}
+\DoxyCodeLine{00889\ \ \ \ \ 0x91,\ 0x87,\ 0xda,\ 0x10,\ 0x9c,\ 0x2c,\ 0x9f,\ 0xe2,}
+\DoxyCodeLine{00890\ \ \ \ \ 0xaa,\ 0xdb,\ 0xb0,\ 0xc2,\ 0x2a,\ 0xf5,\ 0x4c,\ 0x61,}
+\DoxyCodeLine{00891\ \ \ \ \ 0x66,\ 0x55,\ 0x00,\ 0x0c,\ 0x43,\ 0x1c,\ 0x6b,\ 0x4a,}
+\DoxyCodeLine{00892\ \ \ \ \ 0x37,\ 0x97,\ 0x63,\ 0xb0,\ 0xa9,\ 0x16,\ 0x58,\ 0xef,}
+\DoxyCodeLine{00893\ \ \ \ \ 0xc8,\ 0x4e,\ 0x8b,\ 0x06,\ 0x35,\ 0x8c,\ 0x8b,\ 0x4f,}
+\DoxyCodeLine{00894\ \ \ \ \ 0x21,\ 0x37,\ 0x10,\ 0xfd,\ 0x10,\ 0x17,\ 0x2c,\ 0xf3,}
+\DoxyCodeLine{00895\ \ \ \ \ 0x9b,\ 0x83,\ 0x0c,\ 0x2d,\ 0xd8,\ 0x4a,\ 0x0c,\ 0x8a,}
+\DoxyCodeLine{00896\ \ \ \ \ 0xb8,\ 0x25,\ 0x16,\ 0xec,\ 0xab,\ 0x99,\ 0x5f,\ 0xa4,}
+\DoxyCodeLine{00897\ \ \ \ \ 0x21,\ 0x5e,\ 0x02,\ 0x3e,\ 0x4e,\ 0xcf,\ 0x80,\ 0x74,}
+\DoxyCodeLine{00898\ \ \ \ \ 0xc3,\ 0x9d,\ 0x6c,\ 0x88,\ 0xb7,\ 0x0d,\ 0x1e,\ 0xe4,}
+\DoxyCodeLine{00899\ \ \ \ \ 0xe9,\ 0x6f,\ 0xdc,\ 0x20,\ 0xea,\ 0x11,\ 0x5c,\ 0x32}
+\DoxyCodeLine{00900\ \};}
+\DoxyCodeLine{00901\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ dh\_priv[]\ =\ \{}
+\DoxyCodeLine{00902\ \ \ \ \ 0x14,\ 0x33,\ 0xe0,\ 0xb5,\ 0xa9,\ 0x17,\ 0xb6,\ 0x0a,}
+\DoxyCodeLine{00903\ \ \ \ \ 0x30,\ 0x23,\ 0xf2,\ 0xf8,\ 0xaa,\ 0x2c,\ 0x2d,\ 0x70,}
+\DoxyCodeLine{00904\ \ \ \ \ 0xd2,\ 0x96,\ 0x8a,\ 0xba,\ 0x9a,\ 0xea,\ 0xc8,\ 0x15,}
+\DoxyCodeLine{00905\ \ \ \ \ 0x40,\ 0xb8,\ 0xfc,\ 0xe6}
+\DoxyCodeLine{00906\ \};}
+\DoxyCodeLine{00907\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ dh\_pub[]\ =\ \{}
+\DoxyCodeLine{00908\ \ \ \ \ 0x95,\ 0xdd,\ 0x33,\ 0x8d,\ 0x29,\ 0xe5,\ 0x71,\ 0x04,}
+\DoxyCodeLine{00909\ \ \ \ \ 0x92,\ 0xb9,\ 0x18,\ 0x31,\ 0x7b,\ 0x72,\ 0xa3,\ 0x69,}
+\DoxyCodeLine{00910\ \ \ \ \ 0x36,\ 0xe1,\ 0x95,\ 0x1a,\ 0x2e,\ 0xe5,\ 0xa5,\ 0x59,}
+\DoxyCodeLine{00911\ \ \ \ \ 0x16,\ 0x99,\ 0xc0,\ 0x48,\ 0x6d,\ 0x0d,\ 0x4f,\ 0x9b,}
+\DoxyCodeLine{00912\ \ \ \ \ 0xdd,\ 0x6d,\ 0x5a,\ 0x3f,\ 0x6b,\ 0x98,\ 0x89,\ 0x0c,}
+\DoxyCodeLine{00913\ \ \ \ \ 0x62,\ 0xb3,\ 0x76,\ 0x52,\ 0xd3,\ 0x6e,\ 0x71,\ 0x21,}
+\DoxyCodeLine{00914\ \ \ \ \ 0x11,\ 0xe6,\ 0x8a,\ 0x73,\ 0x55,\ 0x37,\ 0x25,\ 0x06,}
+\DoxyCodeLine{00915\ \ \ \ \ 0x99,\ 0xef,\ 0xe3,\ 0x30,\ 0x53,\ 0x73,\ 0x91,\ 0xfb,}
+\DoxyCodeLine{00916\ \ \ \ \ 0xc2,\ 0xc5,\ 0x48,\ 0xbc,\ 0x5a,\ 0xc3,\ 0xe5,\ 0xb2,}
+\DoxyCodeLine{00917\ \ \ \ \ 0x33,\ 0x86,\ 0xc3,\ 0xee,\ 0xf5,\ 0xeb,\ 0x43,\ 0xc0,}
+\DoxyCodeLine{00918\ \ \ \ \ 0x99,\ 0xd7,\ 0x0a,\ 0x52,\ 0x02,\ 0x68,\ 0x7e,\ 0x83,}
+\DoxyCodeLine{00919\ \ \ \ \ 0x96,\ 0x42,\ 0x48,\ 0xfc,\ 0xa9,\ 0x1f,\ 0x40,\ 0x90,}
+\DoxyCodeLine{00920\ \ \ \ \ 0x8e,\ 0x8f,\ 0xb3,\ 0x31,\ 0x93,\ 0x15,\ 0xf6,\ 0xd2,}
+\DoxyCodeLine{00921\ \ \ \ \ 0x60,\ 0x6d,\ 0x7f,\ 0x7c,\ 0xd5,\ 0x2c,\ 0xc6,\ 0xe7,}
+\DoxyCodeLine{00922\ \ \ \ \ 0xc5,\ 0x84,\ 0x3a,\ 0xfb,\ 0x22,\ 0x51,\ 0x9c,\ 0xf0,}
+\DoxyCodeLine{00923\ \ \ \ \ 0xf0,\ 0xf9,\ 0xd3,\ 0xa0,\ 0xa4,\ 0xe8,\ 0xc8,\ 0x88,}
+\DoxyCodeLine{00924\ \ \ \ \ 0x99,\ 0xef,\ 0xed,\ 0xe7,\ 0x36,\ 0x43,\ 0x51,\ 0xfb,}
+\DoxyCodeLine{00925\ \ \ \ \ 0x6a,\ 0x36,\ 0x3e,\ 0xe7,\ 0x17,\ 0xe5,\ 0x44,\ 0x5a,}
+\DoxyCodeLine{00926\ \ \ \ \ 0xda,\ 0xb4,\ 0xc9,\ 0x31,\ 0xa6,\ 0x48,\ 0x39,\ 0x97,}
+\DoxyCodeLine{00927\ \ \ \ \ 0xb8,\ 0x7d,\ 0xad,\ 0x83,\ 0x67,\ 0x7e,\ 0x4d,\ 0x1d,}
+\DoxyCodeLine{00928\ \ \ \ \ 0x3a,\ 0x77,\ 0x75,\ 0xe0,\ 0xf6,\ 0xd0,\ 0x0f,\ 0xdf,}
+\DoxyCodeLine{00929\ \ \ \ \ 0x73,\ 0xc7,\ 0xad,\ 0x80,\ 0x1e,\ 0x66,\ 0x5a,\ 0x0e,}
+\DoxyCodeLine{00930\ \ \ \ \ 0x5a,\ 0x79,\ 0x6d,\ 0x0a,\ 0x03,\ 0x80,\ 0xa1,\ 0x9f,}
+\DoxyCodeLine{00931\ \ \ \ \ 0xa1,\ 0x82,\ 0xef,\ 0xc8,\ 0xa0,\ 0x4f,\ 0x5e,\ 0x4d,}
+\DoxyCodeLine{00932\ \ \ \ \ 0xb9,\ 0x0d,\ 0x1a,\ 0x86,\ 0x37,\ 0xf9,\ 0x5d,\ 0xb1,}
+\DoxyCodeLine{00933\ \ \ \ \ 0x64,\ 0x36,\ 0xbd,\ 0xc8,\ 0xf3,\ 0xfc,\ 0x09,\ 0x6c,}
+\DoxyCodeLine{00934\ \ \ \ \ 0x4f,\ 0xf7,\ 0xf2,\ 0x34,\ 0xbe,\ 0x8f,\ 0xef,\ 0x47,}
+\DoxyCodeLine{00935\ \ \ \ \ 0x9a,\ 0xc4,\ 0xb0,\ 0xdc,\ 0x4b,\ 0x77,\ 0x26,\ 0x3e,}
+\DoxyCodeLine{00936\ \ \ \ \ 0x07,\ 0xd9,\ 0x95,\ 0x9d,\ 0xe0,\ 0xf1,\ 0xbf,\ 0x3f,}
+\DoxyCodeLine{00937\ \ \ \ \ 0x0a,\ 0xe3,\ 0xd9,\ 0xd5,\ 0x0e,\ 0x4b,\ 0x89,\ 0xc9,}
+\DoxyCodeLine{00938\ \ \ \ \ 0x9e,\ 0x3e,\ 0xa1,\ 0x21,\ 0x73,\ 0x43,\ 0xdd,\ 0x8c,}
+\DoxyCodeLine{00939\ \ \ \ \ 0x65,\ 0x81,\ 0xac,\ 0xc4,\ 0x95,\ 0x9c,\ 0x91,\ 0xd3}
+\DoxyCodeLine{00940\ \};}
+\DoxyCodeLine{00941\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ dh\_peer\_pub[]\ =\ \{}
+\DoxyCodeLine{00942\ \ \ \ \ 0x1f,\ 0xc1,\ 0xda,\ 0x34,\ 0x1d,\ 0x1a,\ 0x84,\ 0x6a,}
+\DoxyCodeLine{00943\ \ \ \ \ 0x96,\ 0xb7,\ 0xbe,\ 0x24,\ 0x34,\ 0x0f,\ 0x87,\ 0x7d,}
+\DoxyCodeLine{00944\ \ \ \ \ 0xd0,\ 0x10,\ 0xaa,\ 0x03,\ 0x56,\ 0xd5,\ 0xad,\ 0x58,}
+\DoxyCodeLine{00945\ \ \ \ \ 0xaa,\ 0xe9,\ 0xc7,\ 0xb0,\ 0x8f,\ 0x74,\ 0x9a,\ 0x32,}
+\DoxyCodeLine{00946\ \ \ \ \ 0x23,\ 0x51,\ 0x10,\ 0xb5,\ 0xd8,\ 0x8e,\ 0xb5,\ 0xdb,}
+\DoxyCodeLine{00947\ \ \ \ \ 0xfa,\ 0x97,\ 0x8d,\ 0x27,\ 0xec,\ 0xc5,\ 0x30,\ 0xf0,}
+\DoxyCodeLine{00948\ \ \ \ \ 0x2d,\ 0x31,\ 0x14,\ 0x00,\ 0x5b,\ 0x64,\ 0xb1,\ 0xc0,}
+\DoxyCodeLine{00949\ \ \ \ \ 0xe0,\ 0x24,\ 0xcb,\ 0x8a,\ 0xe2,\ 0x16,\ 0x98,\ 0xbc,}
+\DoxyCodeLine{00950\ \ \ \ \ 0xa9,\ 0xe6,\ 0x0d,\ 0x42,\ 0x80,\ 0x86,\ 0x22,\ 0xf1,}
+\DoxyCodeLine{00951\ \ \ \ \ 0x81,\ 0xc5,\ 0x6e,\ 0x1d,\ 0xe7,\ 0xa9,\ 0x6e,\ 0x6e,}
+\DoxyCodeLine{00952\ \ \ \ \ 0xfe,\ 0xe9,\ 0xd6,\ 0x65,\ 0x67,\ 0xe9,\ 0x1b,\ 0x97,}
+\DoxyCodeLine{00953\ \ \ \ \ 0x70,\ 0x42,\ 0xc7,\ 0xe3,\ 0xd0,\ 0x44,\ 0x8f,\ 0x05,}
+\DoxyCodeLine{00954\ \ \ \ \ 0xfb,\ 0x77,\ 0xf5,\ 0x22,\ 0xb9,\ 0xbf,\ 0xc8,\ 0xd3,}
+\DoxyCodeLine{00955\ \ \ \ \ 0x3c,\ 0xc3,\ 0xc3,\ 0x1e,\ 0xd3,\ 0xb3,\ 0x1f,\ 0x0f,}
+\DoxyCodeLine{00956\ \ \ \ \ 0xec,\ 0xb6,\ 0xdb,\ 0x4f,\ 0x6e,\ 0xa3,\ 0x11,\ 0xe7,}
+\DoxyCodeLine{00957\ \ \ \ \ 0x7a,\ 0xfd,\ 0xbc,\ 0xd4,\ 0x7a,\ 0xee,\ 0x1b,\ 0xb1,}
+\DoxyCodeLine{00958\ \ \ \ \ 0x50,\ 0xf2,\ 0x16,\ 0x87,\ 0x35,\ 0x78,\ 0xfb,\ 0x96,}
+\DoxyCodeLine{00959\ \ \ \ \ 0x46,\ 0x8e,\ 0x8f,\ 0x9f,\ 0x3d,\ 0xe8,\ 0xef,\ 0xbf,}
+\DoxyCodeLine{00960\ \ \ \ \ 0xce,\ 0x75,\ 0x62,\ 0x4b,\ 0x1d,\ 0xf0,\ 0x53,\ 0x22,}
+\DoxyCodeLine{00961\ \ \ \ \ 0xa3,\ 0x4f,\ 0x14,\ 0x63,\ 0xe8,\ 0x39,\ 0xe8,\ 0x98,}
+\DoxyCodeLine{00962\ \ \ \ \ 0x4c,\ 0x4a,\ 0xd0,\ 0xa9,\ 0x6e,\ 0x1a,\ 0xc8,\ 0x42,}
+\DoxyCodeLine{00963\ \ \ \ \ 0xe5,\ 0x31,\ 0x8c,\ 0xc2,\ 0x3c,\ 0x06,\ 0x2a,\ 0x8c,}
+\DoxyCodeLine{00964\ \ \ \ \ 0xa1,\ 0x71,\ 0xb8,\ 0xd5,\ 0x75,\ 0x98,\ 0x0d,\ 0xde,}
+\DoxyCodeLine{00965\ \ \ \ \ 0x7f,\ 0xc5,\ 0x6f,\ 0x15,\ 0x36,\ 0x52,\ 0x38,\ 0x20,}
+\DoxyCodeLine{00966\ \ \ \ \ 0xd4,\ 0x31,\ 0x92,\ 0xbf,\ 0xd5,\ 0x1e,\ 0x8e,\ 0x22,}
+\DoxyCodeLine{00967\ \ \ \ \ 0x89,\ 0x78,\ 0xac,\ 0xa5,\ 0xb9,\ 0x44,\ 0x72,\ 0xf3,}
+\DoxyCodeLine{00968\ \ \ \ \ 0x39,\ 0xca,\ 0xeb,\ 0x99,\ 0x31,\ 0xb4,\ 0x2b,\ 0xe3,}
+\DoxyCodeLine{00969\ \ \ \ \ 0x01,\ 0x26,\ 0x8b,\ 0xc9,\ 0x97,\ 0x89,\ 0xc9,\ 0xb2,}
+\DoxyCodeLine{00970\ \ \ \ \ 0x55,\ 0x71,\ 0xc3,\ 0xc0,\ 0xe4,\ 0xcb,\ 0x3f,\ 0x00,}
+\DoxyCodeLine{00971\ \ \ \ \ 0x7f,\ 0x1a,\ 0x51,\ 0x1c,\ 0xbb,\ 0x53,\ 0xc8,\ 0x51,}
+\DoxyCodeLine{00972\ \ \ \ \ 0x9c,\ 0xdd,\ 0x13,\ 0x02,\ 0xab,\ 0xca,\ 0x6c,\ 0x0f,}
+\DoxyCodeLine{00973\ \ \ \ \ 0x34,\ 0xf9,\ 0x67,\ 0x39,\ 0xf1,\ 0x7f,\ 0xf4,\ 0x8b}
+\DoxyCodeLine{00974\ \};}
+\DoxyCodeLine{00975\ }
+\DoxyCodeLine{00976\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ dh\_secret\_expected[]\ =\ \{}
+\DoxyCodeLine{00977\ \ \ \ \ 0x08,\ 0xff,\ 0x33,\ 0xbb,\ 0x2e,\ 0xcf,\ 0xf4,\ 0x9a,}
+\DoxyCodeLine{00978\ \ \ \ \ 0x7d,\ 0x4a,\ 0x79,\ 0x12,\ 0xae,\ 0xb1,\ 0xbb,\ 0x6a,}
+\DoxyCodeLine{00979\ \ \ \ \ 0xb5,\ 0x11,\ 0x64,\ 0x1b,\ 0x4a,\ 0x76,\ 0x77,\ 0x0c,}
+\DoxyCodeLine{00980\ \ \ \ \ 0x8c,\ 0xc1,\ 0xbc,\ 0xc2,\ 0x33,\ 0x34,\ 0x3d,\ 0xfe,}
+\DoxyCodeLine{00981\ \ \ \ \ 0x70,\ 0x0d,\ 0x11,\ 0x81,\ 0x3d,\ 0x2c,\ 0x9e,\ 0xd2,}
+\DoxyCodeLine{00982\ \ \ \ \ 0x3b,\ 0x21,\ 0x1c,\ 0xa9,\ 0xe8,\ 0x78,\ 0x69,\ 0x21,}
+\DoxyCodeLine{00983\ \ \ \ \ 0xed,\ 0xca,\ 0x28,\ 0x3c,\ 0x68,\ 0xb1,\ 0x61,\ 0x53,}
+\DoxyCodeLine{00984\ \ \ \ \ 0xfa,\ 0x01,\ 0xe9,\ 0x1a,\ 0xb8,\ 0x2c,\ 0x90,\ 0xdd,}
+\DoxyCodeLine{00985\ \ \ \ \ 0xab,\ 0x4a,\ 0x95,\ 0x81,\ 0x67,\ 0x70,\ 0xa9,\ 0x87,}
+\DoxyCodeLine{00986\ \ \ \ \ 0x10,\ 0xe1,\ 0x4c,\ 0x92,\ 0xab,\ 0x83,\ 0xb6,\ 0xe4,}
+\DoxyCodeLine{00987\ \ \ \ \ 0x6e,\ 0x1e,\ 0x42,\ 0x6e,\ 0xe8,\ 0x52,\ 0x43,\ 0x0d,}
+\DoxyCodeLine{00988\ \ \ \ \ 0x61,\ 0x87,\ 0xda,\ 0xa3,\ 0x72,\ 0x0a,\ 0x6b,\ 0xcd,}
+\DoxyCodeLine{00989\ \ \ \ \ 0x73,\ 0x23,\ 0x5c,\ 0x6b,\ 0x0f,\ 0x94,\ 0x1f,\ 0x33,}
+\DoxyCodeLine{00990\ \ \ \ \ 0x64,\ 0xf5,\ 0x04,\ 0x20,\ 0x55,\ 0x1a,\ 0x4b,\ 0xfe,}
+\DoxyCodeLine{00991\ \ \ \ \ 0xaf,\ 0xe2,\ 0xbc,\ 0x43,\ 0x85,\ 0x05,\ 0xa5,\ 0x9a,}
+\DoxyCodeLine{00992\ \ \ \ \ 0x4a,\ 0x40,\ 0xda,\ 0xca,\ 0x7a,\ 0x89,\ 0x5a,\ 0x73,}
+\DoxyCodeLine{00993\ \ \ \ \ 0xdb,\ 0x57,\ 0x5c,\ 0x74,\ 0xc1,\ 0x3a,\ 0x23,\ 0xad,}
+\DoxyCodeLine{00994\ \ \ \ \ 0x88,\ 0x32,\ 0x95,\ 0x7d,\ 0x58,\ 0x2d,\ 0x38,\ 0xf0,}
+\DoxyCodeLine{00995\ \ \ \ \ 0xa6,\ 0x16,\ 0x5f,\ 0xb0,\ 0xd7,\ 0xe9,\ 0xb8,\ 0x79,}
+\DoxyCodeLine{00996\ \ \ \ \ 0x9e,\ 0x42,\ 0xfd,\ 0x32,\ 0x20,\ 0xe3,\ 0x32,\ 0xe9,}
+\DoxyCodeLine{00997\ \ \ \ \ 0x81,\ 0x85,\ 0xa0,\ 0xc9,\ 0x42,\ 0x97,\ 0x57,\ 0xb2,}
+\DoxyCodeLine{00998\ \ \ \ \ 0xd0,\ 0xd0,\ 0x2c,\ 0x17,\ 0xdb,\ 0xaa,\ 0x1f,\ 0xf6,}
+\DoxyCodeLine{00999\ \ \ \ \ 0xed,\ 0x93,\ 0xd7,\ 0xe7,\ 0x3e,\ 0x24,\ 0x1e,\ 0xae,}
+\DoxyCodeLine{01000\ \ \ \ \ 0xd9,\ 0x0c,\ 0xaf,\ 0x39,\ 0x4d,\ 0x2b,\ 0xc6,\ 0x57,}
+\DoxyCodeLine{01001\ \ \ \ \ 0x0f,\ 0x18,\ 0xc8,\ 0x1f,\ 0x2b,\ 0xe5,\ 0xd0,\ 0x1a,}
+\DoxyCodeLine{01002\ \ \ \ \ 0x2c,\ 0xa9,\ 0x9f,\ 0xf1,\ 0x42,\ 0xb5,\ 0xd9,\ 0x63,}
+\DoxyCodeLine{01003\ \ \ \ \ 0xf9,\ 0xf5,\ 0x00,\ 0x32,\ 0x5e,\ 0x75,\ 0x56,\ 0xf9,}
+\DoxyCodeLine{01004\ \ \ \ \ 0x58,\ 0x49,\ 0xb3,\ 0xff,\ 0xc7,\ 0x47,\ 0x94,\ 0x86,}
+\DoxyCodeLine{01005\ \ \ \ \ 0xbe,\ 0x1d,\ 0x45,\ 0x96,\ 0xa3,\ 0x10,\ 0x6b,\ 0xd5,}
+\DoxyCodeLine{01006\ \ \ \ \ 0xcb,\ 0x4f,\ 0x61,\ 0xc5,\ 0x7e,\ 0xc5,\ 0xf1,\ 0x00,}
+\DoxyCodeLine{01007\ \ \ \ \ 0xfb,\ 0x7a,\ 0x0c,\ 0x82,\ 0xa1,\ 0x0b,\ 0x82,\ 0x52,}
+\DoxyCodeLine{01008\ \ \ \ \ 0x6a,\ 0x97,\ 0xd1,\ 0xd9,\ 0x7d,\ 0x98,\ 0xea,\ 0xf6}
+\DoxyCodeLine{01009\ \};}
+\DoxyCodeLine{01010\ }
+\DoxyCodeLine{01011\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ ST\_KAT\_PARAM\ dh\_group[]\ =\ \{}
+\DoxyCodeLine{01012\ \ \ \ \ ST\_KAT\_PARAM\_BIGNUM(OSSL\_PKEY\_PARAM\_FFC\_P,\ dh\_p),}
+\DoxyCodeLine{01013\ \ \ \ \ ST\_KAT\_PARAM\_BIGNUM(OSSL\_PKEY\_PARAM\_FFC\_Q,\ dh\_q),}
+\DoxyCodeLine{01014\ \ \ \ \ ST\_KAT\_PARAM\_BIGNUM(OSSL\_PKEY\_PARAM\_FFC\_G,\ dh\_g),}
+\DoxyCodeLine{01015\ \ \ \ \ ST\_KAT\_PARAM\_END()}
+\DoxyCodeLine{01016\ \};}
+\DoxyCodeLine{01017\ }
+\DoxyCodeLine{01018\ \textcolor{comment}{/*\ The\ host's\ private\ key\ */}}
+\DoxyCodeLine{01019\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ ST\_KAT\_PARAM\ dh\_host\_key[]\ =\ \{}
+\DoxyCodeLine{01020\ \ \ \ \ ST\_KAT\_PARAM\_BIGNUM(OSSL\_PKEY\_PARAM\_PUB\_KEY,\ dh\_pub),}
+\DoxyCodeLine{01021\ \ \ \ \ ST\_KAT\_PARAM\_BIGNUM(OSSL\_PKEY\_PARAM\_PRIV\_KEY,\ dh\_priv),}
+\DoxyCodeLine{01022\ \ \ \ \ ST\_KAT\_PARAM\_END()}
+\DoxyCodeLine{01023\ \};}
+\DoxyCodeLine{01024\ }
+\DoxyCodeLine{01025\ \textcolor{comment}{/*\ The\ peer's\ public\ key\ */}}
+\DoxyCodeLine{01026\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ ST\_KAT\_PARAM\ dh\_peer\_key[]\ =\ \{}
+\DoxyCodeLine{01027\ \ \ \ \ ST\_KAT\_PARAM\_BIGNUM(OSSL\_PKEY\_PARAM\_PUB\_KEY,\ dh\_peer\_pub),}
+\DoxyCodeLine{01028\ \ \ \ \ ST\_KAT\_PARAM\_END()}
+\DoxyCodeLine{01029\ \};}
+\DoxyCodeLine{01030\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ OPENSSL\_NO\_DH\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{01031\ }
+\DoxyCodeLine{01032\ }
+\DoxyCodeLine{01033\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_EC}}
+\DoxyCodeLine{01034\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ ecdh\_curve\_name[]\ =\ \textcolor{stringliteral}{"{}prime256v1"{}};}
+\DoxyCodeLine{01035\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ecdh\_privd[]\ =\ \{}
+\DoxyCodeLine{01036\ \ \ \ \ 0x33,\ 0xd0,\ 0x43,\ 0x83,\ 0xa9,\ 0x89,\ 0x56,\ 0x03,}
+\DoxyCodeLine{01037\ \ \ \ \ 0xd2,\ 0xd7,\ 0xfe,\ 0x6b,\ 0x01,\ 0x6f,\ 0xe4,\ 0x59,}
+\DoxyCodeLine{01038\ \ \ \ \ 0xcc,\ 0x0d,\ 0x9a,\ 0x24,\ 0x6c,\ 0x86,\ 0x1b,\ 0x2e,}
+\DoxyCodeLine{01039\ \ \ \ \ 0xdc,\ 0x4b,\ 0x4d,\ 0x35,\ 0x43,\ 0xe1,\ 0x1b,\ 0xad}
+\DoxyCodeLine{01040\ \};}
+\DoxyCodeLine{01041\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ecdh\_pub[]\ =\ \{}
+\DoxyCodeLine{01042\ \ \ \ \ 0x04,}
+\DoxyCodeLine{01043\ \ \ \ \ 0x1b,\ 0x93,\ 0x67,\ 0x55,\ 0x1c,\ 0x55,\ 0x9f,\ 0x63,}
+\DoxyCodeLine{01044\ \ \ \ \ 0xd1,\ 0x22,\ 0xa4,\ 0xd8,\ 0xd1,\ 0x0a,\ 0x60,\ 0x6d,}
+\DoxyCodeLine{01045\ \ \ \ \ 0x02,\ 0xa5,\ 0x77,\ 0x57,\ 0xc8,\ 0xa3,\ 0x47,\ 0x73,}
+\DoxyCodeLine{01046\ \ \ \ \ 0x3a,\ 0x6a,\ 0x08,\ 0x28,\ 0x39,\ 0xbd,\ 0xc9,\ 0xd2,}
+\DoxyCodeLine{01047\ \ \ \ \ 0x80,\ 0xec,\ 0xe9,\ 0xa7,\ 0x08,\ 0x29,\ 0x71,\ 0x2f,}
+\DoxyCodeLine{01048\ \ \ \ \ 0xc9,\ 0x56,\ 0x82,\ 0xee,\ 0x9a,\ 0x85,\ 0x0f,\ 0x6d,}
+\DoxyCodeLine{01049\ \ \ \ \ 0x7f,\ 0x59,\ 0x5f,\ 0x8c,\ 0xd1,\ 0x96,\ 0x0b,\ 0xdf,}
+\DoxyCodeLine{01050\ \ \ \ \ 0x29,\ 0x3e,\ 0x49,\ 0x07,\ 0x88,\ 0x3f,\ 0x9a,\ 0x29}
+\DoxyCodeLine{01051\ \};}
+\DoxyCodeLine{01052\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ecdh\_peer\_pub[]\ =\ \{}
+\DoxyCodeLine{01053\ \ \ \ \ 0x04,}
+\DoxyCodeLine{01054\ \ \ \ \ 0x1f,\ 0x72,\ 0xbd,\ 0x2a,\ 0x3e,\ 0xeb,\ 0x6c,\ 0x76,}
+\DoxyCodeLine{01055\ \ \ \ \ 0xe5,\ 0x5d,\ 0x69,\ 0x75,\ 0x24,\ 0xbf,\ 0x2f,\ 0x5b,}
+\DoxyCodeLine{01056\ \ \ \ \ 0x96,\ 0xb2,\ 0x91,\ 0x62,\ 0x06,\ 0x35,\ 0xcc,\ 0xb2,}
+\DoxyCodeLine{01057\ \ \ \ \ 0x4b,\ 0x31,\ 0x1b,\ 0x0c,\ 0x6f,\ 0x06,\ 0x9f,\ 0x86,}
+\DoxyCodeLine{01058\ \ \ \ \ 0xcf,\ 0xc8,\ 0xac,\ 0xd5,\ 0x4f,\ 0x4d,\ 0x77,\ 0xf3,}
+\DoxyCodeLine{01059\ \ \ \ \ 0x70,\ 0x4a,\ 0x8f,\ 0x04,\ 0x9a,\ 0xb1,\ 0x03,\ 0xc7,}
+\DoxyCodeLine{01060\ \ \ \ \ 0xeb,\ 0xd5,\ 0x94,\ 0x78,\ 0x61,\ 0xab,\ 0x78,\ 0x0c,}
+\DoxyCodeLine{01061\ \ \ \ \ 0x4a,\ 0x2d,\ 0x6b,\ 0xf3,\ 0x2f,\ 0x2e,\ 0x4a,\ 0xbc}
+\DoxyCodeLine{01062\ \};}
+\DoxyCodeLine{01063\ }
+\DoxyCodeLine{01064\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ ST\_KAT\_PARAM\ ecdh\_group[]\ =\ \{}
+\DoxyCodeLine{01065\ \ \ \ \ ST\_KAT\_PARAM\_UTF8STRING(OSSL\_PKEY\_PARAM\_GROUP\_NAME,\ ecdh\_curve\_name),}
+\DoxyCodeLine{01066\ \ \ \ \ ST\_KAT\_PARAM\_END()}
+\DoxyCodeLine{01067\ \};}
+\DoxyCodeLine{01068\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ ST\_KAT\_PARAM\ ecdh\_host\_key[]\ =\ \{}
+\DoxyCodeLine{01069\ \ \ \ \ ST\_KAT\_PARAM\_OCTET(OSSL\_PKEY\_PARAM\_PUB\_KEY,\ ecdh\_pub),}
+\DoxyCodeLine{01070\ \ \ \ \ ST\_KAT\_PARAM\_BIGNUM(OSSL\_PKEY\_PARAM\_PRIV\_KEY,\ ecdh\_privd),}
+\DoxyCodeLine{01071\ \ \ \ \ ST\_KAT\_PARAM\_END()}
+\DoxyCodeLine{01072\ \};}
+\DoxyCodeLine{01073\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ ST\_KAT\_PARAM\ ecdh\_peer\_key[]\ =\ \{}
+\DoxyCodeLine{01074\ \ \ \ \ ST\_KAT\_PARAM\_OCTET(OSSL\_PKEY\_PARAM\_PUB\_KEY,\ ecdh\_peer\_pub),}
+\DoxyCodeLine{01075\ \ \ \ \ ST\_KAT\_PARAM\_END()}
+\DoxyCodeLine{01076\ \};}
+\DoxyCodeLine{01077\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ecdh\_secret\_expected[]\ =\ \{}
+\DoxyCodeLine{01078\ \ \ \ \ 0x45,\ 0x2a,\ 0x2f,\ 0x0d,\ 0x24,\ 0xe6,\ 0x8d,\ 0xd0,}
+\DoxyCodeLine{01079\ \ \ \ \ 0xda,\ 0x59,\ 0x7b,\ 0x0c,\ 0xec,\ 0x9b,\ 0x4c,\ 0x38,}
+\DoxyCodeLine{01080\ \ \ \ \ 0x41,\ 0xdd,\ 0xce,\ 0xb3,\ 0xcc,\ 0xf1,\ 0x90,\ 0x8e,}
+\DoxyCodeLine{01081\ \ \ \ \ 0x30,\ 0xdb,\ 0x5b,\ 0x5f,\ 0x97,\ 0xea,\ 0xe0,\ 0xc2}
+\DoxyCodeLine{01082\ \};}
+\DoxyCodeLine{01083\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ OPENSSL\_NO\_EC\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{01084\ }
+\DoxyCodeLine{01085\ \textcolor{preprocessor}{\#if\ !defined(OPENSSL\_NO\_DH)\ ||\ !defined(OPENSSL\_NO\_EC)}}
+\DoxyCodeLine{01086\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ ST\_KAT\_KAS\ st\_kat\_kas\_tests[]\ =}
+\DoxyCodeLine{01087\ \{}
+\DoxyCodeLine{01088\ \textcolor{preprocessor}{\#\ ifndef\ OPENSSL\_NO\_DH}}
+\DoxyCodeLine{01089\ \ \ \ \ \{}
+\DoxyCodeLine{01090\ \ \ \ \ \ \ \ \ OSSL\_SELF\_TEST\_DESC\_KA\_DH,}
+\DoxyCodeLine{01091\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}DH"{}},}
+\DoxyCodeLine{01092\ \ \ \ \ \ \ \ \ dh\_group,}
+\DoxyCodeLine{01093\ \ \ \ \ \ \ \ \ dh\_host\_key,}
+\DoxyCodeLine{01094\ \ \ \ \ \ \ \ \ dh\_peer\_key,}
+\DoxyCodeLine{01095\ \ \ \ \ \ \ \ \ ITM(dh\_secret\_expected)}
+\DoxyCodeLine{01096\ \ \ \ \ \},}
+\DoxyCodeLine{01097\ \textcolor{preprocessor}{\#\ endif\ }\textcolor{comment}{/*\ OPENSSL\_NO\_DH\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{01098\ \textcolor{preprocessor}{\#\ ifndef\ OPENSSL\_NO\_EC}}
+\DoxyCodeLine{01099\ \ \ \ \ \{}
+\DoxyCodeLine{01100\ \ \ \ \ \ \ \ \ OSSL\_SELF\_TEST\_DESC\_KA\_ECDH,}
+\DoxyCodeLine{01101\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}EC"{}},}
+\DoxyCodeLine{01102\ \ \ \ \ \ \ \ \ ecdh\_group,}
+\DoxyCodeLine{01103\ \ \ \ \ \ \ \ \ ecdh\_host\_key,}
+\DoxyCodeLine{01104\ \ \ \ \ \ \ \ \ ecdh\_peer\_key,}
+\DoxyCodeLine{01105\ \ \ \ \ \ \ \ \ ITM(ecdh\_secret\_expected)}
+\DoxyCodeLine{01106\ \ \ \ \ \},}
+\DoxyCodeLine{01107\ \textcolor{preprocessor}{\#\ endif\ }\textcolor{comment}{/*\ OPENSSL\_NO\_EC\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{01108\ \};}
+\DoxyCodeLine{01109\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ !defined(OPENSSL\_NO\_DH)\ ||\ !defined(OPENSSL\_NO\_EC)\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{01110\ }
+\DoxyCodeLine{01111\ \textcolor{comment}{/*\ RSA\ key\ data\ */}}
+\DoxyCodeLine{01112\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ rsa\_n[]\ =\ \{}
+\DoxyCodeLine{01113\ \ \ \ \ 0xDB,\ 0x10,\ 0x1A,\ 0xC2,\ 0xA3,\ 0xF1,\ 0xDC,\ 0xFF,}
+\DoxyCodeLine{01114\ \ \ \ \ 0x13,\ 0x6B,\ 0xED,\ 0x44,\ 0xDF,\ 0xF0,\ 0x02,\ 0x6D,}
+\DoxyCodeLine{01115\ \ \ \ \ 0x13,\ 0xC7,\ 0x88,\ 0xDA,\ 0x70,\ 0x6B,\ 0x54,\ 0xF1,}
+\DoxyCodeLine{01116\ \ \ \ \ 0xE8,\ 0x27,\ 0xDC,\ 0xC3,\ 0x0F,\ 0x99,\ 0x6A,\ 0xFA,}
+\DoxyCodeLine{01117\ \ \ \ \ 0xC6,\ 0x67,\ 0xFF,\ 0x1D,\ 0x1E,\ 0x3C,\ 0x1D,\ 0xC1,}
+\DoxyCodeLine{01118\ \ \ \ \ 0xB5,\ 0x5F,\ 0x6C,\ 0xC0,\ 0xB2,\ 0x07,\ 0x3A,\ 0x6D,}
+\DoxyCodeLine{01119\ \ \ \ \ 0x41,\ 0xE4,\ 0x25,\ 0x99,\ 0xAC,\ 0xFC,\ 0xD2,\ 0x0F,}
+\DoxyCodeLine{01120\ \ \ \ \ 0x02,\ 0xD3,\ 0xD1,\ 0x54,\ 0x06,\ 0x1A,\ 0x51,\ 0x77,}
+\DoxyCodeLine{01121\ \ \ \ \ 0xBD,\ 0xB6,\ 0xBF,\ 0xEA,\ 0xA7,\ 0x5C,\ 0x06,\ 0xA9,}
+\DoxyCodeLine{01122\ \ \ \ \ 0x5D,\ 0x69,\ 0x84,\ 0x45,\ 0xD7,\ 0xF5,\ 0x05,\ 0xBA,}
+\DoxyCodeLine{01123\ \ \ \ \ 0x47,\ 0xF0,\ 0x1B,\ 0xD7,\ 0x2B,\ 0x24,\ 0xEC,\ 0xCB,}
+\DoxyCodeLine{01124\ \ \ \ \ 0x9B,\ 0x1B,\ 0x10,\ 0x8D,\ 0x81,\ 0xA0,\ 0xBE,\ 0xB1,}
+\DoxyCodeLine{01125\ \ \ \ \ 0x8C,\ 0x33,\ 0xE4,\ 0x36,\ 0xB8,\ 0x43,\ 0xEB,\ 0x19,}
+\DoxyCodeLine{01126\ \ \ \ \ 0x2A,\ 0x81,\ 0x8D,\ 0xDE,\ 0x81,\ 0x0A,\ 0x99,\ 0x48,}
+\DoxyCodeLine{01127\ \ \ \ \ 0xB6,\ 0xF6,\ 0xBC,\ 0xCD,\ 0x49,\ 0x34,\ 0x3A,\ 0x8F,}
+\DoxyCodeLine{01128\ \ \ \ \ 0x26,\ 0x94,\ 0xE3,\ 0x28,\ 0x82,\ 0x1A,\ 0x7C,\ 0x8F,}
+\DoxyCodeLine{01129\ \ \ \ \ 0x59,\ 0x9F,\ 0x45,\ 0xE8,\ 0x5D,\ 0x1A,\ 0x45,\ 0x76,}
+\DoxyCodeLine{01130\ \ \ \ \ 0x04,\ 0x56,\ 0x05,\ 0xA1,\ 0xD0,\ 0x1B,\ 0x8C,\ 0x77,}
+\DoxyCodeLine{01131\ \ \ \ \ 0x6D,\ 0xAF,\ 0x53,\ 0xFA,\ 0x71,\ 0xE2,\ 0x67,\ 0xE0,}
+\DoxyCodeLine{01132\ \ \ \ \ 0x9A,\ 0xFE,\ 0x03,\ 0xA9,\ 0x85,\ 0xD2,\ 0xC9,\ 0xAA,}
+\DoxyCodeLine{01133\ \ \ \ \ 0xBA,\ 0x2A,\ 0xBC,\ 0xF4,\ 0xA0,\ 0x08,\ 0xF5,\ 0x13,}
+\DoxyCodeLine{01134\ \ \ \ \ 0x98,\ 0x13,\ 0x5D,\ 0xF0,\ 0xD9,\ 0x33,\ 0x34,\ 0x2A,}
+\DoxyCodeLine{01135\ \ \ \ \ 0x61,\ 0xC3,\ 0x89,\ 0x55,\ 0xF0,\ 0xAE,\ 0x1A,\ 0x9C,}
+\DoxyCodeLine{01136\ \ \ \ \ 0x22,\ 0xEE,\ 0x19,\ 0x05,\ 0x8D,\ 0x32,\ 0xFE,\ 0xEC,}
+\DoxyCodeLine{01137\ \ \ \ \ 0x9C,\ 0x84,\ 0xBA,\ 0xB7,\ 0xF9,\ 0x6C,\ 0x3A,\ 0x4F,}
+\DoxyCodeLine{01138\ \ \ \ \ 0x07,\ 0xFC,\ 0x45,\ 0xEB,\ 0x12,\ 0xE5,\ 0x7B,\ 0xFD,}
+\DoxyCodeLine{01139\ \ \ \ \ 0x55,\ 0xE6,\ 0x29,\ 0x69,\ 0xD1,\ 0xC2,\ 0xE8,\ 0xB9,}
+\DoxyCodeLine{01140\ \ \ \ \ 0x78,\ 0x59,\ 0xF6,\ 0x79,\ 0x10,\ 0xC6,\ 0x4E,\ 0xEB,}
+\DoxyCodeLine{01141\ \ \ \ \ 0x6A,\ 0x5E,\ 0xB9,\ 0x9A,\ 0xC7,\ 0xC4,\ 0x5B,\ 0x63,}
+\DoxyCodeLine{01142\ \ \ \ \ 0xDA,\ 0xA3,\ 0x3F,\ 0x5E,\ 0x92,\ 0x7A,\ 0x81,\ 0x5E,}
+\DoxyCodeLine{01143\ \ \ \ \ 0xD6,\ 0xB0,\ 0xE2,\ 0x62,\ 0x8F,\ 0x74,\ 0x26,\ 0xC2,}
+\DoxyCodeLine{01144\ \ \ \ \ 0x0C,\ 0xD3,\ 0x9A,\ 0x17,\ 0x47,\ 0xE6,\ 0x8E,\ 0xAB}
+\DoxyCodeLine{01145\ \};}
+\DoxyCodeLine{01146\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ rsa\_e[]\ =\ \{\ 0x01,\ 0x00,\ 0x01\ \};}
+\DoxyCodeLine{01147\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ rsa\_d[]\ =\ \{}
+\DoxyCodeLine{01148\ \ \ \ \ 0x52,\ 0x41,\ 0xF4,\ 0xDA,\ 0x7B,\ 0xB7,\ 0x59,\ 0x55,}
+\DoxyCodeLine{01149\ \ \ \ \ 0xCA,\ 0xD4,\ 0x2F,\ 0x0F,\ 0x3A,\ 0xCB,\ 0xA4,\ 0x0D,}
+\DoxyCodeLine{01150\ \ \ \ \ 0x93,\ 0x6C,\ 0xCC,\ 0x9D,\ 0xC1,\ 0xB2,\ 0xFB,\ 0xFD,}
+\DoxyCodeLine{01151\ \ \ \ \ 0xAE,\ 0x40,\ 0x31,\ 0xAC,\ 0x69,\ 0x52,\ 0x21,\ 0x92,}
+\DoxyCodeLine{01152\ \ \ \ \ 0xB3,\ 0x27,\ 0xDF,\ 0xEA,\ 0xEE,\ 0x2C,\ 0x82,\ 0xBB,}
+\DoxyCodeLine{01153\ \ \ \ \ 0xF7,\ 0x40,\ 0x32,\ 0xD5,\ 0x14,\ 0xC4,\ 0x94,\ 0x12,}
+\DoxyCodeLine{01154\ \ \ \ \ 0xEC,\ 0xB8,\ 0x1F,\ 0xCA,\ 0x59,\ 0xE3,\ 0xC1,\ 0x78,}
+\DoxyCodeLine{01155\ \ \ \ \ 0xF3,\ 0x85,\ 0xD8,\ 0x47,\ 0xA5,\ 0xD7,\ 0x02,\ 0x1A,}
+\DoxyCodeLine{01156\ \ \ \ \ 0x65,\ 0x79,\ 0x97,\ 0x0D,\ 0x24,\ 0xF4,\ 0xF0,\ 0x67,}
+\DoxyCodeLine{01157\ \ \ \ \ 0x6E,\ 0x75,\ 0x2D,\ 0xBF,\ 0x10,\ 0x3D,\ 0xA8,\ 0x7D,}
+\DoxyCodeLine{01158\ \ \ \ \ 0xEF,\ 0x7F,\ 0x60,\ 0xE4,\ 0xE6,\ 0x05,\ 0x82,\ 0x89,}
+\DoxyCodeLine{01159\ \ \ \ \ 0x5D,\ 0xDF,\ 0xC6,\ 0xD2,\ 0x6C,\ 0x07,\ 0x91,\ 0x33,}
+\DoxyCodeLine{01160\ \ \ \ \ 0x98,\ 0x42,\ 0xF0,\ 0x02,\ 0x00,\ 0x25,\ 0x38,\ 0xC5,}
+\DoxyCodeLine{01161\ \ \ \ \ 0x85,\ 0x69,\ 0x8A,\ 0x7D,\ 0x2F,\ 0x95,\ 0x6C,\ 0x43,}
+\DoxyCodeLine{01162\ \ \ \ \ 0x9A,\ 0xB8,\ 0x81,\ 0xE2,\ 0xD0,\ 0x07,\ 0x35,\ 0xAA,}
+\DoxyCodeLine{01163\ \ \ \ \ 0x05,\ 0x41,\ 0xC9,\ 0x1E,\ 0xAF,\ 0xE4,\ 0x04,\ 0x3B,}
+\DoxyCodeLine{01164\ \ \ \ \ 0x19,\ 0xB8,\ 0x73,\ 0xA2,\ 0xAC,\ 0x4B,\ 0x1E,\ 0x66,}
+\DoxyCodeLine{01165\ \ \ \ \ 0x48,\ 0xD8,\ 0x72,\ 0x1F,\ 0xAC,\ 0xF6,\ 0xCB,\ 0xBC,}
+\DoxyCodeLine{01166\ \ \ \ \ 0x90,\ 0x09,\ 0xCA,\ 0xEC,\ 0x0C,\ 0xDC,\ 0xF9,\ 0x2C,}
+\DoxyCodeLine{01167\ \ \ \ \ 0xD7,\ 0xEB,\ 0xAE,\ 0xA3,\ 0xA4,\ 0x47,\ 0xD7,\ 0x33,}
+\DoxyCodeLine{01168\ \ \ \ \ 0x2F,\ 0x8A,\ 0xCA,\ 0xBC,\ 0x5E,\ 0xF0,\ 0x77,\ 0xE4,}
+\DoxyCodeLine{01169\ \ \ \ \ 0x97,\ 0x98,\ 0x97,\ 0xC7,\ 0x10,\ 0x91,\ 0x7D,\ 0x2A,}
+\DoxyCodeLine{01170\ \ \ \ \ 0xA6,\ 0xFF,\ 0x46,\ 0x83,\ 0x97,\ 0xDE,\ 0xE9,\ 0xE2,}
+\DoxyCodeLine{01171\ \ \ \ \ 0x17,\ 0x03,\ 0x06,\ 0x14,\ 0xE2,\ 0xD7,\ 0xB1,\ 0x1D,}
+\DoxyCodeLine{01172\ \ \ \ \ 0x77,\ 0xAF,\ 0x51,\ 0x27,\ 0x5B,\ 0x5E,\ 0x69,\ 0xB8,}
+\DoxyCodeLine{01173\ \ \ \ \ 0x81,\ 0xE6,\ 0x11,\ 0xC5,\ 0x43,\ 0x23,\ 0x81,\ 0x04,}
+\DoxyCodeLine{01174\ \ \ \ \ 0x62,\ 0xFF,\ 0xE9,\ 0x46,\ 0xB8,\ 0xD8,\ 0x44,\ 0xDB,}
+\DoxyCodeLine{01175\ \ \ \ \ 0xA5,\ 0xCC,\ 0x31,\ 0x54,\ 0x34,\ 0xCE,\ 0x3E,\ 0x82,}
+\DoxyCodeLine{01176\ \ \ \ \ 0xD6,\ 0xBF,\ 0x7A,\ 0x0B,\ 0x64,\ 0x21,\ 0x6D,\ 0x88,}
+\DoxyCodeLine{01177\ \ \ \ \ 0x7E,\ 0x5B,\ 0x45,\ 0x12,\ 0x1E,\ 0x63,\ 0x8D,\ 0x49,}
+\DoxyCodeLine{01178\ \ \ \ \ 0xA7,\ 0x1D,\ 0xD9,\ 0x1E,\ 0x06,\ 0xCD,\ 0xE8,\ 0xBA,}
+\DoxyCodeLine{01179\ \ \ \ \ 0x2C,\ 0x8C,\ 0x69,\ 0x32,\ 0xEA,\ 0xBE,\ 0x60,\ 0x71}
+\DoxyCodeLine{01180\ \};}
+\DoxyCodeLine{01181\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ rsa\_p[]\ =\ \{}
+\DoxyCodeLine{01182\ \ \ \ \ 0xFA,\ 0xAC,\ 0xE1,\ 0x37,\ 0x5E,\ 0x32,\ 0x11,\ 0x34,}
+\DoxyCodeLine{01183\ \ \ \ \ 0xC6,\ 0x72,\ 0x58,\ 0x2D,\ 0x91,\ 0x06,\ 0x3E,\ 0x77,}
+\DoxyCodeLine{01184\ \ \ \ \ 0xE7,\ 0x11,\ 0x21,\ 0xCD,\ 0x4A,\ 0xF8,\ 0xA4,\ 0x3F,}
+\DoxyCodeLine{01185\ \ \ \ \ 0x0F,\ 0xEF,\ 0x31,\ 0xE3,\ 0xF3,\ 0x55,\ 0xA0,\ 0xB9,}
+\DoxyCodeLine{01186\ \ \ \ \ 0xAC,\ 0xB6,\ 0xCB,\ 0xBB,\ 0x41,\ 0xD0,\ 0x32,\ 0x81,}
+\DoxyCodeLine{01187\ \ \ \ \ 0x9A,\ 0x8F,\ 0x7A,\ 0x99,\ 0x30,\ 0x77,\ 0x6C,\ 0x68,}
+\DoxyCodeLine{01188\ \ \ \ \ 0x27,\ 0xE2,\ 0x96,\ 0xB5,\ 0x72,\ 0xC9,\ 0xC3,\ 0xD4,}
+\DoxyCodeLine{01189\ \ \ \ \ 0x42,\ 0xAA,\ 0xAA,\ 0xCA,\ 0x95,\ 0x8F,\ 0xFF,\ 0xC9,}
+\DoxyCodeLine{01190\ \ \ \ \ 0x9B,\ 0x52,\ 0x34,\ 0x30,\ 0x1D,\ 0xCF,\ 0xFE,\ 0xCF,}
+\DoxyCodeLine{01191\ \ \ \ \ 0x3C,\ 0x56,\ 0x68,\ 0x6E,\ 0xEF,\ 0xE7,\ 0x6C,\ 0xD7,}
+\DoxyCodeLine{01192\ \ \ \ \ 0xFB,\ 0x99,\ 0xF5,\ 0x4A,\ 0xA5,\ 0x21,\ 0x1F,\ 0x2B,}
+\DoxyCodeLine{01193\ \ \ \ \ 0xEA,\ 0x93,\ 0xE8,\ 0x98,\ 0x26,\ 0xC4,\ 0x6E,\ 0x42,}
+\DoxyCodeLine{01194\ \ \ \ \ 0x21,\ 0x5E,\ 0xA0,\ 0xA1,\ 0x2A,\ 0x58,\ 0x35,\ 0xBB,}
+\DoxyCodeLine{01195\ \ \ \ \ 0x10,\ 0xE7,\ 0xBA,\ 0x27,\ 0x0A,\ 0x3B,\ 0xB3,\ 0xAF,}
+\DoxyCodeLine{01196\ \ \ \ \ 0xE2,\ 0x75,\ 0x36,\ 0x04,\ 0xAC,\ 0x56,\ 0xA0,\ 0xAB,}
+\DoxyCodeLine{01197\ \ \ \ \ 0x52,\ 0xDE,\ 0xCE,\ 0xDD,\ 0x2C,\ 0x28,\ 0x77,\ 0x03}
+\DoxyCodeLine{01198\ \};}
+\DoxyCodeLine{01199\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ rsa\_q[]\ =\ \{}
+\DoxyCodeLine{01200\ \ \ \ \ 0xDF,\ 0xB7,\ 0x52,\ 0xB6,\ 0xD7,\ 0xC0,\ 0xE2,\ 0x96,}
+\DoxyCodeLine{01201\ \ \ \ \ 0xE7,\ 0xC9,\ 0xFE,\ 0x5D,\ 0x71,\ 0x5A,\ 0xC4,\ 0x40,}
+\DoxyCodeLine{01202\ \ \ \ \ 0x96,\ 0x2F,\ 0xE5,\ 0x87,\ 0xEA,\ 0xF3,\ 0xA5,\ 0x77,}
+\DoxyCodeLine{01203\ \ \ \ \ 0x11,\ 0x67,\ 0x3C,\ 0x8D,\ 0x56,\ 0x08,\ 0xA7,\ 0xB5,}
+\DoxyCodeLine{01204\ \ \ \ \ 0x67,\ 0xFA,\ 0x37,\ 0xA8,\ 0xB8,\ 0xCF,\ 0x61,\ 0xE8,}
+\DoxyCodeLine{01205\ \ \ \ \ 0x63,\ 0xD8,\ 0x38,\ 0x06,\ 0x21,\ 0x2B,\ 0x92,\ 0x09,}
+\DoxyCodeLine{01206\ \ \ \ \ 0xA6,\ 0x39,\ 0x3A,\ 0xEA,\ 0xA8,\ 0xB4,\ 0x45,\ 0x4B,}
+\DoxyCodeLine{01207\ \ \ \ \ 0x36,\ 0x10,\ 0x4C,\ 0xE4,\ 0x00,\ 0x66,\ 0x71,\ 0x65,}
+\DoxyCodeLine{01208\ \ \ \ \ 0xF8,\ 0x0B,\ 0x94,\ 0x59,\ 0x4F,\ 0x8C,\ 0xFD,\ 0xD5,}
+\DoxyCodeLine{01209\ \ \ \ \ 0x34,\ 0xA2,\ 0xE7,\ 0x62,\ 0x84,\ 0x0A,\ 0xA7,\ 0xBB,}
+\DoxyCodeLine{01210\ \ \ \ \ 0xDB,\ 0xD9,\ 0x8A,\ 0xCD,\ 0x05,\ 0xE1,\ 0xCC,\ 0x57,}
+\DoxyCodeLine{01211\ \ \ \ \ 0x7B,\ 0xF1,\ 0xF1,\ 0x1F,\ 0x11,\ 0x9D,\ 0xBA,\ 0x3E,}
+\DoxyCodeLine{01212\ \ \ \ \ 0x45,\ 0x18,\ 0x99,\ 0x1B,\ 0x41,\ 0x64,\ 0x43,\ 0xEE,}
+\DoxyCodeLine{01213\ \ \ \ \ 0x97,\ 0x5D,\ 0x77,\ 0x13,\ 0x5B,\ 0x74,\ 0x69,\ 0x73,}
+\DoxyCodeLine{01214\ \ \ \ \ 0x87,\ 0x95,\ 0x05,\ 0x07,\ 0xBE,\ 0x45,\ 0x07,\ 0x17,}
+\DoxyCodeLine{01215\ \ \ \ \ 0x7E,\ 0x4A,\ 0x69,\ 0x22,\ 0xF3,\ 0xDB,\ 0x05,\ 0x39}
+\DoxyCodeLine{01216\ \};}
+\DoxyCodeLine{01217\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ rsa\_dp[]\ =\ \{}
+\DoxyCodeLine{01218\ \ \ \ \ 0x5E,\ 0xD8,\ 0xDC,\ 0xDA,\ 0x53,\ 0x44,\ 0xC4,\ 0x67,}
+\DoxyCodeLine{01219\ \ \ \ \ 0xE0,\ 0x92,\ 0x51,\ 0x34,\ 0xE4,\ 0x83,\ 0xA5,\ 0x4D,}
+\DoxyCodeLine{01220\ \ \ \ \ 0x3E,\ 0xDB,\ 0xA7,\ 0x9B,\ 0x82,\ 0xBB,\ 0x73,\ 0x81,}
+\DoxyCodeLine{01221\ \ \ \ \ 0xFC,\ 0xE8,\ 0x77,\ 0x4B,\ 0x15,\ 0xBE,\ 0x17,\ 0x73,}
+\DoxyCodeLine{01222\ \ \ \ \ 0x49,\ 0x9B,\ 0x5C,\ 0x98,\ 0xBC,\ 0xBD,\ 0x26,\ 0xEF,}
+\DoxyCodeLine{01223\ \ \ \ \ 0x0C,\ 0xE9,\ 0x2E,\ 0xED,\ 0x19,\ 0x7E,\ 0x86,\ 0x41,}
+\DoxyCodeLine{01224\ \ \ \ \ 0x1E,\ 0x9E,\ 0x48,\ 0x81,\ 0xDD,\ 0x2D,\ 0xE4,\ 0x6F,}
+\DoxyCodeLine{01225\ \ \ \ \ 0xC2,\ 0xCD,\ 0xCA,\ 0x93,\ 0x9E,\ 0x65,\ 0x7E,\ 0xD5,}
+\DoxyCodeLine{01226\ \ \ \ \ 0xEC,\ 0x73,\ 0xFD,\ 0x15,\ 0x1B,\ 0xA2,\ 0xA0,\ 0x7A,}
+\DoxyCodeLine{01227\ \ \ \ \ 0x0F,\ 0x0D,\ 0x6E,\ 0xB4,\ 0x53,\ 0x07,\ 0x90,\ 0x92,}
+\DoxyCodeLine{01228\ \ \ \ \ 0x64,\ 0x3B,\ 0x8B,\ 0xA9,\ 0x33,\ 0xB3,\ 0xC5,\ 0x94,}
+\DoxyCodeLine{01229\ \ \ \ \ 0x9B,\ 0x4C,\ 0x5D,\ 0x9C,\ 0x7C,\ 0x46,\ 0xA4,\ 0xA5,}
+\DoxyCodeLine{01230\ \ \ \ \ 0x56,\ 0xF4,\ 0xF3,\ 0xF8,\ 0x27,\ 0x0A,\ 0x7B,\ 0x42,}
+\DoxyCodeLine{01231\ \ \ \ \ 0x0D,\ 0x92,\ 0x70,\ 0x47,\ 0xE7,\ 0x42,\ 0x51,\ 0xA9,}
+\DoxyCodeLine{01232\ \ \ \ \ 0xC2,\ 0x18,\ 0xB1,\ 0x58,\ 0xB1,\ 0x50,\ 0x91,\ 0xB8,}
+\DoxyCodeLine{01233\ \ \ \ \ 0x61,\ 0x41,\ 0xB6,\ 0xA9,\ 0xCE,\ 0xD4,\ 0x7C,\ 0xBB}
+\DoxyCodeLine{01234\ \};}
+\DoxyCodeLine{01235\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ rsa\_dq[]\ =\ \{}
+\DoxyCodeLine{01236\ \ \ \ \ 0x54,\ 0x09,\ 0x1F,\ 0x0F,\ 0x03,\ 0xD8,\ 0xB6,\ 0xC5,}
+\DoxyCodeLine{01237\ \ \ \ \ 0x0C,\ 0xE8,\ 0xB9,\ 0x9E,\ 0x0C,\ 0x38,\ 0x96,\ 0x43,}
+\DoxyCodeLine{01238\ \ \ \ \ 0xD4,\ 0xA6,\ 0xC5,\ 0x47,\ 0xDB,\ 0x20,\ 0x0E,\ 0xE5,}
+\DoxyCodeLine{01239\ \ \ \ \ 0xBD,\ 0x29,\ 0xD4,\ 0x7B,\ 0x1A,\ 0xF8,\ 0x41,\ 0x57,}
+\DoxyCodeLine{01240\ \ \ \ \ 0x49,\ 0x69,\ 0x9A,\ 0x82,\ 0xCC,\ 0x79,\ 0x4A,\ 0x43,}
+\DoxyCodeLine{01241\ \ \ \ \ 0xEB,\ 0x4D,\ 0x8B,\ 0x2D,\ 0xF2,\ 0x43,\ 0xD5,\ 0xA5,}
+\DoxyCodeLine{01242\ \ \ \ \ 0xBE,\ 0x44,\ 0xFD,\ 0x36,\ 0xAC,\ 0x8C,\ 0x9B,\ 0x02,}
+\DoxyCodeLine{01243\ \ \ \ \ 0xF7,\ 0x9A,\ 0x03,\ 0xE8,\ 0x19,\ 0xA6,\ 0x61,\ 0xAE,}
+\DoxyCodeLine{01244\ \ \ \ \ 0x76,\ 0x10,\ 0x93,\ 0x77,\ 0x41,\ 0x04,\ 0xAB,\ 0x4C,}
+\DoxyCodeLine{01245\ \ \ \ \ 0xED,\ 0x6A,\ 0xCC,\ 0x14,\ 0x1B,\ 0x99,\ 0x8D,\ 0x0C,}
+\DoxyCodeLine{01246\ \ \ \ \ 0x6A,\ 0x37,\ 0x3B,\ 0x86,\ 0x6C,\ 0x51,\ 0x37,\ 0x5B,}
+\DoxyCodeLine{01247\ \ \ \ \ 0x1D,\ 0x79,\ 0xF2,\ 0xA3,\ 0x43,\ 0x10,\ 0xC6,\ 0xA7,}
+\DoxyCodeLine{01248\ \ \ \ \ 0x21,\ 0x79,\ 0x6D,\ 0xF9,\ 0xE9,\ 0x04,\ 0x6A,\ 0xE8,}
+\DoxyCodeLine{01249\ \ \ \ \ 0x32,\ 0xFF,\ 0xAE,\ 0xFD,\ 0x1C,\ 0x7B,\ 0x8C,\ 0x29,}
+\DoxyCodeLine{01250\ \ \ \ \ 0x13,\ 0xA3,\ 0x0C,\ 0xB2,\ 0xAD,\ 0xEC,\ 0x6C,\ 0x0F,}
+\DoxyCodeLine{01251\ \ \ \ \ 0x8D,\ 0x27,\ 0x12,\ 0x7B,\ 0x48,\ 0xB2,\ 0xDB,\ 0x31}
+\DoxyCodeLine{01252\ \};}
+\DoxyCodeLine{01253\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ rsa\_qInv[]\ =\ \{}
+\DoxyCodeLine{01254\ \ \ \ \ 0x8D,\ 0x1B,\ 0x05,\ 0xCA,\ 0x24,\ 0x1F,\ 0x0C,\ 0x53,}
+\DoxyCodeLine{01255\ \ \ \ \ 0x19,\ 0x52,\ 0x74,\ 0x63,\ 0x21,\ 0xFA,\ 0x78,\ 0x46,}
+\DoxyCodeLine{01256\ \ \ \ \ 0x79,\ 0xAF,\ 0x5C,\ 0xDE,\ 0x30,\ 0xA4,\ 0x6C,\ 0x20,}
+\DoxyCodeLine{01257\ \ \ \ \ 0x38,\ 0xE6,\ 0x97,\ 0x39,\ 0xB8,\ 0x7A,\ 0x70,\ 0x0D,}
+\DoxyCodeLine{01258\ \ \ \ \ 0x8B,\ 0x6C,\ 0x6D,\ 0x13,\ 0x74,\ 0xD5,\ 0x1C,\ 0xDE,}
+\DoxyCodeLine{01259\ \ \ \ \ 0xA9,\ 0xF4,\ 0x60,\ 0x37,\ 0xFE,\ 0x68,\ 0x77,\ 0x5E,}
+\DoxyCodeLine{01260\ \ \ \ \ 0x0B,\ 0x4E,\ 0x5E,\ 0x03,\ 0x31,\ 0x30,\ 0xDF,\ 0xD6,}
+\DoxyCodeLine{01261\ \ \ \ \ 0xAE,\ 0x85,\ 0xD0,\ 0x81,\ 0xBB,\ 0x61,\ 0xC7,\ 0xB1,}
+\DoxyCodeLine{01262\ \ \ \ \ 0x04,\ 0x5A,\ 0xC4,\ 0x6D,\ 0x56,\ 0x1C,\ 0xD9,\ 0x64,}
+\DoxyCodeLine{01263\ \ \ \ \ 0xE7,\ 0x85,\ 0x7F,\ 0x88,\ 0x91,\ 0xC9,\ 0x60,\ 0x28,}
+\DoxyCodeLine{01264\ \ \ \ \ 0x05,\ 0xE2,\ 0xC6,\ 0x24,\ 0x8F,\ 0xDD,\ 0x61,\ 0x64,}
+\DoxyCodeLine{01265\ \ \ \ \ 0xD8,\ 0x09,\ 0xDE,\ 0x7E,\ 0xD3,\ 0x4A,\ 0x61,\ 0x1A,}
+\DoxyCodeLine{01266\ \ \ \ \ 0xD3,\ 0x73,\ 0x58,\ 0x4B,\ 0xD8,\ 0xA0,\ 0x54,\ 0x25,}
+\DoxyCodeLine{01267\ \ \ \ \ 0x48,\ 0x83,\ 0x6F,\ 0x82,\ 0x6C,\ 0xAF,\ 0x36,\ 0x51,}
+\DoxyCodeLine{01268\ \ \ \ \ 0x2A,\ 0x5D,\ 0x14,\ 0x2F,\ 0x41,\ 0x25,\ 0x00,\ 0xDD,}
+\DoxyCodeLine{01269\ \ \ \ \ 0xF8,\ 0xF3,\ 0x95,\ 0xFE,\ 0x31,\ 0x25,\ 0x50,\ 0x12}
+\DoxyCodeLine{01270\ \};}
+\DoxyCodeLine{01271\ }
+\DoxyCodeLine{01272\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ ST\_KAT\_PARAM\ rsa\_crt\_key[]\ =\ \{}
+\DoxyCodeLine{01273\ \ \ \ \ ST\_KAT\_PARAM\_BIGNUM(OSSL\_PKEY\_PARAM\_RSA\_N,\ rsa\_n),}
+\DoxyCodeLine{01274\ \ \ \ \ ST\_KAT\_PARAM\_BIGNUM(OSSL\_PKEY\_PARAM\_RSA\_E,\ rsa\_e),}
+\DoxyCodeLine{01275\ \ \ \ \ ST\_KAT\_PARAM\_BIGNUM(OSSL\_PKEY\_PARAM\_RSA\_D,\ rsa\_d),}
+\DoxyCodeLine{01276\ \ \ \ \ ST\_KAT\_PARAM\_BIGNUM(OSSL\_PKEY\_PARAM\_RSA\_FACTOR1,\ rsa\_p),}
+\DoxyCodeLine{01277\ \ \ \ \ ST\_KAT\_PARAM\_BIGNUM(OSSL\_PKEY\_PARAM\_RSA\_FACTOR2,\ rsa\_q),}
+\DoxyCodeLine{01278\ \ \ \ \ ST\_KAT\_PARAM\_BIGNUM(OSSL\_PKEY\_PARAM\_RSA\_EXPONENT1,\ rsa\_dp),}
+\DoxyCodeLine{01279\ \ \ \ \ ST\_KAT\_PARAM\_BIGNUM(OSSL\_PKEY\_PARAM\_RSA\_EXPONENT2,\ rsa\_dq),}
+\DoxyCodeLine{01280\ \ \ \ \ ST\_KAT\_PARAM\_BIGNUM(OSSL\_PKEY\_PARAM\_RSA\_COEFFICIENT1,\ rsa\_qInv),}
+\DoxyCodeLine{01281\ \ \ \ \ ST\_KAT\_PARAM\_END()}
+\DoxyCodeLine{01282\ \};}
+\DoxyCodeLine{01283\ }
+\DoxyCodeLine{01284\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ ST\_KAT\_PARAM\ rsa\_pub\_key[]\ =\ \{}
+\DoxyCodeLine{01285\ \ \ \ \ ST\_KAT\_PARAM\_BIGNUM(OSSL\_PKEY\_PARAM\_RSA\_N,\ rsa\_n),}
+\DoxyCodeLine{01286\ \ \ \ \ ST\_KAT\_PARAM\_BIGNUM(OSSL\_PKEY\_PARAM\_RSA\_E,\ rsa\_e),}
+\DoxyCodeLine{01287\ \ \ \ \ ST\_KAT\_PARAM\_END()}
+\DoxyCodeLine{01288\ \};}
+\DoxyCodeLine{01289\ }
+\DoxyCodeLine{01290\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ ST\_KAT\_PARAM\ rsa\_priv\_key[]\ =\ \{}
+\DoxyCodeLine{01291\ \ \ \ \ ST\_KAT\_PARAM\_BIGNUM(OSSL\_PKEY\_PARAM\_RSA\_N,\ rsa\_n),}
+\DoxyCodeLine{01292\ \ \ \ \ ST\_KAT\_PARAM\_BIGNUM(OSSL\_PKEY\_PARAM\_RSA\_E,\ rsa\_e),}
+\DoxyCodeLine{01293\ \ \ \ \ ST\_KAT\_PARAM\_BIGNUM(OSSL\_PKEY\_PARAM\_RSA\_D,\ rsa\_d),}
+\DoxyCodeLine{01294\ \ \ \ \ ST\_KAT\_PARAM\_END()}
+\DoxyCodeLine{01295\ \};}
+\DoxyCodeLine{01296\ }
+\DoxyCodeLine{01297\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{01298\ \textcolor{comment}{\ *\ Using\ OSSL\_PKEY\_RSA\_PAD\_MODE\_NONE\ directly\ in\ the\ expansion\ of\ the}}
+\DoxyCodeLine{01299\ \textcolor{comment}{\ *\ ST\_KAT\_PARAM\_UTF8STRING\ macro\ below\ causes\ a\ failure\ on\ ancient}}
+\DoxyCodeLine{01300\ \textcolor{comment}{\ *\ HP/UX\ PA-\/RISC\ compilers.}}
+\DoxyCodeLine{01301\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{01302\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ pad\_mode\_none[]\ =\ OSSL\_PKEY\_RSA\_PAD\_MODE\_NONE;}
+\DoxyCodeLine{01303\ }
+\DoxyCodeLine{01304\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ ST\_KAT\_PARAM\ rsa\_enc\_params[]\ =\ \{}
+\DoxyCodeLine{01305\ \ \ \ \ ST\_KAT\_PARAM\_UTF8STRING(OSSL\_ASYM\_CIPHER\_PARAM\_PAD\_MODE,\ pad\_mode\_none),}
+\DoxyCodeLine{01306\ \ \ \ \ ST\_KAT\_PARAM\_END()}
+\DoxyCodeLine{01307\ \};}
+\DoxyCodeLine{01308\ }
+\DoxyCodeLine{01309\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ rsa\_expected\_sig[256]\ =\ \{}
+\DoxyCodeLine{01310\ \ \ \ \ 0xad,\ 0xbe,\ 0x2a,\ 0xaf,\ 0x16,\ 0x85,\ 0xc5,\ 0x00,}
+\DoxyCodeLine{01311\ \ \ \ \ 0x91,\ 0x3e,\ 0xd0,\ 0x49,\ 0xfb,\ 0x3a,\ 0x81,\ 0xb9,}
+\DoxyCodeLine{01312\ \ \ \ \ 0x6c,\ 0x28,\ 0xbc,\ 0xbf,\ 0xea,\ 0x96,\ 0x5f,\ 0xe4,}
+\DoxyCodeLine{01313\ \ \ \ \ 0x9f,\ 0x99,\ 0xf7,\ 0x18,\ 0x8c,\ 0xec,\ 0x60,\ 0x28,}
+\DoxyCodeLine{01314\ \ \ \ \ 0xeb,\ 0x29,\ 0x02,\ 0x49,\ 0xfc,\ 0xda,\ 0xd7,\ 0x78,}
+\DoxyCodeLine{01315\ \ \ \ \ 0x68,\ 0xf8,\ 0xe1,\ 0xe9,\ 0x4d,\ 0x20,\ 0x6d,\ 0x32,}
+\DoxyCodeLine{01316\ \ \ \ \ 0xa6,\ 0xde,\ 0xfc,\ 0xe4,\ 0xda,\ 0xcc,\ 0x6c,\ 0x75,}
+\DoxyCodeLine{01317\ \ \ \ \ 0x36,\ 0x6b,\ 0xff,\ 0x5a,\ 0xac,\ 0x01,\ 0xa8,\ 0xc2,}
+\DoxyCodeLine{01318\ \ \ \ \ 0xa9,\ 0xe6,\ 0x8b,\ 0x18,\ 0x3e,\ 0xec,\ 0xea,\ 0x4c,}
+\DoxyCodeLine{01319\ \ \ \ \ 0x4a,\ 0x9e,\ 0x00,\ 0x09,\ 0xd1,\ 0x8a,\ 0x69,\ 0x1b,}
+\DoxyCodeLine{01320\ \ \ \ \ 0x8b,\ 0xd9,\ 0xad,\ 0x37,\ 0xe5,\ 0x7c,\ 0xff,\ 0x7d,}
+\DoxyCodeLine{01321\ \ \ \ \ 0x59,\ 0x56,\ 0x3e,\ 0xa0,\ 0xc6,\ 0x32,\ 0xd8,\ 0x35,}
+\DoxyCodeLine{01322\ \ \ \ \ 0x2f,\ 0xff,\ 0xfb,\ 0x05,\ 0x02,\ 0xcd,\ 0xd7,\ 0x19,}
+\DoxyCodeLine{01323\ \ \ \ \ 0xb9,\ 0x00,\ 0x86,\ 0x2a,\ 0xcf,\ 0xaa,\ 0x78,\ 0x16,}
+\DoxyCodeLine{01324\ \ \ \ \ 0x4b,\ 0xf1,\ 0xa7,\ 0x59,\ 0xef,\ 0x7d,\ 0xe8,\ 0x74,}
+\DoxyCodeLine{01325\ \ \ \ \ 0x23,\ 0x5c,\ 0xb2,\ 0xd4,\ 0x8a,\ 0x99,\ 0xa5,\ 0xbc,}
+\DoxyCodeLine{01326\ \ \ \ \ 0xfa,\ 0x63,\ 0xd8,\ 0xf7,\ 0xbd,\ 0xc6,\ 0x00,\ 0x13,}
+\DoxyCodeLine{01327\ \ \ \ \ 0x06,\ 0x02,\ 0x9a,\ 0xd4,\ 0xa7,\ 0xb4,\ 0x3d,\ 0x61,}
+\DoxyCodeLine{01328\ \ \ \ \ 0xab,\ 0xf1,\ 0xc2,\ 0x95,\ 0x59,\ 0x9b,\ 0x3d,\ 0x67,}
+\DoxyCodeLine{01329\ \ \ \ \ 0x1f,\ 0xde,\ 0x57,\ 0xb6,\ 0xb6,\ 0x9f,\ 0xb0,\ 0x87,}
+\DoxyCodeLine{01330\ \ \ \ \ 0xd6,\ 0x51,\ 0xd5,\ 0x3e,\ 0x00,\ 0xe2,\ 0xc9,\ 0xa0,}
+\DoxyCodeLine{01331\ \ \ \ \ 0x03,\ 0x66,\ 0xbc,\ 0x01,\ 0xb3,\ 0x8e,\ 0xfa,\ 0xf1,}
+\DoxyCodeLine{01332\ \ \ \ \ 0x15,\ 0xeb,\ 0x26,\ 0xf1,\ 0x5d,\ 0x81,\ 0x90,\ 0xb4,}
+\DoxyCodeLine{01333\ \ \ \ \ 0x1c,\ 0x00,\ 0x7c,\ 0x83,\ 0x4a,\ 0xa5,\ 0xde,\ 0x64,}
+\DoxyCodeLine{01334\ \ \ \ \ 0xae,\ 0xea,\ 0x6c,\ 0x43,\ 0xc3,\ 0x20,\ 0x77,\ 0x77,}
+\DoxyCodeLine{01335\ \ \ \ \ 0x42,\ 0x12,\ 0x24,\ 0xf5,\ 0xe3,\ 0x70,\ 0xdd,\ 0x59,}
+\DoxyCodeLine{01336\ \ \ \ \ 0x48,\ 0x9c,\ 0xef,\ 0xd4,\ 0x8a,\ 0x3c,\ 0x29,\ 0x6a,}
+\DoxyCodeLine{01337\ \ \ \ \ 0x0c,\ 0x9c,\ 0xf2,\ 0x13,\ 0xa4,\ 0x1c,\ 0x2f,\ 0x49,}
+\DoxyCodeLine{01338\ \ \ \ \ 0xcd,\ 0xb4,\ 0xaa,\ 0x28,\ 0x40,\ 0x34,\ 0xc6,\ 0x75,}
+\DoxyCodeLine{01339\ \ \ \ \ 0xba,\ 0x30,\ 0xe6,\ 0xd8,\ 0x5b,\ 0x2f,\ 0x08,\ 0xd0,}
+\DoxyCodeLine{01340\ \ \ \ \ 0x29,\ 0xa5,\ 0x39,\ 0xfb,\ 0x6e,\ 0x3b,\ 0x0f,\ 0x52,}
+\DoxyCodeLine{01341\ \ \ \ \ 0x2c,\ 0x68,\ 0xf0,\ 0x37,\ 0xa9,\ 0xd2,\ 0x56,\ 0xd6}
+\DoxyCodeLine{01342\ \};}
+\DoxyCodeLine{01343\ }
+\DoxyCodeLine{01344\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ rsa\_asym\_plaintext\_encrypt[256]\ =\ \{}
+\DoxyCodeLine{01345\ \ \ \ 0x01,\ 0x02,\ 0x03,\ 0x04,\ 0x05,\ 0x06,\ 0x07,\ 0x08,}
+\DoxyCodeLine{01346\ \ \ \ 0x09,\ 0x0a,\ 0x0b,\ 0x0c,\ 0x0d,\ 0x0e,\ 0x0f,\ 0x10,}
+\DoxyCodeLine{01347\ \};}
+\DoxyCodeLine{01348\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ rsa\_asym\_expected\_encrypt[256]\ =\ \{}
+\DoxyCodeLine{01349\ \ \ \ \ 0x54,\ 0xac,\ 0x23,\ 0x96,\ 0x1d,\ 0x82,\ 0x5d,\ 0x8b,}
+\DoxyCodeLine{01350\ \ \ \ \ 0x8f,\ 0x36,\ 0x33,\ 0xd0,\ 0xf4,\ 0x02,\ 0xa2,\ 0x61,}
+\DoxyCodeLine{01351\ \ \ \ \ 0xb1,\ 0x13,\ 0xd4,\ 0x4a,\ 0x46,\ 0x06,\ 0x37,\ 0x3c,}
+\DoxyCodeLine{01352\ \ \ \ \ 0xbf,\ 0x40,\ 0x05,\ 0x3c,\ 0xc6,\ 0x3b,\ 0x64,\ 0xdc,}
+\DoxyCodeLine{01353\ \ \ \ \ 0x22,\ 0x22,\ 0xaf,\ 0x36,\ 0x79,\ 0x62,\ 0x45,\ 0xf0,}
+\DoxyCodeLine{01354\ \ \ \ \ 0x97,\ 0x82,\ 0x22,\ 0x44,\ 0x86,\ 0x4a,\ 0x7c,\ 0xfa,}
+\DoxyCodeLine{01355\ \ \ \ \ 0xac,\ 0x03,\ 0x21,\ 0x84,\ 0x3f,\ 0x31,\ 0xad,\ 0x2a,}
+\DoxyCodeLine{01356\ \ \ \ \ 0xa4,\ 0x6e,\ 0x7a,\ 0xc5,\ 0x93,\ 0xf3,\ 0x0f,\ 0xfc,}
+\DoxyCodeLine{01357\ \ \ \ \ 0xf1,\ 0x62,\ 0xce,\ 0x82,\ 0x12,\ 0x45,\ 0xc9,\ 0x35,}
+\DoxyCodeLine{01358\ \ \ \ \ 0xb0,\ 0x7a,\ 0xcd,\ 0x99,\ 0x8c,\ 0x91,\ 0x6b,\ 0x5a,}
+\DoxyCodeLine{01359\ \ \ \ \ 0xd3,\ 0x46,\ 0xdb,\ 0xf9,\ 0x9e,\ 0x52,\ 0x49,\ 0xbd,}
+\DoxyCodeLine{01360\ \ \ \ \ 0x1e,\ 0xe8,\ 0xda,\ 0xac,\ 0x61,\ 0x47,\ 0xc2,\ 0xda,}
+\DoxyCodeLine{01361\ \ \ \ \ 0xfc,\ 0x1e,\ 0xfb,\ 0x74,\ 0xd7,\ 0xd6,\ 0xc1,\ 0x18,}
+\DoxyCodeLine{01362\ \ \ \ \ 0x86,\ 0x3e,\ 0x20,\ 0x9c,\ 0x7a,\ 0xe1,\ 0x04,\ 0xb7,}
+\DoxyCodeLine{01363\ \ \ \ \ 0x38,\ 0x43,\ 0xb1,\ 0x4e,\ 0xa0,\ 0xd8,\ 0xc1,\ 0x39,}
+\DoxyCodeLine{01364\ \ \ \ \ 0x4d,\ 0xe1,\ 0xd3,\ 0xb0,\ 0xb3,\ 0xf1,\ 0x82,\ 0x87,}
+\DoxyCodeLine{01365\ \ \ \ \ 0x1f,\ 0x74,\ 0xb5,\ 0x69,\ 0xfd,\ 0x33,\ 0xd6,\ 0x21,}
+\DoxyCodeLine{01366\ \ \ \ \ 0x7c,\ 0x61,\ 0x60,\ 0x28,\ 0xca,\ 0x70,\ 0xdb,\ 0xa0,}
+\DoxyCodeLine{01367\ \ \ \ \ 0xbb,\ 0xc8,\ 0x73,\ 0xa9,\ 0x82,\ 0xf8,\ 0x6b,\ 0xd8,}
+\DoxyCodeLine{01368\ \ \ \ \ 0xf0,\ 0xc9,\ 0x7b,\ 0x20,\ 0xdf,\ 0x9d,\ 0xfb,\ 0x8c,}
+\DoxyCodeLine{01369\ \ \ \ \ 0xd4,\ 0xa2,\ 0x89,\ 0xe1,\ 0x9b,\ 0x04,\ 0xad,\ 0xaa,}
+\DoxyCodeLine{01370\ \ \ \ \ 0x11,\ 0x6c,\ 0x8f,\ 0xce,\ 0x83,\ 0x29,\ 0x56,\ 0x69,}
+\DoxyCodeLine{01371\ \ \ \ \ 0xbb,\ 0x00,\ 0x3b,\ 0xef,\ 0xca,\ 0x2d,\ 0xcd,\ 0x52,}
+\DoxyCodeLine{01372\ \ \ \ \ 0xc8,\ 0xf1,\ 0xb3,\ 0x9b,\ 0xb4,\ 0x4f,\ 0x6d,\ 0x9c,}
+\DoxyCodeLine{01373\ \ \ \ \ 0x3d,\ 0x69,\ 0xcc,\ 0x6d,\ 0x1f,\ 0x38,\ 0x4d,\ 0xe6,}
+\DoxyCodeLine{01374\ \ \ \ \ 0xbb,\ 0x0c,\ 0x87,\ 0xdc,\ 0x5f,\ 0xa9,\ 0x24,\ 0x93,}
+\DoxyCodeLine{01375\ \ \ \ \ 0x03,\ 0x46,\ 0xa2,\ 0x33,\ 0x6c,\ 0xf4,\ 0xd8,\ 0x5d,}
+\DoxyCodeLine{01376\ \ \ \ \ 0x68,\ 0xf3,\ 0xd3,\ 0xe0,\ 0xf2,\ 0x30,\ 0xdb,\ 0xf5,}
+\DoxyCodeLine{01377\ \ \ \ \ 0x4f,\ 0x0f,\ 0xad,\ 0xc7,\ 0xd0,\ 0xaa,\ 0x47,\ 0xd9,}
+\DoxyCodeLine{01378\ \ \ \ \ 0x9f,\ 0x85,\ 0x1b,\ 0x2e,\ 0x6c,\ 0x3c,\ 0x57,\ 0x04,}
+\DoxyCodeLine{01379\ \ \ \ \ 0x29,\ 0xf4,\ 0xf5,\ 0x66,\ 0x7d,\ 0x93,\ 0x4a,\ 0xaa,}
+\DoxyCodeLine{01380\ \ \ \ \ 0x05,\ 0x52,\ 0x55,\ 0xc1,\ 0xc6,\ 0x06,\ 0x90,\ 0xab,}
+\DoxyCodeLine{01381\ \};}
+\DoxyCodeLine{01382\ }
+\DoxyCodeLine{01383\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_EC}}
+\DoxyCodeLine{01384\ \textcolor{comment}{/*\ ECDSA\ key\ data\ */}}
+\DoxyCodeLine{01385\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ ecd\_prime\_curve\_name[]\ =\ \textcolor{stringliteral}{"{}secp224r1"{}};}
+\DoxyCodeLine{01386\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ecd\_prime\_priv[]\ =\ \{}
+\DoxyCodeLine{01387\ \ \ \ \ 0x98,\ 0x1f,\ 0xb5,\ 0xf1,\ 0xfc,\ 0x87,\ 0x1d,\ 0x7d,}
+\DoxyCodeLine{01388\ \ \ \ \ 0xde,\ 0x1e,\ 0x01,\ 0x64,\ 0x09,\ 0x9b,\ 0xe7,\ 0x1b,}
+\DoxyCodeLine{01389\ \ \ \ \ 0x9f,\ 0xad,\ 0x63,\ 0xdd,\ 0x33,\ 0x01,\ 0xd1,\ 0x50,}
+\DoxyCodeLine{01390\ \ \ \ \ 0x80,\ 0x93,\ 0x50,\ 0x30}
+\DoxyCodeLine{01391\ \};}
+\DoxyCodeLine{01392\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ecd\_prime\_pub[]\ =\ \{}
+\DoxyCodeLine{01393\ \ \ \ \ 0x04,\ 0x95,\ 0x47,\ 0x99,\ 0x44,\ 0x29,\ 0x8f,\ 0x51,}
+\DoxyCodeLine{01394\ \ \ \ \ 0x39,\ 0xe2,\ 0x53,\ 0xec,\ 0x79,\ 0xb0,\ 0x4d,\ 0xde,}
+\DoxyCodeLine{01395\ \ \ \ \ 0x87,\ 0x1a,\ 0x76,\ 0x54,\ 0xd5,\ 0x96,\ 0xb8,\ 0x7a,}
+\DoxyCodeLine{01396\ \ \ \ \ 0x6d,\ 0xf4,\ 0x1c,\ 0x2c,\ 0x87,\ 0x91,\ 0x5f,\ 0xd5,}
+\DoxyCodeLine{01397\ \ \ \ \ 0x31,\ 0xdd,\ 0x24,\ 0xe5,\ 0x78,\ 0xd9,\ 0x08,\ 0x24,}
+\DoxyCodeLine{01398\ \ \ \ \ 0x8a,\ 0x49,\ 0x99,\ 0xec,\ 0x55,\ 0xf2,\ 0x82,\ 0xb3,}
+\DoxyCodeLine{01399\ \ \ \ \ 0xc4,\ 0xb7,\ 0x33,\ 0x68,\ 0xe4,\ 0x24,\ 0xa9,\ 0x12,}
+\DoxyCodeLine{01400\ \ \ \ \ 0x82}
+\DoxyCodeLine{01401\ \};}
+\DoxyCodeLine{01402\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ecdsa\_prime\_expected\_sig[]\ =\ \{}
+\DoxyCodeLine{01403\ \ \ \ \ 0x30,\ 0x3d,\ 0x02,\ 0x1d,\ 0x00,\ 0xd2,\ 0x4a,\ 0xc9,}
+\DoxyCodeLine{01404\ \ \ \ \ 0x4f,\ 0xaf,\ 0xdb,\ 0x62,\ 0xfc,\ 0x41,\ 0x4a,\ 0x81,}
+\DoxyCodeLine{01405\ \ \ \ \ 0x2a,\ 0x9f,\ 0xcf,\ 0xa3,\ 0xda,\ 0xfe,\ 0xa3,\ 0x49,}
+\DoxyCodeLine{01406\ \ \ \ \ 0xbd,\ 0xea,\ 0xbf,\ 0x2a,\ 0x51,\ 0xb4,\ 0x0b,\ 0xc3,}
+\DoxyCodeLine{01407\ \ \ \ \ 0xbc,\ 0x02,\ 0x1c,\ 0x7f,\ 0x30,\ 0xb7,\ 0xad,\ 0xab,}
+\DoxyCodeLine{01408\ \ \ \ \ 0x09,\ 0x6e,\ 0x3c,\ 0xad,\ 0x7f,\ 0xf9,\ 0x5e,\ 0xaa,}
+\DoxyCodeLine{01409\ \ \ \ \ 0xe2,\ 0x38,\ 0xe5,\ 0x29,\ 0x16,\ 0xc4,\ 0xc8,\ 0x77,}
+\DoxyCodeLine{01410\ \ \ \ \ 0xa1,\ 0xf8,\ 0x60,\ 0x77,\ 0x39,\ 0x7a,\ 0xec}
+\DoxyCodeLine{01411\ \};}
+\DoxyCodeLine{01412\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ ST\_KAT\_PARAM\ ecdsa\_prime\_key[]\ =\ \{}
+\DoxyCodeLine{01413\ \ \ \ \ ST\_KAT\_PARAM\_UTF8STRING(OSSL\_PKEY\_PARAM\_GROUP\_NAME,\ ecd\_prime\_curve\_name),}
+\DoxyCodeLine{01414\ \ \ \ \ ST\_KAT\_PARAM\_OCTET(OSSL\_PKEY\_PARAM\_PUB\_KEY,\ ecd\_prime\_pub),}
+\DoxyCodeLine{01415\ \ \ \ \ ST\_KAT\_PARAM\_BIGNUM(OSSL\_PKEY\_PARAM\_PRIV\_KEY,\ ecd\_prime\_priv),}
+\DoxyCodeLine{01416\ \ \ \ \ ST\_KAT\_PARAM\_END()}
+\DoxyCodeLine{01417\ \};}
+\DoxyCodeLine{01418\ }
+\DoxyCodeLine{01419\ \textcolor{preprocessor}{\#\ ifndef\ OPENSSL\_NO\_EC2M}}
+\DoxyCodeLine{01420\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ ecd\_bin\_curve\_name[]\ =\ \textcolor{stringliteral}{"{}sect233r1"{}};}
+\DoxyCodeLine{01421\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ecd\_bin\_priv[]\ =\ \{}
+\DoxyCodeLine{01422\ \ \ \ \ 0x00,\ 0x6d,\ 0xd6,\ 0x39,\ 0x9d,\ 0x2a,\ 0xa2,\ 0xc8,}
+\DoxyCodeLine{01423\ \ \ \ \ 0x8c,\ 0xfc,\ 0x7b,\ 0x80,\ 0x66,\ 0xaa,\ 0xe1,\ 0xaa,}
+\DoxyCodeLine{01424\ \ \ \ \ 0xba,\ 0xee,\ 0xcb,\ 0xfd,\ 0xc9,\ 0xe5,\ 0x36,\ 0x38,}
+\DoxyCodeLine{01425\ \ \ \ \ 0x2e,\ 0xf7,\ 0x37,\ 0x6d,\ 0xd3,\ 0x20}
+\DoxyCodeLine{01426\ \};}
+\DoxyCodeLine{01427\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ecd\_bin\_pub[]\ =\ \{}
+\DoxyCodeLine{01428\ \ \ \ \ 0x04,\ 0x00,\ 0x06,\ 0xe2,\ 0x56,\ 0xf7,\ 0x37,\ 0xf9,}
+\DoxyCodeLine{01429\ \ \ \ \ 0xea,\ 0xb6,\ 0xd1,\ 0x0f,\ 0x59,\ 0xfa,\ 0x23,\ 0xc3,}
+\DoxyCodeLine{01430\ \ \ \ \ 0x93,\ 0xa8,\ 0xb2,\ 0x26,\ 0xe2,\ 0x5c,\ 0x08,\ 0xbe,}
+\DoxyCodeLine{01431\ \ \ \ \ 0x63,\ 0x49,\ 0x26,\ 0xdc,\ 0xc7,\ 0x1e,\ 0x6f,\ 0x01,}
+\DoxyCodeLine{01432\ \ \ \ \ 0x32,\ 0x3b,\ 0xe6,\ 0x54,\ 0x8d,\ 0xc1,\ 0x13,\ 0x3e,}
+\DoxyCodeLine{01433\ \ \ \ \ 0x54,\ 0xb2,\ 0x66,\ 0x89,\ 0xb2,\ 0x82,\ 0x0a,\ 0x72,}
+\DoxyCodeLine{01434\ \ \ \ \ 0x02,\ 0xa8,\ 0xe9,\ 0x6f,\ 0x54,\ 0xfd,\ 0x3a,\ 0x6b,}
+\DoxyCodeLine{01435\ \ \ \ \ 0x99,\ 0xb6,\ 0x8f,\ 0x80,\ 0x46}
+\DoxyCodeLine{01436\ \};}
+\DoxyCodeLine{01437\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ ecdsa\_bin\_expected\_sig[]\ =\ \{}
+\DoxyCodeLine{01438\ \ \ \ \ 0x30,\ 0x3f,\ 0x02,\ 0x1d,\ 0x08,\ 0x11,\ 0x7c,\ 0xcd,}
+\DoxyCodeLine{01439\ \ \ \ \ 0xf4,\ 0xa1,\ 0x31,\ 0x9a,\ 0xc1,\ 0xfd,\ 0x50,\ 0x0e,}
+\DoxyCodeLine{01440\ \ \ \ \ 0x5d,\ 0xa9,\ 0xb6,\ 0x0e,\ 0x95,\ 0x49,\ 0xe1,\ 0xbd,}
+\DoxyCodeLine{01441\ \ \ \ \ 0x44,\ 0xe3,\ 0x5b,\ 0xa9,\ 0x35,\ 0x94,\ 0xa5,\ 0x2f,}
+\DoxyCodeLine{01442\ \ \ \ \ 0xae,\ 0x02,\ 0x1e,\ 0x00,\ 0xe3,\ 0xba,\ 0xb8,\ 0x8f,}
+\DoxyCodeLine{01443\ \ \ \ \ 0x4b,\ 0x05,\ 0x76,\ 0x88,\ 0x1e,\ 0x49,\ 0xd6,\ 0x62,}
+\DoxyCodeLine{01444\ \ \ \ \ 0x76,\ 0xd3,\ 0x22,\ 0x4d,\ 0xa3,\ 0x7b,\ 0x04,\ 0xcc,}
+\DoxyCodeLine{01445\ \ \ \ \ 0xfa,\ 0x7b,\ 0x41,\ 0x9b,\ 0x8c,\ 0xaf,\ 0x1b,\ 0x6d,}
+\DoxyCodeLine{01446\ \ \ \ \ 0xbd}
+\DoxyCodeLine{01447\ \};}
+\DoxyCodeLine{01448\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ ST\_KAT\_PARAM\ ecdsa\_bin\_key[]\ =\ \{}
+\DoxyCodeLine{01449\ \ \ \ \ ST\_KAT\_PARAM\_UTF8STRING(OSSL\_PKEY\_PARAM\_GROUP\_NAME,\ ecd\_bin\_curve\_name),}
+\DoxyCodeLine{01450\ \ \ \ \ ST\_KAT\_PARAM\_OCTET(OSSL\_PKEY\_PARAM\_PUB\_KEY,\ ecd\_bin\_pub),}
+\DoxyCodeLine{01451\ \ \ \ \ ST\_KAT\_PARAM\_BIGNUM(OSSL\_PKEY\_PARAM\_PRIV\_KEY,\ ecd\_bin\_priv),}
+\DoxyCodeLine{01452\ \ \ \ \ ST\_KAT\_PARAM\_END()}
+\DoxyCodeLine{01453\ \};}
+\DoxyCodeLine{01454\ \textcolor{preprocessor}{\#\ endif\ }\textcolor{comment}{/*\ OPENSSL\_NO\_EC2M\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{01455\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ OPENSSL\_NO\_EC\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{01456\ }
+\DoxyCodeLine{01457\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_DSA}}
+\DoxyCodeLine{01458\ \textcolor{comment}{/*\ dsa\ 2048\ */}}
+\DoxyCodeLine{01459\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ dsa\_p[]\ =\ \{}
+\DoxyCodeLine{01460\ \ \ \ \ 0xa2,\ 0x9b,\ 0x88,\ 0x72,\ 0xce,\ 0x8b,\ 0x84,\ 0x23,}
+\DoxyCodeLine{01461\ \ \ \ \ 0xb7,\ 0xd5,\ 0xd2,\ 0x1d,\ 0x4b,\ 0x02,\ 0xf5,\ 0x7e,}
+\DoxyCodeLine{01462\ \ \ \ \ 0x03,\ 0xe9,\ 0xe6,\ 0xb8,\ 0xa2,\ 0x58,\ 0xdc,\ 0x16,}
+\DoxyCodeLine{01463\ \ \ \ \ 0x61,\ 0x1b,\ 0xa0,\ 0x98,\ 0xab,\ 0x54,\ 0x34,\ 0x15,}
+\DoxyCodeLine{01464\ \ \ \ \ 0xe4,\ 0x15,\ 0xf1,\ 0x56,\ 0x99,\ 0x7a,\ 0x3e,\ 0xe2,}
+\DoxyCodeLine{01465\ \ \ \ \ 0x36,\ 0x65,\ 0x8f,\ 0xa0,\ 0x93,\ 0x26,\ 0x0d,\ 0xe3,}
+\DoxyCodeLine{01466\ \ \ \ \ 0xad,\ 0x42,\ 0x2e,\ 0x05,\ 0xe0,\ 0x46,\ 0xf9,\ 0xec,}
+\DoxyCodeLine{01467\ \ \ \ \ 0x29,\ 0x16,\ 0x1a,\ 0x37,\ 0x5f,\ 0x0e,\ 0xb4,\ 0xef,}
+\DoxyCodeLine{01468\ \ \ \ \ 0xfc,\ 0xef,\ 0x58,\ 0x28,\ 0x5c,\ 0x5d,\ 0x39,\ 0xed,}
+\DoxyCodeLine{01469\ \ \ \ \ 0x42,\ 0x5d,\ 0x7a,\ 0x62,\ 0xca,\ 0x12,\ 0x89,\ 0x6c,}
+\DoxyCodeLine{01470\ \ \ \ \ 0x4a,\ 0x92,\ 0xcb,\ 0x19,\ 0x46,\ 0xf2,\ 0x95,\ 0x2a,}
+\DoxyCodeLine{01471\ \ \ \ \ 0x48,\ 0x13,\ 0x3f,\ 0x07,\ 0xda,\ 0x36,\ 0x4d,\ 0x1b,}
+\DoxyCodeLine{01472\ \ \ \ \ 0xdf,\ 0x6b,\ 0x0f,\ 0x71,\ 0x39,\ 0x98,\ 0x3e,\ 0x69,}
+\DoxyCodeLine{01473\ \ \ \ \ 0x3c,\ 0x80,\ 0x05,\ 0x9b,\ 0x0e,\ 0xac,\ 0xd1,\ 0x47,}
+\DoxyCodeLine{01474\ \ \ \ \ 0x9b,\ 0xa9,\ 0xf2,\ 0x85,\ 0x77,\ 0x54,\ 0xed,\ 0xe7,}
+\DoxyCodeLine{01475\ \ \ \ \ 0x5f,\ 0x11,\ 0x2b,\ 0x07,\ 0xeb,\ 0xbf,\ 0x35,\ 0x34,}
+\DoxyCodeLine{01476\ \ \ \ \ 0x8b,\ 0xbf,\ 0x3e,\ 0x01,\ 0xe0,\ 0x2f,\ 0x2d,\ 0x47,}
+\DoxyCodeLine{01477\ \ \ \ \ 0x3d,\ 0xe3,\ 0x94,\ 0x53,\ 0xf9,\ 0x9d,\ 0xd2,\ 0x36,}
+\DoxyCodeLine{01478\ \ \ \ \ 0x75,\ 0x41,\ 0xca,\ 0xca,\ 0x3b,\ 0xa0,\ 0x11,\ 0x66,}
+\DoxyCodeLine{01479\ \ \ \ \ 0x34,\ 0x3d,\ 0x7b,\ 0x5b,\ 0x58,\ 0xa3,\ 0x7b,\ 0xd1,}
+\DoxyCodeLine{01480\ \ \ \ \ 0xb7,\ 0x52,\ 0x1d,\ 0xb2,\ 0xf1,\ 0x3b,\ 0x86,\ 0x70,}
+\DoxyCodeLine{01481\ \ \ \ \ 0x71,\ 0x32,\ 0xfe,\ 0x09,\ 0xf4,\ 0xcd,\ 0x09,\ 0xdc,}
+\DoxyCodeLine{01482\ \ \ \ \ 0x16,\ 0x18,\ 0xfa,\ 0x34,\ 0x01,\ 0xeb,\ 0xf9,\ 0xcc,}
+\DoxyCodeLine{01483\ \ \ \ \ 0x7b,\ 0x19,\ 0xfa,\ 0x94,\ 0xaa,\ 0x47,\ 0x20,\ 0x88,}
+\DoxyCodeLine{01484\ \ \ \ \ 0x13,\ 0x3d,\ 0x6c,\ 0xb2,\ 0xd3,\ 0x5c,\ 0x11,\ 0x79,}
+\DoxyCodeLine{01485\ \ \ \ \ 0xc8,\ 0xc8,\ 0xff,\ 0x36,\ 0x87,\ 0x58,\ 0xd5,\ 0x07,}
+\DoxyCodeLine{01486\ \ \ \ \ 0xd9,\ 0xf9,\ 0xa1,\ 0x7d,\ 0x46,\ 0xc1,\ 0x10,\ 0xfe,}
+\DoxyCodeLine{01487\ \ \ \ \ 0x31,\ 0x44,\ 0xce,\ 0x9b,\ 0x02,\ 0x2b,\ 0x42,\ 0xe4,}
+\DoxyCodeLine{01488\ \ \ \ \ 0x19,\ 0xeb,\ 0x4f,\ 0x53,\ 0x88,\ 0x61,\ 0x3b,\ 0xfc,}
+\DoxyCodeLine{01489\ \ \ \ \ 0x3e,\ 0x26,\ 0x24,\ 0x1a,\ 0x43,\ 0x2e,\ 0x87,\ 0x06,}
+\DoxyCodeLine{01490\ \ \ \ \ 0xbc,\ 0x58,\ 0xef,\ 0x76,\ 0x11,\ 0x72,\ 0x78,\ 0xde,}
+\DoxyCodeLine{01491\ \ \ \ \ 0xab,\ 0x6c,\ 0xf6,\ 0x92,\ 0x61,\ 0x82,\ 0x91,\ 0xb7}
+\DoxyCodeLine{01492\ \};}
+\DoxyCodeLine{01493\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ dsa\_q[]\ =\ \{}
+\DoxyCodeLine{01494\ \ \ \ \ 0xa3,\ 0xbf,\ 0xd9,\ 0xab,\ 0x78,\ 0x84,\ 0x79,\ 0x4e,}
+\DoxyCodeLine{01495\ \ \ \ \ 0x38,\ 0x34,\ 0x50,\ 0xd5,\ 0x89,\ 0x1d,\ 0xc1,\ 0x8b,}
+\DoxyCodeLine{01496\ \ \ \ \ 0x65,\ 0x15,\ 0x7b,\ 0xdc,\ 0xfc,\ 0xda,\ 0xc5,\ 0x15,}
+\DoxyCodeLine{01497\ \ \ \ \ 0x18,\ 0x90,\ 0x28,\ 0x67}
+\DoxyCodeLine{01498\ \};}
+\DoxyCodeLine{01499\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ dsa\_g[]\ =\ \{}
+\DoxyCodeLine{01500\ \ \ \ \ 0x68,\ 0x19,\ 0x27,\ 0x88,\ 0x69,\ 0xc7,\ 0xfd,\ 0x3d,}
+\DoxyCodeLine{01501\ \ \ \ \ 0x2d,\ 0x7b,\ 0x77,\ 0xf7,\ 0x7e,\ 0x81,\ 0x50,\ 0xd9,}
+\DoxyCodeLine{01502\ \ \ \ \ 0xad,\ 0x43,\ 0x3b,\ 0xea,\ 0x3b,\ 0xa8,\ 0x5e,\ 0xfc,}
+\DoxyCodeLine{01503\ \ \ \ \ 0x80,\ 0x41,\ 0x5a,\ 0xa3,\ 0x54,\ 0x5f,\ 0x78,\ 0xf7,}
+\DoxyCodeLine{01504\ \ \ \ \ 0x22,\ 0x96,\ 0xf0,\ 0x6c,\ 0xb1,\ 0x9c,\ 0xed,\ 0xa0,}
+\DoxyCodeLine{01505\ \ \ \ \ 0x6c,\ 0x94,\ 0xb0,\ 0x55,\ 0x1c,\ 0xfe,\ 0x6e,\ 0x6f,}
+\DoxyCodeLine{01506\ \ \ \ \ 0x86,\ 0x3e,\ 0x31,\ 0xd1,\ 0xde,\ 0x6e,\ 0xed,\ 0x7d,}
+\DoxyCodeLine{01507\ \ \ \ \ 0xab,\ 0x8b,\ 0x0c,\ 0x9d,\ 0xf2,\ 0x31,\ 0xe0,\ 0x84,}
+\DoxyCodeLine{01508\ \ \ \ \ 0x34,\ 0xd1,\ 0x18,\ 0x4f,\ 0x91,\ 0xd0,\ 0x33,\ 0x69,}
+\DoxyCodeLine{01509\ \ \ \ \ 0x6b,\ 0xb3,\ 0x82,\ 0xf8,\ 0x45,\ 0x5e,\ 0x98,\ 0x88,}
+\DoxyCodeLine{01510\ \ \ \ \ 0xf5,\ 0xd3,\ 0x1d,\ 0x47,\ 0x84,\ 0xec,\ 0x40,\ 0x12,}
+\DoxyCodeLine{01511\ \ \ \ \ 0x02,\ 0x46,\ 0xf4,\ 0xbe,\ 0xa6,\ 0x17,\ 0x94,\ 0xbb,}
+\DoxyCodeLine{01512\ \ \ \ \ 0xa5,\ 0x86,\ 0x6f,\ 0x09,\ 0x74,\ 0x64,\ 0x63,\ 0xbd,}
+\DoxyCodeLine{01513\ \ \ \ \ 0xf8,\ 0xe9,\ 0xe1,\ 0x08,\ 0xcd,\ 0x95,\ 0x29,\ 0xc3,}
+\DoxyCodeLine{01514\ \ \ \ \ 0xd0,\ 0xf6,\ 0xdf,\ 0x80,\ 0x31,\ 0x6e,\ 0x2e,\ 0x70,}
+\DoxyCodeLine{01515\ \ \ \ \ 0xaa,\ 0xeb,\ 0x1b,\ 0x26,\ 0xcd,\ 0xb8,\ 0xad,\ 0x97,}
+\DoxyCodeLine{01516\ \ \ \ \ 0xbc,\ 0x3d,\ 0x28,\ 0x7e,\ 0x0b,\ 0x8d,\ 0x61,\ 0x6c,}
+\DoxyCodeLine{01517\ \ \ \ \ 0x42,\ 0xe6,\ 0x5b,\ 0x87,\ 0xdb,\ 0x20,\ 0xde,\ 0xb7,}
+\DoxyCodeLine{01518\ \ \ \ \ 0x00,\ 0x5b,\ 0xc4,\ 0x16,\ 0x74,\ 0x7a,\ 0x64,\ 0x70,}
+\DoxyCodeLine{01519\ \ \ \ \ 0x14,\ 0x7a,\ 0x68,\ 0xa7,\ 0x82,\ 0x03,\ 0x88,\ 0xeb,}
+\DoxyCodeLine{01520\ \ \ \ \ 0xf4,\ 0x4d,\ 0x52,\ 0xe0,\ 0x62,\ 0x8a,\ 0xf9,\ 0xcf,}
+\DoxyCodeLine{01521\ \ \ \ \ 0x1b,\ 0x71,\ 0x66,\ 0xd0,\ 0x34,\ 0x65,\ 0xf3,\ 0x5a,}
+\DoxyCodeLine{01522\ \ \ \ \ 0xcc,\ 0x31,\ 0xb6,\ 0x11,\ 0x0c,\ 0x43,\ 0xda,\ 0xbc,}
+\DoxyCodeLine{01523\ \ \ \ \ 0x7c,\ 0x5d,\ 0x59,\ 0x1e,\ 0x67,\ 0x1e,\ 0xaf,\ 0x7c,}
+\DoxyCodeLine{01524\ \ \ \ \ 0x25,\ 0x2c,\ 0x1c,\ 0x14,\ 0x53,\ 0x36,\ 0xa1,\ 0xa4,}
+\DoxyCodeLine{01525\ \ \ \ \ 0xdd,\ 0xf1,\ 0x32,\ 0x44,\ 0xd5,\ 0x5e,\ 0x83,\ 0x56,}
+\DoxyCodeLine{01526\ \ \ \ \ 0x80,\ 0xca,\ 0xb2,\ 0x53,\ 0x3b,\ 0x82,\ 0xdf,\ 0x2e,}
+\DoxyCodeLine{01527\ \ \ \ \ 0xfe,\ 0x55,\ 0xec,\ 0x18,\ 0xc1,\ 0xe6,\ 0xcd,\ 0x00,}
+\DoxyCodeLine{01528\ \ \ \ \ 0x7b,\ 0xb0,\ 0x89,\ 0x75,\ 0x8b,\ 0xb1,\ 0x7c,\ 0x2c,}
+\DoxyCodeLine{01529\ \ \ \ \ 0xbe,\ 0x14,\ 0x44,\ 0x1b,\ 0xd0,\ 0x93,\ 0xae,\ 0x66,}
+\DoxyCodeLine{01530\ \ \ \ \ 0xe5,\ 0x97,\ 0x6d,\ 0x53,\ 0x73,\ 0x3f,\ 0x4f,\ 0xa3,}
+\DoxyCodeLine{01531\ \ \ \ \ 0x26,\ 0x97,\ 0x01,\ 0xd3,\ 0x1d,\ 0x23,\ 0xd4,\ 0x67}
+\DoxyCodeLine{01532\ \};}
+\DoxyCodeLine{01533\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ dsa\_pub[]\ =\ \{}
+\DoxyCodeLine{01534\ \ \ \ \ 0xa0,\ 0x12,\ 0xb3,\ 0xb1,\ 0x70,\ 0xb3,\ 0x07,\ 0x22,}
+\DoxyCodeLine{01535\ \ \ \ \ 0x79,\ 0x57,\ 0xb7,\ 0xca,\ 0x20,\ 0x61,\ 0xa8,\ 0x16,}
+\DoxyCodeLine{01536\ \ \ \ \ 0xac,\ 0x7a,\ 0x2b,\ 0x3d,\ 0x9a,\ 0xe9,\ 0x95,\ 0xa5,}
+\DoxyCodeLine{01537\ \ \ \ \ 0x11,\ 0x9c,\ 0x38,\ 0x5b,\ 0x60,\ 0x3b,\ 0xf6,\ 0xf6,}
+\DoxyCodeLine{01538\ \ \ \ \ 0xc5,\ 0xde,\ 0x4d,\ 0xc5,\ 0xec,\ 0xb5,\ 0xdf,\ 0xa4,}
+\DoxyCodeLine{01539\ \ \ \ \ 0xa4,\ 0x1c,\ 0x68,\ 0x66,\ 0x2e,\ 0xb2,\ 0x5b,\ 0x63,}
+\DoxyCodeLine{01540\ \ \ \ \ 0x8b,\ 0x7e,\ 0x26,\ 0x20,\ 0xba,\ 0x89,\ 0x8d,\ 0x07,}
+\DoxyCodeLine{01541\ \ \ \ \ 0xda,\ 0x6c,\ 0x49,\ 0x91,\ 0xe7,\ 0x6c,\ 0xc0,\ 0xec,}
+\DoxyCodeLine{01542\ \ \ \ \ 0xd1,\ 0xad,\ 0x34,\ 0x21,\ 0x07,\ 0x70,\ 0x67,\ 0xe4,}
+\DoxyCodeLine{01543\ \ \ \ \ 0x7c,\ 0x18,\ 0xf5,\ 0x8a,\ 0x92,\ 0xa7,\ 0x2a,\ 0xd4,}
+\DoxyCodeLine{01544\ \ \ \ \ 0x31,\ 0x99,\ 0xec,\ 0xb7,\ 0xbd,\ 0x84,\ 0xe7,\ 0xd3,}
+\DoxyCodeLine{01545\ \ \ \ \ 0xaf,\ 0xb9,\ 0x01,\ 0x9f,\ 0x0e,\ 0x9d,\ 0xd0,\ 0xfb,}
+\DoxyCodeLine{01546\ \ \ \ \ 0xaa,\ 0x48,\ 0x73,\ 0x00,\ 0xb1,\ 0x30,\ 0x81,\ 0xe3,}
+\DoxyCodeLine{01547\ \ \ \ \ 0x3c,\ 0x90,\ 0x28,\ 0x76,\ 0x43,\ 0x6f,\ 0x7b,\ 0x03,}
+\DoxyCodeLine{01548\ \ \ \ \ 0xc3,\ 0x45,\ 0x52,\ 0x84,\ 0x81,\ 0xd3,\ 0x62,\ 0x81,}
+\DoxyCodeLine{01549\ \ \ \ \ 0x5e,\ 0x24,\ 0xfe,\ 0x59,\ 0xda,\ 0xc5,\ 0xac,\ 0x34,}
+\DoxyCodeLine{01550\ \ \ \ \ 0x66,\ 0x0d,\ 0x4c,\ 0x8a,\ 0x76,\ 0xcb,\ 0x99,\ 0xa7,}
+\DoxyCodeLine{01551\ \ \ \ \ 0xc7,\ 0xde,\ 0x93,\ 0xeb,\ 0x95,\ 0x6c,\ 0xd6,\ 0xbc,}
+\DoxyCodeLine{01552\ \ \ \ \ 0x88,\ 0xe5,\ 0x8d,\ 0x90,\ 0x10,\ 0x34,\ 0x94,\ 0x4a,}
+\DoxyCodeLine{01553\ \ \ \ \ 0x09,\ 0x4b,\ 0x01,\ 0x80,\ 0x3a,\ 0x43,\ 0xc6,\ 0x72,}
+\DoxyCodeLine{01554\ \ \ \ \ 0xb9,\ 0x68,\ 0x8c,\ 0x0e,\ 0x01,\ 0xd8,\ 0xf4,\ 0xfc,}
+\DoxyCodeLine{01555\ \ \ \ \ 0x91,\ 0xc6,\ 0x2a,\ 0x3f,\ 0x88,\ 0x02,\ 0x1f,\ 0x7b,}
+\DoxyCodeLine{01556\ \ \ \ \ 0xd6,\ 0xa6,\ 0x51,\ 0xb1,\ 0xa8,\ 0x8f,\ 0x43,\ 0xaa,}
+\DoxyCodeLine{01557\ \ \ \ \ 0x4e,\ 0xf2,\ 0x76,\ 0x53,\ 0xd1,\ 0x2b,\ 0xf8,\ 0xb7,}
+\DoxyCodeLine{01558\ \ \ \ \ 0x09,\ 0x9f,\ 0xdf,\ 0x6b,\ 0x46,\ 0x10,\ 0x82,\ 0xf8,}
+\DoxyCodeLine{01559\ \ \ \ \ 0xe9,\ 0x39,\ 0x10,\ 0x7b,\ 0xfd,\ 0x2f,\ 0x72,\ 0x10,}
+\DoxyCodeLine{01560\ \ \ \ \ 0x08,\ 0x7d,\ 0x32,\ 0x6c,\ 0x37,\ 0x52,\ 0x00,\ 0xf1,}
+\DoxyCodeLine{01561\ \ \ \ \ 0xf5,\ 0x1e,\ 0x7e,\ 0x74,\ 0xa3,\ 0x41,\ 0x31,\ 0x90,}
+\DoxyCodeLine{01562\ \ \ \ \ 0x1b,\ 0xcd,\ 0x08,\ 0x63,\ 0x52,\ 0x1f,\ 0xf8,\ 0xd6,}
+\DoxyCodeLine{01563\ \ \ \ \ 0x76,\ 0xc4,\ 0x85,\ 0x81,\ 0x86,\ 0x87,\ 0x36,\ 0xc5,}
+\DoxyCodeLine{01564\ \ \ \ \ 0xe5,\ 0x1b,\ 0x16,\ 0xa4,\ 0xe3,\ 0x92,\ 0x15,\ 0xea,}
+\DoxyCodeLine{01565\ \ \ \ \ 0x0b,\ 0x17,\ 0xc4,\ 0x73,\ 0x59,\ 0x74,\ 0xc5,\ 0x16}
+\DoxyCodeLine{01566\ \};}
+\DoxyCodeLine{01567\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ dsa\_priv[]\ =\ \{}
+\DoxyCodeLine{01568\ \ \ \ \ 0x6c,\ 0xca,\ 0xee,\ 0xf6,\ 0xd7,\ 0x3b,\ 0x4e,\ 0x80,}
+\DoxyCodeLine{01569\ \ \ \ \ 0xf1,\ 0x1c,\ 0x17,\ 0xb8,\ 0xe9,\ 0x62,\ 0x7c,\ 0x03,}
+\DoxyCodeLine{01570\ \ \ \ \ 0x66,\ 0x35,\ 0xba,\ 0xc3,\ 0x94,\ 0x23,\ 0x50,\ 0x5e,}
+\DoxyCodeLine{01571\ \ \ \ \ 0x40,\ 0x7e,\ 0x5c,\ 0xb7}
+\DoxyCodeLine{01572\ \};}
+\DoxyCodeLine{01573\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ dsa\_expected\_sig[]\ =\ \{}
+\DoxyCodeLine{01574\ \ \ \ \ 0x30,\ 0x3c,\ 0x02,\ 0x1c,\ 0x70,\ 0xa4,\ 0x77,\ 0xb6,}
+\DoxyCodeLine{01575\ \ \ \ \ 0x02,\ 0xb5,\ 0xd3,\ 0x07,\ 0x21,\ 0x22,\ 0x2d,\ 0xe3,}
+\DoxyCodeLine{01576\ \ \ \ \ 0x4f,\ 0x7d,\ 0xfd,\ 0xfd,\ 0x6b,\ 0x4f,\ 0x03,\ 0x27,}
+\DoxyCodeLine{01577\ \ \ \ \ 0x4c,\ 0xd3,\ 0xb2,\ 0x8c,\ 0x7c,\ 0xc5,\ 0xc4,\ 0xdf,}
+\DoxyCodeLine{01578\ \ \ \ \ 0x02,\ 0x1c,\ 0x11,\ 0x52,\ 0x65,\ 0x16,\ 0x9f,\ 0xbd,}
+\DoxyCodeLine{01579\ \ \ \ \ 0x4c,\ 0xe5,\ 0xab,\ 0xb2,\ 0x01,\ 0xd0,\ 0x7a,\ 0x30,}
+\DoxyCodeLine{01580\ \ \ \ \ 0x5c,\ 0xc5,\ 0xba,\ 0x22,\ 0xc6,\ 0x62,\ 0x7e,\ 0xa6,}
+\DoxyCodeLine{01581\ \ \ \ \ 0x7d,\ 0x98,\ 0x96,\ 0xc9,\ 0x77,\ 0x00}
+\DoxyCodeLine{01582\ \};}
+\DoxyCodeLine{01583\ }
+\DoxyCodeLine{01584\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ ST\_KAT\_PARAM\ dsa\_key[]\ =\ \{}
+\DoxyCodeLine{01585\ \ \ \ \ ST\_KAT\_PARAM\_BIGNUM(OSSL\_PKEY\_PARAM\_FFC\_P,\ dsa\_p),}
+\DoxyCodeLine{01586\ \ \ \ \ ST\_KAT\_PARAM\_BIGNUM(OSSL\_PKEY\_PARAM\_FFC\_Q,\ dsa\_q),}
+\DoxyCodeLine{01587\ \ \ \ \ ST\_KAT\_PARAM\_BIGNUM(OSSL\_PKEY\_PARAM\_FFC\_G,\ dsa\_g),}
+\DoxyCodeLine{01588\ \ \ \ \ ST\_KAT\_PARAM\_BIGNUM(OSSL\_PKEY\_PARAM\_PUB\_KEY,\ dsa\_pub),}
+\DoxyCodeLine{01589\ \ \ \ \ ST\_KAT\_PARAM\_BIGNUM(OSSL\_PKEY\_PARAM\_PRIV\_KEY,\ dsa\_priv),}
+\DoxyCodeLine{01590\ \ \ \ \ ST\_KAT\_PARAM\_END()}
+\DoxyCodeLine{01591\ \};}
+\DoxyCodeLine{01592\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ OPENSSL\_NO\_DSA\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{01593\ }
+\DoxyCodeLine{01594\ \textcolor{comment}{/*\ Hash\ DRBG\ inputs\ for\ signature\ KATs\ */}}
+\DoxyCodeLine{01595\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ sig\_kat\_entropyin[]\ =\ \{}
+\DoxyCodeLine{01596\ \ \ \ \ 0x06,\ 0x6d,\ 0xc8,\ 0xce,\ 0x75,\ 0xb2,\ 0x89,\ 0x66,\ 0xa6,\ 0x85,\ 0x16,\ 0x3f,}
+\DoxyCodeLine{01597\ \ \ \ \ 0xe2,\ 0xa4,\ 0xd4,\ 0x27,\ 0xfb,\ 0xdb,\ 0x61,\ 0x66,\ 0x50,\ 0x61,\ 0x6b,\ 0xa2,}
+\DoxyCodeLine{01598\ \ \ \ \ 0x82,\ 0xfc,\ 0x33,\ 0x2b,\ 0x4e,\ 0x6f,\ 0x12,\ 0x20}
+\DoxyCodeLine{01599\ \};}
+\DoxyCodeLine{01600\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ sig\_kat\_nonce[]\ =\ \{}
+\DoxyCodeLine{01601\ \ \ \ \ 0x55,\ 0x9f,\ 0x7c,\ 0x64,\ 0x89,\ 0x70,\ 0x83,\ 0xec,\ 0x2d,\ 0x73,\ 0x70,\ 0xd9,}
+\DoxyCodeLine{01602\ \ \ \ \ 0xf0,\ 0xe5,\ 0x07,\ 0x1f}
+\DoxyCodeLine{01603\ \};}
+\DoxyCodeLine{01604\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ sig\_kat\_persstr[]\ =\ \{}
+\DoxyCodeLine{01605\ \ \ \ \ 0x88,\ 0x6f,\ 0x54,\ 0x9a,\ 0xad,\ 0x1a,\ 0xc6,\ 0x3d,\ 0x18,\ 0xcb,\ 0xcc,\ 0x66,}
+\DoxyCodeLine{01606\ \ \ \ \ 0x85,\ 0xda,\ 0xa2,\ 0xc2,\ 0xf7,\ 0x9e,\ 0xb0,\ 0x89,\ 0x4c,\ 0xb4,\ 0xae,\ 0xf1,}
+\DoxyCodeLine{01607\ \ \ \ \ 0xac,\ 0x54,\ 0x4f,\ 0xce,\ 0x57,\ 0xf1,\ 0x5e,\ 0x11}
+\DoxyCodeLine{01608\ \};}
+\DoxyCodeLine{01609\ }
+\DoxyCodeLine{01610\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ ST\_KAT\_SIGN\ st\_kat\_sign\_tests[]\ =\ \{}
+\DoxyCodeLine{01611\ \ \ \ \ \{}
+\DoxyCodeLine{01612\ \ \ \ \ \ \ \ \ OSSL\_SELF\_TEST\_DESC\_SIGN\_RSA,}
+\DoxyCodeLine{01613\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}RSA"{}},}
+\DoxyCodeLine{01614\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}SHA-\/256"{}},}
+\DoxyCodeLine{01615\ \ \ \ \ \ \ \ \ rsa\_crt\_key,}
+\DoxyCodeLine{01616\ \ \ \ \ \ \ \ \ ITM(sig\_kat\_entropyin),}
+\DoxyCodeLine{01617\ \ \ \ \ \ \ \ \ ITM(sig\_kat\_nonce),}
+\DoxyCodeLine{01618\ \ \ \ \ \ \ \ \ ITM(sig\_kat\_persstr),}
+\DoxyCodeLine{01619\ \ \ \ \ \ \ \ \ ITM(rsa\_expected\_sig)}
+\DoxyCodeLine{01620\ \ \ \ \ \},}
+\DoxyCodeLine{01621\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_EC}}
+\DoxyCodeLine{01622\ \ \ \ \ \{}
+\DoxyCodeLine{01623\ \ \ \ \ \ \ \ \ OSSL\_SELF\_TEST\_DESC\_SIGN\_ECDSA,}
+\DoxyCodeLine{01624\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}EC"{}},}
+\DoxyCodeLine{01625\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}SHA-\/256"{}},}
+\DoxyCodeLine{01626\ \ \ \ \ \ \ \ \ ecdsa\_prime\_key,}
+\DoxyCodeLine{01627\ \ \ \ \ \ \ \ \ ITM(sig\_kat\_entropyin),}
+\DoxyCodeLine{01628\ \ \ \ \ \ \ \ \ ITM(sig\_kat\_nonce),}
+\DoxyCodeLine{01629\ \ \ \ \ \ \ \ \ ITM(sig\_kat\_persstr),}
+\DoxyCodeLine{01630\ \ \ \ \ \ \ \ \ ITM(ecdsa\_prime\_expected\_sig)}
+\DoxyCodeLine{01631\ \ \ \ \ \},}
+\DoxyCodeLine{01632\ \textcolor{preprocessor}{\#\ ifndef\ OPENSSL\_NO\_EC2M}}
+\DoxyCodeLine{01633\ \ \ \ \ \{}
+\DoxyCodeLine{01634\ \ \ \ \ \ \ \ \ OSSL\_SELF\_TEST\_DESC\_SIGN\_ECDSA,}
+\DoxyCodeLine{01635\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}EC"{}},}
+\DoxyCodeLine{01636\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}SHA-\/256"{}},}
+\DoxyCodeLine{01637\ \ \ \ \ \ \ \ \ ecdsa\_bin\_key,}
+\DoxyCodeLine{01638\ \ \ \ \ \ \ \ \ ITM(sig\_kat\_entropyin),}
+\DoxyCodeLine{01639\ \ \ \ \ \ \ \ \ ITM(sig\_kat\_nonce),}
+\DoxyCodeLine{01640\ \ \ \ \ \ \ \ \ ITM(sig\_kat\_persstr),}
+\DoxyCodeLine{01641\ \ \ \ \ \ \ \ \ ITM(ecdsa\_bin\_expected\_sig)}
+\DoxyCodeLine{01642\ \ \ \ \ \},}
+\DoxyCodeLine{01643\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{01644\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ OPENSSL\_NO\_EC\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{01645\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_DSA}}
+\DoxyCodeLine{01646\ \ \ \ \ \{}
+\DoxyCodeLine{01647\ \ \ \ \ \ \ \ \ OSSL\_SELF\_TEST\_DESC\_SIGN\_DSA,}
+\DoxyCodeLine{01648\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}DSA"{}},}
+\DoxyCodeLine{01649\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}SHA-\/256"{}},}
+\DoxyCodeLine{01650\ \ \ \ \ \ \ \ \ dsa\_key,}
+\DoxyCodeLine{01651\ \ \ \ \ \ \ \ \ ITM(sig\_kat\_entropyin),}
+\DoxyCodeLine{01652\ \ \ \ \ \ \ \ \ ITM(sig\_kat\_nonce),}
+\DoxyCodeLine{01653\ \ \ \ \ \ \ \ \ ITM(sig\_kat\_persstr),}
+\DoxyCodeLine{01654\ \ \ \ \ \ \ \ \ ITM(dsa\_expected\_sig)}
+\DoxyCodeLine{01655\ \ \ \ \ \},}
+\DoxyCodeLine{01656\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ OPENSSL\_NO\_DSA\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{01657\ \};}
+\DoxyCodeLine{01658\ }
+\DoxyCodeLine{01659\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ ST\_KAT\_ASYM\_CIPHER\ st\_kat\_asym\_cipher\_tests[]\ =\ \{}
+\DoxyCodeLine{01660\ \ \ \ \ \{}
+\DoxyCodeLine{01661\ \ \ \ \ \ \ \ \ OSSL\_SELF\_TEST\_DESC\_ASYM\_RSA\_ENC,}
+\DoxyCodeLine{01662\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}RSA"{}},}
+\DoxyCodeLine{01663\ \ \ \ \ \ \ \ \ 1,}
+\DoxyCodeLine{01664\ \ \ \ \ \ \ \ \ rsa\_pub\_key,}
+\DoxyCodeLine{01665\ \ \ \ \ \ \ \ \ rsa\_enc\_params,}
+\DoxyCodeLine{01666\ \ \ \ \ \ \ \ \ ITM(rsa\_asym\_plaintext\_encrypt),}
+\DoxyCodeLine{01667\ \ \ \ \ \ \ \ \ ITM(rsa\_asym\_expected\_encrypt),}
+\DoxyCodeLine{01668\ \ \ \ \ \},}
+\DoxyCodeLine{01669\ \ \ \ \ \{}
+\DoxyCodeLine{01670\ \ \ \ \ \ \ \ \ OSSL\_SELF\_TEST\_DESC\_ASYM\_RSA\_DEC,}
+\DoxyCodeLine{01671\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}RSA"{}},}
+\DoxyCodeLine{01672\ \ \ \ \ \ \ \ \ 0,}
+\DoxyCodeLine{01673\ \ \ \ \ \ \ \ \ rsa\_priv\_key,}
+\DoxyCodeLine{01674\ \ \ \ \ \ \ \ \ rsa\_enc\_params,}
+\DoxyCodeLine{01675\ \ \ \ \ \ \ \ \ ITM(rsa\_asym\_expected\_encrypt),}
+\DoxyCodeLine{01676\ \ \ \ \ \ \ \ \ ITM(rsa\_asym\_plaintext\_encrypt),}
+\DoxyCodeLine{01677\ \ \ \ \ \},}
+\DoxyCodeLine{01678\ \ \ \ \ \{}
+\DoxyCodeLine{01679\ \ \ \ \ \ \ \ \ OSSL\_SELF\_TEST\_DESC\_ASYM\_RSA\_DEC,}
+\DoxyCodeLine{01680\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}RSA"{}},}
+\DoxyCodeLine{01681\ \ \ \ \ \ \ \ \ 0,}
+\DoxyCodeLine{01682\ \ \ \ \ \ \ \ \ rsa\_crt\_key,}
+\DoxyCodeLine{01683\ \ \ \ \ \ \ \ \ rsa\_enc\_params,}
+\DoxyCodeLine{01684\ \ \ \ \ \ \ \ \ ITM(rsa\_asym\_expected\_encrypt),}
+\DoxyCodeLine{01685\ \ \ \ \ \ \ \ \ ITM(rsa\_asym\_plaintext\_encrypt),}
+\DoxyCodeLine{01686\ \ \ \ \ \},}
+\DoxyCodeLine{01687\ \};}
+
+\end{DoxyCode}

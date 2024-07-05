@@ -1,0 +1,62 @@
+\doxysection{quic\+\_\+error.\+h}
+\hypertarget{quic__error_8h_source}{}\label{quic__error_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/quic\_error.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/quic\_error.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2022-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_QUIC\_ERROR\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_QUIC\_ERROR\_H}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#\ include\ <openssl/ssl.h>}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#\ ifndef\ OPENSSL\_NO\_QUIC}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{comment}{/*\ RFC\ 9000\ Section\ 20.1\ */}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_ERR\_NO\_ERROR\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 0x00}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_ERR\_INTERNAL\_ERROR\ \ \ \ \ \ \ \ \ \ \ \ 0x01}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_ERR\_CONNECTION\_REFUSED\ \ \ \ \ \ \ \ 0x02}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_ERR\_FLOW\_CONTROL\_ERROR\ \ \ \ \ \ \ \ 0x03}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_ERR\_STREAM\_LIMIT\_ERROR\ \ \ \ \ \ \ \ 0x04}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_ERR\_STREAM\_STATE\_ERROR\ \ \ \ \ \ \ \ 0x05}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_ERR\_FINAL\_SIZE\_ERROR\ \ \ \ \ \ \ \ \ \ 0x06}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_ERR\_FRAME\_ENCODING\_ERROR\ \ \ \ \ \ 0x07}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_ERR\_TRANSPORT\_PARAMETER\_ERROR\ 0x08}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_ERR\_CONNECTION\_ID\_LIMIT\_ERROR\ 0x09}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_ERR\_PROTOCOL\_VIOLATION\ \ \ \ \ \ \ \ 0x0A}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_ERR\_INVALID\_TOKEN\ \ \ \ \ \ \ \ \ \ \ \ \ 0x0B}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_ERR\_APPLICATION\_ERROR\ \ \ \ \ \ \ \ \ 0x0C}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_ERR\_CRYPTO\_BUFFER\_EXCEEDED\ \ \ \ 0x0D}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_ERR\_KEY\_UPDATE\_ERROR\ \ \ \ \ \ \ \ \ \ 0x0E}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_ERR\_AEAD\_LIMIT\_REACHED\ \ \ \ \ \ \ \ 0x0F}}
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_ERR\_NO\_VIABLE\_PATH\ \ \ \ \ \ \ \ \ \ \ \ 0x10}}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \textcolor{comment}{/*\ Inclusive\ range\ for\ handshake-\/specific\ errors.\ */}}
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_ERR\_CRYPTO\_ERR\_BEGIN\ \ \ \ \ \ \ \ \ \ 0x0100}}
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_ERR\_CRYPTO\_ERR\_END\ \ \ \ \ \ \ \ \ \ \ \ 0x01FF}}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_ERR\_CRYPTO\_ERR(X)\ \(\backslash\)}}
+\DoxyCodeLine{00041\ \textcolor{preprocessor}{\ \ \ \ (QUIC\_ERR\_CRYPTO\_ERR\_BEGIN\ +\ (X))}}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_ERR\_CRYPTO\_UNEXPECTED\_MESSAGE\ \(\backslash\)}}
+\DoxyCodeLine{00044\ \textcolor{preprocessor}{\ \ \ \ QUIC\_ERR\_CRYPTO\_ERR(SSL3\_AD\_UNEXPECTED\_MESSAGE)}}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_ERR\_CRYPTO\_MISSING\_EXT\ \(\backslash\)}}
+\DoxyCodeLine{00047\ \textcolor{preprocessor}{\ \ \ \ QUIC\_ERR\_CRYPTO\_ERR(TLS13\_AD\_MISSING\_EXTENSION)}}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_ERR\_CRYPTO\_NO\_APP\_PROTO\ \(\backslash\)}}
+\DoxyCodeLine{00050\ \textcolor{preprocessor}{\ \ \ \ QUIC\_ERR\_CRYPTO\_ERR(TLS1\_AD\_NO\_APPLICATION\_PROTOCOL)}}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *ossl\_quic\_err\_to\_string(uint64\_t\ error\_code);}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

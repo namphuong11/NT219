@@ -1,0 +1,45 @@
+\doxysection{cipher\+\_\+aes\+\_\+ocb.\+h}
+\hypertarget{cipher__aes__ocb_8h_source}{}\label{cipher__aes__ocb_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/providers/implementations/ciphers/cipher\_aes\_ocb.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/providers/implementations/ciphers/cipher\_aes\_ocb.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2019-\/2020\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <openssl/aes.h>}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ "{}prov/ciphercommon.h"{}}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ "{}crypto/aes\_platform.h"{}}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#define\ OCB\_MAX\_TAG\_LEN\ \ \ \ \ AES\_BLOCK\_SIZE}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#define\ OCB\_MAX\_DATA\_LEN\ \ \ \ AES\_BLOCK\_SIZE}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#define\ OCB\_MAX\_AAD\_LEN\ \ \ \ \ AES\_BLOCK\_SIZE}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structprov__aes__ocb__ctx__st}{prov\_aes\_ocb\_ctx\_st}}\ \{}
+\DoxyCodeLine{00019\ \ \ \ \ \mbox{\hyperlink{structprov__cipher__ctx__st}{PROV\_CIPHER\_CTX}}\ base;\ \ \ \ \ \ \ \textcolor{comment}{/*\ Must\ be\ first\ */}}
+\DoxyCodeLine{00020\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00021\ \ \ \ \ \ \ \ \ OSSL\_UNION\_ALIGN;}
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ AES\_KEY\ ks;}
+\DoxyCodeLine{00023\ \ \ \ \ \}\ ksenc;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ AES\ key\ schedule\ to\ use\ for\ encryption/aad\ */}}
+\DoxyCodeLine{00024\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ OSSL\_UNION\_ALIGN;}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ AES\_KEY\ ks;}
+\DoxyCodeLine{00027\ \ \ \ \ \}\ ksdec;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ AES\ key\ schedule\ to\ use\ for\ decryption\ */}}
+\DoxyCodeLine{00028\ \ \ \ \ OCB128\_CONTEXT\ ocb;}
+\DoxyCodeLine{00029\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ iv\_state;\ \ \ \ \ \ \textcolor{comment}{/*\ set\ to\ one\ of\ IV\_STATE\_XXX\ */}}
+\DoxyCodeLine{00030\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ key\_set\ :\ 1;}
+\DoxyCodeLine{00031\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ taglen;}
+\DoxyCodeLine{00032\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ data\_buf\_len;}
+\DoxyCodeLine{00033\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ aad\_buf\_len;}
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ tag[OCB\_MAX\_TAG\_LEN];}
+\DoxyCodeLine{00035\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ data\_buf[OCB\_MAX\_DATA\_LEN];\ \textcolor{comment}{/*\ Store\ partial\ data\ blocks\ */}}
+\DoxyCodeLine{00036\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ aad\_buf[OCB\_MAX\_AAD\_LEN];\ \ \ \textcolor{comment}{/*\ Store\ partial\ AAD\ blocks\ */}}
+\DoxyCodeLine{00037\ \}\ \mbox{\hyperlink{structprov__aes__ocb__ctx__st}{PROV\_AES\_OCB\_CTX}};}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structprov__cipher__hw__st}{PROV\_CIPHER\_HW}}\ *ossl\_prov\_cipher\_hw\_aes\_ocb(\textcolor{keywordtype}{size\_t}\ keybits);}
+
+\end{DoxyCode}

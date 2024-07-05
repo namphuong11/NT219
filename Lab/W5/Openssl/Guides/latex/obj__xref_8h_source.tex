@@ -1,0 +1,144 @@
+\doxysection{obj\+\_\+xref.\+h}
+\hypertarget{obj__xref_8h_source}{}\label{obj__xref_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/objects/obj\_xref.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/objects/obj\_xref.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ WARNING:\ do\ not\ edit!}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *\ Generated\ by\ objxref.pl}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ Copyright\ 1998-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00015\ \ \ \ \ \textcolor{keywordtype}{int}\ sign\_id;}
+\DoxyCodeLine{00016\ \ \ \ \ \textcolor{keywordtype}{int}\ hash\_id;}
+\DoxyCodeLine{00017\ \ \ \ \ \textcolor{keywordtype}{int}\ pkey\_id;}
+\DoxyCodeLine{00018\ \}\ \mbox{\hyperlink{structnid__triple}{nid\_triple}};}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ DEFINE\_STACK\_OF(\mbox{\hyperlink{structnid__triple}{nid\_triple}})}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structnid__triple}{nid\_triple}}\ sigoid\_srt[]\ =\ \{}
+\DoxyCodeLine{00023\ \ \ \ \ \{NID\_md2WithRSAEncryption,\ NID\_md2,\ NID\_rsaEncryption\},}
+\DoxyCodeLine{00024\ \ \ \ \ \{NID\_md5WithRSAEncryption,\ NID\_md5,\ NID\_rsaEncryption\},}
+\DoxyCodeLine{00025\ \ \ \ \ \{NID\_shaWithRSAEncryption,\ NID\_sha,\ NID\_rsaEncryption\},}
+\DoxyCodeLine{00026\ \ \ \ \ \{NID\_sha1WithRSAEncryption,\ NID\_sha1,\ NID\_rsaEncryption\},}
+\DoxyCodeLine{00027\ \ \ \ \ \{NID\_dsaWithSHA,\ NID\_sha,\ NID\_dsa\},}
+\DoxyCodeLine{00028\ \ \ \ \ \{NID\_dsaWithSHA1\_2,\ NID\_sha1,\ NID\_dsa\_2\},}
+\DoxyCodeLine{00029\ \ \ \ \ \{NID\_mdc2WithRSA,\ NID\_mdc2,\ NID\_rsaEncryption\},}
+\DoxyCodeLine{00030\ \ \ \ \ \{NID\_md5WithRSA,\ NID\_md5,\ NID\_rsa\},}
+\DoxyCodeLine{00031\ \ \ \ \ \{NID\_dsaWithSHA1,\ NID\_sha1,\ NID\_dsa\},}
+\DoxyCodeLine{00032\ \ \ \ \ \{NID\_sha1WithRSA,\ NID\_sha1,\ NID\_rsa\},}
+\DoxyCodeLine{00033\ \ \ \ \ \{NID\_ripemd160WithRSA,\ NID\_ripemd160,\ NID\_rsaEncryption\},}
+\DoxyCodeLine{00034\ \ \ \ \ \{NID\_md4WithRSAEncryption,\ NID\_md4,\ NID\_rsaEncryption\},}
+\DoxyCodeLine{00035\ \ \ \ \ \{NID\_ecdsa\_with\_SHA1,\ NID\_sha1,\ NID\_X9\_62\_id\_ecPublicKey\},}
+\DoxyCodeLine{00036\ \ \ \ \ \{NID\_sha256WithRSAEncryption,\ NID\_sha256,\ NID\_rsaEncryption\},}
+\DoxyCodeLine{00037\ \ \ \ \ \{NID\_sha384WithRSAEncryption,\ NID\_sha384,\ NID\_rsaEncryption\},}
+\DoxyCodeLine{00038\ \ \ \ \ \{NID\_sha512WithRSAEncryption,\ NID\_sha512,\ NID\_rsaEncryption\},}
+\DoxyCodeLine{00039\ \ \ \ \ \{NID\_sha224WithRSAEncryption,\ NID\_sha224,\ NID\_rsaEncryption\},}
+\DoxyCodeLine{00040\ \ \ \ \ \{NID\_ecdsa\_with\_Recommended,\ NID\_undef,\ NID\_X9\_62\_id\_ecPublicKey\},}
+\DoxyCodeLine{00041\ \ \ \ \ \{NID\_ecdsa\_with\_Specified,\ NID\_undef,\ NID\_X9\_62\_id\_ecPublicKey\},}
+\DoxyCodeLine{00042\ \ \ \ \ \{NID\_ecdsa\_with\_SHA224,\ NID\_sha224,\ NID\_X9\_62\_id\_ecPublicKey\},}
+\DoxyCodeLine{00043\ \ \ \ \ \{NID\_ecdsa\_with\_SHA256,\ NID\_sha256,\ NID\_X9\_62\_id\_ecPublicKey\},}
+\DoxyCodeLine{00044\ \ \ \ \ \{NID\_ecdsa\_with\_SHA384,\ NID\_sha384,\ NID\_X9\_62\_id\_ecPublicKey\},}
+\DoxyCodeLine{00045\ \ \ \ \ \{NID\_ecdsa\_with\_SHA512,\ NID\_sha512,\ NID\_X9\_62\_id\_ecPublicKey\},}
+\DoxyCodeLine{00046\ \ \ \ \ \{NID\_dsa\_with\_SHA224,\ NID\_sha224,\ NID\_dsa\},}
+\DoxyCodeLine{00047\ \ \ \ \ \{NID\_dsa\_with\_SHA256,\ NID\_sha256,\ NID\_dsa\},}
+\DoxyCodeLine{00048\ \ \ \ \ \{NID\_id\_GostR3411\_94\_with\_GostR3410\_2001,\ NID\_id\_GostR3411\_94,}
+\DoxyCodeLine{00049\ \ \ \ \ \ NID\_id\_GostR3410\_2001\},}
+\DoxyCodeLine{00050\ \ \ \ \ \{NID\_id\_GostR3411\_94\_with\_GostR3410\_94,\ NID\_id\_GostR3411\_94,}
+\DoxyCodeLine{00051\ \ \ \ \ \ NID\_id\_GostR3410\_94\},}
+\DoxyCodeLine{00052\ \ \ \ \ \{NID\_id\_GostR3411\_94\_with\_GostR3410\_94\_cc,\ NID\_id\_GostR3411\_94,}
+\DoxyCodeLine{00053\ \ \ \ \ \ NID\_id\_GostR3410\_94\_cc\},}
+\DoxyCodeLine{00054\ \ \ \ \ \{NID\_id\_GostR3411\_94\_with\_GostR3410\_2001\_cc,\ NID\_id\_GostR3411\_94,}
+\DoxyCodeLine{00055\ \ \ \ \ \ NID\_id\_GostR3410\_2001\_cc\},}
+\DoxyCodeLine{00056\ \ \ \ \ \{NID\_rsassaPss,\ NID\_undef,\ NID\_rsassaPss\},}
+\DoxyCodeLine{00057\ \ \ \ \ \{NID\_dhSinglePass\_stdDH\_sha1kdf\_scheme,\ NID\_sha1,\ NID\_dh\_std\_kdf\},}
+\DoxyCodeLine{00058\ \ \ \ \ \{NID\_dhSinglePass\_stdDH\_sha224kdf\_scheme,\ NID\_sha224,\ NID\_dh\_std\_kdf\},}
+\DoxyCodeLine{00059\ \ \ \ \ \{NID\_dhSinglePass\_stdDH\_sha256kdf\_scheme,\ NID\_sha256,\ NID\_dh\_std\_kdf\},}
+\DoxyCodeLine{00060\ \ \ \ \ \{NID\_dhSinglePass\_stdDH\_sha384kdf\_scheme,\ NID\_sha384,\ NID\_dh\_std\_kdf\},}
+\DoxyCodeLine{00061\ \ \ \ \ \{NID\_dhSinglePass\_stdDH\_sha512kdf\_scheme,\ NID\_sha512,\ NID\_dh\_std\_kdf\},}
+\DoxyCodeLine{00062\ \ \ \ \ \{NID\_dhSinglePass\_cofactorDH\_sha1kdf\_scheme,\ NID\_sha1,}
+\DoxyCodeLine{00063\ \ \ \ \ \ NID\_dh\_cofactor\_kdf\},}
+\DoxyCodeLine{00064\ \ \ \ \ \{NID\_dhSinglePass\_cofactorDH\_sha224kdf\_scheme,\ NID\_sha224,}
+\DoxyCodeLine{00065\ \ \ \ \ \ NID\_dh\_cofactor\_kdf\},}
+\DoxyCodeLine{00066\ \ \ \ \ \{NID\_dhSinglePass\_cofactorDH\_sha256kdf\_scheme,\ NID\_sha256,}
+\DoxyCodeLine{00067\ \ \ \ \ \ NID\_dh\_cofactor\_kdf\},}
+\DoxyCodeLine{00068\ \ \ \ \ \{NID\_dhSinglePass\_cofactorDH\_sha384kdf\_scheme,\ NID\_sha384,}
+\DoxyCodeLine{00069\ \ \ \ \ \ NID\_dh\_cofactor\_kdf\},}
+\DoxyCodeLine{00070\ \ \ \ \ \{NID\_dhSinglePass\_cofactorDH\_sha512kdf\_scheme,\ NID\_sha512,}
+\DoxyCodeLine{00071\ \ \ \ \ \ NID\_dh\_cofactor\_kdf\},}
+\DoxyCodeLine{00072\ \ \ \ \ \{NID\_id\_tc26\_signwithdigest\_gost3410\_2012\_256,\ NID\_id\_GostR3411\_2012\_256,}
+\DoxyCodeLine{00073\ \ \ \ \ \ NID\_id\_GostR3410\_2012\_256\},}
+\DoxyCodeLine{00074\ \ \ \ \ \{NID\_id\_tc26\_signwithdigest\_gost3410\_2012\_512,\ NID\_id\_GostR3411\_2012\_512,}
+\DoxyCodeLine{00075\ \ \ \ \ \ NID\_id\_GostR3410\_2012\_512\},}
+\DoxyCodeLine{00076\ \ \ \ \ \{NID\_ED25519,\ NID\_undef,\ NID\_ED25519\},}
+\DoxyCodeLine{00077\ \ \ \ \ \{NID\_ED448,\ NID\_undef,\ NID\_ED448\},}
+\DoxyCodeLine{00078\ \ \ \ \ \{NID\_ecdsa\_with\_SHA3\_224,\ NID\_sha3\_224,\ NID\_X9\_62\_id\_ecPublicKey\},}
+\DoxyCodeLine{00079\ \ \ \ \ \{NID\_ecdsa\_with\_SHA3\_256,\ NID\_sha3\_256,\ NID\_X9\_62\_id\_ecPublicKey\},}
+\DoxyCodeLine{00080\ \ \ \ \ \{NID\_ecdsa\_with\_SHA3\_384,\ NID\_sha3\_384,\ NID\_X9\_62\_id\_ecPublicKey\},}
+\DoxyCodeLine{00081\ \ \ \ \ \{NID\_ecdsa\_with\_SHA3\_512,\ NID\_sha3\_512,\ NID\_X9\_62\_id\_ecPublicKey\},}
+\DoxyCodeLine{00082\ \ \ \ \ \{NID\_RSA\_SHA3\_224,\ NID\_sha3\_224,\ NID\_rsaEncryption\},}
+\DoxyCodeLine{00083\ \ \ \ \ \{NID\_RSA\_SHA3\_256,\ NID\_sha3\_256,\ NID\_rsaEncryption\},}
+\DoxyCodeLine{00084\ \ \ \ \ \{NID\_RSA\_SHA3\_384,\ NID\_sha3\_384,\ NID\_rsaEncryption\},}
+\DoxyCodeLine{00085\ \ \ \ \ \{NID\_RSA\_SHA3\_512,\ NID\_sha3\_512,\ NID\_rsaEncryption\},}
+\DoxyCodeLine{00086\ \ \ \ \ \{NID\_SM2\_with\_SM3,\ NID\_sm3,\ NID\_sm2\},}
+\DoxyCodeLine{00087\ \};}
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00089\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structnid__triple}{nid\_triple}}\ *\textcolor{keyword}{const}\ sigoid\_srt\_xref[]\ =\ \{}
+\DoxyCodeLine{00090\ \ \ \ \ \&sigoid\_srt[0],}
+\DoxyCodeLine{00091\ \ \ \ \ \&sigoid\_srt[1],}
+\DoxyCodeLine{00092\ \ \ \ \ \&sigoid\_srt[7],}
+\DoxyCodeLine{00093\ \ \ \ \ \&sigoid\_srt[2],}
+\DoxyCodeLine{00094\ \ \ \ \ \&sigoid\_srt[4],}
+\DoxyCodeLine{00095\ \ \ \ \ \&sigoid\_srt[3],}
+\DoxyCodeLine{00096\ \ \ \ \ \&sigoid\_srt[9],}
+\DoxyCodeLine{00097\ \ \ \ \ \&sigoid\_srt[5],}
+\DoxyCodeLine{00098\ \ \ \ \ \&sigoid\_srt[8],}
+\DoxyCodeLine{00099\ \ \ \ \ \&sigoid\_srt[12],}
+\DoxyCodeLine{00100\ \ \ \ \ \&sigoid\_srt[30],}
+\DoxyCodeLine{00101\ \ \ \ \ \&sigoid\_srt[35],}
+\DoxyCodeLine{00102\ \ \ \ \ \&sigoid\_srt[6],}
+\DoxyCodeLine{00103\ \ \ \ \ \&sigoid\_srt[10],}
+\DoxyCodeLine{00104\ \ \ \ \ \&sigoid\_srt[11],}
+\DoxyCodeLine{00105\ \ \ \ \ \&sigoid\_srt[13],}
+\DoxyCodeLine{00106\ \ \ \ \ \&sigoid\_srt[24],}
+\DoxyCodeLine{00107\ \ \ \ \ \&sigoid\_srt[20],}
+\DoxyCodeLine{00108\ \ \ \ \ \&sigoid\_srt[32],}
+\DoxyCodeLine{00109\ \ \ \ \ \&sigoid\_srt[37],}
+\DoxyCodeLine{00110\ \ \ \ \ \&sigoid\_srt[14],}
+\DoxyCodeLine{00111\ \ \ \ \ \&sigoid\_srt[21],}
+\DoxyCodeLine{00112\ \ \ \ \ \&sigoid\_srt[33],}
+\DoxyCodeLine{00113\ \ \ \ \ \&sigoid\_srt[38],}
+\DoxyCodeLine{00114\ \ \ \ \ \&sigoid\_srt[15],}
+\DoxyCodeLine{00115\ \ \ \ \ \&sigoid\_srt[22],}
+\DoxyCodeLine{00116\ \ \ \ \ \&sigoid\_srt[34],}
+\DoxyCodeLine{00117\ \ \ \ \ \&sigoid\_srt[39],}
+\DoxyCodeLine{00118\ \ \ \ \ \&sigoid\_srt[16],}
+\DoxyCodeLine{00119\ \ \ \ \ \&sigoid\_srt[23],}
+\DoxyCodeLine{00120\ \ \ \ \ \&sigoid\_srt[19],}
+\DoxyCodeLine{00121\ \ \ \ \ \&sigoid\_srt[31],}
+\DoxyCodeLine{00122\ \ \ \ \ \&sigoid\_srt[36],}
+\DoxyCodeLine{00123\ \ \ \ \ \&sigoid\_srt[25],}
+\DoxyCodeLine{00124\ \ \ \ \ \&sigoid\_srt[26],}
+\DoxyCodeLine{00125\ \ \ \ \ \&sigoid\_srt[27],}
+\DoxyCodeLine{00126\ \ \ \ \ \&sigoid\_srt[28],}
+\DoxyCodeLine{00127\ \ \ \ \ \&sigoid\_srt[40],}
+\DoxyCodeLine{00128\ \ \ \ \ \&sigoid\_srt[41],}
+\DoxyCodeLine{00129\ \ \ \ \ \&sigoid\_srt[48],}
+\DoxyCodeLine{00130\ \ \ \ \ \&sigoid\_srt[44],}
+\DoxyCodeLine{00131\ \ \ \ \ \&sigoid\_srt[49],}
+\DoxyCodeLine{00132\ \ \ \ \ \&sigoid\_srt[45],}
+\DoxyCodeLine{00133\ \ \ \ \ \&sigoid\_srt[50],}
+\DoxyCodeLine{00134\ \ \ \ \ \&sigoid\_srt[46],}
+\DoxyCodeLine{00135\ \ \ \ \ \&sigoid\_srt[51],}
+\DoxyCodeLine{00136\ \ \ \ \ \&sigoid\_srt[47],}
+\DoxyCodeLine{00137\ \ \ \ \ \&sigoid\_srt[52],}
+\DoxyCodeLine{00138\ \};}
+
+\end{DoxyCode}

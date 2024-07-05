@@ -1,0 +1,920 @@
+\chapter{Behaviour of SSL functions on QUIC SSL objects}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api-ssl-funcs}{}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api-ssl-funcs}\index{Behaviour of SSL functions on QUIC SSL objects@{Behaviour of SSL functions on QUIC SSL objects}}
+This document is a companion to the \doxysectlink{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api}{QUIC API Overview}{0} which lists all SSL functions and controls and notes their behaviour with QUIC SSL objects.
+
+The Category column is as follows\+:
+
+
+\begin{DoxyItemize}
+\item {\bfseries{Global}}\+: These API items do not relate to SSL objects. They may be stateless or may relate only to global state.
+
+Can also be used for APIs implemented only in terms of other public libssl APIs.
+\item {\bfseries{Object}}\+: Object management APIs. Some of these may require QUIC-\/specific implementation.
+\item {\bfseries{HL}}\+: Handshake layer API.
+
+These calls should generally be dispatched to the handshake layer, unless they are not applicable to QUIC. Modifications inside the handshake layer for the QUIC case may or may not be required.
+\item {\bfseries{CSSM}}\+: Connection/\+Stream State Machine. API related to lifecycle of a connection or stream. Needs QUIC-\/specific implementation.
+\item {\bfseries{ADP}}\+: App Data Path. Application-\/side data path API. QUIC-\/specific implementation.
+\item {\bfseries{NDP}}\+: Net Data Path. Network-\/side data path control API. Also includes I/O ticking and timeout handling.
+\item {\bfseries{RL}}\+: Record layer related API. If these API items only relate to the TLS record layer, they must be disabled for QUIC; if they are also relevant to the QUIC record layer, they will require QUIC-\/specific implementation.
+\item {\bfseries{Async}}\+: Relates to the async functionality.
+\item {\bfseries{0-\/RTT}}\+: Relates to early data/0-\/\+RTT functionality.
+\item {\bfseries{Special}}\+: Other calls which defy classification.
+\end{DoxyItemize}
+
+The Semantics column is as follows\+:
+
+
+\begin{DoxyItemize}
+\item {\bfseries{🟩U}}\+: Unchanged. The semantics of the API are not changed for QUIC.
+\item {\bfseries{🟧C}}\+: Changed. The semantics of the API are changed for QUIC.
+\item {\bfseries{🟦N}}\+: New. The API is new for QUIC.
+\item {\bfseries{🟥\+TBD}}\+: Yet to be determined if semantic changes will be required.
+\end{DoxyItemize}
+
+The Applicability column is as follows\+:
+
+
+\begin{DoxyItemize}
+\item {\bfseries{🟦U}}\+: Unrelated. Not applicable to QUIC — fully unrelated (e.\+g. functions for other SSL methods).
+\item {\bfseries{🟥\+FC}}\+: Not applicable to QUIC (or not currently supported) — fail closed.
+\item {\bfseries{🟧\+NO}}\+: Not applicable to QUIC (nor not currently supported) — no-\/op.
+\item {\bfseries{🟩A}}\+: Applicable.
+\end{DoxyItemize}
+
+The Implementation Requirements column is as follows\+:
+
+
+\begin{DoxyItemize}
+\item {\bfseries{🟩\+NC}}\+: No changes are expected to be needed (where marked \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}, dispatch to handshake layer).
+
+{\bfseries{Note}}\+: Where this value is used with an applicability of {\bfseries{FC}} or {\bfseries{NO}}, this means that the desired behaviour is already an emergent consequence of the existing code.
+\item {\bfseries{🟨C}}\+: Modifications are expected to be needed (where marked \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}, dispatch to handshake layer with changes inside the handshake layer).
+\item {\bfseries{🟧\+QSI}}\+: QUIC specific implementation.
+\item {\bfseries{🟥\+QSA}}\+: QUIC specific API.
+\end{DoxyItemize}
+
+The Status column is as follows\+:
+
+
+\begin{DoxyItemize}
+\item {\bfseries{🔴\+Pending Triage}}\+: Have not determined the classification of this API item yet.
+\item {\bfseries{🟠\+Design TBD}}\+: It has not yet been determined how this API item will work for QUIC.
+\item {\bfseries{🟡\+TODO}}\+: It has been determined how this API item should work for QUIC but it has not yet been implemented.
+\item {\bfseries{🟢\+Done}}\+: No further work is anticipated to be needed for this API item.
+\end{DoxyItemize}
+
+Notes\+:
+
+
+\begin{DoxyItemize}
+\item †1\+: Must restrict which ciphers can be used with QUIC; otherwise, no changes.
+\item †2\+: ALPN usage must be mandated; otherwise, no changes.
+\item †3\+: NPN usage should be forced off as it should never be used with QUIC; otherwise, no changes.
+\item †4\+: Controls needing changes are listed separately.
+\item †5\+: TLS compression and renegotiation must not be used with QUIC, but these features are already forbidden in TLS 1.\+3, which is a requirement for QUIC, thus no changes should be needed.
+\item †6\+: Callback specified is called for handshake layer messages (TLSv1.\+3).
+\item †7\+: Tickets are issued using {\ttfamily NEW\+\_\+\+TOKEN} frames in QUIC and this will require handshake layer changes. However these APIs as such do not require changes.
+\item †8\+: Use of post-\/handshake authentication is prohibited by QUIC.
+\item †9\+: QUIC always uses AES-\/128-\/\+GCM initially. We need to determine when and what ciphers we report as being in use.
+\item †10\+: Not supporting async for now.
+\item †11\+: Since these functions only configure cipher suite lists used for TLSv1.\+2, which is never used for QUIC, they do not require changes, and we can allow applications to configure these lists freely, as they will be ignored.
+\end{DoxyItemize}
+
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{6}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ API Item   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Cat.   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Sema.   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Appl.   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Impl. Req.   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Status    }\\\cline{1-6}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ API Item   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Cat.   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Sema.   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Appl.   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Impl. Req.   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Status    }\\\cline{1-6}
+\endhead
+{\bfseries{⇒ Global Information and Functions}}   &&&&&\\\cline{1-6}
+{\ttfamily OSSL\+\_\+default\+\_\+cipher\+\_\+list}   &Global   &🟩U   &🟦U   &🟩\+NC   &🟢\+Done    \\\cline{1-6}
+{\ttfamily OSSL\+\_\+default\+\_\+ciphersuites}   &Global   &🟩U   &🟦U   &🟩\+NC   &🟢\+Done    \\\cline{1-6}
+{\ttfamily ERR\+\_\+load\+\_\+\+SSL\+\_\+strings}   &Global   &🟩U   &🟦U   &🟩\+NC   &🟢\+Done    \\\cline{1-6}
+{\ttfamily OPENSSL\+\_\+init\+\_\+ssl}   &Global   &🟩U   &🟦U   &🟩\+NC   &🟢\+Done    \\\cline{1-6}
+{\ttfamily OPENSSL\+\_\+cipher\+\_\+name}   &Global   &🟩U   &🟦U   &🟩\+NC   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+alert\+\_\+desc\+\_\+string}   &Global   &🟩U   &🟦U   &🟩\+NC   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+alert\+\_\+desc\+\_\+string\+\_\+long}   &Global   &🟩U   &🟦U   &🟩\+NC   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+alert\+\_\+type\+\_\+string}   &Global   &🟩U   &🟦U   &🟩\+NC   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+alert\+\_\+type\+\_\+string\+\_\+long}   &Global   &🟩U   &🟦U   &🟩\+NC   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+extension\+\_\+supported}   &Global   &🟩U   &🟦U   &🟩\+NC   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+add\+\_\+ssl\+\_\+module}   &Global   &🟩U   &🟦U   &🟩\+NC   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+test\+\_\+functions}   &Global   &🟩U   &🟦U   &🟩\+NC   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+select\+\_\+next\+\_\+proto}   &Global   &🟩U   &🟦U   &🟩\+NC   &🟢\+Done    \\\cline{1-6}
+{\bfseries{⇒ Methods}}   &&&&&\\\cline{1-6}
+{\ttfamily SSLv3\+\_\+method}   &Global   &🟩U   &🟦U   &🟩\+NC   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSLv3\+\_\+client\+\_\+method}   &Global   &🟩U   &🟦U   &🟩\+NC   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSLv3\+\_\+server\+\_\+method}   &Global   &🟩U   &🟦U   &🟩\+NC   &🟢\+Done    \\\cline{1-6}
+{\ttfamily TLS\+\_\+method}   &Global   &🟩U   &🟦U   &🟩\+NC   &🟢\+Done    \\\cline{1-6}
+{\ttfamily TLS\+\_\+client\+\_\+method}   &Global   &🟩U   &🟦U   &🟩\+NC   &🟢\+Done    \\\cline{1-6}
+{\ttfamily TLS\+\_\+server\+\_\+method}   &Global   &🟩U   &🟦U   &🟩\+NC   &🟢\+Done    \\\cline{1-6}
+{\ttfamily TLSv1\+\_\+method}   &Global   &🟩U   &🟦U   &🟩\+NC   &🟢\+Done    \\\cline{1-6}
+{\ttfamily TLSv1\+\_\+client\+\_\+method}   &Global   &🟩U   &🟦U   &🟩\+NC   &🟢\+Done    \\\cline{1-6}
+{\ttfamily TLSv1\+\_\+server\+\_\+method}   &Global   &🟩U   &🟦U   &🟩\+NC   &🟢\+Done    \\\cline{1-6}
+{\ttfamily TLSv1\+\_\+1\+\_\+method}   &Global   &🟩U   &🟦U   &🟩\+NC   &🟢\+Done    \\\cline{1-6}
+{\ttfamily TLSv1\+\_\+1\+\_\+client\+\_\+method}   &Global   &🟩U   &🟦U   &🟩\+NC   &🟢\+Done    \\\cline{1-6}
+{\ttfamily TLSv1\+\_\+1\+\_\+server\+\_\+method}   &Global   &🟩U   &🟦U   &🟩\+NC   &🟢\+Done    \\\cline{1-6}
+{\ttfamily TLSv1\+\_\+2\+\_\+client\+\_\+method}   &Global   &🟩U   &🟦U   &🟩\+NC   &🟢\+Done    \\\cline{1-6}
+{\ttfamily TLSv1\+\_\+2\+\_\+server\+\_\+method}   &Global   &🟩U   &🟦U   &🟩\+NC   &🟢\+Done    \\\cline{1-6}
+{\ttfamily TLSv1\+\_\+2\+\_\+method}   &Global   &🟩U   &🟦U   &🟩\+NC   &🟢\+Done    \\\cline{1-6}
+{\ttfamily DTLS\+\_\+method}   &Global   &🟩U   &🟦U   &🟩\+NC   &🟢\+Done    \\\cline{1-6}
+{\ttfamily DTLS\+\_\+client\+\_\+method}   &Global   &🟩U   &🟦U   &🟩\+NC   &🟢\+Done    \\\cline{1-6}
+{\ttfamily DTLS\+\_\+server\+\_\+method}   &Global   &🟩U   &🟦U   &🟩\+NC   &🟢\+Done    \\\cline{1-6}
+{\ttfamily DTLSv1\+\_\+client\+\_\+method}   &Global   &🟩U   &🟦U   &🟩\+NC   &🟢\+Done    \\\cline{1-6}
+{\ttfamily DTLSv1\+\_\+server\+\_\+method}   &Global   &🟩U   &🟦U   &🟩\+NC   &🟢\+Done    \\\cline{1-6}
+{\ttfamily DTLSv1\+\_\+method}   &Global   &🟩U   &🟦U   &🟩\+NC   &🟢\+Done    \\\cline{1-6}
+{\ttfamily DTLSv1\+\_\+2\+\_\+method}   &Global   &🟩U   &🟦U   &🟩\+NC   &🟢\+Done    \\\cline{1-6}
+{\ttfamily DTLSv1\+\_\+2\+\_\+client\+\_\+method}   &Global   &🟩U   &🟦U   &🟩\+NC   &🟢\+Done    \\\cline{1-6}
+{\ttfamily DTLSv1\+\_\+2\+\_\+server\+\_\+method}   &Global   &🟩U   &🟦U   &🟩\+NC   &🟢\+Done    \\\cline{1-6}
+{\ttfamily OSSL\+\_\+\+QUIC\+\_\+client\+\_\+method}   &Global   &🟩U   &🟦U   &🟥\+QSA   &🟢\+Done    \\\cline{1-6}
+{\ttfamily OSSL\+\_\+\+QUIC\+\_\+client\+\_\+thread\+\_\+method}   &Global   &🟩U   &🟦U   &🟥\+QSA   &🟢\+Done    \\\cline{1-6}
+{\ttfamily OSSL\+\_\+\+QUIC\+\_\+server\+\_\+method}   &Global   &🟩U   &🟦U   &🟥\+QSA   &🟠\+Design TBD    \\\cline{1-6}
+{\bfseries{⇒ Instantiation}}   &&&&&\\\cline{1-6}
+{\ttfamily BIO\+\_\+f\+\_\+ssl}   &Object   &🟩U   &🟩A   &🟩\+NC   &🟢\+Done    \\\cline{1-6}
+{\ttfamily BIO\+\_\+new\+\_\+ssl}   &Object   &🟩U   &🟩A   &🟩\+NC   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+new}   &Object   &🟩U   &🟩A   &🟩\+NC   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+new\+\_\+ex}   &Object   &🟩U   &🟩A   &🟩\+NC   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+up\+\_\+ref}   &Object   &🟩U   &🟩A   &🟩\+NC   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+free}   &Object   &🟩U   &🟩A   &🟩\+NC   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+new}   &Object   &🟩U   &🟩A   &🟧\+QSI   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+dup}   &Object   &🟩U   &🟩A   &🟥\+FC   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+up\+\_\+ref}   &Object   &🟩U   &🟩A   &🟩\+NC   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+free}   &Object   &🟩U   &🟩A   &🟧\+QSI   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+is\+\_\+dtls}   &Object   &🟩U   &🟩A   &🟩\+NC   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+get\+\_\+ex\+\_\+data}   &Object   &🟩U   &🟩A   &🟩\+NC   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+ex\+\_\+data}   &Object   &🟩U   &🟩A   &🟩\+NC   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+ex\+\_\+data}   &Object   &🟩U   &🟩A   &🟩\+NC   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set\+\_\+ex\+\_\+data}   &Object   &🟩U   &🟩A   &🟩\+NC   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+\+SSL\+\_\+\+CTX}   &Object   &🟩U   &🟩A   &🟩\+NC   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set\+\_\+\+SSL\+\_\+\+CTX}   &Object   &🟩U   &🟩A   &🟩\+NC   &🟢\+Done    \\\cline{1-6}
+{\bfseries{⇒ Method Manipulation}}   &&&&&\\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+get\+\_\+ssl\+\_\+method}   &Object   &🟩U   &🟩A   &🟩\+NC   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+ssl\+\_\+method}   &Object   &🟩U   &🟩A   &🟩\+NC   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set\+\_\+ssl\+\_\+method}   &Object   &🟩U   &🟥\+FC   &🟧\+QSI   &🟢\+Done    \\\cline{1-6}
+{\bfseries{⇒ SRTP}}   &&&&&\\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+selected\+\_\+srtp\+\_\+profile}   &HL   &🟩U   &🟧\+NO   &🟨\+C\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+srtp\+\_\+profiles}   &HL   &🟩U   &🟧\+NO   &🟨\+C\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+tlsext\+\_\+use\+\_\+srtp}   &HL   &🟩U   &🟥\+FC   &🟨\+C\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set\+\_\+tlsext\+\_\+use\+\_\+srtp}   &HL   &🟩U   &🟥\+FC   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\bfseries{⇒ Ciphersuite Configuration}}   &&&&&\\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+cipher\+\_\+list}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*} †11   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+ciphersuites}   &HL   &🟩U   &🟩A   &🟨\+C\texorpdfstring{$\ast$}{*} †1   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+get\+\_\+ciphers}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set\+\_\+ciphersuites}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get1\+\_\+supported\+\_\+ciphers}   &HL   &🟩U   &🟩A   &🟨\+C\texorpdfstring{$\ast$}{*} †1   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+bytes\+\_\+to\+\_\+cipher\+\_\+list}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+ciphers}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+cipher\+\_\+list}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*} †11   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set\+\_\+cipher\+\_\+list}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*} †11   &🟢\+Done    \\\cline{1-6}
+{\bfseries{⇒ Negotiated Ciphersuite Queries}}   &&&&&\\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+current\+\_\+cipher}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*} †9   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+pending\+\_\+cipher}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*} †9   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+shared\+\_\+ciphers}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*} †9   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+client\+\_\+ciphers}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*} †9   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+current\+\_\+compression}   &HL   &🟩U   &🟩A   &🟩\+HLNC   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+current\+\_\+expansion}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+shared\+\_\+sigalgs}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+sigalgs}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+peer\+\_\+signature\+\_\+nid}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+peer\+\_\+signature\+\_\+type\+\_\+nid}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+signature\+\_\+nid}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+signature\+\_\+type\+\_\+nid}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\bfseries{⇒ ALPN}}   &†2   &&&&\\\cline{1-6}
+{\ttfamily SSL\+\_\+\+SESSION\+\_\+set1\+\_\+alpn\+\_\+selected}   &HL   &🟩U   &🟩A   &🟨\+C\texorpdfstring{$\ast$}{*} †2   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+SESSION\+\_\+get0\+\_\+alpn\+\_\+selected}   &HL   &🟩U   &🟩A   &🟨\+C\texorpdfstring{$\ast$}{*} †2   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+alpn\+\_\+select\+\_\+cb}   &HL   &🟩U   &🟩A   &🟨\+C\texorpdfstring{$\ast$}{*} †2   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set\+\_\+alpn\+\_\+protos}   &HL   &🟩U   &🟩A   &🟨\+C\texorpdfstring{$\ast$}{*} †2   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get0\+\_\+alpn\+\_\+selected}   &HL   &🟩U   &🟩A   &🟨\+C\texorpdfstring{$\ast$}{*} †2   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+alpn\+\_\+protos}   &HL   &🟩U   &🟩A   &🟨\+C\texorpdfstring{$\ast$}{*} †2   &🟢\+Done    \\\cline{1-6}
+{\bfseries{⇒ NPN}}   &†3   &&&&\\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+next\+\_\+proto\+\_\+select\+\_\+cb}   &HL   &🟩U   &🟥\+FC   &🟨\+C\texorpdfstring{$\ast$}{*} †3   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+next\+\_\+protos\+\_\+advertised\+\_\+cb}   &HL   &🟩U   &🟥\+FC   &🟨\+C\texorpdfstring{$\ast$}{*} †3   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get0\+\_\+next\+\_\+proto\+\_\+negotiated}   &HL   &🟩U   &🟥\+FC   &🟩\+NC\texorpdfstring{$\ast$}{*} †3   &🟢\+Done    \\\cline{1-6}
+{\bfseries{⇒ Narrow Waist Interface}}   &†4   &&&&\\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+ctrl}   &Object   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*} †4   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+ctrl}   &Object   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*} †4   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+callback\+\_\+ctrl}   &Object   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*} †4   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+callback\+\_\+ctrl}   &Object   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*} †4   &🟢\+Done    \\\cline{1-6}
+{\bfseries{⇒ Miscellaneous Accessors}}   &&&&&\\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+server\+\_\+random}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+client\+\_\+random}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+finished}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+peer\+\_\+finished}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\bfseries{⇒ Ciphersuite Information}}   &&&&&\\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CIPHER\+\_\+description}   &Global   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CIPHER\+\_\+find}   &Global   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CIPHER\+\_\+get\+\_\+auth\+\_\+nid}   &Global   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CIPHER\+\_\+get\+\_\+bits}   &Global   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CIPHER\+\_\+get\+\_\+cipher\+\_\+nid}   &Global   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CIPHER\+\_\+get\+\_\+digest\+\_\+nid}   &Global   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CIPHER\+\_\+get\+\_\+handshake\+\_\+digest}   &Global   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CIPHER\+\_\+get\+\_\+id}   &Global   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CIPHER\+\_\+get\+\_\+kx\+\_\+nid}   &Global   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CIPHER\+\_\+get\+\_\+name}   &Global   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CIPHER\+\_\+get\+\_\+protocol\+\_\+id}   &Global   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CIPHER\+\_\+get\+\_\+version}   &Global   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CIPHER\+\_\+is\+\_\+aead}   &Global   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CIPHER\+\_\+standard\+\_\+name}   &Global   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+group\+\_\+to\+\_\+name}   &Global   &🟩U   &🟦U   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\bfseries{⇒ Version Queries}}   &&&&&\\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+version}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+version}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+client\+\_\+version}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\bfseries{⇒ Certificate Chain Management}}   &&&&&\\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+certificate}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+use\+\_\+certificate}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+use\+\_\+certificate\+\_\+chain\+\_\+file}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+use\+\_\+certificate\+\_\+chain\+\_\+file}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+use\+\_\+certificate\+\_\+file}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+load\+\_\+verify\+\_\+file}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+load\+\_\+verify\+\_\+dir}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+load\+\_\+verify\+\_\+store}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+load\+\_\+verify\+\_\+locations}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily Cert\+SSL\+\_\+use\+\_\+cert\+\_\+and\+\_\+key}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+use\+\_\+certificate\+\_\+\+ASN1}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+use\+\_\+\+Private\+Key}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+use\+\_\+\+Private\+Key\+\_\+\+ASN1}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+use\+\_\+\+Private\+Key\+\_\+file}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+use\+\_\+\+RSAPrivate\+Key}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+use\+\_\+\+RSAPrivate\+Key\+\_\+\+ASN1}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+use\+\_\+\+RSAPrivate\+Key\+\_\+file}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+default\+\_\+verify\+\_\+dir}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+default\+\_\+verify\+\_\+file}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+default\+\_\+verify\+\_\+paths}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+default\+\_\+verify\+\_\+store}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+use\+\_\+cert\+\_\+and\+\_\+key}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+use\+\_\+certificate}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+use\+\_\+certificate\+\_\+\+ASN1}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+use\+\_\+certificate\+\_\+file}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+use\+\_\+\+Private\+Key}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+use\+\_\+\+Private\+Key\+\_\+\+ASN1}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+use\+\_\+\+Private\+Key\+\_\+file}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+use\+\_\+\+RSAPrivate\+Key}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+use\+\_\+\+RSAPrivate\+Key\+\_\+\+ASN1}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+use\+\_\+\+RSAPrivate\+Key\+\_\+file}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+check\+\_\+chain}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+check\+\_\+private\+\_\+key}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+check\+\_\+private\+\_\+key}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+add\+\_\+client\+\_\+\+CA}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+add1\+\_\+to\+\_\+\+CA\+\_\+list}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+add\+\_\+dir\+\_\+cert\+\_\+subjects\+\_\+to\+\_\+stack}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+add\+\_\+file\+\_\+cert\+\_\+subjects\+\_\+to\+\_\+stack}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+add\+\_\+store\+\_\+cert\+\_\+subjects\+\_\+to\+\_\+stack}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+load\+\_\+client\+\_\+\+CA\+\_\+file}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+load\+\_\+client\+\_\+\+CA\+\_\+file\+\_\+ex}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+dup\+\_\+\+CA\+\_\+list}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set0\+\_\+\+CA\+\_\+list}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get0\+\_\+\+CA\+\_\+list}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set\+\_\+client\+\_\+\+CA\+\_\+list}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+add\+\_\+client\+\_\+\+CA}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+get0\+\_\+\+CA\+\_\+list}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+get0\+\_\+certificate}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+get0\+\_\+privatekey}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+get\+\_\+cert\+\_\+store}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set1\+\_\+cert\+\_\+store}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+get\+\_\+client\+\_\+\+CA\+\_\+list}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+add1\+\_\+to\+\_\+\+CA\+\_\+list}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set0\+\_\+\+CA\+\_\+list}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+get\+\_\+client\+\_\+cert\+\_\+cb}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+get\+\_\+default\+\_\+passwd\+\_\+cb}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+get\+\_\+default\+\_\+passwd\+\_\+cb\+\_\+userdata}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+client\+\_\+\+CA\+\_\+list}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+privatekey}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\bfseries{⇒ Certificate Compression}}   &&&&&\\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set1\+\_\+cert\+\_\+comp\+\_\+preference}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set1\+\_\+cert\+\_\+comp\+\_\+preference}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+compress\+\_\+certs}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+compress\+\_\+certs}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set1\+\_\+compressed\+\_\+cert}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set1\+\_\+compressed\+\_\+cert}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+get1\+\_\+compressed\+\_\+cert}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get1\+\_\+compressed\+\_\+cert}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\bfseries{⇒ Certificate Verification}}   &&&&&\\\cline{1-6}
+{\ttfamily SSL\+\_\+set1\+\_\+host}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+add1\+\_\+host}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set\+\_\+hostflags}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set\+\_\+verify}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+verify}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set\+\_\+verify\+\_\+depth}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set\+\_\+verify\+\_\+result}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+verify\+\_\+callback}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+verify\+\_\+depth}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+verify\+\_\+mode}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+verify\+\_\+result}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get0\+\_\+peer\+\_\+\+CA\+\_\+list}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get0\+\_\+peer\+\_\+certificate}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get0\+\_\+verified\+\_\+chain}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get1\+\_\+peer\+\_\+certificate}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+peer\+\_\+cert\+\_\+chain}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+peer\+\_\+certificate}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+certs\+\_\+clear}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+get0\+\_\+param}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get0\+\_\+param}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+get\+\_\+verify\+\_\+mode}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+get\+\_\+verify\+\_\+depth}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+verify\+\_\+depth}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get0\+\_\+peername}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set1\+\_\+param}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set1\+\_\+param}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+get0\+\_\+param}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get0\+\_\+param}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+purpose}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set\+\_\+purpose}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+trust}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set\+\_\+trust}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\bfseries{⇒ PSK}}   &&&&&\\\cline{1-6}
+{\ttfamily SSL\+\_\+use\+\_\+psk\+\_\+identity\+\_\+hint}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+use\+\_\+psk\+\_\+identity\+\_\+hint}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set\+\_\+psk\+\_\+client\+\_\+callback}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set\+\_\+psk\+\_\+find\+\_\+session\+\_\+callback}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set\+\_\+psk\+\_\+server\+\_\+callback}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set\+\_\+psk\+\_\+use\+\_\+session\+\_\+callback}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+psk\+\_\+identity}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+psk\+\_\+identity\+\_\+hint}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\bfseries{⇒ SRP}}   &&&&&\\\cline{1-6}
+{\ttfamily SSL\+\_\+\+SRP\+\_\+\+CTX\+\_\+init}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+\+SRP\+\_\+\+CTX\+\_\+init}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+\+SRP\+\_\+\+CTX\+\_\+free}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+SRP\+\_\+\+CTX\+\_\+free}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+srp\+\_\+client\+\_\+pwd\+\_\+callback}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+srp\+\_\+password}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+srp\+\_\+g}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+srp\+\_\+cb\+\_\+arg}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+srp\+\_\+N}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+srp\+\_\+username\+\_\+callback}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+srp\+\_\+username}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set\+\_\+srp\+\_\+server\+\_\+param}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+srp\+\_\+userinfo}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+srp\+\_\+server\+\_\+param\+\_\+with\+\_\+username}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+srp\+\_\+strength}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+srp\+\_\+verify\+\_\+param\+\_\+callback}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set\+\_\+srp\+\_\+server\+\_\+param\+\_\+pw}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+srp\+\_\+username}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SRP\+\_\+\+Calc\+\_\+\+A\+\_\+param}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\bfseries{⇒ DANE}}   &&&&&\\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+dane\+\_\+enable}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get0\+\_\+dane\+\_\+tlsa}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+dane\+\_\+set\+\_\+flags}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+dane\+\_\+set\+\_\+flags}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+dane\+\_\+clear\+\_\+flags}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+dane\+\_\+clear\+\_\+flags}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get0\+\_\+dane}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+dane\+\_\+enable}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get0\+\_\+dane\+\_\+authority}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+dane\+\_\+mtype\+\_\+set}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+dane\+\_\+tlsa\+\_\+add}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\bfseries{⇒ Certificate Transparency}}   &&&&&\\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+enable\+\_\+ct}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+ct\+\_\+is\+\_\+enabled}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+ctlog\+\_\+list\+\_\+file}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+default\+\_\+ctlog\+\_\+list\+\_\+file}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+ct\+\_\+validation\+\_\+callback}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set0\+\_\+ctlog\+\_\+store}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+get0\+\_\+ctlog\+\_\+store}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+enable\+\_\+ct}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+ct\+\_\+is\+\_\+enabled}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get0\+\_\+peer\+\_\+scts}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set\+\_\+ct\+\_\+validation\+\_\+callback}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\bfseries{⇒ Compression}}   &&&&&\\\cline{1-6}
+{\ttfamily SSL\+\_\+\+COMP\+\_\+add\+\_\+compression\+\_\+method}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*} †5   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+COMP\+\_\+get0\+\_\+name}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*} †5   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+COMP\+\_\+get\+\_\+compression\+\_\+methods}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*} †5   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+COMP\+\_\+get\+\_\+id}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*} †5   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+COMP\+\_\+get\+\_\+name}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*} †5   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+COMP\+\_\+set0\+\_\+compression\+\_\+methods}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*} †5   &🟢\+Done    \\\cline{1-6}
+{\bfseries{⇒ Exporters}}   &&&&&\\\cline{1-6}
+{\ttfamily SSL\+\_\+export\+\_\+keying\+\_\+material}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+export\+\_\+keying\+\_\+material\+\_\+early}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\bfseries{⇒ Renegotiation}}   &&&&&\\\cline{1-6}
+{\ttfamily SSL\+\_\+renegotiate}   &HL   &🟩U   &🟥\+FC   &🟩\+NC\texorpdfstring{$\ast$}{*} †5   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+renegotiate\+\_\+abbreviated}   &HL   &🟩U   &🟥\+FC   &🟩\+NC\texorpdfstring{$\ast$}{*} †5   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+renegotiate\+\_\+pending}   &HL   &🟩U   &🟧\+NO   &🟩\+NC\texorpdfstring{$\ast$}{*} †5   &🟢\+Done    \\\cline{1-6}
+{\bfseries{⇒ Options}}   &&&&&\\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+clear\+\_\+options}   &HL   &🟩U   &🟩A   &🟨\+C\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+options}   &HL   &🟩U   &🟩A   &🟨\+C\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+get\+\_\+options}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+clear\+\_\+options}   &HL   &🟩U   &🟩A   &🟨\+C\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set\+\_\+options}   &HL   &🟩U   &🟩A   &🟨\+C\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+options}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\bfseries{⇒ Configuration}}   &&&&&\\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CONF\+\_\+\+CTX\+\_\+new}   &Global   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CONF\+\_\+\+CTX\+\_\+free}   &Global   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CONF\+\_\+\+CTX\+\_\+set\+\_\+ssl}   &Global   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CONF\+\_\+\+CTX\+\_\+set\+\_\+ssl\+\_\+ctx}   &Global   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CONF\+\_\+\+CTX\+\_\+set1\+\_\+prefix}   &Global   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CONF\+\_\+\+CTX\+\_\+set\+\_\+flags}   &Global   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CONF\+\_\+\+CTX\+\_\+clear\+\_\+flags}   &Global   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CONF\+\_\+\+CTX\+\_\+finish}   &Global   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CONF\+\_\+cmd}   &Global   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CONF\+\_\+cmd\+\_\+argv}   &Global   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CONF\+\_\+cmd\+\_\+value\+\_\+type}   &Global   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+config}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+config}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\bfseries{⇒ Callbacks}}   &&&&&\\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+cert\+\_\+cb}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+cert\+\_\+store}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+cert\+\_\+verify\+\_\+callback}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+client\+\_\+\+CA\+\_\+list}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+client\+\_\+cert\+\_\+cb}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+client\+\_\+cert\+\_\+engine}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+client\+\_\+hello\+\_\+cb}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+cookie\+\_\+generate\+\_\+cb}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+cookie\+\_\+verify\+\_\+cb}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+default\+\_\+passwd\+\_\+cb}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+default\+\_\+passwd\+\_\+cb\+\_\+userdata}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+default\+\_\+read\+\_\+buffer\+\_\+len}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+get\+\_\+info\+\_\+callback}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+info\+\_\+callback}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+info\+\_\+callback}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set\+\_\+info\+\_\+callback}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set\+\_\+msg\+\_\+callback}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*} †6   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set\+\_\+cert\+\_\+cb}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set\+\_\+default\+\_\+passwd\+\_\+cb}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set\+\_\+default\+\_\+passwd\+\_\+cb\+\_\+userdata}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+default\+\_\+passwd\+\_\+cb}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+default\+\_\+passwd\+\_\+cb\+\_\+userdata}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+keylog\+\_\+callback}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+get\+\_\+keylog\+\_\+callback}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+psk\+\_\+client\+\_\+callback}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+psk\+\_\+find\+\_\+session\+\_\+callback}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+psk\+\_\+server\+\_\+callback}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+psk\+\_\+use\+\_\+session\+\_\+callback}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+get\+\_\+verify\+\_\+callback}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+not\+\_\+resumable\+\_\+session\+\_\+callback}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set\+\_\+not\+\_\+resumable\+\_\+session\+\_\+callback}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set\+\_\+session\+\_\+secret\+\_\+cb}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\bfseries{⇒ Session Management}}   &&&&&\\\cline{1-6}
+{\ttfamily d2i\+\_\+\+SSL\+\_\+\+SESSION}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily i2d\+\_\+\+SSL\+\_\+\+SESSION}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily PEM\+\_\+read\+\_\+bio\+\_\+\+SSL\+\_\+\+SESSION}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily PEM\+\_\+read\+\_\+\+SSL\+\_\+\+SESSION}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily PEM\+\_\+write\+\_\+bio\+\_\+\+SSL\+\_\+\+SESSION}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily PEM\+\_\+write\+\_\+\+SSL\+\_\+\+SESSION}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+SESSION\+\_\+new}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+SESSION\+\_\+up\+\_\+ref}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+SESSION\+\_\+dup}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+SESSION\+\_\+free}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+SESSION\+\_\+print}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+SESSION\+\_\+print\+\_\+fp}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+SESSION\+\_\+print\+\_\+keylog}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+SESSION\+\_\+get0\+\_\+cipher}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+SESSION\+\_\+set\+\_\+cipher}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+SESSION\+\_\+get0\+\_\+hostname}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+SESSION\+\_\+set1\+\_\+hostname}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+SESSION\+\_\+get0\+\_\+id\+\_\+context}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+SESSION\+\_\+set1\+\_\+id\+\_\+context}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+SESSION\+\_\+get0\+\_\+peer}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+SESSION\+\_\+get0\+\_\+ticket}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+SESSION\+\_\+get0\+\_\+ticket\+\_\+appdata}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+SESSION\+\_\+set1\+\_\+ticket\+\_\+appdata}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+SESSION\+\_\+has\+\_\+ticket}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+SESSION\+\_\+get\+\_\+protocol\+\_\+version}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+SESSION\+\_\+set\+\_\+protocol\+\_\+version}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+SESSION\+\_\+get\+\_\+compress\+\_\+id}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+SESSION\+\_\+get\+\_\+id}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+SESSION\+\_\+set1\+\_\+id}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+SESSION\+\_\+get\+\_\+time}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+SESSION\+\_\+set\+\_\+time}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+SESSION\+\_\+get\+\_\+timeout}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+SESSION\+\_\+set\+\_\+timeout}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+SESSION\+\_\+get\+\_\+ex\+\_\+data}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+SESSION\+\_\+set\+\_\+ex\+\_\+data}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+SESSION\+\_\+get0\+\_\+hostname}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+SESSION\+\_\+set1\+\_\+hostname}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+SESSION\+\_\+get\+\_\+master\+\_\+key}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+SESSION\+\_\+get\+\_\+master\+\_\+key}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+SESSION\+\_\+is\+\_\+resumable}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+SESSION\+\_\+get\+\_\+max\+\_\+early\+\_\+data}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+SESSION\+\_\+get\+\_\+max\+\_\+early\+\_\+data}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+SESSION\+\_\+get\+\_\+max\+\_\+fragment\+\_\+length}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+SESSION\+\_\+get\+\_\+ticket\+\_\+lifetime\+\_\+hint}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+add\+\_\+session}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+remove\+\_\+session}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get1\+\_\+session}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+session}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set\+\_\+session}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+sess\+\_\+get\+\_\+get\+\_\+cb}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+sess\+\_\+set\+\_\+get\+\_\+cb}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+sess\+\_\+get\+\_\+new\+\_\+cb}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+sess\+\_\+set\+\_\+new\+\_\+cb}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+sess\+\_\+get\+\_\+remove\+\_\+cb}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+sess\+\_\+set\+\_\+remove\+\_\+cb}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+session\+\_\+id\+\_\+context}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set\+\_\+session\+\_\+id\+\_\+context}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set\+\_\+generate\+\_\+session\+\_\+id}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+generate\+\_\+session\+\_\+id}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+has\+\_\+matching\+\_\+session\+\_\+id}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+flush\+\_\+sessions}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+session\+\_\+reused}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+get\+\_\+timeout}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+timeout}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+default\+\_\+timeout}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+sessions}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\bfseries{⇒ Session Ticket Management}}   &&&&&\\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+num\+\_\+tickets}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*} †7   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set\+\_\+num\+\_\+tickets}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*} †7   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+get\+\_\+num\+\_\+tickets}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*} †7   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+num\+\_\+tickets}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*} †7   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+new\+\_\+session\+\_\+ticket}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*} †7   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set\+\_\+session\+\_\+ticket\+\_\+ext}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set\+\_\+session\+\_\+ticket\+\_\+ext\+\_\+cb}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+tlsext\+\_\+ticket\+\_\+key\+\_\+evp\+\_\+cb}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\bfseries{⇒ Security Levels}}   &&&&&\\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+get\+\_\+security\+\_\+level}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+security\+\_\+level}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+security\+\_\+level}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set\+\_\+security\+\_\+level}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+get\+\_\+security\+\_\+callback}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+security\+\_\+callback}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+security\+\_\+callback}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set\+\_\+security\+\_\+callback}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+get0\+\_\+security\+\_\+ex\+\_\+data}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set0\+\_\+security\+\_\+ex\+\_\+data}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get0\+\_\+security\+\_\+ex\+\_\+data}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set0\+\_\+security\+\_\+ex\+\_\+data}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\bfseries{⇒ Custom Extensions}}   &&&&&\\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+add\+\_\+custom\+\_\+ext}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+add\+\_\+client\+\_\+custom\+\_\+ext}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+add\+\_\+server\+\_\+custom\+\_\+ext}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+has\+\_\+client\+\_\+custom\+\_\+ext}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\bfseries{⇒ Early Client\+Hello Processing}}   &&&&&\\\cline{1-6}
+{\ttfamily SSL\+\_\+client\+\_\+hello\+\_\+get\+\_\+extension\+\_\+order}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+client\+\_\+hello\+\_\+get0\+\_\+ciphers}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+client\+\_\+hello\+\_\+get0\+\_\+compression\+\_\+methods}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+client\+\_\+hello\+\_\+get0\+\_\+ext}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+client\+\_\+hello\+\_\+get0\+\_\+legacy\+\_\+version}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+client\+\_\+hello\+\_\+get0\+\_\+random}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+client\+\_\+hello\+\_\+get0\+\_\+session\+\_\+id}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+client\+\_\+hello\+\_\+get1\+\_\+extensions\+\_\+present}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+client\+\_\+hello\+\_\+isv2}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\bfseries{⇒ SNI}}   &&&&&\\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+servername}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+servername\+\_\+type}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\bfseries{⇒ Server Info}}   &&&&&\\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+use\+\_\+serverinfo}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+use\+\_\+serverinfo\+\_\+ex}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+use\+\_\+serverinfo\+\_\+file}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\bfseries{⇒ Post-\/\+Handshake Authentication}}   &&&&&\\\cline{1-6}
+{\ttfamily SSL\+\_\+verify\+\_\+client\+\_\+post\+\_\+handshake}   &HL   &🟩U   &🟥\+FC   &🟨\+C\texorpdfstring{$\ast$}{*} †8   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+post\+\_\+handshake\+\_\+auth}   &HL   &🟩U   &🟥\+FC   &🟨\+C\texorpdfstring{$\ast$}{*} †8   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set\+\_\+post\+\_\+handshake\+\_\+auth}   &HL   &🟩U   &🟥\+FC   &🟨\+C\texorpdfstring{$\ast$}{*} †8   &🟢\+Done    \\\cline{1-6}
+{\bfseries{⇒ DH Parameters}}   &&&&&\\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+dh\+\_\+auto}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set\+\_\+dh\+\_\+auto}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set0\+\_\+tmp\+\_\+dh\+\_\+pkey}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set0\+\_\+tmp\+\_\+dh\+\_\+pkey}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+tmp\+\_\+dh\+\_\+callback}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set\+\_\+tmp\+\_\+dh\+\_\+callback}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+tmp\+\_\+dh}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set\+\_\+tmp\+\_\+dh}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\bfseries{⇒ State Queries}}   &&&&&\\\cline{1-6}
+{\ttfamily SSL\+\_\+in\+\_\+init}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+in\+\_\+before}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+is\+\_\+init\+\_\+finished}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+state}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+rstate\+\_\+string}   &HL   &🟩U   &🟩A   &🟧\+QSI   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+rstate\+\_\+string\+\_\+long}   &HL   &🟩U   &🟩A   &🟧\+QSI   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+state\+\_\+string}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+state\+\_\+string\+\_\+long}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\bfseries{⇒ Data Path and CSSM}}   &&&&&\\\cline{1-6}
+{\ttfamily SSL\+\_\+set\+\_\+connect\+\_\+state}   &CSSM   &🟩U   &🟩A   &🟧\+QSI   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set\+\_\+accept\+\_\+state}   &CSSM   &🟩U   &🟩A   &🟧\+QSI   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+is\+\_\+server}   &CSSM   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+peek}   &ADP   &🟩U   &🟩A   &🟧\+QSI   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+peek\+\_\+ex}   &ADP   &🟩U   &🟩A   &🟧\+QSI   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+read}   &ADP   &🟩U   &🟩A   &🟧\+QSI   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+read\+\_\+ex}   &ADP   &🟩U   &🟩A   &🟧\+QSI   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+write}   &ADP   &🟩U   &🟩A   &🟧\+QSI   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+write\+\_\+ex}   &ADP   &🟩U   &🟩A   &🟧\+QSI   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+sendfile}   &ADP   &🟩U   &🟥\+FC   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+pending}   &ADP   &🟩U   &🟩A   &🟧\+QSI   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+has\+\_\+pending}   &ADP   &🟧C   &🟩A   &🟧\+QSI   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+accept}   &CSSM   &🟩U   &🟩A   &🟧\+QSI   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+connect}   &CSSM   &🟩U   &🟩A   &🟧\+QSI   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+do\+\_\+handshake}   &CSSM   &🟩U   &🟩A   &🟧\+QSI   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set0\+\_\+wbio}   &NDP   &🟩U   &🟩A   &🟧\+QSI   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set0\+\_\+rbio}   &NDP   &🟧C   &🟩A   &🟧\+QSI   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set\+\_\+bio}   &NDP   &🟧C   &🟩A   &🟧\+QSI   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+wbio}   &NDP   &🟧C   &🟩A   &🟧\+QSI   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+rbio}   &NDP   &🟧C   &🟩A   &🟧\+QSI   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+error}   &NDP   &🟩U   &🟩A   &🟧\+QSI   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+rfd}   &NDP   &🟩U   &🟩A   &🟩\+NC   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+wfd}   &NDP   &🟩U   &🟩A   &🟩\+NC   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+fd}   &NDP   &🟩U   &🟩A   &🟩\+NC   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set\+\_\+rfd}   &NDP   &🟧C   &🟩A   &🟧\+QSI   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set\+\_\+wfd}   &NDP   &🟧C   &🟩A   &🟧\+QSI   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set\+\_\+fd}   &NDP   &🟩U   &🟩A   &🟧\+QSI   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+key\+\_\+update}   &RL   &🟩U   &🟩A   &🟧\+QSI   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+key\+\_\+update\+\_\+type}   &RL   &🟩U   &🟩A   &🟧\+QSI   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+clear} (connection)   &CSSM   &🟩U   &🟥\+FC   &🟧\+QSI   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+clear} (stream)   &CSSM   &🟩U   &🟥\+FC   &🟧\+QSI   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+shutdown}   &CSSM   &🟧C   &🟩A   &🟧\+QSI   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+want}   &ADP   &🟧C   &🟩A   &🟧\+QSI   &🟢\+Done    \\\cline{1-6}
+{\ttfamily BIO\+\_\+new\+\_\+ssl\+\_\+connect}   &Global   &🟩U   &🟩A   &🟧\+QSI   &🟢\+Done    \\\cline{1-6}
+{\ttfamily BIO\+\_\+new\+\_\+buffer\+\_\+ssl\+\_\+connect}   &Global   &🟩U   &🟦U   &🟧\+QSI   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+shutdown}   &CSSM   &🟩U   &🟩A   &🟧\+QSI   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set\+\_\+shutdown}   &CSSM   &🟩U   &🟩A   &🟧\+QSI   &🟢\+Done    \\\cline{1-6}
+{\bfseries{⇒ New APIs}}   &&&&&\\\cline{1-6}
+{\ttfamily SSL\+\_\+is\+\_\+tls}   &CSSM   &🟦N   &🟩A   &🟥\+QSA   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+is\+\_\+quic}   &CSSM   &🟦N   &🟩A   &🟥\+QSA   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+handle\+\_\+events}   &CSSM   &🟦N   &🟩A   &🟥\+QSA   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+event\+\_\+timeout}   &CSSM   &🟦N   &🟩A   &🟥\+QSA   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+blocking\+\_\+mode}   &CSSM   &🟦N   &🟩A   &🟥\+QSA   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set\+\_\+blocking\+\_\+mode}   &CSSM   &🟦N   &🟩A   &🟥\+QSA   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+rpoll\+\_\+descriptor}   &CSSM   &🟦N   &🟩A   &🟥\+QSA   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+wpoll\+\_\+descriptor}   &CSSM   &🟦N   &🟩A   &🟥\+QSA   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+net\+\_\+read\+\_\+desired}   &CSSM   &🟦N   &🟩A   &🟥\+QSA   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+net\+\_\+write\+\_\+desired}   &CSSM   &🟦N   &🟩A   &🟥\+QSA   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set1\+\_\+initial\+\_\+peer\+\_\+addr}   &CSSM   &🟦N   &🟩A   &🟥\+QSA   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+shutdown\+\_\+ex}   &CSSM   &🟦N   &🟩A   &🟥\+QSA   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+stream\+\_\+conclude}   &CSSM   &🟦N   &🟩A   &🟥\+QSA   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+stream\+\_\+reset}   &CSSM   &🟦N   &🟩A   &🟥\+QSA   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+stream\+\_\+read\+\_\+state}   &CSSM   &🟦N   &🟩A   &🟥\+QSA   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+stream\+\_\+write\+\_\+state}   &CSSM   &🟦N   &🟩A   &🟥\+QSA   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+stream\+\_\+read\+\_\+error\+\_\+code}   &CSSM   &🟦N   &🟩A   &🟥\+QSA   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+stream\+\_\+write\+\_\+error\+\_\+code}   &CSSM   &🟦N   &🟩A   &🟥\+QSA   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+conn\+\_\+close\+\_\+info}   &CSSM   &🟦N   &🟩A   &🟥\+QSA   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+inject\+\_\+net\+\_\+dgram}   &NDP   &🟦N   &🟩A   &🟥\+QSA   &🟢\+Done    \\\cline{1-6}
+{\bfseries{⇒ New APIs for Multi-\/\+Stream}}   &&&&&\\\cline{1-6}
+{\ttfamily SSL\+\_\+get0\+\_\+connection}   &CSSM   &🟦N   &🟩A   &🟥\+QSA   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+is\+\_\+connection}   &CSSM   &🟦N   &🟩A   &🟥\+QSA   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+stream\+\_\+id}   &CSSM   &🟦N   &🟩A   &🟥\+QSA   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+stream\+\_\+type}   &CSSM   &🟦N   &🟩A   &🟥\+QSA   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+is\+\_\+stream\+\_\+local}   &CSSM   &🟦N   &🟩A   &🟥\+QSA   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+new\+\_\+stream}   &CSSM   &🟦N   &🟩A   &🟥\+QSA   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+accept\+\_\+stream}   &CSSM   &🟦N   &🟩A   &🟥\+QSA   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+accept\+\_\+stream\+\_\+queue\+\_\+len}   &CSSM   &🟦N   &🟩A   &🟥\+QSA   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set\+\_\+default\+\_\+stream\+\_\+mode}   &CSSM   &🟦N   &🟩A   &🟥\+QSA   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set\+\_\+incoming\+\_\+stream\+\_\+policy}   &CSSM   &🟦N   &🟩A   &🟥\+QSA   &🟢\+Done    \\\cline{1-6}
+{\bfseries{⇒ Currently Not Supported}}   &&&&&\\\cline{1-6}
+{\ttfamily SSL\+\_\+copy\+\_\+session\+\_\+id}   &Special   &🟩U   &🟥\+FC   &🟨\+C\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily BIO\+\_\+ssl\+\_\+copy\+\_\+session\+\_\+id}   &Special   &🟩U   &🟥\+FC   &🟨\+C\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+quiet\+\_\+shutdown}   &CSSM   &🟩U   &🟦U   &🟩\+NC   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+get\+\_\+quiet\+\_\+shutdown}   &CSSM   &🟩U   &🟦U   &🟩\+NC   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set\+\_\+quiet\+\_\+shutdown}   &CSSM   &🟩U   &🟥\+FC   &🟨C   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+quiet\+\_\+shutdown}   &CSSM   &🟩U   &🟧\+NO   &🟨C   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+ssl\+\_\+version}   &HL   &🟩U   &🟥\+FC   &🟨C   &🟢\+Done    \\\cline{1-6}
+{\bfseries{⇒ Async}}   &&&&&\\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+async\+\_\+callback}   &Async   &🟩U   &🟧\+NO   &🟩\+NC\texorpdfstring{$\ast$}{*} †10   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set\+\_\+async\+\_\+callback}   &Async   &🟩U   &🟧\+NO   &🟩\+NC\texorpdfstring{$\ast$}{*} †10   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+async\+\_\+callback\+\_\+arg}   &Async   &🟩U   &🟧\+NO   &🟩\+NC\texorpdfstring{$\ast$}{*} †10   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set\+\_\+async\+\_\+callback\+\_\+arg}   &Async   &🟩U   &🟧\+NO   &🟩\+NC\texorpdfstring{$\ast$}{*} †10   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+waiting\+\_\+for\+\_\+async}   &Async   &🟩U   &🟧\+NO   &🟩\+NC\texorpdfstring{$\ast$}{*} †10   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+async\+\_\+status}   &Async   &🟩U   &🟧\+NO   &🟩\+NC\texorpdfstring{$\ast$}{*} †10   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+all\+\_\+async\+\_\+fds}   &Async   &🟩U   &🟧\+NO   &🟩\+NC\texorpdfstring{$\ast$}{*} †10   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+changed\+\_\+async\+\_\+fds}   &Async   &🟩U   &🟧\+NO   &🟩\+NC\texorpdfstring{$\ast$}{*} †10   &🟢\+Done    \\\cline{1-6}
+{\bfseries{⇒ Readahead}}   &&&&&\\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+get\+\_\+default\+\_\+read\+\_\+ahead}   &RL   &🟩U   &🟧\+NO   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+get\+\_\+read\+\_\+ahead}   &RL   &🟩U   &🟧\+NO   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+read\+\_\+ahead}   &RL   &🟩U   &🟧\+NO   &🟨\+C\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+read\+\_\+ahead}   &RL   &🟩U   &🟧\+NO   &🟨\+C\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set\+\_\+read\+\_\+ahead}   &RL   &🟩U   &🟧\+NO   &🟨\+C\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+default\+\_\+read\+\_\+buffer\+\_\+len}   &RL   &🟩U   &🟧\+NO   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set\+\_\+default\+\_\+read\+\_\+buffer\+\_\+len}   &RL   &🟩U   &🟧\+NO   &🟨\+C\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\bfseries{⇒ Record Padding and Fragmentation}}   &&&&&\\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+record\+\_\+padding\+\_\+callback}   &RL   &🟩U   &🟥\+FC   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set\+\_\+record\+\_\+padding\+\_\+callback}   &RL   &🟩U   &🟥\+FC   &🟨\+C\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+get\+\_\+record\+\_\+padding\+\_\+callback\+\_\+arg}   &RL   &🟩U   &🟥\+FC   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+record\+\_\+padding\+\_\+callback\+\_\+arg}   &RL   &🟩U   &🟥\+FC   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+record\+\_\+padding\+\_\+callback\+\_\+arg}   &RL   &🟩U   &🟥\+FC   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set\+\_\+record\+\_\+padding\+\_\+callback\+\_\+arg}   &RL   &🟩U   &🟥\+FC   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+block\+\_\+padding}   &RL   &🟩U   &🟥\+FC   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set\+\_\+block\+\_\+padding}   &RL   &🟩U   &🟥\+FC   &🟨\+C\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+tlsext\+\_\+max\+\_\+fragment\+\_\+length}   &RL   &🟩U   &🟥\+FC   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set\+\_\+tlsext\+\_\+max\+\_\+fragment\+\_\+length}   &RL   &🟩U   &🟥\+FC   &🟨\+C\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\bfseries{⇒ Stateless/\+Hello\+Retry\+Request}}   &&&&&\\\cline{1-6}
+{\ttfamily SSL\+\_\+stateless}   &RL   &🟩U   &🟥\+FC   &🟨\+C\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+stateless\+\_\+cookie\+\_\+generate\+\_\+cb}   &RL   &🟩U   &🟥\+FC   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+stateless\+\_\+cookie\+\_\+verify\+\_\+cb}   &RL   &🟩U   &🟥\+FC   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\bfseries{⇒ Early Data/0-\/\+RTT}}   &&&&&\\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+allow\+\_\+early\+\_\+data\+\_\+cb}   &0-\/RTT   &🟩U   &🟥\+FC   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set\+\_\+allow\+\_\+early\+\_\+data\+\_\+cb}   &0-\/RTT   &🟩U   &🟥\+FC   &🟨\+C\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+get\+\_\+recv\+\_\+max\+\_\+early\+\_\+data}   &0-\/RTT   &🟩U   &🟥\+FC   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+recv\+\_\+max\+\_\+early\+\_\+data}   &0-\/RTT   &🟩U   &🟥\+FC   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+recv\+\_\+max\+\_\+early\+\_\+data}   &0-\/RTT   &🟩U   &🟥\+FC   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set\+\_\+recv\+\_\+max\+\_\+early\+\_\+data}   &0-\/RTT   &🟩U   &🟥\+FC   &🟨\+C\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+get\+\_\+max\+\_\+early\+\_\+data}   &0-\/RTT   &🟩U   &🟥\+FC   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+max\+\_\+early\+\_\+data}   &0-\/RTT   &🟩U   &🟥\+FC   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+max\+\_\+early\+\_\+data}   &0-\/RTT   &🟩U   &🟥\+FC   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set\+\_\+max\+\_\+early\+\_\+data}   &0-\/RTT   &🟩U   &🟥\+FC   &🟨\+C\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+read\+\_\+early\+\_\+data}   &0-\/RTT   &🟩U   &🟥\+FC   &🟨\+C\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+write\+\_\+early\+\_\+data}   &0-\/RTT   &🟩U   &🟥\+FC   &🟨\+C\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+early\+\_\+data\+\_\+status}   &0-\/RTT   &🟩U   &🟥\+FC   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\bfseries{⇒ Miscellaneous}}   &&&&&\\\cline{1-6}
+{\ttfamily DTLSv1\+\_\+listen}   &RL   &🟩U   &🟦U   &🟩\+NC   &🟢\+Done    \\\cline{1-6}
+{\ttfamily DTLS\+\_\+set\+\_\+timer\+\_\+cb}   &NDP   &🟩U   &🟦U   &🟩\+NC   &🟢\+Done    \\\cline{1-6}
+{\ttfamily DTLS\+\_\+get\+\_\+data\+\_\+mtu}   &NDP   &🟩U   &🟦U   &🟩\+NC   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+get\+\_\+ex\+\_\+data\+\_\+\+X509\+\_\+\+STORE\+\_\+\+CTX\+\_\+idx}   &Global   &🟩U   &🟦U   &🟩\+NC   &🟢\+Done    \\\cline{1-6}
+{\ttfamily BIO\+\_\+ssl\+\_\+shutdown}   &Global   &🟩U   &🟩A   &🟩\+NC   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+alloc\+\_\+buffers}   &HL   &🟩U   &🟩A   &🟨\+C\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+free\+\_\+buffers}   &HL   &🟩U   &🟩A   &🟨\+C\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+trace}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+set\+\_\+debug}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\bfseries{⇒ Controls}}   &&&&&\\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+MODE}   &Special   &🟩U   &🟩A   &🟧\+QSI   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+CLEAR\+\_\+\+MODE}   &Special   &🟩U   &🟩A   &🟧\+QSI   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+CLEAR\+\_\+\+NUM\+\_\+\+RENEGOTIATIONS}   &HL   &🟩U   &🟧\+NO   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+GET\+\_\+\+NUM\+\_\+\+RENEGOTIATIONS}   &HL   &🟩U   &🟧\+NO   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+GET\+\_\+\+TOTAL\+\_\+\+RENEGOTIATIONS}   &HL   &🟩U   &🟧\+NO   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+GET\+\_\+\+RI\+\_\+\+SUPPORT}   &HL   &🟩U   &🟧\+NO   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+GET\+\_\+\+READ\+\_\+\+AHEAD}   &HL   &🟩U   &🟧\+NO   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+SET\+\_\+\+READ\+\_\+\+AHEAD}   &HL   &🟩U   &🟥\+FC   &🟨\+C\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+SET\+\_\+\+MAX\+\_\+\+PIPELINES}   &RL   &🟩U   &🟥\+FC   &🟨\+C\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+SET\+\_\+\+MAX\+\_\+\+SEND\+\_\+\+FRAGMENT}   &RL   &🟩U   &🟥\+FC   &🟨\+C\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+SET\+\_\+\+SPLIT\+\_\+\+SEND\+\_\+\+FRAGMENT}   &RL   &🟩U   &🟥\+FC   &🟨\+C\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+SET\+\_\+\+MTU}   &RL   &🟩U   &🟥\+FC   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+SET\+\_\+\+MAX\+\_\+\+PROTO\+\_\+\+VERSION}   &HL   &🟩U   &🟩A   &🟨\+C\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+SET\+\_\+\+MIN\+\_\+\+PROTO\+\_\+\+VERSION}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+GET\+\_\+\+MAX\+\_\+\+PROTO\+\_\+\+VERSION}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+GET\+\_\+\+MIN\+\_\+\+PROTO\+\_\+\+VERSION}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+BUILD\+\_\+\+CERT\+\_\+\+CHAIN}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+CERT\+\_\+\+FLAGS}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+CHAIN}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+CHAIN\+\_\+\+CERT}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+CLEAR\+\_\+\+CERT\+\_\+\+FLAGS}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+CLEAR\+\_\+\+EXTRA\+\_\+\+CHAIN\+\_\+\+CERTS}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+EXTRA\+\_\+\+CHAIN\+\_\+\+CERT}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+GET\+\_\+\+CHAIN\+\_\+\+CERTS}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+GET\+\_\+\+CHAIN\+\_\+\+CERT\+\_\+\+STORE}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+GET\+\_\+\+CLIENT\+\_\+\+CERT\+\_\+\+REQUEST}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+GET\+\_\+\+CLIENT\+\_\+\+CERT\+\_\+\+TYPES}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+GET\+\_\+\+EC\+\_\+\+POINT\+\_\+\+FORMATS}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+GET\+\_\+\+EXTMS\+\_\+\+SUPPORT}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+GET\+\_\+\+EXTRA\+\_\+\+CHAIN\+\_\+\+CERTS}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+GET\+\_\+\+FLAGS}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+GET\+\_\+\+GROUPS}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+GET\+\_\+\+IANA\+\_\+\+GROUPS}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+GET\+\_\+\+MAX\+\_\+\+CERT\+\_\+\+LIST}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+GET\+\_\+\+NEGOTIATED\+\_\+\+GROUP}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+GET\+\_\+\+PEER\+\_\+\+SIGNATURE\+\_\+\+NID}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+GET\+\_\+\+PEER\+\_\+\+TMP\+\_\+\+KEY}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+GET\+\_\+\+RAW\+\_\+\+CIPHERLIST}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+GET\+\_\+\+SESS\+\_\+\+CACHE\+\_\+\+MODE}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+GET\+\_\+\+SESS\+\_\+\+CACHE\+\_\+\+SIZE}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+GET\+\_\+\+SHARED\+\_\+\+GROUP}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+GET\+\_\+\+SIGNATURE\+\_\+\+NID}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+GET\+\_\+\+TLSEXT\+\_\+\+STATUS\+\_\+\+REQ\+\_\+\+CB}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+GET\+\_\+\+TLSEXT\+\_\+\+STATUS\+\_\+\+REQ\+\_\+\+CB\+\_\+\+ARG}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+GET\+\_\+\+TLSEXT\+\_\+\+STATUS\+\_\+\+REQ\+\_\+\+EXTS}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+GET\+\_\+\+TLSEXT\+\_\+\+STATUS\+\_\+\+REQ\+\_\+\+IDS}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+GET\+\_\+\+TLSEXT\+\_\+\+STATUS\+\_\+\+REQ\+\_\+\+OCSP\+\_\+\+RESP}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+GET\+\_\+\+TLSEXT\+\_\+\+STATUS\+\_\+\+REQ\+\_\+\+TYPE}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+GET\+\_\+\+TLSEXT\+\_\+\+TICKET\+\_\+\+KEYS}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+GET\+\_\+\+TMP\+\_\+\+KEY}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+GET\+\_\+\+VERIFY\+\_\+\+CERT\+\_\+\+STORE}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+SELECT\+\_\+\+CURRENT\+\_\+\+CERT}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+SESS\+\_\+\+ACCEPT}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+SESS\+\_\+\+ACCEPT\+\_\+\+GOOD}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+SESS\+\_\+\+ACCEPT\+\_\+\+RENEGOTIATE}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+SESS\+\_\+\+CACHE\+\_\+\+FULL}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+SESS\+\_\+\+CB\+\_\+\+HIT}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+SESS\+\_\+\+CONNECT}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+SESS\+\_\+\+CONNECT\+\_\+\+GOOD}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+SESS\+\_\+\+CONNECT\+\_\+\+RENEGOTIATE}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+SESS\+\_\+\+HIT}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+SESS\+\_\+\+MISSES}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+SESS\+\_\+\+NUMBER}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+SESS\+\_\+\+TIMEOUTS}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+SET\+\_\+\+CHAIN\+\_\+\+CERT\+\_\+\+STORE}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+SET\+\_\+\+CLIENT\+\_\+\+CERT\+\_\+\+TYPES}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+SET\+\_\+\+CLIENT\+\_\+\+SIGALGS}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+SET\+\_\+\+CLIENT\+\_\+\+SIGALGS\+\_\+\+LIST}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+SET\+\_\+\+CURRENT\+\_\+\+CERT}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+SET\+\_\+\+DH\+\_\+\+AUTO}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+SET\+\_\+\+GROUPS}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+SET\+\_\+\+GROUPS\+\_\+\+LIST}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+SET\+\_\+\+MAX\+\_\+\+CERT\+\_\+\+LIST}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+SET\+\_\+\+MSG\+\_\+\+CALLBACK}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+SET\+\_\+\+MSG\+\_\+\+CALLBACK\+\_\+\+ARG}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+SET\+\_\+\+NOT\+\_\+\+RESUMABLE\+\_\+\+SESS\+\_\+\+CB}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+SET\+\_\+\+RETRY\+\_\+\+VERIFY}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+SET\+\_\+\+SESS\+\_\+\+CACHE\+\_\+\+MODE}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+SET\+\_\+\+SESS\+\_\+\+CACHE\+\_\+\+SIZE}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+SET\+\_\+\+SIGALGS}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+SET\+\_\+\+SIGALGS\+\_\+\+LIST}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+SET\+\_\+\+SRP\+\_\+\+ARG}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+SET\+\_\+\+SRP\+\_\+\+GIVE\+\_\+\+CLIENT\+\_\+\+PWD\+\_\+\+CB}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+SET\+\_\+\+SRP\+\_\+\+VERIFY\+\_\+\+PARAM\+\_\+\+CB}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+SET\+\_\+\+TLSEXT\+\_\+\+DEBUG\+\_\+\+ARG}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+SET\+\_\+\+TLSEXT\+\_\+\+DEBUG\+\_\+\+CB}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+SET\+\_\+\+TLSEXT\+\_\+\+HOSTNAME}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+SET\+\_\+\+TLSEXT\+\_\+\+SERVERNAME\+\_\+\+ARG}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+SET\+\_\+\+TLSEXT\+\_\+\+SERVERNAME\+\_\+\+CB}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+SET\+\_\+\+TLS\+\_\+\+EXT\+\_\+\+SRP\+\_\+\+PASSWORD}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+SET\+\_\+\+TLS\+\_\+\+EXT\+\_\+\+SRP\+\_\+\+STRENGTH}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+SET\+\_\+\+TLS\+\_\+\+EXT\+\_\+\+SRP\+\_\+\+USERNAME}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+SET\+\_\+\+TLS\+\_\+\+EXT\+\_\+\+SRP\+\_\+\+USERNAME\+\_\+\+CB}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+SET\+\_\+\+TLSEXT\+\_\+\+STATUS\+\_\+\+REQ\+\_\+\+CB}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+SET\+\_\+\+TLSEXT\+\_\+\+STATUS\+\_\+\+REQ\+\_\+\+CB\+\_\+\+ARG}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+SET\+\_\+\+TLSEXT\+\_\+\+STATUS\+\_\+\+REQ\+\_\+\+EXTS}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+SET\+\_\+\+TLSEXT\+\_\+\+STATUS\+\_\+\+REQ\+\_\+\+IDS}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+SET\+\_\+\+TLSEXT\+\_\+\+STATUS\+\_\+\+REQ\+\_\+\+OCSP\+\_\+\+RESP}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+SET\+\_\+\+TLSEXT\+\_\+\+STATUS\+\_\+\+REQ\+\_\+\+TYPE}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+SET\+\_\+\+TLSEXT\+\_\+\+TICKET\+\_\+\+KEY\+\_\+\+CB}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+SET\+\_\+\+TLSEXT\+\_\+\+TICKET\+\_\+\+KEYS}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+SET\+\_\+\+TMP\+\_\+\+DH}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+SET\+\_\+\+TMP\+\_\+\+DH\+\_\+\+CB}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+SET\+\_\+\+TMP\+\_\+\+ECDH}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+CTRL\+\_\+\+SET\+\_\+\+VERIFY\+\_\+\+CERT\+\_\+\+STORE}   &HL   &🟩U   &🟩A   &🟩\+NC\texorpdfstring{$\ast$}{*}   &🟢\+Done    \\\cline{1-6}
+{\bfseries{⇒ SSL Modes}}   &&&&&\\\cline{1-6}
+{\ttfamily SSL\+\_\+\+MODE\+\_\+\+ENABLE\+\_\+\+PARTIAL\+\_\+\+WRITE}   &ADP   &🟩U   &🟩A   &🟧\+QSI   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+MODE\+\_\+\+ACCEPT\+\_\+\+MOVING\+\_\+\+WRITE\+\_\+\+BUFFER}   &ADP   &🟩U   &🟩A   &🟧\+QSI   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+MODE\+\_\+\+RELEASE\+\_\+\+BUFFERS}   &ADP   &🟩U   &🟧\+NO   &🟩\+NC   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+MODE\+\_\+\+ASYNC}   &ADP   &🟩U   &🟧\+NO   &🟩\+NC   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+MODE\+\_\+\+AUTO\+\_\+\+RETRY}   &ADP   &🟩U   &🟧\+NO   &🟩\+NC   &🟢\+Done    \\\cline{1-6}
+{\ttfamily SSL\+\_\+\+MODE\+\_\+\+SEND\+\_\+\+FALLBACK\+\_\+\+SCSV}   &HL   &🟩U   &🟩U   &🟩\+NC   &🟢\+Done   \\\cline{1-6}
+\end{longtabu}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api-ssl-funcs_autotoc_md296}{}\doxysection{\texorpdfstring{Q\&A For TLS-\/\+Related Calls}{Q\&A For TLS-\/\+Related Calls}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api-ssl-funcs_autotoc_md296}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api-ssl-funcs_autotoc_md297}{}\doxysubsection{\texorpdfstring{What should {\ttfamily SSL\+\_\+get\+\_\+current\+\_\+cipher}, {\ttfamily SSL\+\_\+get\+\_\+pending\+\_\+cipher}, etc. do?}{What should {\ttfamily SSL\+\_\+get\+\_\+current\+\_\+cipher}, {\ttfamily SSL\+\_\+get\+\_\+pending\+\_\+cipher}, etc. do?}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api-ssl-funcs_autotoc_md297}
+QUIC always uses AES-\/128-\/\+GCM for Initial packets. At this time the handshake layer has not negotiated a ciphersuite so it has no “current” cipher. We could return AES-\/128-\/\+GCM here, but it seems reasonable to just return NULL as the encryption is mostly for protection against accidental modification and not “real” encryption. From the perspective of the Handshake layer encryption is not active yet. An application using QUIC can always interpret NULL as meaning AES-\/128-\/\+GCM is being used if needed as this is implied by using QUIC.
+
+A. We return NULL here, because it allows applications to detect if a ciphersuite has been negotiated and NULL can be used to infer that Initial encryption is still being used. This also minimises the changes needed to the implementation.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api-ssl-funcs_autotoc_md298}{}\doxysubsection{\texorpdfstring{What should {\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+cipher\+\_\+list} do?}{What should {\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+cipher\+\_\+list} do?}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api-ssl-funcs_autotoc_md298}
+Since this function configures the cipher list for TLSv1.\+2 and below only, there is no need to restrict it as TLSv1.\+3 is required for QUIC. For the sake of application compatibility, applications can still configure the TLSv1.\+2 cipher list; it will always be ignored. This function can still be used to set the SECLEVEL; no changes are needed to facilitate this.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api-ssl-funcs_autotoc_md299}{}\doxysubsection{\texorpdfstring{What SSL options should be supported?}{What SSL options should be supported?}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api-ssl-funcs_autotoc_md299}
+Options we explicitly want to support\+:
+
+
+\begin{DoxyItemize}
+\item {\ttfamily SSL\+\_\+\+OP\+\_\+\+CIPHER\+\_\+\+SERVER\+\_\+\+PREFERENCE}
+\item {\ttfamily SSL\+\_\+\+OP\+\_\+\+DISABLE\+\_\+\+TLSEXT\+\_\+\+CA\+\_\+\+NAMES}
+\item {\ttfamily SSL\+\_\+\+OP\+\_\+\+NO\+\_\+\+TX\+\_\+\+CERTIFICATE\+\_\+\+COMPRESSION}
+\item {\ttfamily SSL\+\_\+\+OP\+\_\+\+NO\+\_\+\+RX\+\_\+\+CERTIFICATE\+\_\+\+COMPRESSION}
+\item {\ttfamily SSL\+\_\+\+OP\+\_\+\+PRIORITIZE\+\_\+\+CHACHA}
+\item {\ttfamily SSL\+\_\+\+OP\+\_\+\+NO\+\_\+\+TICKET}
+\item {\ttfamily SSL\+\_\+\+OP\+\_\+\+CLEANSE\+\_\+\+PLAINTEXT}
+\end{DoxyItemize}
+
+Options we do not yet support but could support in the future, currently no-\/ops\+:
+
+
+\begin{DoxyItemize}
+\item {\ttfamily SSL\+\_\+\+OP\+\_\+\+NO\+\_\+\+QUERY\+\_\+\+MTU}
+\item {\ttfamily SSL\+\_\+\+OP\+\_\+\+NO\+\_\+\+ANTI\+\_\+\+REPLAY}
+\end{DoxyItemize}
+
+The following options must be explicitly forbidden\+:
+
+
+\begin{DoxyItemize}
+\item {\ttfamily SSL\+\_\+\+OP\+\_\+\+NO\+\_\+\+TLSv1\+\_\+3} — TLSv1.\+3 is required for QUIC
+\item {\ttfamily SSL\+\_\+\+OP\+\_\+\+ENABLE\+\_\+\+MIDDLEBOX\+\_\+\+COMPAT} — forbidden by QUIC RFCs
+\item {\ttfamily SSL\+\_\+\+OP\+\_\+\+ENABLE\+\_\+\+KTLS} — not currently supported for QUIC
+\item {\ttfamily SSL\+\_\+\+OP\+\_\+\+SAFARI\+\_\+\+ECDHE\+\_\+\+ECDSA\+\_\+\+BUG}
+\item {\ttfamily SSL\+\_\+\+OP\+\_\+\+TLSEXT\+\_\+\+PADDING}
+\item {\ttfamily SSL\+\_\+\+OP\+\_\+\+TLS\+\_\+\+ROLLBACK\+\_\+\+BUG}
+\item {\ttfamily SSL\+\_\+\+OP\+\_\+\+IGNORE\+\_\+\+UNEXPECTED\+\_\+\+EOF}
+\item {\ttfamily SSL\+\_\+\+OP\+\_\+\+ALLOW\+\_\+\+NO\+\_\+\+DHE\+\_\+\+KEX}
+\end{DoxyItemize}
+
+The following options are ignored for TLSv1.\+3 or otherwise not applicable and may therefore be settable but ignored. We take this approach on the grounds that it is harmless and applications might want to see that options have been correctly set for protocols unrelated to QUIC.
+
+
+\begin{DoxyItemize}
+\item {\ttfamily SSL\+\_\+\+OP\+\_\+\+CRYPTOPRO\+\_\+\+TLSEXT\+\_\+\+BUG}
+\item {\ttfamily SSL\+\_\+\+OP\+\_\+\+DONT\+\_\+\+INSERT\+\_\+\+EMPTY\+\_\+\+FRAGMENTS}
+\item {\ttfamily SSL\+\_\+\+OP\+\_\+\+ALLOW\+\_\+\+CLIENT\+\_\+\+RENEGOTIATION}
+\item {\ttfamily SSL\+\_\+\+OP\+\_\+\+ALLOW\+\_\+\+UNSAFE\+\_\+\+LEGACY\+\_\+\+RENEGOTIATION}
+\item {\ttfamily SSL\+\_\+\+OP\+\_\+\+CISCO\+\_\+\+ANYCONNECT}
+\item {\ttfamily SSL\+\_\+\+OP\+\_\+\+COOKIE\+\_\+\+EXCHANGE}
+\item {\ttfamily SSL\+\_\+\+OP\+\_\+\+LEGACY\+\_\+\+SERVER\+\_\+\+CONNECT}
+\item {\ttfamily SSL\+\_\+\+OP\+\_\+\+NO\+\_\+\+COMPRESSION}
+\item {\ttfamily SSL\+\_\+\+OP\+\_\+\+NO\+\_\+\+ENCRYPT\+\_\+\+THEN\+\_\+\+MAC}
+\item {\ttfamily SSL\+\_\+\+OP\+\_\+\+NO\+\_\+\+EXTENDED\+\_\+\+MASTER\+\_\+\+SECRET}
+\item {\ttfamily SSL\+\_\+\+OP\+\_\+\+NO\+\_\+\+RENEGOTIATION}
+\item {\ttfamily SSL\+\_\+\+OP\+\_\+\+NO\+\_\+\+RESSION\+\_\+\+RESUMPTION\+\_\+\+ON\+\_\+\+NEGOTIATION}
+\item {\ttfamily SSL\+\_\+\+OP\+\_\+\+NO\+\_\+\+SSLv3}
+\item {\ttfamily SSL\+\_\+\+OP\+\_\+\+NO\+\_\+\+TLSv1}
+\item {\ttfamily SSL\+\_\+\+OP\+\_\+\+NO\+\_\+\+TLSv1\+\_\+1}
+\item {\ttfamily SSL\+\_\+\+OP\+\_\+\+NO\+\_\+\+TLSv1\+\_\+2}
+\item {\ttfamily SSL\+\_\+\+OP\+\_\+\+NO\+\_\+\+DTLSv1}
+\item {\ttfamily SSL\+\_\+\+OP\+\_\+\+NO\+\_\+\+DTLSv1\+\_\+2}
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api-ssl-funcs_autotoc_md300}{}\doxysubsection{\texorpdfstring{What should {\ttfamily SSL\+\_\+rstate\+\_\+string} and {\ttfamily SSL\+\_\+state\+\_\+string} do?}{What should {\ttfamily SSL\+\_\+rstate\+\_\+string} and {\ttfamily SSL\+\_\+state\+\_\+string} do?}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api-ssl-funcs_autotoc_md300}
+SSL\+\_\+state\+\_\+string is highly handshake layer specific, so it makes sense to just forward to the handshake layer.
+
+SSL\+\_\+rstate\+\_\+string is record layer specific. A cursory evaluation of usage via Git\+Hub code search did not appear to identify much usage of this function other than for debug output; i.\+e., there seems to be little usage of this in a way that depends on the output for the purposes of control flow. Since there is not really any direct correspondence to the QUIC record layer, we conservatively define the output of this function as "{}unknown"{}.
+
+TODO\+: forbid NPN TODO\+: enforce TLSv1.\+3 TODO\+: forbid PHA -\/ DONE TODO\+: forbid middlebox compat mode in a deeper way? TODO\+: new\+\_\+session\+\_\+ticket doesn\textquotesingle{}t need modifying as such, but ticket machinery will\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api-ssl-funcs_autotoc_md301}{}\doxysubsection{\texorpdfstring{What should {\ttfamily SSL\+\_\+pending} and {\ttfamily SSL\+\_\+has\+\_\+pending} do?}{What should {\ttfamily SSL\+\_\+pending} and {\ttfamily SSL\+\_\+has\+\_\+pending} do?}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api-ssl-funcs_autotoc_md301}
+{\ttfamily SSL\+\_\+pending} traditionally yields the number of bytes buffered inside a SSL object available for immediate reading. For QUIC, we can just make this report the current size of the receive stream buffer.
+
+{\ttfamily SSL\+\_\+has\+\_\+pending} returns a boolean value indicating whether there is processed or unprocessed incoming data pending. There is no direct correspondence to QUIC, so there are various implementation options\+:
+
+
+\begin{DoxyItemize}
+\item {\ttfamily SSL\+\_\+pending() \texorpdfstring{$>$}{>} 0}
+\item {\ttfamily SSL\+\_\+pending() \texorpdfstring{$>$}{>} 0 \texorpdfstring{$\vert$}{|}\texorpdfstring{$\vert$}{|} pending URXEs or RXEs exist}
+\end{DoxyItemize}
+
+The latter can probably be viewed as more of a direct correspondence to the design intent of the API, so we go with this.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api-ssl-funcs_autotoc_md302}{}\doxysubsection{\texorpdfstring{What should {\ttfamily SSL\+\_\+alloc\+\_\+buffers} and {\ttfamily SSL\+\_\+free\+\_\+buffers} do?}{What should {\ttfamily SSL\+\_\+alloc\+\_\+buffers} and {\ttfamily SSL\+\_\+free\+\_\+buffers} do?}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api-ssl-funcs_autotoc_md302}
+These do not really correspond to our internal architecture for QUIC. Since internal buffers are always available, {\ttfamily SSL\+\_\+alloc\+\_\+buffers} can simply always return 1. {\ttfamily SSL\+\_\+free\+\_\+buffers} can always return 0, as though the buffers are in use, which they generally will be.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api-ssl-funcs_autotoc_md303}{}\doxysubsection{\texorpdfstring{What should {\ttfamily SSL\+\_\+key\+\_\+update} and {\ttfamily SSL\+\_\+get\+\_\+key\+\_\+update\+\_\+type}?}{What should {\ttfamily SSL\+\_\+key\+\_\+update} and {\ttfamily SSL\+\_\+get\+\_\+key\+\_\+update\+\_\+type}?}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api-ssl-funcs_autotoc_md303}
+{\ttfamily SSL\+\_\+key\+\_\+update} can trigger a TX record layer key update, which will cause the peer to respond with a key update in turn. The update occurs asynchronously at next transmission, not immediately.
+
+{\ttfamily SSL\+\_\+get\+\_\+key\+\_\+update\+\_\+type} returns an enumerated value which is only relevant to the TLSv1.\+3 protocol; for QUIC, it will always return {\ttfamily SSL\+\_\+\+KEY\+\_\+\+UPDATE\+\_\+\+NONE}.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api-ssl-funcs_autotoc_md304}{}\doxysubsection{\texorpdfstring{What should {\ttfamily SSL\+\_\+\+MODE\+\_\+\+AUTO\+\_\+\+RETRY} do?}{What should {\ttfamily SSL\+\_\+\+MODE\+\_\+\+AUTO\+\_\+\+RETRY} do?}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api-ssl-funcs_autotoc_md304}
+The absence of {\ttfamily SSL\+\_\+\+MODE\+\_\+\+AUTO\+\_\+\+RETRY} causes {\ttfamily SSL\+\_\+read}/{\ttfamily SSL\+\_\+write} on a normal TLS connection to potentially return due to internal handshake message processing. This does not really make sense for our QUIC implementation, therefore we always act as though {\ttfamily SSL\+\_\+\+MODE\+\_\+\+AUTO\+\_\+\+RETRY} is on, and this mode is ignored.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api-ssl-funcs_autotoc_md305}{}\doxysubsection{\texorpdfstring{What should {\ttfamily SSL\+\_\+\+MODE\+\_\+\+SEND\+\_\+\+FALLBACK\+\_\+\+SCSV} do?}{What should {\ttfamily SSL\+\_\+\+MODE\+\_\+\+SEND\+\_\+\+FALLBACK\+\_\+\+SCSV} do?}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api-ssl-funcs_autotoc_md305}
+This is not relevant to QUIC because this functionality relates to protocol version downgrade attack protection and QUIC only supports TLSv1.\+3. Thus, it is ignored.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api-ssl-funcs_autotoc_md306}{}\doxysubsection{\texorpdfstring{What should {\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+ssl\+\_\+version} do?}{What should {\ttfamily SSL\+\_\+\+CTX\+\_\+set\+\_\+ssl\+\_\+version} do?}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api-ssl-funcs_autotoc_md306}
+This is a deprecated function, so it needn\textquotesingle{}t be supported for QUIC. Fail closed.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api-ssl-funcs_autotoc_md307}{}\doxysubsection{\texorpdfstring{What should {\ttfamily SSL\+\_\+set\+\_\+ssl\+\_\+method} do?}{What should {\ttfamily SSL\+\_\+set\+\_\+ssl\+\_\+method} do?}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api-ssl-funcs_autotoc_md307}
+We do not currently support this for QUIC.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api-ssl-funcs_autotoc_md308}{}\doxysubsection{\texorpdfstring{What should {\ttfamily SSL\+\_\+set\+\_\+shutdown} do?}{What should {\ttfamily SSL\+\_\+set\+\_\+shutdown} do?}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api-ssl-funcs_autotoc_md308}
+This is not supported and is a no-\/op for QUIC.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api-ssl-funcs_autotoc_md309}{}\doxysubsection{\texorpdfstring{What should {\ttfamily SSL\+\_\+dup} and {\ttfamily SSL\+\_\+clear} do?}{What should {\ttfamily SSL\+\_\+dup} and {\ttfamily SSL\+\_\+clear} do?}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-api-ssl-funcs_autotoc_md309}
+These may be tricky to support. Currently they are blocked. 

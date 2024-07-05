@@ -1,0 +1,252 @@
+\doxysection{ocsp\+\_\+local.\+h}
+\hypertarget{ocsp__local_8h_source}{}\label{ocsp__local_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/ocsp/ocsp\_local.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/ocsp/ocsp\_local.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2015-\/2021\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ "{}crypto/x509.h"{}}\ \textcolor{comment}{/*\ for\ ossl\_x509\_add\_cert\_new()\ */}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{comment}{/*-\/\ \ CertID\ ::=\ SEQUENCE\ \{}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ *\ \ \ \ \ \ \ hashAlgorithm\ \ \ \ \ \ \ \ \ \ \ \ AlgorithmIdentifier,}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ *\ \ \ \ \ \ \ issuerNameHash\ \ \ \ \ OCTET\ STRING,\ -\/-\/\ Hash\ of\ Issuer's\ DN}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ *\ \ \ \ \ \ \ issuerKeyHash\ \ \ \ \ \ OCTET\ STRING,\ -\/-\/\ Hash\ of\ Issuers\ public\ key\ (excluding\ the\ tag\ \&\ length\ fields)}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ *\ \ \ \ \ \ \ serialNumber\ \ \ \ \ \ \ CertificateSerialNumber\ \}}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00018\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structocsp__cert__id__st}{ocsp\_cert\_id\_st}}\ \{}
+\DoxyCodeLine{00019\ \ \ \ \ X509\_ALGOR\ hashAlgorithm;}
+\DoxyCodeLine{00020\ \ \ \ \ ASN1\_OCTET\_STRING\ issuerNameHash;}
+\DoxyCodeLine{00021\ \ \ \ \ ASN1\_OCTET\_STRING\ issuerKeyHash;}
+\DoxyCodeLine{00022\ \ \ \ \ ASN1\_INTEGER\ serialNumber;}
+\DoxyCodeLine{00023\ \};}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{comment}{/*-\/\ \ Request\ ::=\ \ \ \ \ SEQUENCE\ \{}}
+\DoxyCodeLine{00026\ \textcolor{comment}{\ *\ \ \ \ \ \ \ reqCert\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ CertID,}}
+\DoxyCodeLine{00027\ \textcolor{comment}{\ *\ \ \ \ \ \ \ singleRequestExtensions\ \ \ \ [0]\ EXPLICIT\ Extensions\ OPTIONAL\ \}}}
+\DoxyCodeLine{00028\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00029\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structocsp__one__request__st}{ocsp\_one\_request\_st}}\ \{}
+\DoxyCodeLine{00030\ \ \ \ \ OCSP\_CERTID\ *reqCert;}
+\DoxyCodeLine{00031\ \ \ \ \ STACK\_OF(X509\_EXTENSION)\ *singleRequestExtensions;}
+\DoxyCodeLine{00032\ \};}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \textcolor{comment}{/*-\/\ \ TBSRequest\ \ \ \ \ \ ::=\ \ \ \ \ SEQUENCE\ \{}}
+\DoxyCodeLine{00035\ \textcolor{comment}{\ *\ \ \ \ \ \ \ version\ \ \ \ \ \ \ \ \ \ \ \ \ [0]\ EXPLICIT\ Version\ DEFAULT\ v1,}}
+\DoxyCodeLine{00036\ \textcolor{comment}{\ *\ \ \ \ \ \ \ requestorName\ \ \ \ \ \ \ [1]\ EXPLICIT\ GeneralName\ OPTIONAL,}}
+\DoxyCodeLine{00037\ \textcolor{comment}{\ *\ \ \ \ \ \ \ requestList\ \ \ \ \ \ \ \ \ \ \ \ \ SEQUENCE\ OF\ Request,}}
+\DoxyCodeLine{00038\ \textcolor{comment}{\ *\ \ \ \ \ \ \ requestExtensions\ \ \ [2]\ EXPLICIT\ Extensions\ OPTIONAL\ \}}}
+\DoxyCodeLine{00039\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00040\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structocsp__req__info__st}{ocsp\_req\_info\_st}}\ \{}
+\DoxyCodeLine{00041\ \ \ \ \ ASN1\_INTEGER\ *version;}
+\DoxyCodeLine{00042\ \ \ \ \ GENERAL\_NAME\ *requestorName;}
+\DoxyCodeLine{00043\ \ \ \ \ STACK\_OF(OCSP\_ONEREQ)\ *requestList;}
+\DoxyCodeLine{00044\ \ \ \ \ STACK\_OF(X509\_EXTENSION)\ *requestExtensions;}
+\DoxyCodeLine{00045\ \};}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \textcolor{comment}{/*-\/\ \ Signature\ \ \ \ \ \ \ ::=\ \ \ \ \ SEQUENCE\ \{}}
+\DoxyCodeLine{00048\ \textcolor{comment}{\ *\ \ \ \ \ \ \ signatureAlgorithm\ \ \ AlgorithmIdentifier,}}
+\DoxyCodeLine{00049\ \textcolor{comment}{\ *\ \ \ \ \ \ \ signature\ \ \ \ \ \ \ \ \ \ \ \ BIT\ STRING,}}
+\DoxyCodeLine{00050\ \textcolor{comment}{\ *\ \ \ \ \ \ \ certs\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ [0]\ EXPLICIT\ SEQUENCE\ OF\ Certificate\ OPTIONAL\ \}}}
+\DoxyCodeLine{00051\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00052\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structocsp__signature__st}{ocsp\_signature\_st}}\ \{}
+\DoxyCodeLine{00053\ \ \ \ \ X509\_ALGOR\ signatureAlgorithm;}
+\DoxyCodeLine{00054\ \ \ \ \ ASN1\_BIT\_STRING\ *signature;}
+\DoxyCodeLine{00055\ \ \ \ \ STACK\_OF(X509)\ *certs;}
+\DoxyCodeLine{00056\ \};}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \textcolor{comment}{/*-\/\ \ OCSPRequest\ \ \ \ \ ::=\ \ \ \ \ SEQUENCE\ \{}}
+\DoxyCodeLine{00059\ \textcolor{comment}{\ *\ \ \ \ \ \ \ tbsRequest\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ TBSRequest,}}
+\DoxyCodeLine{00060\ \textcolor{comment}{\ *\ \ \ \ \ \ \ optionalSignature\ \ \ [0]\ \ \ \ \ EXPLICIT\ Signature\ OPTIONAL\ \}}}
+\DoxyCodeLine{00061\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00062\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structocsp__request__st}{ocsp\_request\_st}}\ \{}
+\DoxyCodeLine{00063\ \ \ \ \ OCSP\_REQINFO\ tbsRequest;}
+\DoxyCodeLine{00064\ \ \ \ \ OCSP\_SIGNATURE\ *optionalSignature;\ \textcolor{comment}{/*\ OPTIONAL\ */}}
+\DoxyCodeLine{00065\ \};}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00067\ \textcolor{comment}{/*-\/\ \ OCSPResponseStatus\ ::=\ ENUMERATED\ \{}}
+\DoxyCodeLine{00068\ \textcolor{comment}{\ *\ \ \ \ \ \ \ successful\ \ \ \ \ \ \ \ \ \ \ \ (0),\ \ \ \ \ \ -\/-\/Response\ has\ valid\ confirmations}}
+\DoxyCodeLine{00069\ \textcolor{comment}{\ *\ \ \ \ \ \ \ malformedRequest\ \ \ \ \ \ (1),\ \ \ \ \ \ -\/-\/Illegal\ confirmation\ request}}
+\DoxyCodeLine{00070\ \textcolor{comment}{\ *\ \ \ \ \ \ \ internalError\ \ \ \ \ \ \ \ \ (2),\ \ \ \ \ \ -\/-\/Internal\ error\ in\ issuer}}
+\DoxyCodeLine{00071\ \textcolor{comment}{\ *\ \ \ \ \ \ \ tryLater\ \ \ \ \ \ \ \ \ \ \ \ \ \ (3),\ \ \ \ \ \ -\/-\/Try\ again\ later}}
+\DoxyCodeLine{00072\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ -\/-\/(4)\ is\ not\ used}}
+\DoxyCodeLine{00073\ \textcolor{comment}{\ *\ \ \ \ \ \ \ sigRequired\ \ \ \ \ \ \ \ \ \ \ (5),\ \ \ \ \ \ -\/-\/Must\ sign\ the\ request}}
+\DoxyCodeLine{00074\ \textcolor{comment}{\ *\ \ \ \ \ \ \ unauthorized\ \ \ \ \ \ \ \ \ \ (6)\ \ \ \ \ \ \ -\/-\/Request\ unauthorized}}
+\DoxyCodeLine{00075\ \textcolor{comment}{\ *\ \ \ \}}}
+\DoxyCodeLine{00076\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ \textcolor{comment}{/*-\/\ \ ResponseBytes\ ::=\ \ \ \ \ \ \ SEQUENCE\ \{}}
+\DoxyCodeLine{00079\ \textcolor{comment}{\ *\ \ \ \ \ \ \ responseType\ \ \ OBJECT\ IDENTIFIER,}}
+\DoxyCodeLine{00080\ \textcolor{comment}{\ *\ \ \ \ \ \ \ response\ \ \ \ \ \ \ OCTET\ STRING\ \}}}
+\DoxyCodeLine{00081\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00082\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structocsp__resp__bytes__st}{ocsp\_resp\_bytes\_st}}\ \{}
+\DoxyCodeLine{00083\ \ \ \ \ ASN1\_OBJECT\ *responseType;}
+\DoxyCodeLine{00084\ \ \ \ \ ASN1\_OCTET\_STRING\ *response;}
+\DoxyCodeLine{00085\ \};}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00087\ \textcolor{comment}{/*-\/\ \ OCSPResponse\ ::=\ SEQUENCE\ \{}}
+\DoxyCodeLine{00088\ \textcolor{comment}{\ *\ \ \ \ \ \ responseStatus\ \ \ \ \ \ \ \ \ OCSPResponseStatus,}}
+\DoxyCodeLine{00089\ \textcolor{comment}{\ *\ \ \ \ \ \ responseBytes\ \ \ \ \ \ \ \ \ \ [0]\ EXPLICIT\ ResponseBytes\ OPTIONAL\ \}}}
+\DoxyCodeLine{00090\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00091\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structocsp__response__st}{ocsp\_response\_st}}\ \{}
+\DoxyCodeLine{00092\ \ \ \ \ ASN1\_ENUMERATED\ *responseStatus;}
+\DoxyCodeLine{00093\ \ \ \ \ OCSP\_RESPBYTES\ *responseBytes;}
+\DoxyCodeLine{00094\ \};}
+\DoxyCodeLine{00095\ }
+\DoxyCodeLine{00096\ \textcolor{comment}{/*-\/\ \ ResponderID\ ::=\ CHOICE\ \{}}
+\DoxyCodeLine{00097\ \textcolor{comment}{\ *\ \ \ \ \ \ byName\ \ \ [1]\ Name,}}
+\DoxyCodeLine{00098\ \textcolor{comment}{\ *\ \ \ \ \ \ byKey\ \ \ \ [2]\ KeyHash\ \}}}
+\DoxyCodeLine{00099\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00100\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structocsp__responder__id__st}{ocsp\_responder\_id\_st}}\ \{}
+\DoxyCodeLine{00101\ \ \ \ \ \textcolor{keywordtype}{int}\ type;}
+\DoxyCodeLine{00102\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ X509\_NAME\ *byName;}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ ASN1\_OCTET\_STRING\ *byKey;}
+\DoxyCodeLine{00105\ \ \ \ \ \}\ value;}
+\DoxyCodeLine{00106\ \};}
+\DoxyCodeLine{00107\ }
+\DoxyCodeLine{00108\ \textcolor{comment}{/*-\/\ \ KeyHash\ ::=\ OCTET\ STRING\ -\/-\/SHA-\/1\ hash\ of\ responder's\ public\ key}}
+\DoxyCodeLine{00109\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ -\/-\/(excluding\ the\ tag\ and\ length\ fields)}}
+\DoxyCodeLine{00110\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00111\ }
+\DoxyCodeLine{00112\ \textcolor{comment}{/*-\/\ \ RevokedInfo\ ::=\ SEQUENCE\ \{}}
+\DoxyCodeLine{00113\ \textcolor{comment}{\ *\ \ \ \ \ \ \ revocationTime\ \ \ \ \ \ \ \ \ \ \ \ \ \ GeneralizedTime,}}
+\DoxyCodeLine{00114\ \textcolor{comment}{\ *\ \ \ \ \ \ \ revocationReason\ \ \ \ [0]\ \ \ \ \ EXPLICIT\ CRLReason\ OPTIONAL\ \}}}
+\DoxyCodeLine{00115\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00116\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structocsp__revoked__info__st}{ocsp\_revoked\_info\_st}}\ \{}
+\DoxyCodeLine{00117\ \ \ \ \ ASN1\_GENERALIZEDTIME\ *revocationTime;}
+\DoxyCodeLine{00118\ \ \ \ \ ASN1\_ENUMERATED\ *revocationReason;}
+\DoxyCodeLine{00119\ \};}
+\DoxyCodeLine{00120\ }
+\DoxyCodeLine{00121\ \textcolor{comment}{/*-\/\ \ CertStatus\ ::=\ CHOICE\ \{}}
+\DoxyCodeLine{00122\ \textcolor{comment}{\ *\ \ \ \ \ \ \ good\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ [0]\ \ \ \ \ IMPLICIT\ NULL,}}
+\DoxyCodeLine{00123\ \textcolor{comment}{\ *\ \ \ \ \ \ \ revoked\ \ \ \ \ \ \ \ \ \ \ \ \ [1]\ \ \ \ \ IMPLICIT\ RevokedInfo,}}
+\DoxyCodeLine{00124\ \textcolor{comment}{\ *\ \ \ \ \ \ \ unknown\ \ \ \ \ \ \ \ \ \ \ \ \ [2]\ \ \ \ \ IMPLICIT\ UnknownInfo\ \}}}
+\DoxyCodeLine{00125\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00126\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structocsp__cert__status__st}{ocsp\_cert\_status\_st}}\ \{}
+\DoxyCodeLine{00127\ \ \ \ \ \textcolor{keywordtype}{int}\ type;}
+\DoxyCodeLine{00128\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ ASN1\_NULL\ *good;}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ OCSP\_REVOKEDINFO\ *revoked;}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ ASN1\_NULL\ *unknown;}
+\DoxyCodeLine{00132\ \ \ \ \ \}\ value;}
+\DoxyCodeLine{00133\ \};}
+\DoxyCodeLine{00134\ }
+\DoxyCodeLine{00135\ \textcolor{comment}{/*-\/\ \ SingleResponse\ ::=\ SEQUENCE\ \{}}
+\DoxyCodeLine{00136\ \textcolor{comment}{\ *\ \ \ \ \ \ certID\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ CertID,}}
+\DoxyCodeLine{00137\ \textcolor{comment}{\ *\ \ \ \ \ \ certStatus\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ CertStatus,}}
+\DoxyCodeLine{00138\ \textcolor{comment}{\ *\ \ \ \ \ \ thisUpdate\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ GeneralizedTime,}}
+\DoxyCodeLine{00139\ \textcolor{comment}{\ *\ \ \ \ \ \ nextUpdate\ \ \ \ \ \ \ \ \ \ \ [0]\ \ \ \ \ EXPLICIT\ GeneralizedTime\ OPTIONAL,}}
+\DoxyCodeLine{00140\ \textcolor{comment}{\ *\ \ \ \ \ \ singleExtensions\ \ \ \ \ [1]\ \ \ \ \ EXPLICIT\ Extensions\ OPTIONAL\ \}}}
+\DoxyCodeLine{00141\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00142\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structocsp__single__response__st}{ocsp\_single\_response\_st}}\ \{}
+\DoxyCodeLine{00143\ \ \ \ \ OCSP\_CERTID\ *certId;}
+\DoxyCodeLine{00144\ \ \ \ \ OCSP\_CERTSTATUS\ *certStatus;}
+\DoxyCodeLine{00145\ \ \ \ \ ASN1\_GENERALIZEDTIME\ *thisUpdate;}
+\DoxyCodeLine{00146\ \ \ \ \ ASN1\_GENERALIZEDTIME\ *nextUpdate;}
+\DoxyCodeLine{00147\ \ \ \ \ STACK\_OF(X509\_EXTENSION)\ *singleExtensions;}
+\DoxyCodeLine{00148\ \};}
+\DoxyCodeLine{00149\ }
+\DoxyCodeLine{00150\ \textcolor{comment}{/*-\/\ \ ResponseData\ ::=\ SEQUENCE\ \{}}
+\DoxyCodeLine{00151\ \textcolor{comment}{\ *\ \ \ \ \ \ version\ \ \ \ \ \ \ \ \ \ \ \ \ \ [0]\ EXPLICIT\ Version\ DEFAULT\ v1,}}
+\DoxyCodeLine{00152\ \textcolor{comment}{\ *\ \ \ \ \ \ responderID\ \ \ \ \ \ \ \ \ \ \ \ \ \ ResponderID,}}
+\DoxyCodeLine{00153\ \textcolor{comment}{\ *\ \ \ \ \ \ producedAt\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ GeneralizedTime,}}
+\DoxyCodeLine{00154\ \textcolor{comment}{\ *\ \ \ \ \ \ responses\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ SEQUENCE\ OF\ SingleResponse,}}
+\DoxyCodeLine{00155\ \textcolor{comment}{\ *\ \ \ \ \ \ responseExtensions\ \ \ [1]\ EXPLICIT\ Extensions\ OPTIONAL\ \}}}
+\DoxyCodeLine{00156\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00157\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structocsp__response__data__st}{ocsp\_response\_data\_st}}\ \{}
+\DoxyCodeLine{00158\ \ \ \ \ ASN1\_INTEGER\ *version;}
+\DoxyCodeLine{00159\ \ \ \ \ OCSP\_RESPID\ responderId;}
+\DoxyCodeLine{00160\ \ \ \ \ ASN1\_GENERALIZEDTIME\ *producedAt;}
+\DoxyCodeLine{00161\ \ \ \ \ STACK\_OF(OCSP\_SINGLERESP)\ *responses;}
+\DoxyCodeLine{00162\ \ \ \ \ STACK\_OF(X509\_EXTENSION)\ *responseExtensions;}
+\DoxyCodeLine{00163\ \};}
+\DoxyCodeLine{00164\ }
+\DoxyCodeLine{00165\ \textcolor{comment}{/*-\/\ \ BasicOCSPResponse\ \ \ \ \ \ \ ::=\ SEQUENCE\ \{}}
+\DoxyCodeLine{00166\ \textcolor{comment}{\ *\ \ \ \ \ \ tbsResponseData\ \ \ \ \ \ ResponseData,}}
+\DoxyCodeLine{00167\ \textcolor{comment}{\ *\ \ \ \ \ \ signatureAlgorithm\ \ \ AlgorithmIdentifier,}}
+\DoxyCodeLine{00168\ \textcolor{comment}{\ *\ \ \ \ \ \ signature\ \ \ \ \ \ \ \ \ \ \ \ BIT\ STRING,}}
+\DoxyCodeLine{00169\ \textcolor{comment}{\ *\ \ \ \ \ \ certs\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ [0]\ EXPLICIT\ SEQUENCE\ OF\ Certificate\ OPTIONAL\ \}}}
+\DoxyCodeLine{00170\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00171\ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00172\ \textcolor{comment}{\ \ \ *\ Note\ 1:\ The\ value\ for\ "{}signature"{}\ is\ specified\ in\ the\ OCSP\ rfc2560\ as}}
+\DoxyCodeLine{00173\ \textcolor{comment}{\ \ \ *\ follows:\ "{}The\ value\ for\ the\ signature\ SHALL\ be\ computed\ on\ the\ hash\ of}}
+\DoxyCodeLine{00174\ \textcolor{comment}{\ \ \ *\ the\ DER\ encoding\ ResponseData."{}\ This\ means\ that\ you\ must\ hash\ the}}
+\DoxyCodeLine{00175\ \textcolor{comment}{\ \ \ *\ DER-\/encoded\ tbsResponseData,\ and\ then\ run\ it\ through\ a\ crypto-\/signing}}
+\DoxyCodeLine{00176\ \textcolor{comment}{\ \ \ *\ function,\ which\ will\ (at\ least\ w/RSA)\ do\ a\ hash-\/'n'-\/private-\/encrypt}}
+\DoxyCodeLine{00177\ \textcolor{comment}{\ \ \ *\ operation.\ \ This\ seems\ a\ bit\ odd,\ but\ that's\ the\ spec.\ \ Also\ note\ that}}
+\DoxyCodeLine{00178\ \textcolor{comment}{\ \ \ *\ the\ data\ structures\ do\ not\ leave\ anywhere\ to\ independently\ specify\ the}}
+\DoxyCodeLine{00179\ \textcolor{comment}{\ \ \ *\ algorithm\ used\ for\ the\ initial\ hash.\ So,\ we\ look\ at\ the}}
+\DoxyCodeLine{00180\ \textcolor{comment}{\ \ \ *\ signature-\/specification\ algorithm,\ and\ try\ to\ do\ something\ intelligent.}}
+\DoxyCodeLine{00181\ \textcolor{comment}{\ \ \ *\ -\/-\/\ Kathy\ Weinhold,\ CertCo}}
+\DoxyCodeLine{00182\ \textcolor{comment}{\ \ \ */}}
+\DoxyCodeLine{00183\ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00184\ \textcolor{comment}{\ \ \ *\ Note\ 2:\ It\ seems\ that\ the\ mentioned\ passage\ from\ RFC\ 2560\ (section}}
+\DoxyCodeLine{00185\ \textcolor{comment}{\ \ \ *\ 4.2.1)\ is\ open\ for\ interpretation.\ \ I've\ done\ tests\ against\ another}}
+\DoxyCodeLine{00186\ \textcolor{comment}{\ \ \ *\ responder,\ and\ found\ that\ it\ doesn't\ do\ the\ double\ hashing\ that\ the\ RFC}}
+\DoxyCodeLine{00187\ \textcolor{comment}{\ \ \ *\ seems\ to\ say\ one\ should.\ \ Therefore,\ all\ relevant\ functions\ take\ a\ flag}}
+\DoxyCodeLine{00188\ \textcolor{comment}{\ \ \ *\ saying\ which\ variant\ should\ be\ used.\ \ -\/-\/\ Richard\ Levitte,\ OpenSSL\ team}}
+\DoxyCodeLine{00189\ \textcolor{comment}{\ \ \ *\ and\ CeloCom}}
+\DoxyCodeLine{00190\ \textcolor{comment}{\ \ \ */}}
+\DoxyCodeLine{00191\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structocsp__basic__response__st}{ocsp\_basic\_response\_st}}\ \{}
+\DoxyCodeLine{00192\ \ \ \ \ OCSP\_RESPDATA\ tbsResponseData;}
+\DoxyCodeLine{00193\ \ \ \ \ X509\_ALGOR\ signatureAlgorithm;}
+\DoxyCodeLine{00194\ \ \ \ \ ASN1\_BIT\_STRING\ *signature;}
+\DoxyCodeLine{00195\ \ \ \ \ STACK\_OF(X509)\ *certs;}
+\DoxyCodeLine{00196\ \};}
+\DoxyCodeLine{00197\ }
+\DoxyCodeLine{00198\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00199\ \textcolor{comment}{\ *\ CrlID\ ::=\ SEQUENCE\ \{}}
+\DoxyCodeLine{00200\ \textcolor{comment}{\ *\ \ \ \ \ crlUrl\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ [0]\ \ \ \ \ EXPLICIT\ IA5String\ OPTIONAL,}}
+\DoxyCodeLine{00201\ \textcolor{comment}{\ *\ \ \ \ \ crlNum\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ [1]\ \ \ \ \ EXPLICIT\ INTEGER\ OPTIONAL,}}
+\DoxyCodeLine{00202\ \textcolor{comment}{\ *\ \ \ \ \ crlTime\ \ \ \ \ \ \ \ \ \ \ \ \ \ [2]\ \ \ \ \ EXPLICIT\ GeneralizedTime\ OPTIONAL\ \}}}
+\DoxyCodeLine{00203\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00204\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structocsp__crl__id__st}{ocsp\_crl\_id\_st}}\ \{}
+\DoxyCodeLine{00205\ \ \ \ \ ASN1\_IA5STRING\ *crlUrl;}
+\DoxyCodeLine{00206\ \ \ \ \ ASN1\_INTEGER\ *crlNum;}
+\DoxyCodeLine{00207\ \ \ \ \ ASN1\_GENERALIZEDTIME\ *crlTime;}
+\DoxyCodeLine{00208\ \};}
+\DoxyCodeLine{00209\ }
+\DoxyCodeLine{00210\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00211\ \textcolor{comment}{\ *\ ServiceLocator\ ::=\ SEQUENCE\ \{}}
+\DoxyCodeLine{00212\ \textcolor{comment}{\ *\ \ \ \ \ \ issuer\ \ \ \ Name,}}
+\DoxyCodeLine{00213\ \textcolor{comment}{\ *\ \ \ \ \ \ locator\ \ \ AuthorityInfoAccessSyntax\ OPTIONAL\ \}}}
+\DoxyCodeLine{00214\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00215\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structocsp__service__locator__st}{ocsp\_service\_locator\_st}}\ \{}
+\DoxyCodeLine{00216\ \ \ \ \ X509\_NAME\ *issuer;}
+\DoxyCodeLine{00217\ \ \ \ \ STACK\_OF(ACCESS\_DESCRIPTION)\ *locator;}
+\DoxyCodeLine{00218\ \};}
+\DoxyCodeLine{00219\ }
+\DoxyCodeLine{00220\ \textcolor{preprocessor}{\#\ \ define\ OCSP\_REQUEST\_sign(o,\ pkey,\ md,\ libctx,\ propq)\(\backslash\)}}
+\DoxyCodeLine{00221\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ ASN1\_item\_sign\_ex(ASN1\_ITEM\_rptr(OCSP\_REQINFO),\(\backslash\)}}
+\DoxyCodeLine{00222\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \&(o)-\/>optionalSignature-\/>signatureAlgorithm,\ NULL,\(\backslash\)}}
+\DoxyCodeLine{00223\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (o)-\/>optionalSignature-\/>signature,\ \&(o)-\/>tbsRequest,\(\backslash\)}}
+\DoxyCodeLine{00224\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ NULL,\ pkey,\ md,\ libctx,\ propq)}}
+\DoxyCodeLine{00225\ }
+\DoxyCodeLine{00226\ \textcolor{preprocessor}{\#\ \ define\ OCSP\_BASICRESP\_sign(o,\ pkey,\ md,\ d,\ libctx,\ propq)\(\backslash\)}}
+\DoxyCodeLine{00227\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ ASN1\_item\_sign\_ex(ASN1\_ITEM\_rptr(OCSP\_RESPDATA),\(\backslash\)}}
+\DoxyCodeLine{00228\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \&(o)-\/>signatureAlgorithm,\ NULL,\(\backslash\)}}
+\DoxyCodeLine{00229\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (o)-\/>signature,\ \&(o)-\/>tbsResponseData,\(\backslash\)}}
+\DoxyCodeLine{00230\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ NULL,\ pkey,\ md,\ libctx,\ propq)}}
+\DoxyCodeLine{00231\ }
+\DoxyCodeLine{00232\ \textcolor{preprocessor}{\#\ \ define\ OCSP\_BASICRESP\_sign\_ctx(o,\ ctx,\ d)\(\backslash\)}}
+\DoxyCodeLine{00233\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ ASN1\_item\_sign\_ctx(ASN1\_ITEM\_rptr(OCSP\_RESPDATA),\(\backslash\)}}
+\DoxyCodeLine{00234\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \&(o)-\/>signatureAlgorithm,\ NULL,\(\backslash\)}}
+\DoxyCodeLine{00235\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (o)-\/>signature,\ \&(o)-\/>tbsResponseData,\ ctx)}}
+\DoxyCodeLine{00236\ }
+\DoxyCodeLine{00237\ \textcolor{preprocessor}{\#\ \ define\ OCSP\_REQUEST\_verify(a,\ r,\ libctx,\ propq)\(\backslash\)}}
+\DoxyCodeLine{00238\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ ASN1\_item\_verify\_ex(ASN1\_ITEM\_rptr(OCSP\_REQINFO),\(\backslash\)}}
+\DoxyCodeLine{00239\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \&(a)-\/>optionalSignature-\/>signatureAlgorithm,\(\backslash\)}}
+\DoxyCodeLine{00240\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (a)-\/>optionalSignature-\/>signature,\ \&(a)-\/>tbsRequest,\(\backslash\)}}
+\DoxyCodeLine{00241\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ NULL,\ r,\ libctx,\ propq)}}
+\DoxyCodeLine{00242\ }
+\DoxyCodeLine{00243\ \textcolor{preprocessor}{\#\ \ define\ OCSP\_BASICRESP\_verify(a,\ r,\ libctx,\ propq)\(\backslash\)}}
+\DoxyCodeLine{00244\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ ASN1\_item\_verify\_ex(ASN1\_ITEM\_rptr(OCSP\_RESPDATA),\(\backslash\)}}
+\DoxyCodeLine{00245\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \&(a)-\/>signatureAlgorithm,\ (a)-\/>signature,\(\backslash\)}}
+\DoxyCodeLine{00246\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \&(a)-\/>tbsResponseData,\ NULL,\ r,\ libctx,\ propq)}}
+
+\end{DoxyCode}

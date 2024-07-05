@@ -1,0 +1,61 @@
+\doxysection{ossl\+\_\+ackm\+\_\+tx\+\_\+pkt\+\_\+st Struct Reference}
+\hypertarget{structossl__ackm__tx__pkt__st}{}\label{structossl__ackm__tx__pkt__st}\index{ossl\_ackm\_tx\_pkt\_st@{ossl\_ackm\_tx\_pkt\_st}}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{structossl__ackm__tx__pkt__st_af1ae0926dd117962fe6fe8a7b068fa31}\label{structossl__ackm__tx__pkt__st_af1ae0926dd117962fe6fe8a7b068fa31} 
+{\bfseries OSSL\+\_\+\+LIST\+\_\+\+MEMBER} (tx\+\_\+history, \mbox{\hyperlink{structossl__ackm__tx__pkt__st}{OSSL\+\_\+\+ACKM\+\_\+\+TX\+\_\+\+PKT}})
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{structossl__ackm__tx__pkt__st_a622c718395ce2f0abde3ea5358987a2d}\label{structossl__ackm__tx__pkt__st_a622c718395ce2f0abde3ea5358987a2d} 
+QUIC\+\_\+\+PN {\bfseries pkt\+\_\+num}
+\item 
+\Hypertarget{structossl__ackm__tx__pkt__st_a7e16835a50704c996cba0458a9bbae45}\label{structossl__ackm__tx__pkt__st_a7e16835a50704c996cba0458a9bbae45} 
+size\+\_\+t {\bfseries num\+\_\+bytes}
+\item 
+\Hypertarget{structossl__ackm__tx__pkt__st_a7ac8897a05c6631676c2494e903d6f2e}\label{structossl__ackm__tx__pkt__st_a7ac8897a05c6631676c2494e903d6f2e} 
+\mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\+\_\+\+TIME}} {\bfseries time}
+\item 
+\Hypertarget{structossl__ackm__tx__pkt__st_a218f7b1c60762c96e8dd735b6f142dea}\label{structossl__ackm__tx__pkt__st_a218f7b1c60762c96e8dd735b6f142dea} 
+QUIC\+\_\+\+PN {\bfseries largest\+\_\+acked}
+\item 
+\Hypertarget{structossl__ackm__tx__pkt__st_afb9153b055cab56b3df834b42221904d}\label{structossl__ackm__tx__pkt__st_afb9153b055cab56b3df834b42221904d} 
+unsigned int {\bfseries pkt\+\_\+space}\+:2
+\item 
+\Hypertarget{structossl__ackm__tx__pkt__st_a297d8b77eff2ffd1655f36d23a53a9ea}\label{structossl__ackm__tx__pkt__st_a297d8b77eff2ffd1655f36d23a53a9ea} 
+unsigned int {\bfseries is\+\_\+inflight}\+:1
+\item 
+\Hypertarget{structossl__ackm__tx__pkt__st_abe2047d07b4d778476b7785462e46c89}\label{structossl__ackm__tx__pkt__st_abe2047d07b4d778476b7785462e46c89} 
+unsigned int {\bfseries is\+\_\+ack\+\_\+eliciting}\+:1
+\item 
+\Hypertarget{structossl__ackm__tx__pkt__st_a7e3bb32dfa2eb69ada395d21a905276d}\label{structossl__ackm__tx__pkt__st_a7e3bb32dfa2eb69ada395d21a905276d} 
+unsigned int {\bfseries is\+\_\+pto\+\_\+probe}\+:1
+\item 
+\Hypertarget{structossl__ackm__tx__pkt__st_afa3b4a446f359b422644dfc65ab2cb35}\label{structossl__ackm__tx__pkt__st_afa3b4a446f359b422644dfc65ab2cb35} 
+unsigned int {\bfseries is\+\_\+mtu\+\_\+probe}\+:1
+\item 
+\Hypertarget{structossl__ackm__tx__pkt__st_a6bf1e173ff24086bf1e6742bd52d0e0a}\label{structossl__ackm__tx__pkt__st_a6bf1e173ff24086bf1e6742bd52d0e0a} 
+void(\texorpdfstring{$\ast$}{*} {\bfseries on\+\_\+lost} )(void \texorpdfstring{$\ast$}{*}arg)
+\item 
+\Hypertarget{structossl__ackm__tx__pkt__st_a0b3cae1af7aaeee9ac11e97a48b31d7c}\label{structossl__ackm__tx__pkt__st_a0b3cae1af7aaeee9ac11e97a48b31d7c} 
+void(\texorpdfstring{$\ast$}{*} {\bfseries on\+\_\+acked} )(void \texorpdfstring{$\ast$}{*}arg)
+\item 
+\Hypertarget{structossl__ackm__tx__pkt__st_ad1f354517518ff3006c21cfde8357288}\label{structossl__ackm__tx__pkt__st_ad1f354517518ff3006c21cfde8357288} 
+void(\texorpdfstring{$\ast$}{*} {\bfseries on\+\_\+discarded} )(void \texorpdfstring{$\ast$}{*}arg)
+\item 
+\Hypertarget{structossl__ackm__tx__pkt__st_a96030e01c002de1d4ed27765fd009806}\label{structossl__ackm__tx__pkt__st_a96030e01c002de1d4ed27765fd009806} 
+void \texorpdfstring{$\ast$}{*} {\bfseries cb\+\_\+arg}
+\item 
+\Hypertarget{structossl__ackm__tx__pkt__st_a09addf967a306cdcfae5daaa74f141a9}\label{structossl__ackm__tx__pkt__st_a09addf967a306cdcfae5daaa74f141a9} 
+struct \mbox{\hyperlink{structossl__ackm__tx__pkt__st}{ossl\+\_\+ackm\+\_\+tx\+\_\+pkt\+\_\+st}} \texorpdfstring{$\ast$}{*} {\bfseries anext}
+\item 
+\Hypertarget{structossl__ackm__tx__pkt__st_afd6b43d0ad5e4805608b88119fb71242}\label{structossl__ackm__tx__pkt__st_afd6b43d0ad5e4805608b88119fb71242} 
+struct \mbox{\hyperlink{structossl__ackm__tx__pkt__st}{ossl\+\_\+ackm\+\_\+tx\+\_\+pkt\+\_\+st}} \texorpdfstring{$\ast$}{*} {\bfseries lnext}
+\end{DoxyCompactItemize}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/namph/\+Downloads/openssl/openssl-\/3.\+2.\+1/include/internal/quic\+\_\+ackm.\+h\end{DoxyCompactItemize}

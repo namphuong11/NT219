@@ -1,0 +1,49 @@
+\doxysection{cipher\+\_\+chacha20\+\_\+poly1305.\+h}
+\hypertarget{cipher__chacha20__poly1305_8h_source}{}\label{cipher__chacha20__poly1305_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/providers/implementations/ciphers/cipher\_chacha20\_poly1305.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/providers/implementations/ciphers/cipher\_chacha20\_poly1305.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2019-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{comment}{/*\ Dispatch\ functions\ for\ chacha20\_poly1305\ cipher\ */}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ "{}include/crypto/poly1305.h"{}}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ "{}cipher\_chacha20.h"{}}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#define\ NO\_TLS\_PAYLOAD\_LENGTH\ ((size\_t)-\/1)}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#define\ CHACHA20\_POLY1305\_IVLEN\ 12}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00019\ \ \ \ \ \mbox{\hyperlink{structprov__cipher__ctx__st}{PROV\_CIPHER\_CTX}}\ base;\ \ \ \ \ \ \ \textcolor{comment}{/*\ must\ be\ first\ */}}
+\DoxyCodeLine{00020\ \ \ \ \ \mbox{\hyperlink{struct_p_r_o_v___c_h_a_c_h_a20___c_t_x}{PROV\_CHACHA20\_CTX}}\ chacha;}
+\DoxyCodeLine{00021\ \ \ \ \ \mbox{\hyperlink{structpoly1305__context}{POLY1305}}\ poly1305;}
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ nonce[12\ /\ 4];}
+\DoxyCodeLine{00023\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ tag[POLY1305\_BLOCK\_SIZE];}
+\DoxyCodeLine{00024\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ tls\_aad[POLY1305\_BLOCK\_SIZE];}
+\DoxyCodeLine{00025\ \ \ \ \ \textcolor{keyword}{struct\ }\{\ uint64\_t\ aad,\ text;\ \}\ len;}
+\DoxyCodeLine{00026\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ aad\ :\ 1;}
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ mac\_inited\ :\ 1;}
+\DoxyCodeLine{00028\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ tag\_len;}
+\DoxyCodeLine{00029\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ tls\_payload\_length;}
+\DoxyCodeLine{00030\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ tls\_aad\_pad\_sz;}
+\DoxyCodeLine{00031\ \}\ \mbox{\hyperlink{struct_p_r_o_v___c_h_a_c_h_a20___p_o_l_y1305___c_t_x}{PROV\_CHACHA20\_POLY1305\_CTX}};}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structprov__cipher__hw__chacha__aead__st}{prov\_cipher\_hw\_chacha\_aead\_st}}\ \{}
+\DoxyCodeLine{00034\ \ \ \ \ \mbox{\hyperlink{structprov__cipher__hw__st}{PROV\_CIPHER\_HW}}\ base;\ \textcolor{comment}{/*\ must\ be\ first\ */}}
+\DoxyCodeLine{00035\ \ \ \ \ int\ (*aead\_cipher)(\mbox{\hyperlink{structprov__cipher__ctx__st}{PROV\_CIPHER\_CTX}}\ *dat,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,\ \textcolor{keywordtype}{size\_t}\ *outl,}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,\ \textcolor{keywordtype}{size\_t}\ len);}
+\DoxyCodeLine{00037\ \ \ \ \ int\ (*initiv)(\mbox{\hyperlink{structprov__cipher__ctx__st}{PROV\_CIPHER\_CTX}}\ *ctx);}
+\DoxyCodeLine{00038\ \ \ \ \ int\ (*tls\_init)(\mbox{\hyperlink{structprov__cipher__ctx__st}{PROV\_CIPHER\_CTX}}\ *ctx,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *aad,\ \textcolor{keywordtype}{size\_t}\ alen);}
+\DoxyCodeLine{00039\ \ \ \ \ int\ (*tls\_iv\_set\_fixed)(\mbox{\hyperlink{structprov__cipher__ctx__st}{PROV\_CIPHER\_CTX}}\ *ctx,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *fixed,}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ flen);}
+\DoxyCodeLine{00041\ \}\ \mbox{\hyperlink{structprov__cipher__hw__chacha__aead__st}{PROV\_CIPHER\_HW\_CHACHA20\_POLY1305}};}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structprov__cipher__hw__st}{PROV\_CIPHER\_HW}}\ *ossl\_prov\_cipher\_hw\_chacha20\_poly1305(\textcolor{keywordtype}{size\_t}\ keybits);}
+
+\end{DoxyCode}

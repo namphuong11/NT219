@@ -1,0 +1,187 @@
+\doxysection{bio\+\_\+local.\+h}
+\hypertarget{bio__local_8h_source}{}\label{bio__local_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/bio/bio\_local.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/bio/bio\_local.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2005-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ "{}internal/e\_os.h"{}}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ "{}internal/sockets.h"{}}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ "{}internal/bio\_addr.h"{}}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{comment}{/*\ BEGIN\ BIO\_ADDRINFO/BIO\_ADDR\ stuff.\ */}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_SOCK}}
+\DoxyCodeLine{00017\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ *\ Throughout\ this\ file\ and\ b\_addr.c,\ the\ existence\ of\ the\ macro}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ *\ AI\_PASSIVE\ is\ used\ to\ detect\ the\ availability\ of\ struct\ addrinfo,}}
+\DoxyCodeLine{00020\ \textcolor{comment}{\ *\ getnameinfo()\ and\ getaddrinfo().\ \ If\ that\ macro\ doesn't\ exist,}}
+\DoxyCodeLine{00021\ \textcolor{comment}{\ *\ we\ use\ our\ own\ implementation\ instead.}}
+\DoxyCodeLine{00022\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00025\ \textcolor{comment}{\ *\ It's\ imperative\ that\ these\ macros\ get\ defined\ before\ openssl/bio.h\ gets}}
+\DoxyCodeLine{00026\ \textcolor{comment}{\ *\ included.\ \ Otherwise,\ the\ AI\_PASSIVE\ hack\ will\ not\ work\ properly.}}
+\DoxyCodeLine{00027\ \textcolor{comment}{\ *\ For\ clarity,\ we\ check\ for\ internal/cryptlib.h\ since\ it's\ a\ common\ header}}
+\DoxyCodeLine{00028\ \textcolor{comment}{\ *\ that\ also\ includes\ bio.h.}}
+\DoxyCodeLine{00029\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#\ ifdef\ OSSL\_INTERNAL\_CRYPTLIB\_H}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#\ \ error\ internal/cryptlib.h\ included\ before\ bio\_local.h}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#\ ifdef\ OPENSSL\_BIO\_H}}
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#\ \ error\ openssl/bio.h\ included\ before\ bio\_local.h}}
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#\ ifdef\ AI\_PASSIVE}}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00040\ \textcolor{comment}{\ *\ There's\ a\ bug\ in\ VMS\ C\ header\ file\ netdb.h,\ where\ struct\ addrinfo}}
+\DoxyCodeLine{00041\ \textcolor{comment}{\ *\ always\ is\ the\ P32\ variant,\ but\ the\ functions\ that\ handle\ that\ structure,}}
+\DoxyCodeLine{00042\ \textcolor{comment}{\ *\ such\ as\ getaddrinfo()\ and\ freeaddrinfo()\ adapt\ to\ the\ initial\ pointer}}
+\DoxyCodeLine{00043\ \textcolor{comment}{\ *\ size.\ \ The\ easiest\ workaround\ is\ to\ force\ struct\ addrinfo\ to\ be\ the}}
+\DoxyCodeLine{00044\ \textcolor{comment}{\ *\ 64-\/bit\ variant\ when\ compiling\ in\ P64\ mode.}}
+\DoxyCodeLine{00045\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00046\ \textcolor{preprocessor}{\#\ \ if\ defined(OPENSSL\_SYS\_VMS)\ \&\&\ \_\_INITIAL\_POINTER\_SIZE\ ==\ 64}}
+\DoxyCodeLine{00047\ \textcolor{preprocessor}{\#\ \ \ define\ addrinfo\ \_\_addrinfo64}}
+\DoxyCodeLine{00048\ \textcolor{preprocessor}{\#\ \ endif}}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \textcolor{preprocessor}{\#\ \ define\ bio\_addrinfo\_st\ addrinfo}}
+\DoxyCodeLine{00051\ \textcolor{preprocessor}{\#\ \ define\ bai\_family\ \ \ \ \ \ ai\_family}}
+\DoxyCodeLine{00052\ \textcolor{preprocessor}{\#\ \ define\ bai\_socktype\ \ \ \ ai\_socktype}}
+\DoxyCodeLine{00053\ \textcolor{preprocessor}{\#\ \ define\ bai\_protocol\ \ \ \ ai\_protocol}}
+\DoxyCodeLine{00054\ \textcolor{preprocessor}{\#\ \ define\ bai\_addrlen\ \ \ \ \ ai\_addrlen}}
+\DoxyCodeLine{00055\ \textcolor{preprocessor}{\#\ \ define\ bai\_addr\ \ \ \ \ \ \ \ ai\_addr}}
+\DoxyCodeLine{00056\ \textcolor{preprocessor}{\#\ \ define\ bai\_next\ \ \ \ \ \ \ \ ai\_next}}
+\DoxyCodeLine{00057\ \textcolor{preprocessor}{\#\ else}}
+\DoxyCodeLine{00058\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbio__addrinfo__st}{bio\_addrinfo\_st}}\ \{}
+\DoxyCodeLine{00059\ \ \ \ \ \textcolor{keywordtype}{int}\ bai\_family;}
+\DoxyCodeLine{00060\ \ \ \ \ \textcolor{keywordtype}{int}\ bai\_socktype;}
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{keywordtype}{int}\ bai\_protocol;}
+\DoxyCodeLine{00062\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ bai\_addrlen;}
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{keyword}{struct\ }sockaddr\ *bai\_addr;}
+\DoxyCodeLine{00064\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbio__addrinfo__st}{bio\_addrinfo\_st}}\ *bai\_next;}
+\DoxyCodeLine{00065\ \};}
+\DoxyCodeLine{00066\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00067\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ \textcolor{comment}{/*\ END\ BIO\_ADDRINFO/BIO\_ADDR\ stuff.\ */}}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00071\ \textcolor{preprocessor}{\#include\ "{}internal/cryptlib.h"{}}}
+\DoxyCodeLine{00072\ \textcolor{preprocessor}{\#include\ "{}internal/bio.h"{}}}
+\DoxyCodeLine{00073\ \textcolor{preprocessor}{\#include\ "{}internal/refcount.h"{}}}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00075\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbio__f__buffer__ctx__struct}{bio\_f\_buffer\_ctx\_struct}}\ \{}
+\DoxyCodeLine{00076\ \ \ \ \ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00077\ \textcolor{comment}{\ \ \ \ \ *\ Buffers\ are\ setup\ like\ this:}}
+\DoxyCodeLine{00078\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00079\ \textcolor{comment}{\ \ \ \ \ *\ <-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ size\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/>}}
+\DoxyCodeLine{00080\ \textcolor{comment}{\ \ \ \ \ *\ +-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/+}}
+\DoxyCodeLine{00081\ \textcolor{comment}{\ \ \ \ \ *\ |\ consumed\ |\ remaining\ \ \ \ \ \ \ \ \ \ |\ free\ space\ \ \ \ \ \ \ \ |}}
+\DoxyCodeLine{00082\ \textcolor{comment}{\ \ \ \ \ *\ +-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/+}}
+\DoxyCodeLine{00083\ \textcolor{comment}{\ \ \ \ \ *\ <-\/-\/\ off\ -\/-\/><-\/-\/-\/-\/-\/-\/-\/\ len\ -\/-\/-\/-\/-\/-\/-\/>}}
+\DoxyCodeLine{00084\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{comment}{/*-\/\ BIO\ *bio;\ */}\textcolor{comment}{/*}}
+\DoxyCodeLine{00086\ \textcolor{comment}{\ \ \ \ \ *\ this\ is\ now\ in\ the\ BIO\ struct}}
+\DoxyCodeLine{00087\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00088\ \ \ \ \ \textcolor{keywordtype}{int}\ ibuf\_size;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ how\ big\ is\ the\ input\ buffer\ */}}
+\DoxyCodeLine{00089\ \ \ \ \ \textcolor{keywordtype}{int}\ obuf\_size;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ how\ big\ is\ the\ output\ buffer\ */}}
+\DoxyCodeLine{00090\ \ \ \ \ \textcolor{keywordtype}{char}\ *ibuf;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ the\ char\ array\ */}}
+\DoxyCodeLine{00091\ \ \ \ \ \textcolor{keywordtype}{int}\ ibuf\_len;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ how\ many\ bytes\ are\ in\ it\ */}}
+\DoxyCodeLine{00092\ \ \ \ \ \textcolor{keywordtype}{int}\ ibuf\_off;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ write/read\ offset\ */}}
+\DoxyCodeLine{00093\ \ \ \ \ \textcolor{keywordtype}{char}\ *obuf;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ the\ char\ array\ */}}
+\DoxyCodeLine{00094\ \ \ \ \ \textcolor{keywordtype}{int}\ obuf\_len;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ how\ many\ bytes\ are\ in\ it\ */}}
+\DoxyCodeLine{00095\ \ \ \ \ \textcolor{keywordtype}{int}\ obuf\_off;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ write/read\ offset\ */}}
+\DoxyCodeLine{00096\ \}\ \mbox{\hyperlink{structbio__f__buffer__ctx__struct}{BIO\_F\_BUFFER\_CTX}};}
+\DoxyCodeLine{00097\ }
+\DoxyCodeLine{00098\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbio__st}{bio\_st}}\ \{}
+\DoxyCodeLine{00099\ \ \ \ \ OSSL\_LIB\_CTX\ *libctx;}
+\DoxyCodeLine{00100\ \ \ \ \ \textcolor{keyword}{const}\ BIO\_METHOD\ *method;}
+\DoxyCodeLine{00101\ \ \ \ \ \textcolor{comment}{/*\ bio,\ mode,\ argp,\ argi,\ argl,\ ret\ */}}
+\DoxyCodeLine{00102\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_DEPRECATED\_3\_0}}
+\DoxyCodeLine{00103\ \ \ \ \ BIO\_callback\_fn\ callback;}
+\DoxyCodeLine{00104\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00105\ \ \ \ \ BIO\_callback\_fn\_ex\ callback\_ex;}
+\DoxyCodeLine{00106\ \ \ \ \ \textcolor{keywordtype}{char}\ *cb\_arg;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ first\ argument\ for\ the\ callback\ */}}
+\DoxyCodeLine{00107\ \ \ \ \ \textcolor{keywordtype}{int}\ init;}
+\DoxyCodeLine{00108\ \ \ \ \ \textcolor{keywordtype}{int}\ shutdown;}
+\DoxyCodeLine{00109\ \ \ \ \ \textcolor{keywordtype}{int}\ flags;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ extra\ storage\ */}}
+\DoxyCodeLine{00110\ \ \ \ \ \textcolor{keywordtype}{int}\ retry\_reason;}
+\DoxyCodeLine{00111\ \ \ \ \ \textcolor{keywordtype}{int}\ num;}
+\DoxyCodeLine{00112\ \ \ \ \ \textcolor{keywordtype}{void}\ *ptr;}
+\DoxyCodeLine{00113\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbio__st}{bio\_st}}\ *next\_bio;\ \ \ \ \textcolor{comment}{/*\ used\ by\ filter\ BIOs\ */}}
+\DoxyCodeLine{00114\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structbio__st}{bio\_st}}\ *prev\_bio;\ \ \ \ \textcolor{comment}{/*\ used\ by\ filter\ BIOs\ */}}
+\DoxyCodeLine{00115\ \ \ \ \ \mbox{\hyperlink{struct_c_r_y_p_t_o___r_e_f___c_o_u_n_t}{CRYPTO\_REF\_COUNT}}\ references;}
+\DoxyCodeLine{00116\ \ \ \ \ uint64\_t\ num\_read;}
+\DoxyCodeLine{00117\ \ \ \ \ uint64\_t\ num\_write;}
+\DoxyCodeLine{00118\ \ \ \ \ CRYPTO\_EX\_DATA\ ex\_data;}
+\DoxyCodeLine{00119\ \};}
+\DoxyCodeLine{00120\ }
+\DoxyCodeLine{00121\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_SOCK}}
+\DoxyCodeLine{00122\ \textcolor{preprocessor}{\#\ ifdef\ OPENSSL\_SYS\_VMS}}
+\DoxyCodeLine{00123\ \textcolor{keyword}{typedef}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ socklen\_t;}
+\DoxyCodeLine{00124\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00125\ }
+\DoxyCodeLine{00126\ \textcolor{keyword}{extern}\ CRYPTO\_RWLOCK\ *bio\_lookup\_lock;}
+\DoxyCodeLine{00127\ }
+\DoxyCodeLine{00128\ \textcolor{keywordtype}{int}\ BIO\_ADDR\_make(BIO\_ADDR\ *ap,\ \textcolor{keyword}{const}\ \textcolor{keyword}{struct}\ sockaddr\ *sa);}
+\DoxyCodeLine{00129\ \textcolor{keyword}{const}\ \textcolor{keyword}{struct\ }sockaddr\ *BIO\_ADDR\_sockaddr(\textcolor{keyword}{const}\ BIO\_ADDR\ *ap);}
+\DoxyCodeLine{00130\ \textcolor{keyword}{struct\ }sockaddr\ *BIO\_ADDR\_sockaddr\_noconst(BIO\_ADDR\ *ap);}
+\DoxyCodeLine{00131\ socklen\_t\ BIO\_ADDR\_sockaddr\_size(\textcolor{keyword}{const}\ BIO\_ADDR\ *ap);}
+\DoxyCodeLine{00132\ socklen\_t\ BIO\_ADDRINFO\_sockaddr\_size(\textcolor{keyword}{const}\ BIO\_ADDRINFO\ *bai);}
+\DoxyCodeLine{00133\ \textcolor{keyword}{const}\ \textcolor{keyword}{struct\ }sockaddr\ *BIO\_ADDRINFO\_sockaddr(\textcolor{keyword}{const}\ BIO\_ADDRINFO\ *bai);}
+\DoxyCodeLine{00134\ }
+\DoxyCodeLine{00135\ \textcolor{preprocessor}{\#\ if\ defined(OPENSSL\_SYS\_WINDOWS)\ \&\&\ defined(WSAID\_WSARECVMSG)}}
+\DoxyCodeLine{00136\ \textcolor{preprocessor}{\#\ \ define\ BIO\_HAVE\_WSAMSG}}
+\DoxyCodeLine{00137\ \textcolor{keyword}{extern}\ LPFN\_WSARECVMSG\ bio\_WSARecvMsg;}
+\DoxyCodeLine{00138\ \textcolor{keyword}{extern}\ LPFN\_WSASENDMSG\ bio\_WSASendMsg;}
+\DoxyCodeLine{00139\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00140\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00141\ }
+\DoxyCodeLine{00142\ \textcolor{keyword}{extern}\ \mbox{\hyperlink{struct_c_r_y_p_t_o___r_e_f___c_o_u_n_t}{CRYPTO\_REF\_COUNT}}\ bio\_type\_count;}
+\DoxyCodeLine{00143\ }
+\DoxyCodeLine{00144\ \textcolor{keywordtype}{void}\ bio\_sock\_cleanup\_int(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00145\ }
+\DoxyCodeLine{00146\ \textcolor{preprocessor}{\#if\ BIO\_FLAGS\_UPLINK\_INTERNAL==0}}
+\DoxyCodeLine{00147\ \textcolor{comment}{/*\ Shortcut\ UPLINK\ calls\ on\ most\ platforms...\ */}}
+\DoxyCodeLine{00148\ \textcolor{preprocessor}{\#\ define\ UP\_stdin\ \ \ \ \ \ \ \ stdin}}
+\DoxyCodeLine{00149\ \textcolor{preprocessor}{\#\ define\ UP\_stdout\ \ \ \ \ \ \ stdout}}
+\DoxyCodeLine{00150\ \textcolor{preprocessor}{\#\ define\ UP\_stderr\ \ \ \ \ \ \ stderr}}
+\DoxyCodeLine{00151\ \textcolor{preprocessor}{\#\ define\ UP\_fprintf\ \ \ \ \ \ fprintf}}
+\DoxyCodeLine{00152\ \textcolor{preprocessor}{\#\ define\ UP\_fgets\ \ \ \ \ \ \ \ fgets}}
+\DoxyCodeLine{00153\ \textcolor{preprocessor}{\#\ define\ UP\_fread\ \ \ \ \ \ \ \ fread}}
+\DoxyCodeLine{00154\ \textcolor{preprocessor}{\#\ define\ UP\_fwrite\ \ \ \ \ \ \ fwrite}}
+\DoxyCodeLine{00155\ \textcolor{preprocessor}{\#\ undef\ \ UP\_fsetmod}}
+\DoxyCodeLine{00156\ \textcolor{preprocessor}{\#\ define\ UP\_feof\ \ \ \ \ \ \ \ \ feof}}
+\DoxyCodeLine{00157\ \textcolor{preprocessor}{\#\ define\ UP\_fclose\ \ \ \ \ \ \ fclose}}
+\DoxyCodeLine{00158\ }
+\DoxyCodeLine{00159\ \textcolor{preprocessor}{\#\ define\ UP\_fopen\ \ \ \ \ \ \ \ fopen}}
+\DoxyCodeLine{00160\ \textcolor{preprocessor}{\#\ define\ UP\_fseek\ \ \ \ \ \ \ \ fseek}}
+\DoxyCodeLine{00161\ \textcolor{preprocessor}{\#\ define\ UP\_ftell\ \ \ \ \ \ \ \ ftell}}
+\DoxyCodeLine{00162\ \textcolor{preprocessor}{\#\ define\ UP\_fflush\ \ \ \ \ \ \ fflush}}
+\DoxyCodeLine{00163\ \textcolor{preprocessor}{\#\ define\ UP\_ferror\ \ \ \ \ \ \ ferror}}
+\DoxyCodeLine{00164\ \textcolor{preprocessor}{\#\ ifdef\ \_WIN32}}
+\DoxyCodeLine{00165\ \textcolor{preprocessor}{\#\ \ define\ UP\_fileno\ \ \ \ \ \ \ \_fileno}}
+\DoxyCodeLine{00166\ \textcolor{preprocessor}{\#\ \ define\ UP\_open\ \ \ \ \ \ \ \ \ \_open}}
+\DoxyCodeLine{00167\ \textcolor{preprocessor}{\#\ \ define\ UP\_read\ \ \ \ \ \ \ \ \ \_read}}
+\DoxyCodeLine{00168\ \textcolor{preprocessor}{\#\ \ define\ UP\_write\ \ \ \ \ \ \ \ \_write}}
+\DoxyCodeLine{00169\ \textcolor{preprocessor}{\#\ \ define\ UP\_lseek\ \ \ \ \ \ \ \ \_lseek}}
+\DoxyCodeLine{00170\ \textcolor{preprocessor}{\#\ \ define\ UP\_close\ \ \ \ \ \ \ \ \_close}}
+\DoxyCodeLine{00171\ \textcolor{preprocessor}{\#\ else}}
+\DoxyCodeLine{00172\ \textcolor{preprocessor}{\#\ \ define\ UP\_fileno\ \ \ \ \ \ \ fileno}}
+\DoxyCodeLine{00173\ \textcolor{preprocessor}{\#\ \ define\ UP\_open\ \ \ \ \ \ \ \ \ open}}
+\DoxyCodeLine{00174\ \textcolor{preprocessor}{\#\ \ define\ UP\_read\ \ \ \ \ \ \ \ \ read}}
+\DoxyCodeLine{00175\ \textcolor{preprocessor}{\#\ \ define\ UP\_write\ \ \ \ \ \ \ \ write}}
+\DoxyCodeLine{00176\ \textcolor{preprocessor}{\#\ \ define\ UP\_lseek\ \ \ \ \ \ \ \ lseek}}
+\DoxyCodeLine{00177\ \textcolor{preprocessor}{\#\ \ define\ UP\_close\ \ \ \ \ \ \ \ close}}
+\DoxyCodeLine{00178\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00179\ }
+\DoxyCodeLine{00180\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00181\ }
+
+\end{DoxyCode}

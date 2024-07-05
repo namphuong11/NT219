@@ -1,0 +1,173 @@
+\doxysection{encoder\+\_\+local.\+h}
+\hypertarget{encoder__local_8h_source}{}\label{encoder__local_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/encode\_decode/encoder\_local.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/encode\_decode/encoder\_local.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2019-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <openssl/core\_dispatch.h>}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ <openssl/types.h>}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ <openssl/safestack.h>}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ <openssl/encoder.h>}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ <openssl/decoder.h>}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#include\ "{}internal/cryptlib.h"{}}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#include\ "{}internal/passphrase.h"{}}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#include\ "{}internal/property.h"{}}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#include\ "{}internal/refcount.h"{}}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__endecode__base__st}{ossl\_endecode\_base\_st}}\ \{}
+\DoxyCodeLine{00021\ \ \ \ \ OSSL\_PROVIDER\ *prov;}
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{keywordtype}{int}\ id;}
+\DoxyCodeLine{00023\ \ \ \ \ \textcolor{keywordtype}{char}\ *name;}
+\DoxyCodeLine{00024\ \ \ \ \ \textcolor{keyword}{const}\ OSSL\_ALGORITHM\ *algodef;}
+\DoxyCodeLine{00025\ \ \ \ \ \mbox{\hyperlink{structossl__property__list__st}{OSSL\_PROPERTY\_LIST}}\ *parsed\_propdef;}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \ \ \ \ \mbox{\hyperlink{struct_c_r_y_p_t_o___r_e_f___c_o_u_n_t}{CRYPTO\_REF\_COUNT}}\ refcnt;}
+\DoxyCodeLine{00028\ \};}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__encoder__st}{ossl\_encoder\_st}}\ \{}
+\DoxyCodeLine{00031\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__endecode__base__st}{ossl\_endecode\_base\_st}}\ base;}
+\DoxyCodeLine{00032\ \ \ \ \ OSSL\_FUNC\_encoder\_newctx\_fn\ *newctx;}
+\DoxyCodeLine{00033\ \ \ \ \ OSSL\_FUNC\_encoder\_freectx\_fn\ *freectx;}
+\DoxyCodeLine{00034\ \ \ \ \ OSSL\_FUNC\_encoder\_get\_params\_fn\ *get\_params;}
+\DoxyCodeLine{00035\ \ \ \ \ OSSL\_FUNC\_encoder\_gettable\_params\_fn\ *gettable\_params;}
+\DoxyCodeLine{00036\ \ \ \ \ OSSL\_FUNC\_encoder\_set\_ctx\_params\_fn\ *set\_ctx\_params;}
+\DoxyCodeLine{00037\ \ \ \ \ OSSL\_FUNC\_encoder\_settable\_ctx\_params\_fn\ *settable\_ctx\_params;}
+\DoxyCodeLine{00038\ \ \ \ \ OSSL\_FUNC\_encoder\_does\_selection\_fn\ *does\_selection;}
+\DoxyCodeLine{00039\ \ \ \ \ OSSL\_FUNC\_encoder\_encode\_fn\ *encode;}
+\DoxyCodeLine{00040\ \ \ \ \ OSSL\_FUNC\_encoder\_import\_object\_fn\ *import\_object;}
+\DoxyCodeLine{00041\ \ \ \ \ OSSL\_FUNC\_encoder\_free\_object\_fn\ *free\_object;}
+\DoxyCodeLine{00042\ \};}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__decoder__st}{ossl\_decoder\_st}}\ \{}
+\DoxyCodeLine{00045\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__endecode__base__st}{ossl\_endecode\_base\_st}}\ base;}
+\DoxyCodeLine{00046\ \ \ \ \ OSSL\_FUNC\_decoder\_newctx\_fn\ *newctx;}
+\DoxyCodeLine{00047\ \ \ \ \ OSSL\_FUNC\_decoder\_freectx\_fn\ *freectx;}
+\DoxyCodeLine{00048\ \ \ \ \ OSSL\_FUNC\_decoder\_get\_params\_fn\ *get\_params;}
+\DoxyCodeLine{00049\ \ \ \ \ OSSL\_FUNC\_decoder\_gettable\_params\_fn\ *gettable\_params;}
+\DoxyCodeLine{00050\ \ \ \ \ OSSL\_FUNC\_decoder\_set\_ctx\_params\_fn\ *set\_ctx\_params;}
+\DoxyCodeLine{00051\ \ \ \ \ OSSL\_FUNC\_decoder\_settable\_ctx\_params\_fn\ *settable\_ctx\_params;}
+\DoxyCodeLine{00052\ \ \ \ \ OSSL\_FUNC\_decoder\_does\_selection\_fn\ *does\_selection;}
+\DoxyCodeLine{00053\ \ \ \ \ OSSL\_FUNC\_decoder\_decode\_fn\ *decode;}
+\DoxyCodeLine{00054\ \ \ \ \ OSSL\_FUNC\_decoder\_export\_object\_fn\ *export\_object;}
+\DoxyCodeLine{00055\ \};}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__encoder__instance__st}{ossl\_encoder\_instance\_st}}\ \{}
+\DoxyCodeLine{00058\ \ \ \ \ OSSL\_ENCODER\ *encoder;\ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Never\ NULL\ */}}
+\DoxyCodeLine{00059\ \ \ \ \ \textcolor{keywordtype}{void}\ *encoderctx;\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Never\ NULL\ */}}
+\DoxyCodeLine{00060\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *output\_type;\ \ \ \ \ \ \textcolor{comment}{/*\ Never\ NULL\ */}}
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *output\_structure;\ \textcolor{comment}{/*\ May\ be\ NULL\ */}}
+\DoxyCodeLine{00062\ \};}
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00064\ DEFINE\_STACK\_OF(OSSL\_ENCODER\_INSTANCE)}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \textcolor{keywordtype}{void}\ ossl\_encoder\_instance\_free(OSSL\_ENCODER\_INSTANCE\ *encoder\_inst);}
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00068\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__encoder__ctx__st}{ossl\_encoder\_ctx\_st}}\ \{}
+\DoxyCodeLine{00069\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00070\ \textcolor{comment}{\ \ \ \ \ *\ Select\ what\ parts\ of\ an\ object\ will\ be\ encoded.\ \ This\ selection\ is}}
+\DoxyCodeLine{00071\ \textcolor{comment}{\ \ \ \ \ *\ bit\ encoded,\ and\ the\ bits\ correspond\ to\ selection\ bits\ available\ with}}
+\DoxyCodeLine{00072\ \textcolor{comment}{\ \ \ \ \ *\ the\ provider\ side\ operation.\ \ For\ example,\ when\ encoding\ an\ EVP\_PKEY,}}
+\DoxyCodeLine{00073\ \textcolor{comment}{\ \ \ \ \ *\ the\ OSSL\_KEYMGMT\_SELECT\_\ macros\ are\ used\ for\ this.}}
+\DoxyCodeLine{00074\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00075\ \ \ \ \ \textcolor{keywordtype}{int}\ selection;}
+\DoxyCodeLine{00076\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00077\ \textcolor{comment}{\ \ \ \ \ *\ The\ desired\ output\ type.\ \ The\ encoder\ implementation\ must\ have\ a}}
+\DoxyCodeLine{00078\ \textcolor{comment}{\ \ \ \ \ *\ gettable\ "{}output-\/type"{}\ parameter\ that\ this\ will\ match\ against.}}
+\DoxyCodeLine{00079\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00080\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *output\_type;}
+\DoxyCodeLine{00081\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00082\ \textcolor{comment}{\ \ \ \ \ *\ The\ desired\ output\ structure,\ if\ that's\ relevant\ for\ the\ type\ of}}
+\DoxyCodeLine{00083\ \textcolor{comment}{\ \ \ \ \ *\ object\ being\ encoded.\ \ It\ may\ be\ used\ for\ selection\ of\ the\ starting}}
+\DoxyCodeLine{00084\ \textcolor{comment}{\ \ \ \ \ *\ encoder\ implementations\ in\ a\ chain.}}
+\DoxyCodeLine{00085\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00086\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *output\_structure;}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00088\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00089\ \textcolor{comment}{\ \ \ \ \ *\ Decoders\ that\ are\ components\ of\ any\ current\ decoding\ path.}}
+\DoxyCodeLine{00090\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00091\ \ \ \ \ STACK\_OF(OSSL\_ENCODER\_INSTANCE)\ *encoder\_insts;}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00094\ \textcolor{comment}{\ \ \ \ \ *\ The\ constructor\ and\ destructor\ of\ an\ object\ to\ pass\ to\ the\ first}}
+\DoxyCodeLine{00095\ \textcolor{comment}{\ \ \ \ \ *\ encoder\ in\ a\ chain.}}
+\DoxyCodeLine{00096\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00097\ \ \ \ \ OSSL\_ENCODER\_CONSTRUCT\ *construct;}
+\DoxyCodeLine{00098\ \ \ \ \ OSSL\_ENCODER\_CLEANUP\ *cleanup;}
+\DoxyCodeLine{00099\ \ \ \ \ \textcolor{keywordtype}{void}\ *construct\_data;}
+\DoxyCodeLine{00100\ }
+\DoxyCodeLine{00101\ \ \ \ \ \textcolor{comment}{/*\ For\ any\ function\ that\ needs\ a\ passphrase\ reader\ */}}
+\DoxyCodeLine{00102\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__passphrase__data__st}{ossl\_passphrase\_data\_st}}\ pwdata;}
+\DoxyCodeLine{00103\ \};}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00105\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__decoder__instance__st}{ossl\_decoder\_instance\_st}}\ \{}
+\DoxyCodeLine{00106\ \ \ \ \ OSSL\_DECODER\ *decoder;\ \ \ \ \ \ \ \textcolor{comment}{/*\ Never\ NULL\ */}}
+\DoxyCodeLine{00107\ \ \ \ \ \textcolor{keywordtype}{void}\ *decoderctx;\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Never\ NULL\ */}}
+\DoxyCodeLine{00108\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *input\_type;\ \ \ \ \ \ \textcolor{comment}{/*\ Never\ NULL\ */}}
+\DoxyCodeLine{00109\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *input\_structure;\ \textcolor{comment}{/*\ May\ be\ NULL\ */}}
+\DoxyCodeLine{00110\ \ \ \ \ \textcolor{keywordtype}{int}\ input\_type\_id;}
+\DoxyCodeLine{00111\ }
+\DoxyCodeLine{00112\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ flag\_input\_structure\_was\_set\ :\ 1;}
+\DoxyCodeLine{00113\ \};}
+\DoxyCodeLine{00114\ }
+\DoxyCodeLine{00115\ DEFINE\_STACK\_OF(OSSL\_DECODER\_INSTANCE)}
+\DoxyCodeLine{00116\ }
+\DoxyCodeLine{00117\ struct\ \mbox{\hyperlink{structossl__decoder__ctx__st}{ossl\_decoder\_ctx\_st}}\ \{}
+\DoxyCodeLine{00118\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00119\ \textcolor{comment}{\ \ \ \ \ *\ The\ caller\ may\ know\ the\ input\ type\ of\ the\ data\ they\ pass.\ \ If\ not,}}
+\DoxyCodeLine{00120\ \textcolor{comment}{\ \ \ \ \ *\ this\ will\ remain\ NULL\ and\ the\ decoding\ functionality\ will\ start}}
+\DoxyCodeLine{00121\ \textcolor{comment}{\ \ \ \ \ *\ with\ trying\ to\ decode\ with\ any\ desencoder\ in\ |decoder\_insts|,}}
+\DoxyCodeLine{00122\ \textcolor{comment}{\ \ \ \ \ *\ regardless\ of\ their\ respective\ input\ type.}}
+\DoxyCodeLine{00123\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00124\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *start\_input\_type;}
+\DoxyCodeLine{00125\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00126\ \textcolor{comment}{\ \ \ \ \ *\ The\ desired\ input\ structure,\ if\ that's\ relevant\ for\ the\ type\ of}}
+\DoxyCodeLine{00127\ \textcolor{comment}{\ \ \ \ \ *\ object\ being\ encoded.\ \ It\ may\ be\ used\ for\ selection\ of\ the\ ending}}
+\DoxyCodeLine{00128\ \textcolor{comment}{\ \ \ \ \ *\ decoder\ implementations\ in\ a\ chain,\ i.e.\ those\ chosen\ using\ the}}
+\DoxyCodeLine{00129\ \textcolor{comment}{\ \ \ \ \ *\ expected\ output\ data\ type.}}
+\DoxyCodeLine{00130\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00131\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *input\_structure;}
+\DoxyCodeLine{00132\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00133\ \textcolor{comment}{\ \ \ \ \ *\ Select\ what\ parts\ of\ an\ object\ are\ expected.\ \ This\ may\ affect\ what}}
+\DoxyCodeLine{00134\ \textcolor{comment}{\ \ \ \ \ *\ decoder\ implementations\ are\ selected,\ because\ there\ are\ structures}}
+\DoxyCodeLine{00135\ \textcolor{comment}{\ \ \ \ \ *\ that\ look\ different\ depending\ on\ this\ selection;\ for\ example,\ EVP\_PKEY}}
+\DoxyCodeLine{00136\ \textcolor{comment}{\ \ \ \ \ *\ objects\ often\ have\ different\ encoding\ structures\ for\ private\ keys,}}
+\DoxyCodeLine{00137\ \textcolor{comment}{\ \ \ \ \ *\ public\ keys\ and\ key\ parameters.}}
+\DoxyCodeLine{00138\ \textcolor{comment}{\ \ \ \ \ *\ This\ selection\ is\ bit\ encoded,\ and\ the\ bits\ correspond\ to\ selection}}
+\DoxyCodeLine{00139\ \textcolor{comment}{\ \ \ \ \ *\ bits\ available\ with\ the\ provider\ side\ operation.\ \ For\ example,\ when}}
+\DoxyCodeLine{00140\ \textcolor{comment}{\ \ \ \ \ *\ encoding\ an\ EVP\_PKEY,\ the\ OSSL\_KEYMGMT\_SELECT\_\ macros\ are\ used\ for}}
+\DoxyCodeLine{00141\ \textcolor{comment}{\ \ \ \ \ *\ this.}}
+\DoxyCodeLine{00142\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00143\ \ \ \ \ \textcolor{keywordtype}{int}\ selection;}
+\DoxyCodeLine{00144\ }
+\DoxyCodeLine{00145\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00146\ \textcolor{comment}{\ \ \ \ \ *\ Decoders\ that\ are\ components\ of\ any\ current\ decoding\ path.}}
+\DoxyCodeLine{00147\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00148\ \ \ \ \ STACK\_OF(OSSL\_DECODER\_INSTANCE)\ *decoder\_insts;}
+\DoxyCodeLine{00149\ }
+\DoxyCodeLine{00150\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00151\ \textcolor{comment}{\ \ \ \ \ *\ The\ constructors\ of\ a\ decoding,\ and\ its\ caller\ argument.}}
+\DoxyCodeLine{00152\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00153\ \ \ \ \ OSSL\_DECODER\_CONSTRUCT\ *construct;}
+\DoxyCodeLine{00154\ \ \ \ \ OSSL\_DECODER\_CLEANUP\ *cleanup;}
+\DoxyCodeLine{00155\ \ \ \ \ \textcolor{keywordtype}{void}\ *construct\_data;}
+\DoxyCodeLine{00156\ }
+\DoxyCodeLine{00157\ \ \ \ \ \textcolor{comment}{/*\ For\ any\ function\ that\ needs\ a\ passphrase\ reader\ */}}
+\DoxyCodeLine{00158\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__passphrase__data__st}{ossl\_passphrase\_data\_st}}\ pwdata;}
+\DoxyCodeLine{00159\ \};}
+\DoxyCodeLine{00160\ }
+\DoxyCodeLine{00161\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structossl__property__list__st}{OSSL\_PROPERTY\_LIST}}\ *}
+\DoxyCodeLine{00162\ ossl\_decoder\_parsed\_properties(\textcolor{keyword}{const}\ OSSL\_DECODER\ *decoder);}
+\DoxyCodeLine{00163\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structossl__property__list__st}{OSSL\_PROPERTY\_LIST}}\ *}
+\DoxyCodeLine{00164\ ossl\_encoder\_parsed\_properties(\textcolor{keyword}{const}\ OSSL\_ENCODER\ *encoder);}
+\DoxyCodeLine{00165\ }
+\DoxyCodeLine{00166\ \textcolor{keywordtype}{int}\ ossl\_decoder\_fast\_is\_a(OSSL\_DECODER\ *decoder,}
+\DoxyCodeLine{00167\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *name,\ \textcolor{keywordtype}{int}\ *id\_cache);}
+
+\end{DoxyCode}

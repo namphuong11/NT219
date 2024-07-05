@@ -1,0 +1,42 @@
+\doxysection{md5\+\_\+sha1.\+h}
+\hypertarget{md5__sha1_8h_source}{}\label{md5__sha1_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/providers/implementations/include/prov/md5\_sha1.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/providers/implementations/include/prov/md5\_sha1.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 1995-\/2021\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_PROV\_MD5\_SHA1\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_PROV\_MD5\_SHA1\_H}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#\ include\ <openssl/opensslconf.h>}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#\ ifndef\ OPENSSL\_NO\_MD5}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#\ \ include\ <openssl/e\_os2.h>}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#\ \ include\ <stddef.h>}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#\ \ include\ <openssl/md5.h>}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#\ \ include\ <openssl/sha.h>}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#\ \ define\ MD5\_SHA1\_DIGEST\_LENGTH\ (MD5\_DIGEST\_LENGTH\ +\ SHA\_DIGEST\_LENGTH)}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#\ \ define\ MD5\_SHA1\_CBLOCK\ MD5\_CBLOCK}}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structmd5__sha1__st}{md5\_sha1\_st}}\ \{}
+\DoxyCodeLine{00025\ \ \ \ \ MD5\_CTX\ md5;}
+\DoxyCodeLine{00026\ \ \ \ \ SHA\_CTX\ sha1;}
+\DoxyCodeLine{00027\ \}\ \mbox{\hyperlink{structmd5__sha1__st}{MD5\_SHA1\_CTX}};}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \textcolor{keywordtype}{int}\ ossl\_md5\_sha1\_init(\mbox{\hyperlink{structmd5__sha1__st}{MD5\_SHA1\_CTX}}\ *mctx);}
+\DoxyCodeLine{00030\ \textcolor{keywordtype}{int}\ ossl\_md5\_sha1\_update(\mbox{\hyperlink{structmd5__sha1__st}{MD5\_SHA1\_CTX}}\ *mctx,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *data,\ \textcolor{keywordtype}{size\_t}\ count);}
+\DoxyCodeLine{00031\ \textcolor{keywordtype}{int}\ ossl\_md5\_sha1\_final(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *md,\ \mbox{\hyperlink{structmd5__sha1__st}{MD5\_SHA1\_CTX}}\ *mctx);}
+\DoxyCodeLine{00032\ \textcolor{keywordtype}{int}\ ossl\_md5\_sha1\_ctrl(\mbox{\hyperlink{structmd5__sha1__st}{MD5\_SHA1\_CTX}}\ *mctx,\ \textcolor{keywordtype}{int}\ cmd,\ \textcolor{keywordtype}{int}\ mslen,\ \textcolor{keywordtype}{void}\ *ms);}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#\ endif\ }\textcolor{comment}{/*\ OPENSSL\_NO\_MD5\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ OSSL\_PROV\_MD5\_SHA1\_H\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

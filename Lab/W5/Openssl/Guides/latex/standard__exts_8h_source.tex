@@ -1,0 +1,92 @@
+\doxysection{standard\+\_\+exts.\+h}
+\hypertarget{standard__exts_8h_source}{}\label{standard__exts_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/x509/standard\_exts.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/x509/standard\_exts.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 1999-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ *\ This\ table\ will\ be\ searched\ using\ OBJ\_bsearch\ so\ it\ *must*\ kept\ in\ order}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ *\ of\ the\ ext\_nid\ values.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ X509V3\_EXT\_METHOD\ *standard\_exts[]\ =\ \{}
+\DoxyCodeLine{00016\ \ \ \ \ \&ossl\_v3\_nscert,}
+\DoxyCodeLine{00017\ \ \ \ \ \&ossl\_v3\_ns\_ia5\_list[0],}
+\DoxyCodeLine{00018\ \ \ \ \ \&ossl\_v3\_ns\_ia5\_list[1],}
+\DoxyCodeLine{00019\ \ \ \ \ \&ossl\_v3\_ns\_ia5\_list[2],}
+\DoxyCodeLine{00020\ \ \ \ \ \&ossl\_v3\_ns\_ia5\_list[3],}
+\DoxyCodeLine{00021\ \ \ \ \ \&ossl\_v3\_ns\_ia5\_list[4],}
+\DoxyCodeLine{00022\ \ \ \ \ \&ossl\_v3\_ns\_ia5\_list[5],}
+\DoxyCodeLine{00023\ \ \ \ \ \&ossl\_v3\_ns\_ia5\_list[6],}
+\DoxyCodeLine{00024\ \ \ \ \ \&ossl\_v3\_skey\_id,}
+\DoxyCodeLine{00025\ \ \ \ \ \&ossl\_v3\_key\_usage,}
+\DoxyCodeLine{00026\ \ \ \ \ \&ossl\_v3\_pkey\_usage\_period,}
+\DoxyCodeLine{00027\ \ \ \ \ \&ossl\_v3\_alt[0],}
+\DoxyCodeLine{00028\ \ \ \ \ \&ossl\_v3\_alt[1],}
+\DoxyCodeLine{00029\ \ \ \ \ \&ossl\_v3\_bcons,}
+\DoxyCodeLine{00030\ \ \ \ \ \&ossl\_v3\_crl\_num,}
+\DoxyCodeLine{00031\ \ \ \ \ \&ossl\_v3\_cpols,}
+\DoxyCodeLine{00032\ \ \ \ \ \&ossl\_v3\_akey\_id,}
+\DoxyCodeLine{00033\ \ \ \ \ \&ossl\_v3\_crld,}
+\DoxyCodeLine{00034\ \ \ \ \ \&ossl\_v3\_ext\_ku,}
+\DoxyCodeLine{00035\ \ \ \ \ \&ossl\_v3\_delta\_crl,}
+\DoxyCodeLine{00036\ \ \ \ \ \&ossl\_v3\_crl\_reason,}
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_OCSP}}
+\DoxyCodeLine{00038\ \ \ \ \ \&ossl\_v3\_crl\_invdate,}
+\DoxyCodeLine{00039\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00040\ \ \ \ \ \&ossl\_v3\_sxnet,}
+\DoxyCodeLine{00041\ \ \ \ \ \&ossl\_v3\_info,}
+\DoxyCodeLine{00042\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_RFC3779}}
+\DoxyCodeLine{00043\ \ \ \ \ \&ossl\_v3\_addr,}
+\DoxyCodeLine{00044\ \ \ \ \ \&ossl\_v3\_asid,}
+\DoxyCodeLine{00045\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00046\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_OCSP}}
+\DoxyCodeLine{00047\ \ \ \ \ \&ossl\_v3\_ocsp\_nonce,}
+\DoxyCodeLine{00048\ \ \ \ \ \&ossl\_v3\_ocsp\_crlid,}
+\DoxyCodeLine{00049\ \ \ \ \ \&ossl\_v3\_ocsp\_accresp,}
+\DoxyCodeLine{00050\ \ \ \ \ \&ossl\_v3\_ocsp\_nocheck,}
+\DoxyCodeLine{00051\ \ \ \ \ \&ossl\_v3\_ocsp\_acutoff,}
+\DoxyCodeLine{00052\ \ \ \ \ \&ossl\_v3\_ocsp\_serviceloc,}
+\DoxyCodeLine{00053\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00054\ \ \ \ \ \&ossl\_v3\_sinfo,}
+\DoxyCodeLine{00055\ \ \ \ \ \&ossl\_v3\_policy\_constraints,}
+\DoxyCodeLine{00056\ \ \ \ \ \&ossl\_v3\_no\_rev\_avail,}
+\DoxyCodeLine{00057\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_OCSP}}
+\DoxyCodeLine{00058\ \ \ \ \ \&ossl\_v3\_crl\_hold,}
+\DoxyCodeLine{00059\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00060\ \ \ \ \ \&ossl\_v3\_pci,}
+\DoxyCodeLine{00061\ \ \ \ \ \&ossl\_v3\_name\_constraints,}
+\DoxyCodeLine{00062\ \ \ \ \ \&ossl\_v3\_policy\_mappings,}
+\DoxyCodeLine{00063\ \ \ \ \ \&ossl\_v3\_inhibit\_anyp,}
+\DoxyCodeLine{00064\ \ \ \ \ \&ossl\_v3\_idp,}
+\DoxyCodeLine{00065\ \ \ \ \ \&ossl\_v3\_alt[2],}
+\DoxyCodeLine{00066\ \ \ \ \ \&ossl\_v3\_freshest\_crl,}
+\DoxyCodeLine{00067\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_CT}}
+\DoxyCodeLine{00068\ \ \ \ \ \&ossl\_v3\_ct\_scts[0],}
+\DoxyCodeLine{00069\ \ \ \ \ \&ossl\_v3\_ct\_scts[1],}
+\DoxyCodeLine{00070\ \ \ \ \ \&ossl\_v3\_ct\_scts[2],}
+\DoxyCodeLine{00071\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00072\ \ \ \ \ \&ossl\_v3\_utf8\_list[0],}
+\DoxyCodeLine{00073\ \ \ \ \ \&ossl\_v3\_issuer\_sign\_tool,}
+\DoxyCodeLine{00074\ \ \ \ \ \&ossl\_v3\_tls\_feature,}
+\DoxyCodeLine{00075\ \ \ \ \ \&ossl\_v3\_ext\_admission,}
+\DoxyCodeLine{00076\ \ \ \ \ \&ossl\_v3\_soa\_identifier,}
+\DoxyCodeLine{00077\ \ \ \ \ \&ossl\_v3\_indirect\_issuer,}
+\DoxyCodeLine{00078\ \ \ \ \ \&ossl\_v3\_no\_assertion,}
+\DoxyCodeLine{00079\ \ \ \ \ \&ossl\_v3\_single\_use,}
+\DoxyCodeLine{00080\ \ \ \ \ \&ossl\_v3\_group\_ac}
+\DoxyCodeLine{00081\ \};}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00083\ \textcolor{comment}{/*\ Number\ of\ standard\ extensions\ */}}
+\DoxyCodeLine{00084\ }
+\DoxyCodeLine{00085\ \textcolor{preprocessor}{\#define\ STANDARD\_EXTENSION\_COUNT\ OSSL\_NELEM(standard\_exts)}}
+\DoxyCodeLine{00086\ }
+
+\end{DoxyCode}

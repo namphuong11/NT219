@@ -1,0 +1,86 @@
+\doxysection{rsaz\+\_\+exp.\+h}
+\hypertarget{rsaz__exp_8h_source}{}\label{rsaz__exp_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/bn/rsaz\_exp.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/bn/rsaz\_exp.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2013-\/2021\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *\ Copyright\ (c)\ 2020,\ Intel\ Corporation.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ *\ Originally\ written\ by\ Shay\ Gueron\ (1,\ 2),\ and\ Vlad\ Krasnov\ (1)}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ *\ (1)\ Intel\ Corporation,\ Israel\ Development\ Center,\ Haifa,\ Israel}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ *\ (2)\ University\ of\ Haifa,\ Israel}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#ifndef\ OSSL\_CRYPTO\_BN\_RSAZ\_EXP\_H}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#\ define\ OSSL\_CRYPTO\_BN\_RSAZ\_EXP\_H}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#\ undef\ RSAZ\_ENABLED}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#\ if\ defined(OPENSSL\_BN\_ASM\_MONT)\ \&\&\ \(\backslash\)}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ (defined(\_\_x86\_64)\ ||\ defined(\_\_x86\_64\_\_)\ ||\ \(\backslash\)}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ defined(\_M\_AMD64)\ ||\ defined(\_M\_X64))}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#\ \ define\ RSAZ\_ENABLED}}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#\ \ include\ <openssl/bn.h>}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#\ \ include\ "{}internal/constant\_time.h"{}}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#\ \ include\ "{}bn\_local.h"{}}}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \textcolor{keywordtype}{void}\ RSAZ\_1024\_mod\_exp\_avx2(BN\_ULONG\ result[16],}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BN\_ULONG\ base\_norm[16],}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BN\_ULONG\ exponent[16],}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BN\_ULONG\ m\_norm[16],\ \textcolor{keyword}{const}\ BN\_ULONG\ RR[16],}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BN\_ULONG\ k0);}
+\DoxyCodeLine{00033\ \textcolor{keywordtype}{int}\ rsaz\_avx2\_eligible(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \textcolor{keywordtype}{void}\ RSAZ\_512\_mod\_exp(BN\_ULONG\ result[8],}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BN\_ULONG\ base\_norm[8],\ \textcolor{keyword}{const}\ BN\_ULONG\ exponent[8],}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BN\_ULONG\ m\_norm[8],\ BN\_ULONG\ k0,}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BN\_ULONG\ RR[8]);}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \textcolor{keywordtype}{int}\ ossl\_rsaz\_avx512ifma\_eligible(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \textcolor{keywordtype}{int}\ ossl\_rsaz\_mod\_exp\_avx512\_x2(BN\_ULONG\ *res1,}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BN\_ULONG\ *base1,}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BN\_ULONG\ *exponent1,}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BN\_ULONG\ *m1,}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BN\_ULONG\ *RR1,}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BN\_ULONG\ k0\_1,}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BN\_ULONG\ *res2,}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BN\_ULONG\ *base2,}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BN\_ULONG\ *exponent2,}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BN\_ULONG\ *m2,}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BN\_ULONG\ *RR2,}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BN\_ULONG\ k0\_2,}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ factor\_size);}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{void}\ bn\_select\_words(BN\_ULONG\ *r,\ BN\_ULONG\ mask,}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BN\_ULONG\ *a,}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BN\_ULONG\ *\mbox{\hyperlink{structb}{b}},\ \textcolor{keywordtype}{size\_t}\ num)}
+\DoxyCodeLine{00060\ \{}
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ i;}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ num;\ i++)\ \{}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ r[i]\ =\ constant\_time\_select\_64(mask,\ a[i],\ \mbox{\hyperlink{structb}{b}}[i]);}
+\DoxyCodeLine{00065\ \ \ \ \ \}}
+\DoxyCodeLine{00066\ \}}
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00068\ \textcolor{keyword}{static}\ ossl\_inline\ BN\_ULONG\ bn\_reduce\_once\_in\_place(BN\_ULONG\ *r,}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BN\_ULONG\ carry,}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ BN\_ULONG\ *m,}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BN\_ULONG\ *tmp,\ \textcolor{keywordtype}{size\_t}\ num)}
+\DoxyCodeLine{00072\ \{}
+\DoxyCodeLine{00073\ \ \ \ \ carry\ -\/=\ bn\_sub\_words(tmp,\ r,\ m,\ num);}
+\DoxyCodeLine{00074\ \ \ \ \ bn\_select\_words(r,\ carry,\ r\ \textcolor{comment}{/*\ tmp\ <\ 0\ */},\ tmp\ \textcolor{comment}{/*\ tmp\ >=\ 0\ */},\ num);}
+\DoxyCodeLine{00075\ \ \ \ \ \textcolor{keywordflow}{return}\ carry;}
+\DoxyCodeLine{00076\ \}}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00079\ }
+\DoxyCodeLine{00080\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

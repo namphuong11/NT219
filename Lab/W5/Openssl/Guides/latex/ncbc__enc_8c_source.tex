@@ -1,0 +1,112 @@
+\doxysection{ncbc\+\_\+enc.\+c}
+\hypertarget{ncbc__enc_8c_source}{}\label{ncbc__enc_8c_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/des/ncbc\_enc.c@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/des/ncbc\_enc.c}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 1998-\/2016\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ *\ \#included\ by:}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ *\ \ \ \ cbc\_enc.c\ \ (DES\_cbc\_encrypt)}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ *\ \ \ \ des\_enc.c\ \ (DES\_ncbc\_encrypt)}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#include\ "{}des\_local.h"{}}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#ifdef\ CBC\_ENC\_C\_\_DONT\_UPDATE\_IV}}
+\DoxyCodeLine{00019\ \textcolor{keywordtype}{void}\ DES\_cbc\_encrypt(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,\ \textcolor{keywordtype}{long}\ length,}
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ DES\_key\_schedule\ *\_schedule,\ DES\_cblock\ *ivec,\ \textcolor{keywordtype}{int}\ enc)}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00022\ \textcolor{keywordtype}{void}\ DES\_ncbc\_encrypt(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{long}\ length,\ DES\_key\_schedule\ *\_schedule,}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ DES\_cblock\ *ivec,\ \textcolor{keywordtype}{int}\ enc)}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00026\ \{}
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keyword}{register}\ DES\_LONG\ tin0,\ tin1;}
+\DoxyCodeLine{00028\ \ \ \ \ \textcolor{keyword}{register}\ DES\_LONG\ tout0,\ tout1,\ xor0,\ xor1;}
+\DoxyCodeLine{00029\ \ \ \ \ \textcolor{keyword}{register}\ \textcolor{keywordtype}{long}\ l\ =\ length;}
+\DoxyCodeLine{00030\ \ \ \ \ DES\_LONG\ tin[2];}
+\DoxyCodeLine{00031\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *iv;}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \ \ \ \ iv\ =\ \&(*ivec)[0];}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \ \ \ \ \textcolor{keywordflow}{if}\ (enc)\ \{}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ c2l(iv,\ tout0);}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ c2l(iv,\ tout1);}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (l\ -\/=\ 8;\ l\ >=\ 0;\ l\ -\/=\ 8)\ \{}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \ \ \ \ c2l(in,\ tin0);}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \ \ \ \ c2l(in,\ tin1);}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \ \ \ \ tin0\ \string^=\ tout0;}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \ \ \ \ tin[0]\ =\ tin0;}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \ \ \ \ tin1\ \string^=\ tout1;}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \ \ \ \ tin[1]\ =\ tin1;}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \ \ \ \ DES\_encrypt1((DES\_LONG\ *)tin,\ \_schedule,\ DES\_ENCRYPT);}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \ \ \ \ tout0\ =\ tin[0];}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \ \ \ \ l2c(tout0,\ out);}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \ \ \ \ tout1\ =\ tin[1];}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \ \ \ \ l2c(tout1,\ out);}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (l\ !=\ -\/8)\ \{}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \ \ \ \ c2ln(in,\ tin0,\ tin1,\ l\ +\ 8);}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \ \ \ \ tin0\ \string^=\ tout0;}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \ \ \ \ tin[0]\ =\ tin0;}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \ \ \ \ tin1\ \string^=\ tout1;}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \ \ \ \ tin[1]\ =\ tin1;}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \ \ \ \ DES\_encrypt1((DES\_LONG\ *)tin,\ \_schedule,\ DES\_ENCRYPT);}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \ \ \ \ tout0\ =\ tin[0];}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \ \ \ \ l2c(tout0,\ out);}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \ \ \ \ tout1\ =\ tin[1];}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \ \ \ \ l2c(tout1,\ out);}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00063\ \textcolor{preprocessor}{\#ifndef\ CBC\_ENC\_C\_\_DONT\_UPDATE\_IV}}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ iv\ =\ \&(*ivec)[0];}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ l2c(tout0,\ iv);}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ l2c(tout1,\ iv);}
+\DoxyCodeLine{00067\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00068\ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ c2l(iv,\ xor0);}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ c2l(iv,\ xor1);}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (l\ -\/=\ 8;\ l\ >=\ 0;\ l\ -\/=\ 8)\ \{}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \ \ \ \ c2l(in,\ tin0);}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \ \ \ \ tin[0]\ =\ tin0;}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \ \ \ \ c2l(in,\ tin1);}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \ \ \ \ tin[1]\ =\ tin1;}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \ \ \ \ DES\_encrypt1((DES\_LONG\ *)tin,\ \_schedule,\ DES\_DECRYPT);}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \ \ \ \ tout0\ =\ tin[0]\ \string^\ xor0;}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \ \ \ \ tout1\ =\ tin[1]\ \string^\ xor1;}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \ \ \ \ l2c(tout0,\ out);}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \ \ \ \ l2c(tout1,\ out);}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \ \ \ \ xor0\ =\ tin0;}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \ \ \ \ xor1\ =\ tin1;}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (l\ !=\ -\/8)\ \{}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \ \ \ \ c2l(in,\ tin0);}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \ \ \ \ tin[0]\ =\ tin0;}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \ \ \ \ c2l(in,\ tin1);}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \ \ \ \ tin[1]\ =\ tin1;}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \ \ \ \ DES\_encrypt1((DES\_LONG\ *)tin,\ \_schedule,\ DES\_DECRYPT);}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \ \ \ \ tout0\ =\ tin[0]\ \string^\ xor0;}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \ \ \ \ tout1\ =\ tin[1]\ \string^\ xor1;}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \ \ \ \ l2cn(tout0,\ tout1,\ out,\ l\ +\ 8);}
+\DoxyCodeLine{00093\ \textcolor{preprocessor}{\#ifndef\ CBC\_ENC\_C\_\_DONT\_UPDATE\_IV}}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \ \ \ \ xor0\ =\ tin0;}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \ \ \ \ xor1\ =\ tin1;}
+\DoxyCodeLine{00096\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00098\ \textcolor{preprocessor}{\#ifndef\ CBC\_ENC\_C\_\_DONT\_UPDATE\_IV}}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ iv\ =\ \&(*ivec)[0];}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ l2c(xor0,\ iv);}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ l2c(xor1,\ iv);}
+\DoxyCodeLine{00102\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00103\ \ \ \ \ \}}
+\DoxyCodeLine{00104\ \ \ \ \ tin0\ =\ tin1\ =\ tout0\ =\ tout1\ =\ xor0\ =\ xor1\ =\ 0;}
+\DoxyCodeLine{00105\ \ \ \ \ tin[0]\ =\ tin[1]\ =\ 0;}
+\DoxyCodeLine{00106\ \}}
+
+\end{DoxyCode}

@@ -1,0 +1,46 @@
+\chapter{Open\+SSL User Support resources}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_s_u_p_p_o_r_t}{}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_s_u_p_p_o_r_t}\index{OpenSSL User Support resources@{OpenSSL User Support resources}}
+See the \href{https://www.openssl.org/support/contracts.html}{\texttt{ https\+://www.\+openssl.\+org/support/contracts.\+html}} for details on how to obtain commercial technical support.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_s_u_p_p_o_r_t_autotoc_md968}{}\doxysection{\texorpdfstring{If you have general questions about using Open\+SSL}{If you have general questions about using Open\+SSL}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_s_u_p_p_o_r_t_autotoc_md968}
+In this case the \href{https://mta.openssl.org/mailman/listinfo/openssl-users}{\texttt{ openssl-\/users}} mailing list is the right place for you. The list is not only watched by the Open\+SSL team members, but also by many other Open\+SSL users. Here you will most likely get the answer to your questions. An overview over the mailing lists can be found below.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_s_u_p_p_o_r_t_autotoc_md969}{}\doxysection{\texorpdfstring{If you think you found a Bug}{If you think you found a Bug}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_s_u_p_p_o_r_t_autotoc_md969}
+{\itshape NOTE\+: this section assumes that you want to report it or figure it out and fix it. What\textquotesingle{}s written here is not to be taken as a recipe for how to get a working production installation}
+
+If you have any problems with Open\+SSL then please take the following steps first\+:
+
+
+\begin{DoxyItemize}
+\item Search the mailing lists and/or the Git\+Hub issues to find out whether the problem has already been reported.
+\item Download the latest version from the repository to see if the problem has already been addressed.
+\item Configure without assembler support ({\ttfamily no-\/asm}) and check whether the problem persists.
+\item Remove compiler optimization flags.
+\end{DoxyItemize}
+
+Please keep in mind\+: Just because something doesn\textquotesingle{}t work the way you expect does not mean it is necessarily a bug in Open\+SSL. If you are not sure, consider searching the mail archives and posting a question to the \href{https://mta.openssl.org/mailman/listinfo/openssl-users}{\texttt{ openssl-\/users}} mailing list first.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_s_u_p_p_o_r_t_autotoc_md970}{}\doxysubsection{\texorpdfstring{Open an Issue}{Open an Issue}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_s_u_p_p_o_r_t_autotoc_md970}
+If you wish to report a bug, please open an \href{https://github.com/openssl/openssl/issues/new/choose}{\texttt{ issue}} on Git\+Hub and include the following information\+:
+
+
+\begin{DoxyItemize}
+\item Open\+SSL version\+: output of {\ttfamily openssl version -\/a}
+\item Configuration data\+: output of {\ttfamily perl configdata.\+pm -\/-\/dump}
+\item OS Name, Version, Hardware platform
+\item Compiler Details (name, version)
+\item Application Details (name, version)
+\item Problem Description (steps that will reproduce the problem, if known)
+\item Stack Traceback (if the application dumps core)
+\end{DoxyItemize}
+
+Not only errors in the software, also errors in the documentation, in particular the manual pages, can be reported as issues.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_s_u_p_p_o_r_t_autotoc_md971}{}\doxysubsection{\texorpdfstring{Submit a Pull Request}{Submit a Pull Request}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_s_u_p_p_o_r_t_autotoc_md971}
+The fastest way to get a bug fixed is to fix it yourself ;-\/). If you are experienced in programming and know how to fix the bug, you can open a pull request. The details are covered in the \href{https://github.com/openssl/openssl/blob/master/CONTRIBUTING.md}{\texttt{ Contributing}} section.
+
+Don\textquotesingle{}t hesitate to open a pull request, even if it\textquotesingle{}s only a small change like a grammatical or typographical error in the documentation.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_s_u_p_p_o_r_t_autotoc_md972}{}\doxysection{\texorpdfstring{Mailing Lists}{Mailing Lists}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_s_u_p_p_o_r_t_autotoc_md972}
+The Open\+SSL maintains a number of \href{https://www.openssl.org/community/mailinglists.html}{\texttt{ mailing lists}} for various purposes. The most important lists are\+:
+
+
+\begin{DoxyItemize}
+\item \href{https://mta.openssl.org/mailman/listinfo/openssl-users}{\texttt{ openssl-\/users}} for general questions about using the Open\+SSL software and discussions between Open\+SSL users.
+\item \href{https://mta.openssl.org/mailman/listinfo/openssl-announce}{\texttt{ openssl-\/announce}} for official announcements to the Open\+SSL community.
+\item \href{https://mta.openssl.org/mailman/listinfo/openssl-project}{\texttt{ openssl-\/project}} for discussion about the development roadmap and governance.
+\end{DoxyItemize}
+
+Only subscribers can post to \href{https://mta.openssl.org/mailman/listinfo/openssl-users}{\texttt{ openssl-\/users}} or \href{https://mta.openssl.org/mailman/listinfo/openssl-project}{\texttt{ openssl-\/project}}. The archives are made public, however. For more information, see the \mbox{[}mailing lists\mbox{]} page.
+
+There was an \href{https://mta.openssl.org/mailman/listinfo/openssl-dev}{\texttt{ openssl-\/dev}} list that has been discontinued since development is now taking place in the form of Git\+Hub pull requests. Although not active anymore, the searchable archive may still contain useful information. 

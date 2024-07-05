@@ -1,0 +1,159 @@
+\doxysection{tsan\+\_\+assist.\+h}
+\hypertarget{tsan__assist_8h_source}{}\label{tsan__assist_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/tsan\_assist.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/tsan\_assist.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2018-\/2022\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ *\ Contemporary\ compilers\ implement\ lock-\/free\ atomic\ memory\ access}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ *\ primitives\ that\ facilitate\ writing\ "{}thread-\/opportunistic"{}\ or\ even\ real}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ *\ multi-\/threading\ low-\/overhead\ code.\ "{}Thread-\/opportunistic"{}\ is\ when}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ *\ exact\ result\ is\ not\ required,\ e.g.\ some\ statistics,\ or\ execution\ flow}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ *\ doesn't\ have\ to\ be\ unambiguous.\ Simplest\ example\ is\ lazy\ "{}constant"{}}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ *\ initialization\ when\ one\ can\ synchronize\ on\ variable\ itself,\ e.g.}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ *\ if\ (var\ ==\ NOT\_YET\_INITIALIZED)}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ *\ \ \ \ \ var\ =\ function\_returning\_same\_value();}}
+\DoxyCodeLine{00020\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00021\ \textcolor{comment}{\ *\ This\ does\ work\ provided\ that\ loads\ and\ stores\ are\ single-\/instruction}}
+\DoxyCodeLine{00022\ \textcolor{comment}{\ *\ operations\ (and\ integer\ ones\ are\ on\ *all*\ supported\ platforms),\ but}}
+\DoxyCodeLine{00023\ \textcolor{comment}{\ *\ it\ upsets\ Thread\ Sanitizer.\ Suggested\ solution\ is}}
+\DoxyCodeLine{00024\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00025\ \textcolor{comment}{\ *\ if\ (tsan\_load(\&var)\ ==\ NOT\_YET\_INITIALIZED)}}
+\DoxyCodeLine{00026\ \textcolor{comment}{\ *\ \ \ \ \ tsan\_store(\&var,\ function\_returning\_same\_value());}}
+\DoxyCodeLine{00027\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00028\ \textcolor{comment}{\ *\ Production\ machine\ code\ would\ be\ the\ same,\ so\ one\ can\ wonder\ why}}
+\DoxyCodeLine{00029\ \textcolor{comment}{\ *\ bother.\ Having\ Thread\ Sanitizer\ accept\ "{}thread-\/opportunistic"{}\ code}}
+\DoxyCodeLine{00030\ \textcolor{comment}{\ *\ allows\ to\ move\ on\ trouble-\/shooting\ real\ bugs.}}
+\DoxyCodeLine{00031\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00032\ \textcolor{comment}{\ *\ Resolving\ Thread\ Sanitizer\ nits\ was\ the\ initial\ purpose\ for\ this\ module,}}
+\DoxyCodeLine{00033\ \textcolor{comment}{\ *\ but\ it\ was\ later\ extended\ with\ more\ nuanced\ primitives\ that\ are\ useful}}
+\DoxyCodeLine{00034\ \textcolor{comment}{\ *\ even\ in\ "{}non-\/opportunistic"{}\ scenarios.\ Most\ notably\ verifying\ if\ a\ shared}}
+\DoxyCodeLine{00035\ \textcolor{comment}{\ *\ structure\ is\ fully\ initialized\ and\ bypassing\ the\ initialization\ lock.}}
+\DoxyCodeLine{00036\ \textcolor{comment}{\ *\ It's\ suggested\ to\ view\ macros\ defined\ in\ this\ module\ as\ "{}annotations"{}\ for}}
+\DoxyCodeLine{00037\ \textcolor{comment}{\ *\ thread-\/safe\ lock-\/free\ code,\ "{}Thread-\/Safe\ ANnotations"{}...}}
+\DoxyCodeLine{00038\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00039\ \textcolor{comment}{\ *\ It's\ assumed\ that\ ATOMIC\_\{LONG|INT\}\_LOCK\_FREE\ are\ assigned\ same\ value\ as}}
+\DoxyCodeLine{00040\ \textcolor{comment}{\ *\ ATOMIC\_POINTER\_LOCK\_FREE.\ And\ check\ for\ >=\ 2\ ensures\ that\ corresponding}}
+\DoxyCodeLine{00041\ \textcolor{comment}{\ *\ code\ is\ inlined.\ It\ should\ be\ noted\ that\ statistics\ counters\ become}}
+\DoxyCodeLine{00042\ \textcolor{comment}{\ *\ accurate\ in\ such\ case.}}
+\DoxyCodeLine{00043\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00044\ \textcolor{comment}{\ *\ Special\ note\ about\ TSAN\_QUALIFIER.\ It\ might\ be\ undesired\ to\ use\ it\ in}}
+\DoxyCodeLine{00045\ \textcolor{comment}{\ *\ a\ shared\ header.\ Because\ whether\ operation\ on\ specific\ variable\ or\ member}}
+\DoxyCodeLine{00046\ \textcolor{comment}{\ *\ is\ atomic\ or\ not\ might\ be\ irrelevant\ in\ other\ modules.\ In\ such\ case\ one}}
+\DoxyCodeLine{00047\ \textcolor{comment}{\ *\ can\ use\ TSAN\_QUALIFIER\ in\ cast\ specifically\ when\ it\ has\ to\ count.}}
+\DoxyCodeLine{00048\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \textcolor{preprocessor}{\#ifndef\ OSSL\_INTERNAL\_TSAN\_ASSIST\_H}}
+\DoxyCodeLine{00051\ \textcolor{preprocessor}{\#\ define\ OSSL\_INTERNAL\_TSAN\_ASSIST\_H}}
+\DoxyCodeLine{00052\ \textcolor{preprocessor}{\#\ pragma\ once}}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \textcolor{preprocessor}{\#\ if\ defined(\_\_STDC\_VERSION\_\_)\ \&\&\ \_\_STDC\_VERSION\_\_\ >=\ 201112L\ \(\backslash\)}}
+\DoxyCodeLine{00055\ \textcolor{preprocessor}{\ \ \ \ \&\&\ !defined(\_\_STDC\_NO\_ATOMICS\_\_)}}
+\DoxyCodeLine{00056\ \textcolor{preprocessor}{\#\ \ include\ <stdatomic.h>}}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \textcolor{preprocessor}{\#\ \ if\ defined(ATOMIC\_POINTER\_LOCK\_FREE)\ \(\backslash\)}}
+\DoxyCodeLine{00059\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \&\&\ ATOMIC\_POINTER\_LOCK\_FREE\ >=\ 2}}
+\DoxyCodeLine{00060\ \textcolor{preprocessor}{\#\ \ \ define\ TSAN\_QUALIFIER\ \_Atomic}}
+\DoxyCodeLine{00061\ \textcolor{preprocessor}{\#\ \ \ define\ tsan\_load(ptr)\ atomic\_load\_explicit((ptr),\ memory\_order\_relaxed)}}
+\DoxyCodeLine{00062\ \textcolor{preprocessor}{\#\ \ \ define\ tsan\_store(ptr,\ val)\ atomic\_store\_explicit((ptr),\ (val),\ memory\_order\_relaxed)}}
+\DoxyCodeLine{00063\ \textcolor{preprocessor}{\#\ \ \ define\ tsan\_add(ptr,\ n)\ atomic\_fetch\_add\_explicit((ptr),\ (n),\ memory\_order\_relaxed)}}
+\DoxyCodeLine{00064\ \textcolor{preprocessor}{\#\ \ \ define\ tsan\_ld\_acq(ptr)\ atomic\_load\_explicit((ptr),\ memory\_order\_acquire)}}
+\DoxyCodeLine{00065\ \textcolor{preprocessor}{\#\ \ \ define\ tsan\_st\_rel(ptr,\ val)\ atomic\_store\_explicit((ptr),\ (val),\ memory\_order\_release)}}
+\DoxyCodeLine{00066\ \textcolor{preprocessor}{\#\ \ endif}}
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00068\ \textcolor{preprocessor}{\#\ elif\ defined(\_\_GNUC\_\_)\ \&\&\ defined(\_\_ATOMIC\_RELAXED)}}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ \textcolor{preprocessor}{\#\ \ if\ defined(\_\_GCC\_ATOMIC\_POINTER\_LOCK\_FREE)\ \(\backslash\)}}
+\DoxyCodeLine{00071\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \&\&\ \_\_GCC\_ATOMIC\_POINTER\_LOCK\_FREE\ >=\ 2}}
+\DoxyCodeLine{00072\ \textcolor{preprocessor}{\#\ \ \ define\ TSAN\_QUALIFIER\ volatile}}
+\DoxyCodeLine{00073\ \textcolor{preprocessor}{\#\ \ \ define\ tsan\_load(ptr)\ \_\_atomic\_load\_n((ptr),\ \_\_ATOMIC\_RELAXED)}}
+\DoxyCodeLine{00074\ \textcolor{preprocessor}{\#\ \ \ define\ tsan\_store(ptr,\ val)\ \_\_atomic\_store\_n((ptr),\ (val),\ \_\_ATOMIC\_RELAXED)}}
+\DoxyCodeLine{00075\ \textcolor{preprocessor}{\#\ \ \ define\ tsan\_add(ptr,\ n)\ \_\_atomic\_fetch\_add((ptr),\ (n),\ \_\_ATOMIC\_RELAXED)}}
+\DoxyCodeLine{00076\ \textcolor{preprocessor}{\#\ \ \ define\ tsan\_ld\_acq(ptr)\ \_\_atomic\_load\_n((ptr),\ \_\_ATOMIC\_ACQUIRE)}}
+\DoxyCodeLine{00077\ \textcolor{preprocessor}{\#\ \ \ define\ tsan\_st\_rel(ptr,\ val)\ \_\_atomic\_store\_n((ptr),\ (val),\ \_\_ATOMIC\_RELEASE)}}
+\DoxyCodeLine{00078\ \textcolor{preprocessor}{\#\ \ endif}}
+\DoxyCodeLine{00079\ }
+\DoxyCodeLine{00080\ \textcolor{preprocessor}{\#\ elif\ defined(\_MSC\_VER)\ \&\&\ \_MSC\_VER>=1200\ \(\backslash\)}}
+\DoxyCodeLine{00081\ \textcolor{preprocessor}{\ \ \ \ \ \ \&\&\ (defined(\_M\_IX86)\ ||\ defined(\_M\_AMD64)\ ||\ defined(\_M\_X64)\ ||\ \(\backslash\)}}
+\DoxyCodeLine{00082\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ defined(\_M\_ARM64)\ ||\ (defined(\_M\_ARM)\ \&\&\ \_M\_ARM\ >=\ 7\ \&\&\ !defined(\_WIN32\_WCE)))}}
+\DoxyCodeLine{00083\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00084\ \textcolor{comment}{\ *\ There\ is\ subtle\ dependency\ on\ /volatile:<iso|ms>\ command-\/line\ option.}}
+\DoxyCodeLine{00085\ \textcolor{comment}{\ *\ "{}ms"{}\ implies\ same\ semantic\ as\ memory\_order\_acquire\ for\ loads\ and}}
+\DoxyCodeLine{00086\ \textcolor{comment}{\ *\ memory\_order\_release\ for\ stores,\ while\ "{}iso"{}\ -\/\ memory\_order\_relaxed\ for}}
+\DoxyCodeLine{00087\ \textcolor{comment}{\ *\ either.\ Real\ complication\ is\ that\ defaults\ are\ different\ on\ x86\ and\ ARM.}}
+\DoxyCodeLine{00088\ \textcolor{comment}{\ *\ There\ is\ explanation\ for\ that,\ "{}ms"{}\ is\ backward\ compatible\ with\ earlier}}
+\DoxyCodeLine{00089\ \textcolor{comment}{\ *\ compiler\ versions,\ while\ multi-\/processor\ ARM\ can\ be\ viewed\ as\ brand\ new}}
+\DoxyCodeLine{00090\ \textcolor{comment}{\ *\ platform\ to\ MSC\ and\ its\ users,\ and\ with\ non-\/relaxed\ semantic\ taking\ toll}}
+\DoxyCodeLine{00091\ \textcolor{comment}{\ *\ with\ additional\ instructions\ and\ penalties,\ it\ kind\ of\ makes\ sense\ to}}
+\DoxyCodeLine{00092\ \textcolor{comment}{\ *\ default\ to\ "{}iso"{}...}}
+\DoxyCodeLine{00093\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00094\ \textcolor{preprocessor}{\#\ \ define\ TSAN\_QUALIFIER\ volatile}}
+\DoxyCodeLine{00095\ \textcolor{preprocessor}{\#\ \ if\ defined(\_M\_ARM)\ ||\ defined(\_M\_ARM64)}}
+\DoxyCodeLine{00096\ \textcolor{preprocessor}{\#\ \ \ define\ \_InterlockedExchangeAdd\ \_InterlockedExchangeAdd\_nf}}
+\DoxyCodeLine{00097\ \textcolor{preprocessor}{\#\ \ \ pragma\ intrinsic(\_InterlockedExchangeAdd\_nf)}}
+\DoxyCodeLine{00098\ \textcolor{preprocessor}{\#\ \ \ pragma\ intrinsic(\_\_iso\_volatile\_load32,\ \_\_iso\_volatile\_store32)}}
+\DoxyCodeLine{00099\ \textcolor{preprocessor}{\#\ \ \ ifdef\ \_WIN64}}
+\DoxyCodeLine{00100\ \textcolor{preprocessor}{\#\ \ \ \ define\ \_InterlockedExchangeAdd64\ \_InterlockedExchangeAdd64\_nf}}
+\DoxyCodeLine{00101\ \textcolor{preprocessor}{\#\ \ \ \ pragma\ intrinsic(\_InterlockedExchangeAdd64\_nf)}}
+\DoxyCodeLine{00102\ \textcolor{preprocessor}{\#\ \ \ \ pragma\ intrinsic(\_\_iso\_volatile\_load64,\ \_\_iso\_volatile\_store64)}}
+\DoxyCodeLine{00103\ \textcolor{preprocessor}{\#\ \ \ \ define\ tsan\_load(ptr)\ (sizeof(*(ptr))\ ==\ 8\ ?\ \_\_iso\_volatile\_load64(ptr)\ \(\backslash\)}}
+\DoxyCodeLine{00104\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ \_\_iso\_volatile\_load32(ptr))}}
+\DoxyCodeLine{00105\ \textcolor{preprocessor}{\#\ \ \ \ define\ tsan\_store(ptr,\ val)\ (sizeof(*(ptr))\ ==\ 8\ ?\ \_\_iso\_volatile\_store64((ptr),\ (val))\ \(\backslash\)}}
+\DoxyCodeLine{00106\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ \_\_iso\_volatile\_store32((ptr),\ (val)))}}
+\DoxyCodeLine{00107\ \textcolor{preprocessor}{\#\ \ \ else}}
+\DoxyCodeLine{00108\ \textcolor{preprocessor}{\#\ \ \ \ define\ tsan\_load(ptr)\ \_\_iso\_volatile\_load32(ptr)}}
+\DoxyCodeLine{00109\ \textcolor{preprocessor}{\#\ \ \ \ define\ tsan\_store(ptr,\ val)\ \_\_iso\_volatile\_store32((ptr),\ (val))}}
+\DoxyCodeLine{00110\ \textcolor{preprocessor}{\#\ \ \ endif}}
+\DoxyCodeLine{00111\ \textcolor{preprocessor}{\#\ \ else}}
+\DoxyCodeLine{00112\ \textcolor{preprocessor}{\#\ \ \ define\ tsan\_load(ptr)\ (*(ptr))}}
+\DoxyCodeLine{00113\ \textcolor{preprocessor}{\#\ \ \ define\ tsan\_store(ptr,\ val)\ (*(ptr)\ =\ (val))}}
+\DoxyCodeLine{00114\ \textcolor{preprocessor}{\#\ \ endif}}
+\DoxyCodeLine{00115\ \textcolor{preprocessor}{\#\ \ pragma\ intrinsic(\_InterlockedExchangeAdd)}}
+\DoxyCodeLine{00116\ \textcolor{preprocessor}{\#\ \ ifdef\ \_WIN64}}
+\DoxyCodeLine{00117\ \textcolor{preprocessor}{\#\ \ \ pragma\ intrinsic(\_InterlockedExchangeAdd64)}}
+\DoxyCodeLine{00118\ \textcolor{preprocessor}{\#\ \ \ define\ tsan\_add(ptr,\ n)\ (sizeof(*(ptr))\ ==\ 8\ ?\ \_InterlockedExchangeAdd64((ptr),\ (n))\ \(\backslash\)}}
+\DoxyCodeLine{00119\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ \_InterlockedExchangeAdd((ptr),\ (n)))}}
+\DoxyCodeLine{00120\ \textcolor{preprocessor}{\#\ \ else}}
+\DoxyCodeLine{00121\ \textcolor{preprocessor}{\#\ \ \ define\ tsan\_add(ptr,\ n)\ \_InterlockedExchangeAdd((ptr),\ (n))}}
+\DoxyCodeLine{00122\ \textcolor{preprocessor}{\#\ \ endif}}
+\DoxyCodeLine{00123\ \textcolor{preprocessor}{\#\ \ if\ !defined(\_ISO\_VOLATILE)}}
+\DoxyCodeLine{00124\ \textcolor{preprocessor}{\#\ \ \ define\ tsan\_ld\_acq(ptr)\ (*(ptr))}}
+\DoxyCodeLine{00125\ \textcolor{preprocessor}{\#\ \ \ define\ tsan\_st\_rel(ptr,\ val)\ (*(ptr)\ =\ (val))}}
+\DoxyCodeLine{00126\ \textcolor{preprocessor}{\#\ \ endif}}
+\DoxyCodeLine{00127\ }
+\DoxyCodeLine{00128\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00129\ }
+\DoxyCodeLine{00130\ \textcolor{preprocessor}{\#\ ifndef\ TSAN\_QUALIFIER}}
+\DoxyCodeLine{00131\ }
+\DoxyCodeLine{00132\ \textcolor{preprocessor}{\#\ \ ifdef\ OPENSSL\_THREADS}}
+\DoxyCodeLine{00133\ \textcolor{preprocessor}{\#\ \ \ define\ TSAN\_QUALIFIER\ volatile}}
+\DoxyCodeLine{00134\ \textcolor{preprocessor}{\#\ \ \ define\ TSAN\_REQUIRES\_LOCKING}}
+\DoxyCodeLine{00135\ \textcolor{preprocessor}{\#\ \ else\ \ }\textcolor{comment}{/*\ OPENSSL\_THREADS\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00136\ \textcolor{preprocessor}{\#\ \ \ define\ TSAN\_QUALIFIER}}
+\DoxyCodeLine{00137\ \textcolor{preprocessor}{\#\ \ endif\ }\textcolor{comment}{/*\ OPENSSL\_THREADS\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00138\ }
+\DoxyCodeLine{00139\ \textcolor{preprocessor}{\#\ \ define\ tsan\_load(ptr)\ (*(ptr))}}
+\DoxyCodeLine{00140\ \textcolor{preprocessor}{\#\ \ define\ tsan\_store(ptr,\ val)\ (*(ptr)\ =\ (val))}}
+\DoxyCodeLine{00141\ \textcolor{preprocessor}{\#\ \ define\ tsan\_add(ptr,\ n)\ (*(ptr)\ +=\ (n))}}
+\DoxyCodeLine{00142\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00143\ \textcolor{comment}{\ *\ Lack\ of\ tsan\_ld\_acq\ and\ tsan\_ld\_rel\ means\ that\ compiler\ support\ is\ not}}
+\DoxyCodeLine{00144\ \textcolor{comment}{\ *\ sophisticated\ enough\ to\ support\ them.\ Code\ that\ relies\ on\ them\ should\ be}}
+\DoxyCodeLine{00145\ \textcolor{comment}{\ *\ protected\ with\ \#ifdef\ tsan\_ld\_acq\ with\ locked\ fallback.}}
+\DoxyCodeLine{00146\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00147\ }
+\DoxyCodeLine{00148\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00149\ }
+\DoxyCodeLine{00150\ \textcolor{preprocessor}{\#\ define\ tsan\_counter(ptr)\ tsan\_add((ptr),\ 1)}}
+\DoxyCodeLine{00151\ \textcolor{preprocessor}{\#\ define\ tsan\_decr(ptr)\ tsan\_add((ptr),\ -\/1)}}
+\DoxyCodeLine{00152\ }
+\DoxyCodeLine{00153\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

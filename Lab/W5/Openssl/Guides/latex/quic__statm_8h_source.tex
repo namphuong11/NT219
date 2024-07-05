@@ -1,0 +1,46 @@
+\doxysection{quic\+\_\+statm.\+h}
+\hypertarget{quic__statm_8h_source}{}\label{quic__statm_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/quic\_statm.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/quic\_statm.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2022-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_QUIC\_STATS\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_QUIC\_STATS\_H}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#\ include\ <openssl/ssl.h>}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ include\ "{}internal/time.h"{}}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#\ ifndef\ OPENSSL\_NO\_QUIC}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__statm__st}{ossl\_statm\_st}}\ \{}
+\DoxyCodeLine{00019\ \ \ \ \ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ smoothed\_rtt,\ latest\_rtt,\ min\_rtt,\ rtt\_variance;}
+\DoxyCodeLine{00020\ \ \ \ \ \textcolor{keywordtype}{char}\ \ \ \ \ \ have\_first\_sample;}
+\DoxyCodeLine{00021\ \}\ \mbox{\hyperlink{structossl__statm__st}{OSSL\_STATM}};}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__rtt__info__st}{ossl\_rtt\_info\_st}}\ \{}
+\DoxyCodeLine{00024\ \ \ \ \ \textcolor{comment}{/*\ As\ defined\ in\ RFC\ 9002.\ */}}
+\DoxyCodeLine{00025\ \ \ \ \ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ smoothed\_rtt,\ latest\_rtt,\ rtt\_variance,\ min\_rtt;}
+\DoxyCodeLine{00026\ \}\ \mbox{\hyperlink{structossl__rtt__info__st}{OSSL\_RTT\_INFO}};}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \textcolor{keywordtype}{int}\ ossl\_statm\_init(\mbox{\hyperlink{structossl__statm__st}{OSSL\_STATM}}\ *statm);}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \textcolor{keywordtype}{void}\ ossl\_statm\_destroy(\mbox{\hyperlink{structossl__statm__st}{OSSL\_STATM}}\ *statm);}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \textcolor{keywordtype}{void}\ ossl\_statm\_get\_rtt\_info(\mbox{\hyperlink{structossl__statm__st}{OSSL\_STATM}}\ *statm,\ \mbox{\hyperlink{structossl__rtt__info__st}{OSSL\_RTT\_INFO}}\ *rtt\_info);}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \textcolor{keywordtype}{void}\ ossl\_statm\_update\_rtt(\mbox{\hyperlink{structossl__statm__st}{OSSL\_STATM}}\ *statm,}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ ack\_delay,}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ override\_latest\_rtt);}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

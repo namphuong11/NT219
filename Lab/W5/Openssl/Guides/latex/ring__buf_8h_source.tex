@@ -1,0 +1,283 @@
+\doxysection{ring\+\_\+buf.\+h}
+\hypertarget{ring__buf_8h_source}{}\label{ring__buf_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/ring\_buf.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/ring\_buf.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2022-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_INTERNAL\_RING\_BUF\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_INTERNAL\_RING\_BUF\_H}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#\ pragma\ once}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ include\ <openssl/e\_os2.h>}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ For\ 'ossl\_inline'\ */}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#\ include\ "{}internal/safe\_math.h"{}}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ *\ ==================================================================}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ *\ Byte-\/wise\ ring\ buffer\ which\ supports\ pushing\ and\ popping\ blocks\ of\ multiple}}
+\DoxyCodeLine{00020\ \textcolor{comment}{\ *\ bytes\ at\ a\ time.\ The\ logical\ offset\ of\ each\ byte\ for\ the\ purposes\ of\ a\ QUIC}}
+\DoxyCodeLine{00021\ \textcolor{comment}{\ *\ stream\ is\ tracked.\ Bytes\ can\ be\ popped\ from\ the\ ring\ buffer\ in\ two\ stages;}}
+\DoxyCodeLine{00022\ \textcolor{comment}{\ *\ first\ they\ are\ popped,\ and\ then\ they\ are\ culled.\ Bytes\ which\ have\ been\ popped}}
+\DoxyCodeLine{00023\ \textcolor{comment}{\ *\ but\ not\ yet\ culled\ will\ not\ be\ overwritten,\ and\ can\ be\ restored.}}
+\DoxyCodeLine{00024\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00025\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structring__buf}{ring\_buf}}\ \{}
+\DoxyCodeLine{00026\ \ \ \ \ \textcolor{keywordtype}{void}\ \ \ \ \ \ \ *start;}
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \ \ \ \ \ alloc;\ \ \ \ \ \ \ \ \textcolor{comment}{/*\ size\ of\ buffer\ allocation\ in\ bytes\ */}}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00030\ \textcolor{comment}{\ \ \ \ \ *\ Logical\ offset\ of\ the\ head\ (where\ we\ append\ to).\ This\ is\ the\ current\ size}}
+\DoxyCodeLine{00031\ \textcolor{comment}{\ \ \ \ \ *\ of\ the\ QUIC\ stream.\ This\ increases\ monotonically.}}
+\DoxyCodeLine{00032\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00033\ \ \ \ \ uint64\_t\ \ \ \ head\_offset;}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00036\ \textcolor{comment}{\ \ \ \ \ *\ Logical\ offset\ of\ the\ cull\ tail.\ Data\ is\ no\ longer\ needed\ and\ is}}
+\DoxyCodeLine{00037\ \textcolor{comment}{\ \ \ \ \ *\ deallocated\ as\ the\ cull\ tail\ advances,\ which\ occurs\ as\ data\ is}}
+\DoxyCodeLine{00038\ \textcolor{comment}{\ \ \ \ \ *\ acknowledged.\ This\ increases\ monotonically.}}
+\DoxyCodeLine{00039\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00040\ \ \ \ \ uint64\_t\ \ \ \ ctail\_offset;}
+\DoxyCodeLine{00041\ \};}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ OSSL\_SAFE\_MATH\_UNSIGNED(u64,\ uint64\_t)}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \textcolor{preprocessor}{\#define\ MAX\_OFFSET\ \ \ (((uint64\_t)1)\ <<\ 62)\ }\textcolor{comment}{/*\ QUIC-\/imposed\ limit\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{int}\ ring\_buf\_init(\textcolor{keyword}{struct}\ \mbox{\hyperlink{structring__buf}{ring\_buf}}\ *r)}
+\DoxyCodeLine{00048\ \{}
+\DoxyCodeLine{00049\ \ \ \ \ r-\/>start\ =\ NULL;}
+\DoxyCodeLine{00050\ \ \ \ \ r-\/>alloc\ =\ 0;}
+\DoxyCodeLine{00051\ \ \ \ \ r-\/>head\_offset\ =\ r-\/>ctail\_offset\ =\ 0;}
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00053\ \}}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{void}\ ring\_buf\_destroy(\textcolor{keyword}{struct}\ \mbox{\hyperlink{structring__buf}{ring\_buf}}\ *r,\ \textcolor{keywordtype}{int}\ cleanse)}
+\DoxyCodeLine{00056\ \{}
+\DoxyCodeLine{00057\ \ \ \ \ \textcolor{keywordflow}{if}\ (cleanse)}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ OPENSSL\_clear\_free(r-\/>start,\ r-\/>alloc);}
+\DoxyCodeLine{00059\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ OPENSSL\_free(r-\/>start);}
+\DoxyCodeLine{00061\ \ \ \ \ r-\/>start\ =\ NULL;}
+\DoxyCodeLine{00062\ \ \ \ \ r-\/>alloc\ =\ 0;}
+\DoxyCodeLine{00063\ \}}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{size\_t}\ ring\_buf\_used(\textcolor{keyword}{struct}\ \mbox{\hyperlink{structring__buf}{ring\_buf}}\ *r)}
+\DoxyCodeLine{00066\ \{}
+\DoxyCodeLine{00067\ \ \ \ \ \textcolor{keywordflow}{return}\ (\textcolor{keywordtype}{size\_t})(r-\/>head\_offset\ -\/\ r-\/>ctail\_offset);}
+\DoxyCodeLine{00068\ \}}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{size\_t}\ ring\_buf\_avail(\textcolor{keyword}{struct}\ \mbox{\hyperlink{structring__buf}{ring\_buf}}\ *r)}
+\DoxyCodeLine{00071\ \{}
+\DoxyCodeLine{00072\ \ \ \ \ \textcolor{keywordflow}{return}\ r-\/>alloc\ -\/\ ring\_buf\_used(r);}
+\DoxyCodeLine{00073\ \}}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00075\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{int}\ ring\_buf\_write\_at(\textcolor{keyword}{struct}\ \mbox{\hyperlink{structring__buf}{ring\_buf}}\ *r,}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ logical\_offset,}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *buf,}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ buf\_len)}
+\DoxyCodeLine{00079\ \{}
+\DoxyCodeLine{00080\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ avail,\ idx,\ l;}
+\DoxyCodeLine{00081\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *start\ =\ r-\/>start;}
+\DoxyCodeLine{00082\ \ \ \ \ \textcolor{keywordtype}{int}\ i,\ err\ =\ 0;}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \ \ \ \ avail\ =\ ring\_buf\_avail(r);}
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{keywordflow}{if}\ (logical\_offset\ <\ r-\/>ctail\_offset}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ ||\ safe\_add\_u64(logical\_offset,\ buf\_len,\ \&err)}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \ \ \ >\ safe\_add\_u64(r-\/>head\_offset,\ avail,\ \&err)}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ ||\ safe\_add\_u64(r-\/>head\_offset,\ buf\_len,\ \&err)}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \ \ \ >\ MAX\_OFFSET}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ ||\ err)}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ buf\_len\ >\ 0\ \&\&\ i\ <\ 2;\ ++i)\ \{}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ idx\ =\ logical\_offset\ \%\ r-\/>alloc;}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ l\ =\ r-\/>alloc\ -\/\ idx;}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (buf\_len\ <\ l)}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \ \ \ \ l\ =\ buf\_len;}
+\DoxyCodeLine{00098\ }
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ memcpy(start\ +\ idx,\ buf,\ l);}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (r-\/>head\_offset\ <\ logical\_offset\ +\ l)}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \ \ \ \ r-\/>head\_offset\ =\ logical\_offset\ +\ l;}
+\DoxyCodeLine{00102\ }
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ logical\_offset\ +=\ l;}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ buf\ +=\ l;}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ buf\_len\ -\/=\ l;}
+\DoxyCodeLine{00106\ \ \ \ \ \}}
+\DoxyCodeLine{00107\ }
+\DoxyCodeLine{00108\ \ \ \ \ assert(buf\_len\ ==\ 0);}
+\DoxyCodeLine{00109\ }
+\DoxyCodeLine{00110\ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00111\ \}}
+\DoxyCodeLine{00112\ }
+\DoxyCodeLine{00113\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{size\_t}\ ring\_buf\_push(\textcolor{keyword}{struct}\ \mbox{\hyperlink{structring__buf}{ring\_buf}}\ *r,}
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *buf,}
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ buf\_len)}
+\DoxyCodeLine{00116\ \{}
+\DoxyCodeLine{00117\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ pushed\ =\ 0,\ avail,\ idx,\ l;}
+\DoxyCodeLine{00118\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *start\ =\ r-\/>start;}
+\DoxyCodeLine{00119\ }
+\DoxyCodeLine{00120\ \ \ \ \ \textcolor{keywordflow}{for}\ (;;)\ \{}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ avail\ =\ ring\_buf\_avail(r);}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (buf\_len\ >\ avail)}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \ \ \ \ buf\_len\ =\ avail;}
+\DoxyCodeLine{00124\ }
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (buf\_len\ >\ MAX\_OFFSET\ -\/\ r-\/>head\_offset)}
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ \ \ \ \ buf\_len\ =\ (size\_t)(MAX\_OFFSET\ -\/\ r-\/>head\_offset);}
+\DoxyCodeLine{00127\ }
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (buf\_len\ ==\ 0)}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00130\ }
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ idx\ =\ r-\/>head\_offset\ \%\ r-\/>alloc;}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ l\ =\ r-\/>alloc\ -\/\ idx;}
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (buf\_len\ <\ l)}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ \ \ \ \ l\ =\ buf\_len;}
+\DoxyCodeLine{00135\ }
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ memcpy(start\ +\ idx,\ buf,\ l);}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ r-\/>head\_offset\ \ +=\ l;}
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ buf\ \ \ \ \ \ \ \ \ \ \ \ \ +=\ l;}
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ buf\_len\ \ \ \ \ \ \ \ \ -\/=\ l;}
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ pushed\ \ \ \ \ \ \ \ \ \ +=\ l;}
+\DoxyCodeLine{00141\ \ \ \ \ \}}
+\DoxyCodeLine{00142\ }
+\DoxyCodeLine{00143\ \ \ \ \ \textcolor{keywordflow}{return}\ pushed;}
+\DoxyCodeLine{00144\ \}}
+\DoxyCodeLine{00145\ }
+\DoxyCodeLine{00146\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *ring\_buf\_get\_ptr(\textcolor{keyword}{const}\ \textcolor{keyword}{struct}\ \mbox{\hyperlink{structring__buf}{ring\_buf}}\ *r,}
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ logical\_offset,}
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ *max\_len)}
+\DoxyCodeLine{00149\ \{}
+\DoxyCodeLine{00150\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *start\ =\ r-\/>start;}
+\DoxyCodeLine{00151\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ idx;}
+\DoxyCodeLine{00152\ }
+\DoxyCodeLine{00153\ \ \ \ \ \textcolor{keywordflow}{if}\ (logical\_offset\ >=\ r-\/>head\_offset\ ||\ logical\_offset\ <\ r-\/>ctail\_offset)}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ NULL;}
+\DoxyCodeLine{00155\ \ \ \ \ idx\ =\ logical\_offset\ \%\ r-\/>alloc;}
+\DoxyCodeLine{00156\ \ \ \ \ *max\_len\ =\ r-\/>alloc\ -\/\ idx;}
+\DoxyCodeLine{00157\ \ \ \ \ \textcolor{keywordflow}{return}\ start\ +\ idx;}
+\DoxyCodeLine{00158\ \}}
+\DoxyCodeLine{00159\ }
+\DoxyCodeLine{00160\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00161\ \textcolor{comment}{\ *\ Retrieves\ data\ out\ of\ the\ read\ side\ of\ the\ ring\ buffer\ starting\ at\ the\ given}}
+\DoxyCodeLine{00162\ \textcolor{comment}{\ *\ logical\ offset.\ *buf\ is\ set\ to\ point\ to\ a\ contiguous\ span\ of\ bytes\ and}}
+\DoxyCodeLine{00163\ \textcolor{comment}{\ *\ *buf\_len\ is\ set\ to\ the\ number\ of\ contiguous\ bytes.\ After\ this\ function}}
+\DoxyCodeLine{00164\ \textcolor{comment}{\ *\ returns,\ there\ may\ or\ may\ not\ be\ more\ bytes\ available\ at\ the\ logical\ offset}}
+\DoxyCodeLine{00165\ \textcolor{comment}{\ *\ of\ (logical\_offset\ +\ *buf\_len)\ by\ calling\ this\ function\ again.\ If\ the\ logical}}
+\DoxyCodeLine{00166\ \textcolor{comment}{\ *\ offset\ is\ out\ of\ the\ range\ retained\ by\ the\ ring\ buffer,\ returns\ 0,\ else}}
+\DoxyCodeLine{00167\ \textcolor{comment}{\ *\ returns\ 1.\ A\ logical\ offset\ at\ the\ end\ of\ the\ range\ retained\ by\ the\ ring}}
+\DoxyCodeLine{00168\ \textcolor{comment}{\ *\ buffer\ is\ not\ considered\ an\ error\ and\ is\ returned\ with\ a\ *buf\_len\ of\ 0.}}
+\DoxyCodeLine{00169\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00170\ \textcolor{comment}{\ *\ The\ ring\ buffer\ state\ is\ not\ changed.}}
+\DoxyCodeLine{00171\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00172\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{int}\ ring\_buf\_get\_buf\_at(\textcolor{keyword}{const}\ \textcolor{keyword}{struct}\ \mbox{\hyperlink{structring__buf}{ring\_buf}}\ *r,}
+\DoxyCodeLine{00173\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ logical\_offset,}
+\DoxyCodeLine{00174\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **buf,}
+\DoxyCodeLine{00175\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ *buf\_len)}
+\DoxyCodeLine{00176\ \{}
+\DoxyCodeLine{00177\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *start\ =\ r-\/>start;}
+\DoxyCodeLine{00178\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ idx,\ l;}
+\DoxyCodeLine{00179\ }
+\DoxyCodeLine{00180\ \ \ \ \ \textcolor{keywordflow}{if}\ (logical\_offset\ >\ r-\/>head\_offset\ ||\ logical\_offset\ <\ r-\/>ctail\_offset)}
+\DoxyCodeLine{00181\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00182\ }
+\DoxyCodeLine{00183\ \ \ \ \ \textcolor{keywordflow}{if}\ (r-\/>alloc\ ==\ 0)\ \{}
+\DoxyCodeLine{00184\ \ \ \ \ \ \ \ \ *buf\ \ \ \ \ \ \ \ =\ NULL;}
+\DoxyCodeLine{00185\ \ \ \ \ \ \ \ \ *buf\_len\ \ \ \ =\ 0;}
+\DoxyCodeLine{00186\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00187\ \ \ \ \ \}}
+\DoxyCodeLine{00188\ }
+\DoxyCodeLine{00189\ \ \ \ \ idx\ =\ logical\_offset\ \%\ r-\/>alloc;}
+\DoxyCodeLine{00190\ \ \ \ \ l\ \ \ =\ (size\_t)(r-\/>head\_offset\ -\/\ logical\_offset);}
+\DoxyCodeLine{00191\ \ \ \ \ \textcolor{keywordflow}{if}\ (l\ >\ r-\/>alloc\ -\/\ idx)}
+\DoxyCodeLine{00192\ \ \ \ \ \ \ \ \ l\ =\ r-\/>alloc\ -\/\ idx;}
+\DoxyCodeLine{00193\ }
+\DoxyCodeLine{00194\ \ \ \ \ *buf\ \ \ \ \ \ \ \ =\ start\ +\ idx;}
+\DoxyCodeLine{00195\ \ \ \ \ *buf\_len\ \ \ \ =\ l;}
+\DoxyCodeLine{00196\ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00197\ \}}
+\DoxyCodeLine{00198\ }
+\DoxyCodeLine{00199\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{void}\ ring\_buf\_cpop\_range(\textcolor{keyword}{struct}\ \mbox{\hyperlink{structring__buf}{ring\_buf}}\ *r,}
+\DoxyCodeLine{00200\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ start,\ uint64\_t\ end,}
+\DoxyCodeLine{00201\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ cleanse)}
+\DoxyCodeLine{00202\ \{}
+\DoxyCodeLine{00203\ \ \ \ \ assert(end\ >=\ start);}
+\DoxyCodeLine{00204\ }
+\DoxyCodeLine{00205\ \ \ \ \ \textcolor{keywordflow}{if}\ (start\ >\ r-\/>ctail\_offset\ ||\ end\ >=\ MAX\_OFFSET)}
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00207\ }
+\DoxyCodeLine{00208\ \ \ \ \ \textcolor{keywordflow}{if}\ (cleanse\ \&\&\ r-\/>alloc\ >\ 0\ \&\&\ end\ >\ r-\/>ctail\_offset)\ \{}
+\DoxyCodeLine{00209\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ idx\ =\ r-\/>ctail\_offset\ \%\ r-\/>alloc;}
+\DoxyCodeLine{00210\ \ \ \ \ \ \ \ \ uint64\_t\ cleanse\_end\ =\ end\ +\ 1;}
+\DoxyCodeLine{00211\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ l;}
+\DoxyCodeLine{00212\ }
+\DoxyCodeLine{00213\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (cleanse\_end\ >\ r-\/>head\_offset)}
+\DoxyCodeLine{00214\ \ \ \ \ \ \ \ \ \ \ \ \ cleanse\_end\ =\ r-\/>head\_offset;}
+\DoxyCodeLine{00215\ \ \ \ \ \ \ \ \ l\ =\ (size\_t)(cleanse\_end\ -\/\ r-\/>ctail\_offset);}
+\DoxyCodeLine{00216\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (l\ >\ r-\/>alloc\ -\/\ idx)\ \{}
+\DoxyCodeLine{00217\ \ \ \ \ \ \ \ \ \ \ \ \ OPENSSL\_cleanse((\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *)r-\/>start\ +\ idx,\ r-\/>alloc\ -\/\ idx);}
+\DoxyCodeLine{00218\ \ \ \ \ \ \ \ \ \ \ \ \ l\ -\/=\ r-\/>alloc\ -\/\ idx;}
+\DoxyCodeLine{00219\ \ \ \ \ \ \ \ \ \ \ \ \ idx\ =\ 0;}
+\DoxyCodeLine{00220\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00221\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (l\ >\ 0)}
+\DoxyCodeLine{00222\ \ \ \ \ \ \ \ \ \ \ \ \ OPENSSL\_cleanse((\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *)r-\/>start\ +\ idx,\ l);}
+\DoxyCodeLine{00223\ \ \ \ \ \}}
+\DoxyCodeLine{00224\ }
+\DoxyCodeLine{00225\ \ \ \ \ r-\/>ctail\_offset\ =\ end\ +\ 1;}
+\DoxyCodeLine{00226\ \ \ \ \ \textcolor{comment}{/*\ Allow\ culling\ unpushed\ data\ */}}
+\DoxyCodeLine{00227\ \ \ \ \ \textcolor{keywordflow}{if}\ (r-\/>head\_offset\ <\ r-\/>ctail\_offset)}
+\DoxyCodeLine{00228\ \ \ \ \ \ \ \ \ r-\/>head\_offset\ =\ r-\/>ctail\_offset;}
+\DoxyCodeLine{00229\ \}}
+\DoxyCodeLine{00230\ }
+\DoxyCodeLine{00231\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{int}\ ring\_buf\_resize(\textcolor{keyword}{struct}\ \mbox{\hyperlink{structring__buf}{ring\_buf}}\ *r,\ \textcolor{keywordtype}{size\_t}\ num\_bytes,}
+\DoxyCodeLine{00232\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ cleanse)}
+\DoxyCodeLine{00233\ \{}
+\DoxyCodeLine{00234\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structring__buf}{ring\_buf}}\ rnew\ =\ \{0\};}
+\DoxyCodeLine{00235\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *src\ =\ NULL;}
+\DoxyCodeLine{00236\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ src\_len\ =\ 0,\ copied\ =\ 0;}
+\DoxyCodeLine{00237\ }
+\DoxyCodeLine{00238\ \ \ \ \ \textcolor{keywordflow}{if}\ (num\_bytes\ ==\ r-\/>alloc)}
+\DoxyCodeLine{00239\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00240\ }
+\DoxyCodeLine{00241\ \ \ \ \ \textcolor{keywordflow}{if}\ (num\_bytes\ <\ ring\_buf\_used(r))}
+\DoxyCodeLine{00242\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00243\ }
+\DoxyCodeLine{00244\ \ \ \ \ rnew.start\ =\ OPENSSL\_malloc(num\_bytes);}
+\DoxyCodeLine{00245\ \ \ \ \ \textcolor{keywordflow}{if}\ (rnew.start\ ==\ NULL)}
+\DoxyCodeLine{00246\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00247\ }
+\DoxyCodeLine{00248\ \ \ \ \ rnew.alloc\ \ \ \ \ \ \ \ \ \ =\ num\_bytes;}
+\DoxyCodeLine{00249\ \ \ \ \ rnew.head\_offset\ \ \ \ =\ r-\/>head\_offset\ -\/\ ring\_buf\_used(r);}
+\DoxyCodeLine{00250\ \ \ \ \ rnew.ctail\_offset\ \ \ =\ rnew.head\_offset;}
+\DoxyCodeLine{00251\ }
+\DoxyCodeLine{00252\ \ \ \ \ \textcolor{keywordflow}{for}\ (;;)\ \{}
+\DoxyCodeLine{00253\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!ring\_buf\_get\_buf\_at(r,\ r-\/>ctail\_offset\ +\ copied,\ \&src,\ \&src\_len))\ \{}
+\DoxyCodeLine{00254\ \ \ \ \ \ \ \ \ \ \ \ \ OPENSSL\_free(rnew.start);}
+\DoxyCodeLine{00255\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00256\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00257\ }
+\DoxyCodeLine{00258\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (src\_len\ ==\ 0)}
+\DoxyCodeLine{00259\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00260\ }
+\DoxyCodeLine{00261\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (ring\_buf\_push(\&rnew,\ src,\ src\_len)\ !=\ src\_len)\ \{}
+\DoxyCodeLine{00262\ \ \ \ \ \ \ \ \ \ \ \ \ OPENSSL\_free(rnew.start);}
+\DoxyCodeLine{00263\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00264\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00265\ }
+\DoxyCodeLine{00266\ \ \ \ \ \ \ \ \ copied\ +=\ src\_len;}
+\DoxyCodeLine{00267\ \ \ \ \ \}}
+\DoxyCodeLine{00268\ }
+\DoxyCodeLine{00269\ \ \ \ \ assert(rnew.head\_offset\ ==\ r-\/>head\_offset);}
+\DoxyCodeLine{00270\ \ \ \ \ rnew.ctail\_offset\ =\ r-\/>ctail\_offset;}
+\DoxyCodeLine{00271\ }
+\DoxyCodeLine{00272\ \ \ \ \ ring\_buf\_destroy(r,\ cleanse);}
+\DoxyCodeLine{00273\ \ \ \ \ memcpy(r,\ \&rnew,\ \textcolor{keyword}{sizeof}(*r));}
+\DoxyCodeLine{00274\ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00275\ \}}
+\DoxyCodeLine{00276\ }
+\DoxyCodeLine{00277\ \textcolor{preprocessor}{\#endif\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{/*\ OSSL\_INTERNAL\_RING\_BUF\_H\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

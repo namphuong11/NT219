@@ -1,0 +1,62 @@
+\doxysection{e\+\_\+dasync\+\_\+err.\+c}
+\hypertarget{e__dasync__err_8c_source}{}\label{e__dasync__err_8c_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/engines/e\_dasync\_err.c@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/engines/e\_dasync\_err.c}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Generated\ by\ util/mkerr.pl\ DO\ NOT\ EDIT}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *\ Copyright\ 1995-\/2021\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ <openssl/err.h>}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ "{}e\_dasync\_err.h"{}}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_ERR}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{keyword}{static}\ ERR\_STRING\_DATA\ DASYNC\_str\_reasons[]\ =\ \{}
+\DoxyCodeLine{00017\ \ \ \ \ \{ERR\_PACK(0,\ 0,\ DASYNC\_R\_INIT\_FAILED),\ \textcolor{stringliteral}{"{}init\ failed"{}}\},}
+\DoxyCodeLine{00018\ \ \ \ \ \{0,\ NULL\}}
+\DoxyCodeLine{00019\ \};}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ lib\_code\ =\ 0;}
+\DoxyCodeLine{00024\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ error\_loaded\ =\ 0;}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ ERR\_load\_DASYNC\_strings(\textcolor{keywordtype}{void})}
+\DoxyCodeLine{00027\ \{}
+\DoxyCodeLine{00028\ \ \ \ \ \textcolor{keywordflow}{if}\ (lib\_code\ ==\ 0)}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ lib\_code\ =\ ERR\_get\_next\_error\_library();}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \ \ \ \ \textcolor{keywordflow}{if}\ (!error\_loaded)\ \{}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_ERR}}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ ERR\_load\_strings(lib\_code,\ DASYNC\_str\_reasons);}
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ error\_loaded\ =\ 1;}
+\DoxyCodeLine{00036\ \ \ \ \ \}}
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00038\ \}}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ ERR\_unload\_DASYNC\_strings(\textcolor{keywordtype}{void})}
+\DoxyCodeLine{00041\ \{}
+\DoxyCodeLine{00042\ \ \ \ \ \textcolor{keywordflow}{if}\ (error\_loaded)\ \{}
+\DoxyCodeLine{00043\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_ERR}}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ ERR\_unload\_strings(lib\_code,\ DASYNC\_str\_reasons);}
+\DoxyCodeLine{00045\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ error\_loaded\ =\ 0;}
+\DoxyCodeLine{00047\ \ \ \ \ \}}
+\DoxyCodeLine{00048\ \}}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ ERR\_DASYNC\_error(\textcolor{keywordtype}{int}\ function,\ \textcolor{keywordtype}{int}\ reason,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *file,\ \textcolor{keywordtype}{int}\ line)}
+\DoxyCodeLine{00051\ \{}
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{keywordflow}{if}\ (lib\_code\ ==\ 0)}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ lib\_code\ =\ ERR\_get\_next\_error\_library();}
+\DoxyCodeLine{00054\ \ \ \ \ ERR\_raise(lib\_code,\ reason);}
+\DoxyCodeLine{00055\ \ \ \ \ ERR\_set\_debug(file,\ line,\ NULL);}
+\DoxyCodeLine{00056\ \}}
+
+\end{DoxyCode}

@@ -1,0 +1,159 @@
+\chapter{Report on the Conclusions of the QUIC DDD Process}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2ddd_2_r_e_p_o_r_t}{}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2ddd_2_r_e_p_o_r_t}\index{Report on the Conclusions of the QUIC DDD Process@{Report on the Conclusions of the QUIC DDD Process}}
+The \doxysectlink{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2ddd_2_r_e_a_d_m_e}{QUIC Demo-\/\+Driven Design process}{0} was undertaken to meet the OMC requirement to develop a QUIC API that required only minimal changes to existing applications to be able to adapt their code to use QUIC. The demo-\/driven design process developed a set of representative demos modelling a variety of common Open\+SSL usage patterns based on analysis of a broad spectrum of open source software projects using Open\+SSL.
+
+As part of this process, a set of proposed diffs were produced. These proposed diffs were the expected changes which would be needed to the baseline demos to support QUIC based on theoretical analysis of the minimum requirements to be able to support QUIC. This analysis concluded that the changes needed to applications could be kept very small in many circumstances, with only minimal diff sizes to the baseline demos.
+
+Following the development of QUIC MVP, these demos have been revisited and the correspondence of our actual final API and usage patterns with the planned diffs have been reviewed.
+
+This document discusses the planned changes and the actual changes for each demo and draws conclusions on the level of disparity.
+
+Since tracking a set of diffs separately is unwieldy, both the planned and unplanned changes have been folded into the original baseline demo files guarded with {\ttfamily \#ifdef USE\+\_\+\+QUIC}. Viewing these files therefore is informative to application writers as it provides a clear view of what is different when using QUIC. (The originally planned changes, and the final changes, are added in separate, clearly-\/labelled commits; to view the originally planned changes only, view the commit history for a given demo file.)\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2ddd_2_r_e_p_o_r_t_autotoc_md191}{}\doxysection{\texorpdfstring{ddd-\/01-\/conn-\/blocking}{ddd-\/01-\/conn-\/blocking}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2ddd_2_r_e_p_o_r_t_autotoc_md191}
+This demo exists to demonstrate the simplest possible usage of Open\+SSL, whether with TLS or QUIC.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2ddd_2_r_e_p_o_r_t_autotoc_md192}{}\doxysubsection{\texorpdfstring{Originally planned changes}{Originally planned changes}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2ddd_2_r_e_p_o_r_t_autotoc_md192}
+The originally planned change to enable applications for QUIC amounted to just a single line\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{+\ \ \ \ ctx\ =\ SSL\_CTX\_new(QUIC\_client\_method());}
+\DoxyCodeLine{-\/\ \ \ \ ctx\ =\ SSL\_CTX\_new(TLS\_client\_method());}
+
+\end{DoxyCode}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2ddd_2_r_e_p_o_r_t_autotoc_md193}{}\doxysubsection{\texorpdfstring{Actual changes}{Actual changes}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2ddd_2_r_e_p_o_r_t_autotoc_md193}
+The following additional changes needed to be made\+:
+
+
+\begin{DoxyItemize}
+\item {\ttfamily QUIC\+\_\+client\+\_\+method} was renamed to {\ttfamily OSSL\+\_\+\+QUIC\+\_\+client\+\_\+method} for namespacing reasons.
+\item A call to {\ttfamily SSL\+\_\+set\+\_\+alpn\+\_\+protos} to configure ALPN was added. This is necessary because QUIC mandates the use of ALPN, and this was not noted during the DDD process.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2ddd_2_r_e_p_o_r_t_autotoc_md194}{}\doxysection{\texorpdfstring{ddd-\/02-\/conn-\/nonblocking}{ddd-\/02-\/conn-\/nonblocking}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2ddd_2_r_e_p_o_r_t_autotoc_md194}
+This demo exists to demonstrate simple non-\/blocking usage. As with ddd-\/01-\/conn-\/blocking, the name resolution process is managed by {\ttfamily BIO\+\_\+s\+\_\+connect}.
+
+It also arbitrarily adds a {\ttfamily BIO\+\_\+f\+\_\+buffer} pushed onto the BIO stack as this is a common application usage pattern.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2ddd_2_r_e_p_o_r_t_autotoc_md195}{}\doxysubsection{\texorpdfstring{Originally planned changes}{Originally planned changes}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2ddd_2_r_e_p_o_r_t_autotoc_md195}
+The originally planned changes to enable applications for QUIC amounted to\+:
+
+
+\begin{DoxyItemize}
+\item Change of method (as for ddd-\/01-\/conn-\/blocking);
+\item Use of a {\ttfamily BIO\+\_\+f\+\_\+dgram\+\_\+buffer} BIO method instead of a {\ttfamily BIO\+\_\+f\+\_\+buffer};
+\item Use of a {\ttfamily BIO\+\_\+get\+\_\+poll\+\_\+fd} function to get the FD to poll rather than {\ttfamily BIO\+\_\+get\+\_\+fd};
+\item A change to how the {\ttfamily POLLIN}/{\ttfamily POLLOUT}/{\ttfamily POLLERR} flags to pass to poll(2) need to be determined.
+\item Additional functions in application code to determine event handling timeouts related to QUIC ({\ttfamily get\+\_\+conn\+\_\+pump\+\_\+timeout}) and to pump the QUIC event loop ({\ttfamily pump}).
+\item Timeout computation code which involves merging and comparing different timeouts and calling {\ttfamily pump} as needed, based on deadlines reported by libssl.
+\end{DoxyItemize}
+
+Note that some of these changes are unnecessary when using the thread assisted mode (see the variant ddd-\/02-\/conn-\/nonblocking-\/threads below).\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2ddd_2_r_e_p_o_r_t_autotoc_md196}{}\doxysubsection{\texorpdfstring{Actual changes}{Actual changes}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2ddd_2_r_e_p_o_r_t_autotoc_md196}
+The following additional changes needed to be made\+:
+
+
+\begin{DoxyItemize}
+\item Change of method name (as for ddd-\/01-\/conn-\/blocking);
+\item Use of ALPN (as for ddd-\/01-\/conn-\/blocking);
+\item The strategy for how to expose pollable OS resource handles to applications to determine I/O readiness has changed substantially since the original DDD process. As such, applications now use {\ttfamily BIO\+\_\+get\+\_\+rpoll\+\_\+descriptor} and {\ttfamily BIO\+\_\+get\+\_\+wpoll\+\_\+descriptor} to determine I/O readiness, rather than the originally hypothesised {\ttfamily SSL\+\_\+get\+\_\+poll\+\_\+fd}.
+\item The strategy for how to determine when to poll for {\ttfamily POLLIN}, when to poll for {\ttfamily POLLOUT}, etc. has changed since the original DDD process. This information is now exposed via {\ttfamily SSL\+\_\+net\+\_\+read\+\_\+desired} and {\ttfamily SSL\+\_\+net\+\_\+write\+\_\+desired}.
+\item The API to expose the event handling deadline for the QUIC engine has evolved since the original DDD process. The new API {\ttfamily SSL\+\_\+get\+\_\+event\+\_\+timeout} is used, rather than the originally hypothesised {\ttfamily BIO\+\_\+get\+\_\+timeout}/{\ttfamily SSL\+\_\+get\+\_\+timeout}.
+\item The API to perform QUIC event processing has been renamed to be more descriptive. It is now called {\ttfamily SSL\+\_\+handle\+\_\+events} rather than the originally hypothesised {\ttfamily BIO\+\_\+pump}/{\ttfamily SSL\+\_\+pump}.
+\end{DoxyItemize}
+
+The following changes were foreseen to be necessary, but turned out to actually not be necessary\+:
+
+
+\begin{DoxyItemize}
+\item The need to change code which pushes a {\ttfamily BIO\+\_\+f\+\_\+buffer()} after a SSL BIO was foreseen as use of buffering on the network side is unworkable with QUIC. This turned out not to be necessary since we can just reject the BIO\+\_\+push() call. The buffer should still be freed eventually when the SSL BIO is freed. The buffer is not used and is unnecessary, so it is still desirable for applications to remove this code.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2ddd_2_r_e_p_o_r_t_autotoc_md197}{}\doxysection{\texorpdfstring{ddd-\/02-\/conn-\/nonblocking-\/threads}{ddd-\/02-\/conn-\/nonblocking-\/threads}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2ddd_2_r_e_p_o_r_t_autotoc_md197}
+This is a variant of the ddd-\/02-\/conn-\/nonblocking demo. The base is the same, but the changes made are different. The use of thread-\/assisted mode, in which an internal assist thread is used to perform QUIC event handling, enables an application to make fewer changes than are needed in the ddd-\/02-\/conn-\/nonblocking demo.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2ddd_2_r_e_p_o_r_t_autotoc_md198}{}\doxysubsection{\texorpdfstring{Originally planned changes}{Originally planned changes}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2ddd_2_r_e_p_o_r_t_autotoc_md198}
+The originally planned changes to enable applications for QUIC amounted to\+:
+
+
+\begin{DoxyItemize}
+\item Change of method, this time using method {\ttfamily QUIC\+\_\+client\+\_\+thread\+\_\+method} rather than {\ttfamily QUIC\+\_\+client\+\_\+method};
+\item Use of a {\ttfamily BIO\+\_\+get\+\_\+poll\+\_\+fd} function to get the FD to poll rather than {\ttfamily BIO\+\_\+get\+\_\+fd};
+\item A change to how the {\ttfamily POLLIN}/{\ttfamily POLLOUT}/{\ttfamily POLLERR} flags to pass to poll(2) need to be determined.
+
+Note that this is a substantially smaller list of changes than for ddd-\/02-\/conn-\/nonblocking.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2ddd_2_r_e_p_o_r_t_autotoc_md199}{}\doxysubsection{\texorpdfstring{Actual changes}{Actual changes}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2ddd_2_r_e_p_o_r_t_autotoc_md199}
+The following additional changes needed to be made\+:
+
+
+\begin{DoxyItemize}
+\item Change of method name ({\ttfamily QUIC\+\_\+client\+\_\+thread\+\_\+method} was renamed to {\ttfamily OSSL\+\_\+\+QUIC\+\_\+client\+\_\+thread\+\_\+method} for namespacing reasons);
+\item Use of ALPN (as for ddd-\/01-\/conn-\/blocking);
+\item Use of {\ttfamily BIO\+\_\+get\+\_\+rpoll\+\_\+descriptor} rather than {\ttfamily BIO\+\_\+get\+\_\+poll\+\_\+fd} (as for ddd-\/02-\/conn-\/nonblocking).
+\item Use of {\ttfamily SSL\+\_\+net\+\_\+read\+\_\+desired} and {\ttfamily SSL\+\_\+net\+\_\+write\+\_\+desired} (as for ddd-\/02-\/conn-\/nonblocking).
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2ddd_2_r_e_p_o_r_t_autotoc_md200}{}\doxysection{\texorpdfstring{ddd-\/03-\/fd-\/blocking}{ddd-\/03-\/fd-\/blocking}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2ddd_2_r_e_p_o_r_t_autotoc_md200}
+This demo is similar to ddd-\/01-\/conn-\/blocking but uses a file descriptor passed directly by the application rather than BIO\+\_\+s\+\_\+connect.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2ddd_2_r_e_p_o_r_t_autotoc_md201}{}\doxysubsection{\texorpdfstring{Originally planned changes}{Originally planned changes}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2ddd_2_r_e_p_o_r_t_autotoc_md201}
+
+\begin{DoxyItemize}
+\item Change of method (as for ddd-\/01-\/conn-\/blocking);
+\item The arguments to the {\ttfamily socket(2)} call are changed from {\ttfamily (AF\+\_\+\+INET, SOCK\+\_\+\+STREAM, IPPROTO\+\_\+\+TCP)} to {\ttfamily (AF\+\_\+\+INET, SOCK\+\_\+\+DGRAM, IPPROTO\+\_\+\+UDP)}.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2ddd_2_r_e_p_o_r_t_autotoc_md202}{}\doxysubsection{\texorpdfstring{Actual changes}{Actual changes}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2ddd_2_r_e_p_o_r_t_autotoc_md202}
+The following additional changes needed to be made\+:
+
+
+\begin{DoxyItemize}
+\item Change of method name (as for ddd-\/01-\/conn-\/blocking);
+\item Use of ALPN (as for ddd-\/01-\/conn-\/blocking).
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2ddd_2_r_e_p_o_r_t_autotoc_md203}{}\doxysection{\texorpdfstring{ddd-\/04-\/fd-\/nonblocking}{ddd-\/04-\/fd-\/nonblocking}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2ddd_2_r_e_p_o_r_t_autotoc_md203}
+This demo is similar to ddd-\/01-\/conn-\/nonblocking but uses a file descriptor passed directly by the application rather than BIO\+\_\+s\+\_\+connect.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2ddd_2_r_e_p_o_r_t_autotoc_md204}{}\doxysubsection{\texorpdfstring{Originally planned changes}{Originally planned changes}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2ddd_2_r_e_p_o_r_t_autotoc_md204}
+
+\begin{DoxyItemize}
+\item Change of method (as for ddd-\/01-\/conn-\/blocking);
+\item The arguments to the {\ttfamily socket(2)} call are changed from {\ttfamily (AF\+\_\+\+INET, SOCK\+\_\+\+STREAM, IPPROTO\+\_\+\+TCP)} to {\ttfamily (AF\+\_\+\+INET, SOCK\+\_\+\+DGRAM, IPPROTO\+\_\+\+UDP)};
+\item A change to how the {\ttfamily POLLIN}/{\ttfamily POLLOUT}/{\ttfamily POLLERR} flags to pass to poll(2) need to be determined.
+\item Additional functions in application code to determine event handling timeouts related to QUIC ({\ttfamily get\+\_\+conn\+\_\+pump\+\_\+timeout}) and to pump the QUIC event loop ({\ttfamily pump}).
+\item Timeout computation code which involves merging and comparing different timeouts and calling {\ttfamily pump} as needed, based on deadlines reported by libssl.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2ddd_2_r_e_p_o_r_t_autotoc_md205}{}\doxysubsection{\texorpdfstring{Actual changes}{Actual changes}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2ddd_2_r_e_p_o_r_t_autotoc_md205}
+The following additional changes needed to be made\+:
+
+
+\begin{DoxyItemize}
+\item Change of method name (as for ddd-\/01-\/conn-\/blocking);
+\item Use of ALPN (as for ddd-\/01-\/conn-\/blocking);
+\item {\ttfamily SSL\+\_\+get\+\_\+timeout} replaced with {\ttfamily SSL\+\_\+get\+\_\+event\+\_\+timeout} (as for ddd-\/02-\/conn-\/nonblocking);
+\item {\ttfamily SSL\+\_\+pump} renamed to {\ttfamily SSL\+\_\+handle\+\_\+events} (as for ddd-\/02-\/conn-\/nonblocking);
+\item The strategy for how to determine when to poll for {\ttfamily POLLIN}, when to poll for {\ttfamily POLLOUT}, etc. has changed since the original DDD process. This information is now exposed via {\ttfamily SSL\+\_\+net\+\_\+read\+\_\+desired} and {\ttfamily SSL\+\_\+net\+\_\+write\+\_\+desired} (as for ddd-\/02-\/conn-\/nonblocking).
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2ddd_2_r_e_p_o_r_t_autotoc_md206}{}\doxysection{\texorpdfstring{ddd-\/05-\/mem-\/nonblocking}{ddd-\/05-\/mem-\/nonblocking}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2ddd_2_r_e_p_o_r_t_autotoc_md206}
+This demo is more elaborate. It uses memory buffers created and managed by an application as an intermediary between libssl and the network, which is a common usage pattern for applications. Managing this pattern for QUIC is more elaborate since datagram semantics on the network channel need to be maintained.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2ddd_2_r_e_p_o_r_t_autotoc_md207}{}\doxysubsection{\texorpdfstring{Originally planned changes}{Originally planned changes}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2ddd_2_r_e_p_o_r_t_autotoc_md207}
+
+\begin{DoxyItemize}
+\item Change of method (as for ddd-\/01-\/conn-\/blocking);
+\item Call to {\ttfamily BIO\+\_\+new\+\_\+bio\+\_\+pair} is changed to {\ttfamily BIO\+\_\+new\+\_\+dgram\+\_\+pair}, which provides a bidirectional memory buffer BIO with datagram semantics.
+\item A change to how the {\ttfamily POLLIN}/{\ttfamily POLLOUT}/{\ttfamily POLLERR} flags to pass to poll(2) need to be determined.
+\item Potential changes to buffer sizes used by applications to buffer datagrams, if those buffers are smaller than 1472 bytes.
+\item The arguments to the {\ttfamily socket(2)} call are changed from {\ttfamily (AF\+\_\+\+INET, SOCK\+\_\+\+STREAM, IPPROTO\+\_\+\+TCP)} to {\ttfamily (AF\+\_\+\+INET, SOCK\+\_\+\+DGRAM, IPPROTO\+\_\+\+UDP)};
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2ddd_2_r_e_p_o_r_t_autotoc_md208}{}\doxysubsection{\texorpdfstring{Actual changes}{Actual changes}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2ddd_2_r_e_p_o_r_t_autotoc_md208}
+The following additional changes needed to be made\+:
+
+
+\begin{DoxyItemize}
+\item Change of method name (as for ddd-\/01-\/conn-\/blocking);
+\item Use of ALPN (as for ddd-\/01-\/conn-\/blocking);
+\item The API to construct a {\ttfamily BIO\+\_\+s\+\_\+dgram\+\_\+pair} ended up being named {\ttfamily BIO\+\_\+new\+\_\+bio\+\_\+dgram\+\_\+pair} rather than {\ttfamily BIO\+\_\+new\+\_\+dgram\+\_\+pair};
+\item Use of {\ttfamily SSL\+\_\+net\+\_\+read\+\_\+desired} and {\ttfamily SSL\+\_\+net\+\_\+write\+\_\+desired} (as for ddd-\/02-\/conn-\/nonblocking).
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2ddd_2_r_e_p_o_r_t_autotoc_md209}{}\doxysection{\texorpdfstring{ddd-\/06-\/mem-\/uv}{ddd-\/06-\/mem-\/uv}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2ddd_2_r_e_p_o_r_t_autotoc_md209}
+This demo is the most elaborate of the set. It uses a real-\/world asynchronous I/O reactor, namely libuv (the engine used by Node.\+js). In doing so it seeks to demonstrate and prove the viability of our API design with a real-\/world asynchronous I/O system. It operates wholly in non-\/blocking mode and uses memory buffers on either side of the QUIC stack to feed data to and from the application and the network.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2ddd_2_r_e_p_o_r_t_autotoc_md210}{}\doxysubsection{\texorpdfstring{Originally planned changes}{Originally planned changes}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2ddd_2_r_e_p_o_r_t_autotoc_md210}
+
+\begin{DoxyItemize}
+\item Change of method (as for ddd-\/01-\/conn-\/blocking);
+\item Various changes to use of libuv needed to switch to using UDP;
+\item Additional use of libuv to configure a timer event;
+\item Call to {\ttfamily BIO\+\_\+new\+\_\+bio\+\_\+pair} is changed to {\ttfamily BIO\+\_\+new\+\_\+dgram\+\_\+pair} (as for ddd-\/05-\/mem-\/nonblocking);
+\item Some reordering of code required by the design of libuv.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2ddd_2_r_e_p_o_r_t_autotoc_md211}{}\doxysubsection{\texorpdfstring{Actual changes}{Actual changes}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2ddd_2_r_e_p_o_r_t_autotoc_md211}
+The following additional changes needed to be made\+:
+
+
+\begin{DoxyItemize}
+\item Change of method name (as for ddd-\/01-\/conn-\/blocking);
+\item Use of ALPN (as for ddd-\/01-\/conn-\/blocking);
+\item {\ttfamily BIO\+\_\+new\+\_\+dgram\+\_\+pair} renamed to {\ttfamily BIO\+\_\+new\+\_\+bio\+\_\+dgram\+\_\+pair} (as for ddd-\/05-\/mem-\/nonblocking);
+\item {\ttfamily SSL\+\_\+get\+\_\+timeout} replaced with {\ttfamily SSL\+\_\+get\+\_\+event\+\_\+timeout} (as for ddd-\/02-\/conn-\/nonblocking);
+\item {\ttfamily SSL\+\_\+pump} renamed to {\ttfamily SSL\+\_\+handle\+\_\+events} (as for ddd-\/02-\/conn-\/nonblocking);
+\item Fixes to use of libuv based on a corrected understanding of its operation, and changes that necessarily ensue.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2ddd_2_r_e_p_o_r_t_autotoc_md212}{}\doxysection{\texorpdfstring{Conclusions}{Conclusions}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2ddd_2_r_e_p_o_r_t_autotoc_md212}
+The DDD process has successfully delivered on the objective of delivering a QUIC API which can be used with only minimal API changes. The additional changes on top of those originally planned which were required to successfully execute the demos using QUIC were highly limited in scope and mostly constituted only minor changes. The sum total of the changes required for each demo (both planned and additional), as denoted in each DDD demo file under {\ttfamily \#ifdef USE\+\_\+\+QUIC} guards, are both minimal and limited in scope.
+
+“\+Minimal” and “limited” are distinct criteria. If inexorable technical requirements dictate, an enormous set of changes to an application could be considered “minimal”. The changes required to representative applications, as demonstrated by the DDD demos, are not merely minimal but also limited.
+
+For example, while the extent of these necessary changes varies by the sophistication of each demo and the kind of application usage pattern it represents, some demos in particular demonstrate exceptionally small changesets; for example, ddd-\/01-\/conn-\/blocking and ddd-\/02-\/conn-\/nonblocking-\/threads, with ddd-\/01-\/conn-\/blocking literally being enabled by a single line change assuming ALPN is already configured.
+
+This report concludes the DDD process for the single-\/stream QUIC client API design process, which sought to validate our API design and API ease of use for existing applications seeking to adopt QUIC. 

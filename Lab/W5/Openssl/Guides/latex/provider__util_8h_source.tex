@@ -1,0 +1,148 @@
+\doxysection{provider\+\_\+util.\+h}
+\hypertarget{provider__util_8h_source}{}\label{provider__util_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/providers/common/include/prov/provider\_util.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/providers/common/include/prov/provider\_util.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2019-\/2022\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <openssl/provider.h>}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ <openssl/types.h>}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00014\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ \ \ \ \ *\ References\ to\ the\ underlying\ cipher\ implementation.\ \ |cipher|\ caches}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ \ \ \ \ *\ the\ cipher,\ always.\ \ |alloc\_cipher|\ only\ holds\ a\ reference\ to\ an}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ \ \ \ \ *\ explicitly\ fetched\ cipher.}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00019\ \ \ \ \ \textcolor{keyword}{const}\ EVP\_CIPHER\ *cipher;\ \ \ \textcolor{comment}{/*\ cipher\ */}}
+\DoxyCodeLine{00020\ \ \ \ \ EVP\_CIPHER\ *alloc\_cipher;\ \ \ \textcolor{comment}{/*\ fetched\ cipher\ */}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{comment}{/*\ Conditions\ for\ legacy\ EVP\_CIPHER\ uses\ */}}
+\DoxyCodeLine{00023\ \ \ \ \ ENGINE\ *engine;\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ cipher\ engine\ */}}
+\DoxyCodeLine{00024\ \}\ \mbox{\hyperlink{struct_p_r_o_v___c_i_p_h_e_r}{PROV\_CIPHER}};}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00028\ \textcolor{comment}{\ \ \ \ \ *\ References\ to\ the\ underlying\ digest\ implementation.\ \ |md|\ caches}}
+\DoxyCodeLine{00029\ \textcolor{comment}{\ \ \ \ \ *\ the\ digest,\ always.\ \ |alloc\_md|\ only\ holds\ a\ reference\ to\ an\ explicitly}}
+\DoxyCodeLine{00030\ \textcolor{comment}{\ \ \ \ \ *\ fetched\ digest.}}
+\DoxyCodeLine{00031\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00032\ \ \ \ \ \textcolor{keyword}{const}\ EVP\_MD\ *md;\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ digest\ */}}
+\DoxyCodeLine{00033\ \ \ \ \ EVP\_MD\ *alloc\_md;\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ fetched\ digest\ */}}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \ \ \ \ \textcolor{comment}{/*\ Conditions\ for\ legacy\ EVP\_MD\ uses\ */}}
+\DoxyCodeLine{00036\ \ \ \ \ ENGINE\ *engine;\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ digest\ engine\ */}}
+\DoxyCodeLine{00037\ \}\ \mbox{\hyperlink{struct_p_r_o_v___d_i_g_e_s_t}{PROV\_DIGEST}};}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \textcolor{comment}{/*\ Cipher\ functions\ */}}
+\DoxyCodeLine{00040\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00041\ \textcolor{comment}{\ *\ Load\ a\ cipher\ from\ the\ specified\ parameters\ with\ the\ specified\ context.}}
+\DoxyCodeLine{00042\ \textcolor{comment}{\ *\ The\ params\ "{}properties"{},\ "{}engine"{}\ and\ "{}cipher"{}\ are\ used\ to\ determine\ the}}
+\DoxyCodeLine{00043\ \textcolor{comment}{\ *\ implementation\ used.\ \ If\ a\ provider\ cannot\ be\ found,\ it\ falls\ back\ to\ trying}}
+\DoxyCodeLine{00044\ \textcolor{comment}{\ *\ non-\/provider\ based\ implementations.}}
+\DoxyCodeLine{00045\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00046\ \textcolor{keywordtype}{int}\ ossl\_prov\_cipher\_load\_from\_params(\mbox{\hyperlink{struct_p_r_o_v___c_i_p_h_e_r}{PROV\_CIPHER}}\ *pc,}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ OSSL\_PARAM\ params[],}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OSSL\_LIB\_CTX\ *ctx);}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \textcolor{comment}{/*\ Reset\ the\ PROV\_CIPHER\ fields\ and\ free\ any\ allocated\ cipher\ reference\ */}}
+\DoxyCodeLine{00051\ \textcolor{keywordtype}{void}\ ossl\_prov\_cipher\_reset(\mbox{\hyperlink{struct_p_r_o_v___c_i_p_h_e_r}{PROV\_CIPHER}}\ *pc);}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \textcolor{comment}{/*\ Clone\ a\ PROV\_CIPHER\ structure\ into\ a\ second\ */}}
+\DoxyCodeLine{00054\ \textcolor{keywordtype}{int}\ ossl\_prov\_cipher\_copy(\mbox{\hyperlink{struct_p_r_o_v___c_i_p_h_e_r}{PROV\_CIPHER}}\ *dst,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{struct_p_r_o_v___c_i_p_h_e_r}{PROV\_CIPHER}}\ *src);}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \textcolor{comment}{/*\ Query\ the\ cipher\ and\ associated\ engine\ (if\ any)\ */}}
+\DoxyCodeLine{00057\ \textcolor{keyword}{const}\ EVP\_CIPHER\ *ossl\_prov\_cipher\_cipher(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_p_r_o_v___c_i_p_h_e_r}{PROV\_CIPHER}}\ *pc);}
+\DoxyCodeLine{00058\ ENGINE\ *ossl\_prov\_cipher\_engine(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_p_r_o_v___c_i_p_h_e_r}{PROV\_CIPHER}}\ *pc);}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ \textcolor{comment}{/*\ Digest\ functions\ */}}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00063\ \textcolor{comment}{\ *\ Fetch\ a\ digest\ from\ the\ specified\ libctx\ using\ the\ provided\ mdname\ and}}
+\DoxyCodeLine{00064\ \textcolor{comment}{\ *\ propquery.\ Store\ the\ result\ in\ the\ PROV\_DIGEST\ and\ return\ the\ fetched\ md.}}
+\DoxyCodeLine{00065\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00066\ \textcolor{keyword}{const}\ EVP\_MD\ *ossl\_prov\_digest\_fetch(\mbox{\hyperlink{struct_p_r_o_v___d_i_g_e_s_t}{PROV\_DIGEST}}\ *pd,\ OSSL\_LIB\_CTX\ *libctx,}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *mdname,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *propquery);}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00070\ \textcolor{comment}{\ *\ Load\ a\ digest\ from\ the\ specified\ parameters\ with\ the\ specified\ context.}}
+\DoxyCodeLine{00071\ \textcolor{comment}{\ *\ The\ params\ "{}properties"{},\ "{}engine"{}\ and\ "{}digest"{}\ are\ used\ to\ determine\ the}}
+\DoxyCodeLine{00072\ \textcolor{comment}{\ *\ implementation\ used.\ \ If\ a\ provider\ cannot\ be\ found,\ it\ falls\ back\ to\ trying}}
+\DoxyCodeLine{00073\ \textcolor{comment}{\ *\ non-\/provider\ based\ implementations.}}
+\DoxyCodeLine{00074\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00075\ \textcolor{keywordtype}{int}\ ossl\_prov\_digest\_load\_from\_params(\mbox{\hyperlink{struct_p_r_o_v___d_i_g_e_s_t}{PROV\_DIGEST}}\ *pd,}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ OSSL\_PARAM\ params[],}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OSSL\_LIB\_CTX\ *ctx);}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \textcolor{comment}{/*\ Reset\ the\ PROV\_DIGEST\ fields\ and\ free\ any\ allocated\ digest\ reference\ */}}
+\DoxyCodeLine{00080\ \textcolor{keywordtype}{void}\ ossl\_prov\_digest\_reset(\mbox{\hyperlink{struct_p_r_o_v___d_i_g_e_s_t}{PROV\_DIGEST}}\ *pd);}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00082\ \textcolor{comment}{/*\ Clone\ a\ PROV\_DIGEST\ structure\ into\ a\ second\ */}}
+\DoxyCodeLine{00083\ \textcolor{keywordtype}{int}\ ossl\_prov\_digest\_copy(\mbox{\hyperlink{struct_p_r_o_v___d_i_g_e_s_t}{PROV\_DIGEST}}\ *dst,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{struct_p_r_o_v___d_i_g_e_s_t}{PROV\_DIGEST}}\ *src);}
+\DoxyCodeLine{00084\ }
+\DoxyCodeLine{00085\ \textcolor{comment}{/*\ Query\ the\ digest\ and\ associated\ engine\ (if\ any)\ */}}
+\DoxyCodeLine{00086\ \textcolor{keyword}{const}\ EVP\_MD\ *ossl\_prov\_digest\_md(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_p_r_o_v___d_i_g_e_s_t}{PROV\_DIGEST}}\ *pd);}
+\DoxyCodeLine{00087\ ENGINE\ *ossl\_prov\_digest\_engine(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_p_r_o_v___d_i_g_e_s_t}{PROV\_DIGEST}}\ *pd);}
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00089\ }
+\DoxyCodeLine{00090\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00091\ \textcolor{comment}{\ *\ Set\ the\ various\ parameters\ on\ an\ EVP\_MAC\_CTX\ from\ the\ supplied\ arguments.}}
+\DoxyCodeLine{00092\ \textcolor{comment}{\ *\ If\ any\ of\ the\ supplied\ ciphername/mdname\ etc\ are\ NULL\ then\ the\ values}}
+\DoxyCodeLine{00093\ \textcolor{comment}{\ *\ from\ the\ supplied\ params\ (if\ non\ NULL)\ are\ used\ instead.}}
+\DoxyCodeLine{00094\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00095\ \textcolor{keywordtype}{int}\ ossl\_prov\_set\_macctx(EVP\_MAC\_CTX\ *macctx,}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ OSSL\_PARAM\ params[],}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *ciphername,}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *mdname,}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *engine,}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *properties,}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *key,}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ keylen);}
+\DoxyCodeLine{00103\ }
+\DoxyCodeLine{00104\ \textcolor{comment}{/*\ MAC\ functions\ */}}
+\DoxyCodeLine{00105\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00106\ \textcolor{comment}{\ *\ Load\ an\ EVP\_MAC\_CTX*\ from\ the\ specified\ parameters\ with\ the\ specified}}
+\DoxyCodeLine{00107\ \textcolor{comment}{\ *\ library\ context.}}
+\DoxyCodeLine{00108\ \textcolor{comment}{\ *\ The\ params\ "{}mac"{}\ and\ "{}properties"{}\ are\ used\ to\ determine\ the\ implementation}}
+\DoxyCodeLine{00109\ \textcolor{comment}{\ *\ used,\ and\ the\ parameters\ "{}digest"{},\ "{}cipher"{},\ "{}engine"{}\ and\ "{}properties"{}\ are}}
+\DoxyCodeLine{00110\ \textcolor{comment}{\ *\ passed\ to\ the\ MAC\ via\ the\ created\ MAC\ context\ if\ they\ are\ given.}}
+\DoxyCodeLine{00111\ \textcolor{comment}{\ *\ If\ there\ is\ already\ a\ created\ MAC\ context,\ it\ will\ be\ replaced\ if\ the\ "{}mac"{}}}
+\DoxyCodeLine{00112\ \textcolor{comment}{\ *\ parameter\ is\ found,\ otherwise\ it\ will\ simply\ be\ used\ as\ is,\ and\ passed\ the}}
+\DoxyCodeLine{00113\ \textcolor{comment}{\ *\ parameters\ to\ pilfer\ as\ it\ sees\ fit.}}
+\DoxyCodeLine{00114\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00115\ \textcolor{comment}{\ *\ As\ an\ option,\ a\ MAC\ name\ may\ be\ explicitly\ given,\ and\ if\ it\ is,\ the\ "{}mac"{}}}
+\DoxyCodeLine{00116\ \textcolor{comment}{\ *\ parameter\ will\ be\ ignored.}}
+\DoxyCodeLine{00117\ \textcolor{comment}{\ *\ Similarly,\ as\ an\ option,\ a\ cipher\ name\ or\ a\ digest\ name\ may\ be\ explicitly}}
+\DoxyCodeLine{00118\ \textcolor{comment}{\ *\ given,\ and\ if\ any\ of\ them\ is,\ the\ "{}digest"{}\ and\ "{}cipher"{}\ parameters\ are}}
+\DoxyCodeLine{00119\ \textcolor{comment}{\ *\ ignored.}}
+\DoxyCodeLine{00120\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00121\ \textcolor{keywordtype}{int}\ ossl\_prov\_macctx\_load\_from\_params(EVP\_MAC\_CTX\ **macctx,}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ OSSL\_PARAM\ params[],}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *macname,}
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *ciphername,}
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *mdname,}
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OSSL\_LIB\_CTX\ *ctx);}
+\DoxyCodeLine{00127\ }
+\DoxyCodeLine{00128\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structag__capable__st}{ag\_capable\_st}}\ \{}
+\DoxyCodeLine{00129\ \ \ \ \ OSSL\_ALGORITHM\ alg;}
+\DoxyCodeLine{00130\ \ \ \ \ int\ (*capable)(void);}
+\DoxyCodeLine{00131\ \}\ \mbox{\hyperlink{structag__capable__st}{OSSL\_ALGORITHM\_CAPABLE}};}
+\DoxyCodeLine{00132\ }
+\DoxyCodeLine{00133\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00134\ \textcolor{comment}{\ *\ Dynamically\ select\ algorithms\ by\ calling\ a\ capable()\ method.}}
+\DoxyCodeLine{00135\ \textcolor{comment}{\ *\ If\ this\ method\ is\ NULL\ or\ the\ method\ returns\ 1\ then\ the\ algorithm\ is\ added.}}
+\DoxyCodeLine{00136\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00137\ \textcolor{keywordtype}{void}\ ossl\_prov\_cache\_exported\_algorithms(\textcolor{keyword}{const}\ \mbox{\hyperlink{structag__capable__st}{OSSL\_ALGORITHM\_CAPABLE}}\ *in,}
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OSSL\_ALGORITHM\ *out);}
+\DoxyCodeLine{00139\ }
+\DoxyCodeLine{00140\ \textcolor{comment}{/*\ Duplicate\ a\ lump\ of\ memory\ safely\ */}}
+\DoxyCodeLine{00141\ \textcolor{keywordtype}{int}\ ossl\_prov\_memdup(\textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *src,\ \textcolor{keywordtype}{size\_t}\ src\_len,}
+\DoxyCodeLine{00142\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **dest,\ \textcolor{keywordtype}{size\_t}\ *dest\_len);}
+
+\end{DoxyCode}

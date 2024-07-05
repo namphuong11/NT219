@@ -1,0 +1,115 @@
+\doxysection{ui\+\_\+local.\+h}
+\hypertarget{ui__local_8h_source}{}\label{ui__local_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/ui/ui\_local.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/ui/ui\_local.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2001-\/2016\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_CRYPTO\_UI\_LOCAL\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_CRYPTO\_UI\_LOCAL\_H}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#\ include\ <openssl/ui.h>}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ include\ <openssl/crypto.h>}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#\ ifdef\ \_}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#\ \ undef\ \_}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structui__method__st}{ui\_method\_st}}\ \{}
+\DoxyCodeLine{00021\ \ \ \ \ \textcolor{keywordtype}{char}\ *name;}
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00023\ \textcolor{comment}{\ \ \ \ \ *\ All\ the\ functions\ return\ 1\ or\ non-\/NULL\ for\ success\ and\ 0\ or\ NULL\ for}}
+\DoxyCodeLine{00024\ \textcolor{comment}{\ \ \ \ \ *\ failure}}
+\DoxyCodeLine{00025\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00026\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00027\ \textcolor{comment}{\ \ \ \ \ *\ Open\ whatever\ channel\ for\ this,\ be\ it\ the\ console,\ an\ X\ window\ or}}
+\DoxyCodeLine{00028\ \textcolor{comment}{\ \ \ \ \ *\ whatever.\ This\ function\ should\ use\ the\ ex\_data\ structure\ to\ save}}
+\DoxyCodeLine{00029\ \textcolor{comment}{\ \ \ \ \ *\ intermediate\ data.}}
+\DoxyCodeLine{00030\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00031\ \ \ \ \ int\ (*ui\_open\_session)\ (UI\ *ui);}
+\DoxyCodeLine{00032\ \ \ \ \ int\ (*ui\_write\_string)\ (UI\ *ui,\ UI\_STRING\ *uis);}
+\DoxyCodeLine{00033\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00034\ \textcolor{comment}{\ \ \ \ \ *\ Flush\ the\ output.\ \ If\ a\ GUI\ dialog\ box\ is\ used,\ this\ function\ can\ be}}
+\DoxyCodeLine{00035\ \textcolor{comment}{\ \ \ \ \ *\ used\ to\ actually\ display\ it.}}
+\DoxyCodeLine{00036\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00037\ \ \ \ \ int\ (*ui\_flush)\ (UI\ *ui);}
+\DoxyCodeLine{00038\ \ \ \ \ int\ (*ui\_read\_string)\ (UI\ *ui,\ UI\_STRING\ *uis);}
+\DoxyCodeLine{00039\ \ \ \ \ int\ (*ui\_close\_session)\ (UI\ *ui);}
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00041\ \textcolor{comment}{\ \ \ \ \ *\ Duplicate\ the\ ui\_data\ that\ often\ comes\ alongside\ a\ ui\_method.\ \ This}}
+\DoxyCodeLine{00042\ \textcolor{comment}{\ \ \ \ \ *\ allows\ some\ backends\ to\ save\ away\ UI\ information\ for\ later\ use.}}
+\DoxyCodeLine{00043\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00044\ \ \ \ \ \textcolor{keywordtype}{void}\ *(*ui\_duplicate\_data)\ (UI\ *ui,\ \textcolor{keywordtype}{void}\ *ui\_data);}
+\DoxyCodeLine{00045\ \ \ \ \ void\ (*ui\_destroy\_data)\ (UI\ *ui,\ \textcolor{keywordtype}{void}\ *ui\_data);}
+\DoxyCodeLine{00046\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00047\ \textcolor{comment}{\ \ \ \ \ *\ Construct\ a\ prompt\ in\ a\ user-\/defined\ manner.\ \ object\_desc\ is\ a\ textual}}
+\DoxyCodeLine{00048\ \textcolor{comment}{\ \ \ \ \ *\ short\ description\ of\ the\ object,\ for\ example\ "{}pass\ phrase"{},\ and}}
+\DoxyCodeLine{00049\ \textcolor{comment}{\ \ \ \ \ *\ object\_name\ is\ the\ name\ of\ the\ object\ (might\ be\ a\ card\ name\ or\ a\ file}}
+\DoxyCodeLine{00050\ \textcolor{comment}{\ \ \ \ \ *\ name.\ The\ returned\ string\ shall\ always\ be\ allocated\ on\ the\ heap\ with}}
+\DoxyCodeLine{00051\ \textcolor{comment}{\ \ \ \ \ *\ OPENSSL\_malloc(),\ and\ need\ to\ be\ free'd\ with\ OPENSSL\_free().}}
+\DoxyCodeLine{00052\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{keywordtype}{char}\ *(*ui\_construct\_prompt)\ (UI\ *ui,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *object\_desc,}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *object\_name);}
+\DoxyCodeLine{00055\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00056\ \textcolor{comment}{\ \ \ \ \ *\ UI\_METHOD\ specific\ application\ data.}}
+\DoxyCodeLine{00057\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00058\ \ \ \ \ CRYPTO\_EX\_DATA\ ex\_data;}
+\DoxyCodeLine{00059\ \};}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structui__string__st}{ui\_string\_st}}\ \{}
+\DoxyCodeLine{00062\ \ \ \ \ \textcolor{keyword}{enum}\ UI\_string\_types\ type;\ \ \textcolor{comment}{/*\ Input\ */}}
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *out\_string;\ \ \ \ \ \textcolor{comment}{/*\ Input\ */}}
+\DoxyCodeLine{00064\ \ \ \ \ \textcolor{keywordtype}{int}\ input\_flags;\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Flags\ from\ the\ user\ */}}
+\DoxyCodeLine{00065\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00066\ \textcolor{comment}{\ \ \ \ \ *\ The\ following\ parameters\ are\ completely\ irrelevant\ for\ UIT\_INFO,\ and}}
+\DoxyCodeLine{00067\ \textcolor{comment}{\ \ \ \ \ *\ can\ therefore\ be\ set\ to\ 0\ or\ NULL}}
+\DoxyCodeLine{00068\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00069\ \ \ \ \ \textcolor{keywordtype}{char}\ *result\_buf;\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Input\ and\ Output:\ If\ not\ NULL,}}
+\DoxyCodeLine{00070\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *\ user-\/defined\ with\ size\ in\ result\_maxsize.}}
+\DoxyCodeLine{00071\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *\ Otherwise,\ it\ may\ be\ allocated\ by\ the\ UI}}
+\DoxyCodeLine{00072\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *\ routine,\ meaning\ result\_minsize\ is\ going}}
+\DoxyCodeLine{00073\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *\ to\ be\ overwritten.\ */}}
+\DoxyCodeLine{00074\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ result\_len;}
+\DoxyCodeLine{00075\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ result\_minsize;\ \textcolor{comment}{/*\ Input:\ minimum\ required\ size\ of\ the}}
+\DoxyCodeLine{00078\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *\ result.\ */}}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ result\_maxsize;\ \textcolor{comment}{/*\ Input:\ maximum\ permitted\ size\ of\ the}}
+\DoxyCodeLine{00080\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *\ result\ */}}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *test\_buf;\ \textcolor{comment}{/*\ Input:\ test\ string\ to\ verify\ against\ */}}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \}\ string\_data;}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *action\_desc;\ \textcolor{comment}{/*\ Input\ */}}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *ok\_chars;\ \textcolor{comment}{/*\ Input\ */}}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *cancel\_chars;\ \textcolor{comment}{/*\ Input\ */}}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \}\ boolean\_data;}
+\DoxyCodeLine{00088\ \ \ \ \ \}\ \_;}
+\DoxyCodeLine{00089\ }
+\DoxyCodeLine{00090\ \textcolor{preprocessor}{\#\ define\ OUT\_STRING\_FREEABLE\ 0x01}}
+\DoxyCodeLine{00091\ \ \ \ \ \textcolor{keywordtype}{int}\ flags;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ flags\ for\ internal\ use\ */}}
+\DoxyCodeLine{00092\ \};}
+\DoxyCodeLine{00093\ }
+\DoxyCodeLine{00094\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structui__st}{ui\_st}}\ \{}
+\DoxyCodeLine{00095\ \ \ \ \ \textcolor{keyword}{const}\ UI\_METHOD\ *meth;}
+\DoxyCodeLine{00096\ \ \ \ \ STACK\_OF(UI\_STRING)\ *strings;\ \textcolor{comment}{/*\ We\ might\ want\ to\ prompt\ for\ more\ than}}
+\DoxyCodeLine{00097\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *\ one\ thing\ at\ a\ time,\ and\ with\ different}}
+\DoxyCodeLine{00098\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *\ echoing\ status.\ \ */}}
+\DoxyCodeLine{00099\ \ \ \ \ \textcolor{keywordtype}{void}\ *user\_data;}
+\DoxyCodeLine{00100\ \ \ \ \ CRYPTO\_EX\_DATA\ ex\_data;}
+\DoxyCodeLine{00101\ \textcolor{preprocessor}{\#\ define\ UI\_FLAG\_REDOABLE\ \ \ \ \ \ \ \ 0x0001}}
+\DoxyCodeLine{00102\ \textcolor{preprocessor}{\#\ define\ UI\_FLAG\_DUPL\_DATA\ \ \ \ \ \ \ 0x0002\ }\textcolor{comment}{/*\ user\_data\ was\ duplicated\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00103\ \textcolor{preprocessor}{\#\ define\ UI\_FLAG\_PRINT\_ERRORS\ \ \ \ 0x0100}}
+\DoxyCodeLine{00104\ \ \ \ \ \textcolor{keywordtype}{int}\ flags;}
+\DoxyCodeLine{00105\ }
+\DoxyCodeLine{00106\ \ \ \ \ CRYPTO\_RWLOCK\ *lock;}
+\DoxyCodeLine{00107\ \};}
+\DoxyCodeLine{00108\ }
+\DoxyCodeLine{00109\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

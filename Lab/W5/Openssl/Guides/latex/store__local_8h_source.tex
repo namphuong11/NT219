@@ -1,0 +1,184 @@
+\doxysection{store\+\_\+local.\+h}
+\hypertarget{store__local_8h_source}{}\label{store__local_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/store/store\_local.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/crypto/store/store\_local.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2016-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <openssl/core\_dispatch.h>}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ "{}internal/thread\_once.h"{}}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ "{}internal/refcount.h"{}}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ <openssl/dsa.h>}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ <openssl/engine.h>}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#include\ <openssl/evp.h>}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#include\ <openssl/lhash.h>}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#include\ <openssl/x509.h>}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#include\ <openssl/store.h>}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}internal/passphrase.h"{}}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00022\ \textcolor{comment}{\ *\ \ OSSL\_STORE\_INFO\ stuff}}
+\DoxyCodeLine{00023\ \textcolor{comment}{\ *\ \ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00024\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__store__info__st}{ossl\_store\_info\_st}}\ \{}
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keywordtype}{int}\ type;}
+\DoxyCodeLine{00028\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *data;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ used\ internally\ as\ generic\ pointer\ */}}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{char}\ *name;}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{char}\ *desc;}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \}\ name;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ when\ type\ ==\ OSSL\_STORE\_INFO\_NAME\ */}}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ EVP\_PKEY\ *params;\ \ \ \ \ \ \ \ \textcolor{comment}{/*\ when\ type\ ==\ OSSL\_STORE\_INFO\_PARAMS\ */}}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ EVP\_PKEY\ *\mbox{\hyperlink{structpubkey}{pubkey}};\ \ \ \ \ \ \ \ \textcolor{comment}{/*\ when\ type\ ==\ OSSL\_STORE\_INFO\_PUBKEY\ */}}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ EVP\_PKEY\ *pkey;\ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ when\ type\ ==\ OSSL\_STORE\_INFO\_PKEY\ */}}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ X509\ *x509;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ when\ type\ ==\ OSSL\_STORE\_INFO\_CERT\ */}}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ X509\_CRL\ *crl;\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ when\ type\ ==\ OSSL\_STORE\_INFO\_CRL\ */}}
+\DoxyCodeLine{00041\ \ \ \ \ \}\ \_;}
+\DoxyCodeLine{00042\ \};}
+\DoxyCodeLine{00043\ DEFINE\_STACK\_OF(OSSL\_STORE\_INFO)}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00046\ \textcolor{comment}{\ *\ \ OSSL\_STORE\_SEARCH\ stuff}}
+\DoxyCodeLine{00047\ \textcolor{comment}{\ *\ \ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00048\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ struct\ \mbox{\hyperlink{structossl__store__search__st}{ossl\_store\_search\_st}}\ \{}
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{keywordtype}{int}\ search\_type;}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00054\ \textcolor{comment}{\ \ \ \ \ *\ Used\ by\ OSSL\_STORE\_SEARCH\_BY\_NAME\ and}}
+\DoxyCodeLine{00055\ \textcolor{comment}{\ \ \ \ \ *\ OSSL\_STORE\_SEARCH\_BY\_ISSUER\_SERIAL}}
+\DoxyCodeLine{00056\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00057\ \ \ \ \ X509\_NAME\ *name;}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ \ \ \ \ \textcolor{comment}{/*\ Used\ by\ OSSL\_STORE\_SEARCH\_BY\_ISSUER\_SERIAL\ */}}
+\DoxyCodeLine{00060\ \ \ \ \ \textcolor{keyword}{const}\ ASN1\_INTEGER\ *serial;}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \ \ \ \ \textcolor{comment}{/*\ Used\ by\ OSSL\_STORE\_SEARCH\_BY\_KEY\_FINGERPRINT\ */}}
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{keyword}{const}\ EVP\_MD\ *digest;}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00066\ \textcolor{comment}{\ \ \ \ \ *\ Used\ by\ OSSL\_STORE\_SEARCH\_BY\_KEY\_FINGERPRINT\ and}}
+\DoxyCodeLine{00067\ \textcolor{comment}{\ \ \ \ \ *\ OSSL\_STORE\_SEARCH\_BY\_ALIAS}}
+\DoxyCodeLine{00068\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00069\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *string;}
+\DoxyCodeLine{00070\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ stringlength;}
+\DoxyCodeLine{00071\ \};}
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00073\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00074\ \textcolor{comment}{\ *\ \ OSSL\_STORE\_LOADER\ stuff}}
+\DoxyCodeLine{00075\ \textcolor{comment}{\ *\ \ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00076\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ \textcolor{keywordtype}{int}\ ossl\_store\_register\_loader\_int(OSSL\_STORE\_LOADER\ *loader);}
+\DoxyCodeLine{00079\ OSSL\_STORE\_LOADER\ *ossl\_store\_unregister\_loader\_int(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *scheme);}
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00081\ \textcolor{comment}{/*\ loader\ stuff\ */}}
+\DoxyCodeLine{00082\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__store__loader__st}{ossl\_store\_loader\_st}}\ \{}
+\DoxyCodeLine{00083\ \textcolor{preprocessor}{\#ifndef\ OPENSSL\_NO\_DEPRECATED\_3\_0}}
+\DoxyCodeLine{00084\ \ \ \ \ \textcolor{comment}{/*\ Legacy\ stuff\ */}}
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *scheme;}
+\DoxyCodeLine{00086\ \ \ \ \ ENGINE\ *engine;}
+\DoxyCodeLine{00087\ \ \ \ \ OSSL\_STORE\_open\_fn\ open;}
+\DoxyCodeLine{00088\ \ \ \ \ OSSL\_STORE\_attach\_fn\ attach;}
+\DoxyCodeLine{00089\ \ \ \ \ OSSL\_STORE\_ctrl\_fn\ ctrl;}
+\DoxyCodeLine{00090\ \ \ \ \ OSSL\_STORE\_expect\_fn\ expect;}
+\DoxyCodeLine{00091\ \ \ \ \ OSSL\_STORE\_find\_fn\ find;}
+\DoxyCodeLine{00092\ \ \ \ \ OSSL\_STORE\_load\_fn\ load;}
+\DoxyCodeLine{00093\ \ \ \ \ OSSL\_STORE\_eof\_fn\ eof;}
+\DoxyCodeLine{00094\ \ \ \ \ OSSL\_STORE\_error\_fn\ error;}
+\DoxyCodeLine{00095\ \ \ \ \ OSSL\_STORE\_close\_fn\ closefn;}
+\DoxyCodeLine{00096\ \ \ \ \ OSSL\_STORE\_open\_ex\_fn\ open\_ex;}
+\DoxyCodeLine{00097\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00098\ }
+\DoxyCodeLine{00099\ \ \ \ \ \textcolor{comment}{/*\ Provider\ stuff\ */}}
+\DoxyCodeLine{00100\ \ \ \ \ OSSL\_PROVIDER\ *prov;}
+\DoxyCodeLine{00101\ \ \ \ \ \textcolor{keywordtype}{int}\ scheme\_id;}
+\DoxyCodeLine{00102\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *propdef;}
+\DoxyCodeLine{00103\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *description;}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00105\ \ \ \ \ \mbox{\hyperlink{struct_c_r_y_p_t_o___r_e_f___c_o_u_n_t}{CRYPTO\_REF\_COUNT}}\ refcnt;}
+\DoxyCodeLine{00106\ }
+\DoxyCodeLine{00107\ \ \ \ \ OSSL\_FUNC\_store\_open\_fn\ *p\_open;}
+\DoxyCodeLine{00108\ \ \ \ \ OSSL\_FUNC\_store\_attach\_fn\ *p\_attach;}
+\DoxyCodeLine{00109\ \ \ \ \ OSSL\_FUNC\_store\_settable\_ctx\_params\_fn\ *p\_settable\_ctx\_params;}
+\DoxyCodeLine{00110\ \ \ \ \ OSSL\_FUNC\_store\_set\_ctx\_params\_fn\ *p\_set\_ctx\_params;}
+\DoxyCodeLine{00111\ \ \ \ \ OSSL\_FUNC\_store\_load\_fn\ *p\_load;}
+\DoxyCodeLine{00112\ \ \ \ \ OSSL\_FUNC\_store\_eof\_fn\ *p\_eof;}
+\DoxyCodeLine{00113\ \ \ \ \ OSSL\_FUNC\_store\_close\_fn\ *p\_close;}
+\DoxyCodeLine{00114\ \ \ \ \ OSSL\_FUNC\_store\_export\_object\_fn\ *p\_export\_object;}
+\DoxyCodeLine{00115\ \ \ \ \ OSSL\_FUNC\_store\_delete\_fn\ *p\_delete;}
+\DoxyCodeLine{00116\ \ \ \ \ OSSL\_FUNC\_store\_open\_ex\_fn\ *p\_open\_ex;}
+\DoxyCodeLine{00117\ \};}
+\DoxyCodeLine{00118\ DEFINE\_LHASH\_OF\_EX(OSSL\_STORE\_LOADER);}
+\DoxyCodeLine{00119\ }
+\DoxyCodeLine{00120\ \textcolor{keyword}{const}\ OSSL\_STORE\_LOADER\ *ossl\_store\_get0\_loader\_int(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *scheme);}
+\DoxyCodeLine{00121\ \textcolor{keywordtype}{void}\ ossl\_store\_destroy\_loaders\_int(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00122\ }
+\DoxyCodeLine{00123\ \textcolor{preprocessor}{\#ifdef\ OPENSSL\_NO\_DEPRECATED\_3\_0}}
+\DoxyCodeLine{00124\ \textcolor{comment}{/*\ struct\ ossl\_store\_loader\_ctx\_st\ is\ defined\ differently\ by\ each\ loader\ */}}
+\DoxyCodeLine{00125\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__store__loader__ctx__st}{ossl\_store\_loader\_ctx\_st}}\ OSSL\_STORE\_LOADER\_CTX;}
+\DoxyCodeLine{00126\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00127\ }
+\DoxyCodeLine{00128\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00129\ \textcolor{comment}{\ *\ \ OSSL\_STORE\_CTX\ stuff}}
+\DoxyCodeLine{00130\ \textcolor{comment}{\ *\ \ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00131\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00132\ }
+\DoxyCodeLine{00133\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__store__ctx__st}{ossl\_store\_ctx\_st}}\ \{}
+\DoxyCodeLine{00134\ \ \ \ \ \textcolor{keyword}{const}\ OSSL\_STORE\_LOADER\ *loader;\ \textcolor{comment}{/*\ legacy\ */}}
+\DoxyCodeLine{00135\ \ \ \ \ OSSL\_STORE\_LOADER\ *fetched\_loader;}
+\DoxyCodeLine{00136\ \ \ \ \ OSSL\_STORE\_LOADER\_CTX\ *loader\_ctx;}
+\DoxyCodeLine{00137\ \ \ \ \ OSSL\_STORE\_post\_process\_info\_fn\ post\_process;}
+\DoxyCodeLine{00138\ \ \ \ \ \textcolor{keywordtype}{void}\ *post\_process\_data;}
+\DoxyCodeLine{00139\ \ \ \ \ \textcolor{keywordtype}{int}\ expected\_type;}
+\DoxyCodeLine{00140\ }
+\DoxyCodeLine{00141\ \ \ \ \ \textcolor{keywordtype}{char}\ *properties;}
+\DoxyCodeLine{00142\ }
+\DoxyCodeLine{00143\ \ \ \ \ \textcolor{comment}{/*\ 0\ before\ the\ first\ STORE\_load(),\ 1\ otherwise\ */}}
+\DoxyCodeLine{00144\ \ \ \ \ \textcolor{keywordtype}{int}\ loading;}
+\DoxyCodeLine{00145\ \ \ \ \ \textcolor{comment}{/*\ 1\ on\ load\ error,\ only\ valid\ for\ fetched\ loaders\ */}}
+\DoxyCodeLine{00146\ \ \ \ \ \textcolor{keywordtype}{int}\ error\_flag;}
+\DoxyCodeLine{00147\ }
+\DoxyCodeLine{00148\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00149\ \textcolor{comment}{\ \ \ \ \ *\ Cache\ of\ stuff,\ to\ be\ able\ to\ return\ the\ contents\ of\ a\ PKCS\#12}}
+\DoxyCodeLine{00150\ \textcolor{comment}{\ \ \ \ \ *\ blob,\ one\ object\ at\ a\ time.}}
+\DoxyCodeLine{00151\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00152\ \ \ \ \ STACK\_OF(OSSL\_STORE\_INFO)\ *cached\_info;}
+\DoxyCodeLine{00153\ }
+\DoxyCodeLine{00154\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__passphrase__data__st}{ossl\_passphrase\_data\_st}}\ pwdata;}
+\DoxyCodeLine{00155\ \};}
+\DoxyCodeLine{00156\ }
+\DoxyCodeLine{00157\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00158\ \textcolor{comment}{\ *\ \ 'file'\ scheme\ stuff}}
+\DoxyCodeLine{00159\ \textcolor{comment}{\ *\ \ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00160\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00161\ }
+\DoxyCodeLine{00162\ OSSL\_STORE\_LOADER\_CTX\ *ossl\_store\_file\_attach\_pem\_bio\_int(BIO\ *bp);}
+\DoxyCodeLine{00163\ \textcolor{keywordtype}{int}\ ossl\_store\_file\_detach\_pem\_bio\_int(OSSL\_STORE\_LOADER\_CTX\ *ctx);}
+\DoxyCodeLine{00164\ }
+\DoxyCodeLine{00165\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00166\ \textcolor{comment}{\ *\ Provider\ stuff}}
+\DoxyCodeLine{00167\ \textcolor{comment}{\ *\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00168\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00169\ OSSL\_STORE\_LOADER\ *ossl\_store\_loader\_fetch(OSSL\_LIB\_CTX\ *libctx,}
+\DoxyCodeLine{00170\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *scheme,}
+\DoxyCodeLine{00171\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *properties);}
+\DoxyCodeLine{00172\ }
+\DoxyCodeLine{00173\ \textcolor{comment}{/*\ Standard\ function\ to\ handle\ the\ result\ from\ OSSL\_FUNC\_store\_load()\ */}}
+\DoxyCodeLine{00174\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structossl__load__result__data__st}{ossl\_load\_result\_data\_st}}\ \{}
+\DoxyCodeLine{00175\ \ \ \ \ OSSL\_STORE\_INFO\ *v;\ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ To\ be\ filled\ in\ */}}
+\DoxyCodeLine{00176\ \ \ \ \ OSSL\_STORE\_CTX\ *ctx;}
+\DoxyCodeLine{00177\ \};}
+\DoxyCodeLine{00178\ OSSL\_CALLBACK\ ossl\_store\_handle\_load\_result;}
+
+\end{DoxyCode}

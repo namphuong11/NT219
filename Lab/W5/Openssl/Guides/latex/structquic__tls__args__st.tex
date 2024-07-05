@@ -1,0 +1,58 @@
+\doxysection{quic\+\_\+tls\+\_\+args\+\_\+st Struct Reference}
+\hypertarget{structquic__tls__args__st}{}\label{structquic__tls__args__st}\index{quic\_tls\_args\_st@{quic\_tls\_args\_st}}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{structquic__tls__args__st_a51b6211f6652dfc5e3d017e4068073be}\label{structquic__tls__args__st_a51b6211f6652dfc5e3d017e4068073be} 
+SSL \texorpdfstring{$\ast$}{*} {\bfseries s}
+\item 
+\Hypertarget{structquic__tls__args__st_abf5aa8af532f95af4604c4139ad34d94}\label{structquic__tls__args__st_abf5aa8af532f95af4604c4139ad34d94} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries crypto\+\_\+send\+\_\+cb} )(const unsigned char \texorpdfstring{$\ast$}{*}buf, size\+\_\+t buf\+\_\+len, size\+\_\+t \texorpdfstring{$\ast$}{*}consumed, void \texorpdfstring{$\ast$}{*}arg)
+\item 
+\Hypertarget{structquic__tls__args__st_ab726dd178110928b529fbc37be4dea93}\label{structquic__tls__args__st_ab726dd178110928b529fbc37be4dea93} 
+void \texorpdfstring{$\ast$}{*} {\bfseries crypto\+\_\+send\+\_\+cb\+\_\+arg}
+\item 
+\Hypertarget{structquic__tls__args__st_a4d27b1ae219dadfacf716e7ae81656f4}\label{structquic__tls__args__st_a4d27b1ae219dadfacf716e7ae81656f4} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries crypto\+\_\+recv\+\_\+rcd\+\_\+cb} )(const unsigned char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}buf, size\+\_\+t \texorpdfstring{$\ast$}{*}bytes\+\_\+read, void \texorpdfstring{$\ast$}{*}arg)
+\item 
+\Hypertarget{structquic__tls__args__st_aef781402bd2bb93694b261f6a650c4cf}\label{structquic__tls__args__st_aef781402bd2bb93694b261f6a650c4cf} 
+void \texorpdfstring{$\ast$}{*} {\bfseries crypto\+\_\+recv\+\_\+rcd\+\_\+cb\+\_\+arg}
+\item 
+\Hypertarget{structquic__tls__args__st_af80acb2cb157001440ec7ada60a825df}\label{structquic__tls__args__st_af80acb2cb157001440ec7ada60a825df} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries crypto\+\_\+release\+\_\+rcd\+\_\+cb} )(size\+\_\+t bytes\+\_\+read, void \texorpdfstring{$\ast$}{*}arg)
+\item 
+\Hypertarget{structquic__tls__args__st_a7ff9b007e15cfbbb5dbd9ef10bd0c444}\label{structquic__tls__args__st_a7ff9b007e15cfbbb5dbd9ef10bd0c444} 
+void \texorpdfstring{$\ast$}{*} {\bfseries crypto\+\_\+release\+\_\+rcd\+\_\+cb\+\_\+arg}
+\item 
+\Hypertarget{structquic__tls__args__st_aa69492d415c69cdcb2056eb2b3fb1ceb}\label{structquic__tls__args__st_aa69492d415c69cdcb2056eb2b3fb1ceb} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries yield\+\_\+secret\+\_\+cb} )(uint32\+\_\+t enc\+\_\+level, int direction, uint32\+\_\+t suite\+\_\+id, EVP\+\_\+\+MD \texorpdfstring{$\ast$}{*}md, const unsigned char \texorpdfstring{$\ast$}{*}secret, size\+\_\+t secret\+\_\+len, void \texorpdfstring{$\ast$}{*}arg)
+\item 
+\Hypertarget{structquic__tls__args__st_a49708eb7f4a72c210870ae3d4f0494a5}\label{structquic__tls__args__st_a49708eb7f4a72c210870ae3d4f0494a5} 
+void \texorpdfstring{$\ast$}{*} {\bfseries yield\+\_\+secret\+\_\+cb\+\_\+arg}
+\item 
+\Hypertarget{structquic__tls__args__st_adafdca1a6c6c9218ccdd8b2873280683}\label{structquic__tls__args__st_adafdca1a6c6c9218ccdd8b2873280683} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries got\+\_\+transport\+\_\+params\+\_\+cb} )(const unsigned char \texorpdfstring{$\ast$}{*}params, size\+\_\+t params\+\_\+len, void \texorpdfstring{$\ast$}{*}arg)
+\item 
+\Hypertarget{structquic__tls__args__st_aa332bde7aa66b9ad34178dfac1802b1d}\label{structquic__tls__args__st_aa332bde7aa66b9ad34178dfac1802b1d} 
+void \texorpdfstring{$\ast$}{*} {\bfseries got\+\_\+transport\+\_\+params\+\_\+cb\+\_\+arg}
+\item 
+\Hypertarget{structquic__tls__args__st_a0ff27f8be2c046afe16ae4d27745f400}\label{structquic__tls__args__st_a0ff27f8be2c046afe16ae4d27745f400} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries handshake\+\_\+complete\+\_\+cb} )(void \texorpdfstring{$\ast$}{*}arg)
+\item 
+\Hypertarget{structquic__tls__args__st_abcc7dff1f92213d5162350224d67c5fa}\label{structquic__tls__args__st_abcc7dff1f92213d5162350224d67c5fa} 
+void \texorpdfstring{$\ast$}{*} {\bfseries handshake\+\_\+complete\+\_\+cb\+\_\+arg}
+\item 
+\Hypertarget{structquic__tls__args__st_ab6d4fa2338c06d25890b297f0eda2a48}\label{structquic__tls__args__st_ab6d4fa2338c06d25890b297f0eda2a48} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries alert\+\_\+cb} )(void \texorpdfstring{$\ast$}{*}arg, unsigned char alert\+\_\+code)
+\item 
+\Hypertarget{structquic__tls__args__st_aee2b76f5685f31b462d7219968e6b01c}\label{structquic__tls__args__st_aee2b76f5685f31b462d7219968e6b01c} 
+void \texorpdfstring{$\ast$}{*} {\bfseries alert\+\_\+cb\+\_\+arg}
+\item 
+\Hypertarget{structquic__tls__args__st_a1e66a661f481ee362c0bc6a34ff8921b}\label{structquic__tls__args__st_a1e66a661f481ee362c0bc6a34ff8921b} 
+int {\bfseries is\+\_\+server}
+\end{DoxyCompactItemize}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/namph/\+Downloads/openssl/openssl-\/3.\+2.\+1/include/internal/quic\+\_\+tls.\+h\end{DoxyCompactItemize}

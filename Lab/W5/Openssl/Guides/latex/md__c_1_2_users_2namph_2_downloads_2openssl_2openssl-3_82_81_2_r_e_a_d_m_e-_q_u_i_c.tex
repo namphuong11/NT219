@@ -1,0 +1,36 @@
+\chapter{Using Open\+SSL with QUIC}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_r_e_a_d_m_e-_q_u_i_c}{}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_r_e_a_d_m_e-_q_u_i_c}\index{Using OpenSSL with QUIC@{Using OpenSSL with QUIC}}
+From Open\+SSL 3.\+2, Open\+SSL features support for making QUIC connections as a client.
+
+Users interested in using the new QUIC functionality are encouraged to look at some of the following resources\+:
+
+
+\begin{DoxyItemize}
+\item The new \href{https://www.openssl.org/docs/manmaster/man7/ossl-guide-introduction.html}{\texttt{ Open\+SSL Guide}}, which provides introductory guides on the use of TLS, QUIC, and other Open\+SSL functionality.
+\item The \href{https://www.openssl.org/docs/manmaster/man7/ossl-guide-introduction.html}{\texttt{ Open\+SSL Guide}} incorporates various code samples. The complete source for these can be \href{./demos/guide/}{\texttt{ found in the source tree under {\ttfamily demos/guide}}}.
+\item The \href{https://www.openssl.org/docs/manmaster/man7/openssl-quic.html}{\texttt{ openssl-\/quic(7) manual page}}, which provides a basic reference overview of QUIC functionality and how use of QUIC differs from use of TLS with regard to our API.
+\item The \href{https://github.com/openssl/openssl/tree/master/doc/designs/ddd}{\texttt{ Demo-\/\+Driven Design (DDD)}} demos, which demonstrate the use of QUIC using simple examples. These can be \mbox{[}found in the source tree under {\ttfamily doc/designs/ddd}\mbox{]}.
+\item The \href{./demos/http3/}{\texttt{ demo found in {\ttfamily demos/http3}}}, which provides an HTTP/3 client example using the nghttp3 HTTP/3 library.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_r_e_a_d_m_e-_q_u_i_c_autotoc_md946}{}\doxysection{\texorpdfstring{FAQ}{FAQ}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_r_e_a_d_m_e-_q_u_i_c_autotoc_md946}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_r_e_a_d_m_e-_q_u_i_c_autotoc_md947}{}\doxysubsection{\texorpdfstring{Why would I want to use QUIC, and what functionality does QUIC offer relative to TLS or DTLS?}{Why would I want to use QUIC, and what functionality does QUIC offer relative to TLS or DTLS?}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_r_e_a_d_m_e-_q_u_i_c_autotoc_md947}
+QUIC is a state-\/of-\/the-\/art secure transport protocol carried over UDP. It can serve many of the use cases of SSL/\+TLS as well as those of DTLS.
+
+QUIC delivers a number of advantages such as support for multiple streams of communication; it is the basis for HTTP/3 \href{https://tools.ietf.org/html/rfc9114}{\texttt{ RFC 9114}}; fast connection initiation; and connection migration (enabling a connection to survive IP address changes). For a more complete description of what QUIC is and its advantages see the \href{https://www.openssl.org/docs/manmaster/man7/ossl-guide-quic-introduction.html}{\texttt{ QUIC Introduction}} in the \href{https://www.openssl.org/docs/manmaster/man7/ossl-guide-introduction.html}{\texttt{ Open\+SSL Guide}}.
+
+For a comprehensive overview of Open\+SSL\textquotesingle{}s QUIC implementation, see the \href{https://www.openssl.org/docs/manmaster/man7/openssl-quic.html}{\texttt{ openssl-\/quic(7) manual page}}.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_r_e_a_d_m_e-_q_u_i_c_autotoc_md948}{}\doxysubsection{\texorpdfstring{How can I use HTTP/3 with Open\+SSL?}{How can I use HTTP/3 with Open\+SSL?}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_r_e_a_d_m_e-_q_u_i_c_autotoc_md948}
+There are many HTTP/3 implementations in C available. The use of one such HTTP/3 library with Open\+SSL QUIC is demonstrated via the \href{./demos/http3/}{\texttt{ demo found in {\ttfamily demos/http3}}}.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_r_e_a_d_m_e-_q_u_i_c_autotoc_md949}{}\doxysubsection{\texorpdfstring{How can I use Open\+SSL QUIC in my own application for a different protocol?}{How can I use Open\+SSL QUIC in my own application for a different protocol?}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_r_e_a_d_m_e-_q_u_i_c_autotoc_md949}
+The \href{https://www.openssl.org/docs/manmaster/man7/ossl-guide-introduction.html}{\texttt{ Open\+SSL Guide}} provides introductory examples for how to make use of Open\+SSL QUIC.
+
+The \href{https://www.openssl.org/docs/manmaster/man7/openssl-quic.html}{\texttt{ openssl-\/quic(7) manual page}} and the \href{https://github.com/openssl/openssl/tree/master/doc/designs/ddd}{\texttt{ Demo-\/\+Driven Design (DDD)}} demos may also be helpful to illustrate the changes needed if you are trying to adapt an existing application.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_r_e_a_d_m_e-_q_u_i_c_autotoc_md950}{}\doxysubsection{\texorpdfstring{How can I test QUIC using {\ttfamily openssl s\+\_\+client}?}{How can I test QUIC using {\ttfamily openssl s\+\_\+client}?}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_r_e_a_d_m_e-_q_u_i_c_autotoc_md950}
+There is basic support for single-\/stream QUIC using {\ttfamily openssl s\+\_\+client}\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\$\ openssl\ s\_client\ -\/quic\ -\/alpn\ myalpn\ -\/connect\ host:port}
+
+\end{DoxyCode}
+
+
+In the above example replace {\ttfamily host} with the hostname of the server (e.\+g. {\ttfamily www.\+example.\+com}) and {\ttfamily port} with the port for the server (e.\+g. {\ttfamily 443}). Replace {\ttfamily myalpn} with the Application Layer Protocol to use (e.\+g.{\ttfamily h3} represents HTTP/3). IANA maintains a standard list of \href{https://www.iana.org/assignments/tls-extensiontype-values/tls-extensiontype-values.xhtml\#alpn-protocol-ids}{\texttt{ ALPN ids}} that can be used.
+
+This example connects to a QUIC server and opens a single bidirectional stream. Data can be passed via stdin/stdout as usual. This allows test usage of QUIC using simple TCP/\+TLS-\/like usage. Note that Open\+SSL has no direct support for HTTP/3 so connecting to an HTTP/3 server should be possible but sending an HTTP/3 request or receiving any response data is not. 

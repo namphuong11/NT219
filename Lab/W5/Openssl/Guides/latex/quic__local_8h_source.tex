@@ -1,0 +1,344 @@
+\doxysection{quic\+\_\+local.\+h}
+\hypertarget{quic__local_8h_source}{}\label{quic__local_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/ssl/quic/quic\_local.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/ssl/quic/quic\_local.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2022-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_QUIC\_LOCAL\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_QUIC\_LOCAL\_H}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#\ include\ <openssl/ssl.h>}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ include\ "{}internal/quic\_ssl.h"{}}\ \ \ \ \ \ \ \textcolor{comment}{/*\ QUIC\_CONNECTION\ */}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#\ include\ "{}internal/quic\_txp.h"{}}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#\ include\ "{}internal/quic\_statm.h"{}}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#\ include\ "{}internal/quic\_demux.h"{}}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#\ include\ "{}internal/quic\_record\_rx.h"{}}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#\ include\ "{}internal/quic\_tls.h"{}}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#\ include\ "{}internal/quic\_fc.h"{}}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#\ include\ "{}internal/quic\_stream.h"{}}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#\ include\ "{}internal/quic\_channel.h"{}}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#\ include\ "{}internal/quic\_reactor.h"{}}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#\ include\ "{}internal/quic\_thread\_assist.h"{}}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#\ include\ "{}../ssl\_local.h"{}}}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#\ ifndef\ OPENSSL\_NO\_QUIC}}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00030\ \textcolor{comment}{\ *\ QUIC\ stream\ SSL\ object\ (QSSO)\ type.\ This\ implements\ the\ API\ personality\ layer}}
+\DoxyCodeLine{00031\ \textcolor{comment}{\ *\ for\ QSSO\ objects,\ wrapping\ the\ QUIC-\/native\ QUIC\_STREAM\ object\ and\ tracking}}
+\DoxyCodeLine{00032\ \textcolor{comment}{\ *\ state\ required\ by\ the\ libssl\ API\ personality.}}
+\DoxyCodeLine{00033\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00034\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structquic__xso__st}{quic\_xso\_st}}\ \{}
+\DoxyCodeLine{00035\ \ \ \ \ \textcolor{comment}{/*\ SSL\ object\ common\ header.\ */}}
+\DoxyCodeLine{00036\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structssl__st}{ssl\_st}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ssl;}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \ \ \ \ \textcolor{comment}{/*\ The\ connection\ this\ stream\ is\ associated\ with.\ Always\ non-\/NULL.\ */}}
+\DoxyCodeLine{00039\ \ \ \ \ \mbox{\hyperlink{structquic__conn__st}{QUIC\_CONNECTION}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *conn;}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{comment}{/*\ The\ stream\ object.\ Always\ non-\/NULL\ for\ as\ long\ as\ the\ XSO\ exists.\ */}}
+\DoxyCodeLine{00042\ \ \ \ \ \mbox{\hyperlink{structquic__stream__st}{QUIC\_STREAM}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *stream;}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00045\ \textcolor{comment}{\ \ \ \ \ *\ Has\ this\ stream\ been\ logically\ configured\ into\ blocking\ mode?\ Only}}
+\DoxyCodeLine{00046\ \textcolor{comment}{\ \ \ \ \ *\ meaningful\ if\ desires\_blocking\_set\ is\ 1.\ Ignored\ if\ blocking\ is\ not}}
+\DoxyCodeLine{00047\ \textcolor{comment}{\ \ \ \ \ *\ currently\ possible\ given\ QUIC\_CONNECTION\ configuration.}}
+\DoxyCodeLine{00048\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ desires\_blocking\ \ \ \ \ \ \ \ :\ 1;}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00052\ \textcolor{comment}{\ \ \ \ \ *\ Has\ SSL\_set\_blocking\_mode\ been\ called\ on\ this\ stream?\ If\ not\ set,\ we}}
+\DoxyCodeLine{00053\ \textcolor{comment}{\ \ \ \ \ *\ inherit\ from\ the\ QUIC\_CONNECTION\ blocking\ state.}}
+\DoxyCodeLine{00054\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00055\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ desires\_blocking\_set\ \ \ \ :\ 1;}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00058\ \textcolor{comment}{\ \ \ \ \ *\ This\ state\ tracks\ SSL\_write\ all-\/or-\/nothing\ (AON)\ write\ semantics}}
+\DoxyCodeLine{00059\ \textcolor{comment}{\ \ \ \ \ *\ emulation.}}
+\DoxyCodeLine{00060\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00061\ \textcolor{comment}{\ \ \ \ \ *\ Example\ chronology:}}
+\DoxyCodeLine{00062\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00063\ \textcolor{comment}{\ \ \ \ \ *\ \ \ t=0:\ \ aon\_write\_in\_progress=0}}
+\DoxyCodeLine{00064\ \textcolor{comment}{\ \ \ \ \ *\ \ \ t=1:\ \ SSL\_write(ssl,\ b1,\ l1)\ called;}}
+\DoxyCodeLine{00065\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ too\ big\ to\ enqueue\ into\ sstream\ at\ once,\ SSL\_ERROR\_WANT\_WRITE;}}
+\DoxyCodeLine{00066\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ aon\_write\_in\_progress=1;\ aon\_buf\_base=b1;\ aon\_buf\_len=l1;}}
+\DoxyCodeLine{00067\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ aon\_buf\_pos\ <\ l1\ (depends\ on\ how\ much\ room\ was\ in\ sstream);}}
+\DoxyCodeLine{00068\ \textcolor{comment}{\ \ \ \ \ *\ \ \ t=2:\ \ SSL\_write(ssl,\ b2,\ l2);}}
+\DoxyCodeLine{00069\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ b2\ must\ equal\ b1\ (validated\ unless\ ACCEPT\_MOVING\_WRITE\_BUFFER)}}
+\DoxyCodeLine{00070\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ l2\ must\ equal\ l1\ (always\ validated)}}
+\DoxyCodeLine{00071\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ append\ into\ sstream\ from\ [b2\ +\ aon\_buf\_pos,\ b2\ +\ aon\_buf\_len)}}
+\DoxyCodeLine{00072\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ if\ done,\ aon\_write\_in\_progress=0}}
+\DoxyCodeLine{00073\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00074\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00075\ \ \ \ \ \textcolor{comment}{/*\ Is\ an\ AON\ write\ in\ progress?\ */}}
+\DoxyCodeLine{00076\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ aon\_write\_in\_progress\ \ \ :\ 1;}
+\DoxyCodeLine{00077\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00078\ \textcolor{comment}{\ \ \ \ \ *\ The\ base\ buffer\ pointer\ the\ caller\ passed\ us\ for\ the\ initial\ AON\ write}}
+\DoxyCodeLine{00079\ \textcolor{comment}{\ \ \ \ \ *\ call.\ We\ use\ this\ for\ validation\ purposes\ unless}}
+\DoxyCodeLine{00080\ \textcolor{comment}{\ \ \ \ \ *\ ACCEPT\_MOVING\_WRITE\_BUFFER\ is\ enabled.}}
+\DoxyCodeLine{00081\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00082\ \textcolor{comment}{\ \ \ \ \ *\ NOTE:\ We\ never\ dereference\ this,\ as\ the\ caller\ might\ pass\ a\ different}}
+\DoxyCodeLine{00083\ \textcolor{comment}{\ \ \ \ \ *\ (but\ identical)\ buffer\ if\ using\ ACCEPT\_MOVING\_WRITE\_BUFFER.\ It\ is\ for}}
+\DoxyCodeLine{00084\ \textcolor{comment}{\ \ \ \ \ *\ validation\ by\ pointer\ comparison\ only.}}
+\DoxyCodeLine{00085\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00086\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \ \ \ \ \ \ \ \ \ \ \ \ *aon\_buf\_base;}
+\DoxyCodeLine{00087\ \ \ \ \ \textcolor{comment}{/*\ The\ total\ length\ of\ the\ AON\ buffer\ being\ sent,\ in\ bytes.\ */}}
+\DoxyCodeLine{00088\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ aon\_buf\_len;}
+\DoxyCodeLine{00089\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00090\ \textcolor{comment}{\ \ \ \ \ *\ The\ position\ in\ the\ AON\ buffer\ up\ to\ which\ we\ have\ successfully\ sent\ data}}
+\DoxyCodeLine{00091\ \textcolor{comment}{\ \ \ \ \ *\ so\ far.}}
+\DoxyCodeLine{00092\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00093\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ aon\_buf\_pos;}
+\DoxyCodeLine{00094\ }
+\DoxyCodeLine{00095\ \ \ \ \ \textcolor{comment}{/*\ SSL\_set\_mode\ */}}
+\DoxyCodeLine{00096\ \ \ \ \ uint32\_t\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ssl\_mode;}
+\DoxyCodeLine{00097\ }
+\DoxyCodeLine{00098\ \ \ \ \ \textcolor{comment}{/*\ SSL\_set\_options\ */}}
+\DoxyCodeLine{00099\ \ \ \ \ uint64\_t\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ssl\_options;}
+\DoxyCodeLine{00100\ }
+\DoxyCodeLine{00101\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00102\ \textcolor{comment}{\ \ \ \ \ *\ Last\ 'normal'\ error\ during\ an\ app-\/level\ I/O\ operation,\ used\ by}}
+\DoxyCodeLine{00103\ \textcolor{comment}{\ \ \ \ \ *\ SSL\_get\_error();\ used\ to\ track\ data-\/path\ errors\ like\ SSL\_ERROR\_WANT\_READ}}
+\DoxyCodeLine{00104\ \textcolor{comment}{\ \ \ \ \ *\ and\ SSL\_ERROR\_WANT\_WRITE.}}
+\DoxyCodeLine{00105\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00106\ \ \ \ \ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ last\_error;}
+\DoxyCodeLine{00107\ \};}
+\DoxyCodeLine{00108\ }
+\DoxyCodeLine{00109\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structquic__conn__st}{quic\_conn\_st}}\ \{}
+\DoxyCodeLine{00110\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00111\ \textcolor{comment}{\ \ \ \ \ *\ ssl\_st\ is\ a\ common\ header\ for\ ordinary\ SSL\ objects,\ QUIC\ connection}}
+\DoxyCodeLine{00112\ \textcolor{comment}{\ \ \ \ \ *\ objects\ and\ QUIC\ stream\ objects,\ allowing\ objects\ of\ these\ different}}
+\DoxyCodeLine{00113\ \textcolor{comment}{\ \ \ \ \ *\ types\ to\ be\ disambiguated\ at\ runtime\ and\ providing\ some\ common\ fields.}}
+\DoxyCodeLine{00114\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00115\ \textcolor{comment}{\ \ \ \ \ *\ Note:\ This\ must\ come\ first\ in\ the\ QUIC\_CONNECTION\ structure.}}
+\DoxyCodeLine{00116\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00117\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structssl__st}{ssl\_st}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ssl;}
+\DoxyCodeLine{00118\ }
+\DoxyCodeLine{00119\ \ \ \ \ SSL\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *tls;}
+\DoxyCodeLine{00120\ }
+\DoxyCodeLine{00121\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00122\ \textcolor{comment}{\ \ \ \ \ *\ The\ QUIC\ channel\ providing\ the\ core\ QUIC\ connection\ implementation.\ Note}}
+\DoxyCodeLine{00123\ \textcolor{comment}{\ \ \ \ \ *\ that\ this\ is\ not\ instantiated\ until\ we\ actually\ start\ trying\ to\ do\ the}}
+\DoxyCodeLine{00124\ \textcolor{comment}{\ \ \ \ \ *\ handshake.\ This\ is\ to\ allow\ us\ to\ gather\ information\ like\ whether\ we\ are}}
+\DoxyCodeLine{00125\ \textcolor{comment}{\ \ \ \ \ *\ going\ to\ be\ in\ client\ or\ server\ mode\ before\ committing\ to\ instantiating}}
+\DoxyCodeLine{00126\ \textcolor{comment}{\ \ \ \ \ *\ the\ channel,\ since\ we\ want\ to\ determine\ the\ channel\ arguments\ based\ on}}
+\DoxyCodeLine{00127\ \textcolor{comment}{\ \ \ \ \ *\ that.}}
+\DoxyCodeLine{00128\ \textcolor{comment}{\ \ \ \ \ *}}
+\DoxyCodeLine{00129\ \textcolor{comment}{\ \ \ \ \ *\ The\ channel\ remains\ available\ after\ connection\ termination\ until\ the\ SSL}}
+\DoxyCodeLine{00130\ \textcolor{comment}{\ \ \ \ \ *\ object\ is\ freed,\ thus\ (ch\ !=\ NULL)\ iff\ (started\ ==\ 1).}}
+\DoxyCodeLine{00131\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00132\ \ \ \ \ \mbox{\hyperlink{structquic__channel__st}{QUIC\_CHANNEL}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *ch;}
+\DoxyCodeLine{00133\ }
+\DoxyCodeLine{00134\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00135\ \textcolor{comment}{\ \ \ \ \ *\ The\ mutex\ used\ to\ synchronise\ access\ to\ the\ QUIC\_CHANNEL.\ We\ own\ this\ but}}
+\DoxyCodeLine{00136\ \textcolor{comment}{\ \ \ \ \ *\ provide\ it\ to\ the\ channel.}}
+\DoxyCodeLine{00137\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00138\ \ \ \ \ CRYPTO\_MUTEX\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *mutex;}
+\DoxyCodeLine{00139\ }
+\DoxyCodeLine{00140\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00141\ \textcolor{comment}{\ \ \ \ \ *\ If\ we\ have\ a\ default\ stream\ attached,\ this\ is\ the\ internal\ XSO}}
+\DoxyCodeLine{00142\ \textcolor{comment}{\ \ \ \ \ *\ object.\ If\ there\ is\ no\ default\ stream,\ this\ is\ NULL.}}
+\DoxyCodeLine{00143\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00144\ \ \ \ \ \mbox{\hyperlink{structquic__xso__st}{QUIC\_XSO}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *default\_xso;}
+\DoxyCodeLine{00145\ }
+\DoxyCodeLine{00146\ \ \ \ \ \textcolor{comment}{/*\ The\ network\ read\ and\ write\ BIOs.\ */}}
+\DoxyCodeLine{00147\ \ \ \ \ BIO\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *net\_rbio,\ *net\_wbio;}
+\DoxyCodeLine{00148\ }
+\DoxyCodeLine{00149\ \ \ \ \ \textcolor{comment}{/*\ Initial\ peer\ L4\ address.\ */}}
+\DoxyCodeLine{00150\ \ \ \ \ BIO\_ADDR\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ init\_peer\_addr;}
+\DoxyCodeLine{00151\ }
+\DoxyCodeLine{00152\ \textcolor{preprocessor}{\#\ \ ifndef\ OPENSSL\_NO\_QUIC\_THREAD\_ASSIST}}
+\DoxyCodeLine{00153\ \ \ \ \ \textcolor{comment}{/*\ Manages\ thread\ for\ QUIC\ thread\ assisted\ mode.\ */}}
+\DoxyCodeLine{00154\ \ \ \ \ \mbox{\hyperlink{structquic__thread__assist__st}{QUIC\_THREAD\_ASSIST}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ thread\_assist;}
+\DoxyCodeLine{00155\ \textcolor{preprocessor}{\#\ \ endif}}
+\DoxyCodeLine{00156\ }
+\DoxyCodeLine{00157\ \ \ \ \ \textcolor{comment}{/*\ If\ non-\/NULL,\ used\ instead\ of\ ossl\_time\_now().\ Used\ for\ testing.\ */}}
+\DoxyCodeLine{00158\ \ \ \ \ \mbox{\hyperlink{struct_o_s_s_l___t_i_m_e}{OSSL\_TIME}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (*override\_now\_cb)(\textcolor{keywordtype}{void}\ *arg);}
+\DoxyCodeLine{00159\ \ \ \ \ \textcolor{keywordtype}{void}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *override\_now\_cb\_arg;}
+\DoxyCodeLine{00160\ }
+\DoxyCodeLine{00161\ \ \ \ \ \textcolor{comment}{/*\ Number\ of\ XSOs\ allocated.\ Includes\ the\ default\ XSO,\ if\ any.\ */}}
+\DoxyCodeLine{00162\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ num\_xso;}
+\DoxyCodeLine{00163\ }
+\DoxyCodeLine{00164\ \ \ \ \ \textcolor{comment}{/*\ Have\ we\ started?\ */}}
+\DoxyCodeLine{00165\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ started\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ 1;}
+\DoxyCodeLine{00166\ }
+\DoxyCodeLine{00167\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00168\ \textcolor{comment}{\ \ \ \ \ *\ This\ is\ 1\ if\ we\ were\ instantiated\ using\ a\ QUIC\ server\ method}}
+\DoxyCodeLine{00169\ \textcolor{comment}{\ \ \ \ \ *\ (for\ future\ use).}}
+\DoxyCodeLine{00170\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00171\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ as\_server\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ 1;}
+\DoxyCodeLine{00172\ }
+\DoxyCodeLine{00173\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00174\ \textcolor{comment}{\ \ \ \ \ *\ Has\ the\ application\ called\ SSL\_set\_accept\_state?\ We\ require\ this\ to\ be}}
+\DoxyCodeLine{00175\ \textcolor{comment}{\ \ \ \ \ *\ congruent\ with\ the\ value\ of\ as\_server.}}
+\DoxyCodeLine{00176\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00177\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ as\_server\_state\ \ \ \ \ \ \ \ \ :\ 1;}
+\DoxyCodeLine{00178\ }
+\DoxyCodeLine{00179\ \ \ \ \ \textcolor{comment}{/*\ Are\ we\ using\ thread\ assisted\ mode?\ Never\ changes\ after\ init.\ */}}
+\DoxyCodeLine{00180\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ is\_thread\_assisted\ \ \ \ \ \ :\ 1;}
+\DoxyCodeLine{00181\ }
+\DoxyCodeLine{00182\ \ \ \ \ \textcolor{comment}{/*\ Do\ connection-\/level\ operations\ (e.g.\ handshakes)\ run\ in\ blocking\ mode?\ */}}
+\DoxyCodeLine{00183\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ blocking\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ 1;}
+\DoxyCodeLine{00184\ }
+\DoxyCodeLine{00185\ \ \ \ \ \textcolor{comment}{/*\ Does\ the\ application\ want\ blocking\ mode?\ */}}
+\DoxyCodeLine{00186\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ desires\_blocking\ \ \ \ \ \ \ \ :\ 1;}
+\DoxyCodeLine{00187\ }
+\DoxyCodeLine{00188\ \ \ \ \ \textcolor{comment}{/*\ Have\ we\ created\ a\ default\ XSO\ yet?\ */}}
+\DoxyCodeLine{00189\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ default\_xso\_created\ \ \ \ \ :\ 1;}
+\DoxyCodeLine{00190\ }
+\DoxyCodeLine{00191\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00192\ \textcolor{comment}{\ \ \ \ \ *\ Pre-\/TERMINATING\ shutdown\ phase\ in\ which\ we\ are\ flushing\ streams.}}
+\DoxyCodeLine{00193\ \textcolor{comment}{\ \ \ \ \ *\ Monotonically\ transitions\ to\ 1.}}
+\DoxyCodeLine{00194\ \textcolor{comment}{\ \ \ \ \ *\ New\ streams\ cannot\ be\ created\ in\ this\ state.}}
+\DoxyCodeLine{00195\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00196\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ shutting\_down\ \ \ \ \ \ \ \ \ \ \ :\ 1;}
+\DoxyCodeLine{00197\ }
+\DoxyCodeLine{00198\ \ \ \ \ \textcolor{comment}{/*\ Have\ we\ probed\ the\ BIOs\ for\ addressing\ support?\ */}}
+\DoxyCodeLine{00199\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ addressing\_probe\_done\ \ \ :\ 1;}
+\DoxyCodeLine{00200\ }
+\DoxyCodeLine{00201\ \ \ \ \ \textcolor{comment}{/*\ Are\ we\ using\ addressed\ mode\ (BIO\_sendmmsg\ with\ non-\/NULL\ peer)?\ */}}
+\DoxyCodeLine{00202\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ addressed\_mode\_w\ \ \ \ \ \ \ \ :\ 1;}
+\DoxyCodeLine{00203\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ addressed\_mode\_r\ \ \ \ \ \ \ \ :\ 1;}
+\DoxyCodeLine{00204\ }
+\DoxyCodeLine{00205\ \ \ \ \ \textcolor{comment}{/*\ Default\ stream\ type.\ Defaults\ to\ SSL\_DEFAULT\_STREAM\_MODE\_AUTO\_BIDI.\ */}}
+\DoxyCodeLine{00206\ \ \ \ \ uint32\_t\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ default\_stream\_mode;}
+\DoxyCodeLine{00207\ }
+\DoxyCodeLine{00208\ \ \ \ \ \textcolor{comment}{/*\ SSL\_set\_mode.\ This\ is\ not\ used\ directly\ but\ inherited\ by\ new\ XSOs.\ */}}
+\DoxyCodeLine{00209\ \ \ \ \ uint32\_t\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ default\_ssl\_mode;}
+\DoxyCodeLine{00210\ }
+\DoxyCodeLine{00211\ \ \ \ \ \textcolor{comment}{/*\ SSL\_set\_options.\ This\ is\ not\ used\ directly\ but\ inherited\ by\ new\ XSOs.\ */}}
+\DoxyCodeLine{00212\ \ \ \ \ uint64\_t\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ default\_ssl\_options;}
+\DoxyCodeLine{00213\ }
+\DoxyCodeLine{00214\ \ \ \ \ \textcolor{comment}{/*\ SSL\_set\_incoming\_stream\_policy.\ */}}
+\DoxyCodeLine{00215\ \ \ \ \ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ incoming\_stream\_policy;}
+\DoxyCodeLine{00216\ \ \ \ \ uint64\_t\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ incoming\_stream\_aec;}
+\DoxyCodeLine{00217\ }
+\DoxyCodeLine{00218\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00219\ \textcolor{comment}{\ \ \ \ \ *\ Last\ 'normal'\ error\ during\ an\ app-\/level\ I/O\ operation,\ used\ by}}
+\DoxyCodeLine{00220\ \textcolor{comment}{\ \ \ \ \ *\ SSL\_get\_error();\ used\ to\ track\ data-\/path\ errors\ like\ SSL\_ERROR\_WANT\_READ}}
+\DoxyCodeLine{00221\ \textcolor{comment}{\ \ \ \ \ *\ and\ SSL\_ERROR\_WANT\_WRITE.}}
+\DoxyCodeLine{00222\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00223\ \ \ \ \ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ last\_error;}
+\DoxyCodeLine{00224\ \};}
+\DoxyCodeLine{00225\ }
+\DoxyCodeLine{00226\ \textcolor{comment}{/*\ Internal\ calls\ to\ the\ QUIC\ CSM\ which\ come\ from\ various\ places.\ */}}
+\DoxyCodeLine{00227\ \textcolor{keywordtype}{int}\ ossl\_quic\_conn\_on\_handshake\_confirmed(\mbox{\hyperlink{structquic__conn__st}{QUIC\_CONNECTION}}\ *qc);}
+\DoxyCodeLine{00228\ }
+\DoxyCodeLine{00229\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00230\ \textcolor{comment}{\ *\ To\ be\ called\ when\ a\ protocol\ violation\ occurs.\ The\ connection\ is\ torn\ down}}
+\DoxyCodeLine{00231\ \textcolor{comment}{\ *\ with\ the\ given\ error\ code,\ which\ should\ be\ a\ QUIC\_ERR\_*\ value.\ Reason\ string}}
+\DoxyCodeLine{00232\ \textcolor{comment}{\ *\ is\ optional\ and\ copied\ if\ provided.\ frame\_type\ should\ be\ 0\ if\ not\ applicable.}}
+\DoxyCodeLine{00233\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00234\ \textcolor{keywordtype}{void}\ ossl\_quic\_conn\_raise\_protocol\_error(\mbox{\hyperlink{structquic__conn__st}{QUIC\_CONNECTION}}\ *qc,}
+\DoxyCodeLine{00235\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ error\_code,}
+\DoxyCodeLine{00236\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ frame\_type,}
+\DoxyCodeLine{00237\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *reason);}
+\DoxyCodeLine{00238\ }
+\DoxyCodeLine{00239\ \textcolor{keywordtype}{void}\ ossl\_quic\_conn\_on\_remote\_conn\_close(\mbox{\hyperlink{structquic__conn__st}{QUIC\_CONNECTION}}\ *qc,}
+\DoxyCodeLine{00240\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structossl__quic__frame__conn__close__st}{OSSL\_QUIC\_FRAME\_CONN\_CLOSE}}\ *f);}
+\DoxyCodeLine{00241\ }
+\DoxyCodeLine{00242\ \textcolor{keywordtype}{int}\ ossl\_quic\_trace(\textcolor{keywordtype}{int}\ write\_p,\ \textcolor{keywordtype}{int}\ version,\ \textcolor{keywordtype}{int}\ content\_type,}
+\DoxyCodeLine{00243\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *buf,\ \textcolor{keywordtype}{size\_t}\ msglen,\ SSL\ *ssl,\ \textcolor{keywordtype}{void}\ *arg);}
+\DoxyCodeLine{00244\ }
+\DoxyCodeLine{00245\ \textcolor{preprocessor}{\#\ \ define\ OSSL\_QUIC\_ANY\_VERSION\ 0xFFFFF}}
+\DoxyCodeLine{00246\ \textcolor{preprocessor}{\#\ \ define\ IS\_QUIC\_METHOD(m)\ \(\backslash\)}}
+\DoxyCodeLine{00247\ \textcolor{preprocessor}{\ \ \ \ ((m)\ ==\ OSSL\_QUIC\_client\_method()\ ||\ \(\backslash\)}}
+\DoxyCodeLine{00248\ \textcolor{preprocessor}{\ \ \ \ \ (m)\ ==\ OSSL\_QUIC\_client\_thread\_method())}}
+\DoxyCodeLine{00249\ \textcolor{preprocessor}{\#\ \ define\ IS\_QUIC\_CTX(ctx)\ \ \ \ \ \ \ \ \ \ IS\_QUIC\_METHOD((ctx)-\/>method)}}
+\DoxyCodeLine{00250\ }
+\DoxyCodeLine{00251\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_CONNECTION\_FROM\_SSL\_int(ssl,\ c)\ \ \ \(\backslash\)}}
+\DoxyCodeLine{00252\ \textcolor{preprocessor}{\ \ \ \ \ ((ssl)\ ==\ NULL\ ?\ NULL\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00253\ \textcolor{preprocessor}{\ \ \ \ \ \ :\ ((ssl)-\/>type\ ==\ SSL\_TYPE\_QUIC\_CONNECTION\ \(\backslash\)}}
+\DoxyCodeLine{00254\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ ?\ (c\ QUIC\_CONNECTION\ *)(ssl)\ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00255\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ :\ NULL))}}
+\DoxyCodeLine{00256\ }
+\DoxyCodeLine{00257\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_XSO\_FROM\_SSL\_int(ssl,\ c)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00258\ \textcolor{preprocessor}{\ \ \ \ ((ssl)\ ==\ NULL\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00259\ \textcolor{preprocessor}{\ \ \ \ \ ?\ NULL\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00260\ \textcolor{preprocessor}{\ \ \ \ \ :\ (((ssl)-\/>type\ ==\ SSL\_TYPE\_QUIC\_XSO\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00261\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ ?\ (c\ QUIC\_XSO\ *)(ssl)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00262\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ :\ ((ssl)-\/>type\ ==\ SSL\_TYPE\_QUIC\_CONNECTION\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00263\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ ?\ (c\ QUIC\_XSO\ *)((QUIC\_CONNECTION\ *)(ssl))-\/>default\_xso\ \ \(\backslash\)}}
+\DoxyCodeLine{00264\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ :\ NULL))))}}
+\DoxyCodeLine{00265\ }
+\DoxyCodeLine{00266\ \textcolor{preprocessor}{\#\ \ define\ SSL\_CONNECTION\_FROM\_QUIC\_SSL\_int(ssl,\ c)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00267\ \textcolor{preprocessor}{\ \ \ \ \ ((ssl)\ ==\ NULL\ ?\ NULL\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00268\ \textcolor{preprocessor}{\ \ \ \ \ \ :\ ((ssl)-\/>type\ ==\ SSL\_TYPE\_QUIC\_CONNECTION\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00269\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ ?\ (c\ SSL\_CONNECTION\ *)((c\ QUIC\_CONNECTION\ *)(ssl))-\/>tls\ \(\backslash\)}}
+\DoxyCodeLine{00270\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ :\ NULL))}}
+\DoxyCodeLine{00271\ }
+\DoxyCodeLine{00272\ \textcolor{preprocessor}{\#\ \ define\ IS\_QUIC(ssl)\ ((ssl)\ !=\ NULL\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00273\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \&\&\ ((ssl)-\/>type\ ==\ SSL\_TYPE\_QUIC\_CONNECTION\ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00274\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ||\ (ssl)-\/>type\ ==\ SSL\_TYPE\_QUIC\_XSO))}}
+\DoxyCodeLine{00275\ \textcolor{preprocessor}{\#\ else}}
+\DoxyCodeLine{00276\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_CONNECTION\_FROM\_SSL\_int(ssl,\ c)\ NULL}}
+\DoxyCodeLine{00277\ \textcolor{preprocessor}{\#\ \ define\ QUIC\_XSO\_FROM\_SSL\_int(ssl,\ c)\ NULL}}
+\DoxyCodeLine{00278\ \textcolor{preprocessor}{\#\ \ define\ SSL\_CONNECTION\_FROM\_QUIC\_SSL\_int(ssl,\ c)\ NULL}}
+\DoxyCodeLine{00279\ \textcolor{preprocessor}{\#\ \ define\ IS\_QUIC(ssl)\ 0}}
+\DoxyCodeLine{00280\ \textcolor{preprocessor}{\#\ \ define\ IS\_QUIC\_CTX(ctx)\ 0}}
+\DoxyCodeLine{00281\ \textcolor{preprocessor}{\#\ \ define\ IS\_QUIC\_METHOD(m)\ 0}}
+\DoxyCodeLine{00282\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00283\ }
+\DoxyCodeLine{00284\ \textcolor{preprocessor}{\#\ define\ QUIC\_CONNECTION\_FROM\_SSL(ssl)\ \(\backslash\)}}
+\DoxyCodeLine{00285\ \textcolor{preprocessor}{\ \ \ \ QUIC\_CONNECTION\_FROM\_SSL\_int(ssl,\ SSL\_CONNECTION\_NO\_CONST)}}
+\DoxyCodeLine{00286\ \textcolor{preprocessor}{\#\ define\ QUIC\_CONNECTION\_FROM\_CONST\_SSL(ssl)\ \(\backslash\)}}
+\DoxyCodeLine{00287\ \textcolor{preprocessor}{\ \ \ \ QUIC\_CONNECTION\_FROM\_SSL\_int(ssl,\ const)}}
+\DoxyCodeLine{00288\ \textcolor{preprocessor}{\#\ define\ QUIC\_XSO\_FROM\_SSL(ssl)\ \(\backslash\)}}
+\DoxyCodeLine{00289\ \textcolor{preprocessor}{\ \ \ \ QUIC\_XSO\_FROM\_SSL\_int(ssl,\ SSL\_CONNECTION\_NO\_CONST)}}
+\DoxyCodeLine{00290\ \textcolor{preprocessor}{\#\ define\ QUIC\_XSO\_FROM\_CONST\_SSL(ssl)\ \(\backslash\)}}
+\DoxyCodeLine{00291\ \textcolor{preprocessor}{\ \ \ \ QUIC\_XSO\_FROM\_SSL\_int(ssl,\ const)}}
+\DoxyCodeLine{00292\ \textcolor{preprocessor}{\#\ define\ SSL\_CONNECTION\_FROM\_QUIC\_SSL(ssl)\ \(\backslash\)}}
+\DoxyCodeLine{00293\ \textcolor{preprocessor}{\ \ \ \ SSL\_CONNECTION\_FROM\_QUIC\_SSL\_int(ssl,\ SSL\_CONNECTION\_NO\_CONST)}}
+\DoxyCodeLine{00294\ \textcolor{preprocessor}{\#\ define\ SSL\_CONNECTION\_FROM\_CONST\_QUIC\_SSL(ssl)\ \(\backslash\)}}
+\DoxyCodeLine{00295\ \textcolor{preprocessor}{\ \ \ \ SSL\_CONNECTION\_FROM\_CONST\_QUIC\_SSL\_int(ssl,\ const)}}
+\DoxyCodeLine{00296\ }
+\DoxyCodeLine{00297\ \textcolor{preprocessor}{\#\ define\ IMPLEMENT\_quic\_meth\_func(version,\ func\_name,\ q\_accept,\ \(\backslash\)}}
+\DoxyCodeLine{00298\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ q\_connect,\ enc\_data)\ \(\backslash\)}}
+\DoxyCodeLine{00299\ \textcolor{preprocessor}{const\ SSL\_METHOD\ *func\_name(void)\ \ \(\backslash\)}}
+\DoxyCodeLine{00300\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{\ \(\backslash\)}}
+\DoxyCodeLine{00301\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ static\ const\ SSL\_METHOD\ func\_name\#\#\_data=\ \{\ \(\backslash\)}}
+\DoxyCodeLine{00302\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ version,\ \(\backslash\)}}
+\DoxyCodeLine{00303\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 0,\ \(\backslash\)}}
+\DoxyCodeLine{00304\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 0,\ \(\backslash\)}}
+\DoxyCodeLine{00305\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ossl\_quic\_new,\ \(\backslash\)}}
+\DoxyCodeLine{00306\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ossl\_quic\_free,\ \(\backslash\)}}
+\DoxyCodeLine{00307\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ossl\_quic\_reset,\ \(\backslash\)}}
+\DoxyCodeLine{00308\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ossl\_quic\_init,\ \(\backslash\)}}
+\DoxyCodeLine{00309\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ NULL\ }\textcolor{comment}{/*\ clear\ */}\textcolor{preprocessor}{,\ \(\backslash\)}}
+\DoxyCodeLine{00310\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ossl\_quic\_deinit,\ \(\backslash\)}}
+\DoxyCodeLine{00311\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ q\_accept,\ \(\backslash\)}}
+\DoxyCodeLine{00312\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ q\_connect,\ \(\backslash\)}}
+\DoxyCodeLine{00313\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ossl\_quic\_read,\ \(\backslash\)}}
+\DoxyCodeLine{00314\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ossl\_quic\_peek,\ \(\backslash\)}}
+\DoxyCodeLine{00315\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ossl\_quic\_write,\ \(\backslash\)}}
+\DoxyCodeLine{00316\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ NULL\ }\textcolor{comment}{/*\ shutdown\ */}\textcolor{preprocessor}{,\ \(\backslash\)}}
+\DoxyCodeLine{00317\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ NULL\ }\textcolor{comment}{/*\ renegotiate\ */}\textcolor{preprocessor}{,\ \(\backslash\)}}
+\DoxyCodeLine{00318\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ossl\_quic\_renegotiate\_check,\ \(\backslash\)}}
+\DoxyCodeLine{00319\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ NULL\ }\textcolor{comment}{/*\ read\_bytes\ */}\textcolor{preprocessor}{,\ \(\backslash\)}}
+\DoxyCodeLine{00320\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ NULL\ }\textcolor{comment}{/*\ write\_bytes\ */}\textcolor{preprocessor}{,\ \(\backslash\)}}
+\DoxyCodeLine{00321\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ NULL\ }\textcolor{comment}{/*\ dispatch\_alert\ */}\textcolor{preprocessor}{,\ \(\backslash\)}}
+\DoxyCodeLine{00322\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ossl\_quic\_ctrl,\ \(\backslash\)}}
+\DoxyCodeLine{00323\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ossl\_quic\_ctx\_ctrl,\ \(\backslash\)}}
+\DoxyCodeLine{00324\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ossl\_quic\_get\_cipher\_by\_char,\ \(\backslash\)}}
+\DoxyCodeLine{00325\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ NULL\ }\textcolor{comment}{/*\ put\_cipher\_by\_char\ */}\textcolor{preprocessor}{,\ \(\backslash\)}}
+\DoxyCodeLine{00326\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ossl\_quic\_pending,\ \(\backslash\)}}
+\DoxyCodeLine{00327\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ossl\_quic\_num\_ciphers,\ \(\backslash\)}}
+\DoxyCodeLine{00328\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ossl\_quic\_get\_cipher,\ \(\backslash\)}}
+\DoxyCodeLine{00329\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ tls1\_default\_timeout,\ \(\backslash\)}}
+\DoxyCodeLine{00330\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \&enc\_data,\ \(\backslash\)}}
+\DoxyCodeLine{00331\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ssl\_undefined\_void\_function,\ \(\backslash\)}}
+\DoxyCodeLine{00332\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ossl\_quic\_callback\_ctrl,\ \(\backslash\)}}
+\DoxyCodeLine{00333\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ossl\_quic\_ctx\_callback\_ctrl,\ \(\backslash\)}}
+\DoxyCodeLine{00334\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \};\ \(\backslash\)}}
+\DoxyCodeLine{00335\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ return\ \&func\_name\#\#\_data;\ \(\backslash\)}}
+\DoxyCodeLine{00336\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \}}}
+\DoxyCodeLine{00337\ }
+\DoxyCodeLine{00338\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

@@ -1,0 +1,124 @@
+\chapter{RX depacketizer}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2rx-depacketizer}{}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2rx-depacketizer}\index{RX depacketizer@{RX depacketizer}}
+This component takes a QUIC packet and parses the frames contained therein, to be forwarded to appropriate other components for further processing.
+
+In the \href{https://github.com/openssl/openssl/blob/master/doc/designs/quic-design/quic-overview.md}{\texttt{ overview}}, this is called the "{}\+RX Frame Handler"{}. The name "{}\+RX depacketizer"{} was chosen to reflect the kinship with the \href{https://github.com/openssl/openssl/pull/18570}{\texttt{ TX packetizer}}.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2rx-depacketizer_autotoc_md461}{}\doxysection{\texorpdfstring{Main structures}{Main structures}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2rx-depacketizer_autotoc_md461}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2rx-depacketizer_autotoc_md462}{}\doxysubsection{\texorpdfstring{Connection}{Connection}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2rx-depacketizer_autotoc_md462}
+Represented by an {\ttfamily QUIC\+\_\+\+CONNECTION} object, defined in \href{../../../include/internal/quic_ssl.h}{\texttt{ {\ttfamily include/internal/quic\+\_\+ssl.\+h}}}.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2rx-depacketizer_autotoc_md463}{}\doxysubsection{\texorpdfstring{Stream}{Stream}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2rx-depacketizer_autotoc_md463}
+Represented by an {\ttfamily QUIC\+\_\+\+STREAM} object (yet to be defined).\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2rx-depacketizer_autotoc_md464}{}\doxysubsection{\texorpdfstring{Packets}{Packets}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2rx-depacketizer_autotoc_md464}
+Represented by the {\ttfamily OSSL\+\_\+\+QRX\+\_\+\+PKT} structure, defined in {\ttfamily \doxylink{quic__record__rx_8h_source}{include/internal/quic\+\_\+record\+\_\+rx.\+h}} in \href{https://github.com/openssl/openssl/pull/18949}{\texttt{ QUIC Demuxer and Record Layer (RX+\+TX)}}.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2rx-depacketizer_autotoc_md465}{}\doxysection{\texorpdfstring{Interactions}{Interactions}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2rx-depacketizer_autotoc_md465}
+The RX depacketizer receives a packet from the QUIC Read Record Layer, and then processes frames in two phases\+:
+
+
+\begin{DoxyEnumerate}
+\item Collect information for the ACK Manager
+\item Pass frame data
+\end{DoxyEnumerate}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2rx-depacketizer_autotoc_md466}{}\doxysubsection{\texorpdfstring{Other components}{Other components}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2rx-depacketizer_autotoc_md466}
+There are a number of other components that the RX depacketizer wants to interact with\+:
+
+
+\begin{DoxyItemize}
+\item \href{https://github.com/openssl/openssl/pull/18564}{\texttt{ ACK manager}}
+\item Handshake manager, which is currently unspecified. It\textquotesingle{}s assumed that this will wrap around what is called the "{}\+TLS Handshake Record Layer"{}, in the \href{https://github.com/openssl/openssl/blob/master/doc/designs/quic-design/quic-overview.md}{\texttt{ overview}}
+\item Session manager, which is currently unspecified for QUIC, but may very well be the existing {\ttfamily SSL\+\_\+\+SESSION} functionality, extended to fit QUIC purposes.
+\item Flow control, which is currently unspecified. In the \href{https://github.com/openssl/openssl/blob/master/doc/designs/quic-design/quic-overview.md}{\texttt{ overview}}, it\textquotesingle{}s called the "{}\+Flow Controller And Statistics Collector"{}
+\item Connection manager, which is currently unspecified. In the \href{https://github.com/openssl/openssl/blob/master/doc/designs/quic-design/quic-overview.md}{\texttt{ overview}}, there\textquotesingle{}s a "{}\+Connection State Machine"{} that the "{}\+RX Frame Handler"{} isn\textquotesingle{}t talking directly with, so it\textquotesingle{}s possible that the Connection manager will turn out to be the Handshake manager.
+\item Stream SSL objects, to pass the stream data to.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2rx-depacketizer_autotoc_md467}{}\doxysubsection{\texorpdfstring{Read and process a packet}{Read and process a packet}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2rx-depacketizer_autotoc_md467}
+Following how things are designed elsewhere, the depacketizer is assumed to be called "{}from above"{} using the following function\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\ C}
+\DoxyCodeLine{\_\_owur\ int\ ossl\_quic\_depacketize(QUIC\_CONNECTION\ *connection);}
+
+\end{DoxyCode}
+
+
+This function would create an {\ttfamily OSSL\+\_\+\+QRX\+\_\+\+PKT} and call the QUIC Read Record Layer with a pointer to it, leaving it to the QUIC Read Record Layer to fill in the data.
+
+This uses the {\ttfamily ossl\+\_\+qrx\+\_\+read\+\_\+pkt()} packet reading function from \href{https://github.com/openssl/openssl/pull/18949}{\texttt{ QUIC Demuxer and Record Layer (RX+\+TX)}}. (the {\ttfamily OSSL\+\_\+\+QRX\+\_\+\+PKT} structure / sub-\/structure needs to be extended to take an {\ttfamily \doxylink{struct_o_s_s_l___t_i_m_e}{OSSL\+\_\+\+TIME}}, possibly by reference, which should be filled in with the packet reception time)\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2rx-depacketizer_autotoc_md468}{}\doxysubsection{\texorpdfstring{Collect information for the \href{https://github.com/openssl/openssl/pull/18564}{\texttt{ ACK manager}}}{Collect information for the \href{https://github.com/openssl/openssl/pull/18564}{\texttt{ ACK manager}}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2rx-depacketizer_autotoc_md468}
+This collects appropriate data into a {\ttfamily QUIC\+\_\+\+ACKM\+\_\+\+RX\+\_\+\+PKT} structure\+:
+
+
+\begin{DoxyItemize}
+\item The packet number ({\ttfamily packet-\/\texorpdfstring{$>$}{>}packet\+\_\+number})
+\item The packet receive time ({\ttfamily received})
+\item The packet space, which is always\+:
+\begin{DoxyItemize}
+\item {\ttfamily QUIC\+\_\+\+PN\+\_\+\+SPACE\+\_\+\+INITIAL} when {\ttfamily packet-\/\texorpdfstring{$>$}{>}packet\+\_\+type == pkt\+\_\+initial}
+\item {\ttfamily QUIC\+\_\+\+PN\+\_\+\+SPACE\+\_\+\+HANDSHAKE} when {\ttfamily packet-\/\texorpdfstring{$>$}{>}packet\+\_\+type == pkt\+\_\+handshake}
+\item {\ttfamily QUIC\+\_\+\+PN\+\_\+\+SPACE\+\_\+\+APP} for all other packet types
+\end{DoxyItemize}
+\item The ACK eliciting flag. This is calculated by looping through all frames and noting those that are ACK eliciting, as determined from Table 1 below)
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2rx-depacketizer_autotoc_md469}{}\doxysubsection{\texorpdfstring{Passing frame data}{Passing frame data}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2rx-depacketizer_autotoc_md469}
+This loops through all the frames, extracts data where there is any and calls diverse other components as shown in the Passed to column in Table 1 below.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2rx-depacketizer_autotoc_md470}{}\doxysubsubsection{\texorpdfstring{Table 1}{Table 1}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2rx-depacketizer_autotoc_md470}
+Taken from \href{https://datatracker.ietf.org/doc/html/rfc9000\#section-12.4}{\texttt{ RFC 9000 12.\+4 Frames and Frame Types}}
+
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{8}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Type   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Name   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Passed to   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ ACK eliciting   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ I   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ H   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ 0   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ 1    }\\\cline{1-8}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Type   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Name   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Passed to   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ ACK eliciting   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ I   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ H   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ 0   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ 1    }\\\cline{1-8}
+\endhead
+0x00   &\href{https://datatracker.ietf.org/doc/html/rfc9000\#section-19.1}{\texttt{ padding}}   &-\/   &&\&\#10004;   &\&\#10004;   &\&\#10004;   &\&\#10004;    \\\cline{1-8}
+0x01   &\href{https://datatracker.ietf.org/doc/html/rfc9000\#section-19.2}{\texttt{ ping}}   &-\/   &\&\#10004;   &\&\#10004;   &\&\#10004;   &\&\#10004;   &\&\#10004;    \\\cline{1-8}
+0x02   &\href{https://datatracker.ietf.org/doc/html/rfc9000\#section-19.3}{\texttt{ ack 0x02}}   &\mbox{[}ACK manager\mbox{]} \mbox{[}\texorpdfstring{$^\wedge$}{\string^}1\mbox{]}   &&\&\#10004;   &\&\#10004;   &&\&\#10004;    \\\cline{1-8}
+0x03   &\href{https://datatracker.ietf.org/doc/html/rfc9000\#section-19.3}{\texttt{ ack 0x03}}   &\mbox{[}ACK manager\mbox{]} \mbox{[}\texorpdfstring{$^\wedge$}{\string^}1\mbox{]}   &&\&\#10004;   &\&\#10004;   &&\&\#10004;    \\\cline{1-8}
+0x04   &\href{https://datatracker.ietf.org/doc/html/rfc9000\#section-19.4}{\texttt{ reset\+\_\+stream}}   &-\/ \mbox{[}\texorpdfstring{$^\wedge$}{\string^}2\mbox{]}   &\&\#10004;   &&&\&\#10004;   &\&\#10004;    \\\cline{1-8}
+0x05   &\href{https://datatracker.ietf.org/doc/html/rfc9000\#section-19.5}{\texttt{ stop\+\_\+sending}}   &-\/ \mbox{[}\texorpdfstring{$^\wedge$}{\string^}3\mbox{]}   &\&\#10004;   &&&\&\#10004;   &\&\#10004;    \\\cline{1-8}
+0x06   &\href{https://datatracker.ietf.org/doc/html/rfc9000\#section-19.6}{\texttt{ crypto}}   &Handshake manager   &\&\#10004;   &\&\#10004;   &\&\#10004;   &&\&\#10004;    \\\cline{1-8}
+0x07   &\href{https://datatracker.ietf.org/doc/html/rfc9000\#section-19.7}{\texttt{ new\+\_\+token}}   &Session manager   &\&\#10004;   &&&&\&\#10004;    \\\cline{1-8}
+0x08   &\href{https://datatracker.ietf.org/doc/html/rfc9000\#section-19.8}{\texttt{ stream 0x08}}   &Apprioriate stream \mbox{[}\texorpdfstring{$^\wedge$}{\string^}4\mbox{]}   &\&\#10004;   &&&\&\#10004;   &\&\#10004;    \\\cline{1-8}
+0x09   &\href{https://datatracker.ietf.org/doc/html/rfc9000\#section-19.8}{\texttt{ stream 0x09}}   &Apprioriate stream \mbox{[}\texorpdfstring{$^\wedge$}{\string^}4\mbox{]}   &\&\#10004;   &&&\&\#10004;   &\&\#10004;    \\\cline{1-8}
+0x0A   &\href{https://datatracker.ietf.org/doc/html/rfc9000\#section-19.8}{\texttt{ stream 0x0A}}   &Apprioriate stream \mbox{[}\texorpdfstring{$^\wedge$}{\string^}4\mbox{]}   &\&\#10004;   &&&\&\#10004;   &\&\#10004;    \\\cline{1-8}
+0x0B   &\href{https://datatracker.ietf.org/doc/html/rfc9000\#section-19.8}{\texttt{ stream 0x0B}}   &Apprioriate stream \mbox{[}\texorpdfstring{$^\wedge$}{\string^}4\mbox{]}   &\&\#10004;   &&&\&\#10004;   &\&\#10004;    \\\cline{1-8}
+0x0C   &\href{https://datatracker.ietf.org/doc/html/rfc9000\#section-19.8}{\texttt{ stream 0x0C}}   &Apprioriate stream \mbox{[}\texorpdfstring{$^\wedge$}{\string^}4\mbox{]}   &\&\#10004;   &&&\&\#10004;   &\&\#10004;    \\\cline{1-8}
+0x0D   &\href{https://datatracker.ietf.org/doc/html/rfc9000\#section-19.8}{\texttt{ stream 0x0D}}   &Apprioriate stream \mbox{[}\texorpdfstring{$^\wedge$}{\string^}4\mbox{]}   &\&\#10004;   &&&\&\#10004;   &\&\#10004;    \\\cline{1-8}
+0x0E   &\href{https://datatracker.ietf.org/doc/html/rfc9000\#section-19.8}{\texttt{ stream 0x0E}}   &Apprioriate stream \mbox{[}\texorpdfstring{$^\wedge$}{\string^}4\mbox{]}   &\&\#10004;   &&&\&\#10004;   &\&\#10004;    \\\cline{1-8}
+0x0F   &\href{https://datatracker.ietf.org/doc/html/rfc9000\#section-19.8}{\texttt{ stream 0x0F}}   &Apprioriate stream \mbox{[}\texorpdfstring{$^\wedge$}{\string^}4\mbox{]}   &\&\#10004;   &&&\&\#10004;   &\&\#10004;    \\\cline{1-8}
+0x10   &\href{https://datatracker.ietf.org/doc/html/rfc9000\#section-19.9}{\texttt{ max\+\_\+data}}   &Flow control \mbox{[}\texorpdfstring{$^\wedge$}{\string^}5\mbox{]}   &\&\#10004;   &&&\&\#10004;   &\&\#10004;    \\\cline{1-8}
+0x11   &\href{https://datatracker.ietf.org/doc/html/rfc9000\#section-19.10}{\texttt{ max\+\_\+stream\+\_\+data}}   &Flow control \mbox{[}\texorpdfstring{$^\wedge$}{\string^}5\mbox{]}   &\&\#10004;   &&&\&\#10004;   &\&\#10004;    \\\cline{1-8}
+0x12   &\href{https://datatracker.ietf.org/doc/html/rfc9000\#section-19.11}{\texttt{ max\+\_\+streams 0x12}}   &Connection manager? \mbox{[}\texorpdfstring{$^\wedge$}{\string^}6\mbox{]}   &\&\#10004;   &&&\&\#10004;   &\&\#10004;    \\\cline{1-8}
+0x13   &\href{https://datatracker.ietf.org/doc/html/rfc9000\#section-19.11}{\texttt{ max\+\_\+streams 0x13}}   &Connection manager? \mbox{[}\texorpdfstring{$^\wedge$}{\string^}6\mbox{]}   &\&\#10004;   &&&\&\#10004;   &\&\#10004;    \\\cline{1-8}
+0x14   &\href{https://datatracker.ietf.org/doc/html/rfc9000\#section-19.12}{\texttt{ data\+\_\+blocked}}   &Flow control \mbox{[}\texorpdfstring{$^\wedge$}{\string^}5\mbox{]}   &\&\#10004;   &&&\&\#10004;   &\&\#10004;    \\\cline{1-8}
+0x15   &\href{https://datatracker.ietf.org/doc/html/rfc9000\#section-19.13}{\texttt{ stream\+\_\+data\+\_\+blocked}}   &Flow control \mbox{[}\texorpdfstring{$^\wedge$}{\string^}5\mbox{]}   &\&\#10004;   &&&\&\#10004;   &\&\#10004;    \\\cline{1-8}
+0x16   &\href{https://datatracker.ietf.org/doc/html/rfc9000\#section-19.14}{\texttt{ streams\+\_\+blocked 0x16}}   &Connection manager? \mbox{[}\texorpdfstring{$^\wedge$}{\string^}6\mbox{]}   &\&\#10004;   &&&\&\#10004;   &\&\#10004;    \\\cline{1-8}
+0x17   &\href{https://datatracker.ietf.org/doc/html/rfc9000\#section-19.14}{\texttt{ streams\+\_\+blocked 0x17}}   &Connection manager? \mbox{[}\texorpdfstring{$^\wedge$}{\string^}6\mbox{]}   &\&\#10004;   &&&\&\#10004;   &\&\#10004;    \\\cline{1-8}
+0x18   &\href{https://datatracker.ietf.org/doc/html/rfc9000\#section-19.15}{\texttt{ new\+\_\+connection\+\_\+id}}   &Connection manager   &\&\#10004;   &&&\&\#10004;   &\&\#10004;    \\\cline{1-8}
+0x19   &\href{https://datatracker.ietf.org/doc/html/rfc9000\#section-19.16}{\texttt{ retire\+\_\+connection\+\_\+id}}   &Connection manager   &\&\#10004;   &&&\&\#10004;   &\&\#10004;    \\\cline{1-8}
+0x1A   &\href{https://datatracker.ietf.org/doc/html/rfc9000\#section-19.17}{\texttt{ path\+\_\+challenge}}   &Connection manager? \mbox{[}\texorpdfstring{$^\wedge$}{\string^}7\mbox{]}   &\&\#10004;   &&&\&\#10004;   &\&\#10004;    \\\cline{1-8}
+0x1B   &\href{https://datatracker.ietf.org/doc/html/rfc9000\#section-19.18}{\texttt{ path\+\_\+response}}   &Connection manager? \mbox{[}\texorpdfstring{$^\wedge$}{\string^}7\mbox{]}   &\&\#10004;   &&&&\&\#10004;    \\\cline{1-8}
+0x1C   &\href{https://datatracker.ietf.org/doc/html/rfc9000\#section-19.19}{\texttt{ connection\+\_\+close 0x1C}}   &Connection manager   &&\&\#10004;   &\&\#10004;   &\&\#10004;   &\&\#10004;    \\\cline{1-8}
+0x1D   &\href{https://datatracker.ietf.org/doc/html/rfc9000\#section-19.19}{\texttt{ connection\+\_\+close 0x1D}}   &Connection manager   &&&&\&\#10004;   &\&\#10004;    \\\cline{1-8}
+0x1E   &\href{https://datatracker.ietf.org/doc/html/rfc9000\#section-19.20}{\texttt{ handshake\+\_\+done}}   &Handshake manager   &\&\#10004;   &&&&\&\#10004;    \\\cline{1-8}
+????   &{\itshape \mbox{[}Extension Frames\mbox{]}}   &-\/ \mbox{[}\texorpdfstring{$^\wedge$}{\string^}8\mbox{]}   &\&\#10004;   &&&&\\\cline{1-8}
+\end{longtabu}
+
+
+The I, H, 0, and 1 columns are validity in different packet types, with this meaning\+:
+
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{2}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Pkts   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Description    }\\\cline{1-2}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Pkts   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Description    }\\\cline{1-2}
+\endhead
+\PBS\centering I   &Valid in Initial packets    \\\cline{1-2}
+\PBS\centering H   &Valid in Handshake packets    \\\cline{1-2}
+\PBS\centering 0   &Valid in 0-\/RTT packets    \\\cline{1-2}
+\PBS\centering 1   &Valid in 1-\/RTT packets   \\\cline{1-2}
+\end{longtabu}
+
+
+Notes\+:
+
+\mbox{[}\texorpdfstring{$^\wedge$}{\string^}1\mbox{]}\+: This creates and populates an {\ttfamily QUIC\+\_\+\+ACKM\+\_\+\+ACK} structure, then calls {\ttfamily QUIC\+\_\+\+ACKM\+\_\+on\+\_\+rx\+\_\+ack\+\_\+frame()}, with the appropriate context ({\ttfamily QUIC\+\_\+\+ACKM}, the created {\ttfamily QUIC\+\_\+\+ACKM\+\_\+\+ACK}, {\ttfamily pkt\+\_\+space} and {\ttfamily rx\+\_\+time}) \mbox{[}\texorpdfstring{$^\wedge$}{\string^}2\mbox{]}\+: Immediately terminates the appropriate receiving stream {\ttfamily QUIC\+\_\+\+STREAM} object. This includes discarding any buffered application data. For a stream that\textquotesingle{}s send-\/only, the error {\ttfamily STREAM\+\_\+\+STATE\+\_\+\+ERROR} is raised, and the {\ttfamily QUIC\+\_\+\+CONNECTION} object is terminated. \mbox{[}\texorpdfstring{$^\wedge$}{\string^}3\mbox{]}\+: Immediately terminates the appropriate sending stream {\ttfamily QUIC\+\_\+\+STREAM} object. For a stream that\textquotesingle{}s receive-\/only, the error {\ttfamily STREAM\+\_\+\+STATE\+\_\+\+ERROR} is raised, and the {\ttfamily QUIC\+\_\+\+CONNECTION} object is terminated. \mbox{[}\texorpdfstring{$^\wedge$}{\string^}4\mbox{]}\+: The frame payload (Stream Data) is passed as is to the {\ttfamily QUIC\+\_\+\+STREAM} object, along with available metadata (offset and length, as determined to be available from the lower 3 bits of the frame type). \mbox{[}\texorpdfstring{$^\wedge$}{\string^}5\mbox{]}\+: The details of what flow control will need are yet to be determined \mbox{[}\texorpdfstring{$^\wedge$}{\string^}6\mbox{]}\+: I imagine that {\ttfamily max\+\_\+streams} and {\ttfamily streams\+\_\+blocked} concern a Connection manager before anything else. \mbox{[}\texorpdfstring{$^\wedge$}{\string^}7\mbox{]}\+: I imagine that path challenge/response concerns a Connection manager before anything else. \mbox{[}\texorpdfstring{$^\wedge$}{\string^}8\mbox{]}\+: We have no idea what extension frames there will be. However, we must at least acknowledge their presence, so much is clear from the RFC. 

@@ -1,0 +1,58 @@
+\doxysection{PROV\+\_\+\+ECDSA\+\_\+\+CTX Struct Reference}
+\hypertarget{struct_p_r_o_v___e_c_d_s_a___c_t_x}{}\label{struct_p_r_o_v___e_c_d_s_a___c_t_x}\index{PROV\_ECDSA\_CTX@{PROV\_ECDSA\_CTX}}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{struct_p_r_o_v___e_c_d_s_a___c_t_x_ae39f4a0b76fb6978ca635a66518e9397}\label{struct_p_r_o_v___e_c_d_s_a___c_t_x_ae39f4a0b76fb6978ca635a66518e9397} 
+OSSL\+\_\+\+LIB\+\_\+\+CTX \texorpdfstring{$\ast$}{*} {\bfseries libctx}
+\item 
+\Hypertarget{struct_p_r_o_v___e_c_d_s_a___c_t_x_a141512348403cdb1287db96d6b556e59}\label{struct_p_r_o_v___e_c_d_s_a___c_t_x_a141512348403cdb1287db96d6b556e59} 
+char \texorpdfstring{$\ast$}{*} {\bfseries propq}
+\item 
+\Hypertarget{struct_p_r_o_v___e_c_d_s_a___c_t_x_a122a6142c8667042e6a0f6d11489182a}\label{struct_p_r_o_v___e_c_d_s_a___c_t_x_a122a6142c8667042e6a0f6d11489182a} 
+EC\+\_\+\+KEY \texorpdfstring{$\ast$}{*} {\bfseries ec}
+\item 
+\Hypertarget{struct_p_r_o_v___e_c_d_s_a___c_t_x_ac530381d7c431c4b45f2f203f4cc3d51}\label{struct_p_r_o_v___e_c_d_s_a___c_t_x_ac530381d7c431c4b45f2f203f4cc3d51} 
+char {\bfseries mdname} \mbox{[}OSSL\+\_\+\+MAX\+\_\+\+NAME\+\_\+\+SIZE\mbox{]}
+\item 
+\Hypertarget{struct_p_r_o_v___e_c_d_s_a___c_t_x_a73ca8f125d5618d85190df4f2f7ed45d}\label{struct_p_r_o_v___e_c_d_s_a___c_t_x_a73ca8f125d5618d85190df4f2f7ed45d} 
+unsigned int {\bfseries flag\+\_\+allow\+\_\+md}\+: 1
+\item 
+\Hypertarget{struct_p_r_o_v___e_c_d_s_a___c_t_x_a26ffae782b4ba29a1db0741e142bb09d}\label{struct_p_r_o_v___e_c_d_s_a___c_t_x_a26ffae782b4ba29a1db0741e142bb09d} 
+unsigned char {\bfseries aid\+\_\+buf} \mbox{[}OSSL\+\_\+\+MAX\+\_\+\+ALGORITHM\+\_\+\+ID\+\_\+\+SIZE\mbox{]}
+\item 
+\Hypertarget{struct_p_r_o_v___e_c_d_s_a___c_t_x_a8c5661863b99626832e43e3a498a998b}\label{struct_p_r_o_v___e_c_d_s_a___c_t_x_a8c5661863b99626832e43e3a498a998b} 
+unsigned char \texorpdfstring{$\ast$}{*} {\bfseries aid}
+\item 
+\Hypertarget{struct_p_r_o_v___e_c_d_s_a___c_t_x_a39de4833cfdbe0132f0968d0922bd120}\label{struct_p_r_o_v___e_c_d_s_a___c_t_x_a39de4833cfdbe0132f0968d0922bd120} 
+size\+\_\+t {\bfseries aid\+\_\+len}
+\item 
+\Hypertarget{struct_p_r_o_v___e_c_d_s_a___c_t_x_a8118b1a6cff59a2b17b79886d0159451}\label{struct_p_r_o_v___e_c_d_s_a___c_t_x_a8118b1a6cff59a2b17b79886d0159451} 
+size\+\_\+t {\bfseries mdsize}
+\item 
+\Hypertarget{struct_p_r_o_v___e_c_d_s_a___c_t_x_ad92cf53027df5081ba3af2a79c415350}\label{struct_p_r_o_v___e_c_d_s_a___c_t_x_ad92cf53027df5081ba3af2a79c415350} 
+int {\bfseries operation}
+\item 
+\Hypertarget{struct_p_r_o_v___e_c_d_s_a___c_t_x_ab2afc8ed5756cd452ba0a7e6c92c1046}\label{struct_p_r_o_v___e_c_d_s_a___c_t_x_ab2afc8ed5756cd452ba0a7e6c92c1046} 
+EVP\+\_\+\+MD \texorpdfstring{$\ast$}{*} {\bfseries md}
+\item 
+\Hypertarget{struct_p_r_o_v___e_c_d_s_a___c_t_x_a3b41186945d1b2ba8a36dbbac10ceece}\label{struct_p_r_o_v___e_c_d_s_a___c_t_x_a3b41186945d1b2ba8a36dbbac10ceece} 
+EVP\+\_\+\+MD\+\_\+\+CTX \texorpdfstring{$\ast$}{*} {\bfseries mdctx}
+\item 
+\Hypertarget{struct_p_r_o_v___e_c_d_s_a___c_t_x_a5d78cc60999f46ba0f90f7b98ff052df}\label{struct_p_r_o_v___e_c_d_s_a___c_t_x_a5d78cc60999f46ba0f90f7b98ff052df} 
+BIGNUM \texorpdfstring{$\ast$}{*} {\bfseries kinv}
+\item 
+\Hypertarget{struct_p_r_o_v___e_c_d_s_a___c_t_x_a76dff656023797effb5a6acb73ced17d}\label{struct_p_r_o_v___e_c_d_s_a___c_t_x_a76dff656023797effb5a6acb73ced17d} 
+BIGNUM \texorpdfstring{$\ast$}{*} {\bfseries r}
+\item 
+\Hypertarget{struct_p_r_o_v___e_c_d_s_a___c_t_x_afdf6d1149a12e507f51194068028c0df}\label{struct_p_r_o_v___e_c_d_s_a___c_t_x_afdf6d1149a12e507f51194068028c0df} 
+unsigned int {\bfseries kattest}
+\item 
+\Hypertarget{struct_p_r_o_v___e_c_d_s_a___c_t_x_a56cb4047b35d91a32a713f8a12e2c6ea}\label{struct_p_r_o_v___e_c_d_s_a___c_t_x_a56cb4047b35d91a32a713f8a12e2c6ea} 
+unsigned int {\bfseries nonce\+\_\+type}
+\end{DoxyCompactItemize}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/namph/\+Downloads/openssl/openssl-\/3.\+2.\+1/providers/implementations/signature/ecdsa\+\_\+sig.\+c\end{DoxyCompactItemize}

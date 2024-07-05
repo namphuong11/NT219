@@ -1,0 +1,259 @@
+\chapter{Datagram BIO API revisions for sendmmsg/recvmmsg}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2dgram-api}{}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2dgram-api}\index{Datagram BIO API revisions for sendmmsg/recvmmsg@{Datagram BIO API revisions for sendmmsg/recvmmsg}}
+We need to evolve the API surface of BIO which is relevant to BIO\+\_\+dgram (and the eventual BIO\+\_\+dgram\+\_\+mem) to support APIs which allow multiple datagrams to be sent or received simultaneously, such as sendmmsg(2)/recvmmsg(2).\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2dgram-api_autotoc_md258}{}\doxysection{\texorpdfstring{The adopted design}{The adopted design}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2dgram-api_autotoc_md258}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2dgram-api_autotoc_md259}{}\doxysubsection{\texorpdfstring{Design decisions}{Design decisions}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2dgram-api_autotoc_md259}
+The adopted design makes the following design decisions\+:
+
+
+\begin{DoxyItemize}
+\item We use a sendmmsg/recvmmsg-\/like API. The alternative API was not considered for adoption because it is an explicit goal that the adopted API be suitable for concurrent use on the same BIO.
+\item We define our own structures rather than using the OS\textquotesingle{}s {\ttfamily struct mmsghdr}. The motivations for this are\+:
+\begin{DoxyItemize}
+\item It ensures portability between OSes and allows the API to be used on OSes which do not support {\ttfamily sendmmsg} or {\ttfamily sendmsg}.
+\item It allows us to use structures in keeping with Open\+SSL\textquotesingle{}s existing abstraction layers (e.\+g. {\ttfamily BIO\+\_\+\+ADDR} rather than {\ttfamily struct sockaddr}).
+\item We do not have to expose functionality which we cannot guarantee we can support on all platforms (for example, arbitrary control messages).
+\item It avoids the need to include OS headers in our own public headers, which would pollute the environment of applications which include our headers, potentially undesirably.
+\end{DoxyItemize}
+\item For OSes which do not support {\ttfamily sendmmsg}, we emulate it using repeated calls to {\ttfamily sendmsg}. For OSes which do not support {\ttfamily sendmsg}, we emulate it using {\ttfamily sendto} to the extent feasible. This avoids the need for code consuming these new APIs to define a fallback code path.
+\item We do not define any flags at this time, as the flags previously considered for adoption cannot be supported on all platforms (Win32 does not have {\ttfamily MSG\+\_\+\+DONTWAIT}).
+\item We ensure the extensibility of our {\ttfamily BIO\+\_\+\+MSG} structure in a way that preserves ABI compatibility using a {\ttfamily stride} argument which callers must set to {\ttfamily sizeof(\+BIO\+\_\+\+MSG)}. Implementations can examine the stride field to determine whether a given field is part of a {\ttfamily BIO\+\_\+\+MSG}. This allows us to add optional fields to {\ttfamily BIO\+\_\+\+MSG} at a later time without breaking ABI. All new fields must be added to the end of the structure.
+\item The BIO methods are designed to support stateless operation in which they are simply calls to the equivalent system calls, where supported, without changing BIO state. In particular, this means that things like retry flags are not set or cleared by {\ttfamily BIO\+\_\+sendmmsg} or {\ttfamily BIO\+\_\+recvmmsg}.
+
+The motivation for this is that these functions are intended to support concurrent use on the same BIO. If they read or modify BIO state, they would need to be synchronised with a lock, undermining performance on what (for {\ttfamily BIO\+\_\+dgram}) would otherwise be a straight system call.
+\item We do not support iovecs. The motivations for this are\+:
+\begin{DoxyItemize}
+\item Not all platforms can support iovecs (e.\+g. Windows).
+\item The only way we could emulate iovecs on platforms which don\textquotesingle{}t support them is by copying the data to be sent into a staging buffer. This would defeat all of the advantages of iovecs and prevent us from meeting our zero/single-\/copy requirements. Moreover, it would lead to extremely surprising performance variations for consumers of the API.
+\item We do not believe iovecs are needed to meet our performance requirements for QUIC. The reason for this is that aside from a minimal packet header, all data in QUIC is encrypted, so all data sent via QUIC must pass through an encrypt step anyway, meaning that all data sent will already be copied and there is not going to be any issue depositing the ciphertext in a staging buffer together with the frame header.
+\item Even if we did support iovecs, we would have to impose a limit on the number of iovecs supported, because we translate from our own structures (as discussed above) and also intend these functions to be stateless and not requiire locking. Therefore the OS-\/native iovec structures would need to be allocated on the stack.
+\end{DoxyItemize}
+\item Sometimes, an application may wish to learn the local interface address associated with a receive operation or specify the local interface address to be used for a send operation. We support this, but require this functionality to be explicitly enabled before use.
+
+The reason for this is that enabling this functionality generally requires that the socket be reconfigured using {\ttfamily setsockopt} on most platforms. Doing this on-\/demand would require state in the BIO to determine whether this functionality is currently switched on, which would require otherwise unnecessary locking, undermining performance in concurrent usage of this API on a given BIO. By requiring this functionality to be enabled explicitly before use, this allows this initialization to be done up front without performance cost. It also aids users of the API to understand that this functionality is not always available and to detect when this functionality is available in advance.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2dgram-api_autotoc_md260}{}\doxysubsection{\texorpdfstring{Design}{Design}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2dgram-api_autotoc_md260}
+The currently proposed design is as follows\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }bio\_msg\_st\ \{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordtype}{void}\ *data;}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordtype}{size\_t}\ data\_len;}
+\DoxyCodeLine{\ \ \ \ BIO\_ADDR\ *peer,\ *local;}
+\DoxyCodeLine{\ \ \ \ uint64\_t\ flags;}
+\DoxyCodeLine{\}\ BIO\_MSG;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{preprocessor}{\#define\ BIO\_UNPACK\_ERRNO(e)\ \ \ \ \ }\textcolor{comment}{/*...*/}\textcolor{preprocessor}{}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#define\ BIO\_IS\_ERRNO(e)\ \ \ \ \ \ \ \ \ }\textcolor{comment}{/*...*/}\textcolor{preprocessor}{}}
+\DoxyCodeLine{}
+\DoxyCodeLine{ossl\_ssize\_t\ BIO\_sendmmsg(BIO\ *\mbox{\hyperlink{structb}{b}},\ BIO\_MSG\ *msg,\ \textcolor{keywordtype}{size\_t}\ stride,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ num\_msg,\ uint64\_t\ flags);}
+\DoxyCodeLine{ossl\_ssize\_t\ BIO\_recvmmsg(BIO\ *\mbox{\hyperlink{structb}{b}},\ BIO\_MSG\ *msg,\ \textcolor{keywordtype}{size\_t}\ stride,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ num\_msg,\ uint64\_t\ flags);}
+
+\end{DoxyCode}
+
+
+The API is used as follows\+:
+
+
+\begin{DoxyItemize}
+\item {\ttfamily msg} points to an array of {\ttfamily num\+\_\+msg} {\ttfamily BIO\+\_\+\+MSG} structures.
+\item Both functions have identical prototypes, and return the number of messages processed in the array. If no messages were sent due to an error, {\ttfamily -\/1} is returned. If an OS-\/level socket error occurs, a negative value {\ttfamily v} is returned. The caller should determine that {\ttfamily v} is an OS-\/level socket error by calling {\ttfamily BIO\+\_\+\+IS\+\_\+\+ERRNO(v)} and may obtain the OS-\/level socket error code by calling {\ttfamily BIO\+\_\+\+UNPACK\+\_\+\+ERRNO(v)}.
+\item {\ttfamily stride} must be set to {\ttfamily sizeof(\+BIO\+\_\+\+MSG)}.
+\item {\ttfamily data} points to the buffer of data to be sent or to be filled with received data. {\ttfamily data\+\_\+len} is the size of the buffer in bytes on call. If the given message in the array is processed (i.\+e., if the return value exceeds the index of that message in the array), {\ttfamily data\+\_\+len} is updated to the actual amount of data sent or received at return time.
+\item {\ttfamily flags} in the {\ttfamily BIO\+\_\+\+MSG} structure provides per-\/message flags to the {\ttfamily BIO\+\_\+sendmmsg} or {\ttfamily BIO\+\_\+recvmmsg} call. If the given message in the array is processed, {\ttfamily flags} is written with zero or more result flags at return time. The {\ttfamily flags} argument to the call itself provides for global flags affecting all messages in the array. Currently, no per-\/message or global flags are defined and all of these fields are set to zero on call and on return.
+\item {\ttfamily peer} and {\ttfamily local} are optional pointers to {\ttfamily BIO\+\_\+\+ADDR} structures into which the remote and local addresses are to be filled. If either of these are NULL, the given addressing information is not requested. Local address support may not be available in all circumstances, in which case processing of the message fails. (This means that the function returns the number of messages processed, or -\/1 if the message in question is the first message.)
+
+Support for {\ttfamily local} must be explicitly enabled before use, otherwise attempts to use it fail.
+\end{DoxyItemize}
+
+Local address support is enabled as follows\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keywordtype}{int}\ BIO\_dgram\_set\_local\_addr\_enable(BIO\ *\mbox{\hyperlink{structb}{b}},\ \textcolor{keywordtype}{int}\ enable);}
+\DoxyCodeLine{\textcolor{keywordtype}{int}\ BIO\_dgram\_get\_local\_addr\_enable(BIO\ *\mbox{\hyperlink{structb}{b}});}
+\DoxyCodeLine{\textcolor{keywordtype}{int}\ BIO\_dgram\_get\_local\_addr\_cap(BIO\ *\mbox{\hyperlink{structb}{b}});}
+
+\end{DoxyCode}
+
+
+{\ttfamily BIO\+\_\+dgram\+\_\+get\+\_\+local\+\_\+addr\+\_\+cap()} returns 1 if local address support is available. It is then enabled using {\ttfamily BIO\+\_\+dgram\+\_\+set\+\_\+local\+\_\+addr\+\_\+enable()}, which fails if support is not available.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2dgram-api_autotoc_md261}{}\doxysection{\texorpdfstring{Options which were considered}{Options which were considered}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2dgram-api_autotoc_md261}
+Options for the API surface which were considered included\+:\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2dgram-api_autotoc_md262}{}\doxysubsection{\texorpdfstring{sendmmsg/recvmmsg-\/like API}{sendmmsg/recvmmsg-\/like API}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2dgram-api_autotoc_md262}
+This design was chosen to form the basis of the adopted design, which is described above.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keywordtype}{int}\ BIO\_readm(BIO\ *\mbox{\hyperlink{structb}{b}},\ BIO\_mmsghdr\ *msgvec,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ len,\ \textcolor{keywordtype}{int}\ flags,\ \textcolor{keyword}{struct}\ timespec\ *timeout);}
+\DoxyCodeLine{\textcolor{keywordtype}{int}\ BIO\_writem(BIO\ *\mbox{\hyperlink{structb}{b}},\ BIO\_mmsghdr\ *msgvec,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ len,\ \textcolor{keywordtype}{int}\ flags,\ \textcolor{keyword}{struct}\ timespec\ *timeout);}
+
+\end{DoxyCode}
+
+
+We can either define {\ttfamily BIO\+\_\+mmsghdr} as a typedef of {\ttfamily struct mmsghdr} or redefine an equivalent structure. The former has the advantage that we can just pass the structures through to the syscall without copying them.
+
+Note that in {\ttfamily BIO\+\_\+mem\+\_\+dgram} we will have to process and therefore understand the contents of {\ttfamily struct mmsghdr} ourselves. Therefore, initially we define a subset of {\ttfamily struct mmsghdr} as being supported, specifically no control messages; {\ttfamily msg\+\_\+name} and {\ttfamily msg\+\_\+iov} only.
+
+The flags argument is defined by us. Initially we can support something like {\ttfamily MSG\+\_\+\+DONTWAIT} (say, {\ttfamily BIO\+\_\+\+DONTWAIT}).\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2dgram-api_autotoc_md263}{}\doxysubsubsection{\texorpdfstring{Implementation Questions}{Implementation Questions}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2dgram-api_autotoc_md263}
+If we go with this, there are some issues that arise\+:
+
+
+\begin{DoxyItemize}
+\item Are {\ttfamily BIO\+\_\+mmsghdr}, {\ttfamily BIO\+\_\+msghdr} and {\ttfamily BIO\+\_\+iovec} simple typedefs for OS-\/provided structures, or our own independent structure definitions?
+\begin{DoxyItemize}
+\item If we use OS-\/provided structures\+:
+\begin{DoxyItemize}
+\item We would need to include the OS headers which provide these structures in our public API headers.
+\item If we choose to support these functions when OS support is not available (see discussion below), We would need to define our own structures in this case (a “polyfill” approach).
+\end{DoxyItemize}
+\item If we use our own structures\+:
+\begin{DoxyItemize}
+\item We would need to translate these structures during every call.
+
+But we would need to have storage inside the BIO\+\_\+dgram for {\itshape m} {\ttfamily struct msghdr}, {\itshape m\texorpdfstring{$\ast$}{*}v} iovecs, etc. Since we want to support multithreaded use these allocations probably will need to be on the stack, and therefore must be limited.
+
+Limiting {\itshape m} isn\textquotesingle{}t a problem, because {\ttfamily sendmmsg} returns the number of messages sent, so the existing semantics we are trying to match lets us just send or receive fewer messages than we were asked to.
+
+However, it does seem like we will need to limit {\itshape v}, the number of iovecs per message. So what limit should we give to {\itshape v}, the number of iovecs? We will need a fixed stack allocation of OS iovec structures and we can allocate from this stack allocation as we iterate through the {\ttfamily BIO\+\_\+msghdr} we have been given. So in practice we could just only send messages until we reach our iovec limit, and then return.
+
+For example, suppose we allocate 64 iovecs internally\+:
+
+{\ttfamily c struct iovec vecs\mbox{[}64\mbox{]}; }
+
+If the first message passed to a call to {\ttfamily BIO\+\_\+writem} has 64 iovecs attached to it, no further messages can be sent and {\ttfamily BIO\+\_\+writem} returns 1.
+
+If three messages are sent, with 32, 32, and 1 iovecs respectively, the first two messages are sent and {\ttfamily BIO\+\_\+writem} returns 2.
+
+So the only important thing we would need to document in this API is the limit of iovecs on a single message; in other words, the number of iovecs which must not be exceeded if a forward progress guarantee is to be made. e.\+g. if we allocate 64 iovecs internally, {\ttfamily BIO\+\_\+writem} with a single message with 65 iovecs will never work and this becomes part of the API contract.
+
+Obviously these quantities of iovecs are unrealistically large. iovecs are small, so we can afford to set the limit high enough that it shouldn\textquotesingle{}t cause any problems in practice. We can increase the limit later without a breaking API change, but we cannot decrease it later. So we might want to start with something small, like 8.
+\end{DoxyItemize}
+\end{DoxyItemize}
+\item We also need to decide what to do for OSes which don\textquotesingle{}t support at least {\ttfamily sendmsg}/{\ttfamily recvmsg}.
+\begin{DoxyItemize}
+\item Don\textquotesingle{}t provide these functions and require all users of these functions to have an alternate code path which doesn\textquotesingle{}t rely on them?
+\begin{DoxyItemize}
+\item Not providing these functions on OSes that don\textquotesingle{}t support at least sendmsg/recvmsg is a simple solution but adds complexity to code using BIO\+\_\+dgram. (Though it does communicate to code more realistic performance expectations since it knows when these functions are actually available.)
+\end{DoxyItemize}
+\item Provide these functions and emulate the functionality\+:
+\begin{DoxyItemize}
+\item However there is a question here as to how we implement the iovec arguments on platforms without {\ttfamily sendmsg}/{\ttfamily recvmsg}. (We cannot use {\ttfamily writev}/{\ttfamily readv} because we need peer address information.) Logically implementing these would then have to be done by copying buffers around internally before calling {\ttfamily sendto}/{\ttfamily recvfrom}, defeating the point of iovecs and providing a performance profile which is surprising to code using BIO\+\_\+dgram.
+\item Another option could be a variable limit on the number of iovecs, which can be queried from BIO\+\_\+dgram. This would be a constant set when libcrypto is compiled. It would be 1 for platforms not supporting {\ttfamily sendmsg}/{\ttfamily recvmsg}. This again adds burdens on the code using BIO\+\_\+dgram, but it seems the only way to avoid the surprising performance pitfall of buffer copying to emulate iovec support. There is a fair risk of code being written which accidentally works on one platform but not another, because the author didn\textquotesingle{}t realise the iovec limit is 1 on some platforms. Possibly we could have an “iovec limit” variable in the BIO\+\_\+dgram which is 1 by default, which can be increased by a call to a function BIO\+\_\+set\+\_\+iovec\+\_\+limit, but not beyond the fixed size discussed above. It would return failure if not possible and this would give client code a clear way to determine if its expectations are met.
+\end{DoxyItemize}
+\end{DoxyItemize}
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2dgram-api_autotoc_md264}{}\doxysubsection{\texorpdfstring{Alternate API}{Alternate API}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2dgram-api_autotoc_md264}
+Could we use a simplified API? For example, could we have an API that returns one datagram where BIO\+\_\+dgram uses {\ttfamily readmmsg} internally and queues the returned datagrams, thereby still avoiding extra syscalls but offering a simple API.
+
+The problem here is we want to support “single-\/copy” (where the data is only copied as it is decrypted). Thus BIO\+\_\+dgram needs to know the final resting place of encrypted data at the time it makes the {\ttfamily readmmsg} call.
+
+One option would be to allow the user to set a callback on BIO\+\_\+dgram it can use to request a new buffer, then have an API which returns the buffer\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keywordtype}{int}\ BIO\_dgram\_set\_read\_callback(BIO\ *\mbox{\hyperlink{structb}{b}},}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *(*cb)(\textcolor{keywordtype}{size\_t}\ len,\ \textcolor{keywordtype}{void}\ *arg),}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *arg);}
+\DoxyCodeLine{\textcolor{keywordtype}{int}\ BIO\_dgram\_set\_read\_free\_callback(BIO\ *\mbox{\hyperlink{structb}{b}},}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ (*cb)(\textcolor{keywordtype}{void}\ *buf,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ buf\_len,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *arg),}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *arg);}
+\DoxyCodeLine{\textcolor{keywordtype}{int}\ BIO\_read\_dequeue(BIO\ *\mbox{\hyperlink{structb}{b}},\ \textcolor{keywordtype}{void}\ **buf,\ \textcolor{keywordtype}{size\_t}\ *buf\_len);}
+
+\end{DoxyCode}
+
+
+The BIO\+\_\+dgram calls the specified callback when it needs to generate internal iovecs for its {\ttfamily readmmsg} call, and the received datagrams can then be popped by the application and freed as it likes. (The read free callback above is only used in rare circumstances, such as when calls to {\ttfamily BIO\+\_\+read} and {\ttfamily BIO\+\_\+read\+\_\+dequeue} are alternated, or when the BIO\+\_\+dgram is destroyed prior to all read buffers being dequeued; see below.) For convenience we could have an extra call to allow a buffer to be pushed back into the BIO\+\_\+dgram\textquotesingle{}s internal queue of unused read buffers, which avoids the need for the application to do its own management of such recycled buffers\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keywordtype}{int}\ BIO\_dgram\_push\_read\_buffer(BIO\ *\mbox{\hyperlink{structb}{b}},\ \textcolor{keywordtype}{void}\ *buf,\ \textcolor{keywordtype}{size\_t}\ buf\_len);}
+
+\end{DoxyCode}
+
+
+On the write side, the application provides buffers and can get a callback when they are freed. BIO\+\_\+write\+\_\+queue just queues for transmission, and the {\ttfamily sendmmsg} call is made when calling {\ttfamily BIO\+\_\+flush}. (TBD\+: whether it is reasonable to overload the semantics of BIO\+\_\+flush in this way.)
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keywordtype}{int}\ BIO\_dgram\_set\_write\_done\_callback(BIO\ *\mbox{\hyperlink{structb}{b}},}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ (*cb)(\textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *buf,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ buf\_len,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ status,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *arg),}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *arg);}
+\DoxyCodeLine{\textcolor{keywordtype}{int}\ BIO\_write\_queue(BIO\ *\mbox{\hyperlink{structb}{b}},\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *buf,\ \textcolor{keywordtype}{size\_t}\ buf\_len);}
+\DoxyCodeLine{\textcolor{keywordtype}{int}\ BIO\_flush(BIO\ *\mbox{\hyperlink{structb}{b}});}
+
+\end{DoxyCode}
+
+
+The status argument to the write done callback will be 1 on success, some negative value on failure, and some special negative value if the BIO\+\_\+dgram is being freed before the write could be completed.
+
+For send/receive addresses, we import the {\ttfamily BIO\+\_\+(set\texorpdfstring{$\vert$}{|}get)\+\_\+dgram\+\_\+(origin\texorpdfstring{$\vert$}{|}dest)} APIs proposed in the sendmsg/recvmsg PR (\#5257). {\ttfamily BIO\+\_\+get\+\_\+dgram\+\_\+(origin\texorpdfstring{$\vert$}{|}dest)} should be called immediately after {\ttfamily BIO\+\_\+read\+\_\+dequeue} and {\ttfamily BIO\+\_\+set\+\_\+dgram\+\_\+(origin\texorpdfstring{$\vert$}{|}dest)} should be called immediately before {\ttfamily BIO\+\_\+write\+\_\+queue}.
+
+This approach allows {\ttfamily BIO\+\_\+dgram} to support myriad options via composition of successive function calls in a “builder” style rather than via a single function call with an excessive number of arguments or pointers to unwieldy ever-\/growing argument structures, requiring constant revision of the central read/write functions of the BIO API.
+
+Note that since {\ttfamily BIO\+\_\+set\+\_\+dgram\+\_\+(origin\texorpdfstring{$\vert$}{|}dest)} sets data on outgoing packets and {\ttfamily BIO\+\_\+get\+\_\+dgram\+\_\+(origin\texorpdfstring{$\vert$}{|}dest)} gets data on incoming packets, it doesn\textquotesingle{}t follow that these are accessing the same data (they are not setters and getters of a variables called "{}dgram origin"{} and "{}dgram destination"{}, even though they look like setters and getters of the same variables from the name.) We probably want to separate these as there is no need for a getter for outgoing packet destination, for example, and by separating these we allow the possibility of multithreaded use (one thread reads, one thread writes) in the future. Possibly we should choose less confusing names for these functions. Maybe {\ttfamily BIO\+\_\+set\+\_\+outgoing\+\_\+dgram\+\_\+(origin\texorpdfstring{$\vert$}{|}dest)} and {\ttfamily BIO\+\_\+get\+\_\+incoming\+\_\+dgram\+\_\+(origin\texorpdfstring{$\vert$}{|}dest)}.
+
+Pros of this approach\+:
+
+
+\begin{DoxyItemize}
+\item Application can generate one datagram at a time and still get the advantages of sendmmsg/recvmmsg (fewer syscalls, etc.)
+
+We probably want this for our own QUIC implementation built on top of this anyway. Otherwise we will need another piece to do basically the same thing and agglomerate multiple datagrams into a single BIO call. Unless we only want use {\ttfamily sendmmsg} constructively in trivial cases (e.\+g. where we send two datagrams from the same function immediately after one another... doesn\textquotesingle{}t seem like a common use case.)
+\item Flexible support for single-\/copy (zero-\/copy).
+\end{DoxyItemize}
+
+Cons of this approach\+:
+
+
+\begin{DoxyItemize}
+\item Very different way of doing reads/writes might be strange to existing applications. {\itshape But} the primary consumer of this new API will be our own QUIC implementation so probably not a big deal. We can always support {\ttfamily BIO\+\_\+read}/{\ttfamily BIO\+\_\+write} as a less efficient fallback for existing third party users of BIO\+\_\+dgram.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2dgram-api_autotoc_md265}{}\doxysubsubsection{\texorpdfstring{Compatibility interop}{Compatibility interop}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2dgram-api_autotoc_md265}
+Suppose the following sequence happens\+:
+
+
+\begin{DoxyEnumerate}
+\item BIO\+\_\+read (legacy call path)
+\item BIO\+\_\+read\+\_\+dequeue ({\ttfamily recvmmsg} based call path with callback-\/allocated buffer)
+\item BIO\+\_\+read (legacy call path)
+\end{DoxyEnumerate}
+
+For (1) we have two options
+
+a. Use {\ttfamily recvmmsg} and add the received datagrams to an RX queue just as for the {\ttfamily BIO\+\_\+read\+\_\+dequeue} path. We use an Open\+SSL-\/provided default allocator ({\ttfamily OPENSSL\+\_\+malloc}) and flag these datagrams as needing to be freed by Open\+SSL, not the application.
+
+When the application calls {\ttfamily BIO\+\_\+read}, a copy is performed and the internal buffer is freed.
+
+b. Use {\ttfamily recvfrom} directly. This means we have a {\ttfamily recvmmsg} path and a {\ttfamily recvfrom} path depending on what API is being used.
+
+The disadvantage of (a) is it yields an extra copy relative to what we have now, whereas with (b) the buffer passed to {\ttfamily BIO\+\_\+read} gets passed through to the syscall and we do not have to copy anything.
+
+Since we will probably need to support platforms without {\ttfamily sendmmsg}/{\ttfamily recvmmsg} support anyway, (b) seems like the better option.
+
+For (2) the new API is used. Since the previous call to BIO\+\_\+read is essentially “stateless” (it\textquotesingle{}s just a simple call to {\ttfamily recvfrom}, and doesn\textquotesingle{}t require mutation of any internal BIO state other than maybe the last datagram source/destination address fields), BIO\+\_\+dgram can go ahead and start using the {\ttfamily recvmmsg} code path. Since the RX queue will obviously be empty at this point, it is initialised and filled using {\ttfamily recvmmsg}, then one datagram is popped from it.
+
+For (3) we have a legacy {\ttfamily BIO\+\_\+read} but we have several datagrams still in the RX queue. In this case we do have to copy -\/ we have no choice. However this only happens in circumstances where a user of BIO\+\_\+dgram alternates between old and new APIs, which should be very unusual.
+
+Subsequently for (3) we have to free the buffer using the free callback. This is an unusual case where BIO\+\_\+dgram is responsible for freeing read buffers and not the application (the only other case being premature destruction, see below). But since this seems a very strange API usage pattern, we may just want to fail in this case.
+
+Probably not worth supporting this. So we can have the following rule\+:
+
+
+\begin{DoxyItemize}
+\item After the first call to {\ttfamily BIO\+\_\+read\+\_\+dequeue} is made on a BIO\+\_\+dgram, all subsequent calls to ordinary {\ttfamily BIO\+\_\+read} will fail.
+\end{DoxyItemize}
+
+Of course, all of the above applies analogously to the TX side.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2dgram-api_autotoc_md266}{}\doxysubsubsection{\texorpdfstring{BIO\+\_\+dgram\+\_\+pair}{BIO\+\_\+dgram\+\_\+pair}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2dgram-api_autotoc_md266}
+We will also implement from scratch a BIO\+\_\+dgram\+\_\+pair. This will be provided as a BIO pair which provides identical semantics to the BIO\+\_\+dgram above, both for the legacy and zero-\/copy code paths.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2dgram-api_autotoc_md267}{}\doxysubsubsection{\texorpdfstring{Thread safety}{Thread safety}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2dgram-api_autotoc_md267}
+It is a functional assumption of the above design that we would never want to have more than one thread doing TX on the same BIO and never have more than one thread doing RX on the same BIO.
+
+If we did ever want to do this, multiple BIOs on the same FD is one possibility (for the BIO\+\_\+dgram case at least). But I don\textquotesingle{}t believe there is any general intention to support multithreaded use of a single BIO at this time (unless I am mistaken), so this seems like it isn\textquotesingle{}t an issue.
+
+If we wanted to support multithreaded use of the same FD using the same BIO, we would need to revisit the set-\/call-\/then-\/execute-\/call API approach above ({\ttfamily BIO\+\_\+(set\texorpdfstring{$\vert$}{|}get)\+\_\+dgram\+\_\+(origin\texorpdfstring{$\vert$}{|}dest)}) as this would pose a problem. But I mainly mention this only for completeness. Our recent learnt lessons on cache contention suggest that this probably wouldn\textquotesingle{}t be a good idea anyway.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2dgram-api_autotoc_md268}{}\doxysubsubsection{\texorpdfstring{Other questions}{Other questions}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2dgram-api_autotoc_md268}
+BIO\+\_\+dgram will call the allocation function to get buffers for {\ttfamily recvmmsg} to fill. We might want to have a way to specify how many buffers it should offer to {\ttfamily recvmmsg}, and thus how many buffers it allocates in advance.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2dgram-api_autotoc_md269}{}\doxysubsubsection{\texorpdfstring{Premature destruction}{Premature destruction}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2dgram-api_autotoc_md269}
+If BIO\+\_\+dgram is freed before all datagrams are read, the read buffer free callback is used to free any unreturned read buffers. 

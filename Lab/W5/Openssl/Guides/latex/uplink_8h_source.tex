@@ -1,0 +1,44 @@
+\doxysection{uplink.\+h}
+\hypertarget{uplink_8h_source}{}\label{uplink_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/ms/uplink.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/ms/uplink.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2004-\/2016\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#define\ APPMACROS\_ONLY}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ "{}applink.c"{}}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{keyword}{extern}\ \textcolor{keywordtype}{void}\ *OPENSSL\_UplinkTable[];}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#define\ UP\_stdin\ \ (*(void\ *(*)(void))OPENSSL\_UplinkTable[APPLINK\_STDIN])()}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#define\ UP\_stdout\ (*(void\ *(*)(void))OPENSSL\_UplinkTable[APPLINK\_STDOUT])()}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ UP\_stderr\ (*(void\ *(*)(void))OPENSSL\_UplinkTable[APPLINK\_STDERR])()}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#define\ UP\_fprintf\ (*(int\ (*)(void\ *,const\ char\ *,...))OPENSSL\_UplinkTable[APPLINK\_FPRINTF])}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#define\ UP\_fgets\ \ (*(char\ *(*)(char\ *,int,void\ *))OPENSSL\_UplinkTable[APPLINK\_FGETS])}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#define\ UP\_fread\ \ (*(size\_t\ (*)(void\ *,size\_t,size\_t,void\ *))OPENSSL\_UplinkTable[APPLINK\_FREAD])}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#define\ UP\_fwrite\ (*(size\_t\ (*)(const\ void\ *,size\_t,size\_t,void\ *))OPENSSL\_UplinkTable[APPLINK\_FWRITE])}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#define\ UP\_fsetmod\ (*(int\ (*)(void\ *,char))OPENSSL\_UplinkTable[APPLINK\_FSETMOD])}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#define\ UP\_feof\ \ \ (*(int\ (*)(void\ *))OPENSSL\_UplinkTable[APPLINK\_FEOF])}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#define\ UP\_fclose\ (*(int\ (*)(void\ *))OPENSSL\_UplinkTable[APPLINK\_FCLOSE])}}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#define\ UP\_fopen\ \ (*(void\ *(*)(const\ char\ *,const\ char\ *))OPENSSL\_UplinkTable[APPLINK\_FOPEN])}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#define\ UP\_fseek\ \ (*(int\ (*)(void\ *,long,int))OPENSSL\_UplinkTable[APPLINK\_FSEEK])}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#define\ UP\_ftell\ \ (*(long\ (*)(void\ *))OPENSSL\_UplinkTable[APPLINK\_FTELL])}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#define\ UP\_fflush\ (*(int\ (*)(void\ *))OPENSSL\_UplinkTable[APPLINK\_FFLUSH])}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#define\ UP\_ferror\ (*(int\ (*)(void\ *))OPENSSL\_UplinkTable[APPLINK\_FERROR])}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#define\ UP\_clearerr\ (*(void\ (*)(void\ *))OPENSSL\_UplinkTable[APPLINK\_CLEARERR])}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#define\ UP\_fileno\ (*(int\ (*)(void\ *))OPENSSL\_UplinkTable[APPLINK\_FILENO])}}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#define\ UP\_open\ \ \ (*(int\ (*)(const\ char\ *,int,...))OPENSSL\_UplinkTable[APPLINK\_OPEN])}}
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#define\ UP\_read\ \ \ (*(ossl\_ssize\_t\ (*)(int,void\ *,size\_t))OPENSSL\_UplinkTable[APPLINK\_READ])}}
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#define\ UP\_write\ \ (*(ossl\_ssize\_t\ (*)(int,const\ void\ *,size\_t))OPENSSL\_UplinkTable[APPLINK\_WRITE])}}
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#define\ UP\_lseek\ \ (*(long\ (*)(int,long,int))OPENSSL\_UplinkTable[APPLINK\_LSEEK])}}
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#define\ UP\_close\ \ (*(int\ (*)(int))OPENSSL\_UplinkTable[APPLINK\_CLOSE])}}
+
+\end{DoxyCode}

@@ -1,0 +1,159 @@
+\doxysection{applink.\+c}
+\hypertarget{ms_2applink_8c_source}{}\label{ms_2applink_8c_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/ms/applink.c@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/ms/applink.c}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2004-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#define\ APPLINK\_STDIN\ \ \ 1}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#define\ APPLINK\_STDOUT\ \ 2}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#define\ APPLINK\_STDERR\ \ 3}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#define\ APPLINK\_FPRINTF\ 4}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#define\ APPLINK\_FGETS\ \ \ 5}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#define\ APPLINK\_FREAD\ \ \ 6}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#define\ APPLINK\_FWRITE\ \ 7}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ APPLINK\_FSETMOD\ 8}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#define\ APPLINK\_FEOF\ \ \ \ 9}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#define\ APPLINK\_FCLOSE\ \ 10\ \ \ \ \ \ }\textcolor{comment}{/*\ should\ not\ be\ used\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#define\ APPLINK\_FOPEN\ \ \ 11\ \ \ \ \ \ }\textcolor{comment}{/*\ solely\ for\ completeness\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#define\ APPLINK\_FSEEK\ \ \ 12}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#define\ APPLINK\_FTELL\ \ \ 13}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#define\ APPLINK\_FFLUSH\ \ 14}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#define\ APPLINK\_FERROR\ \ 15}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#define\ APPLINK\_CLEARERR\ 16}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#define\ APPLINK\_FILENO\ \ 17\ \ \ \ \ \ }\textcolor{comment}{/*\ to\ be\ used\ with\ below\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#define\ APPLINK\_OPEN\ \ \ \ 18\ \ \ \ \ \ }\textcolor{comment}{/*\ formally\ can't\ be\ used,\ as\ flags\ can\ vary\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#define\ APPLINK\_READ\ \ \ \ 19}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#define\ APPLINK\_WRITE\ \ \ 20}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#define\ APPLINK\_LSEEK\ \ \ 21}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#define\ APPLINK\_CLOSE\ \ \ 22}}
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#define\ APPLINK\_MAX\ \ \ \ \ 22\ \ \ \ \ \ }\textcolor{comment}{/*\ always\ same\ as\ last\ macro\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#ifndef\ APPMACROS\_ONLY}}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00039\ \textcolor{comment}{\ *\ Normally,\ do\ not\ define\ APPLINK\_NO\_INCLUDES.\ \ Define\ it\ if\ you\ are\ using}}
+\DoxyCodeLine{00040\ \textcolor{comment}{\ *\ symbol\ preprocessing\ and\ do\ not\ want\ the\ preprocessing\ to\ affect\ the}}
+\DoxyCodeLine{00041\ \textcolor{comment}{\ *\ following\ included\ header\ files.\ \ You\ will\ need\ to\ put\ these}}
+\DoxyCodeLine{00042\ \textcolor{comment}{\ *\ include\ lines\ somewhere\ in\ the\ file\ that\ is\ including\ applink.c.}}
+\DoxyCodeLine{00043\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00044\ \textcolor{preprocessor}{\#\ ifndef\ APPLINK\_NO\_INCLUDES}}
+\DoxyCodeLine{00045\ \textcolor{preprocessor}{\#\ \ include\ <stdio.h>}}
+\DoxyCodeLine{00046\ \textcolor{preprocessor}{\#\ \ include\ <io.h>}}
+\DoxyCodeLine{00047\ \textcolor{preprocessor}{\#\ \ include\ <fcntl.h>}}
+\DoxyCodeLine{00048\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \textcolor{preprocessor}{\#\ ifdef\ \_\_BORLANDC\_\_}}
+\DoxyCodeLine{00051\ \ \ \ \textcolor{comment}{/*\ \_lseek\ in\ <io.h>\ is\ a\ function-\/like\ macro\ so\ we\ can't\ take\ its\ address\ */}}
+\DoxyCodeLine{00052\ \textcolor{preprocessor}{\#\ \ undef\ \_lseek}}
+\DoxyCodeLine{00053\ \textcolor{preprocessor}{\#\ \ define\ \_lseek\ lseek}}
+\DoxyCodeLine{00054\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ *app\_stdin(\textcolor{keywordtype}{void})}
+\DoxyCodeLine{00057\ \{}
+\DoxyCodeLine{00058\ \ \ \ \ \textcolor{keywordflow}{return}\ stdin;}
+\DoxyCodeLine{00059\ \}}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ *app\_stdout(\textcolor{keywordtype}{void})}
+\DoxyCodeLine{00062\ \{}
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{keywordflow}{return}\ stdout;}
+\DoxyCodeLine{00064\ \}}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ *app\_stderr(\textcolor{keywordtype}{void})}
+\DoxyCodeLine{00067\ \{}
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{keywordflow}{return}\ stderr;}
+\DoxyCodeLine{00069\ \}}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00071\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ app\_feof(FILE\ *fp)}
+\DoxyCodeLine{00072\ \{}
+\DoxyCodeLine{00073\ \ \ \ \ \textcolor{keywordflow}{return}\ feof(fp);}
+\DoxyCodeLine{00074\ \}}
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00076\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ app\_ferror(FILE\ *fp)}
+\DoxyCodeLine{00077\ \{}
+\DoxyCodeLine{00078\ \ \ \ \ \textcolor{keywordflow}{return}\ ferror(fp);}
+\DoxyCodeLine{00079\ \}}
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00081\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ app\_clearerr(FILE\ *fp)}
+\DoxyCodeLine{00082\ \{}
+\DoxyCodeLine{00083\ \ \ \ \ clearerr(fp);}
+\DoxyCodeLine{00084\ \}}
+\DoxyCodeLine{00085\ }
+\DoxyCodeLine{00086\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ app\_fileno(FILE\ *fp)}
+\DoxyCodeLine{00087\ \{}
+\DoxyCodeLine{00088\ \ \ \ \ \textcolor{keywordflow}{return}\ \_fileno(fp);}
+\DoxyCodeLine{00089\ \}}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ app\_fsetmod(FILE\ *fp,\ \textcolor{keywordtype}{char}\ mod)}
+\DoxyCodeLine{00092\ \{}
+\DoxyCodeLine{00093\ \ \ \ \ \textcolor{keywordflow}{return}\ \_setmode(\_fileno(fp),\ mod\ ==\ \textcolor{charliteral}{'b'}\ ?\ \_O\_BINARY\ :\ \_O\_TEXT);}
+\DoxyCodeLine{00094\ \}}
+\DoxyCodeLine{00095\ }
+\DoxyCodeLine{00096\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00097\ \textcolor{keyword}{extern}\ \textcolor{stringliteral}{"{}C"{}}\ \{}
+\DoxyCodeLine{00098\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00100\ \_\_declspec(dllexport)}
+\DoxyCodeLine{00101\ \textcolor{keywordtype}{void}\ **}
+\DoxyCodeLine{00102\ \textcolor{preprocessor}{\#\ if\ defined(\_\_BORLANDC\_\_)}}
+\DoxyCodeLine{00103\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00104\ \textcolor{comment}{\ *\ \_\_stdcall\ appears\ to\ be\ the\ only\ way\ to\ get\ the\ name}}
+\DoxyCodeLine{00105\ \textcolor{comment}{\ *\ decoration\ right\ with\ Borland\ C.\ Otherwise\ it\ works}}
+\DoxyCodeLine{00106\ \textcolor{comment}{\ *\ purely\ incidentally,\ as\ we\ pass\ no\ parameters.}}
+\DoxyCodeLine{00107\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00108\ \_\_stdcall}
+\DoxyCodeLine{00109\ \textcolor{preprocessor}{\#\ else}}
+\DoxyCodeLine{00110\ \_\_cdecl}
+\DoxyCodeLine{00111\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00112\ OPENSSL\_Applink(\textcolor{keywordtype}{void})}
+\DoxyCodeLine{00113\ \{}
+\DoxyCodeLine{00114\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ once\ =\ 1;}
+\DoxyCodeLine{00115\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ *OPENSSL\_ApplinkTable[APPLINK\_MAX\ +\ 1]\ =}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \{\ (\textcolor{keywordtype}{void}\ *)APPLINK\_MAX\ \};}
+\DoxyCodeLine{00117\ }
+\DoxyCodeLine{00118\ \ \ \ \ \textcolor{keywordflow}{if}\ (once)\ \{}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ OPENSSL\_ApplinkTable[APPLINK\_STDIN]\ =\ app\_stdin;}
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ OPENSSL\_ApplinkTable[APPLINK\_STDOUT]\ =\ app\_stdout;}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ OPENSSL\_ApplinkTable[APPLINK\_STDERR]\ =\ app\_stderr;}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ OPENSSL\_ApplinkTable[APPLINK\_FPRINTF]\ =\ fprintf;}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ OPENSSL\_ApplinkTable[APPLINK\_FGETS]\ =\ fgets;}
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ OPENSSL\_ApplinkTable[APPLINK\_FREAD]\ =\ fread;}
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ OPENSSL\_ApplinkTable[APPLINK\_FWRITE]\ =\ fwrite;}
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ OPENSSL\_ApplinkTable[APPLINK\_FSETMOD]\ =\ app\_fsetmod;}
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ OPENSSL\_ApplinkTable[APPLINK\_FEOF]\ =\ app\_feof;}
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ OPENSSL\_ApplinkTable[APPLINK\_FCLOSE]\ =\ fclose;}
+\DoxyCodeLine{00129\ }
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ OPENSSL\_ApplinkTable[APPLINK\_FOPEN]\ =\ fopen;}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ OPENSSL\_ApplinkTable[APPLINK\_FSEEK]\ =\ fseek;}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ OPENSSL\_ApplinkTable[APPLINK\_FTELL]\ =\ ftell;}
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ OPENSSL\_ApplinkTable[APPLINK\_FFLUSH]\ =\ fflush;}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ OPENSSL\_ApplinkTable[APPLINK\_FERROR]\ =\ app\_ferror;}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ OPENSSL\_ApplinkTable[APPLINK\_CLEARERR]\ =\ app\_clearerr;}
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ OPENSSL\_ApplinkTable[APPLINK\_FILENO]\ =\ app\_fileno;}
+\DoxyCodeLine{00137\ }
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ OPENSSL\_ApplinkTable[APPLINK\_OPEN]\ =\ \_open;}
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ OPENSSL\_ApplinkTable[APPLINK\_READ]\ =\ \_read;}
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ OPENSSL\_ApplinkTable[APPLINK\_WRITE]\ =\ \_write;}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ OPENSSL\_ApplinkTable[APPLINK\_LSEEK]\ =\ \_lseek;}
+\DoxyCodeLine{00142\ \ \ \ \ \ \ \ \ OPENSSL\_ApplinkTable[APPLINK\_CLOSE]\ =\ \_close;}
+\DoxyCodeLine{00143\ }
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ once\ =\ 0;}
+\DoxyCodeLine{00145\ \ \ \ \ \}}
+\DoxyCodeLine{00146\ }
+\DoxyCodeLine{00147\ \ \ \ \ \textcolor{keywordflow}{return}\ OPENSSL\_ApplinkTable;}
+\DoxyCodeLine{00148\ \}}
+\DoxyCodeLine{00149\ }
+\DoxyCodeLine{00150\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00151\ \}}
+\DoxyCodeLine{00152\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00153\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

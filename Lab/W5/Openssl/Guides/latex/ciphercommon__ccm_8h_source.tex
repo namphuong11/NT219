@@ -1,0 +1,112 @@
+\doxysection{ciphercommon\+\_\+ccm.\+h}
+\hypertarget{ciphercommon__ccm_8h_source}{}\label{ciphercommon__ccm_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/providers/implementations/include/prov/ciphercommon\_ccm.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/providers/implementations/include/prov/ciphercommon\_ccm.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2019-\/2022\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_PROV\_CIPHERCOMMON\_CCM\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_PROV\_CIPHERCOMMON\_CCM\_H}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#\ pragma\ once}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ include\ "{}ciphercommon\_aead.h"{}}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structprov__ccm__hw__st}{prov\_ccm\_hw\_st}}\ \mbox{\hyperlink{structprov__ccm__hw__st}{PROV\_CCM\_HW}};}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#\ if\ defined(OPENSSL\_CPUID\_OBJ)\ \&\&\ defined(\_\_s390\_\_)}}
+\DoxyCodeLine{00019\ \textcolor{comment}{/*-\/}}
+\DoxyCodeLine{00020\ \textcolor{comment}{\ *\ KMAC-\/AES\ parameter\ block\ -\/\ begin}}
+\DoxyCodeLine{00021\ \textcolor{comment}{\ *\ (see\ z/Architecture\ Principles\ of\ Operation\ >=\ SA22-\/7832-\/08)}}
+\DoxyCodeLine{00022\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00023\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }S390X\_kmac\_params\_st\ \{}
+\DoxyCodeLine{00024\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{long}\ g[2];}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \mbox{\hyperlink{structb}{b}}[16];}
+\DoxyCodeLine{00027\ \ \ \ \ \}\ icv;}
+\DoxyCodeLine{00028\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ k[32];}
+\DoxyCodeLine{00029\ \}\ S390X\_KMAC\_PARAMS;}
+\DoxyCodeLine{00030\ \textcolor{comment}{/*\ KMAC-\/AES\ parameter\ block\ -\/\ end\ */}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#\ endif}}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \textcolor{comment}{/*\ Base\ structure\ that\ is\ shared\ by\ AES\ \&\ ARIA\ for\ CCM\ MODE\ */}}
+\DoxyCodeLine{00034\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structprov__ccm__st}{prov\_ccm\_st}}\ \{}
+\DoxyCodeLine{00035\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ enc\ :\ 1;}
+\DoxyCodeLine{00036\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ key\_set\ :\ 1;\ \ \textcolor{comment}{/*\ Set\ if\ key\ initialised\ */}}
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ iv\_set\ :\ 1;\ \ \ \textcolor{comment}{/*\ Set\ if\ an\ iv\ is\ set\ */}}
+\DoxyCodeLine{00038\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ tag\_set\ :\ 1;\ \ \textcolor{comment}{/*\ Set\ if\ tag\ is\ valid\ */}}
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ len\_set\ :\ 1;\ \ \textcolor{comment}{/*\ Set\ if\ message\ length\ set\ */}}
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ l,\ m;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ L\ and\ M\ parameters\ from\ RFC3610\ */}}
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ keylen;}
+\DoxyCodeLine{00042\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ tls\_aad\_len;\ \ \ \ \ \ \ \ \textcolor{comment}{/*\ TLS\ AAD\ length\ */}}
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ tls\_aad\_pad\_sz;}
+\DoxyCodeLine{00044\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ iv[GENERIC\_BLOCK\_SIZE];}
+\DoxyCodeLine{00045\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ buf[GENERIC\_BLOCK\_SIZE];}
+\DoxyCodeLine{00046\ \ \ \ \ CCM128\_CONTEXT\ ccm\_ctx;}
+\DoxyCodeLine{00047\ \ \ \ \ ccm128\_f\ str;}
+\DoxyCodeLine{00048\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structprov__ccm__hw__st}{PROV\_CCM\_HW}}\ *hw;\ \ \ \ \ \textcolor{comment}{/*\ hardware\ specific\ methods\ \ */}}
+\DoxyCodeLine{00049\ \}\ \mbox{\hyperlink{structprov__ccm__st}{PROV\_CCM\_CTX}};}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ PROV\_CIPHER\_FUNC(\textcolor{keywordtype}{int},\ CCM\_cipher,\ (\mbox{\hyperlink{structprov__ccm__st}{PROV\_CCM\_CTX}}\ *ctx,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,\ \ \ \ \ \ \(\backslash\)}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ *padlen,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,\ \ \ \ \(\backslash\)}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ len));}
+\DoxyCodeLine{00054\ PROV\_CIPHER\_FUNC(\textcolor{keywordtype}{int},\ CCM\_setkey,\ (\mbox{\hyperlink{structprov__ccm__st}{PROV\_CCM\_CTX}}\ *ctx,\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *key,\ \textcolor{keywordtype}{size\_t}\ keylen));}
+\DoxyCodeLine{00056\ PROV\_CIPHER\_FUNC(\textcolor{keywordtype}{int},\ CCM\_setiv,\ (\mbox{\hyperlink{structprov__ccm__st}{PROV\_CCM\_CTX}}\ *dat,\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *iv,\ \textcolor{keywordtype}{size\_t}\ ivlen,\ \ \ \ \ \ \ \(\backslash\)}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ mlen));}
+\DoxyCodeLine{00059\ PROV\_CIPHER\_FUNC(\textcolor{keywordtype}{int},\ CCM\_setaad,\ (\mbox{\hyperlink{structprov__ccm__st}{PROV\_CCM\_CTX}}\ *ctx,\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *aad,\ \textcolor{keywordtype}{size\_t}\ aadlen));}
+\DoxyCodeLine{00061\ PROV\_CIPHER\_FUNC(\textcolor{keywordtype}{int},\ CCM\_auth\_encrypt,\ (\mbox{\hyperlink{structprov__ccm__st}{PROV\_CCM\_CTX}}\ *ctx,\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,\ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,\ \textcolor{keywordtype}{size\_t}\ len,\ \ \ \ \ \ \ \(\backslash\)}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *tag,\ \textcolor{keywordtype}{size\_t}\ taglen));}
+\DoxyCodeLine{00065\ PROV\_CIPHER\_FUNC(\textcolor{keywordtype}{int},\ CCM\_auth\_decrypt,\ (\mbox{\hyperlink{structprov__ccm__st}{PROV\_CCM\_CTX}}\ *ctx,\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,\ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,\ \textcolor{keywordtype}{size\_t}\ len,\ \ \ \ \ \ \ \(\backslash\)}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *tag,\ \textcolor{keywordtype}{size\_t}\ taglen));}
+\DoxyCodeLine{00069\ PROV\_CIPHER\_FUNC(\textcolor{keywordtype}{int},\ CCM\_gettag,\ (\mbox{\hyperlink{structprov__ccm__st}{PROV\_CCM\_CTX}}\ *ctx,\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *tag,\ \ \textcolor{keywordtype}{size\_t}\ taglen));}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00072\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00073\ \textcolor{comment}{\ *\ CCM\ Mode\ internal\ method\ table\ used\ to\ handle\ hardware\ specific\ differences,}}
+\DoxyCodeLine{00074\ \textcolor{comment}{\ *\ (and\ different\ algorithms).}}
+\DoxyCodeLine{00075\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00076\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structprov__ccm__hw__st}{prov\_ccm\_hw\_st}}\ \{}
+\DoxyCodeLine{00077\ \ \ \ \ OSSL\_CCM\_setkey\_fn\ setkey;}
+\DoxyCodeLine{00078\ \ \ \ \ OSSL\_CCM\_setiv\_fn\ setiv;}
+\DoxyCodeLine{00079\ \ \ \ \ OSSL\_CCM\_setaad\_fn\ setaad;}
+\DoxyCodeLine{00080\ \ \ \ \ OSSL\_CCM\_auth\_encrypt\_fn\ auth\_encrypt;}
+\DoxyCodeLine{00081\ \ \ \ \ OSSL\_CCM\_auth\_decrypt\_fn\ auth\_decrypt;}
+\DoxyCodeLine{00082\ \ \ \ \ OSSL\_CCM\_gettag\_fn\ gettag;}
+\DoxyCodeLine{00083\ \};}
+\DoxyCodeLine{00084\ }
+\DoxyCodeLine{00085\ OSSL\_FUNC\_cipher\_encrypt\_init\_fn\ ossl\_ccm\_einit;}
+\DoxyCodeLine{00086\ OSSL\_FUNC\_cipher\_decrypt\_init\_fn\ ossl\_ccm\_dinit;}
+\DoxyCodeLine{00087\ OSSL\_FUNC\_cipher\_get\_ctx\_params\_fn\ ossl\_ccm\_get\_ctx\_params;}
+\DoxyCodeLine{00088\ OSSL\_FUNC\_cipher\_set\_ctx\_params\_fn\ ossl\_ccm\_set\_ctx\_params;}
+\DoxyCodeLine{00089\ OSSL\_FUNC\_cipher\_update\_fn\ ossl\_ccm\_stream\_update;}
+\DoxyCodeLine{00090\ OSSL\_FUNC\_cipher\_final\_fn\ ossl\_ccm\_stream\_final;}
+\DoxyCodeLine{00091\ OSSL\_FUNC\_cipher\_cipher\_fn\ ossl\_ccm\_cipher;}
+\DoxyCodeLine{00092\ \textcolor{keywordtype}{void}\ ossl\_ccm\_initctx(\mbox{\hyperlink{structprov__ccm__st}{PROV\_CCM\_CTX}}\ *ctx,\ \textcolor{keywordtype}{size\_t}\ keybits,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structprov__ccm__hw__st}{PROV\_CCM\_HW}}\ *hw);}
+\DoxyCodeLine{00093\ }
+\DoxyCodeLine{00094\ \textcolor{keywordtype}{int}\ ossl\_ccm\_generic\_setiv(\mbox{\hyperlink{structprov__ccm__st}{PROV\_CCM\_CTX}}\ *ctx,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *nonce,}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ nlen,\ \textcolor{keywordtype}{size\_t}\ mlen);}
+\DoxyCodeLine{00096\ \textcolor{keywordtype}{int}\ ossl\_ccm\_generic\_setaad(\mbox{\hyperlink{structprov__ccm__st}{PROV\_CCM\_CTX}}\ *ctx,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *aad,}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ alen);}
+\DoxyCodeLine{00098\ \textcolor{keywordtype}{int}\ ossl\_ccm\_generic\_gettag(\mbox{\hyperlink{structprov__ccm__st}{PROV\_CCM\_CTX}}\ *ctx,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *tag,\ \textcolor{keywordtype}{size\_t}\ tlen);}
+\DoxyCodeLine{00099\ \textcolor{keywordtype}{int}\ ossl\_ccm\_generic\_auth\_encrypt(\mbox{\hyperlink{structprov__ccm__st}{PROV\_CCM\_CTX}}\ *ctx,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,\ \textcolor{keywordtype}{size\_t}\ len,}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *tag,\ \textcolor{keywordtype}{size\_t}\ taglen);}
+\DoxyCodeLine{00102\ \textcolor{keywordtype}{int}\ ossl\_ccm\_generic\_auth\_decrypt(\mbox{\hyperlink{structprov__ccm__st}{PROV\_CCM\_CTX}}\ *ctx,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *in,}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *out,\ \textcolor{keywordtype}{size\_t}\ len,}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *expected\_tag,\ \textcolor{keywordtype}{size\_t}\ taglen);}
+\DoxyCodeLine{00105\ }
+\DoxyCodeLine{00106\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

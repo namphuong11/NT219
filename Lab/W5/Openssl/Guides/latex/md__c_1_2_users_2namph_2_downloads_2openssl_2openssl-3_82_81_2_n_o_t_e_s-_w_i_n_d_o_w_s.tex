@@ -1,0 +1,139 @@
+\chapter{Notes for Windows platforms}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_w_i_n_d_o_w_s}{}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_w_i_n_d_o_w_s}\index{Notes for Windows platforms@{Notes for Windows platforms}}
+
+\begin{DoxyItemize}
+\item Native builds using Visual C++
+\item Native builds using Embarcadero C++\+Builder
+\item Native builds using Min\+GW
+\item Linking native applications
+\item Hosted builds using Cygwin
+\end{DoxyItemize}
+
+There are various options to build and run Open\+SSL on the Windows platforms.
+
+"{}\+Native"{} Open\+SSL uses the Windows APIs directly at run time. To build a native Open\+SSL you can either use\+: \begin{DoxyVerb}Microsoft Visual C++ (MSVC) C compiler on the command line
+\end{DoxyVerb}
+ or Embarcadero C++\+Builder or Min\+GW cross compiler run on the GNU-\/like development environment MSYS2 or run on Linux or Cygwin
+
+"{}\+Hosted"{} Open\+SSL relies on an external POSIX compatibility layer for building (using GNU/\+Unix shell, compiler, and tools) and at run time. For this option, you can use Cygwin.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_w_i_n_d_o_w_s_autotoc_md908}{}\doxysection{\texorpdfstring{Native builds using Visual C++}{Native builds using Visual C++}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_w_i_n_d_o_w_s_autotoc_md908}
+The native builds using Visual C++ have a {\ttfamily VC-\/\texorpdfstring{$\ast$}{*}} prefix.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_w_i_n_d_o_w_s_autotoc_md909}{}\doxysubsection{\texorpdfstring{Requirement details}{Requirement details}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_w_i_n_d_o_w_s_autotoc_md909}
+In addition to the requirements and instructions listed in {\ttfamily INSTALL.\+md}, these are required as well\+:\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_w_i_n_d_o_w_s_autotoc_md910}{}\doxysubsubsection{\texorpdfstring{Perl}{Perl}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_w_i_n_d_o_w_s_autotoc_md910}
+We recommend Strawberry Perl, available from \href{http://strawberryperl.com/}{\texttt{ http\+://strawberryperl.\+com/}} Please read NOTES.\+PERL for more information, including the use of CPAN. An alternative is Active\+State Perl, \href{https://www.activestate.com/ActivePerl}{\texttt{ https\+://www.\+activestate.\+com/\+Active\+Perl}} for which you may need to explicitly build the Perl module Win32/\+Console.\+pm via \href{https://platform.activestate.com/ActiveState}{\texttt{ https\+://platform.\+activestate.\+com/\+Active\+State}} and then download it.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_w_i_n_d_o_w_s_autotoc_md911}{}\doxysubsubsection{\texorpdfstring{Microsoft Visual C compiler.}{Microsoft Visual C compiler.}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_w_i_n_d_o_w_s_autotoc_md911}
+Since these are proprietary and ever-\/changing we cannot test them all. Older versions may not work. Use a recent version wherever possible.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_w_i_n_d_o_w_s_autotoc_md912}{}\doxysubsubsection{\texorpdfstring{Netwide Assembler (NASM)}{Netwide Assembler (NASM)}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_w_i_n_d_o_w_s_autotoc_md912}
+NASM is the only supported assembler. It is available from \href{https://www.nasm.us}{\texttt{ https\+://www.\+nasm.\+us}}.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_w_i_n_d_o_w_s_autotoc_md913}{}\doxysubsection{\texorpdfstring{Quick start}{Quick start}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_w_i_n_d_o_w_s_autotoc_md913}
+
+\begin{DoxyEnumerate}
+\item Install Perl
+\item Install NASM
+\item Make sure both Perl and NASM are on your PATH\%
+\item Use Visual Studio Developer Command Prompt with administrative privileges, choosing one of its variants depending on the intended architecture. Or run {\ttfamily cmd} and execute {\ttfamily vcvarsall.\+bat} with one of the options {\ttfamily x86}, {\ttfamily x86\+\_\+amd64}, {\ttfamily x86\+\_\+arm}, {\ttfamily x86\+\_\+arm64}, {\ttfamily amd64}, {\ttfamily amd64\+\_\+x86}, {\ttfamily amd64\+\_\+arm}, or {\ttfamily amd64\+\_\+arm64}. This sets up the environment variables needed for {\ttfamily nmake.\+exe}, {\ttfamily cl.\+exe}, etc. See also \href{https://docs.microsoft.com/cpp/build/building-on-the-command-line}{\texttt{ https\+://docs.\+microsoft.\+com/cpp/build/building-\/on-\/the-\/command-\/line}}
+\item From the root of the Open\+SSL source directory enter
+\begin{DoxyItemize}
+\item {\ttfamily perl Configure VC-\/\+WIN32} if you want 32-\/bit Open\+SSL or
+\item {\ttfamily perl Configure VC-\/\+WIN64A} if you want 64-\/bit Open\+SSL or
+\item {\ttfamily perl Configure VC-\/\+WIN64-\/\+ARM} if you want Windows on Arm (win-\/arm64) Open\+SSL or
+\item {\ttfamily perl Configure VC-\/\+WIN64-\/\+CLANGASM-\/\+ARM} if you want Windows on Arm (win-\/arm64) Open\+SSL with assembly support using clang-\/cl as assembler or
+\item {\ttfamily perl Configure VC-\/\+CLANG-\/\+WIN64-\/\+CLANGASM-\/\+ARM} if you want Windows on Arm (win-\/arm64) Open\+SSL using clang-\/cl as both compiler and assembler or
+\item {\ttfamily perl Configure VC-\/\+WIN32-\/\+HYBRIDCRT} if you want 32-\/bit Open\+SSL dependent on the Universal CRT or
+\item {\ttfamily perl Configure VC-\/\+WIN64\+A-\/\+HYBRIDCRT} if you want 64-\/bit Open\+SSL dependent on the Universal CRT or
+\item {\ttfamily perl Configure} to let Configure figure out the platform
+\end{DoxyItemize}
+\item {\ttfamily nmake}
+\item {\ttfamily nmake test}
+\item {\ttfamily nmake install}
+\end{DoxyEnumerate}
+
+For the full installation instructions, or if anything goes wrong at any stage, check the INSTALL.\+md file.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_w_i_n_d_o_w_s_autotoc_md914}{}\doxysubsection{\texorpdfstring{Installation directories}{Installation directories}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_w_i_n_d_o_w_s_autotoc_md914}
+The default installation directories are derived from environment variables.
+
+For VC-\/\+WIN32, the following defaults are use\+: \begin{DoxyVerb}PREFIX:      %ProgramFiles(x86)%\OpenSSL
+OPENSSLDIR:  %CommonProgramFiles(x86)%\SSL
+\end{DoxyVerb}
+ For VC-\/\+WIN64, the following defaults are use\+: \begin{DoxyVerb}PREFIX:      %ProgramW6432%\OpenSSL
+OPENSSLDIR:  %CommonProgramW6432%\SSL
+\end{DoxyVerb}
+ Should those environment variables not exist (on a pure Win32 installation for examples), these fallbacks are used\+: \begin{DoxyVerb}PREFIX:      %ProgramFiles%\OpenSSL
+OPENSSLDIR:  %CommonProgramFiles%\SSL
+\end{DoxyVerb}
+ ALSO NOTE that those directories are usually write protected, even if your account is in the Administrators group. To work around that, start the command prompt by right-\/clicking on it and choosing "{}\+Run as \+Administrator"{} before running {\ttfamily nmake install}. The other solution is, of course, to choose a different set of directories by using {\ttfamily -\/-\/prefix} and {\ttfamily -\/-\/openssldir} when configuring.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_w_i_n_d_o_w_s_autotoc_md915}{}\doxysubsection{\texorpdfstring{Special notes for Universal Windows Platform builds, aka {\ttfamily VC-\/\texorpdfstring{$\ast$}{*}-\/\+UWP}}{Special notes for Universal Windows Platform builds, aka {\ttfamily VC-\/\texorpdfstring{$\ast$}{*}-\/\+UWP}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_w_i_n_d_o_w_s_autotoc_md915}
+
+\begin{DoxyItemize}
+\item UWP targets only support building the static and dynamic libraries.
+\item You should define the platform type to {\ttfamily uwp} and the target arch via {\ttfamily vcvarsall.\+bat} before you compile. For example, if you want to build {\ttfamily arm64} builds, you should run {\ttfamily vcvarsall.\+bat x86\+\_\+arm64 uwp}.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_w_i_n_d_o_w_s_autotoc_md916}{}\doxysection{\texorpdfstring{Native builds using Embarcadero C++\+Builder}{Native builds using Embarcadero C++\+Builder}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_w_i_n_d_o_w_s_autotoc_md916}
+This toolchain (a descendant of Turbo/\+Borland C++) is an alternative to MSVC. Open\+SSL currently includes an experimental 32-\/bit configuration targeting the Clang-\/based compiler ({\ttfamily bcc32c.\+exe}) in v10.\+3.\+3 Community Edition. \href{https://www.embarcadero.com/products/cbuilder/starter}{\texttt{ https\+://www.\+embarcadero.\+com/products/cbuilder/starter}}
+
+
+\begin{DoxyEnumerate}
+\item Install Perl.
+\item Open the RAD Studio Command Prompt.
+\item Go to the root of the Open\+SSL source directory and run\+: {\ttfamily perl Configure BC-\/32 -\/-\/prefix=CD\%}
+\item {\ttfamily make -\/N}
+\item {\ttfamily make -\/N test}
+\item Build your program against this Open\+SSL\+:
+\begin{DoxyItemize}
+\item Set your include search path to the "{}include"{} subdirectory of Open\+SSL.
+\item Set your library search path to the Open\+SSL source directory.
+\end{DoxyItemize}
+\end{DoxyEnumerate}
+
+Note that this is very experimental. Support for 64-\/bit and other Configure options is still pending.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_w_i_n_d_o_w_s_autotoc_md917}{}\doxysection{\texorpdfstring{Native builds using Min\+GW}{Native builds using Min\+GW}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_w_i_n_d_o_w_s_autotoc_md917}
+Min\+GW offers an alternative way to build native Open\+SSL, by cross compilation.
+
+
+\begin{DoxyItemize}
+\item Usually the build is done on Windows in a GNU-\/like environment called MSYS2.
+
+MSYS2 provides GNU tools, a Unix-\/like command prompt, and a UNIX compatibility layer for applications. However, in this context it is only used for building Open\+SSL. The resulting Open\+SSL does not rely on MSYS2 to run and is fully native.
+
+Requirement details
+\begin{DoxyItemize}
+\item MSYS2 shell, from \href{https://www.msys2.org/}{\texttt{ https\+://www.\+msys2.\+org/}}
+\item Perl, at least version 5.\+10.\+0, which usually comes pre-\/installed with MSYS2
+\item make, installed using {\ttfamily pacman -\/S make} into the MSYS2 environment
+\item Min\+GW\mbox{[}64\mbox{]} compiler\+: {\ttfamily mingw-\/w64-\/i686-\/gcc} and/or {\ttfamily mingw-\/w64-\/x86\+\_\+64-\/gcc}. These compilers must be on your MSYS2 \$\+PATH. A common error is to not have these on your \$\+PATH. The MSYS2 version of gcc will not work correctly here.
+\end{DoxyItemize}
+
+In the MSYS2 shell do the configuration depending on the target architecture\+: \begin{DoxyVerb}./Configure mingw ...
+\end{DoxyVerb}
+ or \begin{DoxyVerb}./Configure mingw64 ...
+\end{DoxyVerb}
+ or \begin{DoxyVerb}./Configure ...
+\end{DoxyVerb}
+ for the default architecture.
+
+Apart from that, follow the Unix / Linux instructions in {\ttfamily INSTALL.\+md}.
+\item It is also possible to build mingw\mbox{[}64\mbox{]} on Linux or Cygwin.
+
+In this case configure with the corresponding {\ttfamily -\/-\/cross-\/compile-\/prefix=} option. For example \begin{DoxyVerb}./Configure mingw --cross-compile-prefix=i686-w64-mingw32- ...
+\end{DoxyVerb}
+ or \begin{DoxyVerb}./Configure mingw64 --cross-compile-prefix=x86_64-w64-mingw32- ...
+\end{DoxyVerb}
+ This requires that you\textquotesingle{}ve installed the necessary add-\/on packages for mingw\mbox{[}64\mbox{]} cross compilation.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_w_i_n_d_o_w_s_autotoc_md918}{}\doxysection{\texorpdfstring{Linking native applications}{Linking native applications}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_w_i_n_d_o_w_s_autotoc_md918}
+This section applies to all native builds.
+
+If you link with static Open\+SSL libraries, then you\textquotesingle{}re expected to additionally link your application with {\ttfamily WS2\+\_\+32.\+LIB}, {\ttfamily GDI32.\+LIB}, {\ttfamily ADVAPI32.\+LIB}, {\ttfamily CRYPT32.\+LIB} and {\ttfamily USER32.\+LIB}. Those developing non-\/interactive service applications might feel concerned about linking with {\ttfamily GDI32.\+LIB} and {\ttfamily USER32.\+LIB}, as they are justly associated with interactive desktop, which is not available to service processes. The toolkit is designed to detect in which context it\textquotesingle{}s currently executed, GUI, console app or service, and act accordingly, namely whether to actually make GUI calls. Additionally, those who wish to {\ttfamily /\+DELAYLOAD\+:GDI32.\+DLL} and {\ttfamily /\+DELAYLOAD\+:USER32.\+DLL} and actually keep them off service process should consider implementing and exporting from .exe image in question own {\ttfamily \+\_\+\+OPENSSL\+\_\+isservice} not relying on {\ttfamily USER32.\+DLL}. E.\+g., on Windows Vista and later you could\+: \begin{DoxyVerb}   __declspec(dllexport) __cdecl BOOL _OPENSSL_isservice(void)
+   {
+       DWORD sess;
+
+       if (ProcessIdToSessionId(GetCurrentProcessId(), &sess))
+           return sess == 0;
+       return FALSE;
+   }
+\end{DoxyVerb}
+ If you link with Open\+SSL .DLLs, then you\textquotesingle{}re expected to include into your application code a small "{}shim"{} snippet, which provides the glue between the Open\+SSL BIO layer and your compiler run-\/time. See also the OPENSSL\+\_\+\+Applink manual page.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_w_i_n_d_o_w_s_autotoc_md919}{}\doxysection{\texorpdfstring{Hosted builds using Cygwin}{Hosted builds using Cygwin}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_w_i_n_d_o_w_s_autotoc_md919}
+Cygwin implements a POSIX/\+Unix runtime system ({\ttfamily cygwin1.\+dll}) on top of the Windows subsystem and provides a Bash shell and GNU tools environment. Consequently, a build of Open\+SSL with Cygwin is virtually identical to the Unix procedure.
+
+To build Open\+SSL using Cygwin, you need to\+:
+
+
+\begin{DoxyItemize}
+\item Install Cygwin, see \href{https://cygwin.com/}{\texttt{ https\+://cygwin.\+com/}}
+\item Install Cygwin Perl, at least version 5.\+10.\+0 and ensure it is in the \$\+PATH
+\item Run the Cygwin Bash shell
+\end{DoxyItemize}
+
+Apart from that, follow the Unix / Linux instructions in INSTALL.\+md.
+
+NOTE\+: {\ttfamily make test} and normal file operations may fail in directories mounted as text (i.\+e. {\ttfamily mount -\/t c\+:\textbackslash{}somewhere /home}) due to Cygwin stripping of carriage returns. To avoid this, ensure that a binary mount is used, e.\+g. {\ttfamily mount -\/b c\+:\textbackslash{}somewhere /home}. 

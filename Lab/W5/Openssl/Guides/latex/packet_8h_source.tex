@@ -1,0 +1,945 @@
+\doxysection{packet.\+h}
+\hypertarget{packet_8h_source}{}\label{packet_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/packet.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/internal/packet.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2015-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_INTERNAL\_PACKET\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_INTERNAL\_PACKET\_H}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#\ pragma\ once}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ include\ <string.h>}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#\ include\ <openssl/bn.h>}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#\ include\ <openssl/buffer.h>}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#\ include\ <openssl/crypto.h>}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#\ include\ <openssl/e\_os2.h>}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#\ include\ "{}internal/numbers.h"{}}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00023\ \ \ \ \ \textcolor{comment}{/*\ Pointer\ to\ where\ we\ are\ currently\ reading\ from\ */}}
+\DoxyCodeLine{00024\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *curr;}
+\DoxyCodeLine{00025\ \ \ \ \ \textcolor{comment}{/*\ Number\ of\ bytes\ remaining\ */}}
+\DoxyCodeLine{00026\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ remaining;}
+\DoxyCodeLine{00027\ \}\ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}};}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \textcolor{comment}{/*\ Internal\ unchecked\ shorthand;\ don't\ use\ outside\ this\ file.\ */}}
+\DoxyCodeLine{00030\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{void}\ packet\_forward(\mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,\ \textcolor{keywordtype}{size\_t}\ len)}
+\DoxyCodeLine{00031\ \{}
+\DoxyCodeLine{00032\ \ \ \ \ pkt-\/>curr\ +=\ len;}
+\DoxyCodeLine{00033\ \ \ \ \ pkt-\/>remaining\ -\/=\ len;}
+\DoxyCodeLine{00034\ \}}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00037\ \textcolor{comment}{\ *\ Returns\ the\ number\ of\ bytes\ remaining\ to\ be\ read\ in\ the\ PACKET}}
+\DoxyCodeLine{00038\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00039\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{size\_t}\ PACKET\_remaining(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt)}
+\DoxyCodeLine{00040\ \{}
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{keywordflow}{return}\ pkt-\/>remaining;}
+\DoxyCodeLine{00042\ \}}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00045\ \textcolor{comment}{\ *\ Returns\ a\ pointer\ to\ the\ first\ byte\ after\ the\ packet\ data.}}
+\DoxyCodeLine{00046\ \textcolor{comment}{\ *\ Useful\ for\ integrating\ with\ non-\/PACKET\ parsing\ code.}}
+\DoxyCodeLine{00047\ \textcolor{comment}{\ *\ Specifically,\ we\ use\ PACKET\_end()\ to\ verify\ that\ a\ d2i\_...\ call}}
+\DoxyCodeLine{00048\ \textcolor{comment}{\ *\ has\ consumed\ the\ entire\ packet\ contents.}}
+\DoxyCodeLine{00049\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00050\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *PACKET\_end(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt)}
+\DoxyCodeLine{00051\ \{}
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{keywordflow}{return}\ pkt-\/>curr\ +\ pkt-\/>remaining;}
+\DoxyCodeLine{00053\ \}}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00056\ \textcolor{comment}{\ *\ Returns\ a\ pointer\ to\ the\ PACKET's\ current\ position.}}
+\DoxyCodeLine{00057\ \textcolor{comment}{\ *\ For\ use\ in\ non-\/PACKETized\ APIs.}}
+\DoxyCodeLine{00058\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00059\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *PACKET\_data(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt)}
+\DoxyCodeLine{00060\ \{}
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{keywordflow}{return}\ pkt-\/>curr;}
+\DoxyCodeLine{00062\ \}}
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00064\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00065\ \textcolor{comment}{\ *\ Initialise\ a\ PACKET\ with\ |len|\ bytes\ held\ in\ |buf|.\ This\ does\ not\ make\ a}}
+\DoxyCodeLine{00066\ \textcolor{comment}{\ *\ copy\ of\ the\ data\ so\ |buf|\ must\ be\ present\ for\ the\ whole\ time\ that\ the\ PACKET}}
+\DoxyCodeLine{00067\ \textcolor{comment}{\ *\ is\ being\ used.}}
+\DoxyCodeLine{00068\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00069\ \_\_owur\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{int}\ PACKET\_buf\_init(\mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *buf,}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ len)}
+\DoxyCodeLine{00072\ \{}
+\DoxyCodeLine{00073\ \ \ \ \ \textcolor{comment}{/*\ Sanity\ check\ for\ negative\ values.\ */}}
+\DoxyCodeLine{00074\ \ \ \ \ \textcolor{keywordflow}{if}\ (len\ >\ (\textcolor{keywordtype}{size\_t})(SIZE\_MAX\ /\ 2))}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00077\ \ \ \ \ pkt-\/>curr\ =\ buf;}
+\DoxyCodeLine{00078\ \ \ \ \ pkt-\/>remaining\ =\ len;}
+\DoxyCodeLine{00079\ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00080\ \}}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00082\ \textcolor{comment}{/*\ Initialize\ a\ PACKET\ to\ hold\ zero\ bytes.\ */}}
+\DoxyCodeLine{00083\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{void}\ PACKET\_null\_init(\mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt)}
+\DoxyCodeLine{00084\ \{}
+\DoxyCodeLine{00085\ \ \ \ \ pkt-\/>curr\ =\ NULL;}
+\DoxyCodeLine{00086\ \ \ \ \ pkt-\/>remaining\ =\ 0;}
+\DoxyCodeLine{00087\ \}}
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00089\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00090\ \textcolor{comment}{\ *\ Returns\ 1\ if\ the\ packet\ has\ length\ |num|\ and\ its\ contents\ equal\ the\ |num|}}
+\DoxyCodeLine{00091\ \textcolor{comment}{\ *\ bytes\ read\ from\ |ptr|.\ Returns\ 0\ otherwise\ (lengths\ or\ contents\ not\ equal).}}
+\DoxyCodeLine{00092\ \textcolor{comment}{\ *\ If\ lengths\ are\ equal,\ performs\ the\ comparison\ in\ constant\ time.}}
+\DoxyCodeLine{00093\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00094\ \_\_owur\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{int}\ PACKET\_equal(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *ptr,}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ num)}
+\DoxyCodeLine{00096\ \{}
+\DoxyCodeLine{00097\ \ \ \ \ \textcolor{keywordflow}{if}\ (PACKET\_remaining(pkt)\ !=\ num)}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00099\ \ \ \ \ \textcolor{keywordflow}{return}\ CRYPTO\_memcmp(pkt-\/>curr,\ ptr,\ num)\ ==\ 0;}
+\DoxyCodeLine{00100\ \}}
+\DoxyCodeLine{00101\ }
+\DoxyCodeLine{00102\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00103\ \textcolor{comment}{\ *\ Peek\ ahead\ and\ initialize\ |subpkt|\ with\ the\ next\ |len|\ bytes\ read\ from\ |pkt|.}}
+\DoxyCodeLine{00104\ \textcolor{comment}{\ *\ Data\ is\ not\ copied:\ the\ |subpkt|\ packet\ will\ share\ its\ underlying\ buffer\ with}}
+\DoxyCodeLine{00105\ \textcolor{comment}{\ *\ the\ original\ |pkt|,\ so\ data\ wrapped\ by\ |pkt|\ must\ outlive\ the\ |subpkt|.}}
+\DoxyCodeLine{00106\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00107\ \_\_owur\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{int}\ PACKET\_peek\_sub\_packet(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *subpkt,\ \textcolor{keywordtype}{size\_t}\ len)}
+\DoxyCodeLine{00109\ \{}
+\DoxyCodeLine{00110\ \ \ \ \ \textcolor{keywordflow}{if}\ (PACKET\_remaining(pkt)\ <\ len)}
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00112\ }
+\DoxyCodeLine{00113\ \ \ \ \ \textcolor{keywordflow}{return}\ PACKET\_buf\_init(subpkt,\ pkt-\/>curr,\ len);}
+\DoxyCodeLine{00114\ \}}
+\DoxyCodeLine{00115\ }
+\DoxyCodeLine{00116\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00117\ \textcolor{comment}{\ *\ Initialize\ |subpkt|\ with\ the\ next\ |len|\ bytes\ read\ from\ |pkt|.\ Data\ is\ not}}
+\DoxyCodeLine{00118\ \textcolor{comment}{\ *\ copied:\ the\ |subpkt|\ packet\ will\ share\ its\ underlying\ buffer\ with\ the}}
+\DoxyCodeLine{00119\ \textcolor{comment}{\ *\ original\ |pkt|,\ so\ data\ wrapped\ by\ |pkt|\ must\ outlive\ the\ |subpkt|.}}
+\DoxyCodeLine{00120\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00121\ \_\_owur\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{int}\ PACKET\_get\_sub\_packet(\mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *subpkt,\ \textcolor{keywordtype}{size\_t}\ len)}
+\DoxyCodeLine{00123\ \{}
+\DoxyCodeLine{00124\ \ \ \ \ \textcolor{keywordflow}{if}\ (!PACKET\_peek\_sub\_packet(pkt,\ subpkt,\ len))}
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00126\ }
+\DoxyCodeLine{00127\ \ \ \ \ packet\_forward(pkt,\ len);}
+\DoxyCodeLine{00128\ }
+\DoxyCodeLine{00129\ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00130\ \}}
+\DoxyCodeLine{00131\ }
+\DoxyCodeLine{00132\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00133\ \textcolor{comment}{\ *\ Peek\ ahead\ at\ 2\ bytes\ in\ network\ order\ from\ |pkt|\ and\ store\ the\ value\ in}}
+\DoxyCodeLine{00134\ \textcolor{comment}{\ *\ |*data|}}
+\DoxyCodeLine{00135\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00136\ \_\_owur\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{int}\ PACKET\_peek\_net\_2(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ *data)}
+\DoxyCodeLine{00138\ \{}
+\DoxyCodeLine{00139\ \ \ \ \ \textcolor{keywordflow}{if}\ (PACKET\_remaining(pkt)\ <\ 2)}
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00141\ }
+\DoxyCodeLine{00142\ \ \ \ \ *data\ =\ ((\textcolor{keywordtype}{unsigned}\ int)(*pkt-\/>curr))\ <<\ 8;}
+\DoxyCodeLine{00143\ \ \ \ \ *data\ |=\ *(pkt-\/>curr\ +\ 1);}
+\DoxyCodeLine{00144\ }
+\DoxyCodeLine{00145\ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00146\ \}}
+\DoxyCodeLine{00147\ }
+\DoxyCodeLine{00148\ \textcolor{comment}{/*\ Equivalent\ of\ n2s\ */}}
+\DoxyCodeLine{00149\ \textcolor{comment}{/*\ Get\ 2\ bytes\ in\ network\ order\ from\ |pkt|\ and\ store\ the\ value\ in\ |*data|\ */}}
+\DoxyCodeLine{00150\ \_\_owur\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{int}\ PACKET\_get\_net\_2(\mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ *data)}
+\DoxyCodeLine{00151\ \{}
+\DoxyCodeLine{00152\ \ \ \ \ \textcolor{keywordflow}{if}\ (!PACKET\_peek\_net\_2(pkt,\ data))}
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00154\ }
+\DoxyCodeLine{00155\ \ \ \ \ packet\_forward(pkt,\ 2);}
+\DoxyCodeLine{00156\ }
+\DoxyCodeLine{00157\ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00158\ \}}
+\DoxyCodeLine{00159\ }
+\DoxyCodeLine{00160\ \textcolor{comment}{/*\ Same\ as\ PACKET\_get\_net\_2()\ but\ for\ a\ size\_t\ */}}
+\DoxyCodeLine{00161\ \_\_owur\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{int}\ PACKET\_get\_net\_2\_len(\mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,\ \textcolor{keywordtype}{size\_t}\ *data)}
+\DoxyCodeLine{00162\ \{}
+\DoxyCodeLine{00163\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ i;}
+\DoxyCodeLine{00164\ \ \ \ \ \textcolor{keywordtype}{int}\ ret\ =\ PACKET\_get\_net\_2(pkt,\ \&i);}
+\DoxyCodeLine{00165\ }
+\DoxyCodeLine{00166\ \ \ \ \ \textcolor{keywordflow}{if}\ (ret)}
+\DoxyCodeLine{00167\ \ \ \ \ \ \ \ \ *data\ =\ (size\_t)i;}
+\DoxyCodeLine{00168\ }
+\DoxyCodeLine{00169\ \ \ \ \ \textcolor{keywordflow}{return}\ ret;}
+\DoxyCodeLine{00170\ \}}
+\DoxyCodeLine{00171\ }
+\DoxyCodeLine{00172\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00173\ \textcolor{comment}{\ *\ Peek\ ahead\ at\ 3\ bytes\ in\ network\ order\ from\ |pkt|\ and\ store\ the\ value\ in}}
+\DoxyCodeLine{00174\ \textcolor{comment}{\ *\ |*data|}}
+\DoxyCodeLine{00175\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00176\ \_\_owur\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{int}\ PACKET\_peek\_net\_3(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00177\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ *data)}
+\DoxyCodeLine{00178\ \{}
+\DoxyCodeLine{00179\ \ \ \ \ \textcolor{keywordflow}{if}\ (PACKET\_remaining(pkt)\ <\ 3)}
+\DoxyCodeLine{00180\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00181\ }
+\DoxyCodeLine{00182\ \ \ \ \ *data\ =\ ((\textcolor{keywordtype}{unsigned}\ long)(*pkt-\/>curr))\ <<\ 16;}
+\DoxyCodeLine{00183\ \ \ \ \ *data\ |=\ ((\textcolor{keywordtype}{unsigned}\ long)(*(pkt-\/>curr\ +\ 1)))\ <<\ 8;}
+\DoxyCodeLine{00184\ \ \ \ \ *data\ |=\ *(pkt-\/>curr\ +\ 2);}
+\DoxyCodeLine{00185\ }
+\DoxyCodeLine{00186\ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00187\ \}}
+\DoxyCodeLine{00188\ }
+\DoxyCodeLine{00189\ \textcolor{comment}{/*\ Equivalent\ of\ n2l3\ */}}
+\DoxyCodeLine{00190\ \textcolor{comment}{/*\ Get\ 3\ bytes\ in\ network\ order\ from\ |pkt|\ and\ store\ the\ value\ in\ |*data|\ */}}
+\DoxyCodeLine{00191\ \_\_owur\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{int}\ PACKET\_get\_net\_3(\mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ *data)}
+\DoxyCodeLine{00192\ \{}
+\DoxyCodeLine{00193\ \ \ \ \ \textcolor{keywordflow}{if}\ (!PACKET\_peek\_net\_3(pkt,\ data))}
+\DoxyCodeLine{00194\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00195\ }
+\DoxyCodeLine{00196\ \ \ \ \ packet\_forward(pkt,\ 3);}
+\DoxyCodeLine{00197\ }
+\DoxyCodeLine{00198\ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00199\ \}}
+\DoxyCodeLine{00200\ }
+\DoxyCodeLine{00201\ \textcolor{comment}{/*\ Same\ as\ PACKET\_get\_net\_3()\ but\ for\ a\ size\_t\ */}}
+\DoxyCodeLine{00202\ \_\_owur\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{int}\ PACKET\_get\_net\_3\_len(\mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,\ \textcolor{keywordtype}{size\_t}\ *data)}
+\DoxyCodeLine{00203\ \{}
+\DoxyCodeLine{00204\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ i;}
+\DoxyCodeLine{00205\ \ \ \ \ \textcolor{keywordtype}{int}\ ret\ =\ PACKET\_get\_net\_3(pkt,\ \&i);}
+\DoxyCodeLine{00206\ }
+\DoxyCodeLine{00207\ \ \ \ \ \textcolor{keywordflow}{if}\ (ret)}
+\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ *data\ =\ (size\_t)i;}
+\DoxyCodeLine{00209\ }
+\DoxyCodeLine{00210\ \ \ \ \ \textcolor{keywordflow}{return}\ ret;}
+\DoxyCodeLine{00211\ \}}
+\DoxyCodeLine{00212\ }
+\DoxyCodeLine{00213\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00214\ \textcolor{comment}{\ *\ Peek\ ahead\ at\ 4\ bytes\ in\ network\ order\ from\ |pkt|\ and\ store\ the\ value\ in}}
+\DoxyCodeLine{00215\ \textcolor{comment}{\ *\ |*data|}}
+\DoxyCodeLine{00216\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00217\ \_\_owur\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{int}\ PACKET\_peek\_net\_4(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00218\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ *data)}
+\DoxyCodeLine{00219\ \{}
+\DoxyCodeLine{00220\ \ \ \ \ \textcolor{keywordflow}{if}\ (PACKET\_remaining(pkt)\ <\ 4)}
+\DoxyCodeLine{00221\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00222\ }
+\DoxyCodeLine{00223\ \ \ \ \ *data\ =\ ((\textcolor{keywordtype}{unsigned}\ long)(*pkt-\/>curr))\ <<\ 24;}
+\DoxyCodeLine{00224\ \ \ \ \ *data\ |=\ ((\textcolor{keywordtype}{unsigned}\ long)(*(pkt-\/>curr\ +\ 1)))\ <<\ 16;}
+\DoxyCodeLine{00225\ \ \ \ \ *data\ |=\ ((\textcolor{keywordtype}{unsigned}\ long)(*(pkt-\/>curr\ +\ 2)))\ <<\ 8;}
+\DoxyCodeLine{00226\ \ \ \ \ *data\ |=\ *(pkt-\/>curr\ +\ 3);}
+\DoxyCodeLine{00227\ }
+\DoxyCodeLine{00228\ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00229\ \}}
+\DoxyCodeLine{00230\ }
+\DoxyCodeLine{00231\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00232\ \textcolor{comment}{\ *\ Peek\ ahead\ at\ 8\ bytes\ in\ network\ order\ from\ |pkt|\ and\ store\ the\ value\ in}}
+\DoxyCodeLine{00233\ \textcolor{comment}{\ *\ |*data|}}
+\DoxyCodeLine{00234\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00235\ \_\_owur\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{int}\ PACKET\_peek\_net\_8(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00236\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ *data)}
+\DoxyCodeLine{00237\ \{}
+\DoxyCodeLine{00238\ \ \ \ \ \textcolor{keywordflow}{if}\ (PACKET\_remaining(pkt)\ <\ 8)}
+\DoxyCodeLine{00239\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00240\ }
+\DoxyCodeLine{00241\ \ \ \ \ *data\ =\ ((uint64\_t)(*pkt-\/>curr))\ <<\ 56;}
+\DoxyCodeLine{00242\ \ \ \ \ *data\ |=\ ((uint64\_t)(*(pkt-\/>curr\ +\ 1)))\ <<\ 48;}
+\DoxyCodeLine{00243\ \ \ \ \ *data\ |=\ ((uint64\_t)(*(pkt-\/>curr\ +\ 2)))\ <<\ 40;}
+\DoxyCodeLine{00244\ \ \ \ \ *data\ |=\ ((uint64\_t)(*(pkt-\/>curr\ +\ 3)))\ <<\ 32;}
+\DoxyCodeLine{00245\ \ \ \ \ *data\ |=\ ((uint64\_t)(*(pkt-\/>curr\ +\ 4)))\ <<\ 24;}
+\DoxyCodeLine{00246\ \ \ \ \ *data\ |=\ ((uint64\_t)(*(pkt-\/>curr\ +\ 5)))\ <<\ 16;}
+\DoxyCodeLine{00247\ \ \ \ \ *data\ |=\ ((uint64\_t)(*(pkt-\/>curr\ +\ 6)))\ <<\ 8;}
+\DoxyCodeLine{00248\ \ \ \ \ *data\ |=\ *(pkt-\/>curr\ +\ 7);}
+\DoxyCodeLine{00249\ }
+\DoxyCodeLine{00250\ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00251\ \}}
+\DoxyCodeLine{00252\ }
+\DoxyCodeLine{00253\ \textcolor{comment}{/*\ Equivalent\ of\ n2l\ */}}
+\DoxyCodeLine{00254\ \textcolor{comment}{/*\ Get\ 4\ bytes\ in\ network\ order\ from\ |pkt|\ and\ store\ the\ value\ in\ |*data|\ */}}
+\DoxyCodeLine{00255\ \_\_owur\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{int}\ PACKET\_get\_net\_4(\mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ *data)}
+\DoxyCodeLine{00256\ \{}
+\DoxyCodeLine{00257\ \ \ \ \ \textcolor{keywordflow}{if}\ (!PACKET\_peek\_net\_4(pkt,\ data))}
+\DoxyCodeLine{00258\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00259\ }
+\DoxyCodeLine{00260\ \ \ \ \ packet\_forward(pkt,\ 4);}
+\DoxyCodeLine{00261\ }
+\DoxyCodeLine{00262\ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00263\ \}}
+\DoxyCodeLine{00264\ }
+\DoxyCodeLine{00265\ \textcolor{comment}{/*\ Same\ as\ PACKET\_get\_net\_4()\ but\ for\ a\ size\_t\ */}}
+\DoxyCodeLine{00266\ \_\_owur\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{int}\ PACKET\_get\_net\_4\_len(\mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,\ \textcolor{keywordtype}{size\_t}\ *data)}
+\DoxyCodeLine{00267\ \{}
+\DoxyCodeLine{00268\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ i;}
+\DoxyCodeLine{00269\ \ \ \ \ \textcolor{keywordtype}{int}\ ret\ =\ PACKET\_get\_net\_4(pkt,\ \&i);}
+\DoxyCodeLine{00270\ }
+\DoxyCodeLine{00271\ \ \ \ \ \textcolor{keywordflow}{if}\ (ret)}
+\DoxyCodeLine{00272\ \ \ \ \ \ \ \ \ *data\ =\ (size\_t)i;}
+\DoxyCodeLine{00273\ }
+\DoxyCodeLine{00274\ \ \ \ \ \textcolor{keywordflow}{return}\ ret;}
+\DoxyCodeLine{00275\ \}}
+\DoxyCodeLine{00276\ }
+\DoxyCodeLine{00277\ \textcolor{comment}{/*\ Get\ 8\ bytes\ in\ network\ order\ from\ |pkt|\ and\ store\ the\ value\ in\ |*data|\ */}}
+\DoxyCodeLine{00278\ \_\_owur\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{int}\ PACKET\_get\_net\_8(\mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,\ uint64\_t\ *data)}
+\DoxyCodeLine{00279\ \{}
+\DoxyCodeLine{00280\ \ \ \ \ \textcolor{keywordflow}{if}\ (!PACKET\_peek\_net\_8(pkt,\ data))}
+\DoxyCodeLine{00281\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00282\ }
+\DoxyCodeLine{00283\ \ \ \ \ packet\_forward(pkt,\ 8);}
+\DoxyCodeLine{00284\ }
+\DoxyCodeLine{00285\ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00286\ \}}
+\DoxyCodeLine{00287\ }
+\DoxyCodeLine{00288\ \textcolor{comment}{/*\ Peek\ ahead\ at\ 1\ byte\ from\ |pkt|\ and\ store\ the\ value\ in\ |*data|\ */}}
+\DoxyCodeLine{00289\ \_\_owur\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{int}\ PACKET\_peek\_1(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00290\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ *data)}
+\DoxyCodeLine{00291\ \{}
+\DoxyCodeLine{00292\ \ \ \ \ \textcolor{keywordflow}{if}\ (!PACKET\_remaining(pkt))}
+\DoxyCodeLine{00293\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00294\ }
+\DoxyCodeLine{00295\ \ \ \ \ *data\ =\ *pkt-\/>curr;}
+\DoxyCodeLine{00296\ }
+\DoxyCodeLine{00297\ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00298\ \}}
+\DoxyCodeLine{00299\ }
+\DoxyCodeLine{00300\ \textcolor{comment}{/*\ Get\ 1\ byte\ from\ |pkt|\ and\ store\ the\ value\ in\ |*data|\ */}}
+\DoxyCodeLine{00301\ \_\_owur\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{int}\ PACKET\_get\_1(\mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ *data)}
+\DoxyCodeLine{00302\ \{}
+\DoxyCodeLine{00303\ \ \ \ \ \textcolor{keywordflow}{if}\ (!PACKET\_peek\_1(pkt,\ data))}
+\DoxyCodeLine{00304\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00305\ }
+\DoxyCodeLine{00306\ \ \ \ \ packet\_forward(pkt,\ 1);}
+\DoxyCodeLine{00307\ }
+\DoxyCodeLine{00308\ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00309\ \}}
+\DoxyCodeLine{00310\ }
+\DoxyCodeLine{00311\ \textcolor{comment}{/*\ Same\ as\ PACKET\_get\_1()\ but\ for\ a\ size\_t\ */}}
+\DoxyCodeLine{00312\ \_\_owur\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{int}\ PACKET\_get\_1\_len(\mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,\ \textcolor{keywordtype}{size\_t}\ *data)}
+\DoxyCodeLine{00313\ \{}
+\DoxyCodeLine{00314\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ i;}
+\DoxyCodeLine{00315\ \ \ \ \ \textcolor{keywordtype}{int}\ ret\ =\ PACKET\_get\_1(pkt,\ \&i);}
+\DoxyCodeLine{00316\ }
+\DoxyCodeLine{00317\ \ \ \ \ \textcolor{keywordflow}{if}\ (ret)}
+\DoxyCodeLine{00318\ \ \ \ \ \ \ \ \ *data\ =\ (size\_t)i;}
+\DoxyCodeLine{00319\ }
+\DoxyCodeLine{00320\ \ \ \ \ \textcolor{keywordflow}{return}\ ret;}
+\DoxyCodeLine{00321\ \}}
+\DoxyCodeLine{00322\ }
+\DoxyCodeLine{00323\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00324\ \textcolor{comment}{\ *\ Peek\ ahead\ at\ 4\ bytes\ in\ reverse\ network\ order\ from\ |pkt|\ and\ store\ the\ value}}
+\DoxyCodeLine{00325\ \textcolor{comment}{\ *\ in\ |*data|}}
+\DoxyCodeLine{00326\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00327\ \_\_owur\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{int}\ PACKET\_peek\_4(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00328\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ *data)}
+\DoxyCodeLine{00329\ \{}
+\DoxyCodeLine{00330\ \ \ \ \ \textcolor{keywordflow}{if}\ (PACKET\_remaining(pkt)\ <\ 4)}
+\DoxyCodeLine{00331\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00332\ }
+\DoxyCodeLine{00333\ \ \ \ \ *data\ =\ *pkt-\/>curr;}
+\DoxyCodeLine{00334\ \ \ \ \ *data\ |=\ ((\textcolor{keywordtype}{unsigned}\ long)(*(pkt-\/>curr\ +\ 1)))\ <<\ 8;}
+\DoxyCodeLine{00335\ \ \ \ \ *data\ |=\ ((\textcolor{keywordtype}{unsigned}\ long)(*(pkt-\/>curr\ +\ 2)))\ <<\ 16;}
+\DoxyCodeLine{00336\ \ \ \ \ *data\ |=\ ((\textcolor{keywordtype}{unsigned}\ long)(*(pkt-\/>curr\ +\ 3)))\ <<\ 24;}
+\DoxyCodeLine{00337\ }
+\DoxyCodeLine{00338\ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00339\ \}}
+\DoxyCodeLine{00340\ }
+\DoxyCodeLine{00341\ \textcolor{comment}{/*\ Equivalent\ of\ c2l\ */}}
+\DoxyCodeLine{00342\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00343\ \textcolor{comment}{\ *\ Get\ 4\ bytes\ in\ reverse\ network\ order\ from\ |pkt|\ and\ store\ the\ value\ in}}
+\DoxyCodeLine{00344\ \textcolor{comment}{\ *\ |*data|}}
+\DoxyCodeLine{00345\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00346\ \_\_owur\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{int}\ PACKET\_get\_4(\mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ *data)}
+\DoxyCodeLine{00347\ \{}
+\DoxyCodeLine{00348\ \ \ \ \ \textcolor{keywordflow}{if}\ (!PACKET\_peek\_4(pkt,\ data))}
+\DoxyCodeLine{00349\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00350\ }
+\DoxyCodeLine{00351\ \ \ \ \ packet\_forward(pkt,\ 4);}
+\DoxyCodeLine{00352\ }
+\DoxyCodeLine{00353\ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00354\ \}}
+\DoxyCodeLine{00355\ }
+\DoxyCodeLine{00356\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00357\ \textcolor{comment}{\ *\ Peek\ ahead\ at\ |len|\ bytes\ from\ the\ |pkt|\ and\ store\ a\ pointer\ to\ them\ in}}
+\DoxyCodeLine{00358\ \textcolor{comment}{\ *\ |*data|.\ This\ just\ points\ at\ the\ underlying\ buffer\ that\ |pkt|\ is\ using.\ The}}
+\DoxyCodeLine{00359\ \textcolor{comment}{\ *\ caller\ should\ not\ free\ this\ data\ directly\ (it\ will\ be\ freed\ when\ the}}
+\DoxyCodeLine{00360\ \textcolor{comment}{\ *\ underlying\ buffer\ gets\ freed}}
+\DoxyCodeLine{00361\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00362\ \_\_owur\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{int}\ PACKET\_peek\_bytes(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00363\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **data,}
+\DoxyCodeLine{00364\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ len)}
+\DoxyCodeLine{00365\ \{}
+\DoxyCodeLine{00366\ \ \ \ \ \textcolor{keywordflow}{if}\ (PACKET\_remaining(pkt)\ <\ len)}
+\DoxyCodeLine{00367\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00368\ }
+\DoxyCodeLine{00369\ \ \ \ \ *data\ =\ pkt-\/>curr;}
+\DoxyCodeLine{00370\ }
+\DoxyCodeLine{00371\ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00372\ \}}
+\DoxyCodeLine{00373\ }
+\DoxyCodeLine{00374\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00375\ \textcolor{comment}{\ *\ Read\ |len|\ bytes\ from\ the\ |pkt|\ and\ store\ a\ pointer\ to\ them\ in\ |*data|.\ This}}
+\DoxyCodeLine{00376\ \textcolor{comment}{\ *\ just\ points\ at\ the\ underlying\ buffer\ that\ |pkt|\ is\ using.\ The\ caller\ should}}
+\DoxyCodeLine{00377\ \textcolor{comment}{\ *\ not\ free\ this\ data\ directly\ (it\ will\ be\ freed\ when\ the\ underlying\ buffer\ gets}}
+\DoxyCodeLine{00378\ \textcolor{comment}{\ *\ freed}}
+\DoxyCodeLine{00379\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00380\ \_\_owur\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{int}\ PACKET\_get\_bytes(\mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00381\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **data,}
+\DoxyCodeLine{00382\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ len)}
+\DoxyCodeLine{00383\ \{}
+\DoxyCodeLine{00384\ \ \ \ \ \textcolor{keywordflow}{if}\ (!PACKET\_peek\_bytes(pkt,\ data,\ len))}
+\DoxyCodeLine{00385\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00386\ }
+\DoxyCodeLine{00387\ \ \ \ \ packet\_forward(pkt,\ len);}
+\DoxyCodeLine{00388\ }
+\DoxyCodeLine{00389\ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00390\ \}}
+\DoxyCodeLine{00391\ }
+\DoxyCodeLine{00392\ \textcolor{comment}{/*\ Peek\ ahead\ at\ |len|\ bytes\ from\ |pkt|\ and\ copy\ them\ to\ |data|\ */}}
+\DoxyCodeLine{00393\ \_\_owur\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{int}\ PACKET\_peek\_copy\_bytes(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00394\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *data,}
+\DoxyCodeLine{00395\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ len)}
+\DoxyCodeLine{00396\ \{}
+\DoxyCodeLine{00397\ \ \ \ \ \textcolor{keywordflow}{if}\ (PACKET\_remaining(pkt)\ <\ len)}
+\DoxyCodeLine{00398\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00399\ }
+\DoxyCodeLine{00400\ \ \ \ \ memcpy(data,\ pkt-\/>curr,\ len);}
+\DoxyCodeLine{00401\ }
+\DoxyCodeLine{00402\ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00403\ \}}
+\DoxyCodeLine{00404\ }
+\DoxyCodeLine{00405\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00406\ \textcolor{comment}{\ *\ Read\ |len|\ bytes\ from\ |pkt|\ and\ copy\ them\ to\ |data|.}}
+\DoxyCodeLine{00407\ \textcolor{comment}{\ *\ The\ caller\ is\ responsible\ for\ ensuring\ that\ |data|\ can\ hold\ |len|\ bytes.}}
+\DoxyCodeLine{00408\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00409\ \_\_owur\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{int}\ PACKET\_copy\_bytes(\mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00410\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *data,\ \textcolor{keywordtype}{size\_t}\ len)}
+\DoxyCodeLine{00411\ \{}
+\DoxyCodeLine{00412\ \ \ \ \ \textcolor{keywordflow}{if}\ (!PACKET\_peek\_copy\_bytes(pkt,\ data,\ len))}
+\DoxyCodeLine{00413\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00414\ }
+\DoxyCodeLine{00415\ \ \ \ \ packet\_forward(pkt,\ len);}
+\DoxyCodeLine{00416\ }
+\DoxyCodeLine{00417\ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00418\ \}}
+\DoxyCodeLine{00419\ }
+\DoxyCodeLine{00420\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00421\ \textcolor{comment}{\ *\ Copy\ packet\ data\ to\ |dest|,\ and\ set\ |len|\ to\ the\ number\ of\ copied\ bytes.}}
+\DoxyCodeLine{00422\ \textcolor{comment}{\ *\ If\ the\ packet\ has\ more\ than\ |dest\_len|\ bytes,\ nothing\ is\ copied.}}
+\DoxyCodeLine{00423\ \textcolor{comment}{\ *\ Returns\ 1\ if\ the\ packet\ data\ fits\ in\ |dest\_len|\ bytes,\ 0\ otherwise.}}
+\DoxyCodeLine{00424\ \textcolor{comment}{\ *\ Does\ not\ forward\ PACKET\ position\ (because\ it\ is\ typically\ the\ last\ thing}}
+\DoxyCodeLine{00425\ \textcolor{comment}{\ *\ done\ with\ a\ given\ PACKET).}}
+\DoxyCodeLine{00426\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00427\ \_\_owur\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{int}\ PACKET\_copy\_all(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00428\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *dest,}
+\DoxyCodeLine{00429\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ dest\_len,\ \textcolor{keywordtype}{size\_t}\ *len)}
+\DoxyCodeLine{00430\ \{}
+\DoxyCodeLine{00431\ \ \ \ \ \textcolor{keywordflow}{if}\ (PACKET\_remaining(pkt)\ >\ dest\_len)\ \{}
+\DoxyCodeLine{00432\ \ \ \ \ \ \ \ \ *len\ =\ 0;}
+\DoxyCodeLine{00433\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00434\ \ \ \ \ \}}
+\DoxyCodeLine{00435\ \ \ \ \ *len\ =\ pkt-\/>remaining;}
+\DoxyCodeLine{00436\ \ \ \ \ memcpy(dest,\ pkt-\/>curr,\ pkt-\/>remaining);}
+\DoxyCodeLine{00437\ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00438\ \}}
+\DoxyCodeLine{00439\ }
+\DoxyCodeLine{00440\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00441\ \textcolor{comment}{\ *\ Copy\ |pkt|\ bytes\ to\ a\ newly\ allocated\ buffer\ and\ store\ a\ pointer\ to\ the}}
+\DoxyCodeLine{00442\ \textcolor{comment}{\ *\ result\ in\ |*data|,\ and\ the\ length\ in\ |len|.}}
+\DoxyCodeLine{00443\ \textcolor{comment}{\ *\ If\ |*data|\ is\ not\ NULL,\ the\ old\ data\ is\ OPENSSL\_free'd.}}
+\DoxyCodeLine{00444\ \textcolor{comment}{\ *\ If\ the\ packet\ is\ empty,\ or\ malloc\ fails,\ |*data|\ will\ be\ set\ to\ NULL.}}
+\DoxyCodeLine{00445\ \textcolor{comment}{\ *\ Returns\ 1\ if\ the\ malloc\ succeeds\ and\ 0\ otherwise.}}
+\DoxyCodeLine{00446\ \textcolor{comment}{\ *\ Does\ not\ forward\ PACKET\ position\ (because\ it\ is\ typically\ the\ last\ thing}}
+\DoxyCodeLine{00447\ \textcolor{comment}{\ *\ done\ with\ a\ given\ PACKET).}}
+\DoxyCodeLine{00448\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00449\ \_\_owur\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{int}\ PACKET\_memdup(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00450\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **data,\ \textcolor{keywordtype}{size\_t}\ *len)}
+\DoxyCodeLine{00451\ \{}
+\DoxyCodeLine{00452\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ length;}
+\DoxyCodeLine{00453\ }
+\DoxyCodeLine{00454\ \ \ \ \ OPENSSL\_free(*data);}
+\DoxyCodeLine{00455\ \ \ \ \ *data\ =\ NULL;}
+\DoxyCodeLine{00456\ \ \ \ \ *len\ =\ 0;}
+\DoxyCodeLine{00457\ }
+\DoxyCodeLine{00458\ \ \ \ \ length\ =\ PACKET\_remaining(pkt);}
+\DoxyCodeLine{00459\ }
+\DoxyCodeLine{00460\ \ \ \ \ \textcolor{keywordflow}{if}\ (length\ ==\ 0)}
+\DoxyCodeLine{00461\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00462\ }
+\DoxyCodeLine{00463\ \ \ \ \ *data\ =\ OPENSSL\_memdup(pkt-\/>curr,\ length);}
+\DoxyCodeLine{00464\ \ \ \ \ \textcolor{keywordflow}{if}\ (*data\ ==\ NULL)}
+\DoxyCodeLine{00465\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00466\ }
+\DoxyCodeLine{00467\ \ \ \ \ *len\ =\ length;}
+\DoxyCodeLine{00468\ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00469\ \}}
+\DoxyCodeLine{00470\ }
+\DoxyCodeLine{00471\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00472\ \textcolor{comment}{\ *\ Read\ a\ C\ string\ from\ |pkt|\ and\ copy\ to\ a\ newly\ allocated,\ NUL-\/terminated}}
+\DoxyCodeLine{00473\ \textcolor{comment}{\ *\ buffer.\ Store\ a\ pointer\ to\ the\ result\ in\ |*data|.}}
+\DoxyCodeLine{00474\ \textcolor{comment}{\ *\ If\ |*data|\ is\ not\ NULL,\ the\ old\ data\ is\ OPENSSL\_free'd.}}
+\DoxyCodeLine{00475\ \textcolor{comment}{\ *\ If\ the\ data\ in\ |pkt|\ does\ not\ contain\ a\ NUL-\/byte,\ the\ entire\ data\ is}}
+\DoxyCodeLine{00476\ \textcolor{comment}{\ *\ copied\ and\ NUL-\/terminated.}}
+\DoxyCodeLine{00477\ \textcolor{comment}{\ *\ Returns\ 1\ if\ the\ malloc\ succeeds\ and\ 0\ otherwise.}}
+\DoxyCodeLine{00478\ \textcolor{comment}{\ *\ Does\ not\ forward\ PACKET\ position\ (because\ it\ is\ typically\ the\ last\ thing\ done}}
+\DoxyCodeLine{00479\ \textcolor{comment}{\ *\ with\ a\ given\ PACKET).}}
+\DoxyCodeLine{00480\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00481\ \_\_owur\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{int}\ PACKET\_strndup(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,\ \textcolor{keywordtype}{char}\ **data)}
+\DoxyCodeLine{00482\ \{}
+\DoxyCodeLine{00483\ \ \ \ \ OPENSSL\_free(*data);}
+\DoxyCodeLine{00484\ }
+\DoxyCodeLine{00485\ \ \ \ \ \textcolor{comment}{/*\ This\ will\ succeed\ on\ an\ empty\ packet,\ unless\ pkt-\/>curr\ ==\ NULL.\ */}}
+\DoxyCodeLine{00486\ \ \ \ \ *data\ =\ OPENSSL\_strndup((\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *)pkt-\/>curr,\ PACKET\_remaining(pkt));}
+\DoxyCodeLine{00487\ \ \ \ \ \textcolor{keywordflow}{return}\ (*data\ !=\ NULL);}
+\DoxyCodeLine{00488\ \}}
+\DoxyCodeLine{00489\ }
+\DoxyCodeLine{00490\ \textcolor{comment}{/*\ Returns\ 1\ if\ |pkt|\ contains\ at\ least\ one\ 0-\/byte,\ 0\ otherwise.\ */}}
+\DoxyCodeLine{00491\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{int}\ PACKET\_contains\_zero\_byte(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt)}
+\DoxyCodeLine{00492\ \{}
+\DoxyCodeLine{00493\ \ \ \ \ \textcolor{keywordflow}{return}\ memchr(pkt-\/>curr,\ 0,\ pkt-\/>remaining)\ !=\ NULL;}
+\DoxyCodeLine{00494\ \}}
+\DoxyCodeLine{00495\ }
+\DoxyCodeLine{00496\ \textcolor{comment}{/*\ Move\ the\ current\ reading\ position\ forward\ |len|\ bytes\ */}}
+\DoxyCodeLine{00497\ \_\_owur\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{int}\ PACKET\_forward(\mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,\ \textcolor{keywordtype}{size\_t}\ len)}
+\DoxyCodeLine{00498\ \{}
+\DoxyCodeLine{00499\ \ \ \ \ \textcolor{keywordflow}{if}\ (PACKET\_remaining(pkt)\ <\ len)}
+\DoxyCodeLine{00500\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00501\ }
+\DoxyCodeLine{00502\ \ \ \ \ packet\_forward(pkt,\ len);}
+\DoxyCodeLine{00503\ }
+\DoxyCodeLine{00504\ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00505\ \}}
+\DoxyCodeLine{00506\ }
+\DoxyCodeLine{00507\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00508\ \textcolor{comment}{\ *\ Reads\ a\ variable-\/length\ vector\ prefixed\ with\ a\ one-\/byte\ length,\ and\ stores}}
+\DoxyCodeLine{00509\ \textcolor{comment}{\ *\ the\ contents\ in\ |subpkt|.\ |pkt|\ can\ equal\ |subpkt|.}}
+\DoxyCodeLine{00510\ \textcolor{comment}{\ *\ Data\ is\ not\ copied:\ the\ |subpkt|\ packet\ will\ share\ its\ underlying\ buffer\ with}}
+\DoxyCodeLine{00511\ \textcolor{comment}{\ *\ the\ original\ |pkt|,\ so\ data\ wrapped\ by\ |pkt|\ must\ outlive\ the\ |subpkt|.}}
+\DoxyCodeLine{00512\ \textcolor{comment}{\ *\ Upon\ failure,\ the\ original\ |pkt|\ and\ |subpkt|\ are\ not\ modified.}}
+\DoxyCodeLine{00513\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00514\ \_\_owur\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{int}\ PACKET\_get\_length\_prefixed\_1(\mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00515\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *subpkt)}
+\DoxyCodeLine{00516\ \{}
+\DoxyCodeLine{00517\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ length;}
+\DoxyCodeLine{00518\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *data;}
+\DoxyCodeLine{00519\ \ \ \ \ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ tmp\ =\ *pkt;}
+\DoxyCodeLine{00520\ \ \ \ \ \textcolor{keywordflow}{if}\ (!PACKET\_get\_1(\&tmp,\ \&length)\ ||}
+\DoxyCodeLine{00521\ \ \ \ \ \ \ \ \ !PACKET\_get\_bytes(\&tmp,\ \&data,\ (\textcolor{keywordtype}{size\_t})length))\ \{}
+\DoxyCodeLine{00522\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00523\ \ \ \ \ \}}
+\DoxyCodeLine{00524\ }
+\DoxyCodeLine{00525\ \ \ \ \ *pkt\ =\ tmp;}
+\DoxyCodeLine{00526\ \ \ \ \ subpkt-\/>curr\ =\ data;}
+\DoxyCodeLine{00527\ \ \ \ \ subpkt-\/>remaining\ =\ length;}
+\DoxyCodeLine{00528\ }
+\DoxyCodeLine{00529\ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00530\ \}}
+\DoxyCodeLine{00531\ }
+\DoxyCodeLine{00532\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00533\ \textcolor{comment}{\ *\ Like\ PACKET\_get\_length\_prefixed\_1,\ but\ additionally,\ fails\ when\ there\ are}}
+\DoxyCodeLine{00534\ \textcolor{comment}{\ *\ leftover\ bytes\ in\ |pkt|.}}
+\DoxyCodeLine{00535\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00536\ \_\_owur\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{int}\ PACKET\_as\_length\_prefixed\_1(\mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00537\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *subpkt)}
+\DoxyCodeLine{00538\ \{}
+\DoxyCodeLine{00539\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ length;}
+\DoxyCodeLine{00540\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *data;}
+\DoxyCodeLine{00541\ \ \ \ \ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ tmp\ =\ *pkt;}
+\DoxyCodeLine{00542\ \ \ \ \ \textcolor{keywordflow}{if}\ (!PACKET\_get\_1(\&tmp,\ \&length)\ ||}
+\DoxyCodeLine{00543\ \ \ \ \ \ \ \ \ !PACKET\_get\_bytes(\&tmp,\ \&data,\ (\textcolor{keywordtype}{size\_t})length)\ ||}
+\DoxyCodeLine{00544\ \ \ \ \ \ \ \ \ PACKET\_remaining(\&tmp)\ !=\ 0)\ \{}
+\DoxyCodeLine{00545\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00546\ \ \ \ \ \}}
+\DoxyCodeLine{00547\ }
+\DoxyCodeLine{00548\ \ \ \ \ *pkt\ =\ tmp;}
+\DoxyCodeLine{00549\ \ \ \ \ subpkt-\/>curr\ =\ data;}
+\DoxyCodeLine{00550\ \ \ \ \ subpkt-\/>remaining\ =\ length;}
+\DoxyCodeLine{00551\ }
+\DoxyCodeLine{00552\ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00553\ \}}
+\DoxyCodeLine{00554\ }
+\DoxyCodeLine{00555\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00556\ \textcolor{comment}{\ *\ Reads\ a\ variable-\/length\ vector\ prefixed\ with\ a\ two-\/byte\ length,\ and\ stores}}
+\DoxyCodeLine{00557\ \textcolor{comment}{\ *\ the\ contents\ in\ |subpkt|.\ |pkt|\ can\ equal\ |subpkt|.}}
+\DoxyCodeLine{00558\ \textcolor{comment}{\ *\ Data\ is\ not\ copied:\ the\ |subpkt|\ packet\ will\ share\ its\ underlying\ buffer\ with}}
+\DoxyCodeLine{00559\ \textcolor{comment}{\ *\ the\ original\ |pkt|,\ so\ data\ wrapped\ by\ |pkt|\ must\ outlive\ the\ |subpkt|.}}
+\DoxyCodeLine{00560\ \textcolor{comment}{\ *\ Upon\ failure,\ the\ original\ |pkt|\ and\ |subpkt|\ are\ not\ modified.}}
+\DoxyCodeLine{00561\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00562\ \_\_owur\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{int}\ PACKET\_get\_length\_prefixed\_2(\mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00563\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *subpkt)}
+\DoxyCodeLine{00564\ \{}
+\DoxyCodeLine{00565\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ length;}
+\DoxyCodeLine{00566\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *data;}
+\DoxyCodeLine{00567\ \ \ \ \ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ tmp\ =\ *pkt;}
+\DoxyCodeLine{00568\ }
+\DoxyCodeLine{00569\ \ \ \ \ \textcolor{keywordflow}{if}\ (!PACKET\_get\_net\_2(\&tmp,\ \&length)\ ||}
+\DoxyCodeLine{00570\ \ \ \ \ \ \ \ \ !PACKET\_get\_bytes(\&tmp,\ \&data,\ (\textcolor{keywordtype}{size\_t})length))\ \{}
+\DoxyCodeLine{00571\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00572\ \ \ \ \ \}}
+\DoxyCodeLine{00573\ }
+\DoxyCodeLine{00574\ \ \ \ \ *pkt\ =\ tmp;}
+\DoxyCodeLine{00575\ \ \ \ \ subpkt-\/>curr\ =\ data;}
+\DoxyCodeLine{00576\ \ \ \ \ subpkt-\/>remaining\ =\ length;}
+\DoxyCodeLine{00577\ }
+\DoxyCodeLine{00578\ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00579\ \}}
+\DoxyCodeLine{00580\ }
+\DoxyCodeLine{00581\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00582\ \textcolor{comment}{\ *\ Like\ PACKET\_get\_length\_prefixed\_2,\ but\ additionally,\ fails\ when\ there\ are}}
+\DoxyCodeLine{00583\ \textcolor{comment}{\ *\ leftover\ bytes\ in\ |pkt|.}}
+\DoxyCodeLine{00584\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00585\ \_\_owur\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{int}\ PACKET\_as\_length\_prefixed\_2(\mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00586\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *subpkt)}
+\DoxyCodeLine{00587\ \{}
+\DoxyCodeLine{00588\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ length;}
+\DoxyCodeLine{00589\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *data;}
+\DoxyCodeLine{00590\ \ \ \ \ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ tmp\ =\ *pkt;}
+\DoxyCodeLine{00591\ }
+\DoxyCodeLine{00592\ \ \ \ \ \textcolor{keywordflow}{if}\ (!PACKET\_get\_net\_2(\&tmp,\ \&length)\ ||}
+\DoxyCodeLine{00593\ \ \ \ \ \ \ \ \ !PACKET\_get\_bytes(\&tmp,\ \&data,\ (\textcolor{keywordtype}{size\_t})length)\ ||}
+\DoxyCodeLine{00594\ \ \ \ \ \ \ \ \ PACKET\_remaining(\&tmp)\ !=\ 0)\ \{}
+\DoxyCodeLine{00595\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00596\ \ \ \ \ \}}
+\DoxyCodeLine{00597\ }
+\DoxyCodeLine{00598\ \ \ \ \ *pkt\ =\ tmp;}
+\DoxyCodeLine{00599\ \ \ \ \ subpkt-\/>curr\ =\ data;}
+\DoxyCodeLine{00600\ \ \ \ \ subpkt-\/>remaining\ =\ length;}
+\DoxyCodeLine{00601\ }
+\DoxyCodeLine{00602\ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00603\ \}}
+\DoxyCodeLine{00604\ }
+\DoxyCodeLine{00605\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00606\ \textcolor{comment}{\ *\ Reads\ a\ variable-\/length\ vector\ prefixed\ with\ a\ three-\/byte\ length,\ and\ stores}}
+\DoxyCodeLine{00607\ \textcolor{comment}{\ *\ the\ contents\ in\ |subpkt|.\ |pkt|\ can\ equal\ |subpkt|.}}
+\DoxyCodeLine{00608\ \textcolor{comment}{\ *\ Data\ is\ not\ copied:\ the\ |subpkt|\ packet\ will\ share\ its\ underlying\ buffer\ with}}
+\DoxyCodeLine{00609\ \textcolor{comment}{\ *\ the\ original\ |pkt|,\ so\ data\ wrapped\ by\ |pkt|\ must\ outlive\ the\ |subpkt|.}}
+\DoxyCodeLine{00610\ \textcolor{comment}{\ *\ Upon\ failure,\ the\ original\ |pkt|\ and\ |subpkt|\ are\ not\ modified.}}
+\DoxyCodeLine{00611\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00612\ \_\_owur\ \textcolor{keyword}{static}\ ossl\_inline\ \textcolor{keywordtype}{int}\ PACKET\_get\_length\_prefixed\_3(\mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *pkt,}
+\DoxyCodeLine{00613\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ *subpkt)}
+\DoxyCodeLine{00614\ \{}
+\DoxyCodeLine{00615\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ length;}
+\DoxyCodeLine{00616\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *data;}
+\DoxyCodeLine{00617\ \ \ \ \ \mbox{\hyperlink{struct_p_a_c_k_e_t}{PACKET}}\ tmp\ =\ *pkt;}
+\DoxyCodeLine{00618\ \ \ \ \ \textcolor{keywordflow}{if}\ (!PACKET\_get\_net\_3(\&tmp,\ \&length)\ ||}
+\DoxyCodeLine{00619\ \ \ \ \ \ \ \ \ !PACKET\_get\_bytes(\&tmp,\ \&data,\ (\textcolor{keywordtype}{size\_t})length))\ \{}
+\DoxyCodeLine{00620\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00621\ \ \ \ \ \}}
+\DoxyCodeLine{00622\ }
+\DoxyCodeLine{00623\ \ \ \ \ *pkt\ =\ tmp;}
+\DoxyCodeLine{00624\ \ \ \ \ subpkt-\/>curr\ =\ data;}
+\DoxyCodeLine{00625\ \ \ \ \ subpkt-\/>remaining\ =\ length;}
+\DoxyCodeLine{00626\ }
+\DoxyCodeLine{00627\ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00628\ \}}
+\DoxyCodeLine{00629\ }
+\DoxyCodeLine{00630\ \textcolor{comment}{/*\ Writeable\ packets\ */}}
+\DoxyCodeLine{00631\ }
+\DoxyCodeLine{00632\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structwpacket__sub}{wpacket\_sub}}\ \mbox{\hyperlink{structwpacket__sub}{WPACKET\_SUB}};}
+\DoxyCodeLine{00633\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structwpacket__sub}{wpacket\_sub}}\ \{}
+\DoxyCodeLine{00634\ \ \ \ \ \textcolor{comment}{/*\ The\ parent\ WPACKET\_SUB\ if\ we\ have\ one\ or\ NULL\ otherwise\ */}}
+\DoxyCodeLine{00635\ \ \ \ \ \mbox{\hyperlink{structwpacket__sub}{WPACKET\_SUB}}\ *parent;}
+\DoxyCodeLine{00636\ }
+\DoxyCodeLine{00637\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00638\ \textcolor{comment}{\ \ \ \ \ *\ Offset\ into\ the\ buffer\ where\ the\ length\ of\ this\ WPACKET\ goes.\ We\ use\ an}}
+\DoxyCodeLine{00639\ \textcolor{comment}{\ \ \ \ \ *\ offset\ in\ case\ the\ buffer\ grows\ and\ gets\ reallocated.}}
+\DoxyCodeLine{00640\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00641\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ packet\_len;}
+\DoxyCodeLine{00642\ }
+\DoxyCodeLine{00643\ \ \ \ \ \textcolor{comment}{/*\ Number\ of\ bytes\ in\ the\ packet\_len\ or\ 0\ if\ we\ don't\ write\ the\ length\ */}}
+\DoxyCodeLine{00644\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ lenbytes;}
+\DoxyCodeLine{00645\ }
+\DoxyCodeLine{00646\ \ \ \ \ \textcolor{comment}{/*\ Number\ of\ bytes\ written\ to\ the\ buf\ prior\ to\ this\ packet\ starting\ */}}
+\DoxyCodeLine{00647\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ pwritten;}
+\DoxyCodeLine{00648\ }
+\DoxyCodeLine{00649\ \ \ \ \ \textcolor{comment}{/*\ Flags\ for\ this\ sub-\/packet\ */}}
+\DoxyCodeLine{00650\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ flags;}
+\DoxyCodeLine{00651\ \};}
+\DoxyCodeLine{00652\ }
+\DoxyCodeLine{00653\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structwpacket__st}{wpacket\_st}}\ \mbox{\hyperlink{structwpacket__st}{WPACKET}};}
+\DoxyCodeLine{00654\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structwpacket__st}{wpacket\_st}}\ \{}
+\DoxyCodeLine{00655\ \ \ \ \ \textcolor{comment}{/*\ The\ buffer\ where\ we\ store\ the\ output\ data\ */}}
+\DoxyCodeLine{00656\ \ \ \ \ BUF\_MEM\ *buf;}
+\DoxyCodeLine{00657\ }
+\DoxyCodeLine{00658\ \ \ \ \ \textcolor{comment}{/*\ Fixed\ sized\ buffer\ which\ can\ be\ used\ as\ an\ alternative\ to\ buf\ */}}
+\DoxyCodeLine{00659\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *staticbuf;}
+\DoxyCodeLine{00660\ }
+\DoxyCodeLine{00661\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00662\ \textcolor{comment}{\ \ \ \ \ *\ Offset\ into\ the\ buffer\ where\ we\ are\ currently\ writing.\ We\ use\ an\ offset}}
+\DoxyCodeLine{00663\ \textcolor{comment}{\ \ \ \ \ *\ in\ case\ the\ buffer\ grows\ and\ gets\ reallocated.}}
+\DoxyCodeLine{00664\ \textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{00665\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ curr;}
+\DoxyCodeLine{00666\ }
+\DoxyCodeLine{00667\ \ \ \ \ \textcolor{comment}{/*\ Number\ of\ bytes\ written\ so\ far\ */}}
+\DoxyCodeLine{00668\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ written;}
+\DoxyCodeLine{00669\ }
+\DoxyCodeLine{00670\ \ \ \ \ \textcolor{comment}{/*\ Maximum\ number\ of\ bytes\ we\ will\ allow\ to\ be\ written\ to\ this\ WPACKET\ */}}
+\DoxyCodeLine{00671\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ maxsize;}
+\DoxyCodeLine{00672\ }
+\DoxyCodeLine{00673\ \ \ \ \ \textcolor{comment}{/*\ Our\ sub-\/packets\ (always\ at\ least\ one\ if\ not\ finished)\ */}}
+\DoxyCodeLine{00674\ \ \ \ \ \mbox{\hyperlink{structwpacket__sub}{WPACKET\_SUB}}\ *subs;}
+\DoxyCodeLine{00675\ }
+\DoxyCodeLine{00676\ \ \ \ \ \textcolor{comment}{/*\ Writing\ from\ the\ end\ first?\ */}}
+\DoxyCodeLine{00677\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ endfirst\ :\ 1;}
+\DoxyCodeLine{00678\ \};}
+\DoxyCodeLine{00679\ }
+\DoxyCodeLine{00680\ \textcolor{comment}{/*\ Flags\ */}}
+\DoxyCodeLine{00681\ }
+\DoxyCodeLine{00682\ \textcolor{comment}{/*\ Default\ */}}
+\DoxyCodeLine{00683\ \textcolor{preprocessor}{\#define\ WPACKET\_FLAGS\_NONE\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 0}}
+\DoxyCodeLine{00684\ }
+\DoxyCodeLine{00685\ \textcolor{comment}{/*\ Error\ on\ WPACKET\_close()\ if\ no\ data\ written\ to\ the\ WPACKET\ */}}
+\DoxyCodeLine{00686\ \textcolor{preprocessor}{\#define\ WPACKET\_FLAGS\_NON\_ZERO\_LENGTH\ \ \ \ \ \ \ \ \ \ \ 1}}
+\DoxyCodeLine{00687\ }
+\DoxyCodeLine{00688\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00689\ \textcolor{comment}{\ *\ Abandon\ all\ changes\ on\ WPACKET\_close()\ if\ no\ data\ written\ to\ the\ WPACKET,}}
+\DoxyCodeLine{00690\ \textcolor{comment}{\ *\ i.e.\ this\ does\ not\ write\ out\ a\ zero\ packet\ length}}
+\DoxyCodeLine{00691\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00692\ \textcolor{preprocessor}{\#define\ WPACKET\_FLAGS\_ABANDON\_ON\_ZERO\_LENGTH\ \ \ \ 2}}
+\DoxyCodeLine{00693\ }
+\DoxyCodeLine{00694\ \textcolor{comment}{/*\ QUIC\ variable-\/length\ integer\ length\ prefix\ */}}
+\DoxyCodeLine{00695\ \textcolor{preprocessor}{\#define\ WPACKET\_FLAGS\_QUIC\_VLINT\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 4}}
+\DoxyCodeLine{00696\ }
+\DoxyCodeLine{00697\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00698\ \textcolor{comment}{\ *\ Initialise\ a\ WPACKET\ with\ the\ buffer\ in\ |buf|.\ The\ buffer\ must\ exist}}
+\DoxyCodeLine{00699\ \textcolor{comment}{\ *\ for\ the\ whole\ time\ that\ the\ WPACKET\ is\ being\ used.\ Additionally\ |lenbytes|\ of}}
+\DoxyCodeLine{00700\ \textcolor{comment}{\ *\ data\ is\ preallocated\ at\ the\ start\ of\ the\ buffer\ to\ store\ the\ length\ of\ the}}
+\DoxyCodeLine{00701\ \textcolor{comment}{\ *\ WPACKET\ once\ we\ know\ it.}}
+\DoxyCodeLine{00702\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00703\ \textcolor{keywordtype}{int}\ WPACKET\_init\_len(\mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,\ BUF\_MEM\ *buf,\ \textcolor{keywordtype}{size\_t}\ lenbytes);}
+\DoxyCodeLine{00704\ }
+\DoxyCodeLine{00705\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00706\ \textcolor{comment}{\ *\ Same\ as\ WPACKET\_init\_len\ except\ there\ is\ no\ preallocation\ of\ the\ WPACKET}}
+\DoxyCodeLine{00707\ \textcolor{comment}{\ *\ length.}}
+\DoxyCodeLine{00708\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00709\ \textcolor{keywordtype}{int}\ WPACKET\_init(\mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,\ BUF\_MEM\ *buf);}
+\DoxyCodeLine{00710\ }
+\DoxyCodeLine{00711\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00712\ \textcolor{comment}{\ *\ Same\ as\ WPACKET\_init\_len\ except\ there\ is\ no\ underlying\ buffer.\ No\ data\ is}}
+\DoxyCodeLine{00713\ \textcolor{comment}{\ *\ ever\ actually\ written.\ We\ just\ keep\ track\ of\ how\ much\ data\ would\ have\ been}}
+\DoxyCodeLine{00714\ \textcolor{comment}{\ *\ written\ if\ a\ buffer\ was\ there.}}
+\DoxyCodeLine{00715\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00716\ \textcolor{keywordtype}{int}\ WPACKET\_init\_null(\mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,\ \textcolor{keywordtype}{size\_t}\ lenbytes);}
+\DoxyCodeLine{00717\ }
+\DoxyCodeLine{00718\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00719\ \textcolor{comment}{\ *\ Same\ as\ WPACKET\_init\_null\ except\ we\ set\ the\ WPACKET\ to\ assume\ DER\ length}}
+\DoxyCodeLine{00720\ \textcolor{comment}{\ *\ encoding\ for\ sub-\/packets.}}
+\DoxyCodeLine{00721\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00722\ \textcolor{keywordtype}{int}\ WPACKET\_init\_null\_der(\mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt);}
+\DoxyCodeLine{00723\ }
+\DoxyCodeLine{00724\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00725\ \textcolor{comment}{\ *\ Same\ as\ WPACKET\_init\_len\ except\ we\ do\ not\ use\ a\ growable\ BUF\_MEM\ structure.}}
+\DoxyCodeLine{00726\ \textcolor{comment}{\ *\ A\ fixed\ buffer\ of\ memory\ |buf|\ of\ size\ |len|\ is\ used\ instead.\ A\ failure\ will}}
+\DoxyCodeLine{00727\ \textcolor{comment}{\ *\ occur\ if\ you\ attempt\ to\ write\ beyond\ the\ end\ of\ the\ buffer}}
+\DoxyCodeLine{00728\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00729\ \textcolor{keywordtype}{int}\ WPACKET\_init\_static\_len(\mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *buf,\ \textcolor{keywordtype}{size\_t}\ len,}
+\DoxyCodeLine{00730\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ lenbytes);}
+\DoxyCodeLine{00731\ }
+\DoxyCodeLine{00732\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00733\ \textcolor{comment}{\ *\ Same\ as\ WPACKET\_init\_static\_len\ except\ lenbytes\ is\ always\ 0,\ and\ we\ set\ the}}
+\DoxyCodeLine{00734\ \textcolor{comment}{\ *\ WPACKET\ to\ write\ to\ the\ end\ of\ the\ buffer\ moving\ towards\ the\ start\ and\ use}}
+\DoxyCodeLine{00735\ \textcolor{comment}{\ *\ DER\ length\ encoding\ for\ sub-\/packets.}}
+\DoxyCodeLine{00736\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00737\ \textcolor{keywordtype}{int}\ WPACKET\_init\_der(\mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *buf,\ \textcolor{keywordtype}{size\_t}\ len);}
+\DoxyCodeLine{00738\ }
+\DoxyCodeLine{00739\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00740\ \textcolor{comment}{\ *\ Set\ the\ flags\ to\ be\ applied\ to\ the\ current\ sub-\/packet}}
+\DoxyCodeLine{00741\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00742\ \textcolor{keywordtype}{int}\ WPACKET\_set\_flags(\mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ flags);}
+\DoxyCodeLine{00743\ }
+\DoxyCodeLine{00744\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00745\ \textcolor{comment}{\ *\ Closes\ the\ most\ recent\ sub-\/packet.\ It\ also\ writes\ out\ the\ length\ of\ the}}
+\DoxyCodeLine{00746\ \textcolor{comment}{\ *\ packet\ to\ the\ required\ location\ (normally\ the\ start\ of\ the\ WPACKET)\ if}}
+\DoxyCodeLine{00747\ \textcolor{comment}{\ *\ appropriate.\ The\ top\ level\ WPACKET\ should\ be\ closed\ using\ WPACKET\_finish()}}
+\DoxyCodeLine{00748\ \textcolor{comment}{\ *\ instead\ of\ this\ function.}}
+\DoxyCodeLine{00749\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00750\ \textcolor{keywordtype}{int}\ WPACKET\_close(\mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt);}
+\DoxyCodeLine{00751\ }
+\DoxyCodeLine{00752\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00753\ \textcolor{comment}{\ *\ The\ same\ as\ WPACKET\_close()\ but\ only\ for\ the\ top\ most\ WPACKET.\ Additionally}}
+\DoxyCodeLine{00754\ \textcolor{comment}{\ *\ frees\ memory\ resources\ for\ this\ WPACKET.}}
+\DoxyCodeLine{00755\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00756\ \textcolor{keywordtype}{int}\ WPACKET\_finish(\mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt);}
+\DoxyCodeLine{00757\ }
+\DoxyCodeLine{00758\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00759\ \textcolor{comment}{\ *\ Iterate\ through\ all\ the\ sub-\/packets\ and\ write\ out\ their\ lengths\ as\ if\ they}}
+\DoxyCodeLine{00760\ \textcolor{comment}{\ *\ were\ being\ closed.\ The\ lengths\ will\ be\ overwritten\ with\ the\ final\ lengths}}
+\DoxyCodeLine{00761\ \textcolor{comment}{\ *\ when\ the\ sub-\/packets\ are\ eventually\ closed\ (which\ may\ be\ different\ if\ more}}
+\DoxyCodeLine{00762\ \textcolor{comment}{\ *\ data\ is\ added\ to\ the\ WPACKET).\ This\ function\ fails\ if\ a\ sub-\/packet\ is\ of\ 0}}
+\DoxyCodeLine{00763\ \textcolor{comment}{\ *\ length\ and\ WPACKET\_FLAGS\_ABANDON\_ON\_ZERO\_LENGTH\ is\ set.}}
+\DoxyCodeLine{00764\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00765\ \textcolor{keywordtype}{int}\ WPACKET\_fill\_lengths(\mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt);}
+\DoxyCodeLine{00766\ }
+\DoxyCodeLine{00767\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00768\ \textcolor{comment}{\ *\ Initialise\ a\ new\ sub-\/packet.\ Additionally\ |lenbytes|\ of\ data\ is\ preallocated}}
+\DoxyCodeLine{00769\ \textcolor{comment}{\ *\ at\ the\ start\ of\ the\ sub-\/packet\ to\ store\ its\ length\ once\ we\ know\ it.\ Don't}}
+\DoxyCodeLine{00770\ \textcolor{comment}{\ *\ call\ this\ directly.\ Use\ the\ convenience\ macros\ below\ instead.}}
+\DoxyCodeLine{00771\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00772\ \textcolor{keywordtype}{int}\ WPACKET\_start\_sub\_packet\_len\_\_(\mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,\ \textcolor{keywordtype}{size\_t}\ lenbytes);}
+\DoxyCodeLine{00773\ }
+\DoxyCodeLine{00774\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00775\ \textcolor{comment}{\ *\ Convenience\ macros\ for\ calling\ WPACKET\_start\_sub\_packet\_len\ with\ different}}
+\DoxyCodeLine{00776\ \textcolor{comment}{\ *\ lengths}}
+\DoxyCodeLine{00777\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00778\ \textcolor{preprocessor}{\#define\ WPACKET\_start\_sub\_packet\_u8(pkt)\ \(\backslash\)}}
+\DoxyCodeLine{00779\ \textcolor{preprocessor}{\ \ \ \ WPACKET\_start\_sub\_packet\_len\_\_((pkt),\ 1)}}
+\DoxyCodeLine{00780\ \textcolor{preprocessor}{\#define\ WPACKET\_start\_sub\_packet\_u16(pkt)\ \(\backslash\)}}
+\DoxyCodeLine{00781\ \textcolor{preprocessor}{\ \ \ \ WPACKET\_start\_sub\_packet\_len\_\_((pkt),\ 2)}}
+\DoxyCodeLine{00782\ \textcolor{preprocessor}{\#define\ WPACKET\_start\_sub\_packet\_u24(pkt)\ \(\backslash\)}}
+\DoxyCodeLine{00783\ \textcolor{preprocessor}{\ \ \ \ WPACKET\_start\_sub\_packet\_len\_\_((pkt),\ 3)}}
+\DoxyCodeLine{00784\ \textcolor{preprocessor}{\#define\ WPACKET\_start\_sub\_packet\_u32(pkt)\ \(\backslash\)}}
+\DoxyCodeLine{00785\ \textcolor{preprocessor}{\ \ \ \ WPACKET\_start\_sub\_packet\_len\_\_((pkt),\ 4)}}
+\DoxyCodeLine{00786\ }
+\DoxyCodeLine{00787\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00788\ \textcolor{comment}{\ *\ Same\ as\ WPACKET\_start\_sub\_packet\_len\_\_()\ except\ no\ bytes\ are\ pre-\/allocated}}
+\DoxyCodeLine{00789\ \textcolor{comment}{\ *\ for\ the\ sub-\/packet\ length.}}
+\DoxyCodeLine{00790\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00791\ \textcolor{keywordtype}{int}\ WPACKET\_start\_sub\_packet(\mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt);}
+\DoxyCodeLine{00792\ }
+\DoxyCodeLine{00793\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00794\ \textcolor{comment}{\ *\ Allocate\ bytes\ in\ the\ WPACKET\ for\ the\ output.\ This\ reserves\ the\ bytes}}
+\DoxyCodeLine{00795\ \textcolor{comment}{\ *\ and\ counts\ them\ as\ "{}written"{},\ but\ doesn't\ actually\ do\ the\ writing.\ A\ pointer}}
+\DoxyCodeLine{00796\ \textcolor{comment}{\ *\ to\ the\ allocated\ bytes\ is\ stored\ in\ |*allocbytes|.\ |allocbytes|\ may\ be\ NULL.}}
+\DoxyCodeLine{00797\ \textcolor{comment}{\ *\ WARNING:\ the\ allocated\ bytes\ must\ be\ filled\ in\ immediately,\ without\ further}}
+\DoxyCodeLine{00798\ \textcolor{comment}{\ *\ WPACKET\_*\ calls.\ If\ not\ then\ the\ underlying\ buffer\ may\ be\ realloc'd\ and}}
+\DoxyCodeLine{00799\ \textcolor{comment}{\ *\ change\ its\ location.}}
+\DoxyCodeLine{00800\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00801\ \textcolor{keywordtype}{int}\ WPACKET\_allocate\_bytes(\mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,\ \textcolor{keywordtype}{size\_t}\ len,}
+\DoxyCodeLine{00802\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **allocbytes);}
+\DoxyCodeLine{00803\ }
+\DoxyCodeLine{00804\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00805\ \textcolor{comment}{\ *\ The\ same\ as\ WPACKET\_allocate\_bytes()\ except\ additionally\ a\ new\ sub-\/packet\ is}}
+\DoxyCodeLine{00806\ \textcolor{comment}{\ *\ started\ for\ the\ allocated\ bytes,\ and\ then\ closed\ immediately\ afterwards.\ The}}
+\DoxyCodeLine{00807\ \textcolor{comment}{\ *\ number\ of\ length\ bytes\ for\ the\ sub-\/packet\ is\ in\ |lenbytes|.\ Don't\ call\ this}}
+\DoxyCodeLine{00808\ \textcolor{comment}{\ *\ directly.\ Use\ the\ convenience\ macros\ below\ instead.}}
+\DoxyCodeLine{00809\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00810\ \textcolor{keywordtype}{int}\ WPACKET\_sub\_allocate\_bytes\_\_(\mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,\ \textcolor{keywordtype}{size\_t}\ len,}
+\DoxyCodeLine{00811\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **allocbytes,\ \textcolor{keywordtype}{size\_t}\ lenbytes);}
+\DoxyCodeLine{00812\ }
+\DoxyCodeLine{00813\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00814\ \textcolor{comment}{\ *\ Convenience\ macros\ for\ calling\ WPACKET\_sub\_allocate\_bytes\ with\ different}}
+\DoxyCodeLine{00815\ \textcolor{comment}{\ *\ lengths}}
+\DoxyCodeLine{00816\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00817\ \textcolor{preprocessor}{\#define\ WPACKET\_sub\_allocate\_bytes\_u8(pkt,\ len,\ bytes)\ \(\backslash\)}}
+\DoxyCodeLine{00818\ \textcolor{preprocessor}{\ \ \ \ WPACKET\_sub\_allocate\_bytes\_\_((pkt),\ (len),\ (bytes),\ 1)}}
+\DoxyCodeLine{00819\ \textcolor{preprocessor}{\#define\ WPACKET\_sub\_allocate\_bytes\_u16(pkt,\ len,\ bytes)\ \(\backslash\)}}
+\DoxyCodeLine{00820\ \textcolor{preprocessor}{\ \ \ \ WPACKET\_sub\_allocate\_bytes\_\_((pkt),\ (len),\ (bytes),\ 2)}}
+\DoxyCodeLine{00821\ \textcolor{preprocessor}{\#define\ WPACKET\_sub\_allocate\_bytes\_u24(pkt,\ len,\ bytes)\ \(\backslash\)}}
+\DoxyCodeLine{00822\ \textcolor{preprocessor}{\ \ \ \ WPACKET\_sub\_allocate\_bytes\_\_((pkt),\ (len),\ (bytes),\ 3)}}
+\DoxyCodeLine{00823\ \textcolor{preprocessor}{\#define\ WPACKET\_sub\_allocate\_bytes\_u32(pkt,\ len,\ bytes)\ \(\backslash\)}}
+\DoxyCodeLine{00824\ \textcolor{preprocessor}{\ \ \ \ WPACKET\_sub\_allocate\_bytes\_\_((pkt),\ (len),\ (bytes),\ 4)}}
+\DoxyCodeLine{00825\ }
+\DoxyCodeLine{00826\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00827\ \textcolor{comment}{\ *\ The\ same\ as\ WPACKET\_allocate\_bytes()\ except\ the\ reserved\ bytes\ are\ not}}
+\DoxyCodeLine{00828\ \textcolor{comment}{\ *\ actually\ counted\ as\ written.\ Typically\ this\ will\ be\ for\ when\ we\ don't\ know}}
+\DoxyCodeLine{00829\ \textcolor{comment}{\ *\ how\ big\ arbitrary\ data\ is\ going\ to\ be\ up\ front,\ but\ we\ do\ know\ what\ the}}
+\DoxyCodeLine{00830\ \textcolor{comment}{\ *\ maximum\ size\ will\ be.\ If\ this\ function\ is\ used,\ then\ it\ should\ be\ immediately}}
+\DoxyCodeLine{00831\ \textcolor{comment}{\ *\ followed\ by\ a\ WPACKET\_allocate\_bytes()\ call\ before\ any\ other\ WPACKET}}
+\DoxyCodeLine{00832\ \textcolor{comment}{\ *\ functions\ are\ called\ (unless\ the\ write\ to\ the\ allocated\ bytes\ is\ abandoned).}}
+\DoxyCodeLine{00833\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00834\ \textcolor{comment}{\ *\ For\ example:\ If\ we\ are\ generating\ a\ signature,\ then\ the\ size\ of\ that}}
+\DoxyCodeLine{00835\ \textcolor{comment}{\ *\ signature\ may\ not\ be\ known\ in\ advance.\ We\ can\ use\ WPACKET\_reserve\_bytes()\ to}}
+\DoxyCodeLine{00836\ \textcolor{comment}{\ *\ handle\ this:}}
+\DoxyCodeLine{00837\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00838\ \textcolor{comment}{\ *\ \ if\ (!WPACKET\_sub\_reserve\_bytes\_u16(\&pkt,\ EVP\_PKEY\_get\_size(pkey),\ \&sigbytes1)}}
+\DoxyCodeLine{00839\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ ||\ EVP\_SignFinal(md\_ctx,\ sigbytes1,\ \&siglen,\ pkey)\ <=\ 0}}
+\DoxyCodeLine{00840\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ ||\ !WPACKET\_sub\_allocate\_bytes\_u16(\&pkt,\ siglen,\ \&sigbytes2)}}
+\DoxyCodeLine{00841\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ ||\ sigbytes1\ !=\ sigbytes2)}}
+\DoxyCodeLine{00842\ \textcolor{comment}{\ *\ \ \ \ \ \ goto\ err;}}
+\DoxyCodeLine{00843\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00844\ \textcolor{keywordtype}{int}\ WPACKET\_reserve\_bytes(\mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,\ \textcolor{keywordtype}{size\_t}\ len,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **allocbytes);}
+\DoxyCodeLine{00845\ }
+\DoxyCodeLine{00846\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00847\ \textcolor{comment}{\ *\ The\ "{}reserve\_bytes"{}\ equivalent\ of\ WPACKET\_sub\_allocate\_bytes\_\_()}}
+\DoxyCodeLine{00848\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00849\ \textcolor{keywordtype}{int}\ WPACKET\_sub\_reserve\_bytes\_\_(\mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,\ \textcolor{keywordtype}{size\_t}\ len,}
+\DoxyCodeLine{00850\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **allocbytes,\ \textcolor{keywordtype}{size\_t}\ lenbytes);}
+\DoxyCodeLine{00851\ }
+\DoxyCodeLine{00852\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00853\ \textcolor{comment}{\ *\ Convenience\ macros\ for\ \ WPACKET\_sub\_reserve\_bytes\ with\ different\ lengths}}
+\DoxyCodeLine{00854\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00855\ \textcolor{preprocessor}{\#define\ WPACKET\_sub\_reserve\_bytes\_u8(pkt,\ len,\ bytes)\ \(\backslash\)}}
+\DoxyCodeLine{00856\ \textcolor{preprocessor}{\ \ \ \ WPACKET\_reserve\_bytes\_\_((pkt),\ (len),\ (bytes),\ 1)}}
+\DoxyCodeLine{00857\ \textcolor{preprocessor}{\#define\ WPACKET\_sub\_reserve\_bytes\_u16(pkt,\ len,\ bytes)\ \(\backslash\)}}
+\DoxyCodeLine{00858\ \textcolor{preprocessor}{\ \ \ \ WPACKET\_sub\_reserve\_bytes\_\_((pkt),\ (len),\ (bytes),\ 2)}}
+\DoxyCodeLine{00859\ \textcolor{preprocessor}{\#define\ WPACKET\_sub\_reserve\_bytes\_u24(pkt,\ len,\ bytes)\ \(\backslash\)}}
+\DoxyCodeLine{00860\ \textcolor{preprocessor}{\ \ \ \ WPACKET\_sub\_reserve\_bytes\_\_((pkt),\ (len),\ (bytes),\ 3)}}
+\DoxyCodeLine{00861\ \textcolor{preprocessor}{\#define\ WPACKET\_sub\_reserve\_bytes\_u32(pkt,\ len,\ bytes)\ \(\backslash\)}}
+\DoxyCodeLine{00862\ \textcolor{preprocessor}{\ \ \ \ WPACKET\_sub\_reserve\_bytes\_\_((pkt),\ (len),\ (bytes),\ 4)}}
+\DoxyCodeLine{00863\ }
+\DoxyCodeLine{00864\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00865\ \textcolor{comment}{\ *\ Write\ the\ value\ stored\ in\ |val|\ into\ the\ WPACKET.\ The\ value\ will\ consume}}
+\DoxyCodeLine{00866\ \textcolor{comment}{\ *\ |bytes|\ amount\ of\ storage.\ An\ error\ will\ occur\ if\ |val|\ cannot\ be}}
+\DoxyCodeLine{00867\ \textcolor{comment}{\ *\ accommodated\ in\ |bytes|\ storage,\ e.g.\ attempting\ to\ write\ the\ value\ 256\ into}}
+\DoxyCodeLine{00868\ \textcolor{comment}{\ *\ 1\ byte\ will\ fail.\ Don't\ call\ this\ directly.\ Use\ the\ convenience\ macros\ below}}
+\DoxyCodeLine{00869\ \textcolor{comment}{\ *\ instead.}}
+\DoxyCodeLine{00870\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00871\ \textcolor{keywordtype}{int}\ WPACKET\_put\_bytes\_\_(\mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,\ uint64\_t\ val,\ \textcolor{keywordtype}{size\_t}\ bytes);}
+\DoxyCodeLine{00872\ }
+\DoxyCodeLine{00873\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00874\ \textcolor{comment}{\ *\ Convenience\ macros\ for\ calling\ WPACKET\_put\_bytes\ with\ different}}
+\DoxyCodeLine{00875\ \textcolor{comment}{\ *\ lengths}}
+\DoxyCodeLine{00876\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00877\ \textcolor{preprocessor}{\#define\ WPACKET\_put\_bytes\_u8(pkt,\ val)\ \(\backslash\)}}
+\DoxyCodeLine{00878\ \textcolor{preprocessor}{\ \ \ \ WPACKET\_put\_bytes\_\_((pkt),\ (val),\ 1)}}
+\DoxyCodeLine{00879\ \textcolor{preprocessor}{\#define\ WPACKET\_put\_bytes\_u16(pkt,\ val)\ \(\backslash\)}}
+\DoxyCodeLine{00880\ \textcolor{preprocessor}{\ \ \ \ WPACKET\_put\_bytes\_\_((pkt),\ (val),\ 2)}}
+\DoxyCodeLine{00881\ \textcolor{preprocessor}{\#define\ WPACKET\_put\_bytes\_u24(pkt,\ val)\ \(\backslash\)}}
+\DoxyCodeLine{00882\ \textcolor{preprocessor}{\ \ \ \ WPACKET\_put\_bytes\_\_((pkt),\ (val),\ 3)}}
+\DoxyCodeLine{00883\ \textcolor{preprocessor}{\#define\ WPACKET\_put\_bytes\_u32(pkt,\ val)\ \(\backslash\)}}
+\DoxyCodeLine{00884\ \textcolor{preprocessor}{\ \ \ \ WPACKET\_put\_bytes\_\_((pkt),\ (val),\ 4)}}
+\DoxyCodeLine{00885\ \textcolor{preprocessor}{\#define\ WPACKET\_put\_bytes\_u64(pkt,\ val)\ \(\backslash\)}}
+\DoxyCodeLine{00886\ \textcolor{preprocessor}{\ \ \ \ WPACKET\_put\_bytes\_\_((pkt),\ (val),\ 8)}}
+\DoxyCodeLine{00887\ }
+\DoxyCodeLine{00888\ \textcolor{comment}{/*\ Set\ a\ maximum\ size\ that\ we\ will\ not\ allow\ the\ WPACKET\ to\ grow\ beyond\ */}}
+\DoxyCodeLine{00889\ \textcolor{keywordtype}{int}\ WPACKET\_set\_max\_size(\mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,\ \textcolor{keywordtype}{size\_t}\ maxsize);}
+\DoxyCodeLine{00890\ }
+\DoxyCodeLine{00891\ \textcolor{comment}{/*\ Copy\ |len|\ bytes\ of\ data\ from\ |*src|\ into\ the\ WPACKET.\ */}}
+\DoxyCodeLine{00892\ \textcolor{keywordtype}{int}\ WPACKET\_memcpy(\mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *src,\ \textcolor{keywordtype}{size\_t}\ len);}
+\DoxyCodeLine{00893\ }
+\DoxyCodeLine{00894\ \textcolor{comment}{/*\ Set\ |len|\ bytes\ of\ data\ to\ |ch|\ into\ the\ WPACKET.\ */}}
+\DoxyCodeLine{00895\ \textcolor{keywordtype}{int}\ WPACKET\_memset(\mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,\ \textcolor{keywordtype}{int}\ ch,\ \textcolor{keywordtype}{size\_t}\ len);}
+\DoxyCodeLine{00896\ }
+\DoxyCodeLine{00897\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00898\ \textcolor{comment}{\ *\ Copy\ |len|\ bytes\ of\ data\ from\ |*src|\ into\ the\ WPACKET\ and\ prefix\ with\ its}}
+\DoxyCodeLine{00899\ \textcolor{comment}{\ *\ length\ (consuming\ |lenbytes|\ of\ data\ for\ the\ length).\ Don't\ call\ this}}
+\DoxyCodeLine{00900\ \textcolor{comment}{\ *\ directly.\ Use\ the\ convenience\ macros\ below\ instead.}}
+\DoxyCodeLine{00901\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00902\ \textcolor{keywordtype}{int}\ WPACKET\_sub\_memcpy\_\_(\mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *src,\ \textcolor{keywordtype}{size\_t}\ len,}
+\DoxyCodeLine{00903\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ lenbytes);}
+\DoxyCodeLine{00904\ }
+\DoxyCodeLine{00905\ \textcolor{comment}{/*\ Convenience\ macros\ for\ calling\ WPACKET\_sub\_memcpy\ with\ different\ lengths\ */}}
+\DoxyCodeLine{00906\ \textcolor{preprocessor}{\#define\ WPACKET\_sub\_memcpy\_u8(pkt,\ src,\ len)\ \(\backslash\)}}
+\DoxyCodeLine{00907\ \textcolor{preprocessor}{\ \ \ \ WPACKET\_sub\_memcpy\_\_((pkt),\ (src),\ (len),\ 1)}}
+\DoxyCodeLine{00908\ \textcolor{preprocessor}{\#define\ WPACKET\_sub\_memcpy\_u16(pkt,\ src,\ len)\ \(\backslash\)}}
+\DoxyCodeLine{00909\ \textcolor{preprocessor}{\ \ \ \ WPACKET\_sub\_memcpy\_\_((pkt),\ (src),\ (len),\ 2)}}
+\DoxyCodeLine{00910\ \textcolor{preprocessor}{\#define\ WPACKET\_sub\_memcpy\_u24(pkt,\ src,\ len)\ \(\backslash\)}}
+\DoxyCodeLine{00911\ \textcolor{preprocessor}{\ \ \ \ WPACKET\_sub\_memcpy\_\_((pkt),\ (src),\ (len),\ 3)}}
+\DoxyCodeLine{00912\ \textcolor{preprocessor}{\#define\ WPACKET\_sub\_memcpy\_u32(pkt,\ src,\ len)\ \(\backslash\)}}
+\DoxyCodeLine{00913\ \textcolor{preprocessor}{\ \ \ \ WPACKET\_sub\_memcpy\_\_((pkt),\ (src),\ (len),\ 4)}}
+\DoxyCodeLine{00914\ }
+\DoxyCodeLine{00915\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00916\ \textcolor{comment}{\ *\ Return\ the\ total\ number\ of\ bytes\ written\ so\ far\ to\ the\ underlying\ buffer}}
+\DoxyCodeLine{00917\ \textcolor{comment}{\ *\ including\ any\ storage\ allocated\ for\ length\ bytes}}
+\DoxyCodeLine{00918\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00919\ \textcolor{keywordtype}{int}\ WPACKET\_get\_total\_written(\mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,\ \textcolor{keywordtype}{size\_t}\ *written);}
+\DoxyCodeLine{00920\ }
+\DoxyCodeLine{00921\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00922\ \textcolor{comment}{\ *\ Returns\ the\ length\ of\ the\ current\ sub-\/packet.\ This\ excludes\ any\ bytes}}
+\DoxyCodeLine{00923\ \textcolor{comment}{\ *\ allocated\ for\ the\ length\ itself.}}
+\DoxyCodeLine{00924\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00925\ \textcolor{keywordtype}{int}\ WPACKET\_get\_length(\mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt,\ \textcolor{keywordtype}{size\_t}\ *len);}
+\DoxyCodeLine{00926\ }
+\DoxyCodeLine{00927\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00928\ \textcolor{comment}{\ *\ Returns\ a\ pointer\ to\ the\ current\ write\ location,\ but\ does\ not\ allocate\ any}}
+\DoxyCodeLine{00929\ \textcolor{comment}{\ *\ bytes.}}
+\DoxyCodeLine{00930\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00931\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *WPACKET\_get\_curr(\mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt);}
+\DoxyCodeLine{00932\ }
+\DoxyCodeLine{00933\ \textcolor{comment}{/*\ Returns\ true\ if\ the\ underlying\ buffer\ is\ actually\ NULL\ */}}
+\DoxyCodeLine{00934\ \textcolor{keywordtype}{int}\ WPACKET\_is\_null\_buf(\mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt);}
+\DoxyCodeLine{00935\ }
+\DoxyCodeLine{00936\ \textcolor{comment}{/*\ Release\ resources\ in\ a\ WPACKET\ if\ a\ failure\ has\ occurred.\ */}}
+\DoxyCodeLine{00937\ \textcolor{keywordtype}{void}\ WPACKET\_cleanup(\mbox{\hyperlink{structwpacket__st}{WPACKET}}\ *pkt);}
+\DoxyCodeLine{00938\ }
+\DoxyCodeLine{00939\ \textcolor{preprocessor}{\#endif\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{/*\ OSSL\_INTERNAL\_PACKET\_H\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

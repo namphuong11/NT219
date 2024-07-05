@@ -1,0 +1,948 @@
+\chapter{Build and Install}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l}{}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l}\index{Build and Install@{Build and Install}}
+This document describes installation on all supported operating systems\+: the Unix/\+Linux family (including mac\+OS), Open\+VMS, and Windows.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md528}{}\doxysection{\texorpdfstring{Table of Contents}{Table of Contents}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md528}
+
+\begin{DoxyItemize}
+\item Prerequisites
+\item Notational Conventions
+\item Quick Installation Guide
+\begin{DoxyItemize}
+\item Building Open\+SSL
+\item Installing Open\+SSL
+\end{DoxyItemize}
+\item Configuration Options
+\begin{DoxyItemize}
+\item API Level
+\item Cross Compile Prefix
+\item Build Type
+\item Directories
+\item Compiler Warnings
+\item Compression Algorithm Flags
+\item Seeding the Random Generator
+\item Setting the FIPS HMAC key
+\item Enable and Disable Features
+\item Displaying configuration data
+\end{DoxyItemize}
+\item Installation Steps in Detail
+\begin{DoxyItemize}
+\item Configure
+\item Build
+\item Test
+\item Install
+\end{DoxyItemize}
+\item Advanced Build Options
+\begin{DoxyItemize}
+\item Environment Variables
+\item Makefile Targets
+\item Running Selected Tests
+\end{DoxyItemize}
+\item Troubleshooting
+\begin{DoxyItemize}
+\item Configuration Problems
+\item Build Failures
+\item Test Failures
+\end{DoxyItemize}
+\item Notes
+\begin{DoxyItemize}
+\item Notes on multi-\/threading
+\item Notes on shared libraries
+\item Notes on random number generation
+\item Notes on assembler modules compilation
+\end{DoxyItemize}
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md529}{}\doxysection{\texorpdfstring{Prerequisites}{Prerequisites}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md529}
+To install Open\+SSL, you will need\+:
+
+
+\begin{DoxyItemize}
+\item A "{}make"{} implementation
+\item Perl 5 with core modules (please read \doxysectlink{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_p_e_r_l}{NOTES-\/\+PERL.md}{0})
+\item The Perl module {\ttfamily Text\+::\+Template} (please read \doxysectlink{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_p_e_r_l}{NOTES-\/\+PERL.md}{0})
+\item an ANSI C compiler
+\item a development environment in the form of development libraries and C header files
+\item a supported operating system
+\end{DoxyItemize}
+
+For additional platform specific requirements, solutions to specific issues and other details, please read one of these\+:
+
+
+\begin{DoxyItemize}
+\item \doxysectlink{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_u_n_i_x}{Notes for UNIX-\/like platforms}{0}
+\item \doxysectlink{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_a_n_d_r_o_i_d}{Notes for Android platforms}{0}
+\item \doxysectlink{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_w_i_n_d_o_w_s}{Notes for Windows platforms}{0}
+\item \doxysectlink{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_d_j_g_p_p}{Notes for the DOS platform with DJGPP}{0}
+\item \doxysectlink{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_v_m_s}{Notes for the Open\+VMS platform}{0}
+\item \doxysectlink{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_p_e_r_l}{Notes on Perl}{0}
+\item \doxysectlink{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_v_a_l_g_r_i_n_d}{Notes on Valgrind}{0}
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md530}{}\doxysection{\texorpdfstring{Notational conventions}{Notational conventions}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md530}
+Throughout this document, we use the following conventions.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md531}{}\doxysubsection{\texorpdfstring{Commands}{Commands}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md531}
+Any line starting with a dollar sign is a command line. \begin{DoxyVerb}$ command
+\end{DoxyVerb}
+ The dollar sign indicates the shell prompt and is not to be entered as part of the command.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md532}{}\doxysubsection{\texorpdfstring{Choices}{Choices}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md532}
+Several words in curly braces separated by pipe characters indicate a {\bfseries{mandatory choice}}, to be replaced with one of the given words. For example, the line \begin{DoxyVerb}$ echo { WORD1 | WORD2 | WORD3 }
+\end{DoxyVerb}
+ represents one of the following three commands \begin{DoxyVerb}$ echo WORD1
+- or -
+$ echo WORD2
+- or -
+$ echo WORD3
+\end{DoxyVerb}
+ One or several words in square brackets separated by pipe characters denote an {\bfseries{optional choice}}. It is similar to the mandatory choice, but it can also be omitted entirely.
+
+So the line \begin{DoxyVerb}$ echo [ WORD1 | WORD2 | WORD3 ]
+\end{DoxyVerb}
+ represents one of the four commands \begin{DoxyVerb}$ echo WORD1
+- or -
+$ echo WORD2
+- or -
+$ echo WORD3
+- or -
+$ echo
+\end{DoxyVerb}
+ \hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md533}{}\doxysubsection{\texorpdfstring{Arguments}{Arguments}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md533}
+{\bfseries{Optional Arguments}} are enclosed in square brackets. \begin{DoxyVerb}[option...]
+\end{DoxyVerb}
+ A trailing ellipsis means that more than one could be specified.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md534}{}\doxysection{\texorpdfstring{Quick Installation Guide}{Quick Installation Guide}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md534}
+If you just want to get Open\+SSL installed without bothering too much about the details, here is the short version of how to build and install Open\+SSL. If any of the following steps fails, please consult the Installation in Detail section below.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md535}{}\doxysubsection{\texorpdfstring{Building Open\+SSL}{Building Open\+SSL}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md535}
+Use the following commands to configure, build and test Open\+SSL. The testing is optional, but recommended if you intend to install Open\+SSL for production use.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md536}{}\doxysubsubsection{\texorpdfstring{Unix / Linux / mac\+OS}{Unix / Linux / mac\+OS}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md536}
+\begin{DoxyVerb}$ ./Configure
+$ make
+$ make test
+\end{DoxyVerb}
+ \hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md537}{}\doxysubsubsection{\texorpdfstring{Open\+VMS}{Open\+VMS}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md537}
+Use the following commands to build Open\+SSL\+: \begin{DoxyVerb}$ perl Configure
+$ mms
+$ mms test
+\end{DoxyVerb}
+ \hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md538}{}\doxysubsubsection{\texorpdfstring{Windows}{Windows}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md538}
+If you are using Visual Studio, open a Developer Command Prompt and issue the following commands to build Open\+SSL. \begin{DoxyVerb}$ perl Configure
+$ nmake
+$ nmake test
+\end{DoxyVerb}
+ As mentioned in the Choices section, you need to pick one of the four Configure targets in the first command.
+
+Most likely you will be using the {\ttfamily VC-\/\+WIN64A}/{\ttfamily VC-\/\+WIN64\+A-\/\+HYBRIDCRT} target for 64bit Windows binaries (AMD64) or {\ttfamily VC-\/\+WIN32}/{\ttfamily VC-\/\+WIN32-\/\+HYBRIDCRT} for 32bit Windows binaries (X86). The other two options are {\ttfamily VC-\/\+WIN64I} (Intel IA64, Itanium) and {\ttfamily VC-\/\+CE} (Windows CE) are rather uncommon nowadays.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md539}{}\doxysubsection{\texorpdfstring{Installing Open\+SSL}{Installing Open\+SSL}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md539}
+The following commands will install Open\+SSL to a default system location.
+
+{\bfseries{Danger Zone\+:}} even if you are impatient, please read the following two paragraphs carefully before you install Open\+SSL.
+
+For security reasons the default system location is by default not writable for unprivileged users. So for the final installation step administrative privileges are required. The default system location and the procedure to obtain administrative privileges depends on the operating system. It is recommended to compile and test Open\+SSL with normal user privileges and use administrative privileges only for the final installation step.
+
+On some platforms Open\+SSL is preinstalled as part of the Operating System. In this case it is highly recommended not to overwrite the system versions, because other applications or libraries might depend on it. To avoid breaking other applications, install your copy of Open\+SSL to a different location which is not in the global search path for system libraries.
+
+Finally, if you plan on using the FIPS module, you need to read the Post-\/installation Notes further down.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md540}{}\doxysubsubsection{\texorpdfstring{Unix / Linux / mac\+OS}{Unix / Linux / mac\+OS}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md540}
+Depending on your distribution, you need to run the following command as root user or prepend {\ttfamily sudo} to the command\+: \begin{DoxyVerb}$ make install
+\end{DoxyVerb}
+ By default, Open\+SSL will be installed to \begin{DoxyVerb}/usr/local
+\end{DoxyVerb}
+ More precisely, the files will be installed into the subdirectories \begin{DoxyVerb}/usr/local/bin
+/usr/local/lib
+/usr/local/include
+...
+\end{DoxyVerb}
+ depending on the file type, as it is custom on Unix-\/like operating systems.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md541}{}\doxysubsubsection{\texorpdfstring{Open\+VMS}{Open\+VMS}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md541}
+Use the following command to install Open\+SSL. \begin{DoxyVerb}$ mms install
+\end{DoxyVerb}
+ By default, Open\+SSL will be installed to \begin{DoxyVerb}SYS$COMMON:[OPENSSL]
+\end{DoxyVerb}
+ \hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md542}{}\doxysubsubsection{\texorpdfstring{Windows}{Windows}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md542}
+If you are using Visual Studio, open the Developer Command Prompt {\itshape elevated} and issue the following command. \begin{DoxyVerb}$ nmake install
+\end{DoxyVerb}
+ The easiest way to elevate the Command Prompt is to press and hold down both the {\ttfamily \texorpdfstring{$<$}{<}CTRL\texorpdfstring{$>$}{>}} and {\ttfamily \texorpdfstring{$<$}{<}SHIFT\texorpdfstring{$>$}{>}} keys while clicking the menu item in the task menu.
+
+The default installation location is \begin{DoxyVerb}C:\Program Files\OpenSSL
+\end{DoxyVerb}
+ for native binaries, or \begin{DoxyVerb}C:\Program Files (x86)\OpenSSL
+\end{DoxyVerb}
+ for 32bit binaries on 64bit Windows (WOW64).\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md543}{}\doxyparagraph{\texorpdfstring{Installing to a different location}{Installing to a different location}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md543}
+To install Open\+SSL to a different location (for example into your home directory for testing purposes) run {\ttfamily Configure} as shown in the following examples.
+
+The options {\ttfamily -\/-\/prefix} and {\ttfamily -\/-\/openssldir} are explained in further detail in Directories below, and the values used here are mere examples.
+
+On Unix\+: \begin{DoxyVerb}$ ./Configure --prefix=/opt/openssl --openssldir=/usr/local/ssl
+\end{DoxyVerb}
+ On Open\+VMS\+: \begin{DoxyVerb}$ perl Configure --prefix=PROGRAM:[INSTALLS] --openssldir=SYS$MANAGER:[OPENSSL]
+\end{DoxyVerb}
+ Note\+: if you do add options to the configuration command, please make sure you\textquotesingle{}ve read more than just this Quick Start, such as relevant {\ttfamily NOTES-\/\texorpdfstring{$\ast$}{*}} files, the options outline below, as configuration options may change the outcome in otherwise unexpected ways.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md544}{}\doxysection{\texorpdfstring{Configuration Options}{Configuration Options}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md544}
+There are several options to {\ttfamily ./\+Configure} to customize the build (note that for Windows, the defaults for {\ttfamily -\/-\/prefix} and {\ttfamily -\/-\/openssldir} depend on what configuration is used and what Windows implementation Open\+SSL is built on. For more information, see the \doxysectlink{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_n_o_t_e_s-_w_i_n_d_o_w_s}{Notes for Windows platforms}{0}.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md545}{}\doxysubsection{\texorpdfstring{API Level}{API Level}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md545}
+\begin{DoxyVerb}--api=x.y[.z]
+\end{DoxyVerb}
+ Build the Open\+SSL libraries to support the API for the specified version. If no-\/deprecated is also given, don\textquotesingle{}t build with support for deprecated APIs in or below the specified version number. For example, adding \begin{DoxyVerb}--api=1.1.0 no-deprecated
+\end{DoxyVerb}
+ will remove support for all APIs that were deprecated in Open\+SSL version 1.\+1.\+0 or below. This is a rather specialized option for developers. If you just intend to remove all deprecated APIs up to the current version entirely, just specify no-\/deprecated. If {\ttfamily -\/-\/api} isn\textquotesingle{}t given, it defaults to the current (minor) Open\+SSL version.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md546}{}\doxysubsection{\texorpdfstring{Cross Compile Prefix}{Cross Compile Prefix}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md546}
+\begin{DoxyVerb}--cross-compile-prefix=<PREFIX>
+\end{DoxyVerb}
+ The {\ttfamily \texorpdfstring{$<$}{<}PREFIX\texorpdfstring{$>$}{>}} to include in front of commands for your toolchain.
+
+It is likely to have to end with dash, e.\+g. {\ttfamily a-\/b-\/c-\/} would invoke GNU compiler as {\ttfamily a-\/b-\/c-\/gcc}, etc. Unfortunately cross-\/compiling is too case-\/specific to put together one-\/size-\/fits-\/all instructions. You might have to pass more flags or set up environment variables to actually make it work. Android and i\+OS cases are discussed in corresponding {\ttfamily Configurations/15-\/\texorpdfstring{$\ast$}{*}.conf} files. But there are cases when this option alone is sufficient. For example to build the mingw64 target on Linux {\ttfamily -\/-\/cross-\/compile-\/prefix=x86\+\_\+64-\/w64-\/mingw32-\/} works. Naturally provided that mingw packages are installed. Today Debian and Ubuntu users have option to install a number of prepackaged cross-\/compilers along with corresponding run-\/time and development packages for "{}alien"{} hardware. To give another example {\ttfamily -\/-\/cross-\/compile-\/prefix=mipsel-\/linux-\/gnu-\/} suffices in such case.
+
+For cross compilation, you must configure manually. Also, note that {\ttfamily -\/-\/openssldir} refers to target\textquotesingle{}s file system, not one you are building on.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md547}{}\doxysubsection{\texorpdfstring{Build Type}{Build Type}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md547}
+\begin{DoxyVerb}--debug
+\end{DoxyVerb}
+ Build Open\+SSL with debugging symbols and zero optimization level. \begin{DoxyVerb}--release
+\end{DoxyVerb}
+ Build Open\+SSL without debugging symbols. This is the default.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md548}{}\doxysubsection{\texorpdfstring{Directories}{Directories}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md548}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md549}{}\doxysubsubsection{\texorpdfstring{libdir}{libdir}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md549}
+\begin{DoxyVerb}--libdir=DIR
+\end{DoxyVerb}
+ The name of the directory under the top of the installation directory tree (see the {\ttfamily -\/-\/prefix} option) where libraries will be installed. By default this is {\ttfamily lib}. Note that on Windows only static libraries ({\ttfamily \texorpdfstring{$\ast$}{*}.lib}) will be stored in this location. Shared libraries ({\ttfamily \texorpdfstring{$\ast$}{*}.dll}) will always be installed to the {\ttfamily bin} directory.
+
+Some build targets have a multilib postfix set in the build configuration. For these targets the default libdir is {\ttfamily lib\texorpdfstring{$<$}{<}multilib-\/postfix\texorpdfstring{$>$}{>}}. Please use {\ttfamily -\/-\/libdir=lib} to override the libdir if adding the postfix is undesirable.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md550}{}\doxysubsubsection{\texorpdfstring{openssldir}{openssldir}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md550}
+\begin{DoxyVerb}--openssldir=DIR
+\end{DoxyVerb}
+ Directory for Open\+SSL configuration files, and also the default certificate and key store. Defaults are\+: \begin{DoxyVerb}Unix:           /usr/local/ssl
+Windows:        C:\Program Files\Common Files\SSL
+OpenVMS:        SYS$COMMON:[OPENSSL-COMMON]
+\end{DoxyVerb}
+ For 32bit Windows applications on Windows 64bit (WOW64), always replace {\ttfamily C\+:\textbackslash{}Program Files} by {\ttfamily C\+:\textbackslash{}Program Files (x86)}.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md551}{}\doxysubsubsection{\texorpdfstring{prefix}{prefix}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md551}
+\begin{DoxyVerb}--prefix=DIR
+\end{DoxyVerb}
+ The top of the installation directory tree. Defaults are\+: \begin{DoxyVerb}Unix:           /usr/local
+Windows:        C:\Program Files\OpenSSL
+OpenVMS:        SYS$COMMON:[OPENSSL]
+\end{DoxyVerb}
+ \hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md552}{}\doxysubsection{\texorpdfstring{Compiler Warnings}{Compiler Warnings}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md552}
+\begin{DoxyVerb}--strict-warnings
+\end{DoxyVerb}
+ This is a developer flag that switches on various compiler options recommended for Open\+SSL development. It only works when using gcc or clang as the compiler. If you are developing a patch for Open\+SSL then it is recommended that you use this option where possible.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md553}{}\doxysubsection{\texorpdfstring{Compression Algorithm Flags}{Compression Algorithm Flags}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md553}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md554}{}\doxysubsubsection{\texorpdfstring{with-\/brotli-\/include}{with-\/brotli-\/include}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md554}
+\begin{DoxyVerb}--with-brotli-include=DIR
+\end{DoxyVerb}
+ The directory for the location of the brotli include files (i.\+e. the location of the {\bfseries{brotli}} include directory). This option is only necessary if enable-\/brotli is used and the include files are not already on the system include path.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md555}{}\doxysubsubsection{\texorpdfstring{with-\/brotli-\/lib}{with-\/brotli-\/lib}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md555}
+\begin{DoxyVerb}--with-brotli-lib=LIB
+\end{DoxyVerb}
+ {\bfseries{On Unix}}\+: this is the directory containing the brotli libraries. If not provided, the system library path will be used.
+
+The names of the libraries are\+:
+
+
+\begin{DoxyItemize}
+\item libbrotlicommon.\+a or libbrotlicommon.\+so
+\item libbrotlidec.\+a or libbrotlidec.\+so
+\item libbrotlienc.\+a or libbrotlienc.\+so
+\end{DoxyItemize}
+
+{\bfseries{On Windows\+:}} this is the directory containing the brotli libraries. If not provided, the system library path will be used.
+
+The names of the libraries are\+:
+
+
+\begin{DoxyItemize}
+\item brotlicommon.\+lib
+\item brotlidec.\+lib
+\item brotlienc.\+lib
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md556}{}\doxysubsubsection{\texorpdfstring{with-\/zlib-\/include}{with-\/zlib-\/include}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md556}
+\begin{DoxyVerb}--with-zlib-include=DIR
+\end{DoxyVerb}
+ The directory for the location of the zlib include file. This option is only necessary if zlib is used and the include file is not already on the system include path.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md557}{}\doxysubsubsection{\texorpdfstring{with-\/zlib-\/lib}{with-\/zlib-\/lib}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md557}
+\begin{DoxyVerb}--with-zlib-lib=LIB
+\end{DoxyVerb}
+ {\bfseries{On Unix}}\+: this is the directory containing the zlib library. If not provided the system library path will be used.
+
+{\bfseries{On Windows\+:}} this is the filename of the zlib library (with or without a path). This flag must be provided if the zlib-\/dynamic option is not also used. If {\ttfamily zlib-\/dynamic} is used then this flag is optional and defaults to {\ttfamily ZLIB1} if not provided.
+
+{\bfseries{On VMS\+:}} this is the filename of the zlib library (with or without a path). This flag is optional and if not provided then {\ttfamily GNV\$LIBZSHR}, {\ttfamily GNV\$LIBZSHR32} or {\ttfamily GNV\$LIBZSHR64} is used by default depending on the pointer size chosen.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md558}{}\doxysubsubsection{\texorpdfstring{with-\/zstd-\/include}{with-\/zstd-\/include}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md558}
+\begin{DoxyVerb}--with-zstd-include=DIR
+\end{DoxyVerb}
+ The directory for the location of the Zstd include file. This option is only necessary if enable-\/std is used and the include file is not already on the system include path.
+
+Open\+SSL requires Zstd 1.\+4 or greater. The Linux kernel source contains a {\itshape zstd.\+h} file that is not compatible with the 1.\+4.\+x Zstd distribution, the compilation will generate an error if the Linux {\itshape zstd.\+h} is included before (or instead of) the Zstd distribution header.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md559}{}\doxysubsubsection{\texorpdfstring{with-\/zstd-\/lib}{with-\/zstd-\/lib}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md559}
+\begin{DoxyVerb}--with-zstd-lib=LIB
+\end{DoxyVerb}
+ {\bfseries{On Unix}}\+: this is the directory containing the Zstd library. If not provided the system library path will be used.
+
+{\bfseries{On Windows\+:}} this is the filename of the Zstd library (with or without a path). This flag must be provided if the enable-\/zstd-\/dynamic option is not also used. If {\ttfamily zstd-\/dynamic} is used then this flag is optional and defaults to {\ttfamily LIBZSTD} if not provided.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md560}{}\doxysubsection{\texorpdfstring{Seeding the Random Generator}{Seeding the Random Generator}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md560}
+\begin{DoxyVerb}--with-rand-seed=seed1[,seed2,...]
+\end{DoxyVerb}
+ A comma separated list of seeding methods which will be tried by Open\+SSL in order to obtain random input (a.\+k.\+a "{}entropy"{}) for seeding its cryptographically secure random number generator (CSPRNG). The current seeding methods are\+:\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md561}{}\doxysubsubsection{\texorpdfstring{os}{os}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md561}
+Use a trusted operating system entropy source. This is the default method if such an entropy source exists.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md562}{}\doxysubsubsection{\texorpdfstring{getrandom}{getrandom}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md562}
+Use the \href{http://man7.org/linux/man-pages/man2/getrandom.2.html}{\texttt{ getrandom(2)}} or equivalent system call.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md563}{}\doxysubsubsection{\texorpdfstring{devrandom}{devrandom}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md563}
+Use the first device from the {\ttfamily DEVRANDOM} list which can be opened to read random bytes. The {\ttfamily DEVRANDOM} preprocessor constant expands to \begin{DoxyVerb}"/dev/urandom","/dev/random","/dev/srandom"
+\end{DoxyVerb}
+ on most unix-\/ish operating systems.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md564}{}\doxysubsubsection{\texorpdfstring{egd}{egd}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md564}
+Check for an entropy generating daemon. This source is ignored by the FIPS provider.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md565}{}\doxysubsubsection{\texorpdfstring{rdcpu}{rdcpu}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md565}
+Use the {\ttfamily RDSEED} or {\ttfamily RDRAND} command on x86 or {\ttfamily RNDRRS} command on aarch64 if provided by the CPU.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md566}{}\doxysubsubsection{\texorpdfstring{librandom}{librandom}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md566}
+Use librandom (not implemented yet). This source is ignored by the FIPS provider.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md567}{}\doxysubsubsection{\texorpdfstring{none}{none}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md567}
+Disable automatic seeding. This is the default on some operating systems where no suitable entropy source exists, or no support for it is implemented yet. This option is ignored by the FIPS provider.
+
+For more information, see the section Notes on random number generation at the end of this document.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md568}{}\doxysubsection{\texorpdfstring{Setting the FIPS HMAC key}{Setting the FIPS HMAC key}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md568}
+\begin{DoxyVerb}--fips-key=value
+\end{DoxyVerb}
+ As part of its self-\/test validation, the FIPS module must verify itself by performing a SHA-\/256 HMAC computation on itself. The default key is the SHA256 value of "{}the holy handgrenade of antioch"{} and is sufficient for meeting the FIPS requirements.
+
+To change the key to a different value, use this flag. The value should be a hex string no more than 64 characters.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md569}{}\doxysubsection{\texorpdfstring{Enable and Disable Features}{Enable and Disable Features}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md569}
+Feature options always come in pairs, an option to enable feature {\ttfamily xxxx}, and an option to disable it\+: \begin{DoxyVerb}[ enable-xxxx | no-xxxx ]
+\end{DoxyVerb}
+ Whether a feature is enabled or disabled by default, depends on the feature. In the following list, always the non-\/default variant is documented\+: if feature {\ttfamily xxxx} is disabled by default then {\ttfamily enable-\/xxxx} is documented and if feature {\ttfamily xxxx} is enabled by default then {\ttfamily no-\/xxxx} is documented.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md570}{}\doxysubsubsection{\texorpdfstring{no-\/afalgeng}{no-\/afalgeng}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md570}
+Don\textquotesingle{}t build the AFALG engine.
+
+This option will be forced on a platform that does not support AFALG.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md571}{}\doxysubsubsection{\texorpdfstring{enable-\/ktls}{enable-\/ktls}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md571}
+Build with Kernel TLS support.
+
+This option will enable the use of the Kernel TLS data-\/path, which can improve performance and allow for the use of sendfile and splice system calls on TLS sockets. The Kernel may use TLS accelerators if any are available on the system. This option will be forced off on systems that do not support the Kernel TLS data-\/path.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md572}{}\doxysubsubsection{\texorpdfstring{enable-\/asan}{enable-\/asan}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md572}
+Build with the Address sanitiser.
+
+This is a developer option only. It may not work on all platforms and should never be used in production environments. It will only work when used with gcc or clang and should be used in conjunction with the no-\/shared option.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md573}{}\doxysubsubsection{\texorpdfstring{enable-\/acvp-\/tests}{enable-\/acvp-\/tests}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md573}
+Build support for Automated Cryptographic Validation Protocol (ACVP) tests.
+
+This is required for FIPS validation purposes. Certain ACVP tests require access to algorithm internals that are not normally accessible. Additional information related to ACVP can be found at \href{https://github.com/usnistgov/ACVP}{\texttt{ https\+://github.\+com/usnistgov/\+ACVP}}.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md574}{}\doxysubsubsection{\texorpdfstring{no-\/apps}{no-\/apps}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md574}
+Do not build apps, e.\+g. the openssl program. This is handy for minimization. This option also disables tests.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md575}{}\doxysubsubsection{\texorpdfstring{no-\/asm}{no-\/asm}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md575}
+Do not use assembler code.
+
+This should be viewed as debugging/troubleshooting option rather than for production use. On some platforms a small amount of assembler code may still be used even with this option.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md576}{}\doxysubsubsection{\texorpdfstring{no-\/async}{no-\/async}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md576}
+Do not build support for async operations.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md577}{}\doxysubsubsection{\texorpdfstring{no-\/autoalginit}{no-\/autoalginit}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md577}
+Don\textquotesingle{}t automatically load all supported ciphers and digests.
+
+Typically Open\+SSL will make available all of its supported ciphers and digests. For a statically linked application this may be undesirable if small executable size is an objective. This only affects libcrypto. Ciphers and digests will have to be loaded manually using {\ttfamily EVP\+\_\+add\+\_\+cipher()} and {\ttfamily EVP\+\_\+add\+\_\+digest()} if this option is used. This option will force a non-\/shared build.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md578}{}\doxysubsubsection{\texorpdfstring{no-\/autoerrinit}{no-\/autoerrinit}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md578}
+Don\textquotesingle{}t automatically load all libcrypto/libssl error strings.
+
+Typically Open\+SSL will automatically load human readable error strings. For a statically linked application this may be undesirable if small executable size is an objective.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md579}{}\doxysubsubsection{\texorpdfstring{enable-\/brotli}{enable-\/brotli}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md579}
+Build with support for brotli compression/decompression.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md580}{}\doxysubsubsection{\texorpdfstring{enable-\/brotli-\/dynamic}{enable-\/brotli-\/dynamic}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md580}
+Like the enable-\/brotli option, but has Open\+SSL load the brotli library dynamically when needed.
+
+This is only supported on systems where loading of shared libraries is supported.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md581}{}\doxysubsubsection{\texorpdfstring{no-\/autoload-\/config}{no-\/autoload-\/config}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md581}
+Don\textquotesingle{}t automatically load the default {\ttfamily openssl.\+cnf} file.
+
+Typically Open\+SSL will automatically load a system config file which configures default SSL options.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md582}{}\doxysubsubsection{\texorpdfstring{enable-\/buildtest-\/c++}{enable-\/buildtest-\/c++}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md582}
+While testing, generate C++ buildtest files that simply check that the public Open\+SSL header files are usable standalone with C++.
+
+Enabling this option demands extra care. For any compiler flag given directly as configuration option, you must ensure that it\textquotesingle{}s valid for both the C and the C++ compiler. If not, the C++ build test will most likely break. As an alternative, you can use the language specific variables, {\ttfamily CFLAGS} and {\ttfamily CXXFLAGS}.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md583}{}\doxysubsubsection{\texorpdfstring{--banner=text}{--banner=text}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md583}
+Use the specified text instead of the default banner at the end of configuration.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md584}{}\doxysubsubsection{\texorpdfstring{--w}{--w}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md584}
+On platforms where the choice of 32-\/bit or 64-\/bit architecture is not explicitly specified, {\ttfamily Configure} will print a warning message and wait for a few seconds to let you interrupt the configuration. Using this flag skips the wait.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md585}{}\doxysubsubsection{\texorpdfstring{no-\/bulk}{no-\/bulk}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md585}
+Build only some minimal set of features. This is a developer option used internally for CI build tests of the project.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md586}{}\doxysubsubsection{\texorpdfstring{no-\/cached-\/fetch}{no-\/cached-\/fetch}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md586}
+Never cache algorithms when they are fetched from a provider. Normally, a provider indicates if the algorithms it supplies can be cached or not. Using this option will reduce run-\/time memory usage but it also introduces a significant performance penalty. This option is primarily designed to help with detecting incorrect reference counting.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md587}{}\doxysubsubsection{\texorpdfstring{no-\/capieng}{no-\/capieng}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md587}
+Don\textquotesingle{}t build the CAPI engine.
+
+This option will be forced if on a platform that does not support CAPI.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md588}{}\doxysubsubsection{\texorpdfstring{no-\/cmp}{no-\/cmp}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md588}
+Don\textquotesingle{}t build support for Certificate Management Protocol (CMP) and Certificate Request Message Format (CRMF).\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md589}{}\doxysubsubsection{\texorpdfstring{no-\/cms}{no-\/cms}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md589}
+Don\textquotesingle{}t build support for Cryptographic Message Syntax (CMS).\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md590}{}\doxysubsubsection{\texorpdfstring{no-\/comp}{no-\/comp}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md590}
+Don\textquotesingle{}t build support for SSL/\+TLS compression.
+
+If this option is enabled (the default), then compression will only work if the zlib or {\ttfamily zlib-\/dynamic} options are also chosen.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md591}{}\doxysubsubsection{\texorpdfstring{enable-\/crypto-\/mdebug}{enable-\/crypto-\/mdebug}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md591}
+This now only enables the {\ttfamily failed-\/malloc} feature.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md592}{}\doxysubsubsection{\texorpdfstring{enable-\/crypto-\/mdebug-\/backtrace}{enable-\/crypto-\/mdebug-\/backtrace}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md592}
+This is a no-\/op; the project uses the compiler\textquotesingle{}s address/leak sanitizer instead.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md593}{}\doxysubsubsection{\texorpdfstring{no-\/ct}{no-\/ct}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md593}
+Don\textquotesingle{}t build support for Certificate Transparency (CT).\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md594}{}\doxysubsubsection{\texorpdfstring{no-\/deprecated}{no-\/deprecated}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md594}
+Don\textquotesingle{}t build with support for deprecated APIs up until and including the version given with {\ttfamily -\/-\/api} (or the current version, if {\ttfamily -\/-\/api} wasn\textquotesingle{}t specified).\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md595}{}\doxysubsubsection{\texorpdfstring{no-\/dgram}{no-\/dgram}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md595}
+Don\textquotesingle{}t build support for datagram based BIOs.
+
+Selecting this option will also force the disabling of DTLS.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md596}{}\doxysubsubsection{\texorpdfstring{no-\/docs}{no-\/docs}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md596}
+Don\textquotesingle{}t build and install documentation, i.\+e. manual pages in various forms.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md597}{}\doxysubsubsection{\texorpdfstring{no-\/dso}{no-\/dso}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md597}
+Don\textquotesingle{}t build support for loading Dynamic Shared Objects (DSO)\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md598}{}\doxysubsubsection{\texorpdfstring{enable-\/devcryptoeng}{enable-\/devcryptoeng}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md598}
+Build the {\ttfamily /dev/crypto} engine.
+
+This option is automatically selected on the BSD platform, in which case it can be disabled with {\ttfamily no-\/devcryptoeng}.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md599}{}\doxysubsubsection{\texorpdfstring{no-\/dynamic-\/engine}{no-\/dynamic-\/engine}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md599}
+Don\textquotesingle{}t build the dynamically loaded engines.
+
+This only has an effect in a shared build.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md600}{}\doxysubsubsection{\texorpdfstring{no-\/ec}{no-\/ec}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md600}
+Don\textquotesingle{}t build support for Elliptic Curves.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md601}{}\doxysubsubsection{\texorpdfstring{no-\/ec2m}{no-\/ec2m}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md601}
+Don\textquotesingle{}t build support for binary Elliptic Curves\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md602}{}\doxysubsubsection{\texorpdfstring{enable-\/ec\+\_\+nistp\+\_\+64\+\_\+gcc\+\_\+128}{enable-\/ec\+\_\+nistp\+\_\+64\+\_\+gcc\+\_\+128}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md602}
+Enable support for optimised implementations of some commonly used NIST elliptic curves.
+
+This option is only supported on platforms\+:
+
+
+\begin{DoxyItemize}
+\item with little-\/endian storage of non-\/byte types
+\item that tolerate misaligned memory references
+\item where the compiler\+:
+\begin{DoxyItemize}
+\item supports the non-\/standard type {\ttfamily \+\_\+\+\_\+uint128\+\_\+t}
+\item defines the built-\/in macro {\ttfamily \+\_\+\+\_\+\+SIZEOF\+\_\+\+INT128\+\_\+\+\_\+}
+\end{DoxyItemize}
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md603}{}\doxysubsubsection{\texorpdfstring{enable-\/egd}{enable-\/egd}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md603}
+Build support for gathering entropy from the Entropy Gathering Daemon (EGD).\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md604}{}\doxysubsubsection{\texorpdfstring{no-\/engine}{no-\/engine}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md604}
+Don\textquotesingle{}t build support for loading engines.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md605}{}\doxysubsubsection{\texorpdfstring{no-\/err}{no-\/err}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md605}
+Don\textquotesingle{}t compile in any error strings.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md606}{}\doxysubsubsection{\texorpdfstring{enable-\/external-\/tests}{enable-\/external-\/tests}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md606}
+Enable building of integration with external test suites.
+
+This is a developer option and may not work on all platforms. The following external test suites are currently supported\+:
+
+
+\begin{DoxyItemize}
+\item GOST engine test suite
+\item Python PYCA/\+Cryptography test suite
+\item krb5 test suite
+\end{DoxyItemize}
+
+See the file \doxysectlink{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2test_2_r_e_a_d_m_e-external}{test/\+README-\/external.md}{0} for further details.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md607}{}\doxysubsubsection{\texorpdfstring{no-\/filenames}{no-\/filenames}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md607}
+Don\textquotesingle{}t compile in filename and line number information (e.\+g. for errors and memory allocation).\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md608}{}\doxysubsubsection{\texorpdfstring{enable-\/fips}{enable-\/fips}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md608}
+Build (and install) the FIPS provider\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md609}{}\doxysubsubsection{\texorpdfstring{no-\/fips-\/securitychecks}{no-\/fips-\/securitychecks}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md609}
+Don\textquotesingle{}t perform FIPS module run-\/time checks related to enforcement of security parameters such as minimum security strength of keys.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md610}{}\doxysubsubsection{\texorpdfstring{enable-\/fuzz-\/libfuzzer, enable-\/fuzz-\/afl}{enable-\/fuzz-\/libfuzzer, enable-\/fuzz-\/afl}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md610}
+Build with support for fuzzing using either libfuzzer or AFL.
+
+These are developer options only. They may not work on all platforms and should never be used in production environments.
+
+See the file \doxysectlink{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2fuzz_2_r_e_a_d_m_e}{fuzz/\+README.md}{0} for further details.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md611}{}\doxysubsubsection{\texorpdfstring{no-\/gost}{no-\/gost}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md611}
+Don\textquotesingle{}t build support for GOST based ciphersuites.
+
+Note that if this feature is enabled then GOST ciphersuites are only available if the GOST algorithms are also available through loading an externally supplied engine.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md612}{}\doxysubsubsection{\texorpdfstring{no-\/http}{no-\/http}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md612}
+Disable HTTP support.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md613}{}\doxysubsubsection{\texorpdfstring{no-\/legacy}{no-\/legacy}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md613}
+Don\textquotesingle{}t build the legacy provider.
+
+Disabling this also disables the legacy algorithms\+: MD2 (already disabled by default).\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md614}{}\doxysubsubsection{\texorpdfstring{no-\/makedepend}{no-\/makedepend}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md614}
+Don\textquotesingle{}t generate dependencies.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md615}{}\doxysubsubsection{\texorpdfstring{no-\/module}{no-\/module}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md615}
+Don\textquotesingle{}t build any dynamically loadable engines.
+
+This also implies {\ttfamily no-\/dynamic-\/engine}.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md616}{}\doxysubsubsection{\texorpdfstring{no-\/multiblock}{no-\/multiblock}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md616}
+Don\textquotesingle{}t build support for writing multiple records in one go in libssl
+
+Note\+: this is a different capability to the pipelining functionality.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md617}{}\doxysubsubsection{\texorpdfstring{no-\/nextprotoneg}{no-\/nextprotoneg}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md617}
+Don\textquotesingle{}t build support for the Next Protocol Negotiation (NPN) TLS extension.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md618}{}\doxysubsubsection{\texorpdfstring{no-\/ocsp}{no-\/ocsp}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md618}
+Don\textquotesingle{}t build support for Online Certificate Status Protocol (OCSP).\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md619}{}\doxysubsubsection{\texorpdfstring{no-\/padlockeng}{no-\/padlockeng}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md619}
+Don\textquotesingle{}t build the padlock engine.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md620}{}\doxysubsubsection{\texorpdfstring{no-\/hw-\/padlock}{no-\/hw-\/padlock}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md620}
+As synonym for {\ttfamily no-\/padlockeng}. Deprecated and should not be used.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md621}{}\doxysubsubsection{\texorpdfstring{no-\/pic}{no-\/pic}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md621}
+Don\textquotesingle{}t build with support for Position Independent Code.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md622}{}\doxysubsubsection{\texorpdfstring{no-\/pinshared}{no-\/pinshared}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md622}
+Don\textquotesingle{}t pin the shared libraries.
+
+By default Open\+SSL will attempt to stay in memory until the process exits. This is so that libcrypto and libssl can be properly cleaned up automatically via an {\ttfamily atexit()} handler. The handler is registered by libcrypto and cleans up both libraries. On some platforms the {\ttfamily atexit()} handler will run on unload of libcrypto (if it has been dynamically loaded) rather than at process exit.
+
+This option can be used to stop Open\+SSL from attempting to stay in memory until the process exits. This could lead to crashes if either libcrypto or libssl have already been unloaded at the point that the atexit handler is invoked, e.\+g. on a platform which calls {\ttfamily atexit()} on unload of the library, and libssl is unloaded before libcrypto then a crash is likely to happen.
+
+Note that shared library pinning is not automatically disabled for static builds, i.\+e., {\ttfamily no-\/shared} does not imply {\ttfamily no-\/pinshared}. This may come as a surprise when linking libcrypto statically into a shared third-\/party library, because in this case the shared library will be pinned. To prevent this behaviour, you need to configure the static build using {\ttfamily no-\/shared} and {\ttfamily no-\/pinshared} together.
+
+Applications can suppress running of the {\ttfamily atexit()} handler at run time by using the {\ttfamily OPENSSL\+\_\+\+INIT\+\_\+\+NO\+\_\+\+ATEXIT} option to {\ttfamily OPENSSL\+\_\+init\+\_\+crypto()}. See the man page for it for further details.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md623}{}\doxysubsubsection{\texorpdfstring{no-\/posix-\/io}{no-\/posix-\/io}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md623}
+Don\textquotesingle{}t use POSIX IO capabilities.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md624}{}\doxysubsubsection{\texorpdfstring{no-\/psk}{no-\/psk}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md624}
+Don\textquotesingle{}t build support for Pre-\/\+Shared Key based ciphersuites.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md625}{}\doxysubsubsection{\texorpdfstring{no-\/rdrand}{no-\/rdrand}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md625}
+Don\textquotesingle{}t use hardware RDRAND capabilities.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md626}{}\doxysubsubsection{\texorpdfstring{no-\/rfc3779}{no-\/rfc3779}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md626}
+Don\textquotesingle{}t build support for RFC3779, "{}\+X.\+509 Extensions for IP Addresses and \+AS Identifiers"{}.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md627}{}\doxysubsubsection{\texorpdfstring{sctp}{sctp}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md627}
+Build support for Stream Control Transmission Protocol (SCTP).\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md628}{}\doxysubsubsection{\texorpdfstring{no-\/shared}{no-\/shared}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md628}
+Do not create shared libraries, only static ones.
+
+See Notes on shared libraries below.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md629}{}\doxysubsubsection{\texorpdfstring{no-\/sm2-\/precomp}{no-\/sm2-\/precomp}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md629}
+Disable using the SM2 precomputed table on aarch64 to make the library smaller.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md630}{}\doxysubsubsection{\texorpdfstring{no-\/sock}{no-\/sock}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md630}
+Don\textquotesingle{}t build support for socket BIOs.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md631}{}\doxysubsubsection{\texorpdfstring{no-\/srp}{no-\/srp}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md631}
+Don\textquotesingle{}t build support for Secure Remote Password (SRP) protocol or SRP based ciphersuites.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md632}{}\doxysubsubsection{\texorpdfstring{no-\/srtp}{no-\/srtp}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md632}
+Don\textquotesingle{}t build Secure Real-\/\+Time Transport Protocol (SRTP) support.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md633}{}\doxysubsubsection{\texorpdfstring{no-\/sse2}{no-\/sse2}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md633}
+Exclude SSE2 code paths from 32-\/bit x86 assembly modules.
+
+Normally SSE2 extension is detected at run-\/time, but the decision whether or not the machine code will be executed is taken solely on CPU capability vector. This means that if you happen to run OS kernel which does not support SSE2 extension on Intel P4 processor, then your application might be exposed to "{}illegal instruction"{} exception. There might be a way to enable support in kernel, e.\+g. Free\+BSD kernel can be compiled with {\ttfamily CPU\+\_\+\+ENABLE\+\_\+\+SSE}, and there is a way to disengage SSE2 code paths upon application start-\/up, but if you aim for wider "{}audience"{} running such kernel, consider {\ttfamily no-\/sse2}. Both the {\ttfamily 386} and {\ttfamily no-\/asm} options imply {\ttfamily no-\/sse2}.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md634}{}\doxysubsubsection{\texorpdfstring{no-\/ssl-\/trace}{no-\/ssl-\/trace}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md634}
+Don\textquotesingle{}t build with SSL Trace capabilities.
+
+This removes the {\ttfamily -\/trace} option from {\ttfamily s\+\_\+client} and {\ttfamily s\+\_\+server}, and omits the {\ttfamily SSL\+\_\+trace()} function from libssl.
+
+Disabling {\ttfamily ssl-\/trace} may provide a small reduction in libssl binary size.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md635}{}\doxysubsubsection{\texorpdfstring{no-\/static-\/engine}{no-\/static-\/engine}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md635}
+Don\textquotesingle{}t build the statically linked engines.
+
+This only has an impact when not built "{}shared"{}.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md636}{}\doxysubsubsection{\texorpdfstring{no-\/stdio}{no-\/stdio}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md636}
+Don\textquotesingle{}t use anything from the C header file {\ttfamily stdio.\+h} that makes use of the {\ttfamily FILE} type. Only libcrypto and libssl can be built in this way. Using this option will suppress building the command line applications. Additionally, since the Open\+SSL tests also use the command line applications, the tests will also be skipped.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md637}{}\doxysubsubsection{\texorpdfstring{no-\/tests}{no-\/tests}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md637}
+Don\textquotesingle{}t build test programs or run any tests.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md638}{}\doxysubsubsection{\texorpdfstring{enable-\/tfo}{enable-\/tfo}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md638}
+Build with support for TCP Fast Open (RFC7413). Supported on Linux, mac\+OS and Free\+BSD.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md639}{}\doxysubsubsection{\texorpdfstring{no-\/quic}{no-\/quic}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md639}
+Don\textquotesingle{}t build with QUIC support.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md640}{}\doxysubsubsection{\texorpdfstring{no-\/threads}{no-\/threads}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md640}
+Don\textquotesingle{}t build with support for multi-\/threaded applications.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md641}{}\doxysubsubsection{\texorpdfstring{threads}{threads}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md641}
+Build with support for multi-\/threaded applications. Most platforms will enable this by default. However, if on a platform where this is not the case then this will usually require additional system-\/dependent options!
+
+See Notes on multi-\/threading below.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md642}{}\doxysubsubsection{\texorpdfstring{no-\/thread-\/pool}{no-\/thread-\/pool}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md642}
+Don\textquotesingle{}t build with support for thread pool functionality.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md643}{}\doxysubsubsection{\texorpdfstring{thread-\/pool}{thread-\/pool}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md643}
+Build with thread pool functionality. If enabled, Open\+SSL algorithms may use the thread pool to perform parallel computation. This option in itself does not enable Open\+SSL to spawn new threads. Currently the only supported thread pool mechanism is the default thread pool.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md644}{}\doxysubsubsection{\texorpdfstring{no-\/default-\/thread-\/pool}{no-\/default-\/thread-\/pool}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md644}
+Don\textquotesingle{}t build with support for default thread pool functionality.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md645}{}\doxysubsubsection{\texorpdfstring{default-\/thread-\/pool}{default-\/thread-\/pool}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md645}
+Build with default thread pool functionality. If enabled, Open\+SSL may create and manage threads up to a maximum number of threads authorized by the application. Supported on POSIX compliant platforms and Windows.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md646}{}\doxysubsubsection{\texorpdfstring{enable-\/trace}{enable-\/trace}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md646}
+Build with support for the integrated tracing api.
+
+See manual pages OSSL\+\_\+trace\+\_\+set\+\_\+channel(3) and OSSL\+\_\+trace\+\_\+enabled(3) for details.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md647}{}\doxysubsubsection{\texorpdfstring{no-\/ts}{no-\/ts}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md647}
+Don\textquotesingle{}t build Time Stamping (TS) Authority support.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md648}{}\doxysubsubsection{\texorpdfstring{enable-\/ubsan}{enable-\/ubsan}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md648}
+Build with the Undefined Behaviour sanitiser (UBSAN).
+
+This is a developer option only. It may not work on all platforms and should never be used in production environments. It will only work when used with gcc or clang and should be used in conjunction with the {\ttfamily -\/DPEDANTIC} option (or the {\ttfamily -\/-\/strict-\/warnings} option).\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md649}{}\doxysubsubsection{\texorpdfstring{no-\/ui-\/console}{no-\/ui-\/console}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md649}
+Don\textquotesingle{}t build with the User Interface (UI) console method
+
+The User Interface console method enables text based console prompts.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md650}{}\doxysubsubsection{\texorpdfstring{enable-\/unit-\/test}{enable-\/unit-\/test}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md650}
+Enable additional unit test APIs.
+
+This should not typically be used in production deployments.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md651}{}\doxysubsubsection{\texorpdfstring{no-\/uplink}{no-\/uplink}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md651}
+Don\textquotesingle{}t build support for UPLINK interface.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md652}{}\doxysubsubsection{\texorpdfstring{enable-\/weak-\/ssl-\/ciphers}{enable-\/weak-\/ssl-\/ciphers}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md652}
+Build support for SSL/\+TLS ciphers that are considered "{}weak"{}
+
+Enabling this includes for example the RC4 based ciphersuites.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md653}{}\doxysubsubsection{\texorpdfstring{zlib}{zlib}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md653}
+Build with support for zlib compression/decompression.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md654}{}\doxysubsubsection{\texorpdfstring{zlib-\/dynamic}{zlib-\/dynamic}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md654}
+Like the zlib option, but has Open\+SSL load the zlib library dynamically when needed.
+
+This is only supported on systems where loading of shared libraries is supported.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md655}{}\doxysubsubsection{\texorpdfstring{enable-\/zstd}{enable-\/zstd}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md655}
+Build with support for Zstd compression/decompression.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md656}{}\doxysubsubsection{\texorpdfstring{enable-\/zstd-\/dynamic}{enable-\/zstd-\/dynamic}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md656}
+Like the enable-\/zstd option, but has Open\+SSL load the Zstd library dynamically when needed.
+
+This is only supported on systems where loading of shared libraries is supported.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md657}{}\doxysubsubsection{\texorpdfstring{386}{386}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md657}
+In 32-\/bit x86 builds, use the 80386 instruction set only in assembly modules
+
+The default x86 code is more efficient, but requires at least an 486 processor. Note\+: This doesn\textquotesingle{}t affect compiler generated code, so this option needs to be accompanied by a corresponding compiler-\/specific option.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md658}{}\doxysubsubsection{\texorpdfstring{no-\/\{protocol\}}{no-\/\{protocol\}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md658}
+\begin{DoxyVerb}no-{ssl|ssl3|tls|tls1|tls1_1|tls1_2|tls1_3|dtls|dtls1|dtls1_2}
+\end{DoxyVerb}
+ Don\textquotesingle{}t build support for negotiating the specified SSL/\+TLS protocol.
+
+If {\ttfamily no-\/tls} is selected then all of {\ttfamily tls1}, {\ttfamily tls1\+\_\+1}, {\ttfamily tls1\+\_\+2} and {\ttfamily tls1\+\_\+3} are disabled. Similarly {\ttfamily no-\/dtls} will disable {\ttfamily dtls1} and {\ttfamily dtls1\+\_\+2}. The {\ttfamily no-\/ssl} option is synonymous with {\ttfamily no-\/ssl3}. Note this only affects version negotiation. Open\+SSL will still provide the methods for applications to explicitly select the individual protocol versions.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md659}{}\doxysubsubsection{\texorpdfstring{no-\/\{protocol\}-\/method}{no-\/\{protocol\}-\/method}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md659}
+\begin{DoxyVerb}no-{ssl3|tls1|tls1_1|tls1_2|dtls1|dtls1_2}-method
+\end{DoxyVerb}
+ Analogous to {\ttfamily no-\/\{protocol\}} but in addition do not build the methods for applications to explicitly select individual protocol versions. Note that there is no {\ttfamily no-\/tls1\+\_\+3-\/method} option because there is no application method for TLSv1.\+3.
+
+Using individual protocol methods directly is deprecated. Applications should use {\ttfamily TLS\+\_\+method()} instead.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md660}{}\doxysubsubsection{\texorpdfstring{enable-\/\{algorithm\}}{enable-\/\{algorithm\}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md660}
+\begin{DoxyVerb}enable-{md2|rc5}
+\end{DoxyVerb}
+ Build with support for the specified algorithm.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md661}{}\doxysubsubsection{\texorpdfstring{no-\/\{algorithm\}}{no-\/\{algorithm\}}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md661}
+\begin{DoxyVerb}no-{aria|bf|blake2|camellia|cast|chacha|cmac|
+    des|dh|dsa|ecdh|ecdsa|idea|md4|mdc2|ocb|
+    poly1305|rc2|rc4|rmd160|scrypt|seed|
+    siphash|siv|sm2|sm3|sm4|whirlpool}
+\end{DoxyVerb}
+ Build without support for the specified algorithm.
+
+The {\ttfamily ripemd} algorithm is deprecated and if used is synonymous with {\ttfamily rmd160}.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md662}{}\doxysubsubsection{\texorpdfstring{Compiler-\/specific options}{Compiler-\/specific options}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md662}
+\begin{DoxyVerb}-Dxxx, -Ixxx, -Wp, -lxxx, -Lxxx, -Wl, -rpath, -R, -framework, -static
+\end{DoxyVerb}
+ These system specific options will be recognised and passed through to the compiler to allow you to define preprocessor symbols, specify additional libraries, library directories or other compiler options. It might be worth noting that some compilers generate code specifically for processor the compiler currently executes on. This is not necessarily what you might have in mind, since it might be unsuitable for execution on other, typically older, processor. Consult your compiler documentation.
+
+Take note of the Environment Variables documentation below and how these flags interact with those variables. \begin{DoxyVerb}-xxx, +xxx, /xxx
+\end{DoxyVerb}
+ Additional options that are not otherwise recognised are passed through as they are to the compiler as well. Unix-\/style options beginning with a {\ttfamily -\/} or {\ttfamily +} and Windows-\/style options beginning with a {\ttfamily /} are recognised. Again, consult your compiler documentation.
+
+If the option contains arguments separated by spaces, then the URL-\/style notation {\ttfamily \%20} can be used for the space character in order to avoid having to quote the option. For example, {\ttfamily -\/opt\%20arg} gets expanded to {\ttfamily -\/opt arg}. In fact, any ASCII character can be encoded as xx using its hexadecimal encoding.
+
+Take note of the Environment Variables documentation below and how these flags interact with those variables.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md663}{}\doxysubsubsection{\texorpdfstring{Environment Variables}{Environment Variables}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md663}
+\begin{DoxyVerb}VAR=value
+\end{DoxyVerb}
+ Assign the given value to the environment variable {\ttfamily VAR} for {\ttfamily Configure}.
+
+These work just like normal environment variable assignments, but are supported on all platforms and are confined to the configuration scripts only. These assignments override the corresponding value in the inherited environment, if there is one.
+
+The following variables are used as "{}\`{}make\`{} variables"{} and can be used as an alternative to giving preprocessor, compiler and linker options directly as configuration. The following variables are supported\+: \begin{DoxyVerb}AR              The static library archiver.
+ARFLAGS         Flags for the static library archiver.
+AS              The assembler compiler.
+ASFLAGS         Flags for the assembler compiler.
+CC              The C compiler.
+CFLAGS          Flags for the C compiler.
+CXX             The C++ compiler.
+CXXFLAGS        Flags for the C++ compiler.
+CPP             The C/C++ preprocessor.
+CPPFLAGS        Flags for the C/C++ preprocessor.
+CPPDEFINES      List of CPP macro definitions, separated
+                by a platform specific character (':' or
+                space for Unix, ';' for Windows, ',' for
+                VMS).  This can be used instead of using
+                -D (or what corresponds to that on your
+                compiler) in CPPFLAGS.
+CPPINCLUDES     List of CPP inclusion directories, separated
+                the same way as for CPPDEFINES.  This can
+                be used instead of -I (or what corresponds
+                to that on your compiler) in CPPFLAGS.
+HASHBANGPERL    Perl invocation to be inserted after '#!'
+                in public perl scripts (only relevant on
+                Unix).
+LD              The program linker (not used on Unix, $(CC)
+                is used there).
+LDFLAGS         Flags for the shared library, DSO and
+                program linker.
+LDLIBS          Extra libraries to use when linking.
+                Takes the form of a space separated list
+                of library specifications on Unix and
+                Windows, and as a comma separated list of
+                libraries on VMS.
+RANLIB          The library archive indexer.
+RC              The Windows resource compiler.
+RCFLAGS         Flags for the Windows resource compiler.
+RM              The command to remove files and directories.
+\end{DoxyVerb}
+ These cannot be mixed with compiling/linking flags given on the command line. In other words, something like this isn\textquotesingle{}t permitted. \begin{DoxyVerb}$ ./Configure -DFOO CPPFLAGS=-DBAR -DCOOKIE
+\end{DoxyVerb}
+ Backward compatibility note\+:
+
+To be compatible with older configuration scripts, the environment variables are ignored if compiling/linking flags are given on the command line, except for the following\+: \begin{DoxyVerb}AR, CC, CXX, CROSS_COMPILE, HASHBANGPERL, PERL, RANLIB, RC, and WINDRES
+\end{DoxyVerb}
+ For example, the following command will not see {\ttfamily -\/DBAR}\+: \begin{DoxyVerb}$ CPPFLAGS=-DBAR ./Configure -DCOOKIE
+\end{DoxyVerb}
+ However, the following will see both set variables\+: \begin{DoxyVerb}$ CC=gcc CROSS_COMPILE=x86_64-w64-mingw32- ./Configure -DCOOKIE
+\end{DoxyVerb}
+ If {\ttfamily CC} is set, it is advisable to also set {\ttfamily CXX} to ensure both the C and C++ compiler are in the same "{}family"{}. This becomes relevant with {\ttfamily enable-\/external-\/tests} and {\ttfamily enable-\/buildtest-\/c++}.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md664}{}\doxysubsubsection{\texorpdfstring{Reconfigure}{Reconfigure}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md664}
+\begin{DoxyVerb}reconf
+reconfigure
+\end{DoxyVerb}
+ Reconfigure from earlier data.
+
+This fetches the previous command line options and environment from data saved in {\ttfamily configdata.\+pm} and runs the configuration process again, using these options and environment. Note\+: NO other option is permitted together with {\ttfamily reconf}. Note\+: The original configuration saves away values for ALL environment variables that were used, and if they weren\textquotesingle{}t defined, they are still saved away with information that they weren\textquotesingle{}t originally defined. This information takes precedence over environment variables that are defined when reconfiguring.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md665}{}\doxysubsection{\texorpdfstring{Displaying configuration data}{Displaying configuration data}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md665}
+The configuration script itself will say very little, and finishes by creating {\ttfamily configdata.\+pm}. This perl module can be loaded by other scripts to find all the configuration data, and it can also be used as a script to display all sorts of configuration data in a human readable form.
+
+For more information, please do\+: \begin{DoxyVerb}$ ./configdata.pm --help                         # Unix
+\end{DoxyVerb}
+ or \begin{DoxyVerb}$ perl configdata.pm --help                      # Windows and VMS
+\end{DoxyVerb}
+ \hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md666}{}\doxysection{\texorpdfstring{Installation Steps in Detail}{Installation Steps in Detail}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md666}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md667}{}\doxysubsection{\texorpdfstring{Configure Open\+SSL}{Configure Open\+SSL}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md667}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md668}{}\doxysubsubsection{\texorpdfstring{Automatic Configuration}{Automatic Configuration}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md668}
+In previous version, the {\ttfamily config} script determined the platform type and compiler and then called {\ttfamily Configure}. Starting with this release, they are the same.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md669}{}\doxyparagraph{\texorpdfstring{Unix / Linux / mac\+OS}{Unix / Linux / mac\+OS}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md669}
+\begin{DoxyVerb}$ ./Configure [options...]
+\end{DoxyVerb}
+ \hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md670}{}\doxyparagraph{\texorpdfstring{Open\+VMS}{Open\+VMS}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md670}
+\begin{DoxyVerb}$ perl Configure [options...]
+\end{DoxyVerb}
+ \hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md671}{}\doxyparagraph{\texorpdfstring{Windows}{Windows}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md671}
+\begin{DoxyVerb}$ perl Configure [options...]
+\end{DoxyVerb}
+ \hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md672}{}\doxysubsubsection{\texorpdfstring{Manual Configuration}{Manual Configuration}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md672}
+Open\+SSL knows about a range of different operating system, hardware and compiler combinations. To see the ones it knows about, run \begin{DoxyVerb}$ ./Configure LIST                               # Unix
+\end{DoxyVerb}
+ or \begin{DoxyVerb}$ perl Configure LIST                            # All other platforms
+\end{DoxyVerb}
+ For the remainder of this text, the Unix form will be used in all examples. Please use the appropriate form for your platform.
+
+Pick a suitable name from the list that matches your system. For most operating systems there is a choice between using cc or gcc. When you have identified your system (and if necessary compiler) use this name as the argument to {\ttfamily Configure}. For example, a {\ttfamily linux-\/elf} user would run\+: \begin{DoxyVerb}$ ./Configure linux-elf [options...]
+\end{DoxyVerb}
+ \hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md673}{}\doxysubsubsection{\texorpdfstring{Creating your own Configuration}{Creating your own Configuration}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md673}
+If your system isn\textquotesingle{}t listed, you will have to create a configuration file named {\ttfamily Configurations/\+YOURFILENAME.\+conf} (replace {\ttfamily YOURFILENAME} with a filename of your choosing) and add the correct configuration for your system. See the available configs as examples and read \doxysectlink{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_configurations_2_r_e_a_d_m_e}{Configurations/\+README.md}{0} and \doxysectlink{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_configurations_2_r_e_a_d_m_e-design}{Configurations/\+README-\/design.md}{0} for more information.
+
+The generic configurations {\ttfamily cc} or {\ttfamily gcc} should usually work on 32 bit Unix-\/like systems.
+
+{\ttfamily Configure} creates a build file ({\ttfamily Makefile} on Unix, {\ttfamily makefile} on Windows and {\ttfamily descrip.\+mms} on Open\+VMS) from a suitable template in {\ttfamily Configurations/}, and defines various macros in {\ttfamily \doxylink{configuration_8h_source}{include/openssl/configuration.\+h}} (generated from {\ttfamily include/openssl/configuration.\+h.\+in}.
+
+If none of the generated build files suit your purpose, it\textquotesingle{}s possible to write your own build file template and give its name through the environment variable {\ttfamily BUILDFILE}. For example, Ninja build files could be supported by writing {\ttfamily Configurations/build.\+ninja.\+tmpl} and then configure with {\ttfamily BUILDFILE} set like this (Unix syntax shown, you\textquotesingle{}ll have to adapt for other platforms)\+: \begin{DoxyVerb}$ BUILDFILE=build.ninja perl Configure [options...]
+\end{DoxyVerb}
+ \hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md674}{}\doxysubsubsection{\texorpdfstring{Out of Tree Builds}{Out of Tree Builds}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md674}
+Open\+SSL can be configured to build in a build directory separate from the source code directory. It\textquotesingle{}s done by placing yourself in some other directory and invoking the configuration commands from there.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md675}{}\doxyparagraph{\texorpdfstring{Unix example}{Unix example}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md675}
+\begin{DoxyVerb}$ mkdir /var/tmp/openssl-build
+$ cd /var/tmp/openssl-build
+$ /PATH/TO/OPENSSL/SOURCE/Configure [options...]
+\end{DoxyVerb}
+ \hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md676}{}\doxyparagraph{\texorpdfstring{Open\+VMS example}{Open\+VMS example}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md676}
+\begin{DoxyVerb}$ set default sys$login:
+$ create/dir [.tmp.openssl-build]
+$ set default [.tmp.openssl-build]
+$ perl D:[PATH.TO.OPENSSL.SOURCE]Configure [options...]
+\end{DoxyVerb}
+ \hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md677}{}\doxyparagraph{\texorpdfstring{Windows example}{Windows example}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md677}
+\begin{DoxyVerb}$ C:
+$ mkdir \temp-openssl
+$ cd \temp-openssl
+$ perl d:\PATH\TO\OPENSSL\SOURCE\Configure [options...]
+\end{DoxyVerb}
+ Paths can be relative just as well as absolute. {\ttfamily Configure} will do its best to translate them to relative paths whenever possible.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md678}{}\doxysubsection{\texorpdfstring{Build Open\+SSL}{Build Open\+SSL}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md678}
+Build Open\+SSL by running\+: \begin{DoxyVerb}$ make                                           # Unix
+$ mms                                            ! (or mmk) OpenVMS
+$ nmake                                          # Windows
+\end{DoxyVerb}
+ This will build the Open\+SSL libraries ({\ttfamily libcrypto.\+a} and {\ttfamily libssl.\+a} on Unix, corresponding on other platforms) and the Open\+SSL binary ({\ttfamily openssl}). The libraries will be built in the top-\/level directory, and the binary will be in the {\ttfamily apps/} subdirectory.
+
+If the build fails, take a look at the Build Failures subsection of the Troubleshooting section.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md679}{}\doxysubsection{\texorpdfstring{Test Open\+SSL}{Test Open\+SSL}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md679}
+After a successful build, and before installing, the libraries should be tested. Run\+: \begin{DoxyVerb}$ make test                                      # Unix
+$ mms test                                       ! OpenVMS
+$ nmake test                                     # Windows
+\end{DoxyVerb}
+ {\bfseries{Warning\+:}} you MUST run the tests from an unprivileged account (or disable your privileges temporarily if your platform allows it).
+
+See \doxysectlink{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2test_2_r_e_a_d_m_e}{test/\+README.md}{0} for further details how run tests.
+
+See \doxysectlink{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2test_2_r_e_a_d_m_e-dev}{test/\+README-\/dev.md}{0} for guidelines on adding tests.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md680}{}\doxysubsection{\texorpdfstring{Install Open\+SSL}{Install Open\+SSL}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md680}
+If everything tests ok, install Open\+SSL with \begin{DoxyVerb}$ make install                                   # Unix
+$ mms install                                    ! OpenVMS
+$ nmake install                                  # Windows
+\end{DoxyVerb}
+ Note that in order to perform the install step above you need to have appropriate permissions to write to the installation directory.
+
+The above commands will install all the software components in this directory tree under {\ttfamily \texorpdfstring{$<$}{<}PREFIX\texorpdfstring{$>$}{>}} (the directory given with {\ttfamily -\/-\/prefix} or its default)\+:\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md681}{}\doxysubsubsection{\texorpdfstring{Unix / Linux / mac\+OS}{Unix / Linux / mac\+OS}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md681}
+\begin{DoxyVerb}bin/           Contains the openssl binary and a few other
+               utility scripts.
+include/openssl
+               Contains the header files needed if you want
+               to build your own programs that use libcrypto
+               or libssl.
+lib            Contains the OpenSSL library files.
+lib/engines    Contains the OpenSSL dynamically loadable engines.
+
+share/man/man1 Contains the OpenSSL command line man-pages.
+share/man/man3 Contains the OpenSSL library calls man-pages.
+share/man/man5 Contains the OpenSSL configuration format man-pages.
+share/man/man7 Contains the OpenSSL other misc man-pages.
+
+share/doc/openssl/html/man1
+share/doc/openssl/html/man3
+share/doc/openssl/html/man5
+share/doc/openssl/html/man7
+               Contains the HTML rendition of the man-pages.
+\end{DoxyVerb}
+ \hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md682}{}\doxysubsubsection{\texorpdfstring{Open\+VMS}{Open\+VMS}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md682}
+\textquotesingle{}arch\textquotesingle{} is replaced with the architecture name, {\ttfamily ALPHA} or {\ttfamily IA64}, \textquotesingle{}sover\textquotesingle{} is replaced with the shared library version ({\ttfamily 0101} for 1.\+1), and \textquotesingle{}pz\textquotesingle{} is replaced with the pointer size Open\+SSL was built with\+: \begin{DoxyVerb}[.EXE.'arch']  Contains the openssl binary.
+[.EXE]         Contains a few utility scripts.
+[.include.openssl]
+               Contains the header files needed if you want
+               to build your own programs that use libcrypto
+               or libssl.
+[.LIB.'arch']  Contains the OpenSSL library files.
+[.ENGINES'sover''pz'.'arch']
+               Contains the OpenSSL dynamically loadable engines.
+[.SYS$STARTUP] Contains startup, login and shutdown scripts.
+               These define appropriate logical names and
+               command symbols.
+[.SYSTEST]     Contains the installation verification procedure.
+[.HTML]        Contains the HTML rendition of the manual pages.
+\end{DoxyVerb}
+ \hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md683}{}\doxysubsubsection{\texorpdfstring{Additional Directories}{Additional Directories}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md683}
+Additionally, install will add the following directories under OPENSSLDIR (the directory given with {\ttfamily -\/-\/openssldir} or its default) for you convenience\+: \begin{DoxyVerb}certs          Initially empty, this is the default location
+               for certificate files.
+private        Initially empty, this is the default location
+               for private key files.
+misc           Various scripts.
+\end{DoxyVerb}
+ The installation directory should be appropriately protected to ensure unprivileged users cannot make changes to Open\+SSL binaries or files, or install engines. If you already have a pre-\/installed version of Open\+SSL as part of your Operating System it is recommended that you do not overwrite the system version and instead install to somewhere else.
+
+Package builders who want to configure the library for standard locations, but have the package installed somewhere else so that it can easily be packaged, can use \begin{DoxyVerb}$ make DESTDIR=/tmp/package-root install         # Unix
+$ mms/macro="DESTDIR=TMP:[PACKAGE-ROOT]" install ! OpenVMS
+\end{DoxyVerb}
+ The specified destination directory will be prepended to all installation target paths.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md684}{}\doxysubsection{\texorpdfstring{Compatibility issues with previous Open\+SSL versions}{Compatibility issues with previous Open\+SSL versions}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md684}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md685}{}\doxysubsubsection{\texorpdfstring{COMPILING existing applications}{COMPILING existing applications}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md685}
+Starting with version 1.\+1.\+0, Open\+SSL hides a number of structures that were previously open. This includes all internal libssl structures and a number of EVP types. Accessor functions have been added to allow controlled access to the structures\textquotesingle{} data.
+
+This means that some software needs to be rewritten to adapt to the new ways of doing things. This often amounts to allocating an instance of a structure explicitly where you could previously allocate them on the stack as automatic variables, and using the provided accessor functions where you would previously access a structure\textquotesingle{}s field directly.
+
+Some APIs have changed as well. However, older APIs have been preserved when possible.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md686}{}\doxysubsection{\texorpdfstring{Post-\/installation Notes}{Post-\/installation Notes}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md686}
+With the default Open\+SSL installation comes a FIPS provider module, which needs some post-\/installation attention, without which it will not be usable. This involves using the following command\+: \begin{DoxyVerb}$ openssl fipsinstall
+\end{DoxyVerb}
+ See the openssl-\/fipsinstall(1) manual for details and examples.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md687}{}\doxysection{\texorpdfstring{Advanced Build Options}{Advanced Build Options}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md687}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md688}{}\doxysubsection{\texorpdfstring{Environment Variables}{Environment Variables}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md688}
+A number of environment variables can be used to provide additional control over the build process. Typically these should be defined prior to running {\ttfamily Configure}. Not all environment variables are relevant to all platforms. \begin{DoxyVerb}AR
+               The name of the ar executable to use.
+
+BUILDFILE
+               Use a different build file name than the platform default
+               ("Makefile" on Unix-like platforms, "makefile" on native Windows,
+               "descrip.mms" on OpenVMS).  This requires that there is a
+               corresponding build file template.
+               See [Configurations/README.md](Configurations/README.md)
+               for further information.
+
+CC
+               The compiler to use. Configure will attempt to pick a default
+               compiler for your platform but this choice can be overridden
+               using this variable. Set it to the compiler executable you wish
+               to use, e.g. gcc or clang.
+
+CROSS_COMPILE
+               This environment variable has the same meaning as for the
+               "--cross-compile-prefix" Configure flag described above. If both
+               are set then the Configure flag takes precedence.
+
+HASHBANGPERL
+               The command string for the Perl executable to insert in the
+               #! line of perl scripts that will be publicly installed.
+               Default: /usr/bin/env perl
+               Note: the value of this variable is added to the same scripts
+               on all platforms, but it's only relevant on Unix-like platforms.
+
+KERNEL_BITS
+               This can be the value `32` or `64` to specify the architecture
+               when it is not "obvious" to the configuration. It should generally
+               not be necessary to specify this environment variable.
+
+NM
+               The name of the nm executable to use.
+
+OPENSSL_LOCAL_CONFIG_DIR
+               OpenSSL comes with a database of information about how it
+               should be built on different platforms as well as build file
+               templates for those platforms. The database is comprised of
+               ".conf" files in the Configurations directory.  The build
+               file templates reside there as well as ".tmpl" files. See the
+               file [Configurations/README.md](Configurations/README.md)
+               for further information about the format of ".conf" files
+               as well as information on the ".tmpl" files.
+               In addition to the standard ".conf" and ".tmpl" files, it is
+               possible to create your own ".conf" and ".tmpl" files and
+               store them locally, outside the OpenSSL source tree.
+               This environment variable can be set to the directory where
+               these files are held and will be considered by Configure
+               before it looks in the standard directories.
+
+PERL
+               The name of the Perl executable to use when building OpenSSL.
+               Only needed if building should use a different Perl executable
+               than what is used to run the Configure script.
+
+RANLIB
+               The name of the ranlib executable to use.
+
+RC
+               The name of the rc executable to use. The default will be as
+               defined for the target platform in the ".conf" file. If not
+               defined then "windres" will be used. The WINDRES environment
+               variable is synonymous to this. If both are defined then RC
+               takes precedence.
+
+WINDRES
+               See RC.
+\end{DoxyVerb}
+ \hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md689}{}\doxysubsection{\texorpdfstring{Makefile Targets}{Makefile Targets}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md689}
+The {\ttfamily Configure} script generates a Makefile in a format relevant to the specific platform. The Makefiles provide a number of targets that can be used. Not all targets may be available on all platforms. Only the most common targets are described here. Examine the Makefiles themselves for the full list. \begin{DoxyVerb}all
+               The target to build all the software components and
+               documentation.
+
+build_sw
+               Build all the software components.
+               THIS IS THE DEFAULT TARGET.
+
+build_docs
+               Build all documentation components.
+
+clean
+               Remove all build artefacts and return the directory to a "clean"
+               state.
+
+depend
+               Rebuild the dependencies in the Makefiles. This is a legacy
+               option that no longer needs to be used since OpenSSL 1.1.0.
+
+install
+               Install all OpenSSL components.
+
+install_sw
+               Only install the OpenSSL software components.
+
+install_docs
+               Only install the OpenSSL documentation components.
+
+install_man_docs
+               Only install the OpenSSL man pages (Unix only).
+
+install_html_docs
+               Only install the OpenSSL HTML documentation.
+
+install_fips
+               Install the FIPS provider module configuration file.
+
+list-tests
+               Prints a list of all the self test names.
+
+test
+               Build and run the OpenSSL self tests.
+
+uninstall
+               Uninstall all OpenSSL components.
+
+reconfigure
+reconf
+               Re-run the configuration process, as exactly as the last time
+               as possible.
+
+update
+               This is a developer option. If you are developing a patch for
+               OpenSSL you may need to use this if you want to update
+               automatically generated files; add new error codes or add new
+               (or change the visibility of) public API functions. (Unix only).
+\end{DoxyVerb}
+ \hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md690}{}\doxysubsection{\texorpdfstring{Running Selected Tests}{Running Selected Tests}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md690}
+You can specify a set of tests to be performed using the {\ttfamily make} variable {\ttfamily TESTS}.
+
+See the section \href{test/README.md\#running-selected-tests}{\texttt{ Running Selected Tests of test/\+README.\+md}}.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md691}{}\doxysection{\texorpdfstring{Troubleshooting}{Troubleshooting}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md691}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md692}{}\doxysubsection{\texorpdfstring{Configuration Problems}{Configuration Problems}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md692}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md693}{}\doxysubsubsection{\texorpdfstring{Selecting the correct target}{Selecting the correct target}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md693}
+The {\ttfamily ./\+Configure} script tries hard to guess your operating system, but in some cases it does not succeed. You will see a message like the following\+: \begin{DoxyVerb}$ ./Configure
+Operating system: x86-whatever-minix
+This system (minix) is not supported. See file INSTALL.md for details.
+\end{DoxyVerb}
+ Even if the automatic target selection by the {\ttfamily ./\+Configure} script fails, chances are that you still might find a suitable target in the {\ttfamily Configurations} directory, which you can supply to the {\ttfamily ./\+Configure} command, possibly after some adjustment.
+
+The {\ttfamily Configurations/} directory contains a lot of examples of such targets. The main configuration file is \href{Configurations/10-main.conf}{\texttt{ 10-\/main.\+conf}}, which contains all targets that are officially supported by the Open\+SSL team. Other configuration files contain targets contributed by other Open\+SSL users. The list of targets can be found in a Perl list {\ttfamily my targets = ( ... )}. \begin{DoxyVerb}my %targets = (
+...
+"target-name" => {
+    inherit_from     => [ "base-target" ],
+    CC               => "...",
+    cflags           => add("..."),
+    asm_arch         => '...',
+    perlasm_scheme   => "...",
+},
+...
+)
+\end{DoxyVerb}
+ If you call {\ttfamily ./\+Configure} without arguments, it will give you a list of all known targets. Using {\ttfamily grep}, you can lookup the target definition in the {\ttfamily Configurations/} directory. For example the {\ttfamily android-\/x86\+\_\+64} can be found in \href{Configurations/15-android.conf}{\texttt{ Configurations/15-\/android.\+conf}}.
+
+The directory contains two README files, which explain the general syntax and design of the configuration files.
+
+
+\begin{DoxyItemize}
+\item \doxysectlink{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_configurations_2_r_e_a_d_m_e}{Configurations/\+README.md}{0}
+\item \doxysectlink{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_configurations_2_r_e_a_d_m_e-design}{Configurations/\+README-\/design.md}{0}
+\end{DoxyItemize}
+
+If you need further help, try to search the \href{https://mta.openssl.org/mailman/listinfo/openssl-users>}{\texttt{ openssl-\/users}} mailing list or the \href{https://github.com/openssl/openssl/issues>}{\texttt{ Git\+Hub Issues}} for existing solutions. If you don\textquotesingle{}t find anything, you can \href{https://github.com/openssl/openssl/issues/new/choose>}{\texttt{ raise an issue}} to ask a question yourself.
+
+More about our support resources can be found in the \doxysectlink{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_s_u_p_p_o_r_t}{SUPPORT}{0} file.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md694}{}\doxysubsubsection{\texorpdfstring{Configuration Errors}{Configuration Errors}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md694}
+If the {\ttfamily ./\+Configure} or {\ttfamily ./\+Configure} command fails with an error message, read the error message carefully and try to figure out whether you made a mistake (e.\+g., by providing a wrong option), or whether the script is working incorrectly. If you think you encountered a bug, please \href{https://github.com/openssl/openssl/issues/new/choose>}{\texttt{ raise an issue}} on Git\+Hub to file a bug report.
+
+Along with a short description of the bug, please provide the complete configure command line and the relevant output including the error message.
+
+Note\+: To make the output readable, please add a \textquotesingle{}code fence\textquotesingle{} (three backquotes {\ttfamily \`{} on a separate line) before and after your output\+: @iverbatim }\`{} ./\+Configure \mbox{[}your arguments...\mbox{]}
+
+\mbox{[}output...\mbox{]}
+
+\`{}\`{}\`{}  \hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md695}{}\doxysubsection{\texorpdfstring{Build Failures}{Build Failures}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md695}
+If the build fails, look carefully at the output. Try to locate and understand the error message. It might be that the compiler is already telling you exactly what you need to do to fix your problem.
+
+There may be reasons for the failure that aren\textquotesingle{}t problems in Open\+SSL itself, for example if the compiler reports missing standard or third party headers.
+
+If the build succeeded previously, but fails after a source or configuration change, it might be helpful to clean the build tree before attempting another build. Use this command\+: \begin{DoxyVerb}$ make clean                                     # Unix
+$ mms clean                                      ! (or mmk) OpenVMS
+$ nmake clean                                    # Windows
+\end{DoxyVerb}
+ Assembler error messages can sometimes be sidestepped by using the {\ttfamily no-\/asm} configuration option. See also notes.
+
+Compiling parts of Open\+SSL with gcc and others with the system compiler will result in unresolved symbols on some systems.
+
+If you are still having problems, try to search the \href{https://mta.openssl.org/mailman/listinfo/openssl-users>}{\texttt{ openssl-\/users}} mailing list or the \href{https://github.com/openssl/openssl/issues>}{\texttt{ Git\+Hub Issues}} for existing solutions. If you think you encountered an Open\+SSL bug, please \href{https://github.com/openssl/openssl/issues/new/choose>}{\texttt{ raise an issue}} to file a bug report. Please take the time to review the existing issues first; maybe the bug was already reported or has already been fixed.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md696}{}\doxysubsection{\texorpdfstring{Test Failures}{Test Failures}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md696}
+If some tests fail, look at the output. There may be reasons for the failure that isn\textquotesingle{}t a problem in Open\+SSL itself (like an OS malfunction or a Perl issue).
+
+You may want increased verbosity, that can be accomplished as described in section \href{test/README.md\#test-failures}{\texttt{ Test Failures of test/\+README.\+md}}.
+
+You may also want to selectively specify which test(s) to perform. This can be done using the {\ttfamily make} variable {\ttfamily TESTS} as described in section \href{test/README.md\#running-selected-tests}{\texttt{ Running Selected Tests of test/\+README.\+md}}.
+
+If you find a problem with Open\+SSL itself, try removing any compiler optimization flags from the {\ttfamily CFLAGS} line in the Makefile and run {\ttfamily make clean; make} or corresponding.
+
+To report a bug please open an issue on Git\+Hub, at \href{https://github.com/openssl/openssl/issues}{\texttt{ https\+://github.\+com/openssl/openssl/issues}}.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md697}{}\doxysection{\texorpdfstring{Notes}{Notes}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md697}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md698}{}\doxysubsection{\texorpdfstring{Notes on multi-\/threading}{Notes on multi-\/threading}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md698}
+For some systems, the Open\+SSL {\ttfamily Configure} script knows what compiler options are needed to generate a library that is suitable for multi-\/threaded applications. On these systems, support for multi-\/threading is enabled by default; use the {\ttfamily no-\/threads} option to disable (this should never be necessary).
+
+On other systems, to enable support for multi-\/threading, you will have to specify at least two options\+: {\ttfamily threads}, and a system-\/dependent option. (The latter is {\ttfamily -\/D\+\_\+\+REENTRANT} on various systems.) The default in this case, obviously, is not to include support for multi-\/threading (but you can still use {\ttfamily no-\/threads} to suppress an annoying warning message from the {\ttfamily Configure} script.)
+
+Open\+SSL provides built-\/in support for two threading models\+: pthreads (found on most UNIX/\+Linux systems), and Windows threads. No other threading models are supported. If your platform does not provide pthreads or Windows threads then you should use {\ttfamily Configure} with the {\ttfamily no-\/threads} option.
+
+For pthreads, all locks are non-\/recursive. In addition, in a debug build, the mutex attribute {\ttfamily PTHREAD\+\_\+\+MUTEX\+\_\+\+ERRORCHECK} is used. If this is not available on your platform, you might have to add {\ttfamily -\/DOPENSSL\+\_\+\+NO\+\_\+\+MUTEX\+\_\+\+ERRORCHECK} to your {\ttfamily Configure} invocation. (On Linux {\ttfamily PTHREAD\+\_\+\+MUTEX\+\_\+\+ERRORCHECK} is an enum value, so a built-\/in ifdef test cannot be used.)\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md699}{}\doxysubsection{\texorpdfstring{Notes on shared libraries}{Notes on shared libraries}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md699}
+For most systems the Open\+SSL {\ttfamily Configure} script knows what is needed to build shared libraries for libcrypto and libssl. On these systems the shared libraries will be created by default. This can be suppressed and only static libraries created by using the {\ttfamily no-\/shared} option. On systems where Open\+SSL does not know how to build shared libraries the {\ttfamily no-\/shared} option will be forced and only static libraries will be created.
+
+Shared libraries are named a little differently on different platforms. One way or another, they all have the major Open\+SSL version number as part of the file name, i.\+e. for Open\+SSL 1.\+1.\+x, {\ttfamily 1.\+1} is somehow part of the name.
+
+On most POSIX platforms, shared libraries are named {\ttfamily libcrypto.\+so.\+1.\+1} and {\ttfamily libssl.\+so.\+1.\+1}.
+
+on Cygwin, shared libraries are named {\ttfamily cygcrypto-\/1.\+1.\+dll} and {\ttfamily cygssl-\/1.\+1.\+dll} with import libraries {\ttfamily libcrypto.\+dll.\+a} and {\ttfamily libssl.\+dll.\+a}.
+
+On Windows build with MSVC or using MingW, shared libraries are named {\ttfamily libcrypto-\/1\+\_\+1.\+dll} and {\ttfamily libssl-\/1\+\_\+1.\+dll} for 32-\/bit Windows, {\ttfamily libcrypto-\/1\+\_\+1-\/x64.\+dll} and {\ttfamily libssl-\/1\+\_\+1-\/x64.\+dll} for 64-\/bit x86\+\_\+64 Windows, and {\ttfamily libcrypto-\/1\+\_\+1-\/ia64.\+dll} and {\ttfamily libssl-\/1\+\_\+1-\/ia64.\+dll} for IA64 Windows. With MSVC, the import libraries are named {\ttfamily libcrypto.\+lib} and {\ttfamily libssl.\+lib}, while with MingW, they are named {\ttfamily libcrypto.\+dll.\+a} and {\ttfamily libssl.\+dll.\+a}.
+
+On VMS, shareable images (VMS speak for shared libraries) are named {\ttfamily ossl\$libcrypto0101\+\_\+shr.\+exe} and {\ttfamily ossl\$libssl0101\+\_\+shr.\+exe}. However, when Open\+SSL is specifically built for 32-\/bit pointers, the shareable images are named {\ttfamily ossl\$libcrypto0101\+\_\+shr32.\+exe} and {\ttfamily ossl\$libssl0101\+\_\+shr32.\+exe} instead, and when built for 64-\/bit pointers, they are named {\ttfamily ossl\$libcrypto0101\+\_\+shr64.\+exe} and {\ttfamily ossl\$libssl0101\+\_\+shr64.\+exe}.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md700}{}\doxysubsection{\texorpdfstring{Notes on random number generation}{Notes on random number generation}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md700}
+Availability of cryptographically secure random numbers is required for secret key generation. Open\+SSL provides several options to seed the internal CSPRNG. If not properly seeded, the internal CSPRNG will refuse to deliver random bytes and a "{}\+PRNG not seeded error"{} will occur.
+
+The seeding method can be configured using the {\ttfamily -\/-\/with-\/rand-\/seed} option, which can be used to specify a comma separated list of seed methods. However, in most cases Open\+SSL will choose a suitable default method, so it is not necessary to explicitly provide this option. Note also that not all methods are available on all platforms. The FIPS provider will silently ignore seed sources that were not validated.
+
+I) On operating systems which provide a suitable randomness source (in form of a system call or system device), Open\+SSL will use the optimal available method to seed the CSPRNG from the operating system\textquotesingle{}s randomness sources. This corresponds to the option {\ttfamily -\/-\/with-\/rand-\/seed=os}.
+
+II) On systems without such a suitable randomness source, automatic seeding and reseeding is disabled ({\ttfamily -\/-\/with-\/rand-\/seed=none}) and it may be necessary to install additional support software to obtain a random seed and reseed the CSPRNG manually. Please check out the manual pages for {\ttfamily RAND\+\_\+add()}, {\ttfamily RAND\+\_\+bytes()}, {\ttfamily RAND\+\_\+egd()}, and the FAQ for more information.\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md701}{}\doxysubsection{\texorpdfstring{Notes on assembler modules compilation}{Notes on assembler modules compilation}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2_i_n_s_t_a_l_l_autotoc_md701}
+Compilation of some code paths in assembler modules might depend on whether the current assembler version supports certain ISA extensions or not. Code paths that use the AES-\/\+NI, PCLMULQDQ, SSSE3, and SHA extensions are always assembled. Apart from that, the minimum requirements for the assembler versions are shown in the table below\+:
+
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{4}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ ISA extension   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ GNU as   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ nasm   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ llvm    }\\\cline{1-4}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ ISA extension   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ GNU as   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ nasm   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ llvm    }\\\cline{1-4}
+\endhead
+AVX   &2.\+19   &2.\+09   &3.\+0    \\\cline{1-4}
+AVX2   &2.\+22   &2.\+10   &3.\+1    \\\cline{1-4}
+ADCX/\+ADOX   &2.\+23   &2.\+10   &3.\+3    \\\cline{1-4}
+AVX512   &2.\+25   &2.\+11.\+8   &3.\+6 (\texorpdfstring{$\ast$}{*})    \\\cline{1-4}
+AVX512\+IFMA   &2.\+26   &2.\+11.\+8   &6.\+0 (\texorpdfstring{$\ast$}{*})    \\\cline{1-4}
+VAES   &2.\+30   &2.\+13.\+3   &6.\+0 (\texorpdfstring{$\ast$}{*})   \\\cline{1-4}
+\end{longtabu}
+
+
+\DoxyHorRuler{0}
+
+
+(\texorpdfstring{$\ast$}{*}) Even though AVX512 support was implemented in llvm 3.\+6, prior to version 7.\+0 an explicit -\/march flag was apparently required to compile assembly modules. But then the compiler generates processor-\/specific code, which in turn contradicts the idea of performing dispatch at run-\/time, which is facilitated by the special variable {\ttfamily OPENSSL\+\_\+ia32cap}. For versions older than 7.\+0, it is possible to work around the problem by forcing the build procedure to use the following script\+: \begin{DoxyVerb}#!/bin/sh
+exec clang -no-integrated-as "$@"
+\end{DoxyVerb}
+ instead of the real clang. In which case it doesn\textquotesingle{}t matter what clang version is used, as it is the version of the GNU assembler that will be checked.
+
+\DoxyHorRuler{0}
+ 

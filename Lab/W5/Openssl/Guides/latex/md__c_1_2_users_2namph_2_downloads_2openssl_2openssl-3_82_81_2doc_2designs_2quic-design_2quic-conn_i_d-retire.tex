@@ -1,0 +1,69 @@
+\chapter{QUIC Route Requirements}
+\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-conn_i_d-retire}{}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-conn_i_d-retire}\index{QUIC Route Requirements@{QUIC Route Requirements}}
+
+\begin{DoxyItemize}
+\item Two connection IDs -- one local, one remote
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-conn_i_d-retire_autotoc_md378}{}\doxysection{\texorpdfstring{MVP}{MVP}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-conn_i_d-retire_autotoc_md378}
+MVP does most of one side of the CID management. The major outstanding items for a complete implementation are\+:
+
+
+\begin{DoxyItemize}
+\item possibly increase the number of CIDs we permit (from 2)
+\item use more than the just latest CID for packet transmission
+\begin{DoxyItemize}
+\item round robin non-\/retired CIDs
+\end{DoxyItemize}
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-conn_i_d-retire_autotoc_md379}{}\doxysection{\texorpdfstring{Non zero Length Connection ID}{Non zero Length Connection ID}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-conn_i_d-retire_autotoc_md379}
+MVP does not issue multiple connection CIDs, instead it uses a zero length CID. To achieve this, more work is required\+:
+
+
+\begin{DoxyItemize}
+\item creation of new CIDs (coded but not used)
+\item responding to new CIDs by returning new CIDs to peer match
+\item managing the number of CIDs presented to our peer
+\item limiting the number of CIDs issued \& retired
+\item retirement of CIDs that are no longer being used
+\item ensuring only one retire connection ID frame is in flight
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-conn_i_d-retire_autotoc_md380}{}\doxysection{\texorpdfstring{Connection Migration}{Connection Migration}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-conn_i_d-retire_autotoc_md380}
+
+\begin{DoxyItemize}
+\item Supporting migration goes well beyond CID management. The additions required to the CID code should be undertaken when/if connection migration is supported. I.\+e. do this later in a just in time manner.
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-conn_i_d-retire_autotoc_md381}{}\doxysection{\texorpdfstring{Retiring Connection ID}{Retiring Connection ID}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-conn_i_d-retire_autotoc_md381}
+When a remote asks to retire a connection ID (RETIRE\+\_\+\+CONNECTION\+\_\+\+ID) we have to\+:
+
+
+\begin{DoxyItemize}
+\item Send retirement acks for all retired CIDs
+\item Immediately delete all CIDs and routes associated with these CIDs
+\begin{DoxyItemize}
+\item Retransmits use different route, so they are good.
+\item Out of order delivery will initiate retransmits
+\end{DoxyItemize}
+\item Should respond with a NEW\+\_\+\+CONNECTION\+\_\+\+ID frame if we are low on CIDs
+\begin{DoxyItemize}
+\item Not sure if it is mandatory to send a retirement.
+\end{DoxyItemize}
+\end{DoxyItemize}
+
+When a remote creates a new connection ID\+:
+
+
+\begin{DoxyItemize}
+\item May respond with a new connection ID frame (it\textquotesingle{}s a good idea)
+\item It reads like the NEW\+\_\+\+CONNECTION\+\_\+\+ID frame can\textquotesingle{}t be used to retire routes. However, see above. Suggest we accept either.
+\end{DoxyItemize}
+
+When we want to retire one (or more) connection IDs we have to\+:
+
+
+\begin{DoxyItemize}
+\item Flag the route(s) as retired
+\item Send a retirement frame (RETIRE\+\_\+\+CONNECTION\+\_\+\+ID)
+\item Delete the connection(s) once they are retired by our peer (either NEW\+\_\+\+CONNECTION\+\_\+\+ID or RETIRE\+\_\+\+CONNECTION\+\_\+\+ID can do this)
+\end{DoxyItemize}\hypertarget{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-conn_i_d-retire_autotoc_md382}{}\doxysection{\texorpdfstring{State}{State}}\label{md__c_1_2_users_2namph_2_downloads_2openssl_2openssl-3_82_81_2doc_2designs_2quic-design_2quic-conn_i_d-retire_autotoc_md382}
+
+\begin{DoxyItemize}
+\item routes we\textquotesingle{}ve retired until they are acked as being retired (uint64\+\_\+t max CID)
+\item routes our peer has retired don\textquotesingle{}t need tracking, we can remove immediately
+\item retired routes where we\textquotesingle{}ve outstanding data to send will have that data sent before the retirement acks are send. If these fragments need to be retransmitted, they\textquotesingle{}ll be done so using a new CID on a new route. This means, there is no requirement to wait for data to be flushed before sending the retirement ack. 
+\end{DoxyItemize}

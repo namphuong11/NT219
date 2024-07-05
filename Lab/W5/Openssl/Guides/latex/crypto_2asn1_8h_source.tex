@@ -1,0 +1,159 @@
+\doxysection{asn1.\+h}
+\hypertarget{crypto_2asn1_8h_source}{}\label{crypto_2asn1_8h_source}\index{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/crypto/asn1.h@{C:/Users/namph/Downloads/openssl/openssl-\/3.2.1/include/crypto/asn1.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ Copyright\ 2015-\/2023\ The\ OpenSSL\ Project\ Authors.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Licensed\ under\ the\ Apache\ License\ 2.0\ (the\ "{}License"{}).\ \ You\ may\ not\ use}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ this\ file\ except\ in\ compliance\ with\ the\ License.\ \ You\ can\ obtain\ a\ copy}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ in\ the\ file\ LICENSE\ in\ the\ source\ distribution\ or\ at}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ https://www.openssl.org/source/license.html}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ OSSL\_CRYPTO\_ASN1\_H}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#\ define\ OSSL\_CRYPTO\_ASN1\_H}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#\ pragma\ once}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ include\ <openssl/asn1.h>}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#\ include\ <openssl/core\_dispatch.h>}\ \textcolor{comment}{/*\ OSSL\_FUNC\_keymgmt\_import()\ */}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{comment}{/*\ Internal\ ASN1\ structures\ and\ functions:\ not\ for\ application\ use\ */}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{comment}{/*\ ASN1\ public\ key\ method\ structure\ */}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ <openssl/core.h>}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structevp__pkey__asn1__method__st}{evp\_pkey\_asn1\_method\_st}}\ \{}
+\DoxyCodeLine{00024\ \ \ \ \ \textcolor{keywordtype}{int}\ pkey\_id;}
+\DoxyCodeLine{00025\ \ \ \ \ \textcolor{keywordtype}{int}\ pkey\_base\_id;}
+\DoxyCodeLine{00026\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ pkey\_flags;}
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keywordtype}{char}\ *pem\_str;}
+\DoxyCodeLine{00028\ \ \ \ \ \textcolor{keywordtype}{char}\ *info;}
+\DoxyCodeLine{00029\ \ \ \ \ int\ (*pub\_decode)\ (EVP\_PKEY\ *pk,\ \textcolor{keyword}{const}\ X509\_PUBKEY\ *pub);}
+\DoxyCodeLine{00030\ \ \ \ \ int\ (*pub\_encode)\ (X509\_PUBKEY\ *pub,\ \textcolor{keyword}{const}\ EVP\_PKEY\ *pk);}
+\DoxyCodeLine{00031\ \ \ \ \ int\ (*pub\_cmp)\ (\textcolor{keyword}{const}\ EVP\_PKEY\ *a,\ \textcolor{keyword}{const}\ EVP\_PKEY\ *\mbox{\hyperlink{structb}{b}});}
+\DoxyCodeLine{00032\ \ \ \ \ int\ (*pub\_print)\ (BIO\ *out,\ \textcolor{keyword}{const}\ EVP\_PKEY\ *pkey,\ \textcolor{keywordtype}{int}\ indent,}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ASN1\_PCTX\ *pctx);}
+\DoxyCodeLine{00034\ \ \ \ \ int\ (*priv\_decode)\ (EVP\_PKEY\ *pk,\ \textcolor{keyword}{const}\ PKCS8\_PRIV\_KEY\_INFO\ *p8inf);}
+\DoxyCodeLine{00035\ \ \ \ \ int\ (*priv\_encode)\ (PKCS8\_PRIV\_KEY\_INFO\ *p8,\ \textcolor{keyword}{const}\ EVP\_PKEY\ *pk);}
+\DoxyCodeLine{00036\ \ \ \ \ int\ (*priv\_print)\ (BIO\ *out,\ \textcolor{keyword}{const}\ EVP\_PKEY\ *pkey,\ \textcolor{keywordtype}{int}\ indent,}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ASN1\_PCTX\ *pctx);}
+\DoxyCodeLine{00038\ \ \ \ \ int\ (*pkey\_size)\ (\textcolor{keyword}{const}\ EVP\_PKEY\ *pk);}
+\DoxyCodeLine{00039\ \ \ \ \ int\ (*pkey\_bits)\ (\textcolor{keyword}{const}\ EVP\_PKEY\ *pk);}
+\DoxyCodeLine{00040\ \ \ \ \ int\ (*pkey\_security\_bits)\ (\textcolor{keyword}{const}\ EVP\_PKEY\ *pk);}
+\DoxyCodeLine{00041\ \ \ \ \ int\ (*param\_decode)\ (EVP\_PKEY\ *pkey,}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **pder,\ \textcolor{keywordtype}{int}\ derlen);}
+\DoxyCodeLine{00043\ \ \ \ \ int\ (*param\_encode)\ (\textcolor{keyword}{const}\ EVP\_PKEY\ *pkey,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **pder);}
+\DoxyCodeLine{00044\ \ \ \ \ int\ (*param\_missing)\ (\textcolor{keyword}{const}\ EVP\_PKEY\ *pk);}
+\DoxyCodeLine{00045\ \ \ \ \ int\ (*param\_copy)\ (EVP\_PKEY\ *to,\ \textcolor{keyword}{const}\ EVP\_PKEY\ *from);}
+\DoxyCodeLine{00046\ \ \ \ \ int\ (*param\_cmp)\ (\textcolor{keyword}{const}\ EVP\_PKEY\ *a,\ \textcolor{keyword}{const}\ EVP\_PKEY\ *\mbox{\hyperlink{structb}{b}});}
+\DoxyCodeLine{00047\ \ \ \ \ int\ (*param\_print)\ (BIO\ *out,\ \textcolor{keyword}{const}\ EVP\_PKEY\ *pkey,\ \textcolor{keywordtype}{int}\ indent,}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ASN1\_PCTX\ *pctx);}
+\DoxyCodeLine{00049\ \ \ \ \ int\ (*sig\_print)\ (BIO\ *out,}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ X509\_ALGOR\ *sigalg,\ \textcolor{keyword}{const}\ ASN1\_STRING\ *sig,}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ indent,\ ASN1\_PCTX\ *pctx);}
+\DoxyCodeLine{00052\ \ \ \ \ void\ (*pkey\_free)\ (EVP\_PKEY\ *pkey);}
+\DoxyCodeLine{00053\ \ \ \ \ int\ (*pkey\_ctrl)\ (EVP\_PKEY\ *pkey,\ \textcolor{keywordtype}{int}\ op,\ \textcolor{keywordtype}{long}\ arg1,\ \textcolor{keywordtype}{void}\ *arg2);}
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{comment}{/*\ Legacy\ functions\ for\ old\ PEM\ */}}
+\DoxyCodeLine{00055\ \ \ \ \ int\ (*old\_priv\_decode)\ (EVP\_PKEY\ *pkey,}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **pder,\ \textcolor{keywordtype}{int}\ derlen);}
+\DoxyCodeLine{00057\ \ \ \ \ int\ (*old\_priv\_encode)\ (\textcolor{keyword}{const}\ EVP\_PKEY\ *pkey,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **pder);}
+\DoxyCodeLine{00058\ \ \ \ \ \textcolor{comment}{/*\ Custom\ ASN1\ signature\ verification\ */}}
+\DoxyCodeLine{00059\ \ \ \ \ int\ (*item\_verify)\ (EVP\_MD\_CTX\ *ctx,\ \textcolor{keyword}{const}\ ASN1\_ITEM\ *it,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *data,}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ X509\_ALGOR\ *a,\ \textcolor{keyword}{const}\ ASN1\_BIT\_STRING\ *sig,}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ EVP\_PKEY\ *pkey);}
+\DoxyCodeLine{00062\ \ \ \ \ int\ (*item\_sign)\ (EVP\_MD\_CTX\ *ctx,\ \textcolor{keyword}{const}\ ASN1\_ITEM\ *it,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *data,}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ X509\_ALGOR\ *alg1,\ X509\_ALGOR\ *alg2,}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ASN1\_BIT\_STRING\ *sig);}
+\DoxyCodeLine{00065\ \ \ \ \ int\ (*siginf\_set)\ (X509\_SIG\_INFO\ *siginf,\ \textcolor{keyword}{const}\ X509\_ALGOR\ *alg,}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ ASN1\_STRING\ *sig);}
+\DoxyCodeLine{00067\ \ \ \ \ \textcolor{comment}{/*\ Check\ */}}
+\DoxyCodeLine{00068\ \ \ \ \ int\ (*pkey\_check)\ (\textcolor{keyword}{const}\ EVP\_PKEY\ *pk);}
+\DoxyCodeLine{00069\ \ \ \ \ int\ (*pkey\_public\_check)\ (\textcolor{keyword}{const}\ EVP\_PKEY\ *pk);}
+\DoxyCodeLine{00070\ \ \ \ \ int\ (*pkey\_param\_check)\ (\textcolor{keyword}{const}\ EVP\_PKEY\ *pk);}
+\DoxyCodeLine{00071\ \ \ \ \ \textcolor{comment}{/*\ Get/set\ raw\ private/public\ key\ data\ */}}
+\DoxyCodeLine{00072\ \ \ \ \ int\ (*set\_priv\_key)\ (EVP\_PKEY\ *pk,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *priv,\ \textcolor{keywordtype}{size\_t}\ len);}
+\DoxyCodeLine{00073\ \ \ \ \ int\ (*set\_pub\_key)\ (EVP\_PKEY\ *pk,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *pub,\ \textcolor{keywordtype}{size\_t}\ len);}
+\DoxyCodeLine{00074\ \ \ \ \ int\ (*get\_priv\_key)\ (\textcolor{keyword}{const}\ EVP\_PKEY\ *pk,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *priv,\ \textcolor{keywordtype}{size\_t}\ *len);}
+\DoxyCodeLine{00075\ \ \ \ \ int\ (*get\_pub\_key)\ (\textcolor{keyword}{const}\ EVP\_PKEY\ *pk,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *pub,\ \textcolor{keywordtype}{size\_t}\ *len);}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00077\ \ \ \ \ \textcolor{comment}{/*\ Exports\ and\ imports\ to\ /\ from\ providers\ */}}
+\DoxyCodeLine{00078\ \ \ \ \ size\_t\ (*dirty\_cnt)\ (\textcolor{keyword}{const}\ EVP\_PKEY\ *pk);}
+\DoxyCodeLine{00079\ \ \ \ \ int\ (*export\_to)\ (\textcolor{keyword}{const}\ EVP\_PKEY\ *pk,\ \textcolor{keywordtype}{void}\ *to\_keydata,}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OSSL\_FUNC\_keymgmt\_import\_fn\ *importer,}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OSSL\_LIB\_CTX\ *libctx,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *propq);}
+\DoxyCodeLine{00082\ \ \ \ \ OSSL\_CALLBACK\ *import\_from;}
+\DoxyCodeLine{00083\ \ \ \ \ int\ (*copy)\ (EVP\_PKEY\ *to,\ EVP\_PKEY\ *from);}
+\DoxyCodeLine{00084\ }
+\DoxyCodeLine{00085\ \ \ \ \ int\ (*priv\_decode\_ex)\ (EVP\_PKEY\ *pk,}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ PKCS8\_PRIV\_KEY\_INFO\ *p8inf,}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OSSL\_LIB\_CTX\ *libctx,}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *propq);}
+\DoxyCodeLine{00089\ \}\ \textcolor{comment}{/*\ EVP\_PKEY\_ASN1\_METHOD\ */}\ ;}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ DEFINE\_STACK\_OF\_CONST(EVP\_PKEY\_ASN1\_METHOD)}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ EVP\_PKEY\_ASN1\_METHOD\ ossl\_dh\_asn1\_meth;}
+\DoxyCodeLine{00094\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ EVP\_PKEY\_ASN1\_METHOD\ ossl\_dhx\_asn1\_meth;}
+\DoxyCodeLine{00095\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ EVP\_PKEY\_ASN1\_METHOD\ ossl\_dsa\_asn1\_meths[5];}
+\DoxyCodeLine{00096\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ EVP\_PKEY\_ASN1\_METHOD\ ossl\_eckey\_asn1\_meth;}
+\DoxyCodeLine{00097\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ EVP\_PKEY\_ASN1\_METHOD\ ossl\_ecx25519\_asn1\_meth;}
+\DoxyCodeLine{00098\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ EVP\_PKEY\_ASN1\_METHOD\ ossl\_ecx448\_asn1\_meth;}
+\DoxyCodeLine{00099\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ EVP\_PKEY\_ASN1\_METHOD\ ossl\_ed25519\_asn1\_meth;}
+\DoxyCodeLine{00100\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ EVP\_PKEY\_ASN1\_METHOD\ ossl\_ed448\_asn1\_meth;}
+\DoxyCodeLine{00101\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ EVP\_PKEY\_ASN1\_METHOD\ ossl\_sm2\_asn1\_meth;}
+\DoxyCodeLine{00102\ }
+\DoxyCodeLine{00103\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ EVP\_PKEY\_ASN1\_METHOD\ ossl\_rsa\_asn1\_meths[2];}
+\DoxyCodeLine{00104\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ EVP\_PKEY\_ASN1\_METHOD\ ossl\_rsa\_pss\_asn1\_meth;}
+\DoxyCodeLine{00105\ }
+\DoxyCodeLine{00106\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00107\ \textcolor{comment}{\ *\ These\ are\ used\ internally\ in\ the\ ASN1\_OBJECT\ to\ keep\ track\ of\ whether\ the}}
+\DoxyCodeLine{00108\ \textcolor{comment}{\ *\ names\ and\ data\ need\ to\ be\ free()ed}}
+\DoxyCodeLine{00109\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00110\ \textcolor{preprocessor}{\#\ define\ ASN1\_OBJECT\_FLAG\_DYNAMIC\ \ \ \ \ \ \ \ \ 0x01}\textcolor{comment}{/*\ internal\ use\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00111\ \textcolor{preprocessor}{\#\ define\ ASN1\_OBJECT\_FLAG\_CRITICAL\ \ \ \ \ \ \ \ 0x02}\textcolor{comment}{/*\ critical\ x509v3\ object\ id\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00112\ \textcolor{preprocessor}{\#\ define\ ASN1\_OBJECT\_FLAG\_DYNAMIC\_STRINGS\ 0x04}\textcolor{comment}{/*\ internal\ use\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00113\ \textcolor{preprocessor}{\#\ define\ ASN1\_OBJECT\_FLAG\_DYNAMIC\_DATA\ \ \ \ 0x08}\textcolor{comment}{/*\ internal\ use\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00114\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structasn1__object__st}{asn1\_object\_st}}\ \{}
+\DoxyCodeLine{00115\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *sn,\ *ln;}
+\DoxyCodeLine{00116\ \ \ \ \ \textcolor{keywordtype}{int}\ nid;}
+\DoxyCodeLine{00117\ \ \ \ \ \textcolor{keywordtype}{int}\ length;}
+\DoxyCodeLine{00118\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *data;\ \ \textcolor{comment}{/*\ data\ remains\ const\ after\ init\ */}}
+\DoxyCodeLine{00119\ \ \ \ \ \textcolor{keywordtype}{int}\ flags;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Should\ we\ free\ this\ one\ */}}
+\DoxyCodeLine{00120\ \};}
+\DoxyCodeLine{00121\ }
+\DoxyCodeLine{00122\ \textcolor{comment}{/*\ ASN1\ print\ context\ structure\ */}}
+\DoxyCodeLine{00123\ }
+\DoxyCodeLine{00124\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structasn1__pctx__st}{asn1\_pctx\_st}}\ \{}
+\DoxyCodeLine{00125\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ flags;}
+\DoxyCodeLine{00126\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ nm\_flags;}
+\DoxyCodeLine{00127\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ cert\_flags;}
+\DoxyCodeLine{00128\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ oid\_flags;}
+\DoxyCodeLine{00129\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ str\_flags;}
+\DoxyCodeLine{00130\ \}\ \textcolor{comment}{/*\ ASN1\_PCTX\ */}\ ;}
+\DoxyCodeLine{00131\ }
+\DoxyCodeLine{00132\ \textcolor{comment}{/*\ ASN1\ type\ functions\ */}}
+\DoxyCodeLine{00133\ }
+\DoxyCodeLine{00134\ \textcolor{keywordtype}{int}\ ossl\_asn1\_type\_set\_octetstring\_int(ASN1\_TYPE\ *a,\ \textcolor{keywordtype}{long}\ num,}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *data,\ \textcolor{keywordtype}{int}\ len);}
+\DoxyCodeLine{00136\ \textcolor{keywordtype}{int}\ ossl\_asn1\_type\_get\_octetstring\_int(\textcolor{keyword}{const}\ ASN1\_TYPE\ *a,\ \textcolor{keywordtype}{long}\ *num,}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *data,\ \textcolor{keywordtype}{int}\ max\_len);}
+\DoxyCodeLine{00138\ }
+\DoxyCodeLine{00139\ \textcolor{keywordtype}{int}\ ossl\_x509\_algor\_new\_from\_md(X509\_ALGOR\ **palg,\ \textcolor{keyword}{const}\ EVP\_MD\ *md);}
+\DoxyCodeLine{00140\ \textcolor{keyword}{const}\ EVP\_MD\ *ossl\_x509\_algor\_get\_md(X509\_ALGOR\ *alg);}
+\DoxyCodeLine{00141\ X509\_ALGOR\ *ossl\_x509\_algor\_mgf1\_decode(X509\_ALGOR\ *alg);}
+\DoxyCodeLine{00142\ \textcolor{keywordtype}{int}\ ossl\_x509\_algor\_md\_to\_mgf1(X509\_ALGOR\ **palg,\ \textcolor{keyword}{const}\ EVP\_MD\ *mgf1md);}
+\DoxyCodeLine{00143\ \textcolor{keywordtype}{int}\ ossl\_asn1\_time\_print\_ex(BIO\ *bp,\ \textcolor{keyword}{const}\ ASN1\_TIME\ *tm,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ flags);}
+\DoxyCodeLine{00144\ }
+\DoxyCodeLine{00145\ EVP\_PKEY\ *ossl\_d2i\_PrivateKey\_legacy(\textcolor{keywordtype}{int}\ keytype,\ EVP\_PKEY\ **a,}
+\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ **pp,\ \textcolor{keywordtype}{long}\ length,}
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OSSL\_LIB\_CTX\ *libctx,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *propq);}
+\DoxyCodeLine{00148\ X509\_ALGOR\ *ossl\_X509\_ALGOR\_from\_nid(\textcolor{keywordtype}{int}\ nid,\ \textcolor{keywordtype}{int}\ ptype,\ \textcolor{keywordtype}{void}\ *pval);}
+\DoxyCodeLine{00149\ }
+\DoxyCodeLine{00150\ time\_t\ ossl\_asn1\_string\_to\_time\_t(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *asn1\_string);}
+\DoxyCodeLine{00151\ \textcolor{keywordtype}{void}\ ossl\_asn1\_string\_set\_bits\_left(ASN1\_STRING\ *str,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ num);}
+\DoxyCodeLine{00152\ }
+\DoxyCodeLine{00153\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ ndef\ OSSL\_CRYPTO\_ASN1\_H\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

@@ -1,0 +1,64 @@
+\doxysection{record\+\_\+functions\+\_\+st Struct Reference}
+\hypertarget{structrecord__functions__st}{}\label{structrecord__functions__st}\index{record\_functions\_st@{record\_functions\_st}}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{structrecord__functions__st_a58ee2f21d65b849494a968f1f8b11c40}\label{structrecord__functions__st_a58ee2f21d65b849494a968f1f8b11c40} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries set\+\_\+crypto\+\_\+state} )(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\+\_\+\+RECORD\+\_\+\+LAYER}} \texorpdfstring{$\ast$}{*}rl, int level, unsigned char \texorpdfstring{$\ast$}{*}key, size\+\_\+t keylen, unsigned char \texorpdfstring{$\ast$}{*}iv, size\+\_\+t ivlen, unsigned char \texorpdfstring{$\ast$}{*}mackey, size\+\_\+t mackeylen, const EVP\+\_\+\+CIPHER \texorpdfstring{$\ast$}{*}ciph, size\+\_\+t taglen, int mactype, const EVP\+\_\+\+MD \texorpdfstring{$\ast$}{*}md, COMP\+\_\+\+METHOD \texorpdfstring{$\ast$}{*}comp)
+\item 
+\Hypertarget{structrecord__functions__st_aafca0da29c62225a035174476cf53393}\label{structrecord__functions__st_aafca0da29c62225a035174476cf53393} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries cipher} )(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\+\_\+\+RECORD\+\_\+\+LAYER}} \texorpdfstring{$\ast$}{*}rl, \mbox{\hyperlink{structtls__rl__record__st}{TLS\+\_\+\+RL\+\_\+\+RECORD}} \texorpdfstring{$\ast$}{*}recs, size\+\_\+t n\+\_\+recs, int sending, \mbox{\hyperlink{structssl__mac__buf__st}{SSL\+\_\+\+MAC\+\_\+\+BUF}} \texorpdfstring{$\ast$}{*}macs, size\+\_\+t macsize)
+\item 
+\Hypertarget{structrecord__functions__st_aa1bc6fc757232c676a286704af2ec5f3}\label{structrecord__functions__st_aa1bc6fc757232c676a286704af2ec5f3} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries mac} )(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\+\_\+\+RECORD\+\_\+\+LAYER}} \texorpdfstring{$\ast$}{*}rl, \mbox{\hyperlink{structtls__rl__record__st}{TLS\+\_\+\+RL\+\_\+\+RECORD}} \texorpdfstring{$\ast$}{*}rec, unsigned char \texorpdfstring{$\ast$}{*}md, int sending)
+\item 
+\Hypertarget{structrecord__functions__st_aa19521794182ee08a1157346ab672c85}\label{structrecord__functions__st_aa19521794182ee08a1157346ab672c85} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries set\+\_\+protocol\+\_\+version} )(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\+\_\+\+RECORD\+\_\+\+LAYER}} \texorpdfstring{$\ast$}{*}rl, int version)
+\item 
+\Hypertarget{structrecord__functions__st_ae16134a382b5bb813ebb6ae4593b7489}\label{structrecord__functions__st_ae16134a382b5bb813ebb6ae4593b7489} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries read\+\_\+n} )(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\+\_\+\+RECORD\+\_\+\+LAYER}} \texorpdfstring{$\ast$}{*}rl, size\+\_\+t n, size\+\_\+t max, int extend, int clearold, size\+\_\+t \texorpdfstring{$\ast$}{*}readbytes)
+\item 
+\Hypertarget{structrecord__functions__st_a0a13c78a80e4cc848e9dc08ede950a96}\label{structrecord__functions__st_a0a13c78a80e4cc848e9dc08ede950a96} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries get\+\_\+more\+\_\+records} )(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\+\_\+\+RECORD\+\_\+\+LAYER}} \texorpdfstring{$\ast$}{*}rl)
+\item 
+\Hypertarget{structrecord__functions__st_a1b6b68096941030a91831e39cec9d433}\label{structrecord__functions__st_a1b6b68096941030a91831e39cec9d433} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries validate\+\_\+record\+\_\+header} )(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\+\_\+\+RECORD\+\_\+\+LAYER}} \texorpdfstring{$\ast$}{*}rl, \mbox{\hyperlink{structtls__rl__record__st}{TLS\+\_\+\+RL\+\_\+\+RECORD}} \texorpdfstring{$\ast$}{*}rec)
+\item 
+\Hypertarget{structrecord__functions__st_aad69cf135234b77beeead8ab903f0a75}\label{structrecord__functions__st_aad69cf135234b77beeead8ab903f0a75} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries post\+\_\+process\+\_\+record} )(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\+\_\+\+RECORD\+\_\+\+LAYER}} \texorpdfstring{$\ast$}{*}rl, \mbox{\hyperlink{structtls__rl__record__st}{TLS\+\_\+\+RL\+\_\+\+RECORD}} \texorpdfstring{$\ast$}{*}rec)
+\item 
+\Hypertarget{structrecord__functions__st_af482ea149ae6d8e064cd01b9b8c007e4}\label{structrecord__functions__st_af482ea149ae6d8e064cd01b9b8c007e4} 
+size\+\_\+t(\texorpdfstring{$\ast$}{*} {\bfseries get\+\_\+max\+\_\+records} )(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\+\_\+\+RECORD\+\_\+\+LAYER}} \texorpdfstring{$\ast$}{*}rl, uint8\+\_\+t type, size\+\_\+t len, size\+\_\+t maxfrag, size\+\_\+t \texorpdfstring{$\ast$}{*}preffrag)
+\item 
+\Hypertarget{structrecord__functions__st_a79555a80f8534afe14f4b284a93eadce}\label{structrecord__functions__st_a79555a80f8534afe14f4b284a93eadce} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries write\+\_\+records} )(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\+\_\+\+RECORD\+\_\+\+LAYER}} \texorpdfstring{$\ast$}{*}rl, \mbox{\hyperlink{structossl__record__template__st}{OSSL\+\_\+\+RECORD\+\_\+\+TEMPLATE}} \texorpdfstring{$\ast$}{*}templates, size\+\_\+t numtempl)
+\item 
+\Hypertarget{structrecord__functions__st_ab2b7105c6f9dfc0285881552451529ef}\label{structrecord__functions__st_ab2b7105c6f9dfc0285881552451529ef} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries allocate\+\_\+write\+\_\+buffers} )(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\+\_\+\+RECORD\+\_\+\+LAYER}} \texorpdfstring{$\ast$}{*}rl, \mbox{\hyperlink{structossl__record__template__st}{OSSL\+\_\+\+RECORD\+\_\+\+TEMPLATE}} \texorpdfstring{$\ast$}{*}templates, size\+\_\+t numtempl, size\+\_\+t \texorpdfstring{$\ast$}{*}prefix)
+\item 
+\Hypertarget{structrecord__functions__st_a70393a1123708d76af408d956daf22d2}\label{structrecord__functions__st_a70393a1123708d76af408d956daf22d2} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries initialise\+\_\+write\+\_\+packets} )(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\+\_\+\+RECORD\+\_\+\+LAYER}} \texorpdfstring{$\ast$}{*}rl, \mbox{\hyperlink{structossl__record__template__st}{OSSL\+\_\+\+RECORD\+\_\+\+TEMPLATE}} \texorpdfstring{$\ast$}{*}templates, size\+\_\+t numtempl, \mbox{\hyperlink{structossl__record__template__st}{OSSL\+\_\+\+RECORD\+\_\+\+TEMPLATE}} \texorpdfstring{$\ast$}{*}prefixtempl, \mbox{\hyperlink{structwpacket__st}{WPACKET}} \texorpdfstring{$\ast$}{*}pkt, \mbox{\hyperlink{structtls__buffer__st}{TLS\+\_\+\+BUFFER}} \texorpdfstring{$\ast$}{*}bufs, size\+\_\+t \texorpdfstring{$\ast$}{*}wpinited)
+\item 
+\Hypertarget{structrecord__functions__st_a33d98af11d4dfb4595f5228675fa7d3e}\label{structrecord__functions__st_a33d98af11d4dfb4595f5228675fa7d3e} 
+uint8\+\_\+t(\texorpdfstring{$\ast$}{*} {\bfseries get\+\_\+record\+\_\+type} )(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\+\_\+\+RECORD\+\_\+\+LAYER}} \texorpdfstring{$\ast$}{*}rl, \mbox{\hyperlink{structossl__record__template__st}{OSSL\+\_\+\+RECORD\+\_\+\+TEMPLATE}} \texorpdfstring{$\ast$}{*}template)
+\item 
+\Hypertarget{structrecord__functions__st_a1140ecf6228b0ff2ce4ad6d6a6db01d1}\label{structrecord__functions__st_a1140ecf6228b0ff2ce4ad6d6a6db01d1} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries prepare\+\_\+record\+\_\+header} )(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\+\_\+\+RECORD\+\_\+\+LAYER}} \texorpdfstring{$\ast$}{*}rl, \mbox{\hyperlink{structwpacket__st}{WPACKET}} \texorpdfstring{$\ast$}{*}thispkt, \mbox{\hyperlink{structossl__record__template__st}{OSSL\+\_\+\+RECORD\+\_\+\+TEMPLATE}} \texorpdfstring{$\ast$}{*}templ, uint8\+\_\+t rectype, unsigned char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}recdata)
+\item 
+\Hypertarget{structrecord__functions__st_a776eea7a18d6f31b355b084884ce86eb}\label{structrecord__functions__st_a776eea7a18d6f31b355b084884ce86eb} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries add\+\_\+record\+\_\+padding} )(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\+\_\+\+RECORD\+\_\+\+LAYER}} \texorpdfstring{$\ast$}{*}rl, \mbox{\hyperlink{structossl__record__template__st}{OSSL\+\_\+\+RECORD\+\_\+\+TEMPLATE}} \texorpdfstring{$\ast$}{*}thistempl, \mbox{\hyperlink{structwpacket__st}{WPACKET}} \texorpdfstring{$\ast$}{*}thispkt, \mbox{\hyperlink{structtls__rl__record__st}{TLS\+\_\+\+RL\+\_\+\+RECORD}} \texorpdfstring{$\ast$}{*}thiswr)
+\item 
+\Hypertarget{structrecord__functions__st_a14b671b238f93d33c97f117efe4aa7b8}\label{structrecord__functions__st_a14b671b238f93d33c97f117efe4aa7b8} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries prepare\+\_\+for\+\_\+encryption} )(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\+\_\+\+RECORD\+\_\+\+LAYER}} \texorpdfstring{$\ast$}{*}rl, size\+\_\+t mac\+\_\+size, \mbox{\hyperlink{structwpacket__st}{WPACKET}} \texorpdfstring{$\ast$}{*}thispkt, \mbox{\hyperlink{structtls__rl__record__st}{TLS\+\_\+\+RL\+\_\+\+RECORD}} \texorpdfstring{$\ast$}{*}thiswr)
+\item 
+\Hypertarget{structrecord__functions__st_a5c65161445a3e6b23c4d9ec17372ac70}\label{structrecord__functions__st_a5c65161445a3e6b23c4d9ec17372ac70} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries post\+\_\+encryption\+\_\+processing} )(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\+\_\+\+RECORD\+\_\+\+LAYER}} \texorpdfstring{$\ast$}{*}rl, size\+\_\+t mac\+\_\+size, \mbox{\hyperlink{structossl__record__template__st}{OSSL\+\_\+\+RECORD\+\_\+\+TEMPLATE}} \texorpdfstring{$\ast$}{*}thistempl, \mbox{\hyperlink{structwpacket__st}{WPACKET}} \texorpdfstring{$\ast$}{*}thispkt, \mbox{\hyperlink{structtls__rl__record__st}{TLS\+\_\+\+RL\+\_\+\+RECORD}} \texorpdfstring{$\ast$}{*}thiswr)
+\item 
+\Hypertarget{structrecord__functions__st_a9139d82bb1c51600912de04de6acadec}\label{structrecord__functions__st_a9139d82bb1c51600912de04de6acadec} 
+int(\texorpdfstring{$\ast$}{*} {\bfseries prepare\+\_\+write\+\_\+bio} )(\mbox{\hyperlink{structossl__record__layer__st}{OSSL\+\_\+\+RECORD\+\_\+\+LAYER}} \texorpdfstring{$\ast$}{*}rl, int type)
+\end{DoxyCompactItemize}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/namph/\+Downloads/openssl/openssl-\/3.\+2.\+1/ssl/record/methods/recmethod\+\_\+local.\+h\end{DoxyCompactItemize}
