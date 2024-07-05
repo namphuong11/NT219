@@ -1,0 +1,11 @@
++Private key
+openssl ecparam -genkey -name prime256v1 -inform PEM -out private_key_1.pem
+openssl ecparam -genkey -name prime256v1 -inform PEM -out private_key_2.pem -param_enc explicit
+openssl ecparam -in private_key_1.pem -out private_key_3.pem -conv_form compressed
+openssl ecparam -genkey -name prime256v1 -inform PEM -out fake_private_key.pem
+
++Public key
+openssl ec -in private_key_1.pem -pubout -out public_key_1.pem
+openssl ec -in private_key_1.pem -pubout -out public_key_2.pem -param_enc explicit
+openssl ec -in private_key_1.pem -pubout -out public_key_3.pem -conv_form compressed
+openssl ec -in fake_private_key.pem -pubout -out fake_public_key.pem

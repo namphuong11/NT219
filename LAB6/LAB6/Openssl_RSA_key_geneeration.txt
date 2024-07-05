@@ -1,0 +1,30 @@
+Openssl for RSA
+https://www.openssl.org/docs/man3.1/man1/
+openssl rsa -h
+openssl genrsa -h
+
+// Base64 format (PEM)
+Gen:
+D:\msys64\mingw64\bin\openssl.exe genrsa -out rsaprivate.pem 3072
+D:\msys64\mingw64\bin\openssl.exe rsa -in rsaprivate.pem -pubout -out rsapubkey.pem
+
+Read:
+D:\msys64\mingw64\bin\openssl.exe rsa -inform pem -in rsaprivate.pem -text -noout
+D:\msys64\mingw64\bin\openssl.exe rsa -inform pem -pubin -in rsapubkey.pem -text -noout
+
+modulus: N = p * q
+publicExponent: e
+prime1: p
+prime2: q
+privateExponent: d
+exponent1 = dp = p mod (p-1)
+exponent2 = dq = q mod (p-1)
+coefficient = qInv = q^-1 mod p
+
+// Binary format (convert pem <-> der)
+openssl rsa -in rsaprivate.pem -outform DER -out rsa-private.der
+openssl rsa -in rsaprivate.pem -outform DER -pubout -out rsa-pubkey.der
+
+Read:
+openssl rsa -inform der -in rsa-private.der -text -noout
+openssl rsa -inform der -pubin -in rsa-pubkey.der -text -noout
