@@ -1,0 +1,10 @@
+C:\Drive\code\N2\MMH\Lab-code\lab6\GUI\GUI\Task4\bin\Debug\Task4.exe.config
+C:\Drive\code\N2\MMH\Lab-code\lab6\GUI\GUI\Task4\bin\Debug\Task4.exe
+C:\Drive\code\N2\MMH\Lab-code\lab6\GUI\GUI\Task4\bin\Debug\Task4.pdb
+C:\Drive\code\N2\MMH\Lab-code\lab6\GUI\GUI\Task4\obj\Debug\Task4.csproj.AssemblyReference.cache
+C:\Drive\code\N2\MMH\Lab-code\lab6\GUI\GUI\Task4\obj\Debug\Task4.Form1.resources
+C:\Drive\code\N2\MMH\Lab-code\lab6\GUI\GUI\Task4\obj\Debug\Task4.Properties.Resources.resources
+C:\Drive\code\N2\MMH\Lab-code\lab6\GUI\GUI\Task4\obj\Debug\Task4.csproj.GenerateResource.cache
+C:\Drive\code\N2\MMH\Lab-code\lab6\GUI\GUI\Task4\obj\Debug\Task4.csproj.CoreCompileInputs.cache
+C:\Drive\code\N2\MMH\Lab-code\lab6\GUI\GUI\Task4\obj\Debug\Task4.exe
+C:\Drive\code\N2\MMH\Lab-code\lab6\GUI\GUI\Task4\obj\Debug\Task4.pdb

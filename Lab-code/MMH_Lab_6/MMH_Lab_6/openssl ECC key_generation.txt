@@ -1,0 +1,45 @@
+1. ECC in openssl
+openssl ecparam -h
+openssl ec -h
+https://www.openssl.org/docs/manmaster/man1/openssl-ecparam.html
+https://www.openssl.org/docs/man3.0/man1/openssl-ec.html
+https://wiki.openssl.org/index.php/Command_Line_Elliptic_Curve_Operations
+
+2. List ECC curves
+openssl ecparam -list_curves
+
+3. Generate the ECC key
+3.1 PEM format
++Private key
+openssl ecparam -genkey -name prime256v1 -inform PEM -out private_key_1.pem
+openssl ecparam -genkey -name prime256v1 -inform PEM -out private_key_2.pem -param_enc explicit
+openssl ecparam -in private_key_1.pem -out private_key_3.pem -conv_form compressed
+openssl ecparam -genkey -name prime256v1 -inform PEM -out fake_private_key.pem
+
++Public key
+openssl ec -in private_key_1.pem -pubout -out public_key_1.pem
+openssl ec -in private_key_1.pem -pubout -out public_key_2.pem -param_enc explicit
+openssl ec -in private_key_1.pem -pubout -out public_key_3.pem -conv_form compressed
+openssl ec -in fake_private_key.pem -pubout -out fake_public_key.pem
+4. Prints out the public, private key components and parameters.
+Read private key
+openssl ec -in private_key_1.pem -conv_form uncompressed -text -noout
+openssl ec -pubin -in public_key_2.pem -text -noout
+openssl ec -pubin -in public_key_3.pem -text -noout
+
+3.2 DER format
+# create DER key with openssl 
+openssl ecparam -name secp384r1 -genkey -outform DER -out private_key_1.der
+Full parameters
+openssl ecparam -name secp384r1 -genkey -outform DER -out private_key_2.der -param_enc explicit
+
+# print private key information
+openssl ec -in private_key_1.der -inform DER -text -noout
+openssl ec -in private_key_2.der -inform DER -text -noout
+# export public key
+openssl ec -in private_key_1.der -inform DER -outform DER -pubout -out public_key_1.der
+openssl ec -in private_key_2.der -inform DER -outform DER -pubout -out public_key_2.der
+
+# print public key information
+openssl ec -pubin -in public_key_1.der -inform DER -text -noout
+openssl ec -pubin -in public_key_2.der -inform DER -text -noout

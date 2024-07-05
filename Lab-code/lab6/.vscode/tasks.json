@@ -1,0 +1,46 @@
+//Windows 11
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "shell",
+      "label": "C/C++: g++.exe build active file",
+      "command": "C:/msys64/mingw64/bin/g++.exe",
+      "args": [
+        "/MT", /* link to static libraries */
+        "/GS",
+        "/O2", /* optimal level */
+        "/W4", /* warning level */
+        "/Zi", /* Generates complete debugging information */
+        "/nologo",
+        "/EHsc", /* C++ exceptions handeling */
+        "/D", /* Define macros */
+        "BUILD_DLL",
+        "/I${workspaceFolder}/include",
+        "${file}",
+        "/link",
+        "/DLL", /* generate dll */
+        "/Fe${fileDirname}\\${fileBasenameNoExtension}.dll", //file extension
+        "/OUT:${fileDirname}\\${fileBasenameNoExtension}.dll", // file ouput name
+        "/LIBPATH:${workspaceFolder}/lib",
+        "libcrypto.a",
+        "libcryptopp.a",
+        "libcrypto.lib",
+        "crypt32.lib",
+        "ws2_32.lib",
+        "/MACHINE:X64", // for window 64
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "detail": "compiler: C:/msys64/mingw64/bin/g++.exe"
+    }
+  ]
+}
